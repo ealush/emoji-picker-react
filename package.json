@@ -1,0 +1,27 @@
+{
+  "name": "emoji-picker",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4"
+  },
+  "devDependencies": {
+    "emoji.json": "^1.2.0",
+    "flow-bin": "^0.44.2",
+    "google-material-color": "^1.3.1",
+    "node-sass-chokidar": "0.0.1",
+    "npm-run-all": "^4.0.2",
+    "react-scripts": "1.0.0"
+  },
+  "scripts": {
+    "build-css": "node-sass-chokidar src/ -o src/",
+    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build": "npm run build-css && react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "flow": "flow"
+  }
+}

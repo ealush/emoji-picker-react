@@ -1,0 +1,199 @@
+@import './colors.scss';
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+$picker_width: 260px;
+$picker_height: 240px;
+$nav_item_size: 30px;
+$emoji_size: 20px;
+$emoji_pad: 5px;
+$hover_color: $md-red-50;
+$picker_bg: $md-grey-100;
+$group_name_height: 25px;
+$footer_height: 20px;
+$footer_bg: $md-grey-300;
+$nav_bg: $md-grey-300;
+$shortname-color: $md-grey-500;
+
+
+.emoji-picker {
+    background-color: $picker_bg;
+    width: $picker_width + 5px;
+    display: block;
+    position: relative;
+    padding: 0;
+    border: 1px solid $md-grey-300;
+    border-radius: 3px;
+    overflow: hidden;
+    box-shadow: 0 3px 5px $md-grey-300;
+    box-sizing: border-box;
+
+    .hidden {
+        display: none;
+        visibility: hidden;
+    }
+
+    nav {
+        background-color: $nav_bg;
+        display: flex;
+        justify-content: space-around;
+        position: absolute;
+        z-index: 2;
+
+        &.top, &.bottom {
+            flex-direction: row;
+            height: $nav_item_size;
+            width: 100%;
+
+            a {
+                width: $nav_item_size;
+            }
+        }
+
+        &.left, &.right {
+            flex-direction: column;
+            width: $nav_item_size;
+            height: 100%;
+
+            a {
+                height: $nav_item_size;
+            }
+        }
+
+        a {
+            height: $nav_item_size;
+            background-size: 70% auto;
+            background-position: 50% 50%;
+            background-repeat: no-repeat;
+            filter: grayscale(1);
+            transition: filter .2s;
+
+            &:hover, &.active {
+                filter: grayscale(0);
+            }
+
+            &.people { background-image: url("/png/1f61c.png"); }
+            &.food { background-image: url("/png/1f355.png"); }
+            &.nature { background-image: url("/png/1f340.png"); }
+            &.activity { background-image: url("/png/1f3b2.png"); }
+            &.objects { background-image: url("/png/1f4a1.png"); }
+            &.travel { background-image: url("/png/26f0.png"); }
+            &.flags { background-image: url("/png/1f6a9.png"); }
+            &.regional { background-image: url("/png/1f1f9.png"); }
+            &.symbols { background-image: url("/png/2764.png"); }
+        }
+    }
+
+    nav.left + .wrapper {
+        margin-left: $nav_item_size;
+    }
+
+    nav.right + .wrapper {
+        margin-right: $nav_item_size;
+    }
+
+    nav.top + .wrapper {
+        margin-top: $nav_item_size;
+    }
+
+    nav.bottom + .wrapper {
+        margin-bottom: $nav_item_size;
+    }
+
+    .wrapper {
+        position: relative;
+    }
+
+    .emoji-list {
+        width: $picker_width;
+        height: $picker_height;
+        padding-right: 10px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    }
+
+    ul.emoji-group {
+        position: relative;
+        padding: $group_name_height 0 0 0;
+        margin: 0;
+        list-style-type: none;
+        text-align: left;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-around;
+
+        &.active {
+            position: initial;
+
+            .group-name {
+                color: $md-grey-500;
+            }
+        }
+
+        li.group-name {
+            background-color: rgba($picker_bg, .9);
+            box-shadow: 0 0 4px 2px $picker_bg;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            display: block;
+            padding: 5px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: $md-grey-300;
+            height: $group_name_height;
+            box-sizing: border-box;
+            transition: color .2s;
+        }
+
+        li.emoji {
+            display: inline-block;
+
+            &:hover {
+                background-color: $hover_color;
+                border-radius: 5px;
+
+                span {
+                    opacity: 1;
+                }
+            }
+
+            a {
+                background-size: $emoji_size;
+                background-repeat: no-repeat;
+                background-position: 50% 50%;
+                display: block;
+                height: $emoji_size;
+                width: $emoji_size;
+                padding: $emoji_pad;
+
+                span {
+                    position: absolute;
+                    right: $emoji_pad;
+                    top: 4px;
+                    font-size: 10px;
+                    font-weight: 100;
+                    z-index: 2;
+                    color: $shortname-color;
+                    opacity: 0;
+                    transition: opacity .2s;
+                }
+            }
+        }
+    }
+
+    footer {
+        background-color: $footer_bg;
+        height: $footer_height;
+    }
+}

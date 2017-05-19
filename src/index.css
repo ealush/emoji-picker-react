@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif; }
+
+.emoji-picker {
+  background-color: #f5f5f5;
+  width: 265px;
+  display: block;
+  position: relative;
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 3px 5px #e0e0e0;
+  box-sizing: border-box; }
+  .emoji-picker .hidden {
+    display: none;
+    visibility: hidden; }
+  .emoji-picker nav {
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: space-around;
+    position: absolute;
+    z-index: 2; }
+    .emoji-picker nav.top, .emoji-picker nav.bottom {
+      flex-direction: row;
+      height: 30px;
+      width: 100%; }
+      .emoji-picker nav.top a, .emoji-picker nav.bottom a {
+        width: 30px; }
+    .emoji-picker nav.left, .emoji-picker nav.right {
+      flex-direction: column;
+      width: 30px;
+      height: 100%; }
+      .emoji-picker nav.left a, .emoji-picker nav.right a {
+        height: 30px; }
+    .emoji-picker nav a {
+      height: 30px;
+      background-size: 70% auto;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      filter: grayscale(1);
+      transition: filter .2s; }
+      .emoji-picker nav a:hover, .emoji-picker nav a.active {
+        filter: grayscale(0); }
+      .emoji-picker nav a.people {
+        background-image: url("/png/1f61c.png"); }
+      .emoji-picker nav a.food {
+        background-image: url("/png/1f355.png"); }
+      .emoji-picker nav a.nature {
+        background-image: url("/png/1f340.png"); }
+      .emoji-picker nav a.activity {
+        background-image: url("/png/1f3b2.png"); }
+      .emoji-picker nav a.objects {
+        background-image: url("/png/1f4a1.png"); }
+      .emoji-picker nav a.travel {
+        background-image: url("/png/26f0.png"); }
+      .emoji-picker nav a.flags {
+        background-image: url("/png/1f6a9.png"); }
+      .emoji-picker nav a.regional {
+        background-image: url("/png/1f1f9.png"); }
+      .emoji-picker nav a.symbols {
+        background-image: url("/png/2764.png"); }
+  .emoji-picker nav.left + .wrapper {
+    margin-left: 30px; }
+  .emoji-picker nav.right + .wrapper {
+    margin-right: 30px; }
+  .emoji-picker nav.top + .wrapper {
+    margin-top: 30px; }
+  .emoji-picker nav.bottom + .wrapper {
+    margin-bottom: 30px; }
+  .emoji-picker .wrapper {
+    position: relative; }
+  .emoji-picker .emoji-list {
+    width: 260px;
+    height: 240px;
+    padding-right: 10px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-sizing: border-box; }
+  .emoji-picker ul.emoji-group {
+    position: relative;
+    padding: 25px 0 0 0;
+    margin: 0;
+    list-style-type: none;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around; }
+    .emoji-picker ul.emoji-group.active {
+      position: initial; }
+      .emoji-picker ul.emoji-group.active .group-name {
+        color: #9e9e9e; }
+    .emoji-picker ul.emoji-group li.group-name {
+      background-color: rgba(245, 245, 245, 0.9);
+      box-shadow: 0 0 4px 2px #f5f5f5;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1;
+      display: block;
+      padding: 5px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #e0e0e0;
+      height: 25px;
+      box-sizing: border-box;
+      transition: color .2s; }
+    .emoji-picker ul.emoji-group li.emoji {
+      display: inline-block; }
+      .emoji-picker ul.emoji-group li.emoji:hover {
+        background-color: #ffebee;
+        border-radius: 5px; }
+        .emoji-picker ul.emoji-group li.emoji:hover span {
+          opacity: 1; }
+      .emoji-picker ul.emoji-group li.emoji a {
+        background-size: 20px;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        display: block;
+        height: 20px;
+        width: 20px;
+        padding: 5px; }
+        .emoji-picker ul.emoji-group li.emoji a span {
+          position: absolute;
+          right: 5px;
+          top: 4px;
+          font-size: 10px;
+          font-weight: 100;
+          z-index: 2;
+          color: #9e9e9e;
+          opacity: 0;
+          transition: opacity .2s; }
+  .emoji-picker footer {
+    background-color: #e0e0e0;
+    height: 20px; }
