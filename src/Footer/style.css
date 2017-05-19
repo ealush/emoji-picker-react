@@ -1,0 +1,24 @@
+.emoji-picker footer {
+  background-color: #eeeeee;
+  height: 30px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1px; }
+  .emoji-picker footer ul {
+    text-align: left; }
+    .emoji-picker footer ul li {
+      margin: 5px 0 5px 5px;
+      border-radius: 50%;
+      transition: background-color .2s; }
+      .emoji-picker footer ul li.selected {
+        background-color: #fafafa; }
+      .emoji-picker footer ul li:hover {
+        background-color: #eeeeee; }
+      .emoji-picker footer ul li a {
+        margin: 1px;
+        display: block;
+        height: 15px;
+        width: 15px; }
+        .emoji-picker footer ul li a img {
+          z-index: 2;
+          height: 15px;
+          width: 15px; }

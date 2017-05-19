@@ -4,6 +4,6 @@ import App from './App';
 import './index.css';
 
 ReactDOM.render(
-  <App nav="top"/>,
+  <App nav="left"/>,
   document.getElementById('root')
 );

@@ -1,0 +1,110 @@
+.emoji-picker.nav-top > nav ~ .search-bar {
+  margin-top: 35px; }
+
+.emoji-picker.nav-top > nav, .emoji-picker.nav-bottom > nav {
+  flex-direction: row;
+  min-height: 35px;
+  width: 100%; }
+
+.emoji-picker.nav-left > nav, .emoji-picker.nav-right > nav {
+  flex-direction: column;
+  min-width: 35px;
+  height: 100%; }
+  .emoji-picker.nav-left > nav ~ .wrapper .emoji-list, .emoji-picker.nav-right > nav ~ .wrapper .emoji-list {
+    width: 208px; }
+
+.emoji-picker.nav-bottom > nav {
+  bottom: 30px;
+  box-shadow: 0 0 2px #bdbdbd; }
+  .emoji-picker.nav-bottom > nav ~ .wrapper .emoji-list {
+    margin-bottom: 35px; }
+
+.emoji-picker.nav-left > nav {
+  border-right: 1px solid #e0e0e0; }
+  .emoji-picker.nav-left > nav ~ .wrapper {
+    left: 35px;
+    margin-right: 35px; }
+  .emoji-picker.nav-left > nav ~ .search-bar {
+    left: 35px;
+    padding-right: 35px; }
+  .emoji-picker.nav-left > nav ~ footer {
+    padding-left: 35px; }
+
+.emoji-picker nav {
+  background-color: #eeeeee;
+  display: flex;
+  justify-content: space-around;
+  position: absolute;
+  z-index: 3;
+  box-sizing: border-box; }
+  .emoji-picker nav a {
+    position: relative;
+    transition: filter .2s;
+    flex: 1 1 auto; }
+    .emoji-picker nav a:hover:before {
+      background-position-y: 40%; }
+    .emoji-picker nav a:hover:after {
+      background-color: #a5d6a7;
+      width: 100%; }
+    .emoji-picker nav a:before {
+      content: '';
+      display: block;
+      height: 100%;
+      background-size: 15px auto;
+      background-position: 50% 50%;
+      background-repeat: no-repeat;
+      padding: 15px;
+      transition: background-position .2s; }
+    .emoji-picker nav a:after {
+      content: '';
+      background-color: #90caf9;
+      position: absolute;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: width .2s, background-color .2s; }
+    .emoji-picker nav a.people:before {
+      background-image: url("./svg/person.svg"); }
+    .emoji-picker nav a.food:before {
+      background-image: url("./svg/coffee.svg"); }
+    .emoji-picker nav a.nature:before {
+      background-image: url("./svg/leaf.svg"); }
+    .emoji-picker nav a.activity:before {
+      background-image: url("./svg/gamepad.svg"); }
+    .emoji-picker nav a.objects:before {
+      background-image: url("./svg/bulb.svg"); }
+    .emoji-picker nav a.travel:before {
+      background-image: url("./svg/rocket.svg"); }
+    .emoji-picker nav a.flags:before {
+      background-image: url("./svg/flag.svg"); }
+    .emoji-picker nav a.symbols:before {
+      background-image: url("./svg/heart.svg"); }
+
+.emoji-picker.people nav .people:after {
+  width: 100%; }
+
+.emoji-picker.food nav .food:after {
+  width: 100%; }
+
+.emoji-picker.nature nav .nature:after {
+  width: 100%; }
+
+.emoji-picker.activity nav .activity:after {
+  width: 100%; }
+
+.emoji-picker.objects nav .objects:after {
+  width: 100%; }
+
+.emoji-picker.travel nav .travel:after {
+  width: 100%; }
+
+.emoji-picker.flags nav .flags:after {
+  width: 100%; }
+
+.emoji-picker.regional nav .regional:after {
+  width: 100%; }
+
+.emoji-picker.symbols nav .symbols:after {
+  width: 100%; }

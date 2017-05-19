@@ -1,0 +1,28 @@
+.emoji-picker ul.emoji-group li.emoji {
+  border-radius: 5px; }
+  .emoji-picker ul.emoji-group li.emoji:hover {
+    background-color: #ffebee; }
+  .emoji-picker ul.emoji-group li.emoji span {
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-size: 9px;
+    font-weight: 100;
+    z-index: 2;
+    color: #9e9e9e;
+    opacity: 0;
+    transition: opacity .2s;
+    max-width: 110px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
+  .emoji-picker ul.emoji-group li.emoji a {
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    display: block;
+    height: 20px;
+    width: 20px;
+    padding: 7px; }
+    .emoji-picker ul.emoji-group li.emoji a:hover + span {
+      opacity: 1; }

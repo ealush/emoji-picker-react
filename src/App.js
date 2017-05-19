@@ -1,237 +1,174 @@
 import React, { Component } from 'react';
-import EmojiGroups from './EmojiGroups';
-import Emojis from './EmojiList';
+import { throttle, debounce } from 'throttle-debounce';
+import emojiGroups from './emoji-data/emoji-groups';
+import EmojiGroup from './EmojiGroup';
+import Footer from './Footer';
+import GroupsNav from './GroupsNav';
+import SearchBar from './SearchBar';
+import { headerHeight, getOffsets, clearTransform, getProximity, getScrollbarWidt, adjustScrollbar } from './helpers';
 import './App.css';
 
-const headerHeight = 25,
-    scrollThrottle = 3,
-    ACTIVE = 'active';
-
-function bgImage(name) {
-    return {
-        'backgroundImage': `url(/png/${name}.png)`
-    };
-}
-
-function calculateOffsets(list) {
-    const offsets = [];
-    Array.prototype.forEach.call(list.children, (node, index) => {
-        offsets.push(node.offsetTop);
-    });
-
-    return offsets;
-}
-
-function SingleEmoji({member, emoji}) {
-
-    if (emoji.hasOwnProperty('diversity')) {
-        return null;
-    }
-
-    const style = {
-        order: emoji.order
-    };
-
-    return (<li className="emoji" style={style}>
-                <a href="#!" style={bgImage(member)}><span>{emoji.shortname}</span></a>
-            </li>);
-}
-
-function clearTransform(transformed, keep) {
-
-    if (!transformed) {
-        return;
-    }
-
-    const newList = [];
-
-    transformed.forEach((groupName) => {
-        if (groupName.index === keep) {
-            newList.push(groupName);
-            return;
-        }
-
-        groupName.element.removeAttribute('style');
-    });
-
-    return newList;
-}
-
-function getProximity(offsets, scrollTop) {
-
-    let proximityIndex = null,
-        visibleGroup;
-    for (let index = 0; index < offsets.length; index++) {
-        const offset = offsets[index],
-            elementIsDown = scrollTop + headerHeight >= offset,
-            elementIsUp = scrollTop - headerHeight <= offset,
-            inProximity = elementIsDown && elementIsUp;
-
-        if (offset <= scrollTop && offsets[index + 1] >= scrollTop) {
-            visibleGroup = index;
-        } else if (index === offsets.length) {
-            visibleGroup = index;
-        }
-
-        if (inProximity) {
-            proximityIndex = index;
-            break;
-        }
-    }
-
-    return {
-        proximityIndex,
-        visibleGroup
-    };
-}
+const scrollThrottleDelay = 1,
+    hideScrollDebounce = 550;
 
 class App extends Component {
 
     constructor() {
         super();
 
-        this.active = 0; // this is for updating the category name
+        this.state = {
+            filter: null,
+            modifier: null,
+            activeModifier: null
+        };
+
+        this.active = null; // this is for updating the category name
         this.transformed = [];
 
+        this.throttleScroll = throttle(scrollThrottleDelay, this.throttleScroll.bind(this));
         this.onScroll = this.onScroll.bind(this);
+        this.onGroupClick = this.onGroupClick.bind(this);
+        this.onSearch = this.onSearch.bind(this);
+        this.onModifierChosen = this.onModifierChosen.bind(this);
+        this.hideScrollbar = debounce(hideScrollDebounce, this.hideScrollbar.bind(this));
+    }
+
+    componentDidMount() {
+        this.scrollbarWidth = getScrollbarWidt();
+        const positions = getOffsets(this._list);
+        this.offsets = positions.offsets;
+        this.scrollHeight = positions.scrollHeight;
+        this.listHeight = positions.listHeight;
+        this._groups = this._list.children; // FIXME: Another abomination
+        this.setActiveGroup({index: 0});
+    }
+
+    componentDidUpdate() {
+        const positions = getOffsets(this._list);
+        this.offsets = positions.offsets;
+        this.scrollHeight = positions.scrollHeight;
     }
 
     setActiveGroup({_prevActive, list, index}) {
 
         const indexPresent = typeof index === 'number',
-            _list = this._list,
+            classList = this.refs._picker.classList,
             prevActive = this.active;
 
-        let _newActive;
-
-        if (indexPresent) {
-            _newActive = _list.children[index];
-        }
-
-        if (!_newActive) {
+        if (index === prevActive) {
             return;
         }
 
-        if (list || !_prevActive) {
-            const _allActive = _list.querySelectorAll('.active');
-            for (let index = 0; index < _allActive.length; index++) {
-                _allActive[index].classList.remove(ACTIVE);
+        if (!indexPresent) {
+            index = 0;
+        }
+
+        emojiGroups.forEach((group) => {
+            if (group.name !== emojiGroups[index].name && classList.contains(group.name)) {
+                classList.remove(group.name);
             }
-        } else {
-            _prevActive.classList.remove(ACTIVE);
+        });
+
+        classList.add(emojiGroups[index].name);
+        this.active = index;
+    }
+
+    throttleScroll(e) {
+        const scrollTop = e.target.scrollTop,
+            active = this.active,
+            _active = this._groups[active];
+
+        const {
+                proximityIndex, // closest group index
+                visibleGroup    // currently visible group
+            } = getProximity(this.offsets, scrollTop);
+
+        this._scroller.classList.add('shown');
+        adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
+
+        // this block deals with mismatches that are caused by fast scrolling
+        if (typeof proximityIndex !== 'number') {
+            if (visibleGroup !== active) {
+                this.setActiveGroup({ index: visibleGroup, list: true });
+            }
+            return this.transformed = clearTransform(this.transformed);
         }
 
-        this[`_nav_${prevActive}`].classList.remove(ACTIVE);
-        this[`_nav_${index}`].classList.add(ACTIVE);
-        _newActive.classList.add(ACTIVE);
-        if (indexPresent) {
-            this.active = index;
-        } else {
-            index = this.active;
+        const distance =  -(scrollTop - this.offsets[proximityIndex]),
+            _activeName = _active.querySelector('.group-name'), // active group name
+            currentIsFirst = proximityIndex === 0, // is this the first group?
+            currentIsActive = proximityIndex === active; // is the current group the active one
+
+        if (distance <= 0 && !currentIsActive) {
+            // scroll down
+            this.setActiveGroup({ _prevActive: _active, index: proximityIndex});
+        } else if (!currentIsFirst && distance >= 0 && currentIsActive) {
+            // scroll up
+            this.setActiveGroup({ _prevActive: _active, index: active -1 });
         }
 
-        return _newActive;
+        if (!currentIsActive) {
+            this.transformed = clearTransform(this.transformed, active);
+            // push the active title up or down
+            _activeName.setAttribute('style', `transform: translateY(${distance-headerHeight}px);`);
+            this.transformed.push({ index: active, element: _activeName });
+        }
     }
 
     onScroll(e) {
-        const now = Date.now();
-
-        if (this.scrollThrottle && this.scrollThrottle > now) {
-            return;
-        }
-
-        this.scrollThrottle = scrollThrottle + now;
-
         e.persist();
-
-        const scrollTop = e.target.scrollTop,
-            active = this.active,
-            _active = this[`group_${active}`];
-
-        setTimeout(() => {
-            const {
-                    proximityIndex,
-                    visibleGroup
-                } = getProximity(this.offsets, scrollTop);
-
-            // this block deals with mismatches that are caused by fast scrolling
-            if (typeof proximityIndex !== 'number') {
-                if (visibleGroup !== active) {
-                    this.setActiveGroup({ index: visibleGroup, list: true });
-                }
-                return this.transformed = clearTransform(this.transformed);
-            }
-
-            const distance =  -(scrollTop - this.offsets[proximityIndex]),
-                _activeName = _active.querySelector('.group-name'),
-                currentIsFirst = proximityIndex === 0,
-                currentIsActive = proximityIndex === active;
-
-            if (distance <= 0 && !currentIsActive) {
-                // scroll down
-                this.setActiveGroup({ _prevActive: _active, index: proximityIndex});
-            } else if (!currentIsFirst && distance >= 0 && currentIsActive) {
-                // scroll up
-                this.setActiveGroup({ _prevActive: _active, index: active -1 });
-            }
-
-            if (!currentIsActive) {
-                this.transformed = clearTransform(this.transformed, active);
-
-                _activeName.setAttribute('style', `transform: translateY(${distance-headerHeight}px);`);
-                this.transformed.push({ index: active, element: _activeName });
-            }
-        }, scrollThrottle);
-
+        this.throttleScroll(e);
+        this.hideScrollbar();
     }
 
-    componentDidMount() {
-        this.offsets = calculateOffsets(this._list);
+    hideScrollbar() {
+        this._scroller.classList.remove('shown');
     }
 
     onGroupClick(e, index) {
-        e.preventDefault();
+        e && e.preventDefault();
         const _newActive = this._list.children[index];
         _newActive.scrollIntoView({'behavior': 'smooth'});
         this.setActiveGroup({_newActive});
     }
 
+    onSearch(filter) {
+        this.onGroupClick(null, 0); // FIXME!!! scroll back to the top
+        this.setState({ filter });
+    }
+
+    onModifierChosen(e, modifier) {
+        e.preventDefault();
+        if (modifier === this.state.activeModifier) {
+            modifier = null;
+        }
+        this.setState({ activeModifier: modifier })
+    }
+
     render() {
 
-        const {
-            nav = 'left'
-        } = this.props;
-
-        const active = this.active;
+        const { nav = 'top' } = this.props;
+        const { filter, activeModifier } = this.state;
+        const navClass = `nav-${nav}`;
 
         return (
             <div className="App">
-
-                <aside className="emoji-picker">
-                    <nav className={nav}>{
-                            EmojiGroups.map((group, index) => {
-                                const groupClass = `${group.name}${active === index ? ' active' : ''}`
-                                return <a href="#!" className={groupClass} key={index} ref={(_nav) => this[`_nav_${index}`] = _nav} onClick={(e) => this.onGroupClick(e, index)}></a>
-                            })
-                        }
-                    </nav>
+                <aside className={`emoji-picker ${navClass}`} ref="_picker">
+                    <GroupsNav onClick={this.onGroupClick}/>
+                    <SearchBar onChange={this.onSearch}/>
                     <div className="wrapper">
+                        <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                         <div className="emoji-list" ref={(list) => this._list = list} onScroll={this.onScroll}>
-                            {EmojiGroups.map((group, index) => {
-                                const activeClass = active === index ? ' active' : '';
-                                return (
-                                    <ul className={`emoji-group${activeClass}`} key={`group-${index}`} ref={(group) => this[`group_${index}`] = group}>
-                                        <li className="group-name">#{group.name}</li>
-                                        {group.members.map((member, index) => {
-                                            const emoji = Emojis[member];
-                                            return (<SingleEmoji member={member} emoji={emoji} key={`emoji-${index}`}/>)
-                                        })}
-                                    </ul>
-                                )
-                            })}
+                            {emojiGroups.map((group, index) =>
+                                <EmojiGroup group={group}
+                                    index={index}
+                                    key={index}
+                                    filter={filter}
+                                    activeModifier={activeModifier}/>
+                            )}
                         </div>
                     </div>
-                    <footer></footer>
+                    <Footer onModifierChosen={this.onModifierChosen} activeModifier={activeModifier}/>
                 </aside>
             </div>
         );

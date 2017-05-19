@@ -1,0 +1,41 @@
+@import '../base.scss';
+
+.emoji-picker ul.emoji-group {
+    li.emoji {
+        border-radius: 5px;
+
+        &:hover {
+            background-color: $hover_color;
+        }
+
+        span {
+            position: absolute;
+            right: 10px;
+            top: 7px;
+            font-size: 9px;
+            font-weight: 100;
+            z-index: 2;
+            color: $shortname-color;
+            opacity: 0;
+            transition: opacity .2s;
+            max-width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        a {
+            background-size: $emoji_size;
+            background-repeat: no-repeat;
+            background-position: 50% 50%;
+            display: block;
+            height: $emoji_size;
+            width: $emoji_size;
+            padding: $emoji_pad;
+
+            &:hover + span {
+                opacity: 1;
+            }
+        }
+    }
+}
