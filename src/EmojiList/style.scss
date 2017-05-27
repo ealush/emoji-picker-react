@@ -1,0 +1,19 @@
+@import '../base.scss';
+
+.emoji-picker {
+    .emoji-list {
+        width: $picker_width;
+        height: $picker_height;
+        overflow-x: hidden;
+        box-sizing: border-box;
+        -ms-overflow-style: none;
+        &::-webkit-scrollbar {
+            height: 0;
+            width: 0;
+        }
+        &::scrollbar {
+            height: 0;
+            width: 0;
+        }
+    }
+}

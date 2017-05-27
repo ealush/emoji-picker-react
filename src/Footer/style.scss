@@ -5,29 +5,33 @@
         background-color: $footer_bg;
         height: $footer_height;
         border-top: 1px solid $md-grey-300;
-        padding-top: 1px;
 
         ul {
+            margin-top: 6px;
+            padding-left: 5px;
             text-align: left;
 
             li {
-                margin: 5px 0 5px 5px;
-                border-radius: 50%;
-                transition: background-color .2s;
+                margin-right: 5px;
+                padding: 1px;
+                border-radius: 3px;
 
                 &.selected {
-                    background-color: $md-grey-50;
+                    background-color: $md-white;
                 }
 
-                &:hover {
-                    background-color: $md-grey-200;
-                }
+                &.neutral a { background-color: $md-amber-200; }
+                &.m1f3fb  a { background-color: $md-orange-100; }
+                &.m1f3fc  a { background-color: $md-deep-orange-100; }
+                &.m1f3fe  a { background-color: $md-brown-500; }
+                &.m1f3ff  a { background-color: $md-brown-700; }
+                &.m1f3fd  a { background-color: $light-brown-skin-tone; }
 
                 a {
-                    margin: 1px;
                     display: block;
                     height: $modifier_size;
                     width: $modifier_size;
+                    border-radius: 2px;
 
                     img {
                         z-index: 2;

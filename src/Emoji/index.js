@@ -1,13 +1,13 @@
 import React from 'react';
-import './style.css';
+import './style.scss';
 
-function bgImage(name) {
+function bgImage(name, assetPath) {
     return {
-        'backgroundImage': `url(/png/${name}.png)`
+        'backgroundImage': `url(${assetPath}/${name}.png)`
     };
 }
 
-function Emoji({member, emoji, hidden, activeModifier}) {
+function Emoji({member, emoji, hidden, activeModifier, assetPath}) {
 
     if (emoji.hasOwnProperty('diversity') && emoji.diversity !== member) {
         return null;
@@ -24,11 +24,12 @@ function Emoji({member, emoji, hidden, activeModifier}) {
         order: emoji.order
     };
 
-    const hiddenClass = hidden ? ' hidden' : '';
+    const hiddenClass = hidden ? ' hidden' : '',
+        bgStyle = bgImage(member, assetPath);
 
     return (
         <li className={`emoji${hiddenClass}`} style={style}>
-            <a href="#!" tabIndex={emoji.order} style={bgImage(member)}><span className="hidden">{emoji.shortname}</span></a>
+            <a href="#!" tabIndex={emoji.order} style={bgStyle}><span className="hidden">{emoji.shortname}</span></a>
             <span>{emoji.shortname}</span>
         </li>
     );

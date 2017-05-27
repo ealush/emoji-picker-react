@@ -10,20 +10,6 @@
         left: 0;
         box-shadow: 0 1px 5px -2px $md-grey-500;
 
-        &:before {
-            content: '';
-            height: 15px;
-            width: 15px;
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            display: block;
-            background-repeat: no-repeat;
-            background-image: url("/png/1f50d.png");
-            background-position: 50% 50%;
-            background-size: 15px 15px;
-        }
-
         input {
             padding: 5px 5px 5px 35px;
             box-sizing: border-box;
@@ -36,6 +22,27 @@
             &::placeholder {
                 color: $md-grey-300;
             }
+
+            &:focus + i {
+                opacity: 1;
+                transform: rotate(90deg);
+            }
+        }
+
+        i {
+            content: '';
+            background-repeat: no-repeat;
+            background-image: url("./svg/find.svg");
+            background-position: 50% 50%;
+            background-size: 15px 15px;
+            height: 15px;
+            width: 15px;
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            display: block;
+            opacity: .3;
+            transition: opacity .2s, transform .2s;
         }
     }
 }

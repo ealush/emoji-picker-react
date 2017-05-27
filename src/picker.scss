@@ -1,0 +1,63 @@
+@import './base.scss';
+
+.emoji-picker {
+    background-color: $picker_bg;
+    width: $picker_width + 5px;
+    display: block;
+    position: relative;
+    padding: 0;
+    border: 1px solid $md-grey-300;
+    border-radius: 3px;
+    overflow: hidden;
+    box-sizing: border-box;
+    font-family: sans-serif;
+
+
+    .hidden {
+        display: none!important;
+        visibility: hidden!important;
+        padding: 0!important;
+        margin: 0!important;
+    }
+
+    a {
+        outline: none;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+            display: inline-block;
+        }
+    }
+
+    .wrapper {
+        position: relative;
+
+        .scroller {
+            display: block;
+            position: absolute;
+            width: 5px;
+            padding-top: 5px;
+            height: 20px;
+            z-index: 2;
+            right: 3px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity .2s;
+
+            &.shown {
+                opacity: 1;
+            }
+
+            div {
+                background-color: $md-grey-400;
+                width: 100%;
+                height: 10px;
+            }
+        }
+    }
+}

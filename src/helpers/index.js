@@ -1,5 +1,4 @@
-export const headerHeight = 25,
-    scrollerHeight = 20;
+export const headerHeight = 25;
 
 export function getScrollbarWidt() {
     const outer = document.createElement('div'),
@@ -10,7 +9,7 @@ export function getScrollbarWidt() {
     outer.appendChild(inner);
     document.body.appendChild(outer);
 
-      const w1 = outer.clientWidth,
+    const w1 = outer.clientWidth,
         w2 = outer.clientWidth;
 
     document.body.removeChild(outer);
@@ -24,7 +23,10 @@ export function getOffsets(_list) {
     const scrollHeight = _list.scrollHeight,
         listHeight = _list.offsetHeight,
         offsets = [];
-    Array.prototype.forEach.call(_list.children, (node, index) => {
+    Array.prototype.forEach.call(_list.children, (node) => {
+        if (node.classList.contains('hidden')) {
+            return;
+        }
         offsets.push(node.offsetTop);
     });
 
@@ -48,34 +50,33 @@ export function clearTransform(transformed, keep) {
 
     const newList = [];
 
-    transformed.forEach((groupName) => {
-        if (groupName.index === keep) {
-            newList.push(groupName);
+    transformed.forEach((categoryName) => {
+        if (categoryName.index === keep) {
+            newList.push(categoryName);
             return;
         }
 
-        groupName.element.removeAttribute('style');
+        categoryName.element.removeAttribute('style');
     });
 
     return newList;
 }
 
 export function getProximity(offsets, scrollTop) {
-    // gets the closest group
+    // gets the closest category
 
     let proximityIndex = null,
-        visibleGroup;
+        visibleCategory;
 
     for (let index = 0; index < offsets.length; index++) {
         const offset = offsets[index],
-            elementIsDown = scrollTop + headerHeight >= offset,
-            elementIsUp = scrollTop - headerHeight <= offset,
+            elementIsUp = scrollTop + headerHeight >= offset,
+            elementIsDown = scrollTop - headerHeight <= offset,
             inProximity = elementIsDown && elementIsUp, // logically not true, better naming needed
-            isLastGroup = index === offsets.length,
-            isVisibleGroup = offset <= scrollTop && offsets[index + 1] >= scrollTop;
+            isVisibleCategory = offset <= scrollTop && (offsets[index + 1] >= scrollTop || offsets[index + 1] === undefined);
 
-        if (isVisibleGroup || isLastGroup) {
-            visibleGroup = index;
+        if (isVisibleCategory) {
+            visibleCategory = index;
         }
 
         if (inProximity) {
@@ -86,6 +87,6 @@ export function getProximity(offsets, scrollTop) {
 
     return {
         proximityIndex,
-        visibleGroup
+        visibleCategory
     };
 }

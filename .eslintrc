@@ -1,0 +1,25 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true,
+            "impliedStrict": true,
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "env": {
+        "browser": true,
+        "jquery": true
+    },
+    "globals": {
+
+    },
+    "extends": "@fiverr/fiverr",
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+
+    }
+}

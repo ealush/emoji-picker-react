@@ -2,11 +2,11 @@ import React, { Component } from 'react';
 import { throttle } from 'throttle-debounce';
 import emojiKeywords from '../emoji-data/emoji-keywords';
 import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
-import emojis  from '../emoji-data/emoji-list';
-import './style.css';
+import emojis from '../emoji-data/emoji-list';
+import './style.scss';
 
 const keys = Object.keys(emojiKeywords),
-    searchThrottle = 100;
+    searchThrottle = 50;
 
 class SearchBar extends Component {
     constructor(props) {
@@ -52,15 +52,15 @@ class SearchBar extends Component {
             stackedItem = this.filterStack[index],
             prevMatches = stackedItem.matches;
 
-        for (const group in prevMatches) {
-            matches[group] = {};
-            for (const emoji in prevMatches[group]) {
-                if (prevMatches[group][emoji].indexOf(text) > -1) {
-                    matches[group][emoji] = prevMatches[group][emoji];
+        for (const category in prevMatches) {
+            matches[category] = {};
+            for (const emoji in prevMatches[category]) {
+                if (prevMatches[category][emoji].indexOf(text) > -1) {
+                    matches[category][emoji] = prevMatches[category][emoji];
                 }
             }
-            if (!Object.keys(matches[group]).length) {
-                delete matches[group];
+            if (!Object.keys(matches[category]).length) {
+                delete matches[category];
             }
         }
 
@@ -91,7 +91,7 @@ class SearchBar extends Component {
             }
             matches = this.stackFilter(stackIndex, text);
             this.addToStack({ text, matches });
-            return this.onChange(matches)
+            return this.onChange(matches);
         } else {
             this.filterStack = [];
         }
@@ -107,13 +107,13 @@ class SearchBar extends Component {
             return this.onChange({});
         }
 
-        matches = matches.reduce((accumulator, keyword, index) => {
-                    emojiKeywords[keyword].forEach((emoji) => {
-                        accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
-                        accumulator[emojis[emoji].category][emoji] = keyword
-                    });
-                    return accumulator;
-                }, {});
+        matches = matches.reduce((accumulator, keyword) => {
+            emojiKeywords[keyword].forEach((emoji) => {
+                accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
+                accumulator[emojis[emoji].category][emoji] = keyword;
+            });
+            return accumulator;
+        }, {});
 
         this.filterStack.push({ text, matches });
         this.onChange(matches);
@@ -129,6 +129,7 @@ class SearchBar extends Component {
         return (
             <div className="search-bar">
                 <input type="text" placeholder="Emoji Search" onChange={this.filterKeywords}/>
+                <i/>
             </div>
         );
 

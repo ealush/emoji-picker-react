@@ -1,0 +1,122 @@
+@import '../base.scss';
+
+.emoji-picker {
+
+    &.nav-top > nav ~ .search-bar {
+        margin-top: $nav_item_size;
+    }
+
+    &.nav-top > nav, &.nav-bottom > nav {
+        flex-direction: row;
+        min-height: $nav_item_size;
+        width: 100%;
+    }
+
+    &.nav-left > nav, &.nav-right > nav {
+        flex-direction: column;
+        min-width: $nav_item_size;
+        height: 100%;
+
+        & ~ .wrapper .emoji-list {
+            width: $picker_width - $nav_item_size + 3px;
+        }
+    }
+
+    &.nav-bottom > nav {
+        bottom: $footer_height;
+        box-shadow: 0 0 2px $md-grey-400;
+
+        & ~ .wrapper {
+
+            .emoji-list {
+                margin-bottom: $nav_item_size;
+            }
+        }
+    }
+
+    &.nav-left > nav {
+        border-right: 1px solid $md-grey-300;
+
+        & ~ .wrapper {
+            left: $nav_item_size;
+            margin-right: $nav_item_size;
+        }
+
+        & ~ .search-bar {
+            left: $nav_item_size;
+            padding-right: $nav_item_size;
+        }
+
+        & ~ footer {
+            padding-left: $nav_item_size;
+        }
+    }
+
+    nav {
+        background-color: $nav_bg;
+        display: flex;
+        justify-content: space-around;
+        position: absolute;
+        z-index: 3;
+        box-sizing: border-box;
+
+        a {
+            position: relative;
+            transition: filter .2s;
+            flex: 1 1 auto;
+
+            &:hover {
+
+                &:before {
+                    background-position-y: 40%;
+                }
+
+                &:after {
+                    background-color: $md-green-200;
+                    width: 100%;
+                }
+            }
+
+            &:before {
+                content: '';
+                display: block;
+                background-size: 15px auto;
+                background-position: 50% 50%;
+                background-repeat: no-repeat;
+                padding: 15px;
+                transition: background-position .2s;
+            }
+
+            &:after {
+                content: '';
+                background-color: $md-blue-200;
+                position: absolute;
+                bottom: 0;
+                width: 0;
+                height: 2px;
+                left: 50%;
+                transform: translateX(-50%);
+                transition: width .2s, background-color .2s;
+            }
+
+            &.people:before     { background-image: url("./svg/person.svg"); }
+            &.food:before       { background-image: url("./svg/coffee.svg"); }
+            &.nature:before     { background-image: url("./svg/leaf.svg"); }
+            &.activity:before   { background-image: url("./svg/gamepad.svg"); }
+            &.objects:before    { background-image: url("./svg/bulb.svg"); }
+            &.travel:before     { background-image: url("./svg/rocket.svg"); }
+            &.flags:before      { background-image: url("./svg/flag.svg"); }
+            &.symbols:before    { background-image: url("./svg/heart.svg"); }
+        }
+    }
+
+    &.people   nav .people:after   { width: 100%; }
+    &.food     nav .food:after     { width: 100%; }
+    &.nature   nav .nature:after   { width: 100%; }
+    &.activity nav .activity:after { width: 100%; }
+    &.objects  nav .objects:after  { width: 100%; }
+    &.travel   nav .travel:after   { width: 100%; }
+    &.flags    nav .flags:after    { width: 100%; }
+    &.regional nav .regional:after { width: 100%; }
+    &.symbols  nav .symbols:after  { width: 100%; }
+}
