@@ -12,7 +12,7 @@ import './picker.scss';
 const scrollThrottleDelay = 1,
     hideScrollDebounce = 550;
 
-class Picker extends Component {
+class EmojiPicker extends Component {
 
     constructor() {
         super();
@@ -171,4 +171,4 @@ class Picker extends Component {
     }
 }
 
-export default Picker;
+export default EmojiPicker;

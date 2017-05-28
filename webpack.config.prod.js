@@ -15,7 +15,7 @@ module.exports = {
     output: {
         path: path.join(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'picker',
+        library: 'EmojiPicker',
         libraryTarget: 'umd'
     },
     module: {
