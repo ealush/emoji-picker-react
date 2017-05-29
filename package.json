@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "0.0.1-WIP",
+  "version": "0.0.2-WIP",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -32,9 +32,9 @@
     "throttle-debounce": "^1.0.1"
   },
   "devDependencies": {
-    "throttle-debounce": "^1.0.1",
     "@fiverr/eslint-config-fiverr": "^0.0.12",
     "@kadira/storybook": "^2.21.0",
+    "@kadira/storybook-addon-actions": "^1.1.3",
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "eslint-plugin-react": "^6.10.3",
@@ -44,6 +44,7 @@
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "svg-url-loader": "^2.0.2",
+    "throttle-debounce": "^1.0.1",
     "uglifyjs-webpack-plugin": "^0.4.3",
     "webpack": "^2.6.1"
   }

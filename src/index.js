@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { throttle, debounce } from 'throttle-debounce';
+import { debounce } from 'throttle-debounce';
 import emojiCategories from './emoji-data/emoji-categories';
 import EmojiList from './EmojiList';
 import Footer from './Footer';
@@ -9,8 +9,7 @@ import SearchBar from './SearchBar';
 import { headerHeight, getOffsets, clearTransform, getProximity, getScrollbarWidt, adjustScrollbar } from './helpers';
 import './picker.scss';
 
-const scrollThrottleDelay = 1,
-    hideScrollDebounce = 550;
+const hideScrollDebounce = 550;
 
 class EmojiPicker extends Component {
 
@@ -26,7 +25,6 @@ class EmojiPicker extends Component {
         this.active = null; // this is for updating the category name
         this.transformed = [];
 
-        this.throttleScroll = throttle(scrollThrottleDelay, this.throttleScroll.bind(this));
         this.onScroll = this.onScroll.bind(this);
         this.onCategoryClick = this.onCategoryClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -74,18 +72,20 @@ class EmojiPicker extends Component {
         this.active = index;
     }
 
-    throttleScroll(e) {
+    onScroll(e) {
+        this.hideScrollbar();
+
         const scrollTop = e.target.scrollTop,
             active = this.active,
             _active = this._categories[active];
+
+        adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
+        this._scroller.classList.add('shown');
 
         const {
                 proximityIndex, // closest category index
                 visibleCategory    // currently visible category
             } = getProximity(this.offsets, scrollTop);
-
-        this._scroller.classList.add('shown');
-        adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
 
         // this block deals with mismatches that are caused by fast scrolling
         if (typeof proximityIndex !== 'number') {
@@ -117,12 +117,6 @@ class EmojiPicker extends Component {
         }
     }
 
-    onScroll(e) {
-        e.persist();
-        this.throttleScroll(e);
-        this.hideScrollbar();
-    }
-
     hideScrollbar() {
         this._scroller.classList.remove('shown');
     }
@@ -149,7 +143,7 @@ class EmojiPicker extends Component {
 
     render() {
 
-        const { nav = 'top', assetPath } = this.props;
+        const { nav = 'top', assetPath, onEmojiClick } = this.props;
         const { filter, activeModifier } = this.state;
         const navClass = `nav-${nav}`;
 
@@ -163,7 +157,8 @@ class EmojiPicker extends Component {
                         activeModifier={activeModifier}
                         ref={(list) => this._list = (list ? list._list : null)}
                         onScroll={this.onScroll}
-                        assetPath={assetPath}/>
+                        assetPath={assetPath}
+                        onEmojiClick={onEmojiClick}/>
                 </div>
                 <Footer onModifierChosen={this.onModifierChosen} activeModifier={activeModifier}/>
             </aside>

@@ -6,7 +6,7 @@ import emojis from '../emoji-data/emoji-list';
 import './style.scss';
 
 const keys = Object.keys(emojiKeywords),
-    searchThrottle = 50;
+    searchThrottle = 20;
 
 class SearchBar extends Component {
     constructor(props) {

@@ -7,7 +7,7 @@ function bgImage(name, assetPath) {
     };
 }
 
-function Emoji({member, emoji, hidden, activeModifier, assetPath}) {
+function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick}) {
 
     if (emoji.hasOwnProperty('diversity') && emoji.diversity !== member) {
         return null;
@@ -20,6 +20,11 @@ function Emoji({member, emoji, hidden, activeModifier, assetPath}) {
         }
     }
 
+    function onClick(e, emoji) {
+        e.preventDefault();
+        onEmojiClick && onEmojiClick(member, emoji);
+    }
+
     const style = {
         order: emoji.order
     };
@@ -29,7 +34,7 @@ function Emoji({member, emoji, hidden, activeModifier, assetPath}) {
 
     return (
         <li className={`emoji${hiddenClass}`} style={style}>
-            <a href="#!" tabIndex={emoji.order} style={bgStyle}><span className="hidden">{emoji.shortname}</span></a>
+            <a href="#!" style={bgStyle} tabIndex={emoji.order} onClick={(e) => onClick(e, emoji)}><span className="hidden">{emoji.shortname}</span></a>
             <span>{emoji.shortname}</span>
         </li>
     );
