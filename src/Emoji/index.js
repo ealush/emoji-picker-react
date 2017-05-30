@@ -1,13 +1,18 @@
 import React from 'react';
 import './style.scss';
 
-function bgImage(name, assetPath) {
+function bgImage(name, assetPath, categorySeen) {
+
+    if (!categorySeen) {
+        return {};
+    }
+
     return {
         'backgroundImage': `url(${assetPath}/${name}.png)`
     };
 }
 
-function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick}) {
+function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick, categorySeen}) {
 
     if (emoji.hasOwnProperty('diversity') && emoji.diversity !== member) {
         return null;
@@ -30,7 +35,7 @@ function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick})
     };
 
     const hiddenClass = hidden ? ' hidden' : '',
-        bgStyle = bgImage(member, assetPath);
+        bgStyle = bgImage(member, assetPath, categorySeen);
 
     return (
         <li className={`emoji${hiddenClass}`} style={style}>

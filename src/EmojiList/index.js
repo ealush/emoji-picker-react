@@ -6,7 +6,7 @@ import './style.scss';
 class EmojiList extends Component {
 
     render() {
-        const { filter, activeModifier, onScroll, assetPath, onEmojiClick } = this.props;
+        const { filter, activeModifier, onScroll, assetPath, onEmojiClick, seenCategories } = this.props;
         return (
             <div className="emoji-list" ref={(list) => this._list = list} onScroll={onScroll}>
                 {emojiCategories.map((category, index) =>
@@ -16,7 +16,8 @@ class EmojiList extends Component {
                         filter={filter}
                         activeModifier={activeModifier}
                         assetPath={assetPath}
-                        onEmojiClick={onEmojiClick}/>
+                        onEmojiClick={onEmojiClick}
+                        categorySeen={seenCategories[index]}/>
                 )}
             </div>
         );

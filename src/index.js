@@ -19,7 +19,10 @@ class EmojiPicker extends Component {
         this.state = {
             filter: null,
             modifier: null,
-            activeModifier: null
+            activeModifier: null,
+            seenCategories: {
+                0: true
+            }
         };
 
         this.active = null; // this is for updating the category name
@@ -72,6 +75,17 @@ class EmojiPicker extends Component {
         this.active = index;
     }
 
+    setSeenCategory(index) {
+        if (this.state.seenCategories[index]) {
+            return;
+        }
+
+        this.setState((prevState) => {
+            const nextState = Object.assign({}, prevState);
+            nextState.seenCategories[index] = true;
+        });
+    }
+
     onScroll(e) {
         this.hideScrollbar();
 
@@ -83,9 +97,18 @@ class EmojiPicker extends Component {
         this._scroller.classList.add('shown');
 
         const {
-                proximityIndex, // closest category index
-                visibleCategory    // currently visible category
-            } = getProximity(this.offsets, scrollTop);
+                proximityIndex,  // closest category index
+                visibleCategory, // currently visible category
+                notActiveVisible // partially visible, not active
+            } = getProximity(this.offsets, scrollTop, this.listHeight);
+
+        if (typeof notActiveVisible === 'number') {
+            this.setSeenCategory(notActiveVisible);
+        }
+
+        if (visibleCategory !== active) {
+            this.setSeenCategory(visibleCategory);
+        }
 
         // this block deals with mismatches that are caused by fast scrolling
         if (typeof proximityIndex !== 'number') {
@@ -144,7 +167,7 @@ class EmojiPicker extends Component {
     render() {
 
         const { nav = 'top', assetPath, onEmojiClick } = this.props;
-        const { filter, activeModifier } = this.state;
+        const { filter, activeModifier, seenCategories } = this.state;
         const navClass = `nav-${nav}`;
 
         return (
@@ -158,7 +181,8 @@ class EmojiPicker extends Component {
                         ref={(list) => this._list = (list ? list._list : null)}
                         onScroll={this.onScroll}
                         assetPath={assetPath}
-                        onEmojiClick={onEmojiClick}/>
+                        onEmojiClick={onEmojiClick}
+                        seenCategories={seenCategories}/>
                 </div>
                 <Footer onModifierChosen={this.onModifierChosen} activeModifier={activeModifier}/>
             </aside>

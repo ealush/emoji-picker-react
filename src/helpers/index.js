@@ -62,18 +62,26 @@ export function clearTransform(transformed, keep) {
     return newList;
 }
 
-export function getProximity(offsets, scrollTop) {
+export function getProximity(offsets, scrollTop, listHeight) {
     // gets the closest category
 
     let proximityIndex = null,
-        visibleCategory;
+        visibleCategory,
+        notActiveVisible;
 
     for (let index = 0; index < offsets.length; index++) {
         const offset = offsets[index],
             elementIsUp = scrollTop + headerHeight >= offset,
             elementIsDown = scrollTop - headerHeight <= offset,
+            next = index + 1,
+            currentTop = scrollTop + listHeight,
             inProximity = elementIsDown && elementIsUp, // logically not true, better naming needed
-            isVisibleCategory = offset <= scrollTop && (offsets[index + 1] >= scrollTop || offsets[index + 1] === undefined);
+            isVisibleCategory = offset <= scrollTop && (offsets[next] >= scrollTop || offsets[next] === undefined),
+            notActiveVisibleCategory = !isVisibleCategory && (currentTop) > offsets[index] && (currentTop) < offsets[next];
+
+        if (notActiveVisibleCategory) {
+            notActiveVisible = index;
+        }
 
         if (isVisibleCategory) {
             visibleCategory = index;
@@ -87,6 +95,7 @@ export function getProximity(offsets, scrollTop) {
 
     return {
         proximityIndex,
-        visibleCategory
+        visibleCategory,
+        notActiveVisible
     };
 }
