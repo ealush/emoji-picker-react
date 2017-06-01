@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import { throttle } from 'throttle-debounce';
 import emojiKeywords from '../emoji-data/emoji-keywords';
 import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
 import emojis from '../emoji-data/emoji-list';
 import './style.scss';
 
-const keys = Object.keys(emojiKeywords),
-    searchThrottle = 20;
+const keys = Object.keys(emojiKeywords);
 
 class SearchBar extends Component {
     constructor(props) {
@@ -16,7 +14,6 @@ class SearchBar extends Component {
         this.filterStack = [];
 
         this.filterKeywords = this.filterKeywords.bind(this);
-        this.throttledChange = throttle(searchThrottle, this.throttledChange.bind(this));
     }
 
     textIndexInStack(text) {
@@ -72,56 +69,55 @@ class SearchBar extends Component {
         this.filterStack.push(filter);
     }
 
-    throttledChange(e) {
-        const text = e.target.value.trim();
-
-        if (!text) {
-            this.filterStack = [];
-            return this.onChange(null);
-        }
-
-        const textLength = text.length,
-            stackIndex = this.textIndexInStack(text);
-
-        let matches;
-
-        if (stackIndex > -1) {
-            if (this.filterStack.length > textLength) {
-                this.filterStack.slice(0, textLength);
-            }
-            matches = this.stackFilter(stackIndex, text);
-            this.addToStack({ text, matches });
-            return this.onChange(matches);
-        } else {
-            this.filterStack = [];
-        }
-
-        if (emojiKeywordsSingle.hasOwnProperty(text)) {
-            matches = emojiKeywordsSingle[text];
-        } else {
-            matches = keys.filter((keyword) => keyword.indexOf(text) > -1);
-        }
-
-
-        if (!matches.length) {
-            return this.onChange({});
-        }
-
-        matches = matches.reduce((accumulator, keyword) => {
-            emojiKeywords[keyword].forEach((emoji) => {
-                accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
-                accumulator[emojis[emoji].category][emoji] = keyword;
-            });
-            return accumulator;
-        }, {});
-
-        this.filterStack.push({ text, matches });
-        this.onChange(matches);
-    }
-
     filterKeywords(e) {
         e.persist();
-        this.throttledChange(e);
+
+        setTimeout(() => {
+            const text = e.target.value.trim();
+
+            if (!text) {
+                this.filterStack = [];
+                return this.onChange(null);
+            }
+
+            const textLength = text.length,
+                stackIndex = this.textIndexInStack(text);
+
+            let matches;
+
+            if (stackIndex > -1) {
+                if (this.filterStack.length > textLength) {
+                    this.filterStack.slice(0, textLength);
+                }
+                matches = this.stackFilter(stackIndex, text);
+                this.addToStack({ text, matches });
+                return this.onChange(matches);
+            } else {
+                this.filterStack = [];
+            }
+
+            if (emojiKeywordsSingle.hasOwnProperty(text)) {
+                matches = emojiKeywordsSingle[text];
+            } else {
+                matches = keys.filter((keyword) => keyword.indexOf(text) > -1);
+            }
+
+
+            if (!matches.length) {
+                return this.onChange({});
+            }
+
+            matches = matches.reduce((accumulator, keyword) => {
+                emojiKeywords[keyword].forEach((emoji) => {
+                    accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
+                    accumulator[emojis[emoji].category][emoji] = keyword;
+                });
+                return accumulator;
+            }, {});
+
+            this.filterStack.push({ text, matches });
+            this.onChange(matches);
+        });
     }
 
     render() {

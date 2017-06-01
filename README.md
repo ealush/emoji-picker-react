@@ -1,4 +1,4 @@
-# React Emoji Picker 0.0.3-WIP
+# React Emoji Picker
 The picker is still under development. Bugs may be encountered.
 
 An easy to use React Emoji Picker Module. Live demo: https://ealush.github.io/emoji-picker/

@@ -6,8 +6,14 @@ import Footer from './Footer';
 import CategoriesNav from './CategoriesNav';
 import SearchBar from './SearchBar';
 
-import { headerHeight, getOffsets, clearTransform, getProximity, getScrollbarWidt, adjustScrollbar } from './helpers';
 import './picker.scss';
+import { getOffsets,
+    clearTransform,
+    getProximity,
+    getScrollbarWidth,
+    adjustScrollbar,
+    getScrollDirection,
+    headerTransform } from './helpers';
 
 const hideScrollDebounce = 550;
 
@@ -36,12 +42,12 @@ class EmojiPicker extends Component {
     }
 
     componentDidMount() {
-        this.scrollbarWidth = getScrollbarWidt();
+        this.scrollbarWidth = getScrollbarWidth();
         const positions = getOffsets(this._list);
         this.offsets = positions.offsets;
         this.scrollHeight = positions.scrollHeight;
         this.listHeight = positions.listHeight;
-        this._categories = this._list.children; // FIXME: Another abomination
+        this._categories = this._list.children;
         this.setActiveCategory({index: 0});
     }
 
@@ -97,37 +103,36 @@ class EmojiPicker extends Component {
         this._scroller.classList.add('shown');
 
         const {
-                proximityIndex,  // closest category index
-                visibleCategory, // currently visible category
-                notActiveVisible // partially visible, not active
+                proximityIndex, // closest category index
+                activeCategory, // currently visible category
+                inViewPort      // partially visible, not active
             } = getProximity(this.offsets, scrollTop, this.listHeight);
 
-        if (typeof notActiveVisible === 'number') {
-            this.setSeenCategory(notActiveVisible);
+        if (typeof inViewPort === 'number') {
+            this.setSeenCategory(inViewPort);
         }
 
-        if (visibleCategory !== active) {
-            this.setSeenCategory(visibleCategory);
+        if (activeCategory !== active) {
+            this.setSeenCategory(activeCategory);
         }
 
         // this block deals with mismatches that are caused by fast scrolling
         if (typeof proximityIndex !== 'number') {
-            if (visibleCategory !== active) {
-                this.setActiveCategory({ index: visibleCategory });
+            if (activeCategory !== active) {
+                this.setActiveCategory({ index: activeCategory });
             }
             return this.transformed = clearTransform(this.transformed);
         }
 
         const distance =  -(scrollTop - this.offsets[proximityIndex]),
-            _activeName = _active.querySelector('.category-name'), // active category name
+            _activeName = _active.firstElementChild, // active category name
             currentIsFirst = proximityIndex === 0, // is this the first category?
-            currentIsActive = proximityIndex === active; // is the current category the active one
+            currentIsActive = proximityIndex === active, // is the current category the active one
+            scrollDirection = getScrollDirection({ distance, currentIsActive, currentIsFirst });
 
-        if (distance === 0 || (distance < 0 && !currentIsActive)) {
-            // scroll down
+        if (scrollDirection === 'down') {
             this.setActiveCategory({ index: proximityIndex});
-        } else if (!currentIsFirst && distance >= 0 && currentIsActive) {
-            // scroll up
+        } else if (scrollDirection === 'up') {
             this.setActiveCategory({ index: active -1 });
         }
 
@@ -135,7 +140,7 @@ class EmojiPicker extends Component {
             this.transformed = clearTransform(this.transformed, active);
 
             // push the active title up or down
-            _activeName.setAttribute('style', `transform: translateY(${distance-headerHeight}px);`);
+            _activeName.setAttribute('style', headerTransform(distance));
             this.transformed.push({ index: active, element: _activeName });
         }
     }
@@ -149,6 +154,7 @@ class EmojiPicker extends Component {
         const _newActive = this._list.children[index];
         _newActive.scrollIntoView({'behavior': 'smooth'});
         this.setActiveCategory({index});
+        this.setSeenCategory(index);
     }
 
     onSearch(filter) {
