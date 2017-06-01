@@ -1,7 +1,9 @@
 # React Emoji Picker
 The picker is still under development. Bugs may be encountered.
 
-An easy to use React Emoji Picker Module. Live demo: https://ealush.github.io/emoji-picker/
+An easy to use React Emoji Picker Module.
+## Live demo:
+https://ealush.github.io/emoji-picker/
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/1.png)
 
 ## Usage:
@@ -42,13 +44,26 @@ Clicking on an emoji should result in a similar output:
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/2.png)
 
 ## Image hosting
-Note, the image files for the emojis are not included in this module, as you need a web server to host and serve all these assets. Provided in this repository (under 'assets' directory), three versions of the supported emojis: 32x32, 64x64, 128x128.
+All Emoji files are hosted on www.jsdeliver.com, and by default, the picker is configured to use it as the image source, with emojis of size 32x32px. You may also choose to serve 64x64px or 128x128px emojis, using the `emojiResolution` prop.
+```js
+<EmojiPicker emojiResolution="64"/>
+```
+For more info on the hosted emojis:
+http://www.jsdelivr.com/projects/emojione
 
-To use them, you will need to host them on your web-server, and pass Emoji Picker the url in which the images are stored. Say you host the images under `http://my-site.com/emojis`, you will need to supply this url to the picker like this:
+## Self hosting of emojis
+You could also serve the emojis from your own server or CDN using the `assetPath` prop. You will then need to serve all emojis from a directory named after the desired image resolution. To specify resolution other than `32`, you will need to pass an additional prop - `emojiResolution`.
+
+If you want to serve 64px emojis from your own website, it will need to look somewhat like this:
 
 ```js
-<EmojiPicker assetPath="http://my-site.com/emojis"/>
+<EmojiPicker assetPath="http://example.com/emojis" emojiResolution="64"/>
 ```
+
+The Emoji will internally construct the image urls to appear like this:
+`http://example.com/emojis/64/1f448-1f3fd.png` (`1f448-1f3fd.png` is an emoji filename + extension)
+
+
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/3.png)
 
 ## Customization

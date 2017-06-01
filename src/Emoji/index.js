@@ -1,18 +1,31 @@
 import React from 'react';
 import './style.scss';
+import { DEFAULt_CDN_PATH, DEFAULT_IMAGE_RESOLUTION } from '../constants';
 
-function bgImage(name, assetPath, categorySeen) {
+function bgImage({ member, assetPath, categorySeen, emojiResolution }) {
 
     if (!categorySeen) {
         return {};
     }
 
+    if (typeof assetPath === 'undefined') {
+        assetPath = DEFAULt_CDN_PATH;
+    }
+
+    assetPath += emojiResolution ? `/${emojiResolution}` : `/${DEFAULT_IMAGE_RESOLUTION}`;
+
     return {
-        'backgroundImage': `url(${assetPath}/${name}.png)`
+        'backgroundImage': `url(${assetPath}/${member}.png)`
     };
 }
 
-function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick, categorySeen}) {
+function Emoji({member, emoji, hidden, categorySeen, emojiProps}) {
+    const {
+        activeModifier,
+        assetPath,
+        onEmojiClick,
+        emojiResolution
+    } = emojiProps;
 
     if (emoji.hasOwnProperty('diversity') && emoji.diversity !== member) {
         return null;
@@ -35,7 +48,7 @@ function Emoji({member, emoji, hidden, activeModifier, assetPath, onEmojiClick, 
     };
 
     const hiddenClass = hidden ? ' hidden' : '',
-        bgStyle = bgImage(member, assetPath, categorySeen);
+        bgStyle = bgImage({ member, assetPath, categorySeen, emojiResolution });
 
     return (
         <li className={`emoji${hiddenClass}`} style={style}>

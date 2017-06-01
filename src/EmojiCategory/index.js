@@ -3,7 +3,7 @@ import emojis from '../emoji-data/emoji-list';
 import Emoji from '../Emoji';
 import './style.scss';
 
-function EmojiCategory({index, category, filter, activeModifier, assetPath, onEmojiClick, categorySeen}) {
+function EmojiCategory({index, category, filter, categorySeen, emojiProps}) {
     const hiddenClass = filter && !filter.hasOwnProperty(category.name) ? ' hidden' : '';
 
     return (
@@ -13,16 +13,13 @@ function EmojiCategory({index, category, filter, activeModifier, assetPath, onEm
 
                 const emoji = emojis[member],
                     hidden = filter && !(filter.hasOwnProperty(category.name) && filter[category.name].hasOwnProperty(member));
-
                 return (
                     <Emoji member={member}
                         emoji={emoji}
                         key={index}
                         hidden={hidden}
-                        activeModifier={activeModifier}
-                        assetPath={assetPath}
-                        onEmojiClick={onEmojiClick}
-                        categorySeen={categorySeen}/>
+                        categorySeen={categorySeen}
+                        emojiProps={emojiProps}/>
                 );
             })}
         </ul>

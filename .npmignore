@@ -4,3 +4,11 @@ stories
 assets
 .vscode
 webpack.config.prod.js
+storybook-static
+static
+src
+.storybook
+.env
+.eslintignore
+.eslintrc
+yarn.lock
