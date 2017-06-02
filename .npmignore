@@ -11,4 +11,4 @@ src
 .env
 .eslintignore
 .eslintrc
-yarn.lock
+*.lock
