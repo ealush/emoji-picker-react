@@ -53,7 +53,7 @@ function Emoji({member, emoji, hidden, categorySeen, emojiProps}) {
     return (
         <li className={`emoji${hiddenClass}`} style={style}>
             <a href="#!" style={bgStyle} tabIndex={emoji.order} onClick={(e) => onClick(e, emoji)}><span className="hidden">{emoji.shortname}</span></a>
-            <span>{emoji.shortname}</span>
+            {categorySeen && <span>{emoji.shortname}</span>}
         </li>
     );
 }

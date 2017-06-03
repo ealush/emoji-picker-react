@@ -13,9 +13,11 @@ import { getOffsets,
     getScrollbarWidth,
     adjustScrollbar,
     getScrollDirection,
-    headerTransform } from './helpers';
+    headerTransform,
+    isFirefoxOnMac } from './helpers';
 
-const hideScrollDebounce = 550;
+const hideScrollDebounce = 550,
+    isFFMac = isFirefoxOnMac();
 
 class EmojiPicker extends Component {
 
@@ -38,15 +40,17 @@ class EmojiPicker extends Component {
         this.onCategoryClick = this.onCategoryClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onModifierChosen = this.onModifierChosen.bind(this);
-        this.hideScrollbar = debounce(hideScrollDebounce, this.hideScrollbar.bind(this));
+        this.hideScrollIndicator = debounce(hideScrollDebounce, this.hideScrollIndicator.bind(this));
     }
 
     componentDidMount() {
         this.scrollbarWidth = getScrollbarWidth();
+        this.hideNativeScrollbar();
         const positions = getOffsets(this._list);
         this.offsets = positions.offsets;
         this.scrollHeight = positions.scrollHeight;
         this.listHeight = positions.listHeight;
+        this.listWidth = positions.listWidth;
         this._categories = this._list.children;
         this.setActiveCategory({index: 0});
     }
@@ -55,6 +59,13 @@ class EmojiPicker extends Component {
         const positions = getOffsets(this._list);
         this.offsets = positions.offsets;
         this.scrollHeight = positions.scrollHeight;
+    }
+
+    hideNativeScrollbar() {
+
+        if (!isFFMac && this.scrollbarWidth > 0) {
+            return this._list.style.width = `${this._list.offsetWidth + this.scrollbarWidth}px`;
+        }
     }
 
     setActiveCategory({index}) {
@@ -93,14 +104,16 @@ class EmojiPicker extends Component {
     }
 
     onScroll(e) {
-        this.hideScrollbar();
 
         const scrollTop = e.target.scrollTop,
             active = this.active,
             _active = this._categories[active];
 
-        adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
-        this._scroller.classList.add('shown');
+        if (!isFFMac) {
+            this.hideScrollIndicator();
+            adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
+            this._scroller.classList.add('shown');
+        }
 
         const {
                 proximityIndex, // closest category index
@@ -145,7 +158,7 @@ class EmojiPicker extends Component {
         }
     }
 
-    hideScrollbar() {
+    hideScrollIndicator() {
         this._scroller.classList.remove('shown');
     }
 

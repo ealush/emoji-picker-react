@@ -11,6 +11,7 @@
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: flex-start;
+        width: $picker_width;
 
         li.category-name {
             background-color: rgba($picker_bg, .9);
