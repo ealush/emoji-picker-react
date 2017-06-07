@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "0.0.9-RC",
+  "version": "0.0.10",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -21,8 +21,7 @@
     "url": "https://github.com/ealush/emoji-picker/issues"
   },
   "homepage": "https://github.com/ealush/emoji-picker#readme",
-  "peerDependencies": {
-    "react": "15.4.1",
+  "dependencies": {
     "throttle-debounce": "^1.0.1"
   },
   "devDependencies": {

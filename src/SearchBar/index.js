@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import emojiKeywords from '../emoji-data/emoji-keywords';
 import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
 import emojis from '../emoji-data/emoji-list';
+import { stackFilter, textIndexInStack } from './helpers';
 import './style.scss';
 
 const keys = Object.keys(emojiKeywords);
@@ -16,56 +17,22 @@ class SearchBar extends Component {
         this.filterKeywords = this.filterKeywords.bind(this);
     }
 
-    textIndexInStack(text) {
-        const textLength = text.length,
-            stack = this.filterStack,
-            stackLength = stack.length;
-
-        if (!stackLength) {
-            return -1;
-        }
-
-        if (stackLength >= textLength && stack[textLength - 1].text === text) {
-            return (textLength - 1);
-        }
-
-        for (let i = stackLength - 1; i >= 0; i--) {
-            const stackItem = stack[i];
-
-            if (stackItem.text === text) {
-                return i;
-            }
-
-            if (stackItem.text.indexOf(text.substr(0, i)) > -1) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    stackFilter(index, text) {
-        const matches = {},
-            stackedItem = this.filterStack[index],
-            prevMatches = stackedItem.matches;
-
-        for (const category in prevMatches) {
-            matches[category] = {};
-            for (const emoji in prevMatches[category]) {
-                if (prevMatches[category][emoji].indexOf(text) > -1) {
-                    matches[category][emoji] = prevMatches[category][emoji];
-                }
-            }
-            if (!Object.keys(matches[category]).length) {
-                delete matches[category];
-            }
-        }
-
-        return matches;
-    }
-
     addToStack(filter) {
-        this.filterStack.filter((item) => !!item);
+
+        if (this.filterStack[this.filterStack.length-1].text === filter.text) {
+            return;
+        }
+
+        this.filterStack = this.filterStack.filter((item, index, all) => {
+            const itemPresent = !!item,
+                nextItem = all[index + 1],
+                nextItemPresent = !!nextItem,
+                doesnotmatchesFilterText = item.text !== filter.text,
+                nextDoesnotMatchesCurrent = nextItemPresent && nextItem.text !== item.text;
+
+            return itemPresent && (!nextItemPresent || nextDoesnotMatchesCurrent) && doesnotmatchesFilterText;
+        });
+
         this.filterStack.push(filter);
     }
 
@@ -80,16 +47,20 @@ class SearchBar extends Component {
                 return this.onChange(null);
             }
 
-            const textLength = text.length,
-                stackIndex = this.textIndexInStack(text);
+            this.filterStack = this.filterStack || [];
+
+            const textLength = text.length;
+
+            if (this.filterStack.length > textLength) {
+                this.filterStack = this.filterStack.slice(0, textLength);
+            }
+
+            const stackIndex = textIndexInStack(text, this.filterStack);
 
             let matches;
 
             if (stackIndex > -1) {
-                if (this.filterStack.length > textLength) {
-                    this.filterStack.slice(0, textLength);
-                }
-                matches = this.stackFilter(stackIndex, text);
+                matches = stackFilter(stackIndex, text, this.filterStack);
                 this.addToStack({ text, matches });
                 return this.onChange(matches);
             } else {
