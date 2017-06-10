@@ -1,18 +1,13 @@
-# React Emoji Picker
-The picker is still under development. Bugs may be encountered.
+# React Emoji Picker | [Live demo](https://ealush.github.io/emoji-picker/)
 
-An easy to use React Emoji Picker Module. All the emojis are [Emoji-One](https://www.emojione.com/) emojis
-
-## Live demo:
-
-https://ealush.github.io/emoji-picker/
-
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/1.png)
-
-## Installation
 ```
 npm i emoji-picker-react --save
 ```
+
+An easy to use React Emoji Picker Module. All the emojis are [Emoji-One](https://www.emojione.com/) emojis
+
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/1.png)
+
 
 ## Usage:
 ```js

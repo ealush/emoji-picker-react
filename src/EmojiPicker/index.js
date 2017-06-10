@@ -62,7 +62,6 @@ class EmojiPicker extends Component {
     }
 
     hideNativeScrollbar() {
-
         if (!isFFMac && this.scrollbarWidth > 0) {
             return this._list.style.width = `${this._list.offsetWidth + this.scrollbarWidth}px`;
         }
@@ -104,7 +103,6 @@ class EmojiPicker extends Component {
     }
 
     onScroll(e) {
-
         const scrollTop = e.target.scrollTop,
             active = this.active,
             _active = this._categories[active];

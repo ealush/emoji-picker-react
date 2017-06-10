@@ -2,7 +2,11 @@
 
 .emoji-picker ul.emoji-category {
     li.emoji {
+        display: inline-block;
         border-radius: 5px;
+        height: $emoji_size;
+        width: $emoji_size;
+        padding: $emoji_pad;
 
         &:hover {
             background-color: $hover_color;
@@ -29,9 +33,8 @@
             background-repeat: no-repeat;
             background-position: 50% 50%;
             display: block;
-            height: $emoji_size;
-            width: $emoji_size;
-            padding: $emoji_pad;
+            height: 100%;
+            width: 100%;
 
             &:hover + span {
                 opacity: 1;

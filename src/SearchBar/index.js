@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
-import emojiKeywords from '../emoji-data/emoji-keywords';
 import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
-import emojis from '../emoji-data/emoji-list';
-import { stackFilter, textIndexInStack } from './helpers';
+import { stackFilter, textIndexInStack, reduceEmojis, filterStack } from './helpers';
+import { ALL_KEYWORDS } from '../constants';
 import './style.scss';
-
-const keys = Object.keys(emojiKeywords);
 
 class SearchBar extends Component {
     constructor(props) {
@@ -17,23 +14,15 @@ class SearchBar extends Component {
         this.filterKeywords = this.filterKeywords.bind(this);
     }
 
-    addToStack(filter) {
+    addToStack(currentFilter) {
 
-        if (this.filterStack[this.filterStack.length-1].text === filter.text) {
+        if (this.filterStack[this.filterStack.length-1].text === currentFilter.text) {
             return;
         }
 
-        this.filterStack = this.filterStack.filter((item, index, all) => {
-            const itemPresent = !!item,
-                nextItem = all[index + 1],
-                nextItemPresent = !!nextItem,
-                doesnotmatchesFilterText = item.text !== filter.text,
-                nextDoesnotMatchesCurrent = nextItemPresent && nextItem.text !== item.text;
+        this.filterStack = filterStack(this.filterStack, currentFilter);
 
-            return itemPresent && (!nextItemPresent || nextDoesnotMatchesCurrent) && doesnotmatchesFilterText;
-        });
-
-        this.filterStack.push(filter);
+        this.filterStack.push(currentFilter);
     }
 
     filterKeywords(e) {
@@ -70,21 +59,14 @@ class SearchBar extends Component {
             if (emojiKeywordsSingle.hasOwnProperty(text)) {
                 matches = emojiKeywordsSingle[text];
             } else {
-                matches = keys.filter((keyword) => keyword.indexOf(text) > -1);
+                matches = ALL_KEYWORDS.filter((keyword) => keyword.indexOf(text) > -1);
             }
-
 
             if (!matches.length) {
                 return this.onChange({});
             }
 
-            matches = matches.reduce((accumulator, keyword) => {
-                emojiKeywords[keyword].forEach((emoji) => {
-                    accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
-                    accumulator[emojis[emoji].category][emoji] = keyword;
-                });
-                return accumulator;
-            }, {});
+            matches = reduceEmojis(matches);
 
             this.filterStack.push({ text, matches });
             this.onChange(matches);

@@ -1,23 +1,6 @@
 import React from 'react';
+import { bgImage } from './helpers';
 import './style.scss';
-import { DEFAULt_CDN_PATH, DEFAULT_IMAGE_RESOLUTION } from '../constants';
-
-function bgImage({ member, assetPath, categorySeen, emojiResolution }) {
-
-    if (!categorySeen) {
-        return {};
-    }
-
-    if (typeof assetPath === 'undefined') {
-        assetPath = DEFAULt_CDN_PATH;
-    }
-
-    assetPath += emojiResolution ? `/${emojiResolution}` : `/${DEFAULT_IMAGE_RESOLUTION}`;
-
-    return {
-        'backgroundImage': `url(${assetPath}/${member}.png)`
-    };
-}
 
 function Emoji({member, emoji, hidden, categorySeen, emojiProps}) {
     const {
@@ -47,13 +30,20 @@ function Emoji({member, emoji, hidden, categorySeen, emojiProps}) {
         order: emoji.order
     };
 
-    const hiddenClass = hidden ? ' hidden' : '',
-        bgStyle = bgImage({ member, assetPath, categorySeen, emojiResolution });
+    if (!categorySeen || hidden) {
+        const hiddenClass = hidden ? ' hidden' : '';
+        return <li className={`emoji${hiddenClass}`} style={style}/>;
+    }
+
+    const bgStyle = bgImage({ member, assetPath, emojiResolution });
 
     return (
-        <li className={`emoji${hiddenClass}`} style={style}>
-            <a href="#!" style={bgStyle} tabIndex={emoji.order} onClick={(e) => onClick(e, emoji)}><span className="hidden">{emoji.shortname}</span></a>
-            {categorySeen && <span>{emoji.shortname}</span>}
+        <li className="emoji" style={style}>
+            <a href="#!"
+                style={bgStyle}
+                tabIndex={emoji.order}
+                onClick={(e) => onClick(e, emoji)}/>
+            <span>{emoji.shortname}</span>
         </li>
     );
 }
