@@ -59,5 +59,19 @@
                 height: 10px;
             }
         }
+
+        .emoji-name {
+            position: absolute;
+            right: 10px;
+            top: 7px;
+            font-size: 9px;
+            font-weight: 100;
+            z-index: 2;
+            color: $shortname-color;
+            max-width: 110px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 }

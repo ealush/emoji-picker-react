@@ -28,6 +28,7 @@ class EmojiPicker extends Component {
             filter: null,
             modifier: null,
             activeModifier: null,
+            currentHover: null,
             seenCategories: {
                 0: true
             }
@@ -38,6 +39,7 @@ class EmojiPicker extends Component {
 
         this.onScroll = this.onScroll.bind(this);
         this.onCategoryClick = this.onCategoryClick.bind(this);
+        this.onEmojiHover = this.onEmojiHover.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onModifierChosen = this.onModifierChosen.bind(this);
         this.hideScrollIndicator = debounce(hideScrollDebounce, this.hideScrollIndicator.bind(this));
@@ -181,12 +183,19 @@ class EmojiPicker extends Component {
         this.setState({ activeModifier: modifier });
     }
 
+    onEmojiHover(name) {
+        this.setState({
+            currentHover: name
+        });
+    }
+
     render() {
 
         const { nav = 'top', assetPath, onEmojiClick, emojiResolution } = this.props;
-        const { filter, activeModifier, seenCategories } = this.state;
+        const { filter, activeModifier, seenCategories, currentHover } = this.state;
         const navClass = `nav-${nav}`;
-        const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution };
+        const onEmojiHover = this.onEmojiHover;
+        const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution, onEmojiHover };
 
         return (
             <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
@@ -194,6 +203,7 @@ class EmojiPicker extends Component {
                 <SearchBar onChange={this.onSearch}/>
                 <div className="wrapper">
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
+                    <span className="emoji-name">{currentHover}</span>
                     <EmojiList emojiProps={emojiProps}
                         filter={filter}
                         onScroll={this.onScroll}

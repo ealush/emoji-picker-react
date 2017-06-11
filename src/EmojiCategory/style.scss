@@ -2,7 +2,7 @@
 
 .emoji-picker {
 
-    ul.emoji-category {
+    .emoji-category {
         position: relative;
         padding: $category_name_height 0 0 0;
         margin: 0;
@@ -13,7 +13,7 @@
         justify-content: flex-start;
         width: $picker_width;
 
-        li.category-name {
+        .category-name {
             background-color: rgba($picker_bg, .9);
             position: absolute;
             top: 0;
