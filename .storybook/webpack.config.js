@@ -9,7 +9,6 @@ module.exports = {
         }, {
             test: /\.svg/,
             loaders: ['svg-url-loader']
-
         }]
     }
 }

@@ -6,7 +6,7 @@ npm i emoji-picker-react --save
 
 An easy to use React Emoji Picker Module. All the emojis are [Emoji-One](https://www.emojione.com/) emojis
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/1.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/1.png)
 
 
 ## Usage:
@@ -44,7 +44,7 @@ Clicking on an emoji should result in a similar output:
             3: "261d-1f3fe"
             4: "261d-1f3ff"
 ```
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/2.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/2.png)
 
 ## Image hosting
 All Emoji files are hosted on [jsdeliver](http://www.jsdelivr.com/projects/emojione), and by default, the picker is configured to use it as the image source, with emojis of size 32x32px. You may also choose to serve 64x64px or 128x128px emojis, using the `emojiResolution` prop.
@@ -67,7 +67,12 @@ The picker will internally construct the image urls to appear like this:
 `http://example.com/emojis/64/1f448-1f3fd.png`
 (`1f448-1f3fd.png` is an emoji filename + extension)
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/images/assets/screenshots/3.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/3.png)
+
+## Per Emoji diversity picker
+Long clicking on diversity (skin-tone) enabled Emojies (mostly the hand Emojis), will open a list of all skin tones for this Emoji.
+
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/4.png)
 
 ## Customization
 At the moment, not many customizations are supported (they are coming). You may choose, though, to have the navigation in different locations. You may choose any of the following three:

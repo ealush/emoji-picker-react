@@ -1,26 +1,31 @@
 import React, { Component } from 'react';
 import { bgImage, memberWithModifier } from './helpers';
+import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
 import './style.scss';
 
 class Emoji extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+
+        this.emoji = props.emoji;
+        this.hasDiversities = this.emoji.hasOwnProperty('diversities');
 
         this.onClick = this.onClick.bind(this);
         this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
+        this.onMouseDown = this.onMouseDown.bind(this);
+        this.onMouseUp = this.onMouseUp.bind(this);
     }
 
     shouldComponentUpdate(nextProps) {
         const visibilityChanged = nextProps.hidden !== this.props.hidden,
             categoryVisibilityChanged = nextProps.categorySeen !== this.props.categorySeen,
-            hasDiversities = this.props.emoji.hasOwnProperty('diversities'),
+            hasDiversities = this.hasDiversities,
             activeModifierChanged = hasDiversities && nextProps.emojiProps.activeModifier !== this.props.emojiProps.activeModifier;
 
         return visibilityChanged || categoryVisibilityChanged || activeModifierChanged;
     }
-
 
     onClick(e) {
         const { emojiProps, member, emoji } = this.props;
@@ -31,7 +36,7 @@ class Emoji extends Component {
     }
 
     onMouseEnter() {
-        this.props.emojiProps.onEmojiHover(this.props.emoji.shortname);
+        this.props.emojiProps.onEmojiHover(this.emoji.shortname);
     }
 
     onMouseLeave(e) {
@@ -41,6 +46,33 @@ class Emoji extends Component {
         }
 
         this.props.emojiProps.onEmojiHover(null);
+    }
+
+    onMouseDown() {
+
+        if (!this.hasDiversities) {
+            return;
+        }
+
+        const emoji = Object.assign({ member: this.props.member }, this.emoji);
+
+        this.timeCounter = Date.now();
+
+        this.diversitiesTimeout = setTimeout(() => {
+            delete this.diversitiesTimeout;
+            this.props.emojiProps.openDiversitiesMenu(emoji);
+        }, OPEN_DIVERSITIES_TIMEOUT);
+    }
+
+    onMouseUp(e) {
+
+        const counter = this.timeCounter;
+        clearTimeout(this.diversitiesTimeout);
+        delete this.timeCounter;
+
+        if (!(counter && (Date.now() - counter) >= OPEN_DIVERSITIES_TIMEOUT)) {
+            return this.onClick(e);
+        }
     }
 
     render() {
@@ -70,9 +102,10 @@ class Emoji extends Component {
                 className="emoji"
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
+                onMouseDown={this.onMouseDown}
+                onMouseUp={this.onMouseUp}
                 tabIndex={emoji.order}
-                style={style}
-                onClick={this.onClick}/>
+                style={style}/>
         );
     }
 }

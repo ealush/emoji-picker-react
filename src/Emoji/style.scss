@@ -1,19 +1,17 @@
 @import '../base.scss';
 
-.emoji-picker .emoji-category {
-    .emoji {
-        display: inline-block;
-        border-radius: 5px;
-        height: $emoji_size;
-        width: $emoji_size;
-        padding: $emoji_pad;
-        background-size: $emoji_size;
-        background-repeat: no-repeat;
-        background-position: 50% 50%;
-        transition: background-color .2s;
+.emoji-picker .emoji {
+    display: inline-block;
+    border-radius: 5px;
+    height: $emoji_size;
+    width: $emoji_size;
+    padding: $emoji_pad;
+    background-size: $emoji_size;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    transition: background-color .2s;
 
-        &:hover {
-            background-color: $hover_color;
-        }
+    &:hover {
+        background-color: $hover_color;
     }
 }

@@ -9,17 +9,10 @@
         }
     },
     "env": {
-        "browser": true,
-        "jquery": true
+        "browser": true
     },
-    "globals": {
-
-    },
-    "extends": "@fiverr/fiverr",
+    "extends": ["@fiverr/fiverr"],
     "plugins": [
         "react"
-    ],
-    "rules": {
-
-    }
+    ]
 }
