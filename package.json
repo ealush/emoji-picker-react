@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -30,16 +30,17 @@
     "@kadira/storybook-addon-actions": "^1.1.3",
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
-    "eslint": "^3.19.0",
-    "eslint-plugin-react": "^6.10.3",
+    "babel-preset-stage-0": "^6.24.1",
+    "eslint": "^4.1.0",
+    "eslint-plugin-react": "^7.1.0",
     "node-sass": "^4.5.3",
-    "react": "15.4.1",
-    "react-dom": "15.4.1",
+    "react": "15.6.1",
+    "react-dom": "15.6.1",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "svg-url-loader": "^2.0.2",
     "throttle-debounce": "^1.0.1",
     "uglifyjs-webpack-plugin": "^0.4.3",
-    "webpack": "^2.6.1"
+    "webpack": "^3.0.0"
   }
 }
