@@ -1,30 +1,36 @@
 import React from 'react';
-import Emoji from '../Emoji';
-import { bgImage, memberWithModifier } from '../Emoji/helpers';
+import emojis from '../emoji-data/emoji-list';
+import { bgImage } from '../Emoji/helpers';
 import './style.scss';
 
-function DiversityPicker({ emoji, assetPath, emojiResolution, onEmojiClick, close }) {
+function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close }) {
 
-    const className = `diversity-picker${emoji ? ' shown' : ''}`;
+    const className = `diversity-picker${name ? ' shown' : ''}`,
+        emoji = emojis[name];
+
+    let diversities = null;
 
     function onClick(diversity) {
         onEmojiClick(diversity, emoji);
         close();
     }
 
-    if (emoji && emoji.member) {
-        emoji.diversities = emoji.diversities || [];
-        if (emoji.diversities.indexOf(emoji.member) === -1) {
-            emoji.diversities.unshift(emoji.member);
-        }
+    if (emoji && emoji.diversities) {
+        diversities = [name].concat(emoji.diversities);
     }
 
     return (
         <div className={className}>
             {
-                emoji && emoji.diversities && emoji.diversities.map((diversity) => {
+                diversities && diversities.map((diversity) => {
                     const style = bgImage({ member: diversity, assetPath, emojiResolution });
-                    return (<a href="#!" key={diversity} style={style} className="emoji" onMouseDown={(() => onClick(diversity))}/>);
+                    return (
+                        <a href="#!"
+                            key={diversity}
+                            style={style}
+                            className="emoji"
+                            onMouseDown={(() => onClick(diversity))}/>
+                    );
                 })
             }
         </div>

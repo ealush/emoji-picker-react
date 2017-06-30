@@ -36,7 +36,7 @@ class Emoji extends Component {
     }
 
     onMouseEnter() {
-        this.props.emojiProps.onEmojiHover(this.emoji.shortname);
+        this.props.emojiProps._emojiName.textContent = this.emoji.shortname;
     }
 
     onMouseLeave(e) {
@@ -45,7 +45,7 @@ class Emoji extends Component {
             return;
         }
 
-        this.props.emojiProps.onEmojiHover(null);
+        this.props.emojiProps._emojiName.textContent = '';
     }
 
     onMouseDown() {
@@ -54,13 +54,11 @@ class Emoji extends Component {
             return;
         }
 
-        const emoji = Object.assign({ member: this.props.member }, this.emoji);
-
         this.timeCounter = Date.now();
 
         this.diversitiesTimeout = setTimeout(() => {
             delete this.diversitiesTimeout;
-            this.props.emojiProps.openDiversitiesMenu(emoji);
+            this.props.emojiProps.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
@@ -84,9 +82,6 @@ class Emoji extends Component {
             return null;
         }
 
-        const style = {
-            order: emoji.order
-        };
 
         if (!categorySeen || hidden) {
             const hiddenClass = hidden ? ' hidden' : '';
@@ -95,7 +90,8 @@ class Emoji extends Component {
 
         member = memberWithModifier(emoji, member, activeModifier);
 
-        Object.assign(style, bgImage({ member, assetPath, emojiResolution }));
+        const style = bgImage({ member, assetPath, emojiResolution });
+        style.order = emoji.order;
 
         return (
             <a href="#!"

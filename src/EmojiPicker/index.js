@@ -8,6 +8,7 @@ import SearchBar from '../SearchBar';
 import DiversityPicker from '../DiversityPicker';
 
 import './picker.scss';
+import { HIDE_SCROLL_DEBOUNCE } from '../constants';
 import { getOffsets,
     clearTransform,
     getProximity,
@@ -17,8 +18,7 @@ import { getOffsets,
     headerTransform,
     isFirefoxOnMac } from './helpers';
 
-const hideScrollDebounce = 550,
-    isFFMac = isFirefoxOnMac();
+const isFFMac = isFirefoxOnMac();
 
 class EmojiPicker extends Component {
 
@@ -29,7 +29,6 @@ class EmojiPicker extends Component {
             filter: null,
             modifier: null,
             activeModifier: null,
-            currentHover: null,
             seenCategories: {
                 0: true
             }
@@ -40,12 +39,11 @@ class EmojiPicker extends Component {
 
         this.onScroll = this.onScroll.bind(this);
         this.onCategoryClick = this.onCategoryClick.bind(this);
-        this.onEmojiHover = this.onEmojiHover.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onModifierChosen = this.onModifierChosen.bind(this);
         this.openDiversitiesMenu = this.openDiversitiesMenu.bind(this);
         this.closeDiversitiesMenu = this.closeDiversitiesMenu.bind(this);
-        this.hideScrollIndicator = debounce(hideScrollDebounce, this.hideScrollIndicator.bind(this));
+        this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
     }
 
     componentDidMount() {
@@ -101,10 +99,10 @@ class EmojiPicker extends Component {
             return;
         }
 
-        this.setState((prevState) => {
-            const nextState = Object.assign({}, prevState);
-            nextState.seenCategories[index] = true;
-        });
+        const seenCategories = {...this.state.seenCategories};
+        seenCategories[index] = true;
+
+        this.setState({ seenCategories });
     }
 
     onScroll(e) {
@@ -174,7 +172,7 @@ class EmojiPicker extends Component {
     }
 
     onSearch(filter) {
-        this.onCategoryClick(null, 0); // FIXME!!! scroll back to the top
+        this._list.scrollTop = 0;
         this.setState({ filter });
     }
 
@@ -186,17 +184,11 @@ class EmojiPicker extends Component {
         this.setState({ activeModifier: modifier });
     }
 
-    onEmojiHover(name) {
-        this.setState({
-            currentHover: name
-        });
-    }
-
-    openDiversitiesMenu(emoji) {
+    openDiversitiesMenu(name) {
 
         this._picker.addEventListener('mousedown', this.closeDiversitiesMenu);
         this.setState({
-            diversityPicker: emoji
+            diversityPicker: name
         });
     }
 
@@ -216,23 +208,23 @@ class EmojiPicker extends Component {
     render() {
 
         const { nav = 'top', assetPath, onEmojiClick, emojiResolution } = this.props;
-        const { filter, activeModifier, seenCategories, currentHover, diversityPicker } = this.state;
+        const { filter, activeModifier, seenCategories, diversityPicker } = this.state;
         const navClass = `nav-${nav}`;
-        const { onEmojiHover, openDiversitiesMenu, closeDiversitiesMenu } = this;
-        const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution, onEmojiHover, openDiversitiesMenu };
+        const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
+        const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
 
         return (
             <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}/>
                 <SearchBar onChange={this.onSearch}/>
                 <div className="wrapper">
-                    <DiversityPicker emoji={diversityPicker}
+                    <DiversityPicker name={diversityPicker}
                         assetPath={assetPath}
                         emojiResolution={emojiResolution}
                         onEmojiClick={onEmojiClick}
                         close={closeDiversitiesMenu}/>
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
-                    <span className="emoji-name">{currentHover}</span>
+                    <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
                     <EmojiList emojiProps={emojiProps}
                         filter={filter}
                         onScroll={this.onScroll}
