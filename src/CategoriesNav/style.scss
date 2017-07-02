@@ -2,7 +2,7 @@
 
 .emoji-picker {
 
-    &.nav-top > nav ~ .search-bar {
+    &.nav-top > nav ~ .bar-wrapper {
         margin-top: $nav_item_size;
     }
 
@@ -23,7 +23,7 @@
     }
 
     &.nav-bottom > nav {
-        bottom: $footer_height;
+        bottom: 0;
         box-shadow: 0 0 2px $md-grey-400;
 
         & ~ .wrapper {
@@ -42,9 +42,8 @@
             margin-right: $nav_item_size;
         }
 
-        & ~ .search-bar {
-            left: $nav_item_size;
-            padding-right: $nav_item_size;
+        & ~ .bar-wrapper {
+            margin-left: $nav_item_size;
         }
 
         & ~ footer {

@@ -1,0 +1,51 @@
+@import '../base.scss';
+
+.emoji-picker {
+
+    ul.skin-tones {
+
+        &.spread {
+            li {
+                opacity: 1;
+            }
+        }
+
+        li {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            z-index: 3;
+            margin-left: 5px;
+            padding: 1px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: transform .4s, opacity .3s;
+
+            &.selected {
+                background-color: $md-white;
+                opacity: 1;
+                transform: scale(1.6);
+            }
+
+            &.neutral a { background-color: $md-amber-200; }
+            &.m1f3fb  a { background-color: $md-orange-100; }
+            &.m1f3fc  a { background-color: $md-deep-orange-100; }
+            &.m1f3fe  a { background-color: $md-brown-500; }
+            &.m1f3ff  a { background-color: $md-brown-700; }
+            &.m1f3fd  a { background-color: $light-brown-skin-tone; }
+
+            a {
+                display: block;
+                height: $modifier_size;
+                width: $modifier_size;
+                border-radius: 2px;
+
+                img {
+                    z-index: 2;
+                    height: $modifier_size;
+                    width: $modifier_size;
+                }
+            }
+        }
+    }
+}

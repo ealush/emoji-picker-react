@@ -6,13 +6,12 @@ function CategoriesNav({onClick}) {
 
     return (
         <nav>{
-                emojiCategories.map((category, index) => (
-                    <a href="#!" className={category.name} key={index} onClick={(e) => onClick(e, index)}>
-                        <span className="hidden">{category.name}</span>
-                    </a>
-                    )
-                )
-            }
+            emojiCategories.map((category, index) => (
+                <a href="#!" className={category.name} key={index} onClick={(e) => onClick(e, index)}>
+                    <span className="hidden">{category.name}</span>
+                </a>
+            ))
+        }
         </nav>
     );
 }

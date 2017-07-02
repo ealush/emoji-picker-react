@@ -34,9 +34,14 @@
         }
     }
 
+    .bar-wrapper {
+        position: relative;
+    }
+
     .wrapper {
         position: relative;
         overflow: hidden;
+
 
         .scroller {
             display: block;

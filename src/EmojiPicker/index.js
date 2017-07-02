@@ -1,8 +1,8 @@
+import SkinTones from '../SkinTones';
 import React, { Component } from 'react';
 import { debounce } from 'throttle-debounce';
 import emojiCategories from '../emoji-data/emoji-categories';
 import EmojiList from '../EmojiList';
-import Footer from '../Footer';
 import CategoriesNav from '../CategoriesNav';
 import SearchBar from '../SearchBar';
 import DiversityPicker from '../DiversityPicker';
@@ -31,7 +31,8 @@ class EmojiPicker extends Component {
             activeModifier: null,
             seenCategories: {
                 0: true
-            }
+            },
+            modifiersSpread: false
         };
 
         this.active = null; // this is for updating the category name
@@ -40,7 +41,7 @@ class EmojiPicker extends Component {
         this.onScroll = this.onScroll.bind(this);
         this.onCategoryClick = this.onCategoryClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
-        this.onModifierChosen = this.onModifierChosen.bind(this);
+        this.onModifierClick = this.onModifierClick.bind(this);
         this.openDiversitiesMenu = this.openDiversitiesMenu.bind(this);
         this.closeDiversitiesMenu = this.closeDiversitiesMenu.bind(this);
         this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
@@ -117,10 +118,10 @@ class EmojiPicker extends Component {
         }
 
         const {
-                proximityIndex, // closest category index
-                activeCategory, // currently visible category
-                inViewPort      // partially visible, not active
-            } = getProximity(this.offsets, scrollTop, this.listHeight);
+            proximityIndex, // closest category index
+            activeCategory, // currently visible category
+            inViewPort // partially visible, not active
+        } = getProximity(this.offsets, scrollTop, this.listHeight);
 
         if (typeof inViewPort === 'number') {
             this.setSeenCategory(inViewPort);
@@ -176,12 +177,17 @@ class EmojiPicker extends Component {
         this.setState({ filter });
     }
 
-    onModifierChosen(e, modifier) {
+    onModifierClick(e, modifier) {
         e.preventDefault();
+
+        if (!this.state.modifiersSpread) {
+            return this.setState({ modifiersSpread: true });
+        }
+
         if (modifier === this.state.activeModifier) {
             modifier = null;
         }
-        this.setState({ activeModifier: modifier });
+        this.setState({ activeModifier: modifier, modifiersSpread: false });
     }
 
     openDiversitiesMenu(name) {
@@ -208,7 +214,7 @@ class EmojiPicker extends Component {
     render() {
 
         const { nav = 'top', assetPath, onEmojiClick, emojiResolution } = this.props;
-        const { filter, activeModifier, seenCategories, diversityPicker } = this.state;
+        const { filter, activeModifier, seenCategories, diversityPicker, modifiersSpread } = this.state;
         const navClass = `nav-${nav}`;
         const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
         const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
@@ -216,7 +222,10 @@ class EmojiPicker extends Component {
         return (
             <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}/>
-                <SearchBar onChange={this.onSearch}/>
+                <div className="bar-wrapper">
+                    <SkinTones onModifierClick={this.onModifierClick} activeModifier={activeModifier} spread={modifiersSpread}/>
+                    <SearchBar onChange={this.onSearch}/>
+                </div>
                 <div className="wrapper">
                     <DiversityPicker name={diversityPicker}
                         assetPath={assetPath}
@@ -231,7 +240,6 @@ class EmojiPicker extends Component {
                         seenCategories={seenCategories}
                         ref={(list) => this._list = (list ? list._list : null)}/>
                 </div>
-                <Footer onModifierChosen={this.onModifierChosen} activeModifier={activeModifier}/>
             </aside>
         );
     }
