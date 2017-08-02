@@ -12,3 +12,5 @@ src
 .eslintignore
 .eslintrc
 *.lock
+package-lock.json
+screenshots

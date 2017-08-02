@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
+// import emojiKeywordsSingle from '../emoji-data/emoji-keywords-single';
 import { stackFilter, textIndexInStack, reduceEmojis, filterStack } from './helpers';
 import { ALL_KEYWORDS } from '../constants';
 import './style.scss';
@@ -56,11 +56,7 @@ class SearchBar extends Component {
                 this.filterStack = [];
             }
 
-            if (emojiKeywordsSingle.hasOwnProperty(text)) {
-                matches = emojiKeywordsSingle[text];
-            } else {
-                matches = ALL_KEYWORDS.filter((keyword) => keyword.indexOf(text) > -1);
-            }
+            matches = ALL_KEYWORDS.filter((keyword) => keyword.indexOf(text) > -1);
 
             if (!matches.length) {
                 return this.onChange({});

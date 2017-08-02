@@ -1,4 +1,4 @@
-import emojiKeywords from '../emoji-data/emoji-keywords';
+import emojiKeywords from '../emoji-data/keywords.json';
 
 export const Header_Height = 25;
 export const OPEN_DIVERSITIES_TIMEOUT = 1000;

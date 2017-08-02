@@ -5,7 +5,7 @@ function checkIfActiveCategory({ offset, offsets, scrollTop, next }) {
 }
 
 function isInViewport({ isActiveCategory, currentTop, offsets, index, next }) {
-    return !isActiveCategory && (currentTop) > offsets[index] && (currentTop) < offsets[next];
+    return !isActiveCategory && (currentTop) > offsets[index] && ((currentTop) < offsets[next] || !offsets[next]);
 }
 
 function isElementInProximity({scrollTop, offset}) {

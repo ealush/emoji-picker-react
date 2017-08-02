@@ -1,5 +1,5 @@
 import React from 'react';
-import emojiModifiers from '../emoji-data/emoji-modifiers';
+import emojiModifiers from '../emoji-data/modifiers.json';
 import './style.scss';
 
 const NEUT = 'neutral';

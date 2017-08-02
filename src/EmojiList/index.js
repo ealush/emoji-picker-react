@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import emojiCategories from '../emoji-data/emoji-categories';
+import emojiCategories from '../emoji-data/categories.json';
 import EmojiCategory from '../EmojiCategory';
 import './style.scss';
 

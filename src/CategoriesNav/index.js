@@ -1,5 +1,5 @@
 import React from 'react';
-import emojiCategories from '../emoji-data/emoji-categories';
+import emojiCategories from '../emoji-data/categories.json';
 import './style.scss';
 
 function CategoriesNav({onClick}) {

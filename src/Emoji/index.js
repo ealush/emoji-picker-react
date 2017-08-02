@@ -37,7 +37,7 @@ class Emoji extends Component {
 
     onMouseEnter() {
         if (this.props.emojiProps._emojiName) {
-            this.props.emojiProps._emojiName.textContent = this.emoji.shortname;
+            this.props.emojiProps._emojiName.textContent = this.emoji.name;
         }
     }
 

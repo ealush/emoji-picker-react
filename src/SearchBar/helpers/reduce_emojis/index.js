@@ -1,11 +1,17 @@
-import emojis from '../../../emoji-data/emoji-list';
-import emojiKeywords from '../../../emoji-data/emoji-keywords';
+import emojis from '../../../emoji-data/emoji-list.json';
+import emojiKeywords from '../../../emoji-data/keywords.json';
 
 export default function reduceEmojis(matches) {
     return matches.reduce((accumulator, keyword) => {
         emojiKeywords[keyword].forEach((emoji) => {
-            accumulator[emojis[emoji].category] = accumulator[emojis[emoji].category] || {};
-            accumulator[emojis[emoji].category][emoji] = keyword;
+            const current = emojis[emoji];
+
+            if (!current) {
+                return;
+            }
+
+            accumulator[current.category] = accumulator[current.category] || {};
+            accumulator[current.category][emoji] = keyword;
         });
         return accumulator;
     }, {});

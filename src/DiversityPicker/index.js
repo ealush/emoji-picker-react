@@ -1,5 +1,5 @@
 import React from 'react';
-import emojis from '../emoji-data/emoji-list';
+import emojis from '../emoji-data/emoji-list.json';
 import { bgImage } from '../Emoji/helpers';
 import './style.scss';
 

@@ -1,7 +1,7 @@
 import SkinTones from '../SkinTones';
 import React, { Component } from 'react';
 import { debounce } from 'throttle-debounce';
-import emojiCategories from '../emoji-data/emoji-categories';
+import emojiCategories from '../emoji-data/categories.json';
 import EmojiList from '../EmojiList';
 import CategoriesNav from '../CategoriesNav';
 import SearchBar from '../SearchBar';

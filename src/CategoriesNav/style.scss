@@ -99,22 +99,22 @@
             }
 
             &.people:before     { background-image: url("./svg/person.svg"); }
-            &.food:before       { background-image: url("./svg/coffee.svg"); }
+            &.foods:before       { background-image: url("./svg/coffee.svg"); }
             &.nature:before     { background-image: url("./svg/leaf.svg"); }
             &.activity:before   { background-image: url("./svg/gamepad.svg"); }
             &.objects:before    { background-image: url("./svg/bulb.svg"); }
-            &.travel:before     { background-image: url("./svg/rocket.svg"); }
+            &.places:before     { background-image: url("./svg/rocket.svg"); }
             &.flags:before      { background-image: url("./svg/flag.svg"); }
             &.symbols:before    { background-image: url("./svg/heart.svg"); }
         }
     }
 
     &.people   nav .people:after   { width: 100%; }
-    &.food     nav .food:after     { width: 100%; }
+    &.foods     nav .foods:after     { width: 100%; }
     &.nature   nav .nature:after   { width: 100%; }
     &.activity nav .activity:after { width: 100%; }
     &.objects  nav .objects:after  { width: 100%; }
-    &.travel   nav .travel:after   { width: 100%; }
+    &.places   nav .places:after   { width: 100%; }
     &.flags    nav .flags:after    { width: 100%; }
     &.regional nav .regional:after { width: 100%; }
     &.symbols  nav .symbols:after  { width: 100%; }

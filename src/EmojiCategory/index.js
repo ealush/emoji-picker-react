@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import emojis from '../emoji-data/emoji-list';
+import emojis from '../emoji-data/emoji-list.json';
 import Emoji from '../Emoji';
 import './style.scss';
 
@@ -13,6 +13,11 @@ function EmojiCategory({index, category, filter, categorySeen, emojiProps}) {
 
                 const emoji = emojis[member],
                     hidden = filter && !(filter.hasOwnProperty(category.name) && filter[category.name].hasOwnProperty(member));
+
+                if (!emoji) {
+                    return null;
+                }
+
                 return (
                     <Emoji member={member}
                         emoji={emoji}
