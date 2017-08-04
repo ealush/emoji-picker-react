@@ -4,6 +4,7 @@
     background-color: $md-grey-200;
     display: flex;
     justify-content: space-around;
+    flex-direction: row-reverse;
     position: absolute;
     z-index: 3;
     left: 0;

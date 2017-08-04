@@ -1,10 +1,10 @@
-export default function memberWithModifier(emoji, member, activeModifier) {
+export default function idWithModifier(emoji, activeModifier) {
     if (activeModifier && emoji.hasOwnProperty('diversities')) {
-        const currentDiversity = `${member}-${activeModifier}`;
+        const currentDiversity = `${emoji.id}-${activeModifier}`;
         if (emoji.diversities.indexOf(currentDiversity) > -1) {
             return currentDiversity;
         }
     }
 
-    return member;
+    return emoji.id;
 }

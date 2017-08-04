@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import emojis from '../emoji-data/emoji-list.json';
+import { emojis } from '../emoji-data';
 import Emoji from '../Emoji';
 import './style.scss';
 

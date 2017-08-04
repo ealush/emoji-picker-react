@@ -1,7 +1,7 @@
 import SkinTones from '../SkinTones';
 import React, { Component } from 'react';
 import { debounce } from 'throttle-debounce';
-import emojiCategories from '../emoji-data/categories.json';
+import { categories, modifiers, skinTones } from '../emoji-data';
 import EmojiList from '../EmojiList';
 import CategoriesNav from '../CategoriesNav';
 import SearchBar from '../SearchBar';
@@ -40,6 +40,7 @@ class EmojiPicker extends Component {
 
         this.onScroll = this.onScroll.bind(this);
         this.onCategoryClick = this.onCategoryClick.bind(this);
+        this.onEmojiClick = this.onEmojiClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onModifierClick = this.onModifierClick.bind(this);
         this.openDiversitiesMenu = this.openDiversitiesMenu.bind(this);
@@ -85,13 +86,13 @@ class EmojiPicker extends Component {
             index = 0;
         }
 
-        emojiCategories.forEach((category) => {
-            if (category.name !== emojiCategories[index].name && classList.contains(category.name)) {
+        categories.forEach((category) => {
+            if (category.name !== categories[index].name && classList.contains(category.name)) {
                 classList.remove(category.name);
             }
         });
 
-        classList.add(emojiCategories[index].name);
+        classList.add(categories[index].name);
         this.active = index;
     }
 
@@ -211,13 +212,36 @@ class EmojiPicker extends Component {
         });
     }
 
+    onEmojiClick(unified, emoji) {
+
+        const usedModifiers = modifiers.filter((modifier) => unified.indexOf(modifier) > -1);
+
+        if (usedModifiers.length) {
+            const shortname = `${emoji.shortname}::${skinTones[usedModifiers[0]]}`;
+            return this.props.onEmojiClick(unified, Object.assign({}, emoji, {
+                shortname: shortname || emoji.shortname
+            }));
+        } else if (this.state.activeModifier && emoji.hasOwnProperty('diversities')) {
+            const modifier = emoji.diversities.filter((diversity) => diversity.indexOf(this.state.activeModifier) > -1);
+
+            if (modifier.length) {
+                const shortname = `${emoji.shortname}::${skinTones[this.state.activeModifier]}`;
+                return this.props.onEmojiClick(modifier[0], Object.assign({}, emoji, {
+                    shortname: shortname || emoji.shortname
+                }));
+            }
+        }
+
+        return this.props.onEmojiClick(unified, emoji);
+    }
+
     render() {
 
-        const { nav = 'top', assetPath, onEmojiClick, emojiResolution } = this.props;
+        const { nav = 'top', assetPath, emojiResolution } = this.props;
         const { filter, activeModifier, seenCategories, diversityPicker, modifiersSpread } = this.state;
         const navClass = `nav-${nav}`;
         const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
-        const emojiProps = { onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
+        const emojiProps = { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
 
         return (
             <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
@@ -230,7 +254,7 @@ class EmojiPicker extends Component {
                     <DiversityPicker name={diversityPicker}
                         assetPath={assetPath}
                         emojiResolution={emojiResolution}
-                        onEmojiClick={onEmojiClick}
+                        onEmojiClick={this.onEmojiClick}
                         close={closeDiversitiesMenu}/>
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                     <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>

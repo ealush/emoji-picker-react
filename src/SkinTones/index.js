@@ -1,5 +1,5 @@
 import React from 'react';
-import emojiModifiers from '../emoji-data/modifiers.json';
+import { modifiers } from '../emoji-data';
 import './style.scss';
 
 const NEUT = 'neutral';
@@ -10,7 +10,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
 
     return (
         <ul className={`skin-tones${spreadClass}`}>
-            {emojiModifiers.map((modifier, index) => {
+            {modifiers.map((modifier, index) => {
 
                 const isNeutral = modifier === NEUT,
                     isSelected = activeModifier === modifier || !activeModifier && isNeutral,

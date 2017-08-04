@@ -1,5 +1,5 @@
 import React from 'react';
-import emojis from '../emoji-data/emoji-list.json';
+import { emojis } from '../emoji-data';
 import { bgImage } from '../Emoji/helpers';
 import './style.scss';
 
@@ -16,24 +16,22 @@ function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close
     }
 
     if (emoji && emoji.diversities) {
-        diversities = [name].concat(emoji.diversities);
+        diversities = [emoji.id].concat(emoji.diversities);
     }
 
     return (
-        <div className={className}>
-            {
-                diversities && diversities.map((diversity) => {
-                    const style = bgImage({ member: diversity, assetPath, emojiResolution });
-                    return (
-                        <a href="#!"
-                            key={diversity}
-                            style={style}
-                            className="emoji"
-                            onMouseDown={(() => onClick(diversity))}/>
-                    );
-                })
-            }
-        </div>
+        <div className={className}>{
+            diversities && diversities.map((diversity) => {
+                const style = bgImage({ id: diversity, assetPath, emojiResolution });
+                return (
+                    <a href="#!"
+                        key={diversity}
+                        style={style}
+                        className="emoji"
+                        onMouseDown={(() => onClick(diversity))}/>
+                );
+            })
+        }</div>
     );
 }
 

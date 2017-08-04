@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import emojiCategories from '../emoji-data/categories.json';
+import { categories } from '../emoji-data';
 import EmojiCategory from '../EmojiCategory';
 import './style.scss';
 
@@ -9,7 +9,7 @@ class EmojiList extends Component {
         const { filter, emojiProps, onScroll, seenCategories } = this.props;
         return (
             <div className="emoji-list" ref={(list) => this._list = list} onScroll={onScroll}>
-                {emojiCategories.map((category, index) => {
+                {categories.map((category, index) => {
                     const isCategorySeen = !!filter ||seenCategories[index]; // filter is here so all emojis are displayed when filtering
                     return (
                         <EmojiCategory category={category}

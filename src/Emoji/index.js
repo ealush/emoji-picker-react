@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { bgImage, memberWithModifier } from './helpers';
+import { bgImage, idWithModifier } from './helpers';
 import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
 import './style.scss';
 
@@ -28,11 +28,11 @@ class Emoji extends Component {
     }
 
     onClick(e) {
-        const { emojiProps, member, emoji } = this.props;
+        const { emojiProps, emoji } = this.props;
         const onEmojiClick = emojiProps.onEmojiClick;
 
         e.preventDefault();
-        onEmojiClick && onEmojiClick(member, emoji);
+        onEmojiClick && onEmojiClick(emoji.id, emoji);
     }
 
     onMouseEnter() {
@@ -80,21 +80,16 @@ class Emoji extends Component {
     render() {
         const { emoji, hidden, categorySeen, emojiProps } = this.props;
         const { activeModifier, assetPath, emojiResolution } = emojiProps;
-        let member = this.props.member;
-
-        if (emoji.hasOwnProperty('diversity') && emoji.diversity !== member) {
-            return null;
-        }
-
+        let id = emoji.id;
 
         if (!categorySeen || hidden) {
             const hiddenClass = hidden ? ' hidden' : '';
             return <div className={`emoji${hiddenClass}`} style={style}/>;
         }
 
-        member = memberWithModifier(emoji, member, activeModifier);
+        id = idWithModifier(emoji, activeModifier);
 
-        const style = bgImage({ member, assetPath, emojiResolution });
+        const style = bgImage({ id, assetPath, emojiResolution });
         style.order = emoji.order;
 
         return (

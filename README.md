@@ -88,6 +88,7 @@ You can use this **picker**, free of charge, no attribution is needed. The emoji
 All emoji images in this project are the property of the [Emojione](www.emojione.com). Usage of the images is subjeced to their [free license](https://www.emojione.com/developers/free-license).
 
 Other shout-outs:
+* [iamcal/emoji-data](https://github.com/iamcal/emoji-data) An amazing project, containing emoji data. All the info (names, keywords, etc) in this picker is generated from their data.
 * [throttle-debounce](https://www.npmjs.com/package/throttle-debounce) npm package, used multiple times in the project.
 * [iconmonstr](https://iconmonstr.com/) used for the category icons.
 * [React Storybook](https://www.npmjs.com/package/@kadira/storybook), made building the live demo fast and simple.
