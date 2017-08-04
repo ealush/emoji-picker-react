@@ -98,14 +98,14 @@
                 transition: width .2s, background-color .2s;
             }
 
-            &.people:before     { background-image: url("./svg/person.svg"); }
-            &.foods:before       { background-image: url("./svg/coffee.svg"); }
-            &.nature:before     { background-image: url("./svg/leaf.svg"); }
-            &.activity:before   { background-image: url("./svg/gamepad.svg"); }
-            &.objects:before    { background-image: url("./svg/bulb.svg"); }
-            &.places:before     { background-image: url("./svg/rocket.svg"); }
-            &.flags:before      { background-image: url("./svg/flag.svg"); }
-            &.symbols:before    { background-image: url("./svg/heart.svg"); }
+            &.people:before     { background-image: url("./svg/people.svg"); }
+            &.foods:before       { background-image: url("./svg/foods.svg"); }
+            &.nature:before     { background-image: url("./svg/nature.svg"); }
+            &.activity:before   { background-image: url("./svg/activity.svg"); }
+            &.objects:before    { background-image: url("./svg/objects.svg"); }
+            &.places:before     { background-image: url("./svg/places.svg"); }
+            &.flags:before      { background-image: url("./svg/flags.svg"); }
+            &.symbols:before    { background-image: url("./svg/symbols.svg"); }
         }
     }
 
