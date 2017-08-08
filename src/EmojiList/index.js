@@ -10,7 +10,7 @@ class EmojiList extends Component {
         return (
             <div className="emoji-list" ref={(list) => this._list = list} onScroll={onScroll}>
                 {categories.map((category, index) => {
-                    const isCategorySeen = !!filter ||seenCategories[index]; // filter is here so all emojis are displayed when filtering
+                    const isCategorySeen = seenCategories[index]; // filter is here so all emojis are displayed when filtering
                     return (
                         <EmojiCategory category={category}
                             index={index}

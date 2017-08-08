@@ -32,6 +32,7 @@ class EmojiPicker extends Component {
             seenCategories: {
                 0: true
             },
+            seenInSearch: {},
             modifiersSpread: false
         };
 
@@ -96,15 +97,30 @@ class EmojiPicker extends Component {
         this.active = index;
     }
 
-    setSeenCategory(index) {
-        if (this.state.seenCategories[index]) {
-            return;
-        }
+    setSeenCategory(index, categories) {
 
         const seenCategories = {...this.state.seenCategories};
         seenCategories[index] = true;
 
+        for (const catIndex in categories) {
+            if (categories.hasOwnProperty(catIndex)) {
+                seenCategories[catIndex] = true;
+            }
+        }
+
         this.setState({ seenCategories });
+    }
+
+    setSeenInSearch(categories) {
+        const seenInSearch = {...this.state.seenInSearch};
+
+        for (const catIndex in categories) {
+            if (categories.hasOwnProperty(catIndex)) {
+                seenInSearch[catIndex] = true;
+            }
+        }
+
+        this.setState({seenInSearch});
     }
 
     onScroll(e) {
@@ -118,15 +134,15 @@ class EmojiPicker extends Component {
             this._scroller.classList.add('shown');
         }
 
+        this.proximity = getProximity(this.offsets, scrollTop, this.listHeight);
+
         const {
             proximityIndex, // closest category index
             activeCategory, // currently visible category
             inViewPort // partially visible, not active
-        } = getProximity(this.offsets, scrollTop, this.listHeight);
+        } = this.proximity;
 
-        if (typeof inViewPort === 'number') {
-            this.setSeenCategory(inViewPort);
-        }
+        this.setSeenCategory(0, inViewPort);
 
         if (activeCategory !== active) {
             this.setSeenCategory(activeCategory);
@@ -174,8 +190,15 @@ class EmojiPicker extends Component {
     }
 
     onSearch(filter) {
-        this._list.scrollTop = 0;
-        this.setState({ filter });
+
+        this.setState({ filter }, () => {
+            const positions = getOffsets(this._list);
+            this.offsets = positions.offsets;
+            this.listHeight = positions.listHeight;
+            this._list.scrollTop = 0;
+            this.proximity = getProximity(this.offsets, 0, this.listHeight);
+            this.setSeenInSearch(this.proximity.inViewPort);
+        });
     }
 
     onModifierClick(e, modifier) {
@@ -238,10 +261,11 @@ class EmojiPicker extends Component {
     render() {
 
         const { nav = 'top', assetPath, emojiResolution } = this.props;
-        const { filter, activeModifier, seenCategories, diversityPicker, modifiersSpread } = this.state;
+        const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
         const navClass = `nav-${nav}`;
         const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
-        const emojiProps = { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
+        const emojiProps = { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
+            visibleCategories = Object.assign({}, seenCategories, seenInSearch);
 
         return (
             <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
@@ -261,7 +285,7 @@ class EmojiPicker extends Component {
                     <EmojiList emojiProps={emojiProps}
                         filter={filter}
                         onScroll={this.onScroll}
-                        seenCategories={seenCategories}
+                        seenCategories={visibleCategories}
                         ref={(list) => this._list = (list ? list._list : null)}/>
                 </div>
             </aside>

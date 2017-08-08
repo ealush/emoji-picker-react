@@ -19,8 +19,9 @@ export default function getProximity(offsets, scrollTop, listHeight) {
     // gets the closest category
 
     let proximityIndex = null,
-        activeCategory,
-        inViewPort;
+        activeCategory;
+
+    const inViewPort = {};
 
     for (let index = 0; index < offsets.length; index++) {
         const offset = offsets[index],
@@ -31,7 +32,7 @@ export default function getProximity(offsets, scrollTop, listHeight) {
             notActiveVisibleCategory = isInViewport({ isActiveCategory, currentTop, offsets, index, next });
 
         if (notActiveVisibleCategory) {
-            inViewPort = index;
+            inViewPort[index] = true;
         }
 
         if (isActiveCategory) {
@@ -40,7 +41,6 @@ export default function getProximity(offsets, scrollTop, listHeight) {
 
         if (inProximity) {
             proximityIndex = index;
-            break;
         }
     }
 
