@@ -16,13 +16,13 @@ function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close
     }
 
     if (emoji && emoji.diversities) {
-        diversities = [emoji.id].concat(emoji.diversities);
+        diversities = [emoji.unified].concat(emoji.diversities);
     }
 
     return (
         <div className={className}>{
             diversities && diversities.map((diversity) => {
-                const style = bgImage({ id: diversity, assetPath, emojiResolution });
+                const style = bgImage({ unified: diversity, assetPath, emojiResolution });
                 return (
                     <a href="#!"
                         key={diversity}

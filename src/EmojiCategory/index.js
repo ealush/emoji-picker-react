@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { emojis } from '../emoji-data';
+import emojiAccessor from '../emoji-data/emoji_accessor';
 import Emoji from '../Emoji';
 import './style.scss';
 
@@ -20,7 +21,7 @@ function EmojiCategory({index, category, filter, categorySeen, emojiProps}) {
 
                 return (
                     <Emoji member={member}
-                        emoji={emoji}
+                        emoji={emojiAccessor(emoji)}
                         key={index}
                         hidden={hidden}
                         categorySeen={categorySeen}

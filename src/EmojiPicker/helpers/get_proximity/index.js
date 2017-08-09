@@ -4,8 +4,8 @@ function checkIfActiveCategory({ offset, offsets, scrollTop, next }) {
     return offset <= scrollTop && (offsets[next] >= scrollTop || offsets[next] === undefined);
 }
 
-function isInViewport({ isActiveCategory, currentTop, offsets, index, next }) {
-    return !isActiveCategory && (currentTop) > offsets[index] && ((currentTop) < offsets[next] || !offsets[next]);
+function isInViewport({ scrollTop, listHeight, offsets, index}) {
+    return offsets[index] < (listHeight + scrollTop) && offsets[index] > scrollTop;
 }
 
 function isElementInProximity({scrollTop, offset}) {
@@ -26,10 +26,9 @@ export default function getProximity(offsets, scrollTop, listHeight) {
     for (let index = 0; index < offsets.length; index++) {
         const offset = offsets[index],
             next = index + 1,
-            currentTop = scrollTop + listHeight,
             inProximity = isElementInProximity({scrollTop, offset}),
             isActiveCategory = checkIfActiveCategory({ offset, offsets, scrollTop, next }),
-            notActiveVisibleCategory = isInViewport({ isActiveCategory, currentTop, offsets, index, next });
+            notActiveVisibleCategory = !isActiveCategory && isInViewport({ scrollTop, listHeight, offsets, index});
 
         if (notActiveVisibleCategory) {
             inViewPort[index] = true;

@@ -1,6 +1,6 @@
 import SkinTones from '../SkinTones';
 import React, { Component } from 'react';
-import { debounce } from 'throttle-debounce';
+import { debounce, throttle } from 'throttle-debounce';
 import { categories, modifiers, skinTones } from '../emoji-data';
 import EmojiList from '../EmojiList';
 import CategoriesNav from '../CategoriesNav';
@@ -39,7 +39,7 @@ class EmojiPicker extends Component {
         this.active = null; // this is for updating the category name
         this.transformed = [];
 
-        this.onScroll = this.onScroll.bind(this);
+        this.onScroll = throttle(16, this.onScroll.bind(this));
         this.onCategoryClick = this.onCategoryClick.bind(this);
         this.onEmojiClick = this.onEmojiClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -123,14 +123,14 @@ class EmojiPicker extends Component {
         this.setState({seenInSearch});
     }
 
-    onScroll(e) {
-        const scrollTop = e.target.scrollTop,
+    onScroll() {
+        const scrollTop = this._list.scrollTop,
             active = this.active,
             _active = this._categories[active];
 
         if (!isFFMac) {
-            this.hideScrollIndicator();
             adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
+            this.hideScrollIndicator();
             this._scroller.classList.add('shown');
         }
 
