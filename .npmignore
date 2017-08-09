@@ -4,6 +4,7 @@ stories
 assets
 .vscode
 webpack.config.prod.js
+webpack.config.js
 storybook-static
 static
 src

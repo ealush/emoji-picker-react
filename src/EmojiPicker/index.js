@@ -240,17 +240,17 @@ class EmojiPicker extends Component {
         const usedModifiers = modifiers.filter((modifier) => unified.indexOf(modifier) > -1);
 
         if (usedModifiers.length) {
-            const shortname = `${emoji.shortname}::${skinTones[usedModifiers[0]]}`;
+            const name = `${emoji.name}::${skinTones[usedModifiers[0]]}`;
             return this.props.onEmojiClick(unified, Object.assign({}, emoji, {
-                shortname: shortname || emoji.shortname
+                name: name || emoji.name
             }));
         } else if (this.state.activeModifier && emoji.hasOwnProperty('diversities')) {
             const modifier = emoji.diversities.filter((diversity) => diversity.indexOf(this.state.activeModifier) > -1);
 
             if (modifier.length) {
-                const shortname = `${emoji.shortname}::${skinTones[this.state.activeModifier]}`;
+                const name = `${emoji.name}::${skinTones[this.state.activeModifier]}`;
                 return this.props.onEmojiClick(modifier[0], Object.assign({}, emoji, {
-                    shortname: shortname || emoji.shortname
+                    name: name || emoji.name
                 }));
             }
         }
