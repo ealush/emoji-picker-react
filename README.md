@@ -33,10 +33,9 @@ Clicking on an emoji should result in a similar output:
 ["261d-1f3ff", Object]
     0: "261d-1f3ff"
     ▶1: Object
-        name: "index pointing up"
+        shortname: "point_up"
         category: "people"
         order: 206
-        shortname: ":point_up:"
         ▶diversities: Array[5]
             0: "261d-1f3fb"
             1: "261d-1f3fc"
@@ -44,9 +43,38 @@ Clicking on an emoji should result in a similar output:
             3: "261d-1f3fe"
             4: "261d-1f3ff"
 ```
+
+## Integrating with your app
+So, you got the emoji the user clicked on, what do you do next?
+I have found that the easiest way to convert the emojis into images on my site, or as unicode characters, is by using [iamcal/js-emoji](https://github.com/iamcal/js-emoji). This guy wrote an amazing library that allows you to take the emoji name (needed to be wrapped in colons, like that: `:joy:`), and convert them into whatever you like. This is what I use for the live-demo demonstration. It should be as simple as:
+
+```js
+import JSEMOJI from 'emoji-js';
+// you can import it with a script tag instead
+
+
+// new instance
+jsemoji = new JSEMOJI();
+// set the style to emojione (default - apple)
+jsemoji.img_set = 'emojione';
+// set the storage location for all emojis
+jsemoji.img_sets.emojione.path = 'https://cdn.jsdelivr.net/emojione/assets/3.0/png/32/';
+
+// some more settings...
+jsemoji.supports_css = false;
+jsemoji.allow_native = false;
+jsemoji.replace_mode = 'unified';
+```
+
+and then, in your onEmojiClick callback:
+```js
+jsemoji.replace_colons(`:${emojiName}:`);
+```
+
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/2.png)
 
-## Image hosting
+# Image hosting
+## CDN
 All Emoji files are hosted on [jsdeliver](http://www.jsdelivr.com/projects/emojione), and by default, the picker is configured to use it as the image source, with emojis of size 32x32px. You may also choose to serve 64x64px or 128x128px emojis, using the `emojiResolution` prop.
 ```js
 <EmojiPicker emojiResolution="64"/>
@@ -69,6 +97,8 @@ The picker will internally construct the image urls to appear like this:
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/3.png)
 
+# Cool stuff
+
 ## Per Emoji diversity picker
 Long clicking on diversity (skin-tone) enabled Emojies (mostly the hand Emojis), will open a list of all skin tones for this Emoji.
 
@@ -82,7 +112,7 @@ At the moment, not many customizations are supported (they are coming). You may 
  <EmojiPicker nav="bottom"/>
 ```
 
-## Attributions
+# Attributions
 You can use this **picker**, free of charge, no attribution is needed. The emojis have their own license.
 
 All emoji images in this project are the property of the [Emojione](www.emojione.com). Usage of the images is subjeced to their [free license](https://www.emojione.com/developers/free-license).
