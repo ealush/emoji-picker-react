@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { categories } from '../emoji-data';
 import './style.scss';
 
@@ -15,5 +17,9 @@ function CategoriesNav({onClick}) {
         </nav>
     );
 }
+
+CategoriesNav.propTypes = {
+    onClick: PropTypes.func.isRequired
+};
 
 export default CategoriesNav;

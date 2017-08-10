@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { modifiers } from '../emoji-data';
 import './style.scss';
 
@@ -36,5 +37,11 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
         </ul>
     );
 }
+
+SkinTones.propTypes = {
+    onModifierClick: PropTypes.func.isRequired,
+    activeModifier: PropTypes.string.isRequired,
+    spread: PropTypes.bool
+};
 
 export default SkinTones;

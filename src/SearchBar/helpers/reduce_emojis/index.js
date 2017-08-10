@@ -1,4 +1,4 @@
-import { emojis, keywords, categories } from '../../../emoji-data';
+import { emojis, keywords } from '../../../emoji-data';
 import emojiAccessor from '../../../emoji-data/emoji_accessor';
 
 export default function reduceEmojis(matches) {

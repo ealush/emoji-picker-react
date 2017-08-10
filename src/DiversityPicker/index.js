@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+
 import { emojis } from '../emoji-data';
 import { bgImage } from '../Emoji/helpers';
 import './style.scss';
@@ -34,5 +36,13 @@ function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close
         }</div>
     );
 }
+
+DiversityPicker.propTypes = {
+    name: PropTypes.string.isRequired,
+    assetPath: PropTypes.string.isRequired,
+    emojiResolution: PropTypes.number.isRequired,
+    onEmojiClick: PropTypes.func.isRequired,
+    close: PropTypes.func.isRequired
+};
 
 export default DiversityPicker;

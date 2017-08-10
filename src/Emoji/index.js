@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bgImage, unifiedWithModifier } from './helpers';
 import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
 import './style.scss';
@@ -83,7 +84,7 @@ class Emoji extends Component {
         let unified = emoji.unified;
 
         if (!categorySeen || hidden) {
-            const hiddenClass = !!hidden ? ' hidden' : '';
+            const hiddenClass = hidden ? ' hidden' : '';
             return <div className={`emoji${hiddenClass}`}/>;
         }
 
@@ -104,5 +105,18 @@ class Emoji extends Component {
         );
     }
 }
+
+Emoji.propTypes = {
+    emoji: PropTypes.object.isRequired,
+    hidden: PropTypes.string,
+    categorySeen: PropTypes.boolean,
+    emojiProps: {
+        activeModifier: PropTypes.string,
+        _emojiName: PropTypes.element,
+        openDiversitiesMenu: PropTypes.func.isRequired
+    },
+    member: PropTypes.number.isRequired
+
+};
 
 export default Emoji;

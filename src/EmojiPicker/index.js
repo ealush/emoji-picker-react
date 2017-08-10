@@ -1,6 +1,7 @@
-import SkinTones from '../SkinTones';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { debounce, throttle } from 'throttle-debounce';
+import SkinTones from '../SkinTones';
 import { categories, modifiers, skinTones } from '../emoji-data';
 import EmojiList from '../EmojiList';
 import CategoriesNav from '../CategoriesNav';
@@ -292,5 +293,12 @@ class EmojiPicker extends Component {
         );
     }
 }
+
+EmojiPicker.propTypes = {
+    onEmojiClick: PropTypes.func.isRequired,
+    nav: PropTypes.string,
+    assetPath: PropTypes.string.isRequired,
+    emojiResolution: PropTypes.number.isRequired
+};
 
 export default EmojiPicker;

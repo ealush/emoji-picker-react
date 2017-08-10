@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { emojis } from '../emoji-data';
 import emojiAccessor from '../emoji-data/emoji_accessor';
 import Emoji from '../Emoji';
@@ -31,5 +32,13 @@ function EmojiCategory({index, category, filter, categorySeen, emojiProps}) {
         </div>
     );
 }
+
+EmojiCategory.propTypes = {
+    index: PropTypes.number.isRequired,
+    category: PropTypes.object.isRequired,
+    filter: PropTypes.object,
+    categorySeen: PropTypes.bool,
+    emojiProps: PropTypes.object
+};
 
 export default EmojiCategory;

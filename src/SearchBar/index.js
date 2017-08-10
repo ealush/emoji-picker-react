@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { stackFilter, textIndexInStack, reduceEmojis, filterStack } from './helpers';
 import { ALL_KEYWORDS, KEYWORDS_SINGLE } from '../constants';
 import './style.scss';
@@ -83,5 +84,9 @@ class SearchBar extends Component {
 
     }
 }
+
+SearchBar.propTypes = {
+    onChange: PropTypes.func.isRequired
+};
 
 export default SearchBar;
