@@ -16,5 +16,24 @@
             height: 0;
             width: 0;
         }
+
+        &.filter {
+            &:before {
+                content: '';
+                background: $md-grey-50;
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: 0;
+                height: 25px;
+                z-index: 2;
+                opacity: .9;
+            }
+
+            .category-name {
+                background: none;
+                z-index: 3;
+            }
+        }
     }
 }

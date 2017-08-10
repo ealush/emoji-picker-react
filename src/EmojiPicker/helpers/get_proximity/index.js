@@ -28,9 +28,9 @@ export default function getProximity(offsets, scrollTop, listHeight) {
             next = index + 1,
             inProximity = isElementInProximity({scrollTop, offset}),
             isActiveCategory = checkIfActiveCategory({ offset, offsets, scrollTop, next }),
-            notActiveVisibleCategory = !isActiveCategory && isInViewport({ scrollTop, listHeight, offsets, index});
+            isVisible = isInViewport({ scrollTop, listHeight, offsets, index});
 
-        if (notActiveVisibleCategory) {
+        if (isVisible) {
             inViewPort[index] = true;
         }
 

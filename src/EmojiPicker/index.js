@@ -94,8 +94,19 @@ class EmojiPicker extends Component {
             }
         });
 
+        if (this.state.filter) {
+            return;
+        }
+
         classList.add(categories[index].name);
         this.active = index;
+    }
+
+    unsetActiveCategory() {
+        const classList = this._picker.classList;
+        categories.forEach((category) => {
+            classList.remove(category.name);
+        });
     }
 
     setSeenCategory(index, categories) {
@@ -143,7 +154,12 @@ class EmojiPicker extends Component {
             inViewPort // partially visible, not active
         } = this.proximity;
 
-        this.setSeenCategory(0, inViewPort);
+        if (this.state.filter) {
+            this.setSeenInSearch(inViewPort);
+            return this.transformed = clearTransform(this.transformed);
+        } else {
+            this.setSeenCategory(0, inViewPort);
+        }
 
         if (activeCategory !== active) {
             this.setSeenCategory(activeCategory);
@@ -198,7 +214,9 @@ class EmojiPicker extends Component {
             this.listHeight = positions.listHeight;
             this._list.scrollTop = 0;
             this.proximity = getProximity(this.offsets, 0, this.listHeight);
+            if (!filter) { return this.setActiveCategory(0); }
             this.setSeenInSearch(this.proximity.inViewPort);
+            this.unsetActiveCategory();
         });
     }
 
