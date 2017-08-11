@@ -23,8 +23,8 @@ const isFFMac = isFirefoxOnMac();
 
 class EmojiPicker extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
 
         this.state = {
             filter: null,
@@ -39,6 +39,7 @@ class EmojiPicker extends Component {
 
         this.active = null; // this is for updating the category name
         this.transformed = [];
+        this.pickerClassName = `emoji-picker nav-${props.nav ? props.nav : 'top'}`;
 
         this.onScroll = throttle(16, this.onScroll.bind(this));
         this.onCategoryClick = this.onCategoryClick.bind(this);
@@ -76,8 +77,9 @@ class EmojiPicker extends Component {
 
     setActiveCategory({index}) {
 
+        if (this.state.filter) { return; }
+
         const indexPresent = typeof index === 'number',
-            classList = this._picker.classList,
             prevActive = this.active;
 
         if (index === prevActive) {
@@ -88,36 +90,22 @@ class EmojiPicker extends Component {
             index = 0;
         }
 
-        categories.forEach((category) => {
-            if (category.name !== categories[index].name && classList.contains(category.name)) {
-                classList.remove(category.name);
-            }
-        });
+        this._picker.setAttribute('class', `${this.pickerClassName} ${categories[index].name}`);
 
-        if (this.state.filter) {
-            return;
-        }
-
-        classList.add(categories[index].name);
         this.active = index;
     }
 
     unsetActiveCategory() {
-        const classList = this._picker.classList;
-        categories.forEach((category) => {
-            classList.remove(category.name);
-        });
+        this._picker.setAttribute('class', this.pickerClassName);
     }
 
     setSeenCategory(index, categories) {
 
-        const seenCategories = {...this.state.seenCategories};
+        const seenCategories = Object.assign({}, this.state.seenCategories, categories);
         seenCategories[index] = true;
 
-        for (const catIndex in categories) {
-            if (categories.hasOwnProperty(catIndex)) {
-                seenCategories[catIndex] = true;
-            }
+        if (Object.keys(this.state.seenCategories).length === Object.keys(seenCategories).length) {
+            return;
         }
 
         this.setState({ seenCategories });
@@ -125,14 +113,21 @@ class EmojiPicker extends Component {
 
     setSeenInSearch(categories) {
         const seenInSearch = {...this.state.seenInSearch};
+        let counter = 0;
 
         for (const catIndex in categories) {
+
+            if (this.state.seenCategories[catIndex] || this.state.seenInSearch[catIndex]) {
+                continue;
+            }
+
             if (categories.hasOwnProperty(catIndex)) {
+                counter++;
                 seenInSearch[catIndex] = true;
             }
         }
 
-        this.setState({seenInSearch});
+        counter && this.setState({seenInSearch});
     }
 
     onScroll() {
@@ -157,13 +152,9 @@ class EmojiPicker extends Component {
         if (this.state.filter) {
             this.setSeenInSearch(inViewPort);
             return this.transformed = clearTransform(this.transformed);
-        } else {
-            this.setSeenCategory(0, inViewPort);
         }
 
-        if (activeCategory !== active) {
-            this.setSeenCategory(activeCategory);
-        }
+        this.setSeenCategory(activeCategory, inViewPort);
 
         // this block deals with mismatches that are caused by fast scrolling
         if (typeof proximityIndex !== 'number') {
@@ -209,11 +200,7 @@ class EmojiPicker extends Component {
     onSearch(filter) {
 
         this.setState({ filter }, () => {
-            const positions = getOffsets(this._list);
-            this.offsets = positions.offsets;
-            this.listHeight = positions.listHeight;
             this._list.scrollTop = 0;
-            this.proximity = getProximity(this.offsets, 0, this.listHeight);
             if (!filter) { return this.setActiveCategory(0); }
             this.setSeenInSearch(this.proximity.inViewPort);
             this.unsetActiveCategory();
@@ -279,15 +266,14 @@ class EmojiPicker extends Component {
 
     render() {
 
-        const { nav = 'top', assetPath, emojiResolution } = this.props;
+        const { assetPath, emojiResolution } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
-        const navClass = `nav-${nav}`;
         const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
         const emojiProps = { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
             visibleCategories = Object.assign({}, seenCategories, seenInSearch);
 
         return (
-            <aside className={`emoji-picker ${navClass}`} ref={(picker) => this._picker = picker}>
+            <aside className={this.pickerClassName} ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}/>
                 <div className="bar-wrapper">
                     <SkinTones onModifierClick={this.onModifierClick} activeModifier={activeModifier} spread={modifiersSpread}/>
