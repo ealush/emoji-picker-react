@@ -15,3 +15,4 @@ src
 *.lock
 package-lock.json
 screenshots
+docs

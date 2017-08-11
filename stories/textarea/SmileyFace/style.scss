@@ -1,0 +1,18 @@
+.emoji-textarea .smiley-face {
+    background-image: url("./smiley-face.svg");
+    position: relative;
+    background-size: 15px 15px;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    opacity: .2;
+    margin-left: 10px;
+
+    &.shown {
+        opacity: 1;
+    }
+
+    &:hover {
+        background-image: url("./smiley-face-yellow.svg");
+    }
+}

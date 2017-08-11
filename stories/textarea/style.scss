@@ -1,0 +1,60 @@
+@import 'colors';
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+.emoji-textarea {
+    position: relative;
+    font-family: 'Open Sans', sans-serif;
+
+    .content-preview {
+        font-family: 'Open Sans', sans-serif;
+        font-size: 14px;
+        line-height: 18px;
+        padding: 10px;
+
+        .emoji {
+            display: inline-block;
+            height: 18px;
+            width: 18px;
+            margin: 2px 2px 0 2px;
+        }
+    }
+
+    .emoji-picker {
+        position: absolute;
+        right: 0;
+        bottom: 25px;
+    }
+
+    textarea {
+        font-size: 1em;
+        color: $md-grey-600;
+        padding: 10px;
+        display: block;
+        width: 100%;
+        resize: none;
+        outline: none;
+        border: 1px solid $md-grey-300;
+        height: 100px;
+        box-sizing: border-box;
+        transition: border .1s;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 11px;
+
+        &:focus {
+            border: 1px solid $md-grey-500;
+        }
+    }
+}
+
+.textarea-wrapper {
+    position: fixed;
+    bottom: 50px;
+    width: 400px;
+
+    footer {
+        padding-top: 5px;
+        float: right;
+        margin-right: 10px;
+        display: block;
+    }
+}
