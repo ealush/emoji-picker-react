@@ -1,4 +1,8 @@
-# React Emoji Picker | [Live demo](https://ealush.github.io/emoji-picker/)
+# React Emoji Picker
+
+[![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react)
+
+[Live demo](https://ealush.github.io/emoji-picker/)
 
 ```
 npm i emoji-picker-react --save
