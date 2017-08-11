@@ -5,7 +5,7 @@ function checkIfActiveCategory({ offset, offsets, scrollTop, next }) {
 }
 
 function isInViewport({ scrollTop, listHeight, offsets, index}) {
-    return offsets[index] < (listHeight + scrollTop) && offsets[index] > scrollTop;
+    return offsets[index] <= (listHeight + scrollTop) && offsets[index] >= scrollTop;
 }
 
 function isElementInProximity({scrollTop, offset}) {

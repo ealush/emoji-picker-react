@@ -202,7 +202,7 @@ class EmojiPicker extends Component {
         this.setState({ filter }, () => {
             this._list.scrollTop = 0;
             if (!filter) { return this.setActiveCategory(0); }
-            this.setSeenInSearch(this.proximity.inViewPort);
+            this.onScroll();
             this.unsetActiveCategory();
         });
     }
