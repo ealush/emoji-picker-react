@@ -5,6 +5,25 @@ import EmojiCategory from '../EmojiCategory';
 import './style.scss';
 
 class EmojiList extends Component {
+    shouldComponentUpdate(nextProps) {
+        if (nextProps.modifiersSpread) {
+            return false;
+        }
+
+        if (nextProps.filter || (!nextProps.filter && this.props.filter)|| nextProps) {
+            return true;
+        }
+
+        if (nextProps.emojiProps._emojiName !== this.props.emojiProps._emojiName) {
+            return true;
+        }
+
+        if (nextProps.emojiProps.activeModifier !== this.props.emojiProps.activeModifier) {
+            return true;
+        }
+
+        return Object.keys(nextProps.seenCategories).length !== Object.keys(this.props.seenCategories).length;
+    }
 
     render() {
         const { filter, emojiProps, onScroll, seenCategories } = this.props;

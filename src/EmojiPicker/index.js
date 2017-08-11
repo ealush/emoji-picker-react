@@ -46,6 +46,7 @@ class EmojiPicker extends Component {
         this.onEmojiClick = this.onEmojiClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
         this.onModifierClick = this.onModifierClick.bind(this);
+        this.suppressModifiers = this.suppressModifiers.bind(this);
         this.openDiversitiesMenu = this.openDiversitiesMenu.bind(this);
         this.closeDiversitiesMenu = this.closeDiversitiesMenu.bind(this);
         this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
@@ -211,6 +212,7 @@ class EmojiPicker extends Component {
         e.preventDefault();
 
         if (!this.state.modifiersSpread) {
+            this._picker.addEventListener('mousedown', this.suppressModifiers);
             return this.setState({ modifiersSpread: true });
         }
 
@@ -218,6 +220,16 @@ class EmojiPicker extends Component {
             modifier = null;
         }
         this.setState({ activeModifier: modifier, modifiersSpread: false });
+    }
+
+    suppressModifiers(e) {
+        this._picker.removeEventListener('mousedown', this.suppressModifiers);
+
+        if (e && e.target.classList.contains('st')) {
+            return;
+        }
+
+        this.setState({ modifiersSpread: false });
     }
 
     openDiversitiesMenu(name) {
@@ -229,12 +241,13 @@ class EmojiPicker extends Component {
     }
 
     closeDiversitiesMenu(e) {
-
         const pickerClass = 'diversity-picker';
 
         if (e && (e.target.classList.contains(pickerClass) || e.target.parentElement.classList.contains(pickerClass))) {
             return;
         }
+
+        this._picker.removeEventListener('mousedown', this.closeDiversitiesMenu);
 
         this.setState({
             diversityPicker: null
@@ -291,6 +304,7 @@ class EmojiPicker extends Component {
                         filter={filter}
                         onScroll={this.onScroll}
                         seenCategories={visibleCategories}
+                        modifiersSpread={modifiersSpread}
                         ref={(list) => this._list = (list ? list._list : null)}/>
                 </div>
             </aside>

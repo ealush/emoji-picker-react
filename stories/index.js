@@ -25,15 +25,6 @@ storiesOf('Text area with picker', module)
 
 // eslint-disable-next-line no-undef
 storiesOf('Standalone picker', module)
-    .add('Self hosted 32px/fastest', () => (
-        <EmojiPicker assetPath={assetPath} onEmojiClick={action('emoji-click')}/>
-    ))
-    .add('Self hosted 64px/slower', () => (
-        <EmojiPicker assetPath={assetPath} emojiResolution="64" onEmojiClick={action('emoji-click')}/>
-    ))
-    .add('Self hosted 128px/slowest', () => (
-        <EmojiPicker assetPath={assetPath} emojiResolution="128" onEmojiClick={action('emoji-click')}/>
-    ))
     .add('Top Navigation CDN hosted 32px/fastest', () => (
         <EmojiPicker onEmojiClick={action('emoji-click')}/>
     ))

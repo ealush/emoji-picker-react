@@ -20,6 +20,7 @@ class Emoji extends Component {
     }
 
     shouldComponentUpdate(nextProps) {
+
         const visibilityChanged = nextProps.hidden !== this.props.hidden,
             categoryVisibilityChanged = nextProps.categorySeen !== this.props.categorySeen,
             hasDiversities = this.hasDiversities,

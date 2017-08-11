@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { emojis } from '../emoji-data';
+import emojiAccessor from '../emoji-data/emoji_accessor';
 import { bgImage } from '../Emoji/helpers';
 import './style.scss';
 
 function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close }) {
 
     const className = `diversity-picker${name ? ' shown' : ''}`,
-        emoji = emojis[name];
+        emoji = emojiAccessor(emojis[name]);
 
     let diversities = null;
 
