@@ -136,7 +136,7 @@ class EmojiPicker extends Component {
             active = this.active,
             _active = this._categories[active];
 
-        if (!isFFMac) {
+        if (!isFFMac && !(this.scrollHeight <= this.listHeight)) {
             adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
             this.hideScrollIndicator();
             this._scroller.classList.add('shown');
