@@ -38,8 +38,8 @@ class Emoji extends Component {
     }
 
     onMouseEnter() {
-        if (this.props.emojiProps._emojiName) {
-            this.props.emojiProps._emojiName.textContent = this.emoji.name;
+        if (this.props.emojiProps.parent._emojiName) {
+            this.props.emojiProps.parent._emojiName.textContent = this.emoji.name;
         }
     }
 
@@ -49,8 +49,8 @@ class Emoji extends Component {
             return;
         }
 
-        if (this.props.emojiProps._emojiName) {
-            this.props.emojiProps._emojiName.textContent = '';
+        if (this.props.emojiProps.parent._emojiName) {
+            this.props.emojiProps.parent._emojiName.textContent = '';
         }
     }
 

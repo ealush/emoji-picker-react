@@ -278,12 +278,13 @@ class EmojiPicker extends Component {
     }
 
     render() {
-
         const { assetPath, emojiResolution } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
         const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
-        const emojiProps = { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
+        const emojiProps = { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
             visibleCategories = Object.assign({}, seenCategories, seenInSearch);
+
+        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
 
         return (
             <aside className={this.pickerClassName} ref={(picker) => this._picker = picker}>
@@ -292,7 +293,7 @@ class EmojiPicker extends Component {
                     <SkinTones onModifierClick={this.onModifierClick} activeModifier={activeModifier} spread={modifiersSpread}/>
                     <SearchBar onChange={this.onSearch}/>
                 </div>
-                <div className="wrapper">
+                <div className={wrapperClassName}>
                     <DiversityPicker name={diversityPicker}
                         assetPath={assetPath}
                         emojiResolution={emojiResolution}
