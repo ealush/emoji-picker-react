@@ -1,5 +1,7 @@
 # React Emoji Picker
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/)
+
 [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react)
 
 [Live demo](https://ealush.github.io/emoji-picker/)
