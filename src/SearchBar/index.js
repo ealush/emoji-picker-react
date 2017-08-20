@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { debounce } from 'throttle-debounce';
 import PropTypes from 'prop-types';
-import { stackFilter, textIndexInStack, reduceEmojis, filterStack } from './helpers';
+import { stackFilter, textIndexInStack, reduceEmojis } from './helpers';
 import { ALL_KEYWORDS, KEYWORDS_SINGLE, FILTER_UPDATE_DEBOUNCE } from '../constants';
 import './style.scss';
 
@@ -20,8 +20,6 @@ class SearchBar extends Component {
         if (this.filterStack[this.filterStack.length-1].text === currentFilter.text) {
             return;
         }
-
-        this.filterStack = filterStack(this.filterStack, currentFilter);
 
         this.filterStack.push(currentFilter);
     }
@@ -48,6 +46,7 @@ class SearchBar extends Component {
         let matches;
 
         if (stackIndex > -1) {
+            this.filterStack.splice(0, stackIndex);
             matches = stackFilter(stackIndex, text, this.filterStack);
             this.addToStack({ text, matches });
             return this.onChange(matches);
