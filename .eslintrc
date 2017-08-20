@@ -21,7 +21,10 @@
     ],
     "globals": {
         "require": true,
-        "react": true
+        "react": true,
+        "expect": true,
+        "it": true,
+        "describe": true
     },
     "rules": {
         "arrow-body-style": 2,
