@@ -40,7 +40,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
 
 SkinTones.propTypes = {
     onModifierClick: PropTypes.func.isRequired,
-    activeModifier: PropTypes.string.isRequired,
+    activeModifier: PropTypes.string,
     spread: PropTypes.bool
 };
 

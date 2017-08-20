@@ -38,9 +38,9 @@ function DiversityPicker({ name, assetPath, emojiResolution, onEmojiClick, close
 }
 
 DiversityPicker.propTypes = {
-    name: PropTypes.string.isRequired,
-    assetPath: PropTypes.string.isRequired,
-    emojiResolution: PropTypes.number.isRequired,
+    name: PropTypes.string,
+    assetPath: PropTypes.string,
+    emojiResolution: PropTypes.number,
     onEmojiClick: PropTypes.func.isRequired,
     close: PropTypes.func.isRequired
 };

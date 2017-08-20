@@ -109,13 +109,9 @@ class Emoji extends Component {
 
 Emoji.propTypes = {
     emoji: PropTypes.object.isRequired,
-    hidden: PropTypes.string,
-    categorySeen: PropTypes.boolean,
-    emojiProps: {
-        activeModifier: PropTypes.string,
-        _emojiName: PropTypes.element,
-        openDiversitiesMenu: PropTypes.func.isRequired
-    },
+    hidden: PropTypes.bool,
+    categorySeen: PropTypes.bool,
+    emojiProps: PropTypes.object,
     member: PropTypes.number.isRequired
 
 };

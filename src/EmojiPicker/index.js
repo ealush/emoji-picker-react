@@ -316,8 +316,8 @@ class EmojiPicker extends Component {
 EmojiPicker.propTypes = {
     onEmojiClick: PropTypes.func.isRequired,
     nav: PropTypes.string,
-    assetPath: PropTypes.string.isRequired,
-    emojiResolution: PropTypes.number.isRequired
+    assetPath: PropTypes.string,
+    emojiResolution: PropTypes.number
 };
 
 export default EmojiPicker;
