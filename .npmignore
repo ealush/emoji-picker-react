@@ -16,3 +16,4 @@ src
 package-lock.json
 screenshots
 docs
+test_setup.js
