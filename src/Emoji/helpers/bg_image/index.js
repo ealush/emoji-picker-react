@@ -1,9 +1,9 @@
-import { DEFAULt_CDN_PATH, DEFAULT_IMAGE_RESOLUTION } from '../../../constants';
+import { DEFAULT_CDN_PATH, DEFAULT_IMAGE_RESOLUTION } from '../../../constants';
 
 export default function bgImage({ unified, assetPath, emojiResolution }) {
 
     if (typeof assetPath === 'undefined') {
-        assetPath = DEFAULt_CDN_PATH;
+        assetPath = DEFAULT_CDN_PATH;
     }
 
     assetPath += emojiResolution ? `/${emojiResolution}` : `/${DEFAULT_IMAGE_RESOLUTION}`;
