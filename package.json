@@ -5,8 +5,8 @@
   "main": "./dist/index.js",
   "scripts": {
     "prepublish": "npm run build",
-    "test": "NODE_ENV=TEST mocha src/**/spec.js --opts mocha.opts",
-    "test:watch": "NODE_ENV=TEST mocha src/**/spec.js --watch --opts mocha.opts",
+    "test": "NODE_ENV=TEST mocha src/**/*/spec.js --opts mocha.opts",
+    "test:watch": "NODE_ENV=TEST mocha src/**/*/spec.js --watch --opts mocha.opts",
     "storybook": "start-storybook -p 9001",
     "build-storybook": "build-storybook",
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
