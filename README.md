@@ -8,7 +8,8 @@
 npm i emoji-picker-react --save
 ```
 
-An easy to use React Emoji Picker Module. All the emojis are [Emoji-One](https://www.emojione.com/) emojis
+An easy to use React Emoji Picker Module.
+For easy integration with your app, you should consider using the companion package: [React Text field components with emoji picker](https://www.npmjs.com/package/emoji-picker-textfield).
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/1.png)
 
