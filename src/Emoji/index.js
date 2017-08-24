@@ -41,9 +41,15 @@ class Emoji extends Component {
         if (this.props.emojiProps.parent._emojiName) {
             this.props.emojiProps.parent._emojiName.textContent = this.emoji.name;
         }
+
+        this.onMouseEnterTimeout = setTimeout(() => {
+            this.props.emojiProps.openDiversitiesMenu(this.props.member);
+        }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
     onMouseLeave(e) {
+
+        clearTimeout(this.onMouseEnterTimeout);
 
         if (e.relatedTarget && e.relatedTarget.classList && e.relatedTarget.classList.contains('emoji')) {
             return;
@@ -55,6 +61,8 @@ class Emoji extends Component {
     }
 
     onMouseDown() {
+
+        clearTimeout(this.onMouseEnterTimeout);
 
         if (!this.hasDiversities) {
             return;
