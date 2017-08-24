@@ -30,6 +30,28 @@ class MyComponent extends Component {
 
 ```
 
+## Customization
+
+## Modifying the picker's height and width
+By default the picker is 240px wide and ~315px tall (depending on the position of the categories panel). To change the width and height of the picker, simply:
+
+```js
+    <EmojiPicker width="315" height="280"/>
+    <EmojiPicker height="280"/> // width will default to 240
+    <EmojiPicker width="315"/> // height will default to 240
+```
+A word on height: The height you determine by the height property, is of the emoji-list only, the search and categories panel are added to the height you specify.
+
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/5.png)
+
+## Moving the categories panel around
+
+```js
+<EmojiPicker nav="top"/> // default. no need to pass nav="top"
+<EmojiPicker nav="left"/>
+<EmojiPicker nav="bottom"/>
+```
+
 ## Getting the clicked-on emoji
 In order to use the picker in your application, you need a way to grab the name and code of the clicked-on emoji. To do this, you just need to pass the `onEmojiClick` prop. It should be a callback function to your application, and it should get two arguments: the emoji code, and the rest of the emoji data.
 
@@ -108,14 +130,6 @@ The picker will internally construct the image urls to appear like this:
 Long clicking on diversity (skin-tone) enabled Emojies (mostly the hand Emojis), will open a list of all skin tones for this Emoji.
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/4.png)
-
-## Customization
-At the moment, not many customizations are supported (they are coming). You may choose, though, to have the navigation in different locations. You may choose any of the following three:
-```js
- <EmojiPicker nav="top"/> // default. no need to pass nav="top"
- <EmojiPicker nav="left"/>
- <EmojiPicker nav="bottom"/>
-```
 
 # Attributions
 You can use this **picker**, free of charge, no attribution is needed. The emojis have their own license.

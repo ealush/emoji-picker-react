@@ -1,4 +1,4 @@
-import { Header_Height } from '../../../constants';
+import { HEADER_HEIGHT } from '../../../constants';
 
 function checkIfActiveCategory({ offset, offsets, scrollTop, next }) {
     return offset <= scrollTop && (offsets[next] >= scrollTop || offsets[next] === undefined);
@@ -9,8 +9,8 @@ function isInViewport({ scrollTop, listHeight, offsets, index}) {
 }
 
 function isElementInProximity({scrollTop, offset}) {
-    const elementIsUp = scrollTop + Header_Height >= offset,
-        elementIsDown = scrollTop - Header_Height <= offset;
+    const elementIsUp = scrollTop + HEADER_HEIGHT >= offset,
+        elementIsDown = scrollTop - HEADER_HEIGHT <= offset;
 
     return elementIsDown && elementIsUp; // logically not true, better naming needed
 }

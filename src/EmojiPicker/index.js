@@ -17,7 +17,8 @@ import { getOffsets,
     adjustScrollbar,
     getScrollDirection,
     headerTransform,
-    isFirefoxOnMac } from './helpers';
+    isFirefoxOnMac,
+    inlineStyleTags } from './helpers';
 
 const isFFMac = isFirefoxOnMac();
 
@@ -40,6 +41,10 @@ class EmojiPicker extends Component {
         this.active = null; // this is for updating the category name
         this.transformed = [];
         this.pickerClassName = `emoji-picker nav-${props.nav ? props.nav : 'top'}`;
+        this.inlineStyle = inlineStyleTags({
+            width: parseInt(props.width, 10),
+            height: parseInt(props.height, 10)
+        });
 
         this.onScroll = throttle(16, this.onScroll.bind(this));
         this.onCategoryClick = this.onCategoryClick.bind(this);
@@ -280,17 +285,19 @@ class EmojiPicker extends Component {
     render() {
         const { assetPath, emojiResolution } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
-        const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName } = this;
+        const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName, pickerClassName, onModifierClick, onScroll, inlineStyle } = this;
         const emojiProps = { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
             visibleCategories = Object.assign({}, seenCategories, seenInSearch);
 
         const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
 
         return (
-            <aside className={this.pickerClassName} ref={(picker) => this._picker = picker}>
+            <aside className={pickerClassName}
+                style={this.inlineStyle.picker}
+                ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}/>
                 <div className="bar-wrapper">
-                    <SkinTones onModifierClick={this.onModifierClick} activeModifier={activeModifier} spread={modifiersSpread}/>
+                    <SkinTones onModifierClick={onModifierClick} activeModifier={activeModifier} spread={modifiersSpread}/>
                     <SearchBar onChange={this.onSearch}/>
                 </div>
                 <div className={wrapperClassName}>
@@ -302,8 +309,9 @@ class EmojiPicker extends Component {
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                     <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
                     <EmojiList emojiProps={emojiProps}
+                        style={inlineStyle.list}
                         filter={filter}
-                        onScroll={this.onScroll}
+                        onScroll={onScroll}
                         seenCategories={visibleCategories}
                         modifiersSpread={modifiersSpread}
                         ref={(list) => this._list = (list ? list._list : null)}/>
@@ -317,7 +325,9 @@ EmojiPicker.propTypes = {
     onEmojiClick: PropTypes.func.isRequired,
     nav: PropTypes.string,
     assetPath: PropTypes.string,
-    emojiResolution: PropTypes.number
+    emojiResolution: PropTypes.number,
+    width: PropTypes.number,
+    height: PropTypes.number
 };
 
 export default EmojiPicker;
