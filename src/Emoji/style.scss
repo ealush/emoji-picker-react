@@ -9,9 +9,27 @@
     background-size: $emoji_size;
     background-repeat: no-repeat;
     background-position: 50% 50%;
+    overflow: hidden;
     transition: background-color .2s;
 
     &:hover {
         background-color: $hover_color;
+
+        &.has-diversities:before {
+            opacity: 1;
+        }
+    }
+
+    &.has-diversities:before {
+        content: '';
+        background-color: $md-blue-400;
+        display: block;
+        height: 5px;
+        width: 5px;
+        float: right;
+        border-radius: 50%;
+        opacity: 0;
+        transform: translateY(-4px) translateX(4px);
+        transition: opacity .2s;
     }
 }

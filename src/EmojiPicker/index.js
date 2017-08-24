@@ -294,7 +294,7 @@ class EmojiPicker extends Component {
                     <SearchBar onChange={this.onSearch}/>
                 </div>
                 <div className={wrapperClassName}>
-                    <DiversityPicker name={diversityPicker}
+                    <DiversityPicker index={diversityPicker}
                         assetPath={assetPath}
                         emojiResolution={emojiResolution}
                         onEmojiClick={this.onEmojiClick}

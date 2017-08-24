@@ -91,12 +91,13 @@ class Emoji extends Component {
 
         unified = unifiedWithModifier(emoji, activeModifier);
 
-        const style = bgImage({ unified, assetPath, emojiResolution });
+        const style = bgImage({ unified, assetPath, emojiResolution }),
+            className = `emoji${this.hasDiversities ? ' has-diversities' : ''}`;
         style.order = emoji.order;
 
         return (
             <a href="#!"
-                className="emoji"
+                className={className}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
                 onMouseDown={this.onMouseDown}
