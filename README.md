@@ -40,6 +40,9 @@ By default the picker is 240px wide and ~315px tall (depending on the position o
     <EmojiPicker height="280"/> // width will default to 240
     <EmojiPicker width="315"/> // height will default to 240
 ```
+
+If you chose a width that cannot fit a whole emoji at the end of each row (when you only leave room for 6.5 emojis, for example), the line will end at the last fully visible emoji, possibly leaving some empty space on the right. To resolve that, just increase or decrease the width of the picker to reach a perfect fit.
+
 A word on height: The height you determine by the height property, is of the emoji-list only, the search and categories panel are added to the height you specify.
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/5.png)
