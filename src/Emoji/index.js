@@ -42,6 +42,10 @@ class Emoji extends Component {
             this.props.emojiProps.parent._emojiName.textContent = this.emoji.name;
         }
 
+        if (!this.hasDiversities) {
+            return;
+        }
+
         this.onMouseEnterTimeout = setTimeout(() => {
             this.props.emojiProps.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
