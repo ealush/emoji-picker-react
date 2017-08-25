@@ -6,6 +6,7 @@ export const HEADER_HEIGHT = 25;
 export const PICKER_WIDTH = 240;
 export const PICKER_HEIGHT = 240;
 export const EMOJI_SIZE = 34;
+export const MIN_SCROLLBAR_HEIGHT_PADDED = 15;
 
 // timers
 export const OPEN_DIVERSITIES_TIMEOUT = 1000;
