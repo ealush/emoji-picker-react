@@ -4,6 +4,8 @@
 
 [Live demo](https://ealush.github.io/emoji-picker/)
 
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/recording.gif)
+
 ```
 npm i emoji-picker-react --save
 ```
@@ -11,7 +13,7 @@ npm i emoji-picker-react --save
 An easy to use React Emoji Picker Module.
 For easy integration with your app, you should consider using the companion package: [React Text field components with emoji picker](https://www.npmjs.com/package/emoji-picker-textfield).
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/1.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/1.png)
 
 
 ## Usage:
@@ -45,7 +47,7 @@ If you chose a width that cannot fit a whole emoji at the end of each row (when 
 
 A word on height: The height you determine by the height property, is of the emoji-list only, the search and categories panel are added to the height you specify.
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/5.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/5.png)
 
 ## Moving the categories panel around
 
@@ -101,7 +103,7 @@ and then, in your onEmojiClick callback:
 jsemoji.replace_colons(`:${emojiName}:`);
 ```
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/2.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/2.png)
 
 # Image hosting
 ## CDN
@@ -125,14 +127,14 @@ The picker will internally construct the image urls to appear like this:
 `http://example.com/emojis/64/1f448-1f3fd.png`
 (`1f448-1f3fd.png` is an emoji filename + extension)
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/3.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/3.png)
 
 # Cool stuff
 
 ## Per Emoji diversity picker
 Long clicking on diversity (skin-tone) enabled Emojies (mostly the hand Emojis), will open a list of all skin tones for this Emoji.
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/gh-pages/screenshots/4.png)
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
 
 # Attributions
 You can use this **picker**, free of charge, no attribution is needed. The emojis have their own license.
