@@ -49,11 +49,14 @@ class EmojiTextarea extends Component {
         const shouldClose = !this._picker || !this._picker._picker.contains(e.target);
 
         if (shouldClose) {
-            this.closePicker();
+            return this.closePicker();
         }
+        e.preventDefault();
+        return false;
     }
 
     onPickerkeypress(e) {
+        e.preventDefault();
         if (e.keyCode === 27 || e.which === 27 || e.key === 'Escape' || e.code === 'Escape') {
             this.closePicker();
         }

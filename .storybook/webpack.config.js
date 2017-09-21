@@ -2,13 +2,13 @@ const path = require('path');
 
 module.exports = {
     module: {
-        loaders: [{
+        rules: [{
             test: /\.scss$/,
-            loaders: ["style", "css", "sass"],
-            include: path.resolve(__dirname, '../')
+            loader: 'style-loader!css-loader!sass-loader'
         }, {
             test: /\.svg/,
+            exclude: /node_modules/,
             loaders: ['svg-url-loader']
         }]
     }
-}
+};

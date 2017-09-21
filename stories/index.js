@@ -1,5 +1,5 @@
 import React from 'react'; // eslint-disable-line no-unused-vars
-import { storiesOf, action } from '@kadira/storybook';
+import { storiesOf, action } from '@storybook/react';
 import EmojiPicker from '../src';
 import EmojiTextarea from './textarea';
 
