@@ -15,7 +15,7 @@ import { getOffsets,
     getProximity,
     getScrollbarWidth,
     adjustScrollbar,
-    getScrollDirection,
+    hitAnotherCategory,
     headerTransform,
     isFirefoxOnMac,
     inlineStyleTags } from './helpers';
@@ -83,6 +83,8 @@ class EmojiPicker extends Component {
 
     setActiveCategory({index}) {
 
+        if (!categories[index]) { return; }
+
         if (this.state.filter) { return; }
 
         const indexPresent = typeof index === 'number',
@@ -147,6 +149,9 @@ class EmojiPicker extends Component {
             this._scroller.classList.add('shown');
         }
 
+        this.state.modifiersSpread && this.suppressModifiers();
+        this.state.diversityPicker && this.closeDiversitiesMenu();
+
         this.proximity = getProximity(this.offsets, scrollTop, this.listHeight);
 
         const {
@@ -162,23 +167,22 @@ class EmojiPicker extends Component {
 
         this.setSeenCategory(activeCategory, inViewPort);
 
-        // this block deals with mismatches that are caused by fast scrolling
+        // this block deals is for most cases - we're not near a title change
         if (typeof proximityIndex !== 'number') {
             if (activeCategory !== active) {
                 this.setActiveCategory({ index: activeCategory });
             }
             return this.transformed = clearTransform(this.transformed);
         }
-
         const distance =  -(scrollTop - this.offsets[proximityIndex]),
             _activeName = _active.firstElementChild, // active category name
             currentIsFirst = proximityIndex === 0, // is this the first category?
             currentIsActive = proximityIndex === active, // is the current category the active one
-            scrollDirection = getScrollDirection({ distance, currentIsActive, currentIsFirst });
+            scrollDirection = hitAnotherCategory({ distance, currentIsActive, currentIsFirst });
 
-        if (scrollDirection === 'down') {
+        if (scrollDirection === 'next') {
             this.setActiveCategory({ index: proximityIndex});
-        } else if (scrollDirection === 'up') {
+        } else if (scrollDirection === 'prev') {
             this.setActiveCategory({ index: active -1 });
         }
 
