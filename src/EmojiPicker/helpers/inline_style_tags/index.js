@@ -4,9 +4,9 @@ import {
     EMOJI_SIZE
 } from '../../../constants';
 
-export default function inlineStyleTags({ width, height }) {
-    const pickerWidth = width || PICKER_WIDTH,
-        pickerHeight = height || PICKER_HEIGHT;
+export default function inlineStyleTags({ width, height } = {}) {
+    const pickerWidth = parseInt(width, 10) || PICKER_WIDTH,
+        pickerHeight = parseInt(height, 10) || PICKER_HEIGHT;
 
     return {
         picker: {
