@@ -15,8 +15,10 @@ function isElementInProximity({scrollTop, offset}) {
     return elementIsDown && elementIsUp; // logically not true, better naming needed
 }
 
-export default function getProximity(offsets, scrollTop, listHeight) {
+export default function getProximity(offsets, scrollTop = 0, listHeight = 0) {
     // gets the closest category
+
+    offsets = offsets || [0];
 
     let proximityIndex = null,
         activeCategory;
