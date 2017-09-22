@@ -19,27 +19,27 @@ class Emoji extends Component {
         this.onMouseUp = this.onMouseUp.bind(this);
     }
 
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
 
         const visibilityChanged = nextProps.hidden !== this.props.hidden,
             categoryVisibilityChanged = nextProps.categorySeen !== this.props.categorySeen,
             hasDiversities = this.hasDiversities,
-            activeModifierChanged = hasDiversities && nextProps.emojiProps.activeModifier !== this.props.emojiProps.activeModifier;
+            activeModifierChanged = hasDiversities && nextContext.activeModifier !== this.context.activeModifier;
 
         return visibilityChanged || categoryVisibilityChanged || activeModifierChanged;
     }
 
     onClick(e) {
-        const { emojiProps, emoji } = this.props;
-        const onEmojiClick = emojiProps.onEmojiClick;
+        const { emoji } = this.props;
+        const onEmojiClick = this.context.onEmojiClick;
 
         e.preventDefault();
         onEmojiClick && onEmojiClick(emoji.unified, emoji);
     }
 
     onMouseEnter() {
-        if (this.props.emojiProps.parent._emojiName) {
-            this.props.emojiProps.parent._emojiName.textContent = this.emoji.name;
+        if (this.context.parent._emojiName) {
+            this.context.parent._emojiName.textContent = this.emoji.name;
         }
 
         if (!this.hasDiversities) {
@@ -47,7 +47,7 @@ class Emoji extends Component {
         }
 
         this.onMouseEnterTimeout = setTimeout(() => {
-            this.props.emojiProps.openDiversitiesMenu(this.props.member);
+            this.context.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
@@ -59,8 +59,8 @@ class Emoji extends Component {
             return;
         }
 
-        if (this.props.emojiProps.parent._emojiName) {
-            this.props.emojiProps.parent._emojiName.textContent = '';
+        if (this.context.parent._emojiName) {
+            this.context.parent._emojiName.textContent = '';
         }
     }
 
@@ -76,7 +76,7 @@ class Emoji extends Component {
 
         this.diversitiesTimeout = setTimeout(() => {
             delete this.diversitiesTimeout;
-            this.props.emojiProps.openDiversitiesMenu(this.props.member);
+            this.context.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
@@ -92,8 +92,8 @@ class Emoji extends Component {
     }
 
     render() {
-        const { emoji, hidden, categorySeen, emojiProps } = this.props;
-        const { activeModifier, assetPath, emojiResolution } = emojiProps;
+        const { emoji, hidden, categorySeen } = this.props;
+        const { activeModifier, assetPath, emojiResolution } = this.context;
         let unified = emoji.unified;
 
         if (!categorySeen || hidden) {
@@ -124,9 +124,17 @@ Emoji.propTypes = {
     emoji: PropTypes.object.isRequired,
     hidden: PropTypes.bool,
     categorySeen: PropTypes.bool,
-    emojiProps: PropTypes.object,
     member: PropTypes.number.isRequired
+};
 
+Emoji.contextTypes = {
+    onEmojiClick: PropTypes.func,
+    parent: PropTypes.any,
+    assetPath: PropTypes.string,
+    activeModifier: PropTypes.string,
+    emojiResolution: PropTypes.number,
+    _emojiName: PropTypes.object,
+    openDiversitiesMenu: PropTypes.func
 };
 
 export default Emoji;

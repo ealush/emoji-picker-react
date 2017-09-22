@@ -5,20 +5,20 @@ import EmojiCategory from '../EmojiCategory';
 import './style.scss';
 
 class EmojiList extends Component {
-    shouldComponentUpdate(nextProps) {
+    shouldComponentUpdate(nextProps, nextState, {_emojiName, activeModifier}) {
         if (nextProps.modifiersSpread) {
             return false;
         }
 
-        if (nextProps.filter || (!nextProps.filter && this.props.filter)|| nextProps) {
+        if (nextProps.filter || (!nextProps.filter && this.props.filter)) {
             return true;
         }
 
-        if (nextProps.emojiProps._emojiName !== this.props.emojiProps._emojiName) {
+        if (_emojiName !== this.context._emojiName) {
             return true;
         }
 
-        if (nextProps.emojiProps.activeModifier !== this.props.emojiProps.activeModifier) {
+        if (activeModifier !== this.context.activeModifier) {
             return true;
         }
 
@@ -26,7 +26,7 @@ class EmojiList extends Component {
     }
 
     render() {
-        const { filter, emojiProps, onScroll, seenCategories, style } = this.props;
+        const { filter, onScroll, seenCategories, style } = this.props;
         const filterClass = filter ? ' filter' : '';
         return (
             <div className={`emoji-list${filterClass}`}
@@ -40,8 +40,7 @@ class EmojiList extends Component {
                             index={index}
                             key={index}
                             filter={filter}
-                            categorySeen={isCategorySeen}
-                            emojiProps={emojiProps}/>
+                            categorySeen={isCategorySeen}/>
                     );
                 })}
             </div>
@@ -51,9 +50,14 @@ class EmojiList extends Component {
 
 EmojiList.propTypes = {
     filter: PropTypes.object,
-    emojiProps: PropTypes.object.isRequired,
     onScroll: PropTypes.func.isRequired,
-    seenCategories: PropTypes.object.isRequired
+    seenCategories: PropTypes.object.isRequired,
+    style: PropTypes.object
+};
+
+EmojiList.contextTypes = {
+    _emojiName: PropTypes.object,
+    activeModifier: PropTypes.string
 };
 
 export default EmojiList;

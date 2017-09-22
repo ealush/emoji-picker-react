@@ -57,6 +57,13 @@ class EmojiPicker extends Component {
         this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
     }
 
+    getChildContext() {
+        const { assetPath, emojiResolution } = this.props;
+        const { activeModifier } = this.state;
+        const { openDiversitiesMenu, _emojiName } = this;
+        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
+    }
+
     componentDidMount() {
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
@@ -289,10 +296,8 @@ class EmojiPicker extends Component {
     render() {
         const { assetPath, emojiResolution } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
-        const { openDiversitiesMenu, closeDiversitiesMenu, _emojiName, pickerClassName, onModifierClick, onScroll, inlineStyle } = this;
-        const emojiProps = { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu },
-            visibleCategories = Object.assign({}, seenCategories, seenInSearch);
-
+        const { closeDiversitiesMenu, pickerClassName, onModifierClick, onScroll, inlineStyle } = this;
+        const visibleCategories = Object.assign({}, seenCategories, seenInSearch);
         const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
 
         return (
@@ -312,8 +317,7 @@ class EmojiPicker extends Component {
                         close={closeDiversitiesMenu}/>
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                     <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
-                    <EmojiList emojiProps={emojiProps}
-                        style={inlineStyle.list}
+                    <EmojiList style={inlineStyle.list}
                         filter={filter}
                         onScroll={onScroll}
                         seenCategories={visibleCategories}
@@ -332,6 +336,16 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number
+};
+
+EmojiPicker.childContextTypes = {
+    onEmojiClick: PropTypes.func,
+    parent: PropTypes.instanceOf(EmojiPicker),
+    assetPath: PropTypes.string,
+    activeModifier: PropTypes.string,
+    emojiResolution: PropTypes.number,
+    _emojiName: PropTypes.object,
+    openDiversitiesMenu: PropTypes.func
 };
 
 export default EmojiPicker;
