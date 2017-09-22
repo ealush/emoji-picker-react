@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { debounce } from 'throttle-debounce';
 import PropTypes from 'prop-types';
-import { stackFilter, textIndexInStack, reduceEmojis } from './helpers';
-import { ALL_KEYWORDS, KEYWORDS_SINGLE, FILTER_UPDATE_DEBOUNCE } from '../constants';
+import { stackFilter, textIndexInStack, reduceEmojis, findMatches } from './helpers';
+import { FILTER_UPDATE_DEBOUNCE } from '../constants';
 import './style.scss';
 
 class SearchBar extends Component {
@@ -17,7 +17,10 @@ class SearchBar extends Component {
 
     addToStack(currentFilter) {
 
-        if (this.filterStack[this.filterStack.length-1].text === currentFilter.text) {
+        const stack = this.filterStack,
+            stackLength = stack.length;
+
+        if (stackLength && stack[stackLength-1].text === currentFilter.text) {
             return;
         }
 
@@ -46,19 +49,32 @@ class SearchBar extends Component {
         let matches;
 
         if (stackIndex > -1) {
-            this.filterStack.splice(0, stackIndex);
-            matches = stackFilter(stackIndex, text, this.filterStack);
-            this.addToStack({ text, matches });
-            return this.onChange(matches);
-        } else {
-            this.filterStack = [];
+            this.filterStack.length = stackIndex + 1;
+            let skip = false;
+
+            // if the text is shorter than the last item in the stack
+            // but the full text is not in the stack
+            if (text.length < this.filterStack[stackIndex].text.length) {
+                skip = true;
+                this.filterStack.forEach((stackItem) => {
+                    if (stackItem.text === text) {
+                        skip = false;
+                    }
+                });
+            }
+
+            if (!skip) {
+                matches = stackFilter(stackIndex, text, this.filterStack);
+                if (Object.keys(matches).length) {
+                    this.addToStack({ text, matches });
+                    return this.onChange(matches);
+                }
+            }
         }
 
-        if (KEYWORDS_SINGLE.hasOwnProperty(text)) {
-            matches = KEYWORDS_SINGLE[text];
-        } else {
-            matches = ALL_KEYWORDS.filter((keyword) => keyword.indexOf(text) > -1);
-        }
+        matches = findMatches(text);
+
+        this.filterStack = [];
 
         if (!matches.length) {
             return this.onChange({});

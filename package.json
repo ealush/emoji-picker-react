@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {

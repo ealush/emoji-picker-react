@@ -3,6 +3,10 @@ export default function stackFilter(index, text, stack) {
         stackedItem = stack[index],
         prevMatches = stackedItem.matches;
 
+    if (stackedItem.text === text) {
+        return prevMatches;
+    }
+
     for (const category in prevMatches) {
         matches[category] = {};
         for (const emoji in prevMatches[category]) {
