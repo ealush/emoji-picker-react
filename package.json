@@ -46,7 +46,7 @@
     "mocha": "^3.5.0",
     "node-sass": "^4.5.3",
     "npm": "^5.4.2",
-    "react": "15.6.1",
+    "react": "15.6.2",
     "react-dom": "15.6.2",
     "react-test-renderer": "^15.6.1",
     "sass-loader": "^6.0.5",
