@@ -48,7 +48,7 @@
     "npm": "^5.4.2",
     "react": "15.6.2",
     "react-dom": "15.6.2",
-    "react-test-renderer": "^15.6.1",
+    "react-test-renderer": "^16.0.0",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
     "svg-url-loader": "^2.0.2",
