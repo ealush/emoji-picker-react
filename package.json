@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@storybook/addon-actions": "3.2.10",
-    "@storybook/react": "3.2.10",
+    "@storybook/react": "3.2.11",
     "babel-cli": "^6.24.1",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.0",
