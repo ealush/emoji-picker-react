@@ -43,7 +43,7 @@
     "eslint-plugin-react": "^7.1.0",
     "growl": "^1.10.2",
     "ignore-styles": "^5.0.1",
-    "mocha": "^3.5.0",
+    "mocha": "^4.0.0",
     "node-sass": "^4.5.3",
     "npm": "^5.4.2",
     "react": "15.6.2",
