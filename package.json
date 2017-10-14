@@ -39,7 +39,7 @@
     "css-loader": "^0.28.7",
     "emoji-js": "^3.2.2",
     "enzyme": "^2.9.1",
-    "eslint": "4.8.0",
+    "eslint": "4.9.0",
     "eslint-plugin-react": "^7.1.0",
     "growl": "^1.10.2",
     "ignore-styles": "^5.0.1",
