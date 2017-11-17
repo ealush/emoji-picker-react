@@ -26,7 +26,7 @@ class EmojiList extends Component {
     }
 
     render() {
-        const { filter, onScroll, seenCategories, style } = this.props;
+        const { filter, onScroll, seenCategories, style, preload } = this.props;
         const filterClass = filter ? ' filter' : '';
         return (
             <div className={`emoji-list${filterClass}`}
@@ -34,7 +34,7 @@ class EmojiList extends Component {
                 onScroll={onScroll}
                 style={style}>
                 {categories.map((category, index) => {
-                    const isCategorySeen = seenCategories[index];
+                    const isCategorySeen = preload || seenCategories[index];
                     return (
                         <EmojiCategory category={category}
                             index={index}
@@ -52,7 +52,8 @@ EmojiList.propTypes = {
     filter: PropTypes.object,
     onScroll: PropTypes.func.isRequired,
     seenCategories: PropTypes.object.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    preload: PropTypes.bool
 };
 
 EmojiList.contextTypes = {
