@@ -13,7 +13,7 @@ export default function textIndexInStack(text, stack) {
         return (textLength - 1);
     }
 
-    if (text.indexOf(stack[stackLast].text)) {
+    if (text.indexOf(stack[stackLast].text) !== -1) {
         return stackLast;
     }
 
