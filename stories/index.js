@@ -13,7 +13,7 @@ Give it a try by clicking the smiley face blow the textarea. :nerd_face:`;
 // eslint-disable-next-line no-undef
 storiesOf('Text area with picker', module)
     .add('Sample textarea with emoji picker', () => (
-        <div style={{maxWidth: '450px'}}>
+        <div>
             <EmojiTextarea value={text}/>
         </div>
     ))
@@ -27,6 +27,9 @@ storiesOf('Text area with picker', module)
 storiesOf('Standalone picker', module)
     .add('Top Navigation CDN hosted 32px/fastest', () => (
         <EmojiPicker onEmojiClick={action('emoji-click')}/>
+    ))
+    .add('Top Navigation [preload]', () => (
+        <EmojiPicker onEmojiClick={action('emoji-click')} preload/>
     ))
     .add('Left Navigation CDN hosted 64px/slower', () => (
         <EmojiPicker emojiResolution="64" nav="left" onEmojiClick={action('emoji-click')}/>

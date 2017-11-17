@@ -294,7 +294,7 @@ class EmojiPicker extends Component {
     }
 
     render() {
-        const { assetPath, emojiResolution } = this.props;
+        const { assetPath, emojiResolution, preload } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
         const { closeDiversitiesMenu, pickerClassName, onModifierClick, onScroll, inlineStyle } = this;
         const visibleCategories = Object.assign({}, seenCategories, seenInSearch);
@@ -322,6 +322,7 @@ class EmojiPicker extends Component {
                         onScroll={onScroll}
                         seenCategories={visibleCategories}
                         modifiersSpread={modifiersSpread}
+                        preload={preload}
                         ref={(list) => this._list = (list ? list._list : null)}/>
                 </div>
             </aside>
