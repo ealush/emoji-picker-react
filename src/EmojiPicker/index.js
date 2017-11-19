@@ -209,7 +209,7 @@ class EmojiPicker extends Component {
     onCategoryClick(e, index) {
         e && e.preventDefault();
         const _newActive = this._list.children[index];
-        _newActive.scrollIntoView({'behavior': 'smooth'});
+        _newActive.scrollIntoView({'behavior': 'smooth', 'block': 'start'});
         this.setActiveCategory({index});
         this.setSeenCategory(index);
     }
