@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "1.5.2",
+  "version": "1.5.3-rc.0",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -10,6 +10,8 @@
     "storybook": "start-storybook -p 9001",
     "build-storybook": "build-storybook",
     "build": "NODE_ENV=production webpack --config webpack.config.prod.js",
+    "build:universal": "NODE_ENV=production webpack --config webpack.config.universal.js",
+    "build:all": "npm run build && npm run build:universal",
     "build:watch": "NODE_ENV=production webpack --config webpack.config.prod.js --watch",
     "eslint": "eslint -c .eslintrc './src/**/*.js'; exit 0"
   },
@@ -41,6 +43,7 @@
     "enzyme": "^2.9.1",
     "eslint": "4.11.0",
     "eslint-plugin-react": "^7.1.0",
+    "extract-text-webpack-plugin": "^3.0.2",
     "growl": "^1.10.2",
     "ignore-styles": "^5.0.1",
     "mocha": "^4.0.0",
