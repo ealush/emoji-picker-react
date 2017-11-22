@@ -1,6 +1,6 @@
 const path = require('path'),
     webpack = require('webpack'),
-    ExtractTextPlugin = require("extract-text-webpack-plugin");
+    ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -25,7 +25,7 @@ module.exports = {
         },
         {
             test: /\.scss$/,
-            use:ExtractTextPlugin.extract({fallback:"style-loader",use:["css-loader","sass-loader"]}),
+            use:ExtractTextPlugin.extract({fallback:'style-loader', use:['css-loader', 'sass-loader']}),
             include: path.resolve(__dirname, '../')
         },
         {
@@ -37,6 +37,6 @@ module.exports = {
     },
     plugins: [
         new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin( "style.css" )
+        new ExtractTextPlugin('style.css')
     ]
 };

@@ -336,7 +336,8 @@ EmojiPicker.propTypes = {
     assetPath: PropTypes.string,
     emojiResolution: PropTypes.number,
     width: PropTypes.number,
-    height: PropTypes.number
+    height: PropTypes.number,
+    preload: PropTypes.boolean
 };
 
 EmojiPicker.childContextTypes = {

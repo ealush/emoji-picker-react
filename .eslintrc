@@ -24,7 +24,10 @@
         "react": true,
         "expect": true,
         "it": true,
-        "describe": true
+        "describe": true,
+        "global": true,
+        "__dirname": true,
+        "module": true
     },
     "rules": {
         "arrow-body-style": 2,

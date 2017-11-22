@@ -7,7 +7,6 @@ webpack.config.prod.js
 webpack.config.js
 storybook-static
 static
-src
 .storybook
 .env
 .eslintignore

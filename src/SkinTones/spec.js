@@ -1,3 +1,4 @@
+import React from 'react';
 import Skintones from './';
 import { shallow } from 'enzyme';
 import { modifiers } from '../emoji-data';
