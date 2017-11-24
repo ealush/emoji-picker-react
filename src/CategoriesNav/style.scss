@@ -71,8 +71,7 @@
                 }
 
                 &:after {
-                    background-color: $md-green-200;
-                    width: 100%;
+                    opacity: 1;
                 }
             }
 
@@ -86,20 +85,8 @@
                 transition: background-position .2s;
             }
 
-            &:after {
-                content: '';
-                background-color: $md-blue-200;
-                position: absolute;
-                bottom: 0;
-                width: 0;
-                height: 2px;
-                left: 50%;
-                transform: translateX(-50%);
-                transition: width .2s, background-color .2s;
-            }
-
             &.people:before     { background-image: url("./svg/people.svg"); }
-            &.foods:before       { background-image: url("./svg/foods.svg"); }
+            &.foods:before      { background-image: url("./svg/foods.svg"); }
             &.nature:before     { background-image: url("./svg/nature.svg"); }
             &.activity:before   { background-image: url("./svg/activity.svg"); }
             &.objects:before    { background-image: url("./svg/objects.svg"); }
@@ -109,13 +96,37 @@
         }
     }
 
-    &.people   nav .people:after   { width: 100%; }
-    &.foods     nav .foods:after     { width: 100%; }
-    &.nature   nav .nature:after   { width: 100%; }
-    &.activity nav .activity:after { width: 100%; }
-    &.objects  nav .objects:after  { width: 100%; }
-    &.places   nav .places:after   { width: 100%; }
-    &.flags    nav .flags:after    { width: 100%; }
-    &.regional nav .regional:after { width: 100%; }
-    &.symbols  nav .symbols:after  { width: 100%; }
+    nav:after, nav a:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        height: 2px;
+        border-radius: 5px;
+        transition: transform .2s, opacity .2s;
+    }
+
+    nav:after {
+        background-color: $md-blue-200;
+        width: calc(100% / 8);
+        left: 0;
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    nav a:after {
+        background-color: $md-green-200;
+        width: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+    }
+
+    &.people   nav:after { transform: translateX(0);    }
+    &.foods    nav:after { transform: translateX(100%); }
+    &.nature   nav:after { transform: translateX(200%); }
+    &.activity nav:after { transform: translateX(300%); }
+    &.objects  nav:after { transform: translateX(400%); }
+    &.places   nav:after { transform: translateX(500%); }
+    &.flags    nav:after { transform: translateX(600%); }
+    &.symbols  nav:after { transform: translateX(700%); }
 }

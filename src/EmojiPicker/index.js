@@ -187,7 +187,7 @@ class EmojiPicker extends Component {
             currentIsActive = proximityIndex === active, // is the current category the active one
             scrollDirection = hitAnotherCategory({ distance, currentIsActive, currentIsFirst });
 
-        if (scrollDirection === 'next') {
+        if (this.delayedCategory === proximityIndex || scrollDirection === 'next') {
             this.setActiveCategory({ index: proximityIndex});
         } else if (scrollDirection === 'prev') {
             this.setActiveCategory({ index: active -1 });
@@ -210,7 +210,8 @@ class EmojiPicker extends Component {
         e && e.preventDefault();
         const _newActive = this._list.children[index];
         _newActive.scrollIntoView({'behavior': 'smooth', 'block': 'start'});
-        this.setActiveCategory({index});
+        // this.setActiveCategory({index});
+        this.delayedCategory = index;
         this.setSeenCategory(index);
     }
 
@@ -337,7 +338,7 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    preload: PropTypes.boolean
+    preload: PropTypes.bool
 };
 
 EmojiPicker.childContextTypes = {
