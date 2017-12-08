@@ -42,7 +42,7 @@ class Emoji extends Component {
             this.context.parent._emojiName.textContent = this.emoji.name;
         }
 
-        if (!this.hasDiversities) {
+        if (!this.hasDiversities || this.props.disableDiversityPicker) {
             return;
         }
 
@@ -68,7 +68,7 @@ class Emoji extends Component {
 
         clearTimeout(this.onMouseEnterTimeout);
 
-        if (!this.hasDiversities) {
+        if (!this.hasDiversities || this.props.disableDiversityPicker) {
             return;
         }
 
@@ -124,7 +124,8 @@ Emoji.propTypes = {
     emoji: PropTypes.object.isRequired,
     hidden: PropTypes.bool,
     categorySeen: PropTypes.bool,
-    member: PropTypes.number.isRequired
+    member: PropTypes.number.isRequired,
+    disableDiversityPicker: PropTypes.bool
 };
 
 Emoji.contextTypes = {
@@ -134,7 +135,8 @@ Emoji.contextTypes = {
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     _emojiName: PropTypes.object,
-    openDiversitiesMenu: PropTypes.func
+    openDiversitiesMenu: PropTypes.func,
+    disableDiversityPicker: PropTypes.bool
 };
 
 export default Emoji;

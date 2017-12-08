@@ -5,7 +5,12 @@ import emojiAccessor from '../emoji-data/emoji_accessor';
 import { bgImage } from '../Emoji/helpers';
 import './style.scss';
 
-function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, close }) {
+function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, close, disable }) {
+
+    if (disable) {
+        return null;
+    }
+
     const className = `diversity-picker${index ? ' shown' : ''}`,
         emoji = emojiAccessor(emojis[index]);
 
@@ -41,7 +46,8 @@ DiversityPicker.propTypes = {
     assetPath: PropTypes.string,
     emojiResolution: PropTypes.number,
     onEmojiClick: PropTypes.func.isRequired,
-    close: PropTypes.func.isRequired
+    close: PropTypes.func.isRequired,
+    disable: PropTypes.bool
 };
 
 export default DiversityPicker;

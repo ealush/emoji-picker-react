@@ -21,6 +21,8 @@ import { getOffsets,
     inlineStyleTags } from './helpers';
 
 const isFFMac = isFirefoxOnMac();
+const CLASSNAME_CATEGORY_INDEX = 2;
+const CLASSNAME_MODIFIER_INDEX = 3;
 
 class EmojiPicker extends Component {
 
@@ -40,7 +42,7 @@ class EmojiPicker extends Component {
 
         this.active = null; // this is for updating the category name
         this.transformed = [];
-        this.pickerClassName = `emoji-picker nav-${props.nav ? props.nav : 'top'}`;
+        this.pickerClassNames = ['emoji-picker', `nav-${props.nav ? props.nav : 'top'}`, '', ''];
         this.inlineStyle = inlineStyleTags({
             width: parseInt(props.width, 10),
             height: parseInt(props.height, 10)
@@ -58,10 +60,10 @@ class EmojiPicker extends Component {
     }
 
     getChildContext() {
-        const { assetPath, emojiResolution } = this.props;
+        const { assetPath, emojiResolution, disableDiversityPicker } = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu, _emojiName } = this;
-        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu };
+        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, _emojiName, openDiversitiesMenu, disableDiversityPicker };
     }
 
     componentDidMount() {
@@ -88,6 +90,11 @@ class EmojiPicker extends Component {
         }
     }
 
+    setPickerClassname(index, nextValue = '') {
+        this.pickerClassNames[index] = nextValue;
+        this._picker.setAttribute('class', this.pickerClassNames.join(' '));
+    }
+
     setActiveCategory({index}) {
 
         if (!categories[index]) { return; }
@@ -105,13 +112,12 @@ class EmojiPicker extends Component {
             index = 0;
         }
 
-        this._picker.setAttribute('class', `${this.pickerClassName} ${categories[index].name}`);
-
+        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX, categories[index].name);
         this.active = index;
     }
 
     unsetActiveCategory() {
-        this._picker.setAttribute('class', this.pickerClassName);
+        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX);
     }
 
     setSeenCategory(index, categories) {
@@ -210,7 +216,6 @@ class EmojiPicker extends Component {
         e && e.preventDefault();
         const _newActive = this._list.children[index];
         _newActive.scrollIntoView({'behavior': 'smooth', 'block': 'start'});
-        // this.setActiveCategory({index});
         this.delayedCategory = index;
         this.setSeenCategory(index);
     }
@@ -236,6 +241,8 @@ class EmojiPicker extends Component {
         if (modifier === this.state.activeModifier) {
             modifier = null;
         }
+
+        this.setPickerClassname(CLASSNAME_MODIFIER_INDEX, modifier);
         this.setState({ activeModifier: modifier, modifiersSpread: false });
     }
 
@@ -295,14 +302,14 @@ class EmojiPicker extends Component {
     }
 
     render() {
-        const { assetPath, emojiResolution, preload } = this.props;
+        const { assetPath, emojiResolution, preload, customCategoryNames, disableDiversityPicker } = this.props;
         const { filter, activeModifier, seenCategories, seenInSearch, diversityPicker, modifiersSpread } = this.state;
-        const { closeDiversitiesMenu, pickerClassName, onModifierClick, onScroll, inlineStyle } = this;
+        const { closeDiversitiesMenu, pickerClassNames, onModifierClick, onScroll, inlineStyle } = this;
         const visibleCategories = Object.assign({}, seenCategories, seenInSearch);
         const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
 
         return (
-            <aside className={pickerClassName}
+            <aside className={pickerClassNames.join(' ')}
                 style={this.inlineStyle.picker}
                 ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}/>
@@ -315,7 +322,8 @@ class EmojiPicker extends Component {
                         assetPath={assetPath}
                         emojiResolution={emojiResolution}
                         onEmojiClick={this.onEmojiClick}
-                        close={closeDiversitiesMenu}/>
+                        close={closeDiversitiesMenu}
+                        disable={disableDiversityPicker}/>
                     <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                     <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
                     <EmojiList style={inlineStyle.list}
@@ -324,6 +332,7 @@ class EmojiPicker extends Component {
                         seenCategories={visibleCategories}
                         modifiersSpread={modifiersSpread}
                         preload={preload}
+                        customCategoryNames={customCategoryNames}
                         ref={(list) => this._list = (list ? list._list : null)}/>
                 </div>
             </aside>
@@ -338,7 +347,9 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
-    preload: PropTypes.bool
+    preload: PropTypes.bool,
+    customCategoryNames: PropTypes.object,
+    disableDiversityPicker: PropTypes.bool
 };
 
 EmojiPicker.childContextTypes = {
@@ -348,7 +359,8 @@ EmojiPicker.childContextTypes = {
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     _emojiName: PropTypes.object,
-    openDiversitiesMenu: PropTypes.func
+    openDiversitiesMenu: PropTypes.func,
+    disableDiversityPicker: PropTypes.bool
 };
 
 export default EmojiPicker;
