@@ -49,6 +49,34 @@ A word on height: The height you determine by the height property, is of the emo
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/5.png)
 
+## Using custom category titles
+If you want to modify the currently existing category names, simply pass a mapping object with the names you would like to replace, for example:
+
+```js
+const customNames = {
+    foods: 'food and drink',
+    nature: 'outdoors',
+    objects: 'stuff'
+};
+
+<EmojiPicker customCategoryNames={customNames}/>
+```
+
+Replacing the title will also remove the hash (`#`) sign from the title.
+
+Here is the list of all category names, accepted by customCategoryNames:
+`people`, `foods`, `nature`, `activity`, `objects`, `places`, `flags`, `symbols`
+
+## Disabling the diversity picker
+
+![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
+
+The per emoji diversity gets triggered on hover or long click by default. By passing the prop `disableDiversityPicker` to the picker, it will be disabled and not get triggered.
+
+```js
+<EmojiPicker disableDiversityPicker/>
+```
+
 ## Moving the categories panel around
 
 ```js
@@ -57,12 +85,21 @@ A word on height: The height you determine by the height property, is of the emo
 <EmojiPicker nav="bottom"/>
 ```
 
+## Preloading all images
+By default, each emoji category is loaded when first viewing it to reduce initial load time and improve perceived performance. This can sometimes take a while. In some cases you would want to load all images at once, for example, when lazy loading the picker in the background regardless of user interaction.
+
+In which case, simply pass the `preload` prop:
+
+```js
+<EmojiPicker preload/>
+```
+
 ## Getting the clicked-on emoji
 In order to use the picker in your application, you need a way to grab the name and code of the clicked-on emoji. To do this, you just need to pass the `onEmojiClick` prop. It should be a callback function to your application, and it should get two arguments: the emoji code, and the rest of the emoji data.
 
 Clicking on an emoji should result in a similar output:
 ```js
-["261d-1f3ff", Object]
+["261d-1f3ff", Object, Event]
     0: "261d-1f3ff"
     ▶1: Object
         shortname: "point_up"
