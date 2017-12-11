@@ -278,7 +278,9 @@ class EmojiPicker extends Component {
         });
     }
 
-    onEmojiClick(unified, emoji) {
+    onEmojiClick(unified, emoji, e) {
+
+        e.preventDefault();
 
         const usedModifiers = modifiers.filter((modifier) => unified.indexOf(modifier) > -1);
 
@@ -286,7 +288,7 @@ class EmojiPicker extends Component {
             const name = `${emoji.name}::${skinTones[usedModifiers[0]]}`;
             return this.props.onEmojiClick(unified, Object.assign({}, emoji, {
                 name: name || emoji.name
-            }));
+            }), e);
         } else if (this.state.activeModifier && emoji.hasOwnProperty('diversities')) {
             const modifier = emoji.diversities.filter((diversity) => diversity.indexOf(this.state.activeModifier) > -1);
 
@@ -294,11 +296,11 @@ class EmojiPicker extends Component {
                 const name = `${emoji.name}::${skinTones[this.state.activeModifier]}`;
                 return this.props.onEmojiClick(modifier[0], Object.assign({}, emoji, {
                     name: name || emoji.name
-                }));
+                }), e);
             }
         }
 
-        return this.props.onEmojiClick(unified, emoji);
+        return this.props.onEmojiClick(unified, emoji, e);
     }
 
     render() {
