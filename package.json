@@ -41,7 +41,7 @@
     "css-loader": "^0.28.7",
     "emoji-js": "^3.2.2",
     "enzyme": "^2.9.1",
-    "eslint": "4.11.0",
+    "eslint": "4.12.0",
     "eslint-plugin-react": "^7.1.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "growl": "^1.10.2",
