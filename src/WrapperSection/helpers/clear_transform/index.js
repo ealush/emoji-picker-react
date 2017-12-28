@@ -1,7 +1,7 @@
 export default function clearTransform(transformed, keep) {
 
-    if (!transformed) {
-        return;
+    if (!Array.isArray(transformed) || transformed.length === 0) {
+        return [];
     }
 
     const newList = [];
