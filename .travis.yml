@@ -4,3 +4,14 @@ node_js:
 script:
 - yarn test
 - yarn build
+
+deploy:
+  provider: npm
+  email: evyatar.a@fiverr.com
+  skip_cleanup: true
+  api_key:
+    secure: BldzfghivtNwJBp25S3NKdSWIaVWghBTOkbZ41i0N3e5ANwQ3Y683L/77TjPBlJPg0x3jhhgI6y1Ep274bd9fOQzGp/zWSWZrV4n+HBGYnY1hhKX1nANuqWhU0GM2wA93Prh2ZNEapeIZKaji29V31t9ZBUkn8bmv4eI8xH/TS0pth3qpQQe+4Z5mMDXyorPMFkraqD/jCdudsHVWq9J5J3Xs5NaUhxoTKEHAO7YAc+O55S0QXhKZee/H1yO+bUHm6RpxEV8GuR3zD5hUYiGiEhjxw2PO9js1ToJD9X1rRj6cNPWXcaEiFUnYFfJdJ0EIqksWqH/XTDDS0ddRgOyUdmevEQJZqcL3b605di76mXsWAp0HDkUOtJ2OaJvB+8s3qoZkoVEXbWyoNlbkpKJQh/15E6EQE17Kb/p8P41zBDtaOwnhkOZbEkQgpaRazqyRLWb6//N1RMOyK+OahrsCcsylyhWDldNU64Iyq+xhMfDdCzTwzkiqlU/i258WHbc+LXV/MGYDQqrhBg7a1wCyMX8dtS5sapIbIkaaAEQVjXelObsAdzcOvmMJ8lEiSBmGKCcwK3XZbU2iGv4ALMYbS+7IwbmQYiuQtx5L+p7s2wqlu6liiImjO3LyesyGNq8WLOrlADbIpwuV8Ozzn34b8DBVrQqPITyHOFbV3QPVoU=
+  on:
+    repo: ealush/emoji-picker
+    branch: master
+    node: '8'
