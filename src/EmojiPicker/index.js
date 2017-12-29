@@ -124,7 +124,7 @@ class EmojiPicker extends Component {
 
     onCategoryClick(e, index) {
         e && e.preventDefault();
-        this.delayedCategory = index;
+        this.setState({ delayedCategory: index });
         this.setSeenCategory(index);
         this._wrapperSection.scrollToCategoryByIndex(index);
     }
@@ -226,7 +226,7 @@ class EmojiPicker extends Component {
                 <div className="bar-wrapper">
                     <SkinTones onModifierClick={this.onModifierClick}
                         activeModifier={this.state.activeModifier}
-                        spread={this.state.modifiersSpread} />
+                        spread={this.state.modifiersSpread}/>
                     <SearchBar onChange={this.onSearch}/>
                 </div>
                 <WrapperSection filter={this.state.filter}
@@ -241,6 +241,7 @@ class EmojiPicker extends Component {
                     setActiveCategory={this.setActiveCategory}
                     setSeenInSearch={this.setSeenInSearch}
                     activeCategory={this.state.activeCategory}
+                    delayedCategory={this.state.delayedCategory}
                     preload={preload}/>
             </aside>
         );

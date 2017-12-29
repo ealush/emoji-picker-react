@@ -88,7 +88,7 @@ class WrapperSection extends Component {
             currentIsActive = proximityIndex === active, // is the current category the active one
             scrollDirection = hitAnotherCategory({ distance, currentIsActive, currentIsFirst });
 
-        if (this.delayedCategory === proximityIndex || scrollDirection === 'next') {
+        if (this.props.delayedCategory === proximityIndex || scrollDirection === 'next') {
             this.props.setActiveCategory({ index: proximityIndex});
         } else if (scrollDirection === 'prev') {
             this.props.setActiveCategory({ index: active -1 });
@@ -115,7 +115,7 @@ class WrapperSection extends Component {
 
     scrollToCategoryByIndex(index) {
         const _newActive = this._list.children[index];
-        _newActive.scrollIntoView({ behavior: 'smooth' });
+        _newActive.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     scrollTop() {
@@ -179,6 +179,7 @@ WrapperSection.propTypes = {
     visibleCategories: PropTypes.object,
     modifiersSpread: PropTypes.bool,
     activeCategory: PropTypes.number,
+    delayedCategory: PropTypes.number,
     preload: PropTypes.bool
 };
 

@@ -115,7 +115,7 @@ class EmojiTextarea extends Component {
                     <footer>
                         <CharCount curr={curr} max={1500}/>
                         <SmileyFace onClick={this.onTriggerClick}/>
-                        {pickerOpen && <EmojiPicker width={310} height={260} onEmojiClick={this.onEmojiClick} ref={(picker) => this._picker = picker}/>}
+                        {pickerOpen && <EmojiPicker width={310} height={260} onEmojiClick={this.onEmojiClick} preload ref={(picker) => this._picker = picker}/>}
                     </footer>
                 </div>
             </div>
