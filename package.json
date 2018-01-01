@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "1.6.6",
+  "version": "1.6.7",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -16,14 +16,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ealush/emoji-picker.git"
+    "url": "git+https://github.com/ealush/emoji-picker-react.git"
   },
   "author": "Evyatar Alush",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ealush/emoji-picker/issues"
+    "url": "https://github.com/ealush/emoji-picker-react/issues"
   },
-  "homepage": "https://github.com/ealush/emoji-picker#readme",
+  "homepage": "https://github.com/ealush/emoji-picker-react#readme",
   "dependencies": {
     "babel-runtime": "^6.25.0",
     "throttle-debounce": "^1.0.1"
