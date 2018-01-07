@@ -1,6 +1,6 @@
 # React Emoji Picker
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker)
+[![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker-react.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker-react)
 
 [Live demo](https://ealush.github.io/emoji-picker/)
 
