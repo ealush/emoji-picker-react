@@ -5,6 +5,10 @@ import { categories, modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
+import {
+    EMOJI_BG_SIZE,
+    EMOJI_PADDING
+} from '../constants';
 
 import './picker.scss';
 import {
@@ -35,7 +39,9 @@ class EmojiPicker extends Component {
         this.pickerClassNames = ['emoji-picker', `nav-${props.nav ? props.nav : 'top'}`, '', ''];
         this.inlineStyle = inlineStyleTags({
             width: parseInt(props.width, 10),
-            height: parseInt(props.height, 10)
+            height: parseInt(props.height, 10),
+            emojiSize: props.emojiSize || EMOJI_BG_SIZE,
+            emojiPadding: props.emojiPadding || EMOJI_PADDING
         });
 
         this.onCategoryClick = this.onCategoryClick.bind(this);
@@ -51,10 +57,12 @@ class EmojiPicker extends Component {
     }
 
     getChildContext() {
-        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames } = this.props;
+        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames, emojiSize, emojiPadding} = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
-        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
+        const overrideEmojiSize = EMOJI_BG_SIZE !== emojiSize || EMOJI_PADDING !== emojiPadding;
+        const emojiStyle = {backgroundSize: `${emojiSize}px`, padding: `${emojiPadding}px`}
+        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames, overrideEmojiSize, emojiStyle };
     }
 
     componentDidMount() {
@@ -257,7 +265,9 @@ EmojiPicker.propTypes = {
     height: PropTypes.number,
     preload: PropTypes.bool,
     customCategoryNames: PropTypes.object,
-    disableDiversityPicker: PropTypes.bool
+    disableDiversityPicker: PropTypes.bool,
+    emojiSize: PropTypes.number,
+    emojiPadding: PropTypes.number
 };
 
 EmojiPicker.childContextTypes = {
@@ -268,7 +278,9 @@ EmojiPicker.childContextTypes = {
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     openDiversitiesMenu: PropTypes.func,
-    disableDiversityPicker: PropTypes.bool
+    disableDiversityPicker: PropTypes.bool,
+    overrideEmojiSize: PropTypes.bool,
+    emojiStyle: PropTypes.object
 };
 
 export default EmojiPicker;

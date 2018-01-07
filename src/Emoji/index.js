@@ -103,9 +103,14 @@ class Emoji extends Component {
 
         unified = unifiedWithModifier(emoji, activeModifier);
 
-        const style = bgImage({ unified, assetPath, emojiResolution }),
-            className = `emoji${this.hasDiversities ? ' has-diversities' : ''}`;
+        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}`;
+
+        let style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;
+
+        if (this.context.overrideEmojiSize) {
+            style = Object.assign({}, style, this.context.emojiStyle);
+        }
 
         return (
             <a href="#!"
@@ -136,7 +141,9 @@ Emoji.contextTypes = {
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     openDiversitiesMenu: PropTypes.func,
-    disableDiversityPicker: PropTypes.bool
+    disableDiversityPicker: PropTypes.bool,
+    overrideEmojiSize: PropTypes.bool,
+    emojiStyle: PropTypes.object
 };
 
 export default Emoji;
