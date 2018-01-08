@@ -30,7 +30,6 @@ class EmojiPicker extends Component {
             seenCategories: {
                 0: true
             },
-            activeCategory: 0,
             seenInSearch: {},
             modifiersSpread: false
         };
@@ -66,7 +65,7 @@ class EmojiPicker extends Component {
     }
 
     componentDidMount() {
-        this.setActiveCategory({index: 0});
+        this.setActiveCategory({ index: 0 });
     }
 
     setPickerClassname(index, nextValue = '') {
