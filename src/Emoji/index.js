@@ -95,15 +95,11 @@ class Emoji extends Component {
         const { emoji, hidden, categorySeen } = this.props;
         const { activeModifier, assetPath, emojiResolution } = this.context;
         let unified = emoji.unified;
-
-        if (!categorySeen || hidden) {
-            const hiddenClass = hidden ? ' hidden' : '';
-            return <div className={`emoji${hiddenClass}`}/>;
-        }
+        const shownClass = (categorySeen && !hidden) ? ' shown' : '';
 
         unified = unifiedWithModifier(emoji, activeModifier);
 
-        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}`;
+        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
 
         let style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;

@@ -10,6 +10,7 @@ function CategoriesNav({onClick}) {
         <nav>{
             categories.map((category, index) => (
                 <a href="#!" className={category.name} key={index} onClick={(e) => onClick(e, index)}>
+                    <i/>
                     <span className="hidden">{category.name}</span>
                 </a>
             ))

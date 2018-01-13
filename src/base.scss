@@ -1,15 +1,64 @@
 @import './colors.scss';
-$picker_width: 240px;
-$picker_height: 240px;
-$nav_item_size: 35px;
-$diversity_picker_size: 35px;
-$emoji_size: 20px;
-$emoji_pad: 7px;
-$hover_color: $md-blue-100;
-$picker_bg: $md-grey-50;
-$category_name_height: 25px;
-$footer_bg: $md-grey-200;
-$nav_bg: $md-grey-200;
-$shortname-color: $md-grey-500;
-$modifier_size: 10px;
-$search_bar_height: 35px;
+
+// Border
+$border_main: $md-grey-200 !default;
+$border_dark: $md-grey-300 !default;
+$border_diversity_picker: $border_main !default;
+$border_emoji_picker: $border_main !default;
+$border_filter: $border_main !default;
+$border_filter_focus: $border_dark !default;
+
+// Colors & Background Colors
+$bg_picker: $md-white !default;
+$bg_category_name: $bg_picker !default;
+$bg_footer: $bg_picker !default;
+$bg_nav: $bg_picker !default;
+
+$bg_diversity_picker: $md-grey-50 !default;
+$bg_diversity_indicator: $md-grey-100 !default;
+$color_filter_placeholder: $md-grey-300 !default;
+$bg_scroller: $md-grey-400 !default;
+$color_filter_input: $md-grey-500 !default;
+$color_shortname: $md-grey-500 !default;
+$bg_emoji_hover: $md-blue-100 !default;
+$color_nav_underline_active: $md-blue-200 !default;
+$color_nav_underline_hover: $md-green-200 !default;
+
+// Opacity
+$opacity_category_name: .9 !default;
+
+// Padding
+$padding_main: 10px !default;
+$padding_emoji: 5px !default;
+$padding_emoji_list: 5px !default;
+$padding_category_name: $padding_emoji_list * 2 !default;
+$padding_nav: $padding_main !default;
+$padding_search_bar: $padding_main !default;
+
+// Width / Height
+$size_emoji: 20px !default;
+$size_modifier: 10px !default;
+$height_category_name: 30px !default;
+$height_diversity_picker: 30px !default;
+$height_footer: 10px !default;
+$height_nav_item: 45px !default;
+$height_picker: 240px !default;
+$height_search_bar: 45px !default;
+$width_nav_item: 20px !default;
+$width_picker: 280px !default;
+
+// Position
+$left_magnifier: $padding_search_bar * 2 !default;
+$right_skin_tone: $padding_search_bar * 2 !default;
+$top_magnifier: 15px !default;
+$top_skin_tone: 16px !default;
+
+
+:export {
+    height_category_name: $height_category_name;
+    width_picker: $width_picker;
+    height_picker: $height_picker;
+    size_emoji: $size_emoji;
+    padding_emoji: $padding_emoji;
+    padding_emoji_list: $padding_emoji_list;
+}

@@ -1,12 +1,14 @@
 import { keywords } from '../emoji-data';
 import keywordsSingleChar from '../SearchBar/helpers/init_keywords_single';
+import * as scss from '../base.scss';
 
 // view
-export const HEADER_HEIGHT = 25;
-export const PICKER_WIDTH = 240;
-export const PICKER_HEIGHT = 240;
-export const EMOJI_BG_SIZE = 20;
-export const EMOJI_PADDING = 7;
+export const HEADER_HEIGHT = parseInt(scss.height_category_name, 10);
+export const PICKER_WIDTH = parseInt(scss.width_picker, 10);
+export const PICKER_HEIGHT = parseInt(scss.height_picker, 10);
+export const EMOJI_BG_SIZE = parseInt(scss.size_emoji, 10);
+export const EMOJI_PADDING = parseInt(scss.padding_emoji, 10);
+export const LIST_PADDING = parseInt(scss.padding_emoji_list, 10);
 export const MIN_SCROLLBAR_HEIGHT_PADDED = 15;
 
 // timers

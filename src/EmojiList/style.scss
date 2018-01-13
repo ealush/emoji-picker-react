@@ -3,7 +3,8 @@
 .emoji-picker {
     .emoji-list {
         width: 100%;
-        height: $picker_height;
+        height: $height_picker;
+        padding: 0;
         overflow-x: hidden;
         box-sizing: border-box;
         -ms-overflow-style: none;
@@ -20,14 +21,14 @@
         &.filter {
             &:before {
                 content: '';
-                background: $md-grey-50;
+                background: $bg_category_name;
                 position: absolute;
                 left: 0;
                 right: 0;
                 top: 0;
-                height: 25px;
+                height: $height_category_name;
                 z-index: 1;
-                opacity: .9;
+                opacity: $opacity_category_name;
             }
 
             .category-name {

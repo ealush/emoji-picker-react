@@ -2,9 +2,8 @@ const path = require('path'),
     webpack = require('webpack');
 
 module.exports = {
-    entry: {
-        index: ['./src/index.js']
-    },
+    entry: './src/index.js',
+    devtool: 'source-map',
     externals: {
         'react': 'react',
         'throttle-debounce': 'throttle-debounce'
@@ -12,7 +11,7 @@ module.exports = {
     target: 'node',
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: '[name].js',
+        filename: 'index.js',
         library: 'EmojiPicker',
         libraryTarget: 'umd'
     },
@@ -35,6 +34,9 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin()
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            sourceMap: true
+        })
     ]
 };

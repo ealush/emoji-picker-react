@@ -2,10 +2,11 @@ const path = require('path'),
     webpack = require('webpack'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const extractScss = new ExtractTextPlugin('style.scss');
+
 module.exports = {
-    entry: {
-        index: ['./src/index.js']
-    },
+    entry: './src/index.js',
+    devtool: 'source-map',
     externals: {
         'react': 'react',
         'throttle-debounce': 'throttle-debounce'
@@ -13,7 +14,7 @@ module.exports = {
     target: 'node',
     output: {
         path: path.join(__dirname, 'dist/universal'),
-        filename: '[name].js',
+        filename: 'index.js',
         library: 'EmojiPicker',
         libraryTarget: 'umd'
     },
@@ -25,8 +26,8 @@ module.exports = {
         },
         {
             test: /\.scss$/,
-            use:ExtractTextPlugin.extract({fallback:'style-loader', use:['css-loader', 'sass-loader']}),
-            include: path.resolve(__dirname, '../')
+            use: extractScss.extract({fallback:'style-loader', use:['css-loader']}),
+            exclude: /dist/
         },
         {
             test: /\.(js|jsx)$/,
@@ -36,7 +37,10 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.optimize.UglifyJsPlugin(),
-        new ExtractTextPlugin('style.css')
+        new webpack.optimize.UglifyJsPlugin({
+            minimize: true,
+            sourceMap: true
+        }),
+        extractScss
     ]
 };
