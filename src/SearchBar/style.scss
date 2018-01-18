@@ -12,10 +12,10 @@
 
         input {
             padding: 5px 5px 5px 35px;
+            margin: 0;
             box-sizing: border-box;
             color: $color_filter_input;
             width: 100%;
-            border: 0;
             outline: none;
             border: 1px solid $border_filter;
             border-radius: 5px;
@@ -28,17 +28,17 @@
             &:focus {
                 border: 1px solid $border_filter_focus;
 
-                + i {
+                + i:before {
                     opacity: 1;
                 }
             }
 
         }
 
-        i {
+        i:before {
             content: '';
             background-repeat: no-repeat;
-            background-image: url($bg_svg_find);
+            background-image: url($bg_img_find);
             background-position: 50% 50%;
             background-size: 15px 15px;
             height: 15px;

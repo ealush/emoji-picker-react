@@ -3,6 +3,9 @@
 .emoji-picker {
 
     ul.skin-tones {
+        position: absolute;
+        right: 0;
+
 
         &.spread {
             li {
@@ -15,16 +18,14 @@
             top: $top_skin_tone;
             right: $right_skin_tone;
             z-index: 3;
-            margin-left: 5px;
             padding: 1px;
             border-radius: 3px;
             opacity: 0;
             transition: transform .4s, opacity .3s;
 
             &.selected {
-                background-color: $md-white;
                 opacity: 1;
-                transform: scale(1.6);
+                transform: scale(1.5);
             }
 
             &.neutral a { background-color: $md-amber-200; }

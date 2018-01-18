@@ -22,7 +22,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
 
                 if (spread) {
                     if (isSelected) {
-                        style.transform = `translateX(${-index*20}px) scale(1.6)`;
+                        style.transform = `translateX(${-index*20}px) scale(1.5)`;
                     } else {
                         style.transform = `translateX(${-index*20}px)`;
                     }

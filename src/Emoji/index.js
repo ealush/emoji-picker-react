@@ -33,8 +33,9 @@ class Emoji extends Component {
         const { emoji } = this.props;
         const onEmojiClick = this.context.onEmojiClick;
 
-        e.preventDefault();
         onEmojiClick && onEmojiClick(emoji.unified, emoji, e);
+
+        if (!e.defaultPrevented) { e.preventDefault(); }
     }
 
     onMouseEnter() {

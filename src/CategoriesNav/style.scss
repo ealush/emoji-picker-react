@@ -48,14 +48,14 @@
                 transition-delay: .2s;
             }
 
-            &.people i   { background-image: url($bg_svg_people); }
-            &.foods i    { background-image: url($bg_svg_foods); }
-            &.nature i   { background-image: url($bg_svg_nature); }
-            &.activity i { background-image: url($bg_svg_activity); }
-            &.objects i  { background-image: url($bg_svg_objects); }
-            &.places i   { background-image: url($bg_svg_places); }
-            &.flags i    { background-image: url($bg_svg_flags); }
-            &.symbols i  { background-image: url($bg_svg_symbols); }
+            &.people i   { background-image: url($bg_img_people); }
+            &.foods i    { background-image: url($bg_img_foods); }
+            &.nature i   { background-image: url($bg_img_nature); }
+            &.activity i { background-image: url($bg_img_activity); }
+            &.objects i  { background-image: url($bg_img_objects); }
+            &.places i   { background-image: url($bg_img_places); }
+            &.flags i    { background-image: url($bg_img_flags); }
+            &.symbols i  { background-image: url($bg_img_symbols); }
         }
     }
 
@@ -69,6 +69,7 @@
         border-radius: 5px;
         background-color: $color_nav_underline_active;
         opacity: 0;
+        transition-delay: 1s;
         transition: opacity .4s, background .2s;
     }
 
