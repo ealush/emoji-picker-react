@@ -101,12 +101,8 @@ class Emoji extends Component {
 
         const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
 
-        let style = bgImage({ unified, assetPath, emojiResolution });
+        const style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;
-
-        if (this.context.overrideEmojiSize) {
-            style = Object.assign({}, style, this.context.emojiStyle);
-        }
 
         return (
             <a href="#!"
@@ -138,8 +134,6 @@ Emoji.contextTypes = {
     emojiResolution: PropTypes.number,
     openDiversitiesMenu: PropTypes.func,
     disableDiversityPicker: PropTypes.bool,
-    overrideEmojiSize: PropTypes.bool,
-    emojiStyle: PropTypes.object
 };
 
 export default Emoji;

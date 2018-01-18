@@ -9,7 +9,7 @@
             &:before {
                 content: '';
                 background-repeat: no-repeat;
-                background-image: url("../SearchBar/svg/find.svg");
+                background-image: url($bg_svg_find);
                 background-position: 50% 50%;
                 background-size: 100px 100px;
                 display: block;

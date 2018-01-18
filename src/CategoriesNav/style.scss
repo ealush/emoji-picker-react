@@ -48,14 +48,14 @@
                 transition-delay: .2s;
             }
 
-            &.people i   { background-image: url("./svg/people.svg"); }
-            &.foods i    { background-image: url("./svg/foods.svg"); }
-            &.nature i   { background-image: url("./svg/nature.svg"); }
-            &.activity i { background-image: url("./svg/activity.svg"); }
-            &.objects i  { background-image: url("./svg/objects.svg"); }
-            &.places i   { background-image: url("./svg/places.svg"); }
-            &.flags i    { background-image: url("./svg/flags.svg"); }
-            &.symbols i  { background-image: url("./svg/symbols.svg"); }
+            &.people i   { background-image: url($bg_svg_people); }
+            &.foods i    { background-image: url($bg_svg_foods); }
+            &.nature i   { background-image: url($bg_svg_nature); }
+            &.activity i { background-image: url($bg_svg_activity); }
+            &.objects i  { background-image: url($bg_svg_objects); }
+            &.places i   { background-image: url($bg_svg_places); }
+            &.flags i    { background-image: url($bg_svg_flags); }
+            &.symbols i  { background-image: url($bg_svg_symbols); }
         }
     }
 

@@ -14,7 +14,7 @@ import {
     getOffsets,
     headerTransform
 } from './helpers';
-import { HIDE_SCROLL_DEBOUNCE, HEADER_HEIGHT } from '../constants';
+import { HIDE_SCROLL_DEBOUNCE } from '../constants';
 
 const isFFMac = isFirefoxOnMac();
 
@@ -30,7 +30,7 @@ class WrapperSection extends Component {
     }
 
     componentDidMount() {
-        this.headerHeight = HEADER_HEIGHT || this._list.querySelector('.category-name').clientHeight;
+        this.headerHeight = this._list.querySelector('.category-name').clientHeight;
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
         const positions = getOffsets(this._list);
@@ -140,7 +140,7 @@ class WrapperSection extends Component {
             disableDiversityPicker
         } = this.context;
 
-        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
+        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results icn-magnifier' : ''}`;
 
         return (
             <section className={wrapperClassName}>

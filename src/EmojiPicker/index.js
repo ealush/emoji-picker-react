@@ -5,10 +5,6 @@ import { categories, modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
-import {
-    EMOJI_BG_SIZE,
-    EMOJI_PADDING
-} from '../constants';
 
 import './style.scss';
 
@@ -49,9 +45,7 @@ class EmojiPicker extends Component {
         const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames, emojiSize, emojiPadding} = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
-        const overrideEmojiSize = EMOJI_BG_SIZE !== emojiSize || EMOJI_PADDING !== emojiPadding;
-        const emojiStyle = { backgroundSize: `${emojiSize}px`, padding: `${emojiPadding}px` };
-        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames, overrideEmojiSize, emojiStyle };
+        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
     }
 
     componentDidMount() {
@@ -262,9 +256,7 @@ EmojiPicker.childContextTypes = {
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     openDiversitiesMenu: PropTypes.func,
-    disableDiversityPicker: PropTypes.bool,
-    overrideEmojiSize: PropTypes.bool,
-    emojiStyle: PropTypes.object
+    disableDiversityPicker: PropTypes.bool
 };
 
 export default EmojiPicker;

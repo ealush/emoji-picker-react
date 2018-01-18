@@ -38,7 +38,7 @@
         i {
             content: '';
             background-repeat: no-repeat;
-            background-image: url("./svg/find.svg");
+            background-image: url($bg_svg_find);
             background-position: 50% 50%;
             background-size: 15px 15px;
             height: 15px;
