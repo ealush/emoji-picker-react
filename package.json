@@ -1,6 +1,6 @@
 {
   "name": "emoji-picker-react",
-  "version": "1.6.7",
+  "version": "1.7.1",
   "description": "React emoji-picker component",
   "main": "./dist/index.js",
   "scripts": {
@@ -31,7 +31,7 @@
   "devDependencies": {
     "prop-types": "^15.6.0",
     "@storybook/addon-actions": "3.3.4",
-    "@storybook/react": "3.3.3",
+    "@storybook/react": "3.3.4",
     "babel-cli": "^6.24.1",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
