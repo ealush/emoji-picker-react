@@ -2,7 +2,7 @@
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker-react.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker-react)
 
-[Live demo](https://ealush.github.io/emoji-picker/)
+[Live demo](https://ealush.github.io/emoji-picker-react/)
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/recording.gif)
 
@@ -43,7 +43,7 @@ You can use custom CSS to modify each part of the picker's visibility.
 **COMPATABILITY NOTE**
 The markup of the picker is guaranteed to stay unchanged through each major version (with the exception of bugfixes), meaning you can safely assume the markup stays the same until version 3 gets released.
 
-### Customizatio via SCSS variables
+### Customization via SCSS variables
 If your project uses SCSS, you can more easily customize your picker's visibility using the predefined [SASS variables](https://github.com/ealush/emoji-picker-react/blob/master/src/base.scss) (click to see all variables).
 To customize the picker using these variables, you will need to import the picker in two parts - js and css.
 
