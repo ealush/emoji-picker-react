@@ -1,12 +1,8 @@
 import { keywords } from '../emoji-data';
 import keywordsSingleChar from '../SearchBar/helpers/init_keywords_single';
+import * as scss from '../base.scss';
 
 // view
-export const HEADER_HEIGHT = 25;
-export const PICKER_WIDTH = 240;
-export const PICKER_HEIGHT = 240;
-export const EMOJI_BG_SIZE = 20;
-export const EMOJI_PADDING = 7;
 export const MIN_SCROLLBAR_HEIGHT_PADDED = 15;
 
 // timers

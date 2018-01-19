@@ -91,7 +91,7 @@ class SearchBar extends Component {
         return (
             <div className="search-bar">
                 <input type="text" placeholder="Emoji Search" onChange={this.filterKeywords} ref={(_input) => this._input = _input}/>
-                <i/>
+                <i className="icn-magnifier"/>
             </div>
         );
 

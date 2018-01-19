@@ -3,6 +3,9 @@
 .emoji-picker {
 
     ul.skin-tones {
+        position: absolute;
+        right: 0;
+
 
         &.spread {
             li {
@@ -12,19 +15,17 @@
 
         li {
             position: absolute;
-            top: 12px;
-            right: 15px;
+            top: $top_skin_tone;
+            right: $right_skin_tone;
             z-index: 3;
-            margin-left: 5px;
             padding: 1px;
             border-radius: 3px;
             opacity: 0;
             transition: transform .4s, opacity .3s;
 
             &.selected {
-                background-color: $md-white;
                 opacity: 1;
-                transform: scale(1.6);
+                transform: scale(1.5);
             }
 
             &.neutral a { background-color: $md-amber-200; }
@@ -36,14 +37,14 @@
 
             a {
                 display: block;
-                height: $modifier_size;
-                width: $modifier_size;
+                height: $size_modifier;
+                width: $size_modifier;
                 border-radius: 2px;
 
                 img {
                     z-index: 2;
-                    height: $modifier_size;
-                    width: $modifier_size;
+                    height: $size_modifier;
+                    width: $size_modifier;
                 }
             }
         }

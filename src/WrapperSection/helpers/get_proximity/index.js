@@ -1,5 +1,3 @@
-import { HEADER_HEIGHT } from '../../../constants';
-
 function checkIfActiveCategory({ offset, offsets, scrollTop, next }) {
     return offset <= scrollTop && (offsets[next] >= scrollTop || offsets[next] === undefined);
 }
@@ -8,15 +6,15 @@ function isInViewport({ scrollTop, listHeight, offsets, index}) {
     return offsets[index] <= (listHeight + scrollTop) && offsets[index] >= scrollTop;
 }
 
-function isElementInProximity({scrollTop, offset}) {
-    const elementIsUp = scrollTop + HEADER_HEIGHT >= offset,
-        elementIsDown = scrollTop - HEADER_HEIGHT <= offset;
+function isElementInProximity({scrollTop, offset, headerHeight}) {
+    const elementIsUp = scrollTop + headerHeight >= offset,
+        elementIsDown = scrollTop - headerHeight <= offset;
 
     return elementIsDown && elementIsUp; // logically not true, better naming needed
 }
 
-export default function getProximity(offsets, scrollTop = 0, listHeight = 0) {
-    // gets the closest category
+export default function getProximity(offsets, scrollTop = 0, listHeight = 0, headerHeight = 30) {
+    // gets the closest categoryw
 
     offsets = offsets || [0];
 
@@ -28,7 +26,7 @@ export default function getProximity(offsets, scrollTop = 0, listHeight = 0) {
     for (let index = 0; index < offsets.length; index++) {
         const offset = offsets[index],
             next = index + 1,
-            inProximity = isElementInProximity({scrollTop, offset}),
+            inProximity = isElementInProximity({scrollTop, offset, headerHeight}),
             isActiveCategory = checkIfActiveCategory({ offset, offsets, scrollTop, next }),
             isVisible = isInViewport({ scrollTop, listHeight, offsets, index});
 

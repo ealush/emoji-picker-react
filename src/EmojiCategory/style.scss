@@ -4,7 +4,7 @@
 
     .emoji-category {
         position: relative;
-        padding: $category_name_height 0 0 0;
+        padding: $height_category_name $padding_emoji_list 0 $padding_emoji_list;
         margin: 0;
         text-align: left;
         display: flex;
@@ -13,20 +13,21 @@
         justify-content: flex-start;
 
         .category-name {
-            background-color: rgba($picker_bg, .9);
+            background-color: rgba($bg_category_name, $opacity_category_name);
             position: absolute;
             top: 0;
             left: 0;
-            right: 1px;
+            right: 0;
             z-index: 0;
             display: block;
-            padding: 5px;
+            padding: 0 $padding_category_name;
             font-size: 12px;
             font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
             color: $md-grey-400;
-            height: $category_name_height;
+            height: $height_category_name;
+            line-height: $height_category_name;
             box-sizing: border-box;
             transition: color .2s;
         }

@@ -30,6 +30,7 @@ class WrapperSection extends Component {
     }
 
     componentDidMount() {
+        this.headerHeight = this._list.querySelector('.category-name').clientHeight;
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
         const positions = getOffsets(this._list);
@@ -60,7 +61,7 @@ class WrapperSection extends Component {
         this.props.suppressModifiers();
         this.props.closeDiversitiesMenu();
 
-        this.proximity = getProximity(this.offsets, scrollTop, this.listHeight);
+        this.proximity = getProximity(this.offsets, scrollTop, this.listHeight, this.headerHeight);
 
         const {
             proximityIndex, // closest category index
@@ -98,7 +99,7 @@ class WrapperSection extends Component {
             this.transformed = clearTransform(this.transformed, active);
 
             // push the active title up or down
-            _activeName.setAttribute('style', headerTransform(distance));
+            _activeName.setAttribute('style', headerTransform(distance, this.headerHeight));
             this.transformed.push({ index: active, element: _activeName });
         }
     }
@@ -127,7 +128,6 @@ class WrapperSection extends Component {
             filter,
             diversityPicker,
             closeDiversitiesMenu,
-            inlineStyle,
             visibleCategories,
             modifiersSpread,
             preload
@@ -140,7 +140,7 @@ class WrapperSection extends Component {
             disableDiversityPicker
         } = this.context;
 
-        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
+        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results icn-magnifier' : ''}`;
 
         return (
             <section className={wrapperClassName}>
@@ -152,8 +152,7 @@ class WrapperSection extends Component {
                     disable={disableDiversityPicker}/>
                 <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
                 <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
-                <EmojiList style={inlineStyle.list}
-                    filter={filter}
+                <EmojiList filter={filter}
                     onScroll={this.onScroll}
                     seenCategories={visibleCategories}
                     modifiersSpread={modifiersSpread}
@@ -175,7 +174,6 @@ WrapperSection.propTypes = {
     setSeenCategory: PropTypes.func,
     setSeenInSearch: PropTypes.func,
     setActiveCategory: PropTypes.func,
-    inlineStyle: PropTypes.object,
     visibleCategories: PropTypes.object,
     modifiersSpread: PropTypes.bool,
     activeCategory: PropTypes.number,

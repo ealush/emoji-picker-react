@@ -33,8 +33,9 @@ class Emoji extends Component {
         const { emoji } = this.props;
         const onEmojiClick = this.context.onEmojiClick;
 
-        e.preventDefault();
         onEmojiClick && onEmojiClick(emoji.unified, emoji, e);
+
+        if (!e.defaultPrevented) { e.preventDefault(); }
     }
 
     onMouseEnter() {
@@ -95,22 +96,14 @@ class Emoji extends Component {
         const { emoji, hidden, categorySeen } = this.props;
         const { activeModifier, assetPath, emojiResolution } = this.context;
         let unified = emoji.unified;
-
-        if (!categorySeen || hidden) {
-            const hiddenClass = hidden ? ' hidden' : '';
-            return <div className={`emoji${hiddenClass}`}/>;
-        }
+        const shownClass = (categorySeen && !hidden) ? ' shown' : '';
 
         unified = unifiedWithModifier(emoji, activeModifier);
 
-        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}`;
+        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
 
-        let style = bgImage({ unified, assetPath, emojiResolution });
+        const style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;
-
-        if (this.context.overrideEmojiSize) {
-            style = Object.assign({}, style, this.context.emojiStyle);
-        }
 
         return (
             <a href="#!"
@@ -142,8 +135,6 @@ Emoji.contextTypes = {
     emojiResolution: PropTypes.number,
     openDiversitiesMenu: PropTypes.func,
     disableDiversityPicker: PropTypes.bool,
-    overrideEmojiSize: PropTypes.bool,
-    emojiStyle: PropTypes.object
 };
 
 export default Emoji;

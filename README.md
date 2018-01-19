@@ -1,4 +1,4 @@
-# React Emoji Picker
+# React Emoji Picker V2.0.0
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker-react.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker-react)
 
@@ -6,14 +6,20 @@
 
 ![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/recording.gif)
 
+## V2 Changes
+* Updated UI
+* Removed customization props, moved to SASS variables
+* Improved filtering performance
+
+
 ```
 npm i emoji-picker-react --save
 ```
 
 An easy to use React Emoji Picker Module.
-For easy integration with your app, you should consider using the companion package: [React Text field components with emoji picker](https://www.npmjs.com/package/emoji-picker-textfield).
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/1.png)
+
+![skin tones](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/1.png)
 
 
 ## Usage:
@@ -32,22 +38,38 @@ class MyComponent extends Component {
 
 ```
 
-## Customization
+## UI Customization
+You can use custom CSS to modify each part of the picker's visibility.
+**COMPATABILITY NOTE**
+The markup of the picker is guaranteed to stay unchanged through each major version (with the exception of bugfixes), meaning you can safely assume the markup stays the same until version 3 gets released.
 
-## Modifying the picker's height and width
-By default the picker is 240px wide and ~315px tall (depending on the position of the categories panel). To change the width and height of the picker, simply:
+### Customizatio via SCSS variables
+If your project uses SCSS, you can more easily customize your picker's visibility using the predefined [SASS variables](https://github.com/ealush/emoji-picker-react/blob/master/src/base.scss) (click to see all variables).
+To customize the picker using these variables, you will need to import the picker in two parts - js and css.
 
 ```js
-    <EmojiPicker width="315" height="280"/>
-    <EmojiPicker height="280"/> // width will default to 240
-    <EmojiPicker width="315"/> // height will default to 240
+// MyComponent.js
+import EmojiPicker from 'emoji-picker-react';
+import 'emoji-picker-react/dist/universal/style.scss'; // or any other way you consume scss files
+
+class MyComponent {
+//    ...
+}
 ```
 
-If you chose a width that cannot fit a whole emoji at the end of each row (when you only leave room for 6.5 emojis, for example), the line will end at the last fully visible emoji, possibly leaving some empty space on the right. To resolve that, just increase or decrease the width of the picker to reach a perfect fit.
+Then you will need to import the stylesheet file from your own stylesheet, and override the default variables with your own.
 
-A word on height: The height you determine by the height property, is of the emoji-list only, the search and categories panel are added to the height you specify.
+```scss
+// style.scss
+$size_emoji: 10px;
+$width_picker: 300px;
+$height_picker: 350px;
+$bg_picker: #f1f1f1;
+@import './node_modules/emoji-picker-react/dist/universal/style.scss'; // relative path to your node modules
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/5.png)
+```
+
+![categories](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/5.png)
 
 ## Using custom category titles
 If you want to modify the currently existing category names, simply pass a mapping object with the names you would like to replace, for example:
@@ -69,20 +91,12 @@ Here is the list of all category names, accepted by customCategoryNames:
 
 ## Disabling the diversity picker
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
+![diverse emojis](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
 
 The per emoji diversity gets triggered on hover or long click by default. By passing the prop `disableDiversityPicker` to the picker, it will be disabled and not get triggered.
 
 ```js
 <EmojiPicker disableDiversityPicker/>
-```
-
-## Moving the categories panel around
-
-```js
-<EmojiPicker nav="top"/> // default. no need to pass nav="top"
-<EmojiPicker nav="left"/>
-<EmojiPicker nav="bottom"/>
 ```
 
 ## Preloading all images
@@ -140,7 +154,7 @@ and then, in your onEmojiClick callback:
 jsemoji.replace_colons(`:${emojiName}:`);
 ```
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/2.png)
+![filtering](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/2.png)
 
 # Image hosting
 ## CDN
@@ -164,14 +178,14 @@ The picker will internally construct the image urls to appear like this:
 `http://example.com/emojis/64/1f448-1f3fd.png`
 (`1f448-1f3fd.png` is an emoji filename + extension)
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/3.png)
+![img](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/3.png)
 
 # Cool stuff
 
 ## Per Emoji diversity picker
 Long clicking on diversity (skin-tone) enabled Emojies (mostly the hand Emojis), will open a list of all skin tones for this Emoji.
 
-![alt tag](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
+![img](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/4.png)
 
 # Attributions
 You can use this **picker**, free of charge, no attribution is needed. The emojis have their own license.

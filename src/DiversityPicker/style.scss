@@ -1,7 +1,7 @@
 @import '../base.scss';
 
 .emoji-picker .diversity-picker {
-    background-color: $md-grey-200;
+    background-color: $bg_diversity_picker;
     display: flex;
     justify-content: space-around;
     flex-direction: row-reverse;
@@ -10,14 +10,18 @@
     left: 0;
     top: 0;
     right: 0;
-    height: $diversity_picker_size;
-    transform: translateY(-$diversity_picker_size);
+    height: $height_diversity_picker;
+    transform: translateY(-$height_diversity_picker);
     opacity: .6;
-    border-bottom: 1px solid $md-grey-300;
     transition: .2s opacity, .2s transform;
 
     &.shown {
         transform: translateY(0);
         opacity: 1;
+        border-bottom: 1px solid $border_diversity_picker;
+    }
+
+    .emoji {
+        display: inline-block;
     }
 }

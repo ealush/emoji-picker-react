@@ -9,7 +9,7 @@
             &:before {
                 content: '';
                 background-repeat: no-repeat;
-                background-image: url("../SearchBar/svg/find.svg");
+                background-image: url($bg_img_find);
                 background-position: 50% 50%;
                 background-size: 100px 100px;
                 display: block;
@@ -25,6 +25,16 @@
             .emoji-name {
                 display: none;
             }
+        }
+
+        &:after {
+            content: '';
+            background-color: $bg_footer;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: $height_footer;
         }
 
         .scroller {
@@ -43,20 +53,20 @@
             }
 
             div {
-                background-color: $md-grey-400;
+                background-color: $bg_scroller;
                 width: 100%;
-                min-height: 10px;
+                min-height: 12px;
             }
         }
 
         .emoji-name {
             position: absolute;
-            right: 10px;
-            top: 7px;
-            font-size: 9px;
+            right: $padding_category_name;
+            top: 8px;
+            font-size: 10px;
             font-weight: 100;
             z-index: 2;
-            color: $shortname-color;
+            color: $color_shortname;
             max-width: 130px;
             white-space: nowrap;
             overflow: hidden;
