@@ -198,7 +198,9 @@ class EmojiPicker extends Component {
 
     onEmojiClick(unified, emoji, e) {
 
-        e.preventDefault();
+        if (!e.defaultPrevented) {
+            e.preventDefault();
+        }
 
         const usedModifiers = modifiers.filter((modifier) => unified.indexOf(modifier) > -1);
 

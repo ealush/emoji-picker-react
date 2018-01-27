@@ -13,6 +13,7 @@ class Emoji extends Component {
         this.hasDiversities = this.emoji.hasOwnProperty('diversities');
 
         this.onClick = this.onClick.bind(this);
+        this.emojiChosen = this.emojiChosen.bind(this);
         this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
         this.onMouseDown = this.onMouseDown.bind(this);
@@ -30,10 +31,13 @@ class Emoji extends Component {
     }
 
     onClick(e) {
+        e.preventDefault();
+    }
+
+    emojiChosen(e) {
         const { emoji } = this.props;
         const onEmojiClick = this.context.onEmojiClick;
 
-        e.preventDefault();
         onEmojiClick && onEmojiClick(emoji.unified, emoji, e);
     }
 
@@ -87,7 +91,7 @@ class Emoji extends Component {
         delete this.timeCounter;
 
         if (!(counter && (Date.now() - counter) >= OPEN_DIVERSITIES_TIMEOUT)) {
-            return this.onClick(e);
+            return this.emojiChosen(e);
         }
     }
 
@@ -115,6 +119,7 @@ class Emoji extends Component {
         return (
             <a href="#!"
                 className={className}
+                onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
                 onMouseDown={this.onMouseDown}
