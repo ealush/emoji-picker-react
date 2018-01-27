@@ -17,9 +17,8 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
     let diversities = null;
 
     function onClick(diversity, e) {
-        e.preventDefault();
         onEmojiClick(diversity, emoji, e);
-        close();
+        setTimeout(close, 500);
     }
 
     if (emoji && emoji.diversities) {
@@ -35,7 +34,7 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
                         key={diversity}
                         style={style}
                         className="emoji"
-                        onMouseDown={((e) => onClick(diversity, e))}/>
+                        onClick={((e) => onClick(diversity, e))}/>
                 );
             })
         }</div>
