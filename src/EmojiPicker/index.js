@@ -42,7 +42,7 @@ class EmojiPicker extends Component {
     }
 
     getChildContext() {
-        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames, emojiSize, emojiPadding} = this.props;
+        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames} = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
         return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
@@ -243,9 +243,7 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     preload: PropTypes.bool,
     customCategoryNames: PropTypes.object,
-    disableDiversityPicker: PropTypes.bool,
-    emojiSize: PropTypes.number,
-    emojiPadding: PropTypes.number
+    disableDiversityPicker: PropTypes.bool
 };
 
 EmojiPicker.childContextTypes = {
