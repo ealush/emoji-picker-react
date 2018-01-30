@@ -36,5 +36,11 @@
                 z-index: 1;
             }
         }
+
+        &:not(.filter) {
+            .emoji-category {
+                min-height: 100%;
+            }
+        }
     }
 }

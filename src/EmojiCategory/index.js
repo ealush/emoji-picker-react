@@ -13,7 +13,7 @@ function EmojiCategory({ index, category, filter, categorySeen, _emojiName }, {c
     return (
         <div className={`emoji-category ${category.name}${hiddenClass}`} key={index}>
             <div className="category-name">{categoryName}</div>
-            {category.members.map((member, index) => {
+            {categorySeen && category.members.map((member, index) => {
 
                 const emoji = emojis[member],
                     hidden = filter && !(filter.hasOwnProperty(category.name) && filter[category.name].hasOwnProperty(member));
