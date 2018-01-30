@@ -626,6 +626,12 @@ $bg_img_find:     "data:image/svg+xml,%3Csvg id='Capa_1' xmlns='http://www.w3.or
                 z-index: 1;
             }
         }
+
+        &:not(.filter) {
+            .emoji-category {
+                min-height: 100%;
+            }
+        }
     }
 }.emoji-picker {
     .wrapper {
