@@ -48,6 +48,7 @@ class WrapperSection extends Component {
     }
 
     onScroll() {
+
         const scrollTop = this._list.scrollTop,
             active = this.props.activeCategory,
             _active = this._categories[active];
@@ -115,8 +116,7 @@ class WrapperSection extends Component {
     }
 
     scrollToCategoryByIndex(index) {
-        const _newActive = this._list.children[index];
-        _newActive.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        this._list.scrollTop = this.offsets[index];
     }
 
     scrollTop() {

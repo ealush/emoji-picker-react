@@ -5,6 +5,7 @@ import EmojiCategory from '../EmojiCategory';
 import './style.scss';
 
 class EmojiList extends Component {
+
     shouldComponentUpdate(nextProps, nextState, {activeModifier}) {
         if (nextProps.modifiersSpread) {
             return false;
