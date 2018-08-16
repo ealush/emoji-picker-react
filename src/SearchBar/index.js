@@ -29,7 +29,7 @@ class SearchBar extends Component {
 
     filterKeywords() {
 
-        const text = this._input.value.trim();
+        const text = this._input.value.trim().toLowerCase();
 
         if (!text) {
             this.filterStack = [];
