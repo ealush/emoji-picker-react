@@ -17,3 +17,4 @@ export const DEFAULT_IMAGE_RESOLUTION = '32';
 // keywords
 export const ALL_KEYWORDS = Object.keys(keywords);
 export const KEYWORDS_SINGLE = keywordsSingleChar;
+

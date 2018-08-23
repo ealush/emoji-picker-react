@@ -45,3 +45,4 @@ SkinTones.propTypes = {
 };
 
 export default SkinTones;
+

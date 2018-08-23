@@ -24,3 +24,4 @@ CategoriesNav.propTypes = {
 };
 
 export default CategoriesNav;
+

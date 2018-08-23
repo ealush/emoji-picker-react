@@ -50,3 +50,4 @@ DiversityPicker.propTypes = {
 };
 
 export default DiversityPicker;
+

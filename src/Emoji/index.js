@@ -143,3 +143,4 @@ Emoji.contextTypes = {
 };
 
 export default Emoji;
+
