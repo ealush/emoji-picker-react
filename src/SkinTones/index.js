@@ -30,7 +30,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
 
                 return (
                     <li className={modifierClass} style={style} key={modifier}>
-                        <a href="#!" className="st" onClick={(e) => onModifierClick(e, modifier)}></a>
+                        <a className="st" onClick={(e) => onModifierClick(e, modifier)}></a>
                     </li>
                 );
             })}

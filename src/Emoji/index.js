@@ -111,8 +111,7 @@ class Emoji extends Component {
         style.order = emoji.order;
 
         return (
-            <a href="#!"
-                className={className}
+            <a className={className}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
