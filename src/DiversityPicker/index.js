@@ -30,8 +30,7 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
             diversities && diversities.map((diversity) => {
                 const style = bgImage({ unified: diversity, assetPath, emojiResolution });
                 return (
-                    <a href="#!"
-                        key={diversity}
+                    <a key={diversity}
                         style={style}
                         className="emoji"
                         onClick={((e) => onClick(diversity, e))}/>
@@ -51,3 +50,4 @@ DiversityPicker.propTypes = {
 };
 
 export default DiversityPicker;
+

@@ -9,7 +9,7 @@ function CategoriesNav({onClick}) {
     return (
         <nav>{
             categories.map((category, index) => (
-                <a href="#!" className={category.name} key={index} onClick={(e) => onClick(e, index)}>
+                <a className={category.name} key={index} onClick={(e) => onClick(e, index)}>
                     <i/>
                     <span className="hidden">{category.name}</span>
                 </a>
@@ -24,3 +24,4 @@ CategoriesNav.propTypes = {
 };
 
 export default CategoriesNav;
+
