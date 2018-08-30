@@ -40,7 +40,7 @@
     "chai": "^4.1.1",
     "css-loader": "^0.28.7",
     "emoji-js": "^3.2.2",
-    "enzyme": "^3.2.0",
+    "enzyme": "^3.5.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "4.16.0",
     "eslint-plugin-react": "^7.5.1",
