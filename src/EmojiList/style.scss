@@ -1,7 +1,7 @@
 @import '../base.scss';
 
-.emoji-picker {
-    .emoji-list {
+.emojiPicker {
+    .emojiList {
         width: 100%;
         height: $height_picker;
         padding: 0;
@@ -9,36 +9,8 @@
         box-sizing: border-box;
         -ms-overflow-style: none;
 
-        &::-webkit-scrollbar {
-            height: 0;
-            width: 0;
-        }
-        &::scrollbar {
-            height: 0;
-            width: 0;
-        }
-
-        &.filter {
-            &:before {
-                content: '';
-                background: $bg_category_name;
-                position: absolute;
-                left: 0;
-                right: 0;
-                top: 0;
-                height: $height_category_name;
-                z-index: 1;
-                opacity: $opacity_category_name;
-            }
-
-            .category-name {
-                background: none;
-                z-index: 1;
-            }
-        }
-
         &:not(.filter) {
-            .emoji-category {
+            .emojiCategory {
                 min-height: 100%;
             }
         }

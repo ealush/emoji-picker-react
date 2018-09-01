@@ -1,6 +1,6 @@
 @import '../base.scss';
 
-.emoji-picker .emoji {
+.emojiPicker .emoji {
     border-radius: 5px;
     height: $size_emoji;
     width: $size_emoji;
@@ -10,21 +10,18 @@
     background-position: 50% 50%;
     overflow: hidden;
     transition: background-color .2s;
-    display: none;
-
-    &.shown {
-        display: inline-block;
-    }
+    display: inline-block;
+    
 
     &:hover {
         background-color: $bg_emoji_hover;
 
-        &.has-diversities:before {
+        &.hasDiversities:before {
             opacity: 1;
         }
     }
 
-    &.has-diversities:before {
+    &.hasDiversities:before {
         content: '';
         background-color: $bg_diversity_indicator;
         display: block;

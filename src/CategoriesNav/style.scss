@@ -1,8 +1,8 @@
 @import '../base.scss';
 
-.emoji-picker {
+.emojiPicker {
 
-    nav ~ .bar-wrapper {
+    nav ~ .barWrapper {
         margin-top: $height_nav_item;
         border-top: 1px solid $border_main;
     }
@@ -22,12 +22,14 @@
         a {
             position: relative;
             transition: filter .2s;
+            text-decoration: none;
+            outline : none;
+            
 
-            &:hover {
-
+            &.active {
                 &:after {
                     opacity: 1;
-                    background-color: $color_nav_underline_hover;
+                    // background-color: $color_nav_underline_hover;
                 }
 
                 i {
@@ -44,8 +46,10 @@
                 background-position: 50% 50%;
                 background-repeat: no-repeat;
                 opacity: .4;
-                transition: opacity .3s;
-                transition-delay: .2s;
+                text-decoration: none;
+                outline : none;
+                // transition: opacity .3s;
+                // transition-delay: .2s;
             }
 
             &.people i   { background-image: url($bg_img_people); }
@@ -69,16 +73,16 @@
         border-radius: 5px;
         background-color: $color_nav_underline_active;
         opacity: 0;
-        transition-delay: 1s;
-        transition: opacity .4s, background .2s;
+        // transition-delay: 1s;
+        // transition: opacity .4s, background .2s;
     }
 
-    &.people   nav .people   { i {opacity: 1;} &:after { opacity: 1; } }
-    &.foods    nav .foods    { i {opacity: 1;} &:after { opacity: 1; } }
-    &.nature   nav .nature   { i {opacity: 1;} &:after { opacity: 1; } }
-    &.activity nav .activity { i {opacity: 1;} &:after { opacity: 1; } }
-    &.objects  nav .objects  { i {opacity: 1;} &:after { opacity: 1; } }
-    &.places   nav .places   { i {opacity: 1;} &:after { opacity: 1; } }
-    &.flags    nav .flags    { i {opacity: 1;} &:after { opacity: 1; } }
-    &.symbols  nav .symbols  { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.people   nav .people   { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.foods    nav .foods    { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.nature   nav .nature   { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.activity nav .activity { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.objects  nav .objects  { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.places   nav .places   { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.flags    nav .flags    { i {opacity: 1;} &:after { opacity: 1; } }
+    // &.symbols  nav .symbols  { i {opacity: 1;} &:after { opacity: 1; } }
 }
