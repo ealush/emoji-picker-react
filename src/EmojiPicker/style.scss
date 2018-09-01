@@ -1,13 +1,13 @@
 @import '../base.scss';
 
-.emoji-picker {
+.emojiPicker {
     background-color: $bg_picker;
-    width: $width_picker + 5px;
+    width: 100%;
     display: block;
     position: relative;
     padding: 0;
-    border: 1px solid $border_emoji_picker;
-    border-radius: 3px;
+    // border: 1px solid $border_emoji_picker;
+    // border-radius: 3px;
     overflow: hidden;
     font-family: sans-serif;
 
@@ -33,7 +33,7 @@
         }
     }
 
-    .bar-wrapper {
+    .barWrapper {
         position: relative;
     }
 }

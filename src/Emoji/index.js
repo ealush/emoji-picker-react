@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bgImage, unifiedWithModifier } from './helpers';
 import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
-import './style.scss';
+import styles from './style.scss';
 
 class Emoji extends Component {
 
@@ -35,8 +35,7 @@ class Emoji extends Component {
     }
 
     emojiChosen(e) {
-        const { emoji } = this.props;
-        const onEmojiClick = this.context.onEmojiClick;
+        const { emoji, onEmojiClick } = this.props;
 
         onEmojiClick && onEmojiClick(emoji.unified, emoji, e);
 
@@ -98,20 +97,15 @@ class Emoji extends Component {
     }
 
     render() {
-        const { emoji, hidden, categorySeen } = this.props;
-        const { activeModifier, assetPath, emojiResolution } = this.context;
+        const { emoji, assetPath, emojiResolution } = this.props;
+        
         let unified = emoji.unified;
-        const shownClass = (categorySeen && !hidden) ? ' shown' : '';
-
-        unified = unifiedWithModifier(emoji, activeModifier);
-
-        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
-
+        
         const style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;
 
         return (
-            <a className={className}
+            <a className={styles.emoji}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
@@ -122,24 +116,5 @@ class Emoji extends Component {
         );
     }
 }
-
-Emoji.propTypes = {
-    emoji: PropTypes.object.isRequired,
-    hidden: PropTypes.bool,
-    categorySeen: PropTypes.bool,
-    member: PropTypes.number.isRequired,
-    disableDiversityPicker: PropTypes.bool,
-    _emojiName: PropTypes.object
-};
-
-Emoji.contextTypes = {
-    onEmojiClick: PropTypes.func,
-    parent: PropTypes.any,
-    assetPath: PropTypes.string,
-    activeModifier: PropTypes.string,
-    emojiResolution: PropTypes.number,
-    openDiversitiesMenu: PropTypes.func,
-    disableDiversityPicker: PropTypes.bool
-};
 
 export default Emoji;
