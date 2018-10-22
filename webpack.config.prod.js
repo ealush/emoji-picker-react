@@ -1,7 +1,7 @@
-const path = require('path'),
-    webpack = require('webpack');
+const path = require('path');
 
 module.exports = {
+    mode: 'production',
     entry: './src/index.js',
     devtool: 'source-map',
     externals: {
@@ -16,7 +16,7 @@ module.exports = {
         libraryTarget: 'umd'
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.svg/,
             loaders: ['svg-url-loader']
 
@@ -29,14 +29,7 @@ module.exports = {
         {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
-            use: ['babel-loader']
-        }
-        ]
-    },
-    plugins: [
-        new webpack.optimize.UglifyJsPlugin({
-            minimize: true,
-            sourceMap: true
-        })
-    ]
+            use: 'babel-loader'
+        }]
+    }
 };

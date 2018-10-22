@@ -12,16 +12,16 @@ Give it a try by clicking the smiley face blow the textarea. :nerd_face:`;
 // eslint-disable-next-line no-undef
 storiesOf('Standalone picker', module)
     .add('Top Navigation CDN hosted 32px/fastest', () => (
-        <EmojiPicker onEmojiClick={action('emoji-click')}/>
+        <EmojiPicker onEmojiClick={() => action('emoji-click')}/>
     ))
     .add('Top Navigation', () => (
-        <EmojiPicker onEmojiClick={action('emoji-click')} preload/>
+        <EmojiPicker onEmojiClick={() => action('emoji-click')} preload/>
     ))
     .add('Left Navigation CDN hosted 64px/slower', () => (
-        <EmojiPicker emojiResolution="64" nav="left" onEmojiClick={action('emoji-click')} preload/>
+        <EmojiPicker emojiResolution="64" nav="left" onEmojiClick={() => action('emoji-click')} preload/>
     ))
     .add('Bottom Navigation CDN hosted 128px/slowest', () => (
-        <EmojiPicker emojiResolution="128" nav="bottom" onEmojiClick={action('emoji-click')} preload/>
+        <EmojiPicker emojiResolution="128" nav="bottom" onEmojiClick={() => action('emoji-click')} preload/>
     ));
 
 // // eslint-disable-next-line no-undef
