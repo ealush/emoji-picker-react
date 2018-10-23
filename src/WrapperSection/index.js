@@ -89,7 +89,7 @@ class WrapperSection extends Component {
         const scrollTop = this._list.scrollTop;
 
         if (!isFFMac && !(this.scrollHeight <= this.listHeight)) {
-            adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
+            requestAnimationFrame(() => adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller));
             this.hideScrollIndicator();
             this._scroller.classList.add('shown');
         }

@@ -10,6 +10,7 @@
     nav {
         flex-direction: row;
         min-height: $height_nav_item;
+        height: $height_nav_item;
         background-color: $bg_nav;
         display: flex;
         justify-content: space-between;
@@ -19,9 +20,12 @@
         left: $padding_category_name;
         right: $padding_category_name;
 
-        a {
+        button {
             position: relative;
             transition: filter .2s;
+            border: 0;
+            background: none;
+            outline: none;
 
             &:hover {
 
@@ -59,7 +63,7 @@
         }
     }
 
-    nav a:after {
+    nav button:after {
         content: '';
         position: absolute;
         bottom: 0;

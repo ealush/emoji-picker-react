@@ -28,18 +28,21 @@
                 transform: scale(1.5);
             }
 
-            &.neutral a { background-color: $md-amber-200; }
-            &.m1f3fb  a { background-color: $md-orange-100; }
-            &.m1f3fc  a { background-color: $md-deep-orange-100; }
-            &.m1f3fe  a { background-color: $md-brown-500; }
-            &.m1f3ff  a { background-color: $md-brown-700; }
-            &.m1f3fd  a { background-color: $light-brown-skin-tone; }
+            &.neutral button { background-color: $md-amber-200; }
+            &.m1f3fb  button { background-color: $md-orange-100; }
+            &.m1f3fc  button { background-color: $md-deep-orange-100; }
+            &.m1f3fe  button { background-color: $md-brown-500; }
+            &.m1f3ff  button { background-color: $md-brown-700; }
+            &.m1f3fd  button { background-color: $light-brown-skin-tone; }
 
-            a {
+            button {
+                border: 0;
+                outline: none;
                 display: block;
                 height: $size_modifier;
                 width: $size_modifier;
                 border-radius: 2px;
+                padding: 0;
 
                 img {
                     z-index: 2;

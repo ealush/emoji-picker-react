@@ -108,17 +108,18 @@ class Emoji extends Component {
         const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
 
         const style = bgImage({ unified, assetPath, emojiResolution });
-        style.order = emoji.order;
 
         return (
-            <a className={className}
+            <button className={className}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
                 onMouseDown={this.onMouseDown}
                 onMouseUp={this.onMouseUp}
-                tabIndex={emoji.order}
-                style={style}/>
+                style={{order: emoji.order}}
+                tabIndex={emoji.order}>
+                <i style={style}/>
+            </button>
         );
     }
 }

@@ -1,16 +1,24 @@
 @import '../base.scss';
 
 .emoji-picker .emoji {
-    border-radius: 5px;
-    height: $size_emoji;
-    width: $size_emoji;
-    padding: $padding_emoji;
-    background-size: $size_emoji;
-    background-repeat: no-repeat;
-    background-position: 50% 50%;
-    overflow: hidden;
-    transition: background-color .2s;
     display: none;
+    border: 0;
+    outline: none;
+    border-radius: 5px;
+    padding: 0;
+    position: relative;
+
+    i {
+        height: $size_emoji;
+        width: $size_emoji;
+        display: inline-block;
+        padding: $padding_emoji;
+        background-size: $size_emoji;
+        background-repeat: no-repeat;
+        background-position: 50% 50%;
+        overflow: hidden;
+        transition: background-color .2s;
+    }
 
     &.shown {
         display: inline-block;
@@ -26,13 +34,12 @@
 
     &.has-diversities:before {
         content: '';
+        position: absolute;
         background-color: $bg_diversity_indicator;
         display: block;
-        height: 8px;
-        width: 8px;
-        float: right;
+        top: 0;
+        right: 0;
         opacity: 0;
-        transform: translateY(-6px) translateX(6px);
         transition: opacity .2s;
     }
 }

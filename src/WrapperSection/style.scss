@@ -1,6 +1,11 @@
 @import '../base.scss';
 
 .emoji-picker {
+
+    button {
+        cursor: pointer;
+    }
+
     .wrapper {
         position: relative;
         overflow: hidden;
