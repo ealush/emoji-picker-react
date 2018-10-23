@@ -21,7 +21,6 @@ class EmojiPicker extends Component {
             modifier: null,
             activeModifier: null,
             seenCategories: {},
-            seenInSearch: {},
             modifiersSpread: false
         };
 
@@ -36,7 +35,6 @@ class EmojiPicker extends Component {
         this.openDiversitiesMenu = this.openDiversitiesMenu.bind(this);
         this.closeDiversitiesMenu = this.closeDiversitiesMenu.bind(this);
         this.setActiveCategory = this.setActiveCategory.bind(this);
-        this.setSeenInSearch = this.setSeenInSearch.bind(this);
     }
 
     getChildContext() {
@@ -80,30 +78,10 @@ class EmojiPicker extends Component {
         this.setState({ seenCategories });
     }
 
-    setSeenInSearch(categories) {
-        const seenInSearch = {...this.state.seenInSearch};
-        let counter = 0;
-
-        for (const catIndex in categories) {
-
-            if (this.state.seenCategories[catIndex] || this.state.seenInSearch[catIndex]) {
-                continue;
-            }
-
-            if (categories.hasOwnProperty(catIndex)) {
-                counter++;
-                seenInSearch[catIndex] = true;
-            }
-        }
-
-        counter && this.setState({seenInSearch});
-    }
-
-    onCategoryClick(e, index) {
+    onCategoryClick(e, name) {
         e && e.preventDefault();
-        this.setState({ delayedCategory: index });
-        this.setSeenCategory(index);
-        this._wrapperSection.scrollToCategoryByIndex(index);
+        this.setSeenCategory(name);
+        this._wrapperSection.scrollToCategory(name);
     }
 
     onSearch(filter) {
@@ -192,7 +170,7 @@ class EmojiPicker extends Component {
 
     render() {
         const { preload } = this.props;
-        const visibleCategories = Object.assign({}, this.state.seenCategories, this.state.seenInSearch);
+        const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
             <aside className={this.pickerClassNames.join(' ')}
@@ -213,9 +191,7 @@ class EmojiPicker extends Component {
                     setSeenCategory={this.setSeenCategory}
                     suppressModifiers={this.suppressModifiers}
                     setActiveCategory={this.setActiveCategory}
-                    setSeenInSearch={this.setSeenInSearch}
                     activeCategory={this.state.activeCategory}
-                    delayedCategory={this.state.delayedCategory}
                     preload={preload}/>
             </aside>
         );

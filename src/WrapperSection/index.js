@@ -56,10 +56,6 @@ class WrapperSection extends Component {
 
                 wrapper.props.setSeenCategory(entryName);
 
-                if (wrapper.props.filter) {
-                    wrapper.props.setSeenInSearch(entryName);
-                }
-
                 // initial load
                 if (!wrapper.props.activeCategory) {
                     return wrapper.props.setActiveCategory({ name: entryName });
@@ -112,8 +108,10 @@ class WrapperSection extends Component {
         }
     }
 
-    scrollToCategoryByIndex(index) {
-        this._list.scrollTop = this.offsets[index];
+    scrollToCategory(name) {
+        // scrolling one pixel down so intersection observer doesn't get confused
+        this._list.scrollTop = this._list.querySelector(`.emoji-category.${name}`).offsetTop + 1;
+        this.props.setActiveCategory({ name });
     }
 
     scrollTop() {
@@ -169,12 +167,10 @@ WrapperSection.propTypes = {
     closeDiversitiesMenu: PropTypes.func,
     suppressModifiers: PropTypes.func,
     setSeenCategory: PropTypes.func,
-    setSeenInSearch: PropTypes.func,
     setActiveCategory: PropTypes.func,
     visibleCategories: PropTypes.object,
     modifiersSpread: PropTypes.bool,
     activeCategory: PropTypes.string,
-    delayedCategory: PropTypes.number,
     preload: PropTypes.bool
 };
 
