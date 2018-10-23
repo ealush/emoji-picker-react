@@ -4,7 +4,7 @@
 
     .emoji-category {
         position: relative;
-        padding: $height_category_name $padding_emoji_list 0 $padding_emoji_list;
+        padding: 0 $padding_emoji_list;
         margin: 0;
         text-align: left;
         display: flex;
@@ -14,7 +14,8 @@
 
         .category-name {
             background-color: rgba($bg_category_name, $opacity_category_name);
-            position: absolute;
+            position: sticky;
+            width: 100%;
             top: 0;
             left: 0;
             right: 0;
@@ -33,13 +34,13 @@
         }
     }
 
-    &.people   .people.emoji-category   { position: initial; .category-name { color: $md-grey-500; } }
-    &.foods     .foods.emoji-category   { position: initial; .category-name { color: $md-grey-500; } }
-    &.nature   .nature.emoji-category   { position: initial; .category-name { color: $md-grey-500; } }
-    &.activity .activity.emoji-category { position: initial; .category-name { color: $md-grey-500; } }
-    &.objects  .objects.emoji-category  { position: initial; .category-name { color: $md-grey-500; } }
-    &.places   .places.emoji-category   { position: initial; .category-name { color: $md-grey-500; } }
-    &.flags    .flags.emoji-category    { position: initial; .category-name { color: $md-grey-500; } }
-    &.regional .regional.emoji-category { position: initial; .category-name { color: $md-grey-500; } }
-    &.symbols  .symbols.emoji-category  { position: initial; .category-name { color: $md-grey-500; } }
+    &.people   .people.emoji-category   { .category-name { color: $md-grey-500; } }
+    &.foods     .foods.emoji-category   { .category-name { color: $md-grey-500; } }
+    &.nature   .nature.emoji-category   { .category-name { color: $md-grey-500; } }
+    &.activity .activity.emoji-category { .category-name { color: $md-grey-500; } }
+    &.objects  .objects.emoji-category  { .category-name { color: $md-grey-500; } }
+    &.places   .places.emoji-category   { .category-name { color: $md-grey-500; } }
+    &.flags    .flags.emoji-category    { .category-name { color: $md-grey-500; } }
+    &.regional .regional.emoji-category { .category-name { color: $md-grey-500; } }
+    &.symbols  .symbols.emoji-category  { .category-name { color: $md-grey-500; } }
 }

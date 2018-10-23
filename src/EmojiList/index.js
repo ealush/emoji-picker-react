@@ -34,7 +34,7 @@ class EmojiList extends Component {
                 ref={(list) => this._list = list}
                 onScroll={onScroll}>
                 {categories.map((category, index) => {
-                    const isCategorySeen = preload || seenCategories[index];
+                    const isCategorySeen = preload || seenCategories[category.name];
 
                     return (
                         <EmojiCategory category={category}

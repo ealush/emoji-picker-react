@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import SkinTones from '../SkinTones';
-import { categories, modifiers, skinTones } from '../emoji-data';
+import { modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
@@ -20,9 +20,7 @@ class EmojiPicker extends Component {
             filter: null,
             modifier: null,
             activeModifier: null,
-            seenCategories: {
-                0: true
-            },
+            seenCategories: {},
             seenInSearch: {},
             modifiersSpread: false
         };
@@ -48,44 +46,32 @@ class EmojiPicker extends Component {
         return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
     }
 
-    componentDidMount() {
-        this.setActiveCategory({ index: 0 });
-    }
-
     setPickerClassname(index, nextValue = '') {
         this.pickerClassNames[index] = nextValue;
         this._picker.setAttribute('class', this.pickerClassNames.join(' '));
     }
 
-    setActiveCategory({index}) {
-
-        if (!categories[index]) { return; }
+    setActiveCategory({ name }) {
 
         if (this.state.filter) { return; }
 
-        const indexPresent = typeof index === 'number',
-            prevActive = this.state.activeCategory;
+        const prevActive = this.state.activeCategory;
 
-        if (index === prevActive) {
+        if (name === prevActive) {
             return;
         }
 
-        if (!indexPresent) {
-            index = 0;
-        }
-
-        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX, categories[index].name);
-        this.setState({ activeCategory: index });
+        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX, name);
+        this.setState({ activeCategory: name });
     }
 
     unsetActiveCategory() {
         this.setPickerClassname(CLASSNAME_CATEGORY_INDEX);
     }
-    setSeenCategory(index, categories) {
 
-
-        const seenCategories = Object.assign({}, this.state.seenCategories, categories);
-        seenCategories[index] = true;
+    setSeenCategory(name) {
+        const seenCategories = Object.assign({}, this.state.seenCategories);
+        seenCategories[name] = true;
 
         if (Object.keys(this.state.seenCategories).length === Object.keys(seenCategories).length) {
             return;
@@ -124,7 +110,6 @@ class EmojiPicker extends Component {
 
         this.setState({ filter }, () => {
             this._wrapperSection.scrollTop();
-            if (!filter) { return this.setActiveCategory(0); }
             this._wrapperSection.onScroll();
             this.unsetActiveCategory();
         });

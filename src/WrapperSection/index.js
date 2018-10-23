@@ -5,14 +5,10 @@ import DiversityPicker from '../DiversityPicker';
 import EmojiList from '../EmojiList';
 import './style.scss';
 import {
-    clearTransform,
-    getProximity,
     getScrollbarWidth,
     adjustScrollbar,
-    hitAnotherCategory,
     isFirefoxOnMac,
-    getOffsets,
-    headerTransform
+    getOffsets
 } from './helpers';
 import { HIDE_SCROLL_DEBOUNCE } from '../constants';
 
@@ -22,7 +18,7 @@ class WrapperSection extends Component {
 
     constructor(props) {
         super(props);
-
+        this.observeActive = this.observeActive.bind(this);
         this.onScroll = throttle(16, this.onScroll.bind(this));
         this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
 
@@ -34,24 +30,67 @@ class WrapperSection extends Component {
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
         const positions = getOffsets(this._list);
-        this.offsets = positions.offsets;
         this.scrollHeight = positions.scrollHeight;
         this.listHeight = positions.listHeight;
         this.listWidth = positions.listWidth;
         this._categories = this._list.children;
+        this.observeActive();
     }
 
     componentDidUpdate() {
         const positions = getOffsets(this._list);
-        this.offsets = positions.offsets;
         this.scrollHeight = positions.scrollHeight;
+    }
+
+    observeActive() {
+        const options = {
+            root: this._list
+        };
+
+        const wrapper = this; // eslint-disable-line
+
+        const observer = new IntersectionObserver((entries) => {
+
+            entries.forEach((entry) => {
+                const entryName = entry.target.getAttribute('name');
+
+                wrapper.props.setSeenCategory(entryName);
+
+                if (wrapper.props.filter) {
+                    wrapper.props.setSeenInSearch(entryName);
+                }
+
+                // initial load
+                if (!wrapper.props.activeCategory) {
+                    return wrapper.props.setActiveCategory({ name: entryName });
+                }
+
+                if (!entry.target.nextSibling) {
+                    return;
+                }
+
+                const nextSiblingName = entry.target.nextSibling.getAttribute('name');
+
+                // scrolling up
+                if (entry.isIntersecting && nextSiblingName === wrapper.props.activeCategory) {
+                    return wrapper.props.setActiveCategory({ name: entryName });
+                }
+
+                // scrolling down
+                if (!entry.isIntersecting && entryName === wrapper.props.activeCategory) {
+                    return wrapper.props.setActiveCategory({ name: nextSiblingName });
+                }
+
+            });
+        }, options);
+        [...this._categories].forEach((category) => {
+            observer.observe(category);
+        });
     }
 
     onScroll() {
 
-        const scrollTop = this._list.scrollTop,
-            active = this.props.activeCategory,
-            _active = this._categories[active];
+        const scrollTop = this._list.scrollTop;
 
         if (!isFFMac && !(this.scrollHeight <= this.listHeight)) {
             adjustScrollbar(this.scrollHeight, scrollTop, this.listHeight, this._scroller);
@@ -61,48 +100,6 @@ class WrapperSection extends Component {
 
         this.props.suppressModifiers();
         this.props.closeDiversitiesMenu();
-
-        this.proximity = getProximity(this.offsets, scrollTop, this.listHeight, this.headerHeight);
-
-        const {
-            proximityIndex, // closest category index
-            activeCategory, // currently visible category
-            inViewPort // partially visible, not active
-        } = this.proximity;
-
-        if (this.props.filter) {
-            this.props.setSeenInSearch(inViewPort);
-            return this.transformed = clearTransform(this.transformed);
-        }
-
-        this.props.setSeenCategory(activeCategory, inViewPort);
-
-        // this block deals is for most cases - we're not near a title change
-        if (typeof proximityIndex !== 'number') {
-            if (activeCategory !== active) {
-                this.props.setActiveCategory({ index: activeCategory });
-            }
-            return this.transformed = clearTransform(this.transformed);
-        }
-        const distance =  -(scrollTop - this.offsets[proximityIndex]),
-            _activeName = _active.firstElementChild, // active category name
-            currentIsFirst = proximityIndex === 0, // is this the first category?
-            currentIsActive = proximityIndex === active, // is the current category the active one
-            scrollDirection = hitAnotherCategory({ distance, currentIsActive, currentIsFirst });
-
-        if (this.props.delayedCategory === proximityIndex || scrollDirection === 'next') {
-            this.props.setActiveCategory({ index: proximityIndex});
-        } else if (scrollDirection === 'prev') {
-            this.props.setActiveCategory({ index: active -1 });
-        }
-
-        if (!currentIsActive) {
-            this.transformed = clearTransform(this.transformed, active);
-
-            // push the active title up or down
-            _activeName.setAttribute('style', headerTransform(distance, this.headerHeight));
-            this.transformed.push({ index: active, element: _activeName });
-        }
     }
 
     hideScrollIndicator() {
@@ -176,7 +173,7 @@ WrapperSection.propTypes = {
     setActiveCategory: PropTypes.func,
     visibleCategories: PropTypes.object,
     modifiersSpread: PropTypes.bool,
-    activeCategory: PropTypes.number,
+    activeCategory: PropTypes.string,
     delayedCategory: PropTypes.number,
     preload: PropTypes.bool
 };
