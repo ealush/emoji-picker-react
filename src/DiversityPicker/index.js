@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { emojis } from '../emoji-data';
 import emojiAccessor from '../emoji-data/emoji_accessor';
 import { bgImage } from '../Emoji/helpers';
-import './style.scss';
+import { Div } from './styled';
 
 function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, close, disable }) {
 
@@ -26,17 +26,19 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
     }
 
     return (
-        <div className={className}>{
+        <Div className={className}>{
             diversities && diversities.map((diversity) => {
                 const style = bgImage({ unified: diversity, assetPath, emojiResolution });
                 return (
-                    <a key={diversity}
-                        style={style}
-                        className="emoji"
-                        onClick={((e) => onClick(diversity, e))}/>
+                    <button key={diversity}
+                        className={className}
+                        onClick={((e) => onClick(diversity, e))}
+                        tabIndex={emoji.order}>
+                        <i style={style}/>
+                    </button>
                 );
             })
-        }</div>
+        }</Div>
     );
 }
 

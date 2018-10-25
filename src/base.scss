@@ -3,7 +3,6 @@
 // Border
 $border_main: $md-grey-200 !default;
 $border_dark: $md-grey-300 !default;
-$border_diversity_picker: $border_main !default;
 $border_emoji_picker: $border_main !default;
 $border_filter: $border_main !default;
 $border_filter_focus: $border_dark !default;
@@ -14,7 +13,6 @@ $bg_category_name: $bg_picker !default;
 $bg_footer: $bg_picker !default;
 $bg_nav: $bg_picker !default;
 
-$bg_diversity_picker: $md-grey-50 !default;
 $bg_diversity_indicator: $md-grey-100 !default;
 $color_filter_placeholder: $md-grey-300 !default;
 $bg_scroller: $md-grey-400 !default;
@@ -39,7 +37,6 @@ $padding_search_bar: $padding_main !default; // search bar padding
 $size_emoji: 20px !default; // size of each emoji (no padding)
 $size_modifier: 10px !default; // width/height of the skintone chooser
 $height_category_name: 30px !default; // height of the category name container
-$height_diversity_picker: 30px !default; // height of the diversity picker
 $height_footer: 5px !default; // picker footer height
 $height_nav_item: 45px !default; // height for the category icons
 $height_picker: 240px !default; // height for the whole picker
