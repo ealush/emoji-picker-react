@@ -175,7 +175,8 @@ class EmojiPicker extends Component {
         return (
             <aside className={this.pickerClassNames.join(' ')}
                 ref={(picker) => this._picker = picker}>
-                <CategoriesNav onClick={this.onCategoryClick}/>
+                <CategoriesNav onClick={this.onCategoryClick}
+                    activeCategory={this.state.activeCategory}/>
                 <div className="bar-wrapper">
                     <SkinTones onModifierClick={this.onModifierClick}
                         activeModifier={this.state.activeModifier}

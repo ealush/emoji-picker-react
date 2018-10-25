@@ -35,5 +35,7 @@
 
     .bar-wrapper {
         position: relative;
+        margin-top: $height_nav_item;
+        border-top: 1px solid $border_main;
     }
 }

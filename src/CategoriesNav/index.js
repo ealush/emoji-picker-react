@@ -1,26 +1,29 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { Nav, ButtonCategory } from './styled';
 import { categories } from '../emoji-data';
-import './style.scss';
 
-function CategoriesNav({onClick}) {
 
+function CategoriesNav({onClick, activeCategory}) {
     return (
-        <nav>{
+        <Nav>{
             categories.map((category, index) => (
-                <button className={category.name} key={index} onClick={(e) => onClick(e, category.name)}>
+                <ButtonCategory key={index}
+                    onClick={(e) => onClick(e, category.name)}
+                    className={category.name}
+                    activeCategory={activeCategory}>
                     <i/>
                     <span className="hidden">{category.name}</span>
-                </button>
+                </ButtonCategory>
             ))
         }
-        </nav>
+        </Nav>
     );
 }
 
 CategoriesNav.propTypes = {
-    onClick: PropTypes.func.isRequired
+    onClick: PropTypes.func.isRequired,
+    activeCategory: PropTypes.string
 };
 
 export default CategoriesNav;
