@@ -10,8 +10,8 @@ function CategoriesNav({onClick, activeCategory}) {
             categories.map((category, index) => (
                 <ButtonCategory key={index}
                     onClick={(e) => onClick(e, category.name)}
-                    className={category.name}
-                    activeCategory={activeCategory}>
+                    categoryName={category.name}
+                    isActiveCategory={activeCategory === category.name}>
                     <i/>
                     <span className="hidden">{category.name}</span>
                 </ButtonCategory>

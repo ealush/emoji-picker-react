@@ -39,17 +39,18 @@ const Aside = styled.aside`
         }
     }
 
-    .bar-wrapper {
-        position: relative;
-        margin-top: ${HEIGHT_NAV_ITEM};
-        border-top: 1px solid ${BORDER_MAIN};
-    }
-
     button {
         cursor: pointer;
     }
 `;
 
+const BarWrapper = styled.div`
+    position: relative;
+    margin-top: ${HEIGHT_NAV_ITEM};
+    border-top: 1px solid ${BORDER_MAIN};
+`;
+
 export {
-    Aside
+    Aside,
+    BarWrapper
 };

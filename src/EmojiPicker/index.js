@@ -5,9 +5,7 @@ import { modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
-import { Aside } from './styled';
-
-const CLASSNAME_MODIFIER_INDEX = 2;
+import { Aside, BarWrapper } from './styled';
 
 class EmojiPicker extends Component {
 
@@ -23,7 +21,6 @@ class EmojiPicker extends Component {
         };
 
         this.transformed = [];
-        this.pickerClassNames = ['emoji-picker', '', ''];
         this.onCategoryClick = this.onCategoryClick.bind(this);
         this.onEmojiClick = this.onEmojiClick.bind(this);
         this.onSearch = this.onSearch.bind(this);
@@ -40,11 +37,6 @@ class EmojiPicker extends Component {
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
         return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
-    }
-
-    setPickerClassname(index, nextValue = '') {
-        this.pickerClassNames[index] = nextValue;
-        this._picker.setAttribute('class', this.pickerClassNames.join(' '));
     }
 
     setActiveCategory({ name }) {
@@ -95,7 +87,6 @@ class EmojiPicker extends Component {
             modifier = null;
         }
 
-        this.setPickerClassname(CLASSNAME_MODIFIER_INDEX, modifier);
         this.setState({ activeModifier: modifier, modifiersSpread: false });
     }
 
@@ -164,16 +155,15 @@ class EmojiPicker extends Component {
         const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
-            <Aside className={this.pickerClassNames.join(' ')}
-                ref={(picker) => this._picker = picker}>
+            <Aside ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}
                     activeCategory={activeCategory}/>
-                <div className="bar-wrapper">
+                <BarWrapper>
                     <SkinTones onModifierClick={this.onModifierClick}
                         activeModifier={this.state.activeModifier}
                         spread={this.state.modifiersSpread}/>
                     <SearchBar onChange={this.onSearch}/>
-                </div>
+                </BarWrapper>
                 <WrapperSection ref={(ref) => this._wrapperSection = ref}
                     filter={this.state.filter}
                     diversityPicker={this.state.diversityPicker}

@@ -22,7 +22,7 @@ const Div = styled.div`
         width: 0;
     }
 
-    &.filter {
+    ${(filter) => filter ? `
         &:before {
             content: '';
             background: ${BG_CATEGORY_NAME};
@@ -33,7 +33,7 @@ const Div = styled.div`
             height: ${HEIGHT_CATEGORY_NAME};
             z-index: 1;
         }
-    }
+    ` : ''}
 `;
 
 export {

@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { stackFilter, textIndexInStack, reduceEmojis, findMatches } from './helpers';
 import { FILTER_UPDATE_DEBOUNCE } from '../constants';
 import { Div } from './styled';
+import { BG_DIVERSITY_INDICATOR } from '../styled';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -89,9 +90,9 @@ class SearchBar extends Component {
     render() {
 
         return (
-            <Div className="search-bar">
+            <Div>
                 <input type="text" placeholder="Emoji Search" onChange={this.filterKeywords} ref={(_input) => this._input = _input}/>
-                <i className="icn-magnifier"/>
+                <i/>
             </Div>
         );
 
