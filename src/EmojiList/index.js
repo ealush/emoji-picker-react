@@ -47,7 +47,7 @@ class EmojiList extends Component {
                             filter={filter}
                             customCategoryNames={customCategoryNames}
                             _emojiName={_emojiName}
-                            activeCategory={activeCategory}
+                            isActiveCategory={activeCategory === category.name}
                             categorySeen={isCategorySeen}/>
                     );
                 })}

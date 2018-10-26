@@ -33,17 +33,6 @@ const Div = styled.div`
             height: ${HEIGHT_CATEGORY_NAME};
             z-index: 1;
         }
-
-        .category-name {
-            background: none;
-            z-index: 1;
-        }
-    }
-
-    &:not(.filter) {
-        .emoji-category {
-            min-height: 100%;
-        }
     }
 `;
 

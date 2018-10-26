@@ -25,7 +25,6 @@ class WrapperSection extends Component {
     }
 
     componentDidMount() {
-        this.headerHeight = this._list.querySelector('.category-name').clientHeight;
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
         const positions = getOffsets(this._list);
@@ -109,7 +108,7 @@ class WrapperSection extends Component {
 
     scrollToCategory(name) {
         // scrolling one pixel down so intersection observer doesn't get confused
-        this._list.scrollTop = this._list.querySelector(`.emoji-category.${name}`).offsetTop + 1;
+        this._list.scrollTop = this._list.querySelector(`.${name}`).offsetTop + 1;
         this.props.setActiveCategory({ name });
     }
 
