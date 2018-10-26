@@ -1,6 +1,5 @@
 import { keywords } from '../emoji-data';
 import keywordsSingleChar from '../SearchBar/helpers/init_keywords_single';
-import * as scss from '../base.scss'; // eslint-disable-line no-unused-vars
 
 // view
 export const MIN_SCROLLBAR_HEIGHT_PADDED = 15;

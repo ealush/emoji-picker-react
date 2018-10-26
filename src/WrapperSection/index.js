@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { debounce, throttle } from 'throttle-debounce';
 import DiversityPicker from '../DiversityPicker';
 import EmojiList from '../EmojiList';
-import './style.scss';
+import { Section } from './styled';
 import {
     getScrollbarWidth,
     adjustScrollbar,
@@ -135,10 +135,10 @@ class WrapperSection extends Component {
             disableDiversityPicker
         } = this.context;
 
-        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results icn-magnifier' : ''}`;
+        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
 
         return (
-            <section className={wrapperClassName}>
+            <Section className={wrapperClassName}>
                 <DiversityPicker index={diversityPicker}
                     assetPath={assetPath}
                     emojiResolution={emojiResolution}
@@ -155,7 +155,7 @@ class WrapperSection extends Component {
                     activeCategory={activeCategory}
                     _emojiName={this._emojiName}
                     ref={(list) => this._list = (list ? list._list : null)}/>
-            </section>
+            </Section>
         );
     }
 }

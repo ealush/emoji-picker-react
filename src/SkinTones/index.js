@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { modifiers } from '../emoji-data';
-import './style.scss';
+import { Ul } from './styled';
 
 const NEUT = 'neutral';
 
@@ -10,7 +10,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
     const spreadClass = spread ? ' spread' : '';
 
     return (
-        <ul className={`skin-tones${spreadClass}`}>
+        <Ul className={`skin-tones${spreadClass}`}>
             {modifiers.map((modifier, index) => {
 
                 const isNeutral = modifier === NEUT,
@@ -34,7 +34,7 @@ function SkinTones({onModifierClick, activeModifier, spread }) {
                     </li>
                 );
             })}
-        </ul>
+        </Ul>
     );
 }
 

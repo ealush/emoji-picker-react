@@ -7,7 +7,6 @@ import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
 import { Aside } from './styled';
 
-const CLASSNAME_CATEGORY_INDEX = 1;
 const CLASSNAME_MODIFIER_INDEX = 2;
 
 class EmojiPicker extends Component {
@@ -57,12 +56,7 @@ class EmojiPicker extends Component {
             return;
         }
 
-        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX, name);
         this.setState({ activeCategory: name });
-    }
-
-    unsetActiveCategory() {
-        this.setPickerClassname(CLASSNAME_CATEGORY_INDEX);
     }
 
     setSeenCategory(name) {
@@ -87,7 +81,6 @@ class EmojiPicker extends Component {
         this.setState({ filter }, () => {
             this._wrapperSection.scrollTop();
             this._wrapperSection.onScroll();
-            this.unsetActiveCategory();
         });
     }
 
