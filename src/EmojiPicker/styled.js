@@ -2,12 +2,13 @@ import styled from 'styled-components';
 import {
     BG_PICKER,
     BORDER_MAIN,
-    HEIGHT_NAV_ITEM
+    HEIGHT_NAV_ITEM,
+    WIDTH_PICKER
 } from '../styled';
 
 const Aside = styled.aside`
     background-color: ${BG_PICKER};
-    width: $width_picker + 5px;
+    width: calc(${WIDTH_PICKER} + 5px);
     display: block;
     position: relative;
     padding: 0;

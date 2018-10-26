@@ -3,7 +3,7 @@ import { debounce } from 'throttle-debounce';
 import PropTypes from 'prop-types';
 import { stackFilter, textIndexInStack, reduceEmojis, findMatches } from './helpers';
 import { FILTER_UPDATE_DEBOUNCE } from '../constants';
-import './style.scss';
+import { Div } from './styled';
 
 class SearchBar extends Component {
     constructor(props) {
@@ -89,10 +89,10 @@ class SearchBar extends Component {
     render() {
 
         return (
-            <div className="search-bar">
+            <Div className="search-bar">
                 <input type="text" placeholder="Emoji Search" onChange={this.filterKeywords} ref={(_input) => this._input = _input}/>
                 <i className="icn-magnifier"/>
-            </div>
+            </Div>
         );
 
     }
