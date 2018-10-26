@@ -50,7 +50,6 @@ class EmojiPicker extends Component {
     }
 
     setActiveCategory({ name }) {
-
         if (this.state.filter) { return; }
 
         const prevActive = this.state.activeCategory;
@@ -170,29 +169,30 @@ class EmojiPicker extends Component {
 
     render() {
         const { preload } = this.props;
+        const { activeCategory } = this.state;
         const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
             <aside className={this.pickerClassNames.join(' ')}
                 ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}
-                    activeCategory={this.state.activeCategory}/>
+                    activeCategory={activeCategory}/>
                 <div className="bar-wrapper">
                     <SkinTones onModifierClick={this.onModifierClick}
                         activeModifier={this.state.activeModifier}
                         spread={this.state.modifiersSpread}/>
                     <SearchBar onChange={this.onSearch}/>
                 </div>
-                <WrapperSection filter={this.state.filter}
+                <WrapperSection ref={(ref) => this._wrapperSection = ref}
+                    filter={this.state.filter}
                     diversityPicker={this.state.diversityPicker}
                     closeDiversitiesMenu={this.closeDiversitiesMenu}
                     visibleCategories={visibleCategories}
                     modifiersSpread={this.state.modifiersSpread}
-                    ref={(ref) => this._wrapperSection = ref}
                     setSeenCategory={this.setSeenCategory}
                     suppressModifiers={this.suppressModifiers}
                     setActiveCategory={this.setActiveCategory}
-                    activeCategory={this.state.activeCategory}
+                    activeCategory={activeCategory}
                     preload={preload}/>
             </aside>
         );

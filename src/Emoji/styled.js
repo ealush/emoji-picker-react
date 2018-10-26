@@ -1,22 +1,28 @@
-@import '../base.scss';
+import styled from 'styled-components';
+import {
+    SIZE_EMOJI,
+    PADDING_EMOJI,
+    BG_EMOJI_HOVER,
+    BG_DIVERSITY_INDICATOR
+} from '../styled';
 
-.emoji-picker .emoji {
+const Button = styled.button`
     display: none;
     border: 0;
     outline: none;
     border-radius: 5px;
     padding: 0;
     position: relative;
+    overflow: hidden;
 
     i {
-        height: $size_emoji;
-        width: $size_emoji;
+        height: ${SIZE_EMOJI};
+        width: ${SIZE_EMOJI};
         display: inline-block;
-        padding: $padding_emoji;
-        background-size: $size_emoji;
+        padding: ${PADDING_EMOJI};
+        background-size: ${SIZE_EMOJI};
         background-repeat: no-repeat;
         background-position: 50% 50%;
-        overflow: hidden;
         transition: background-color .2s;
     }
 
@@ -25,7 +31,7 @@
     }
 
     &:hover {
-        background-color: $bg_emoji_hover;
+        background-color: ${BG_EMOJI_HOVER};
 
         &.has-diversities:before {
             opacity: 1;
@@ -35,11 +41,17 @@
     &.has-diversities:before {
         content: '';
         position: absolute;
-        background-color: $bg_diversity_indicator;
+        background-color: ${BG_DIVERSITY_INDICATOR};
         display: block;
         top: 0;
         right: 0;
+        width: 5px;
+        height: 5px;
         opacity: 0;
         transition: opacity .2s;
     }
-}
+`;
+
+export {
+    Button
+};

@@ -21,7 +21,6 @@ class WrapperSection extends Component {
         this.observeActive = this.observeActive.bind(this);
         this.onScroll = throttle(16, this.onScroll.bind(this));
         this.hideScrollIndicator = debounce(HIDE_SCROLL_DEBOUNCE, this.hideScrollIndicator.bind(this));
-
         this._emojiName = null;
     }
 
@@ -52,13 +51,13 @@ class WrapperSection extends Component {
         const observer = new IntersectionObserver((entries) => {
 
             entries.forEach((entry) => {
-                const entryName = entry.target.getAttribute('name');
+                const name = entry.target.getAttribute('name');
 
-                wrapper.props.setSeenCategory(entryName);
+                wrapper.props.setSeenCategory(name);
 
                 // initial load
                 if (!wrapper.props.activeCategory) {
-                    return wrapper.props.setActiveCategory({ name: entryName });
+                    return wrapper.props.setActiveCategory({ name });
                 }
 
                 if (!entry.target.nextSibling) {
@@ -69,11 +68,11 @@ class WrapperSection extends Component {
 
                 // scrolling up
                 if (entry.isIntersecting && nextSiblingName === wrapper.props.activeCategory) {
-                    return wrapper.props.setActiveCategory({ name: entryName });
+                    return wrapper.props.setActiveCategory({ name });
                 }
 
                 // scrolling down
-                if (!entry.isIntersecting && entryName === wrapper.props.activeCategory) {
+                if (!entry.isIntersecting && name === wrapper.props.activeCategory) {
                     return wrapper.props.setActiveCategory({ name: nextSiblingName });
                 }
 
@@ -125,6 +124,7 @@ class WrapperSection extends Component {
             closeDiversitiesMenu,
             visibleCategories,
             modifiersSpread,
+            activeCategory,
             preload
         } = this.props;
 
@@ -152,6 +152,7 @@ class WrapperSection extends Component {
                     seenCategories={visibleCategories}
                     modifiersSpread={modifiersSpread}
                     preload={preload}
+                    activeCategory={activeCategory}
                     _emojiName={this._emojiName}
                     ref={(list) => this._list = (list ? list._list : null)}/>
             </section>
@@ -178,7 +179,6 @@ WrapperSection.contextTypes = {
     onEmojiClick: PropTypes.func,
     parent: PropTypes.any,
     assetPath: PropTypes.string,
-    activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
     disableDiversityPicker: PropTypes.bool
 };

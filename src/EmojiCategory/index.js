@@ -3,14 +3,16 @@ import PropTypes from 'prop-types';
 import { emojis } from '../emoji-data';
 import emojiAccessor from '../emoji-data/emoji_accessor';
 import Emoji from '../Emoji';
-import './style.scss';
+import { Div } from './styled';
 
-function EmojiCategory({ index, category, filter, categorySeen, _emojiName }, {customCategoryNames}) {
+function EmojiCategory({ index, category, filter, categorySeen, _emojiName, activeCategory }, {customCategoryNames}) {
     const hiddenClass = filter && !filter.hasOwnProperty(category.name) ? ' hidden' : '';
-
-    const categoryName = customCategoryNames && customCategoryNames[category.name] ? customCategoryNames[category.name] : `#${category.name}`;
+    const categoryName = customCategoryNames && customCategoryNames[category.name] ? customCategoryNames[category.name] : category.name;
     return (
-        <div className={`emoji-category ${category.name}${hiddenClass}`} name={category.name} key={index}>
+        <Div className={`emoji-category ${category.name}${hiddenClass}`}
+            name={category.name}
+            activeCategory={activeCategory}
+            key={index}>
             <div className="category-name">{categoryName}</div>
             {categorySeen && category.members.map((member, index) => {
 
@@ -30,7 +32,7 @@ function EmojiCategory({ index, category, filter, categorySeen, _emojiName }, {c
                         categorySeen={categorySeen}/>
                 );
             })}
-        </div>
+        </Div>
     );
 }
 
@@ -39,7 +41,8 @@ EmojiCategory.propTypes = {
     category: PropTypes.object.isRequired,
     filter: PropTypes.object,
     categorySeen: PropTypes.bool,
-    _emojiName: PropTypes.object
+    _emojiName: PropTypes.object,
+    activeCategory: PropTypes.string
 };
 
 EmojiCategory.contextTypes = {

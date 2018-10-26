@@ -6,7 +6,7 @@ import './style.scss';
 
 class EmojiList extends Component {
 
-    shouldComponentUpdate(nextProps, nextState, {activeModifier}) {
+    shouldComponentUpdate(nextProps, nextState, { activeModifier }) {
         if (nextProps.modifiersSpread) {
             return false;
         }
@@ -23,11 +23,15 @@ class EmojiList extends Component {
             return true;
         }
 
+        if (this.props.activeCategory !== nextProps.activeCategory) {
+            return true;
+        }
+
         return Object.keys(nextProps.seenCategories).length !== Object.keys(this.props.seenCategories).length;
     }
 
     render() {
-        const { filter, onScroll, seenCategories, preload, customCategoryNames, _emojiName } = this.props;
+        const { filter, onScroll, seenCategories, preload, customCategoryNames, _emojiName, activeCategory } = this.props;
         const filterClass = filter ? ' filter' : '';
         return (
             <div className={`emoji-list${filterClass}`}
@@ -43,6 +47,7 @@ class EmojiList extends Component {
                             filter={filter}
                             customCategoryNames={customCategoryNames}
                             _emojiName={_emojiName}
+                            activeCategory={activeCategory}
                             categorySeen={isCategorySeen}/>
                     );
                 })}
@@ -57,7 +62,9 @@ EmojiList.propTypes = {
     seenCategories: PropTypes.object.isRequired,
     preload: PropTypes.bool,
     _emojiName: PropTypes.object,
-    customCategoryNames: PropTypes.object
+    modifiersSpread: PropTypes.bool,
+    customCategoryNames: PropTypes.object,
+    activeCategory: PropTypes.string
 };
 
 EmojiList.contextTypes = {

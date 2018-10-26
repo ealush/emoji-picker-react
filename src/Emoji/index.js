@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bgImage, unifiedWithModifier } from './helpers';
 import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
-import './style.scss';
+import { Button } from './styled';
 
 class Emoji extends Component {
 
@@ -110,7 +110,7 @@ class Emoji extends Component {
         const style = bgImage({ unified, assetPath, emojiResolution });
 
         return (
-            <button className={className}
+            <Button className={className}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}
@@ -119,7 +119,7 @@ class Emoji extends Component {
                 style={{order: emoji.order}}
                 tabIndex={emoji.order}>
                 <i style={style}/>
-            </button>
+            </Button>
         );
     }
 }
