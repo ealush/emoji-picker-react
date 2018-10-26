@@ -5,8 +5,7 @@ import { modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
-
-import './style.scss';
+import { Aside } from './styled';
 
 const CLASSNAME_CATEGORY_INDEX = 1;
 const CLASSNAME_MODIFIER_INDEX = 2;
@@ -173,7 +172,7 @@ class EmojiPicker extends Component {
         const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
-            <aside className={this.pickerClassNames.join(' ')}
+            <Aside className={this.pickerClassNames.join(' ')}
                 ref={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}
                     activeCategory={activeCategory}/>
@@ -194,7 +193,7 @@ class EmojiPicker extends Component {
                     setActiveCategory={this.setActiveCategory}
                     activeCategory={activeCategory}
                     preload={preload}/>
-            </aside>
+            </Aside>
         );
     }
 }

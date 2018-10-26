@@ -1,12 +1,17 @@
-@import '../base.scss';
+import styled from 'styled-components';
+import {
+    BG_PICKER,
+    BORDER_MAIN,
+    HEIGHT_NAV_ITEM
+} from '../styled';
 
-.emoji-picker {
-    background-color: $bg_picker;
+const Aside = styled.aside`
+    background-color: ${BG_PICKER};
     width: $width_picker + 5px;
     display: block;
     position: relative;
     padding: 0;
-    border: 1px solid $border_emoji_picker;
+    border: 1px solid ${BORDER_MAIN};
     border-radius: 3px;
     overflow: hidden;
     font-family: sans-serif;
@@ -35,7 +40,11 @@
 
     .bar-wrapper {
         position: relative;
-        margin-top: $height_nav_item;
-        border-top: 1px solid $border_main;
+        margin-top: ${HEIGHT_NAV_ITEM};
+        border-top: 1px solid ${BORDER_MAIN};
     }
-}
+`;
+
+export {
+    Aside
+};

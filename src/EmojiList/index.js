@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { categories } from '../emoji-data';
 import EmojiCategory from '../EmojiCategory';
-import './style.scss';
+import { Div } from './styled';
 
 class EmojiList extends Component {
 
@@ -34,7 +34,7 @@ class EmojiList extends Component {
         const { filter, onScroll, seenCategories, preload, customCategoryNames, _emojiName, activeCategory } = this.props;
         const filterClass = filter ? ' filter' : '';
         return (
-            <div className={`emoji-list${filterClass}`}
+            <Div className={`emoji-list${filterClass}`}
                 ref={(list) => this._list = list}
                 onScroll={onScroll}>
                 {categories.map((category, index) => {
@@ -51,7 +51,7 @@ class EmojiList extends Component {
                             categorySeen={isCategorySeen}/>
                     );
                 })}
-            </div>
+            </Div>
         );
     }
 }
