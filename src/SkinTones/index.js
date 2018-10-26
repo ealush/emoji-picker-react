@@ -1,37 +1,28 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { modifiers } from '../emoji-data';
-import { Ul } from './styled';
+import { Ul, Modifier } from './styled';
 
 const NEUT = 'neutral';
 
 function SkinTones({onModifierClick, activeModifier, spread }) {
 
-    const spreadClass = spread ? ' spread' : '';
-
     return (
-        <Ul className={`skin-tones${spreadClass}`}>
+        <Ul>
             {modifiers.map((modifier, index) => {
 
                 const isNeutral = modifier === NEUT,
                     isSelected = activeModifier === modifier || !activeModifier && isNeutral,
-                    selectedClass = isSelected ? ' selected' : '',
-                    modifierClass = `${isNeutral ? '' : 'm'}${modifier}${selectedClass}`;
-
-                const style = {};
-
-                if (spread) {
-                    if (isSelected) {
-                        style.transform = `translateX(${-index*20}px) scale(1.5)`;
-                    } else {
-                        style.transform = `translateX(${-index*20}px)`;
-                    }
-                }
+                    modifierClass = `${isNeutral ? '' : 'm'}${modifier}`;
 
                 return (
-                    <li className={modifierClass} style={style} key={modifier}>
-                        <button className="st" onClick={(e) => onModifierClick(e, modifier)}></button>
-                    </li>
+                    <Modifier className={modifierClass}
+                        spread={spread}
+                        isSelected={isSelected}
+                        index={index}
+                        key={modifier}>
+                        <button className="st" onClick={(e) => onModifierClick(e, modifier)}/>
+                    </Modifier>
                 );
             })}
         </Ul>

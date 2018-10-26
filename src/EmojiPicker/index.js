@@ -85,7 +85,6 @@ class EmojiPicker extends Component {
     }
 
     onModifierClick(e, modifier) {
-        e.preventDefault();
 
         if (!this.state.modifiersSpread) {
             this._picker.addEventListener('mousedown', this.suppressModifiers);

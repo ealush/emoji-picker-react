@@ -44,6 +44,10 @@ const Aside = styled.aside`
         margin-top: ${HEIGHT_NAV_ITEM};
         border-top: 1px solid ${BORDER_MAIN};
     }
+
+    button {
+        cursor: pointer;
+    }
 `;
 
 export {

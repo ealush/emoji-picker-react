@@ -21,11 +21,14 @@ const Div = styled.div`
     opacity: .6;
     transition: .2s opacity, .2s transform;
 
-    &.shown {
-        transform: translateY(0);
-        opacity: 1;
-        border-bottom: 1px solid ${BORDER_DIVERSITY_PICKER};
-    }
+    ${({shown}) => {
+        if (!shown) { return; }
+        return `
+            transform: translateY(0);
+            opacity: 1;
+            border-bottom: 1px solid ${BORDER_DIVERSITY_PICKER};
+        `;
+    }}
 
     button {
         display: inline-block;

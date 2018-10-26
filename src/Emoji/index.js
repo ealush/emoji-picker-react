@@ -101,16 +101,14 @@ class Emoji extends Component {
         const { emoji, hidden, categorySeen } = this.props;
         const { activeModifier, assetPath, emojiResolution } = this.context;
         let unified = emoji.unified;
-        const shownClass = (categorySeen && !hidden) ? ' shown' : '';
+        const shown = categorySeen && !hidden;
 
         unified = unifiedWithModifier(emoji, activeModifier);
-
-        const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
-
         const style = bgImage({ unified, assetPath, emojiResolution });
 
         return (
-            <Button className={className}
+            <Button shown={shown}
+                hasDiversities={this.hasDiversities}
                 onClick={this.onClick}
                 onMouseEnter={this.onMouseEnter}
                 onMouseLeave={this.onMouseLeave}

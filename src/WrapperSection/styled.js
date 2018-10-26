@@ -12,27 +12,31 @@ const Section = styled.section`
     position: relative;
     overflow: hidden;
 
-    &.no-results {
-        &:before {
-            content: '';
-            background-repeat: no-repeat;
-            background-image: url(${BG_IMG_FIND});
-            background-position: 50% 50%;
-            background-size: 100px 100px;
-            display: block;
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            opacity: .07;
-            transform: translateX(-50%) translateY(-50%);
-        }
+    ${({noSearchResults}) => {
+        if (!noSearchResults) { return; }
 
-        .emoji-name {
-            display: none;
-        }
-    }
+        return `
+            &:before {
+                content: '';
+                background-repeat: no-repeat;
+                background-image: ${BG_IMG_FIND};
+                background-position: 50% 50%;
+                background-size: 100px 100px;
+                display: block;
+                width: 100px;
+                height: 100px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                opacity: .07;
+                transform: translateX(-50%) translateY(-50%);
+            }
+
+            .emoji-name {
+                display: none;
+            }
+        `;
+    }}
 
     &:after {
         content: '';
@@ -43,48 +47,46 @@ const Section = styled.section`
         right: 0;
         height: ${HEIGHT_FOOTER};
     }
+`;
 
-    .scroller {
-        display: block;
-        position: absolute;
-        width: 5px;
-        padding-top: 5px;
-        z-index: 2;
-        right: 3px;
-        box-sizing: border-box;
-        opacity: 0;
-        transition: opacity .2s;
+const EmojiName = styled.span`
+    position: absolute;
+    right: ${PADDING_CATEGORY_NAME};
+    top: 8px;
+    font-size: 10px;
+    font-weight: 100;
+    z-index: 2;
+    color: ${COLOR_SHORTNAME};
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+`;
 
-        &.shown {
-            opacity: 1;
-        }
+const Scroller = styled.div`
+    display: block;
+    position: absolute;
+    width: 5px;
+    padding-top: 5px;
+    z-index: 2;
+    right: 3px;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity .2s;
 
-        Section {
-            background-color: ${BG_SCROLLER};
-            width: 100%;
-            min-height: 12px;
-        }
+    &.shown {
+        opacity: 1;
     }
 
-    .emoji-name {
-        position: absolute;
-        right: ${PADDING_CATEGORY_NAME};
-        top: 8px;
-        font-size: 10px;
-        font-weight: 100;
-        z-index: 2;
-        color: ${COLOR_SHORTNAME};
-        max-width: 130px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    &.no-results:before {
-        background-image: ${BG_IMG_FIND};
+    div {
+        background-color: ${BG_SCROLLER};
+        width: 100%;
+        min-height: 12px;
     }
 `;
 
 export {
-    Section
+    Section,
+    EmojiName,
+    Scroller
 };

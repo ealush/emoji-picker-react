@@ -26,30 +26,30 @@ const Button = styled.button`
         transition: background-color .2s;
     }
 
-    &.shown {
-        display: inline-block;
-    }
+    ${({ shown }) => shown ? 'display: inline-block;' : ''}
 
     &:hover {
         background-color: ${BG_EMOJI_HOVER};
 
-        &.has-diversities:before {
+        &:before {
             opacity: 1;
         }
     }
 
-    &.has-diversities:before {
-        content: '';
-        position: absolute;
-        background-color: ${BG_DIVERSITY_INDICATOR};
-        display: block;
-        top: 0;
-        right: 0;
-        width: 5px;
-        height: 5px;
-        opacity: 0;
-        transition: opacity .2s;
-    }
+    ${({ hasDiversities }) => hasDiversities ? `
+        &:before {
+            content: '';
+            position: absolute;
+            background-color: ${BG_DIVERSITY_INDICATOR};
+            display: block;
+            top: 0;
+            right: 0;
+            width: 5px;
+            height: 5px;
+            opacity: 0;
+            transition: opacity .2s;
+        }
+    ` : ''}
 `;
 
 export {

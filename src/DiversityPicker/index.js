@@ -11,8 +11,7 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
         return null;
     }
 
-    const className = `diversity-picker${index ? ' shown' : ''}`,
-        emoji = emojiAccessor(emojis[index]);
+    const emoji = emojiAccessor(emojis[index]);
 
     let diversities = null;
 
@@ -26,12 +25,11 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
     }
 
     return (
-        <Div className={className}>{
+        <Div shown={index}>{
             diversities && diversities.map((diversity) => {
                 const style = bgImage({ unified: diversity, assetPath, emojiResolution });
                 return (
                     <button key={diversity}
-                        className={className}
                         onClick={((e) => onClick(diversity, e))}
                         tabIndex={emoji.order}>
                         <i style={style}/>

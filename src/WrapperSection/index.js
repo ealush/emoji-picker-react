@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { debounce, throttle } from 'throttle-debounce';
 import DiversityPicker from '../DiversityPicker';
 import EmojiList from '../EmojiList';
-import { Section } from './styled';
+import { Section, EmojiName, Scroller } from './styled';
 import {
     getScrollbarWidth,
     adjustScrollbar,
@@ -135,18 +135,18 @@ class WrapperSection extends Component {
             disableDiversityPicker
         } = this.context;
 
-        const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results' : ''}`;
+        const noSearchResults = filter && Object.keys(filter).length === 0;
 
         return (
-            <Section className={wrapperClassName}>
+            <Section noSearchResults={noSearchResults}>
                 <DiversityPicker index={diversityPicker}
                     assetPath={assetPath}
                     emojiResolution={emojiResolution}
                     onEmojiClick={onEmojiClick}
                     close={closeDiversitiesMenu}
                     disable={disableDiversityPicker}/>
-                <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
-                <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
+                <Scroller ref={(scroller) => this._scroller = scroller}><div/></Scroller>
+                <EmojiName ref={(emojiName) => this._emojiName = emojiName}></EmojiName>
                 <EmojiList filter={filter}
                     onScroll={this.onScroll}
                     seenCategories={visibleCategories}
