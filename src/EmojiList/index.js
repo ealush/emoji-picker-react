@@ -33,7 +33,7 @@ class EmojiList extends Component {
     render() {
         const { filter, onScroll, seenCategories, preload, customCategoryNames, _emojiName, activeCategory } = this.props;
         return (
-            <Div ref={(list) => this._list = list}
+            <Div innerRef={(list) => this._list = list}
                 filter={filter}
                 onScroll={onScroll}>
                 {categories.map((category, index) => {

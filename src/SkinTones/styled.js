@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     COLOR_ST_NEUTRAL,
     COLOR_ST_M1F3FB,
@@ -11,12 +11,12 @@ import {
     SIZE_MODIFIER
 } from '../styled';
 
-const Ul = styled.ul`
+const Ul = styled('ul')`
     position: absolute;
     right: 0;
 `;
 
-const Modifier = styled.li`
+const Modifier = styled('li')`
     position: absolute;
     top: ${TOP_SKIN_TONE};
     right: ${RIGHT_SKIN_TONE};

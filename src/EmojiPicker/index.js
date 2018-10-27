@@ -155,7 +155,7 @@ class EmojiPicker extends Component {
         const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
-            <Aside ref={(picker) => this._picker = picker}>
+            <Aside innerRef={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}
                     activeCategory={activeCategory}/>
                 <BarWrapper>

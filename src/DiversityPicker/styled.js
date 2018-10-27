@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     BG_DIVERSITY_PICKER,
     HEIGHT_DIVERSITY_PICKER,
@@ -6,7 +6,7 @@ import {
     SIZE_EMOJI
 } from '../styled';
 
-const Div = styled.div`
+const Div = styled('div')`
     background-color: ${BG_DIVERSITY_PICKER};
     display: flex;
     justify-content: space-around;

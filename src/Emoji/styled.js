@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     SIZE_EMOJI,
     PADDING_EMOJI,
@@ -6,7 +6,7 @@ import {
     BG_DIVERSITY_INDICATOR
 } from '../styled';
 
-const Button = styled.button`
+const Button = styled('button')`
     display: none;
     border: 0;
     outline: none;

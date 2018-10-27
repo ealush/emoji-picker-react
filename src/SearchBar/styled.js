@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     HEIGHT_SEARCH_BAR,
     PADDING_SEARCH_BAR,
@@ -10,7 +10,7 @@ import {
     BG_IMG_FIND
 } from '../styled';
 
-const Div = styled.div`
+const Div = styled('div')`
     height: ${HEIGHT_SEARCH_BAR};
     margin-top: 0;
     padding: ${PADDING_SEARCH_BAR};

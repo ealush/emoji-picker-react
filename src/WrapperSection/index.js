@@ -30,7 +30,6 @@ class WrapperSection extends Component {
         const positions = getOffsets(this._list);
         this.scrollHeight = positions.scrollHeight;
         this.listHeight = positions.listHeight;
-        this.listWidth = positions.listWidth;
         this._categories = this._list.children;
         this.observeActive();
     }
@@ -144,8 +143,8 @@ class WrapperSection extends Component {
                     onEmojiClick={onEmojiClick}
                     close={closeDiversitiesMenu}
                     disable={disableDiversityPicker}/>
-                <Scroller ref={(scroller) => this._scroller = scroller}><div/></Scroller>
-                <EmojiName ref={(emojiName) => this._emojiName = emojiName}></EmojiName>
+                <Scroller innerRef={(scroller) => this._scroller = scroller}><div/></Scroller>
+                <EmojiName innerRef={(emojiName) => this._emojiName = emojiName}></EmojiName>
                 <EmojiList filter={filter}
                     onScroll={this.onScroll}
                     seenCategories={visibleCategories}

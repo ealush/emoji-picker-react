@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     COLOR_GREY_400,
     COLOR_GREY_500,
@@ -8,7 +8,7 @@ import {
     HEIGHT_CATEGORY_NAME
 } from '../styled';
 
-const Div = styled.div`
+const Div = styled('div')`
     position: relative;
     padding: 0 ${PADDING_EMOJI_LIST};
     margin: 0;
@@ -20,7 +20,7 @@ const Div = styled.div`
     ${({ filter }) => filter ? '' : 'min-height: 100%;'}
 `;
 
-const CategoryName = styled.div`
+const CategoryName = styled('div')`
     background-color: ${BG_CATEGORY_NAME};
     position: sticky;
     width: 100%;

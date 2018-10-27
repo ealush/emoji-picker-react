@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     BG_PICKER,
     BORDER_MAIN,
@@ -6,7 +6,7 @@ import {
     WIDTH_PICKER
 } from '../styled';
 
-const Aside = styled.aside`
+const Aside = styled('aside')`
     background-color: ${BG_PICKER};
     width: calc(${WIDTH_PICKER} + 5px);
     display: block;
@@ -44,7 +44,7 @@ const Aside = styled.aside`
     }
 `;
 
-const BarWrapper = styled.div`
+const BarWrapper = styled('div')`
     position: relative;
     margin-top: ${HEIGHT_NAV_ITEM};
     border-top: 1px solid ${BORDER_MAIN};

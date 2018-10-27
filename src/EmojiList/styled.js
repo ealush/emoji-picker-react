@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import styled from 'react-emotion';
 import {
     HEIGHT_PICKER,
     BG_CATEGORY_NAME,
     HEIGHT_CATEGORY_NAME
 } from '../styled';
 
-const Div = styled.div`
+const Div = styled('div')`
     width: 100%;
     height: ${HEIGHT_PICKER};
     padding: 0;
