@@ -47,7 +47,7 @@ const Div = styled('div')`
     i:before {
         content: '';
         background-repeat: no-repeat;
-        background-image: ${BG_IMG_FIND};
+        background-image: url("${BG_IMG_FIND}");
         background-position: 50% 50%;
         background-size: 15px 15px;
         height: 15px;

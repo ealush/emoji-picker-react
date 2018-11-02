@@ -19,7 +19,7 @@ const Section = styled('section')`
             &:before {
                 content: '';
                 background-repeat: no-repeat;
-                background-image: ${BG_IMG_FIND};
+                background-image: url("${BG_IMG_FIND}");
                 background-position: 50% 50%;
                 background-size: 100px 100px;
                 display: block;
@@ -72,16 +72,18 @@ const Scroller = styled('div')`
     right: 3px;
     box-sizing: border-box;
     opacity: 0;
-    transition: opacity .2s;
+    transition: opacity .4s;
 
     &.shown {
         opacity: 1;
+        transition: opacity .2s, transform .1s;
     }
 
     div {
         background-color: ${BG_SCROLLER};
         width: 100%;
         min-height: 12px;
+        border-radius: 5px;
     }
 `;
 
