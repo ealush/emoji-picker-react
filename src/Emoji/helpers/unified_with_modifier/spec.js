@@ -2,19 +2,19 @@ import unifiedWithModifier from './index';
 
 describe('Test unifiedWithModifier Function', () => {
     it('Should return unified emoji code with active chosen diversity', () => {
-        expect(unifiedWithModifier(emojiWithDiversities, activeModifier)).to.equal(unifiedWithDiversity);
+        expect(unifiedWithModifier(emojiWithDiversities, activeModifier)).toBe(unifiedWithDiversity);
     });
 
     it('Should return default unified emoji code if no diversity is chosen', () => {
-        expect(unifiedWithModifier(emojiWithDiversities)).to.equal(unified);
+        expect(unifiedWithModifier(emojiWithDiversities)).toBe(unified);
     });
 
     it('Should return default unified emoji code if current emoji does not have diversities', () => {
-        expect(unifiedWithModifier(emojiWithNoDiversities, activeModifier)).to.equal(unified);
+        expect(unifiedWithModifier(emojiWithNoDiversities, activeModifier)).toBe(unified);
     });
 
     it('Should return default unified emoji code if current emoji does not have chosen diversity', () => {
-        expect(unifiedWithModifier(emojiWithoutChosenDiversity, activeModifier)).to.equal(unified);
+        expect(unifiedWithModifier(emojiWithoutChosenDiversity, activeModifier)).toBe(unified);
     });
 });
 

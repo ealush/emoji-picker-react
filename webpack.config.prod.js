@@ -17,16 +17,6 @@ module.exports = {
     },
     module: {
         rules: [{
-            test: /\.svg/,
-            loaders: ['svg-url-loader']
-
-        },
-        {
-            test: /\.scss$/,
-            loaders: ['style-loader', 'css-loader', 'sass-loader'],
-            include: path.resolve(__dirname, '../')
-        },
-        {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: 'babel-loader'

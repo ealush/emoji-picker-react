@@ -2,15 +2,15 @@ import emojiAccessor from './emoji_accessor';
 
 describe('Test emojiAccessor Function', () => {
     it('should return undefined if no emoji was supplied', () => {
-        expect(emojiAccessor()).to.equal(undefined);
+        expect(emojiAccessor()).toBe(undefined);
     });
 
     it('should return correct emoji structure', () => {
-        expect(emojiAccessor(emoji)).to.deep.equal(expected);
+        expect(emojiAccessor(emoji)).toEqual(expected);
     });
 
     it('should return correct emoji structure with diversities', () => {
-        expect(emojiAccessor(emojiWithDiversities)).to.deep.equal(Object.assign({}, expected, {
+        expect(emojiAccessor(emojiWithDiversities)).toEqual(Object.assign({}, expected, {
             diversities: []
         }));
     });

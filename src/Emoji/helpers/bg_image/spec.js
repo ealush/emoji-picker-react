@@ -4,12 +4,12 @@ import bgImage from './index';
 describe('Test bgImage Function', () => {
     it('Shoud provide correct emoji background image given all parameters', () => {
         const scope = fullDataForFunction;
-        expect(bgImage(scope.testData)).to.deep.equal(scope.expect);
+        expect(bgImage(scope.testData)).toEqual(scope.expect);
     });
 
     it('Shoud provide correct emoji background image based on default parameters', () => {
         const scope = noSpecifiedConfig;
-        expect(bgImage(scope.testData)).to.deep.equal(scope.expect);
+        expect(bgImage(scope.testData)).toEqual(scope.expect);
     });
 });
 

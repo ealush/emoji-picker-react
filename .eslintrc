@@ -27,7 +27,8 @@
         "describe": true,
         "global": true,
         "__dirname": true,
-        "module": true
+        "module": true,
+        "jest": true
     },
     "rules": {
         "arrow-body-style": 2,

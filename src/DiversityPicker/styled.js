@@ -2,8 +2,7 @@ import styled from 'react-emotion';
 import {
     BG_DIVERSITY_PICKER,
     HEIGHT_DIVERSITY_PICKER,
-    BORDER_DIVERSITY_PICKER,
-    SIZE_EMOJI
+    BORDER_DIVERSITY_PICKER
 } from '../styled';
 
 const Div = styled('div')`
@@ -30,21 +29,8 @@ const Div = styled('div')`
         `;
     }}
 
-    button {
-        display: inline-block;
+    button, button:hover {
         background: none;
-        border: none;
-        outline: none;
-
-        i {
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
-            overflow: hidden;
-            display: block;
-            background-size: ${SIZE_EMOJI};
-            width: ${SIZE_EMOJI};
-            height: ${SIZE_EMOJI};
-        }
     }
 `;
 

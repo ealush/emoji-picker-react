@@ -6,7 +6,7 @@ import {
     BG_DIVERSITY_INDICATOR
 } from '../styled';
 
-const Button = styled('button')`
+const ButtonEmoji = styled('button')`
     display: none;
     border: 0;
     outline: none;
@@ -53,5 +53,5 @@ const Button = styled('button')`
 `;
 
 export {
-    Button
+    ButtonEmoji
 };

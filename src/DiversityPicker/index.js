@@ -4,6 +4,7 @@ import { emojis } from '../emoji-data';
 import emojiAccessor from '../emoji-data/emoji_accessor';
 import { bgImage } from '../Emoji/helpers';
 import { Div } from './styled';
+import { ButtonEmoji } from '../Emoji';
 
 function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, close, disable }) {
 
@@ -29,11 +30,12 @@ function DiversityPicker({ index, assetPath, emojiResolution, onEmojiClick, clos
             diversities && diversities.map((diversity) => {
                 const style = bgImage({ unified: diversity, assetPath, emojiResolution });
                 return (
-                    <button key={diversity}
+                    <ButtonEmoji shown
+                        key={diversity}
                         onClick={((e) => onClick(diversity, e))}
                         tabIndex={emoji.order}>
                         <i style={style}/>
-                    </button>
+                    </ButtonEmoji>
                 );
             })
         }</Div>
