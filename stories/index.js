@@ -3,10 +3,16 @@ import { storiesOf } from '@storybook/react';
 import { action, configureActions } from '@storybook/addon-actions';
 import EmojiPicker from '../src';
 
+const styles = {
+    icons: {
+        people: 'https://npm-assets.fiverrcdn.com/assets/@fiverr/inbox_perseus/objects.b402377.svg'
+    }
+};
+
 // eslint-disable-next-line no-undef
 storiesOf('Standalone picker', module)
     .add('Top Navigation CDN hosted 32px/fastest', () => (
-        <EmojiPicker onEmojiClick={action('emoji-click')}/>
+        <EmojiPicker onEmojiClick={action('emoji-click')} styles={styles}/>
     ))
     .add('Top Navigation', () => (
         <EmojiPicker onEmojiClick={action('emoji-click')} preload/>

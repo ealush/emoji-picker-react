@@ -33,10 +33,10 @@ class EmojiPicker extends Component {
     }
 
     getChildContext() {
-        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames} = this.props;
+        const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames } = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
-        return { onEmojiClick: this.onEmojiClick, parent: this, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
+        return { onEmojiClick: this.onEmojiClick, assetPath, activeModifier, emojiResolution, openDiversitiesMenu, disableDiversityPicker, customCategoryNames };
     }
 
     setActiveCategory({ name }) {
@@ -150,14 +150,15 @@ class EmojiPicker extends Component {
     }
 
     render() {
-        const { preload } = this.props;
+        const { preload, icons } = this.props;
         const { activeCategory } = this.state;
         const visibleCategories = Object.assign({}, this.state.seenCategories);
 
         return (
             <Aside innerRef={(picker) => this._picker = picker}>
                 <CategoriesNav onClick={this.onCategoryClick}
-                    activeCategory={activeCategory}/>
+                    activeCategory={activeCategory}
+                    icons={icons}/>
                 <BarWrapper>
                     <SkinTones onModifierClick={this.onModifierClick}
                         activeModifier={this.state.activeModifier}
@@ -186,13 +187,17 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     preload: PropTypes.bool,
     customCategoryNames: PropTypes.object,
+    icons: PropTypes.object,
     disableDiversityPicker: PropTypes.bool
+};
+
+EmojiPicker.defaultProps = {
+    icons: {}
 };
 
 EmojiPicker.childContextTypes = {
     customCategoryNames: PropTypes.object,
     onEmojiClick: PropTypes.func,
-    parent: PropTypes.instanceOf(EmojiPicker),
     assetPath: PropTypes.string,
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,

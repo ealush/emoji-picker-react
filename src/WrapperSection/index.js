@@ -175,7 +175,6 @@ WrapperSection.propTypes = {
 
 WrapperSection.contextTypes = {
     onEmojiClick: PropTypes.func,
-    parent: PropTypes.any,
     assetPath: PropTypes.string,
     emojiResolution: PropTypes.number,
     disableDiversityPicker: PropTypes.bool

@@ -133,7 +133,6 @@ Emoji.propTypes = {
 
 Emoji.contextTypes = {
     onEmojiClick: PropTypes.func,
-    parent: PropTypes.any,
     assetPath: PropTypes.string,
     activeModifier: PropTypes.string,
     emojiResolution: PropTypes.number,
