@@ -8,7 +8,7 @@ import {
     getScrollbarWidth,
     adjustScrollbar,
     isFirefoxOnMac,
-    getOffsets
+    getHeight
 } from './helpers';
 import { HIDE_SCROLL_DEBOUNCE } from '../constants';
 
@@ -27,7 +27,7 @@ class WrapperSection extends Component {
     componentDidMount() {
         this.scrollbarWidth = getScrollbarWidth();
         this.hideNativeScrollbar();
-        const positions = getOffsets(this._list);
+        const positions = getHeight(this._list);
         this.scrollHeight = positions.scrollHeight;
         this.listHeight = positions.listHeight;
         this._categories = this._list.children;
@@ -35,7 +35,7 @@ class WrapperSection extends Component {
     }
 
     componentDidUpdate() {
-        const positions = getOffsets(this._list);
+        const positions = getHeight(this._list);
         this.scrollHeight = positions.scrollHeight;
     }
 
