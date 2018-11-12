@@ -26,6 +26,7 @@
   "homepage": "https://github.com/ealush/emoji-picker-react#readme",
   "dependencies": {
     "babel-runtime": "^6.25.0",
+    "create-react-context": "^0.2.3",
     "throttle-debounce": "^1.0.1"
   },
   "devDependencies": {

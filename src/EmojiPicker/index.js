@@ -5,7 +5,7 @@ import { categories, modifiers, skinTones } from '../emoji-data';
 import CategoriesNav from '../CategoriesNav';
 import WrapperSection from '../WrapperSection';
 import SearchBar from '../SearchBar';
-
+import { EmojiPickerContext } from "../context/index";
 import './style.scss';
 
 const CLASSNAME_CATEGORY_INDEX = 1;
@@ -39,9 +39,10 @@ class EmojiPicker extends Component {
         this.closeDiversitiesMenu = this.closeDiversitiesMenu.bind(this);
         this.setActiveCategory = this.setActiveCategory.bind(this);
         this.setSeenInSearch = this.setSeenInSearch.bind(this);
+        this.getContext = this.getContext.bind(this);
     }
 
-    getChildContext() {
+    getContext() {
         const { assetPath, emojiResolution, disableDiversityPicker, customCategoryNames} = this.props;
         const { activeModifier } = this.state;
         const { openDiversitiesMenu } = this;
@@ -210,29 +211,31 @@ class EmojiPicker extends Component {
         const visibleCategories = Object.assign({}, this.state.seenCategories, this.state.seenInSearch);
 
         return (
-            <aside className={this.pickerClassNames.join(' ')}
-                ref={(picker) => this._picker = picker}>
-                <CategoriesNav onClick={this.onCategoryClick}/>
-                <div className="bar-wrapper">
-                    <SkinTones onModifierClick={this.onModifierClick}
-                        activeModifier={this.state.activeModifier}
-                        spread={this.state.modifiersSpread}/>
-                    <SearchBar onChange={this.onSearch}/>
-                </div>
-                <WrapperSection filter={this.state.filter}
-                    diversityPicker={this.state.diversityPicker}
-                    closeDiversitiesMenu={this.closeDiversitiesMenu}
-                    visibleCategories={visibleCategories}
-                    modifiersSpread={this.state.modifiersSpread}
-                    ref={(ref) => this._wrapperSection = ref}
-                    setSeenCategory={this.setSeenCategory}
-                    suppressModifiers={this.suppressModifiers}
-                    setActiveCategory={this.setActiveCategory}
-                    setSeenInSearch={this.setSeenInSearch}
-                    activeCategory={this.state.activeCategory}
-                    delayedCategory={this.state.delayedCategory}
-                    preload={preload}/>
-            </aside>
+            <EmojiPickerContext.Provider value={this.getContext()}>
+                <aside className={this.pickerClassNames.join(' ')}
+                    ref={(picker) => this._picker = picker}>
+                    <CategoriesNav onClick={this.onCategoryClick}/>
+                    <div className="bar-wrapper">
+                        <SkinTones onModifierClick={this.onModifierClick}
+                            activeModifier={this.state.activeModifier}
+                            spread={this.state.modifiersSpread}/>
+                        <SearchBar onChange={this.onSearch}/>
+                    </div>
+                    <WrapperSection filter={this.state.filter}
+                        diversityPicker={this.state.diversityPicker}
+                        closeDiversitiesMenu={this.closeDiversitiesMenu}
+                        visibleCategories={visibleCategories}
+                        modifiersSpread={this.state.modifiersSpread}
+                        ref={(ref) => this._wrapperSection = ref}
+                        setSeenCategory={this.setSeenCategory}
+                        suppressModifiers={this.suppressModifiers}
+                        setActiveCategory={this.setActiveCategory}
+                        setSeenInSearch={this.setSeenInSearch}
+                        activeCategory={this.state.activeCategory}
+                        delayedCategory={this.state.delayedCategory}
+                        preload={preload}/>
+                </aside>
+            </EmojiPickerContext.Provider>
         );
     }
 }
@@ -243,17 +246,6 @@ EmojiPicker.propTypes = {
     emojiResolution: PropTypes.number,
     preload: PropTypes.bool,
     customCategoryNames: PropTypes.object,
-    disableDiversityPicker: PropTypes.bool
-};
-
-EmojiPicker.childContextTypes = {
-    customCategoryNames: PropTypes.object,
-    onEmojiClick: PropTypes.func,
-    parent: PropTypes.instanceOf(EmojiPicker),
-    assetPath: PropTypes.string,
-    activeModifier: PropTypes.string,
-    emojiResolution: PropTypes.number,
-    openDiversitiesMenu: PropTypes.func,
     disableDiversityPicker: PropTypes.bool
 };
 

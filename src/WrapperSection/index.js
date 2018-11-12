@@ -15,6 +15,7 @@ import {
     headerTransform
 } from './helpers';
 import { HIDE_SCROLL_DEBOUNCE } from '../constants';
+import { EmojiPickerContext } from '../context';
 
 const isFFMac = isFirefoxOnMac();
 
@@ -133,33 +134,35 @@ class WrapperSection extends Component {
             preload
         } = this.props;
 
-        const {
-            assetPath,
-            onEmojiClick,
-            emojiResolution,
-            disableDiversityPicker
-        } = this.context;
-
         const wrapperClassName = `wrapper${filter && Object.keys(filter).length === 0 ? ' no-results icn-magnifier' : ''}`;
 
         return (
-            <section className={wrapperClassName}>
-                <DiversityPicker index={diversityPicker}
-                    assetPath={assetPath}
-                    emojiResolution={emojiResolution}
-                    onEmojiClick={onEmojiClick}
-                    close={closeDiversitiesMenu}
-                    disable={disableDiversityPicker}/>
-                <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
-                <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
-                <EmojiList filter={filter}
-                    onScroll={this.onScroll}
-                    seenCategories={visibleCategories}
-                    modifiersSpread={modifiersSpread}
-                    preload={preload}
-                    _emojiName={this._emojiName}
-                    ref={(list) => this._list = (list ? list._list : null)}/>
-            </section>
+            <EmojiPickerContext.Consumer>
+                {({
+                    assetPath,
+                    onEmojiClick,
+                    emojiResolution,
+                    disableDiversityPicker
+                }) => (
+                    <section className={wrapperClassName}>
+                        <DiversityPicker index={diversityPicker}
+                            assetPath={assetPath}
+                            emojiResolution={emojiResolution}
+                            onEmojiClick={onEmojiClick}
+                            close={closeDiversitiesMenu}
+                            disable={disableDiversityPicker}/>
+                        <div className="scroller" ref={(scroller) => this._scroller = scroller}><div/></div>
+                        <span className="emoji-name" ref={(emojiName) => this._emojiName = emojiName}></span>
+                        <EmojiList filter={filter}
+                            onScroll={this.onScroll}
+                            seenCategories={visibleCategories}
+                            modifiersSpread={modifiersSpread}
+                            preload={preload}
+                            _emojiName={this._emojiName}
+                            ref={(list) => this._list = (list ? list._list : null)}/>
+                    </section>
+                )}
+            </EmojiPickerContext.Consumer>
         );
     }
 }
@@ -181,11 +184,3 @@ WrapperSection.propTypes = {
     preload: PropTypes.bool
 };
 
-WrapperSection.contextTypes = {
-    onEmojiClick: PropTypes.func,
-    parent: PropTypes.any,
-    assetPath: PropTypes.string,
-    activeModifier: PropTypes.string,
-    emojiResolution: PropTypes.number,
-    disableDiversityPicker: PropTypes.bool
-};

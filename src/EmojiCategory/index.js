@@ -43,8 +43,4 @@ EmojiCategory.propTypes = {
     _emojiName: PropTypes.object
 };
 
-EmojiCategory.contextTypes = {
-    customCategoryNames: PropTypes.object
-};
-
 export default EmojiCategory;

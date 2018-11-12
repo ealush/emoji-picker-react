@@ -6,7 +6,7 @@ import './style.scss';
 
 class EmojiList extends Component {
 
-    shouldComponentUpdate(nextProps, nextState, {activeModifier}) {
+    shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.modifiersSpread) {
             return false;
         }
@@ -16,10 +16,6 @@ class EmojiList extends Component {
         }
 
         if (this.props._emojiName !== nextProps._emojiName) {
-            return true;
-        }
-
-        if (activeModifier !== this.context.activeModifier) {
             return true;
         }
 
@@ -58,10 +54,6 @@ EmojiList.propTypes = {
     preload: PropTypes.bool,
     _emojiName: PropTypes.object,
     customCategoryNames: PropTypes.object
-};
-
-EmojiList.contextTypes = {
-    activeModifier: PropTypes.string
 };
 
 export default EmojiList;

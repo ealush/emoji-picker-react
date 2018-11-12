@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { bgImage, unifiedWithModifier } from './helpers';
 import { OPEN_DIVERSITIES_TIMEOUT} from '../constants';
 import './style.scss';
+import { EmojiPickerContext } from "../context/index";
 
 class Emoji extends Component {
 
@@ -14,18 +15,17 @@ class Emoji extends Component {
 
         this.onClick = this.onClick.bind(this);
         this.emojiChosen = this.emojiChosen.bind(this);
-        this.onMouseEnter = this.onMouseEnter.bind(this);
         this.onMouseLeave = this.onMouseLeave.bind(this);
-        this.onMouseDown = this.onMouseDown.bind(this);
-        this.onMouseUp = this.onMouseUp.bind(this);
+        this.buildStyle = this.buildStyle.bind(this);
+        this.buildClassName = this.buildClassName.bind(this);
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    shouldComponentUpdate(nextProps, nextState) {
 
         const visibilityChanged = nextProps.hidden !== this.props.hidden,
             categoryVisibilityChanged = nextProps.categorySeen !== this.props.categorySeen,
             hasDiversities = this.hasDiversities,
-            activeModifierChanged = hasDiversities && nextContext.activeModifier !== this.context.activeModifier;
+            activeModifierChanged = hasDiversities;
 
         return visibilityChanged || categoryVisibilityChanged || activeModifierChanged;
     }
@@ -34,16 +34,16 @@ class Emoji extends Component {
         e.preventDefault();
     }
 
-    emojiChosen(e) {
+    emojiChosen(context, e) {
         const { emoji } = this.props;
-        const onEmojiClick = this.context.onEmojiClick;
+        const onEmojiClick = context.onEmojiClick;
 
         onEmojiClick && onEmojiClick(emoji.unified, emoji, e);
 
         if (!e.defaultPrevented) { e.preventDefault(); }
     }
 
-    onMouseEnter() {
+    onMouseEnter(context) {
         if (this.props._emojiName) {
             this.props._emojiName.textContent = this.emoji.name;
         }
@@ -53,7 +53,7 @@ class Emoji extends Component {
         }
 
         this.onMouseEnterTimeout = setTimeout(() => {
-            this.context.openDiversitiesMenu(this.props.member);
+            context.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
@@ -70,7 +70,7 @@ class Emoji extends Component {
         }
     }
 
-    onMouseDown() {
+    onMouseDown(context) {
 
         clearTimeout(this.onMouseEnterTimeout);
 
@@ -82,43 +82,54 @@ class Emoji extends Component {
 
         this.diversitiesTimeout = setTimeout(() => {
             delete this.diversitiesTimeout;
-            this.context.openDiversitiesMenu(this.props.member);
+            context.openDiversitiesMenu(this.props.member);
         }, OPEN_DIVERSITIES_TIMEOUT);
     }
 
-    onMouseUp(e) {
+    onMouseUp(context, e) {
 
         const counter = this.timeCounter;
         clearTimeout(this.diversitiesTimeout);
         delete this.timeCounter;
 
         if (!(counter && (Date.now() - counter) >= OPEN_DIVERSITIES_TIMEOUT)) {
-            return this.emojiChosen(e);
+            return this.emojiChosen(context, e);
         }
     }
 
-    render() {
-        const { emoji, hidden, categorySeen } = this.props;
-        const { activeModifier, assetPath, emojiResolution } = this.context;
-        let unified = emoji.unified;
+    buildClassName() {
+        const { hidden, categorySeen } = this.props;
         const shownClass = (categorySeen && !hidden) ? ' shown' : '';
-
-        unified = unifiedWithModifier(emoji, activeModifier);
-
         const className = `emoji${this.hasDiversities ? ' has-diversities' : ''}${shownClass}`;
+        return className;
+    }
 
+    buildStyle(context) {
+        const { emoji } = this.props;
+        const { activeModifier, assetPath, emojiResolution } = context;
+        let unified = emoji.unified;
+        unified = unifiedWithModifier(emoji, activeModifier);
         const style = bgImage({ unified, assetPath, emojiResolution });
         style.order = emoji.order;
+        return style;
+    }
+
+    render() {
+        const { emoji } = this.props;
 
         return (
-            <a className={className}
-                onClick={this.onClick}
-                onMouseEnter={this.onMouseEnter}
-                onMouseLeave={this.onMouseLeave}
-                onMouseDown={this.onMouseDown}
-                onMouseUp={this.onMouseUp}
-                tabIndex={emoji.order}
-                style={style}/>
+            <EmojiPickerContext.Consumer>
+                {context => (
+                    <a className={this.buildClassName()}
+                        onClick={this.onClick}
+                        onMouseEnter={this.onMouseEnter.bind(this, context)}
+                        onMouseLeave={this.onMouseLeave}
+                        onMouseDown={this.onMouseDown.bind(this, context)}
+                        onMouseUp={this.onMouseUp.bind(this, context)}
+                        tabIndex={emoji.order}
+                        style={this.buildStyle(context)} />
+                )}
+            </EmojiPickerContext.Consumer>
         );
     }
 }
@@ -130,16 +141,6 @@ Emoji.propTypes = {
     member: PropTypes.number.isRequired,
     disableDiversityPicker: PropTypes.bool,
     _emojiName: PropTypes.object
-};
-
-Emoji.contextTypes = {
-    onEmojiClick: PropTypes.func,
-    parent: PropTypes.any,
-    assetPath: PropTypes.string,
-    activeModifier: PropTypes.string,
-    emojiResolution: PropTypes.number,
-    openDiversitiesMenu: PropTypes.func,
-    disableDiversityPicker: PropTypes.bool
 };
 
 export default Emoji;
