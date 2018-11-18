@@ -1,4 +1,4 @@
-# React Emoji Picker V2.0.0
+# React Emoji Picker V3
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker-react.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker-react)
 
@@ -8,9 +8,6 @@
 
 ## V2 Changes
 * Updated UI
-* Removed customization props, moved to SASS variables
-* Improved filtering performance
-
 
 ```
 npm i emoji-picker-react --save
@@ -38,36 +35,6 @@ class MyComponent extends Component {
 
 ```
 
-## UI Customization
-You can use custom CSS to modify each part of the picker's visibility.
-**COMPATABILITY NOTE**
-The markup of the picker is guaranteed to stay unchanged through each major version (with the exception of bugfixes), meaning you can safely assume the markup stays the same until version 3 gets released.
-
-### Customization via SCSS variables
-If your project uses SCSS, you can more easily customize your picker's visibility using the predefined [SASS variables](https://github.com/ealush/emoji-picker-react/blob/master/src/base.scss) (click to see all variables).
-To customize the picker using these variables, you will need to import the picker in two parts - js and css.
-
-```js
-// MyComponent.js
-import EmojiPicker from 'emoji-picker-react';
-import 'emoji-picker-react/dist/universal/style.scss'; // or any other way you consume scss files
-
-class MyComponent {
-//    ...
-}
-```
-
-Then you will need to import the stylesheet file from your own stylesheet, and override the default variables with your own.
-
-```scss
-// style.scss
-$size_emoji: 10px;
-$width_picker: 300px;
-$height_picker: 350px;
-$bg_picker: #f1f1f1;
-@import './node_modules/emoji-picker-react/dist/universal/style.scss'; // relative path to your node modules
-
-```
 
 ![categories](https://raw.githubusercontent.com/ealush/emoji-picker/master/screenshots/5.png)
 

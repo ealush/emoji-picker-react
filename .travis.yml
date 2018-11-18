@@ -5,7 +5,7 @@ node_js:
 - node
 script:
 - npm test
-- npm run build:all
+- npm run build
 deploy:
   provider: npm
   email: evyatar.a@fiverr.com
