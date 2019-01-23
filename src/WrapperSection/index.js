@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { debounce, throttle } from 'throttle-debounce';
 import DiversityPicker from '../DiversityPicker';
 import EmojiList from '../EmojiList';
+import { categories } from '../emoji-data';
 import { Section, EmojiName, Scroller } from './styled';
 import {
     getScrollbarWidth,
@@ -40,6 +41,11 @@ class WrapperSection extends Component {
     }
 
     observeActive() {
+
+        if (!('IntersectionObserver' in window)) {
+            return;
+        }
+
         const options = {
             root: this._list
         };

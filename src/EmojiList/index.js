@@ -6,6 +6,14 @@ import { Div } from './styled';
 
 class EmojiList extends Component {
 
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            forcePreload: false
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState, { activeModifier }) {
         if (nextProps.modifiersSpread) {
             return false;
@@ -30,6 +38,13 @@ class EmojiList extends Component {
         return Object.keys(nextProps.seenCategories).length !== Object.keys(this.props.seenCategories).length;
     }
 
+    componentDidMount() {
+        this.setState({
+            forcePreload: !('IntersectionObserver' in window)
+        });
+    }
+
+
     render() {
         const { filter, onScroll, seenCategories, preload, customCategoryNames, _emojiName, activeCategory } = this.props;
         return (
@@ -37,7 +52,7 @@ class EmojiList extends Component {
                 filter={filter}
                 onScroll={onScroll}>
                 {categories.map((category, index) => {
-                    const isCategorySeen = preload || seenCategories[category.name];
+                    const isCategorySeen = this.state.forcePreload || preload || seenCategories[category.name];
 
                     return (
                         <EmojiCategory category={category}

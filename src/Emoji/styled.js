@@ -9,6 +9,7 @@ import {
 const ButtonEmoji = styled('button')`
     display: none;
     border: 0;
+    background: none;
     outline: none;
     border-radius: 5px;
     padding: 0;

@@ -3,13 +3,16 @@ import {
     BG_PICKER,
     BORDER_MAIN,
     HEIGHT_NAV_ITEM,
-    WIDTH_PICKER
+    WIDTH_PICKER,
+    HEIGHT_PICKER
 } from '../styled';
 
 const Aside = styled('aside')`
     background-color: ${BG_PICKER};
     width: calc(${WIDTH_PICKER} + 5px);
-    display: block;
+    height: ${HEIGHT_PICKER};
+    display: flex;
+    flex-direction: column;
     position: relative;
     padding: 0;
     border: 1px solid ${BORDER_MAIN};
@@ -46,7 +49,6 @@ const Aside = styled('aside')`
 
 const BarWrapper = styled('div')`
     position: relative;
-    margin-top: ${HEIGHT_NAV_ITEM};
     border-top: 1px solid ${BORDER_MAIN};
 `;
 

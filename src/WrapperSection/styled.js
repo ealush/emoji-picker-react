@@ -11,6 +11,7 @@ import {
 const Section = styled('section')`
     position: relative;
     overflow: hidden;
+    flex: 1;
 
     ${({noSearchResults}) => {
         if (!noSearchResults) { return; }

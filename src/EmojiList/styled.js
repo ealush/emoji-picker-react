@@ -1,13 +1,12 @@
 import styled from 'react-emotion';
 import {
-    HEIGHT_PICKER,
     BG_CATEGORY_NAME,
     HEIGHT_CATEGORY_NAME
 } from '../styled';
 
 const Div = styled('div')`
     width: 100%;
-    height: ${HEIGHT_PICKER};
+    height: 100%;
     padding: 0;
     overflow-x: hidden;
     box-sizing: border-box;

@@ -27,17 +27,14 @@ const Nav = styled('nav')`
     background-color: ${BG_NAV};
     display: flex;
     justify-content: space-between;
-    position: absolute;
-    z-index: 1;
     box-sizing: border-box;
-    left: ${PADDING_CATEGORY_NAME};
-    right: ${PADDING_CATEGORY_NAME};
 `;
 
 const ButtonCategory = styled('button')`
     position: relative;
     transition: filter .2s;
     border: 0;
+    background: none;
     outline: none;
 
     &:hover {
