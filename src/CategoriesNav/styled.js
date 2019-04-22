@@ -3,7 +3,6 @@ import styled from 'react-emotion';
 import {
     HEIGHT_NAV_ITEM,
     BG_NAV,
-    PADDING_CATEGORY_NAME,
     COLOR_NAV_UNDERLINE_HOVER,
     COLOR_NAV_UNDERLINE_ACTIVE,
     WIDTH_NAV_ITEM
@@ -20,7 +19,7 @@ const defaultIcons = {
     symbols: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 490.4 490.4\'%3E%3Cpath d=\'M229 381.2c4.4 4.4 10.1 6.8 16.3 6.8 6.2 0 12-2.4 16.3-6.8l96.3-96.3c15.7-15.7 24.4-36.6 24.4-58.7 0-22.2-8.6-43.1-24.3-58.8-15.7-15.7-36.6-24.3-58.7-24.3-20 0-38.9 7-54 19.9-15.1-13-34.1-20-54.1-20-22.2 0-43 8.6-58.7 24.3s-24.3 36.6-24.3 58.8 8.7 43 24.4 58.7l96.4 96.4zm-79.3-196.7c11.1-11.1 25.7-17.1 41.4-17.1s30.4 6.1 41.5 17.2l4 4c4.8 4.8 12.5 4.8 17.3 0l3.9-3.9c11.1-11.1 25.8-17.2 41.5-17.2 15.6 0 30.3 6.1 41.4 17.2 11.1 11.1 17.2 25.8 17.1 41.4 0 15.7-6.1 30.4-17.2 41.5l-95.3 95.3-95.5-95.5c-11.1-11.1-17.2-25.8-17.2-41.4 0-15.7 6.1-30.4 17.1-41.5z\'/%3E%3Cpath d=\'M245.2 490.4c135.2 0 245.2-110 245.2-245.2S380.4 0 245.2 0 0 110 0 245.2s110 245.2 245.2 245.2zm0-465.9c121.7 0 220.7 99 220.7 220.7s-99 220.7-220.7 220.7-220.7-99-220.7-220.7 99-220.7 220.7-220.7z\'/%3E%3C/svg%3E'
 };
 
-const Nav = styled('nav')`
+const Nav = styled.nav`
     flex-direction: row;
     min-height: ${HEIGHT_NAV_ITEM};
     height: ${HEIGHT_NAV_ITEM};
@@ -30,7 +29,7 @@ const Nav = styled('nav')`
     box-sizing: border-box;
 `;
 
-const ButtonCategory = styled('button')`
+const ButtonCategory = styled.button`
     position: relative;
     transition: filter .2s;
     border: 0;

@@ -6,7 +6,7 @@ import {
     BG_DIVERSITY_INDICATOR
 } from '../styled';
 
-const ButtonEmoji = styled('button')`
+const ButtonEmoji = styled.button`
     display: none;
     border: 0;
     background: none;

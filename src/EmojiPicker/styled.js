@@ -2,12 +2,11 @@ import styled from 'react-emotion';
 import {
     BG_PICKER,
     BORDER_MAIN,
-    HEIGHT_NAV_ITEM,
     WIDTH_PICKER,
     HEIGHT_PICKER
 } from '../styled';
 
-const Aside = styled('aside')`
+const Aside = styled.aside`
     background-color: ${BG_PICKER};
     width: calc(${WIDTH_PICKER} + 5px);
     height: ${HEIGHT_PICKER};
@@ -47,7 +46,7 @@ const Aside = styled('aside')`
     }
 `;
 
-const BarWrapper = styled('div')`
+const BarWrapper = styled.div`
     position: relative;
     border-top: 1px solid ${BORDER_MAIN};
 `;

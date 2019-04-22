@@ -8,7 +8,7 @@ import {
     HEIGHT_FOOTER
 } from '../styled';
 
-const Section = styled('section')`
+const Section = styled.section`
     position: relative;
     overflow: hidden;
     flex: 1;
@@ -50,7 +50,7 @@ const Section = styled('section')`
     }
 `;
 
-const EmojiName = styled('span')`
+const EmojiName = styled.span`
     position: absolute;
     right: ${PADDING_CATEGORY_NAME};
     top: 8px;
@@ -64,7 +64,7 @@ const EmojiName = styled('span')`
     text-overflow: ellipsis;
 `;
 
-const Scroller = styled('div')`
+const Scroller = styled.div`
     display: block;
     position: absolute;
     width: 5px;

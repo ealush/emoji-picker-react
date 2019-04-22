@@ -5,7 +5,7 @@ import {
     BORDER_DIVERSITY_PICKER
 } from '../styled';
 
-const Div = styled('div')`
+const Div = styled.div`
     background-color: ${BG_DIVERSITY_PICKER};
     display: flex;
     justify-content: space-around;
