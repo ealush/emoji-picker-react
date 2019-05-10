@@ -1,4 +1,4 @@
-# React Emoji Picker V2.0.0
+# React Emoji Picker V2
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/ealush/emoji-picker.svg)](https://greenkeeper.io/) [![npm version](https://badge.fury.io/js/emoji-picker-react.svg)](https://badge.fury.io/js/emoji-picker-react) [![Build Status](https://travis-ci.org/ealush/emoji-picker-react.svg?branch=master)](https://travis-ci.org/ealush/emoji-picker-react)
 
@@ -137,11 +137,12 @@ import JSEMOJI from 'emoji-js';
 
 
 // new instance
-jsemoji = new JSEMOJI();
+const jsemoji = new JSEMOJI();
 // set the style to emojione (default - apple)
 jsemoji.img_set = 'emojione';
 // set the storage location for all emojis
-jsemoji.img_sets.emojione.path = 'https://cdn.jsdelivr.net/emojione/assets/3.0/png/32/';
+jsemoji.img_sets.emojione.path = 'https://cdn.jsdelivr.net/gh/iamcal/emoji-data@19299c91bc87374118f06b2760f1ced69d714ab1/img-emojione-64/';
+
 
 // some more settings...
 jsemoji.supports_css = false;
