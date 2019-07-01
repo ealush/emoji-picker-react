@@ -1,8 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { rgba } from 'polished';
 import  { groupedEmojis, groups } from '../../../lib/initEMojis';
-import { TEXT_LIGHT, WHITE, PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from '../../lib/colors';
+import { TEXT_DARK, TEXT_LIGHT, WHITE, PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from '../../lib/colors';
+import EmojiName from '../EmojiName';
 import { FilterContext } from '../Search';
 
 const CATEGORY_TITLE_BAR_HEIGHT = '45px';
@@ -12,7 +13,7 @@ const pastels = [ PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_
 const bgColor = (order) => pastels[order % pastels.length];
 
 const Ul = styled.ul`
-    position: relative;
+    clear: both;
     padding: 0 15px;
     list-style: none;
     margin: 0;
@@ -23,6 +24,7 @@ const Ul = styled.ul`
     &:before {
         content: attr(data-name);
         color: ${TEXT_LIGHT};
+        font-size: 14px;
         position: sticky;
         background: ${rgba(WHITE, .95)};
         width: 100%;
@@ -30,7 +32,7 @@ const Ul = styled.ul`
         top: 0;
         text-transform: uppercase;
         line-height: ${CATEGORY_TITLE_BAR_HEIGHT};
-        font-weight: 500;
+        font-weight: 700;
     }
 
     &:after {
@@ -47,7 +49,6 @@ const Li = styled.li`
         color: inherit;
         height: 35px;
         width: 35px;
-        border: none;
         border-radius: 5px;
         background-size: 20px 20px;
         background-position: 50% 50%;
@@ -70,21 +71,23 @@ const Emoji = ({ emoji, hidden }) => {
 
     return (
         <Li style={style}>
-            <button style={{backgroundImage: `url(https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160/${emoji.unified}.png)` }}/>
+            <button
+                style={{backgroundImage: `url(https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160/${emoji.unified}.png)` }}/>
         </Li>
     );
 }
 
 const ListsWrapper = styled.section`
     overflow-y: scroll;
+    position: relative;
     height: 100%;
     box-sizing: border-box;
 `;
 
-const Group = ({ name }) => {
+const createEmojiList = ({ name }) => {
     const filterContext = useContext(FilterContext);
 
-    const emojis = groupedEmojis[name].reduce((accumulator, emoji) => {
+    return groupedEmojis[name].reduce((accumulator, emoji) => {
         const hidden = filterContext && !filterContext.hasOwnProperty(emoji.unified);
 
         if (!hidden) {
@@ -92,18 +95,28 @@ const Group = ({ name }) => {
         }
 
         accumulator.list.push(
-            <Emoji emoji={emoji} hidden={hidden} key={emoji.unified}/>
+            <Emoji emoji={emoji}
+                hidden={hidden}
+                key={emoji.unified}/>
         );
 
         return accumulator;
     }, { list: [], shownCount: 0 });
+}
+
+const Group = ({ name }) => {
+    const { list, shownCount } = createEmojiList({
+        name
+    });
 
     const style = {
-        ...!emojis.shownCount && { display: 'none' }
+        ...!shownCount && { display: 'none' }
     };
 
     return (
-        <Ul data-name={name} children={emojis.list} style={style}/>
+        <Ul data-name={name}
+            children={list}
+            style={style}/>
     );
 }
 
@@ -111,7 +124,7 @@ const EmojiList = () => {
 
     return (
         <ListsWrapper>
-            {groups.map((group) => (<Group key={group} name={group}/>))}
+            {groups.map((group) => <Group key={group} name={group}/>)}
         </ListsWrapper>
     );
 }

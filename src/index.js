@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
 import Aside from './styled';
 import EmojiList from './components/EmojiList/';
 import Search, { useFilter, FilterContext } from './components/Search/';

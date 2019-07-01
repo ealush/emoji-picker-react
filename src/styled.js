@@ -19,6 +19,13 @@ const Aside = styled.aside`
     box-sizing: border-box;
     box-shadow: 0 5px 10px ${BORDER_BASE};
     overflow: hidden;
+    position: relative;
+
+    button {
+        border: none;
+        cursor: pointer;
+        outline: none;
+    }
 `;
 
 export default Aside;
