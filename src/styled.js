@@ -12,11 +12,13 @@ const ratio = ({ height = HEIGHT_DEFAULT, width = WIDTH_DEFAULT }) => css`
 const Aside = styled.aside`
     background: ${WHITE};
     ${ratio}
+    font-family: sans-serif;
     padding: 10px 0;
     border: 1px solid ${BORDER_BASE};
     border-radius: 5px;
     box-sizing: border-box;
     box-shadow: 0 5px 10px ${BORDER_BASE};
+    overflow: hidden;
 `;
 
 export default Aside;

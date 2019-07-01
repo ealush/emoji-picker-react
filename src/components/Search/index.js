@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { searchTerms, mappedSearchTerms } from '../../../lib/initEMojis';
 
-const Search = () => {
+export const useFilter = () => {
     const [filter, setFilter] = useState([]);
 
     const handleChange = ({ target: { value } }) => {
@@ -36,8 +36,26 @@ const Search = () => {
         }
     }
 
-    console.log(filter);
+    const last = filter[filter.length - 1];
+    const filterPresent = !!last && last.value;
 
+    return [
+        handleChange,
+        filterPresent
+        ? (last && last.terms || []).reduce((accumulator, term) => {
+            if (!searchTerms[term]){ return accumulator; }
+            return ({
+                ...accumulator,
+                ...searchTerms[term]
+            });
+        }, {})
+        : null
+    ];
+}
+
+export const FilterContext = React.createContext(null);
+
+const Search = ({ handleChange }) => {
     return (
         <input type="text" onChange={handleChange}/>
     );
