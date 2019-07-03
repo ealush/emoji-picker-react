@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { rgba } from 'polished';
 import  { groupedEmojis, groups } from '../../../lib/initEMojis';
 import { TEXT_DARK, TEXT_LIGHT, WHITE, PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from '../../lib/colors';
-import EmojiName from '../EmojiName';
 import { FilterContext } from '../Search';
 
 const CATEGORY_TITLE_BAR_HEIGHT = '45px';
@@ -44,6 +43,19 @@ const Ul = styled.ul`
 `;
 
 const Li = styled.li`
+    position: relative;
+
+    &.has-skin-variation:before {
+        content: '';
+        display: block;
+        height: 5px;
+        width: 5px;
+        background: ${TEXT_DARK};
+        position: absolute;
+        top: 0;
+        right: 0;
+        border-radius: 0 5px 0 0;
+    }
 
     button {
         color: inherit;
@@ -63,6 +75,8 @@ const Li = styled.li`
 
 const Emoji = ({ emoji, hidden }) => {
 
+    const hasSkinVariation = emoji.skin_variations;
+
     const style = {
         order: emoji.sort_order,
         ...hidden && { display: 'none' },
@@ -70,7 +84,7 @@ const Emoji = ({ emoji, hidden }) => {
     };
 
     return (
-        <Li style={style}>
+        <Li style={style} hasSkinVariation={hasSkinVariation} className={emoji.skin_variations ? 'has-skin-variation' : undefined}>
             <button
                 style={{backgroundImage: `url(https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160/${emoji.unified}.png)` }}/>
         </Li>
@@ -90,8 +104,8 @@ const createEmojiList = ({ name }) => {
     return groupedEmojis[name].reduce((accumulator, emoji) => {
         const hidden = filterContext && !filterContext.hasOwnProperty(emoji.unified);
 
-        if (!hidden) {
-            accumulator.shownCount++;
+        if (!accumulator.shown && !hidden) {
+            accumulator.shown = true;
         }
 
         accumulator.list.push(
@@ -101,16 +115,16 @@ const createEmojiList = ({ name }) => {
         );
 
         return accumulator;
-    }, { list: [], shownCount: 0 });
+    }, { list: [], shown: false });
 }
 
 const Group = ({ name }) => {
-    const { list, shownCount } = createEmojiList({
+    const { list, shown } = createEmojiList({
         name
     });
 
     const style = {
-        ...!shownCount && { display: 'none' }
+        ...!shown && { display: 'none' }
     };
 
     return (
