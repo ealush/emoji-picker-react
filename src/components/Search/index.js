@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { searchTerms, mappedSearchTerms } from '../../../lib/initEMojis';
+import Input from './styled';
 
 export const useFilter = () => {
     const [filter, setFilter] = useState([]);
@@ -57,7 +58,7 @@ export const FilterContext = React.createContext(null);
 
 const Search = ({ handleChange }) => {
     return (
-        <input type="text" onChange={handleChange}/>
+        <Input onChange={handleChange}/>
     );
 }
 

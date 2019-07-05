@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import styled, { css } from 'styled-components';
 import { rgba } from 'polished';
 import  { groupedEmojis, groups } from '../../../lib/initEMojis';
 import { TEXT_DARK, TEXT_LIGHT, WHITE, PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from '../../lib/colors';
 import { FilterContext } from '../Search';
+import { SkinToneContext } from '../SkinTones';
 
 const CATEGORY_TITLE_BAR_HEIGHT = '45px';
 
@@ -65,7 +66,7 @@ const Li = styled.li`
         background-size: 20px 20px;
         background-position: 50% 50%;
         background-repeat: no-repeat;
-        transition: .2s background;
+        transition: .1s background;
 
         &:hover {
             background-color: currentColor;
@@ -73,9 +74,10 @@ const Li = styled.li`
     }
 `;
 
-const Emoji = ({ emoji, hidden }) => {
+const Emoji = ({ emoji, hidden, activeSkinTone }) => {
 
     const hasSkinVariation = emoji.skin_variations;
+    let unified = emoji.unified;
 
     const style = {
         order: emoji.sort_order,
@@ -83,10 +85,14 @@ const Emoji = ({ emoji, hidden }) => {
         color: bgColor(emoji.sort_order)
     };
 
+    if (hasSkinVariation && emoji.skin_variations[activeSkinTone]) {
+        unified = emoji.skin_variations[activeSkinTone].unified;
+    }
+
     return (
-        <Li style={style} hasSkinVariation={hasSkinVariation} className={emoji.skin_variations ? 'has-skin-variation' : undefined}>
+        <Li style={style} hasSkinVariation={hasSkinVariation} className={hasSkinVariation ? 'has-skin-variation' : undefined}>
             <button
-                style={{backgroundImage: `url(https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160/${emoji.unified}.png)` }}/>
+                style={{backgroundImage: `url(https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160/${unified}.png)` }}/>
         </Li>
     );
 }
@@ -100,6 +106,7 @@ const ListsWrapper = styled.section`
 
 const createEmojiList = ({ name }) => {
     const filterContext = useContext(FilterContext);
+    const activeSkinTone = useContext(SkinToneContext);
 
     return groupedEmojis[name].reduce((accumulator, emoji) => {
         const hidden = filterContext && !filterContext.hasOwnProperty(emoji.unified);
@@ -110,6 +117,7 @@ const createEmojiList = ({ name }) => {
 
         accumulator.list.push(
             <Emoji emoji={emoji}
+                activeSkinTone={activeSkinTone}
                 hidden={hidden}
                 key={emoji.unified}/>
         );
