@@ -3,13 +3,11 @@ import  { groupedEmojis, groups } from '../../../lib/initEMojis';
 import Emoji from '../Emoji';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import { FilterContext } from '../Search';
-import { SkinToneContext } from '../SkinTones';
 import { ScrollWrapper, Ul } from './styled';
 
 const createEmojiList = ({ name }) => {
     const filterContext = useContext(FilterContext);
-    const activeSkinTone = useContext(SkinToneContext);
-    const { dispatch } = useContext(PickerContext);
+    const { state: {activeSkinTone}, dispatch } = useContext(PickerContext);
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji })
 
