@@ -11,6 +11,8 @@ const ratio = ({ height = HEIGHT_DEFAULT, width = WIDTH_DEFAULT }) => css`
 
 const Aside = styled.aside`
     background: ${WHITE};
+    display: flex;
+    flex-direction: column;
     ${ratio}
     font-family: sans-serif;
     padding: 10px 0;
