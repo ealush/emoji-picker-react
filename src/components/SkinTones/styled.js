@@ -8,15 +8,16 @@ export const Ul = styled.ul`
     list-style-type: none;
     position: absolute;
     top: 22px;
-    right: 22px;
+    right: 40px;
 
     li {
+        background-color: currentColor;
         position: absolute;
         padding: 0;
         border-radius: 5px;
         overflow: hidden;
         transition: transform .3s ease;
-        box-shadow: 0 3px 3px ${BORDER_BASE};
+        box-shadow: 0 0 3px currentColor;
     }
 `;
 
@@ -38,12 +39,12 @@ export const Tone = styled.li`
         display: none;
     }
 
-    &.tneutral label { background-color: #ffe082; }
-    &.t1f3fb  label { background-color: #ffe0b2 }
-    &.t1f3fc  label { background-color: #ffccbc }
-    &.t1f3fe  label { background-color: #795548 }
-    &.t1f3ff  label { background-color: #5d4037 }
-    &.t1f3fd  label { background-color: ${rgb(202, 126, 85)}; }
+    &.tneutral { color: #ffe082; }
+    &.t1f3fb  { color: #ffe0b2 }
+    &.t1f3fc  { color: #ffccbc }
+    &.t1f3fe  { color: #795548 }
+    &.t1f3ff  { color: #5d4037 }
+    &.t1f3fd  { color: ${rgb(202, 126, 85)}; }
 `;
 
 

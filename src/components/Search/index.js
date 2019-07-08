@@ -38,7 +38,8 @@ export const useFilter = () => {
             }];
         }
 
-        const last = filter[filter.length - 1];
+        const last = nextFilter[nextFilter.length - 1];
+
         const filterPresent = !!last && last.value;
 
         const filterResult = filterPresent
