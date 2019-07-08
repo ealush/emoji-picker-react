@@ -1,16 +1,16 @@
-import React, { useState, useReducer } from 'react';
+import React, { useState, useReducer, useRef } from 'react';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu/';
+import CategoriesNav from './components/CategoriesNav/';
 import EmojiList from './components/EmojiList/';
 import Search, { useFilter } from './components/Search/';
 import Aside from './styled';
 
 const EmpojiPicker = () => {
-    const [state, dispatch] = useReducer(reducer, {
-        activeSkinTone: NEUTRAL
-    });
+    const [state, dispatch] = useReducer(reducer, { activeSkinTone: NEUTRAL });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
+    const emojiListRef = useRef(null);
 
     const closeVariations = ({ target }) => {
         if (state.variationMenu) {
@@ -25,11 +25,14 @@ const EmpojiPicker = () => {
     return (
         <PickerContext.Provider value={{ state, dispatch }}>
             <Aside onScroll={closeVariations} onMouseDown={closeVariations}>
-                <Search/>
-                <SkinTones activeSkinTone={activeSkinTone}
-                    setActiveSkinTone={setActiveSkinTone}/>
+                <CategoriesNav emojiListRef={emojiListRef}/>
+                <div style={{position: 'relative'}}>
+                    <Search/>
+                    <SkinTones activeSkinTone={activeSkinTone}
+                        setActiveSkinTone={setActiveSkinTone}/>
+                </div>
                 <VariationsMenu/>
-                <EmojiList/>
+                <EmojiList emojiListRef={emojiListRef}/>
             </Aside>
         </PickerContext.Provider>
     );

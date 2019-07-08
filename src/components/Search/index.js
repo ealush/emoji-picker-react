@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { searchTerms, mappedSearchTerms } from '../../../lib/initEMojis';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Input from './styled';

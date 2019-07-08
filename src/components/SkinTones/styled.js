@@ -7,7 +7,7 @@ export const Ul = styled.ul`
     margin: 0;
     list-style-type: none;
     position: absolute;
-    top: 22px;
+    top: 13px;
     right: 40px;
 
     li {

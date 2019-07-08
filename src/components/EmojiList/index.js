@@ -28,8 +28,8 @@ const createEmojiList = ({ name }) => {
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name]);
 }
 
-const EmojiList = () => (
-    <ScrollWrapper>
+const EmojiList = ({ emojiListRef }) => (
+    <ScrollWrapper ref={emojiListRef}>
         {groups.map((name) => {
             const { list, shown } = createEmojiList({
                 name
@@ -40,7 +40,8 @@ const EmojiList = () => (
             };
 
             return (
-                <Ul data-name={name}
+                <Ul data-id={name}
+                    data-name={name}
                     children={list}
                     key={name}
                     style={style}/>

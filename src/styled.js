@@ -16,7 +16,6 @@ const Aside = styled.aside`
     flex-direction: column;
     ${ratio}
     font-family: sans-serif;
-    padding: 10px 0;
     border: 1px solid ${BORDER_BASE};
     border-radius: 5px;
     box-sizing: border-box;
