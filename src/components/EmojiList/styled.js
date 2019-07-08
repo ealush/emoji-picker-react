@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { rgba } from 'polished';
 import { TEXT_LIGHT, WHITE } from '../../lib/colors';
+import { GLOBAL_PADDING } from '../../styled';
 
 export const Ul = styled.ul`
     clear: both;
-    padding: 0 15px;
+    padding: 0 ${GLOBAL_PADDING}px;
     list-style: none;
     margin: 0;
     display: flex;

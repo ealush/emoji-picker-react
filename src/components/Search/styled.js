@@ -1,9 +1,10 @@
 import styled from 'styled-components';
+import { GLOBAL_PADDING } from '../../styled';
 import { BORDER_BASE, BORDER_DARK } from '../../lib/colors';
 
 const Input = styled.input`
-    width: calc(100% - 30px);
-    margin-left: 15px;
+    width: calc(100% - ${GLOBAL_PADDING * 2}px);
+    margin-left: ${GLOBAL_PADDING}px;
     outline: none;
     box-shadow: none;
     padding: 10px;

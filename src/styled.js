@@ -3,6 +3,7 @@ import { WHITE, BORDER_BASE } from './lib/colors';
 
 const HEIGHT_DEFAULT = 320;
 const WIDTH_DEFAULT = 280;
+export const GLOBAL_PADDING = 15;
 
 const ratio = ({ height = HEIGHT_DEFAULT, width = WIDTH_DEFAULT }) => css`
     height: ${height}px;
