@@ -12,7 +12,7 @@ const handleMouseUp = () => {
     clearTimeout(mouseDownTimeout);
 }
 
-const Emoji = React.memo(({ emoji, hidden, activeSkinTone, openVariationMenu }) => {
+const Emoji = React.memo(({ emoji, hidden, activeSkinTone, openVariationMenu, handleMouseEnter, handleMouseLeave}) => {
     const hasSkinVariation = emoji.skin_variations;
     let unified = emoji.unified;
 
@@ -40,6 +40,8 @@ const Emoji = React.memo(({ emoji, hidden, activeSkinTone, openVariationMenu }) 
     return (
         <Li style={style} hasSkinVariation={hasSkinVariation} className={hasSkinVariation ? 'has-skin-variation' : undefined}>
             <button onMouseDown={handleMouseDown}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
                 style={backgroundImage(unified)}/>
         </Li>

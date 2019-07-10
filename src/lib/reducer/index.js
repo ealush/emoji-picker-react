@@ -29,6 +29,11 @@ const reducer = (state, {type, ...action}) => {
                 ...state,
                 activeSkinTone: action.skinTone
             }
+        case actionTypes.EMOJI_NAME_SET:
+            return {
+                ...state,
+                emojiName: action.name
+            }
         case actionTypes.FILTER_SET:
             return {
                 ...state,

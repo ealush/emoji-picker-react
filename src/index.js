@@ -3,8 +3,9 @@ import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu/';
 import CategoriesNav from './components/CategoriesNav/';
+import ContentWrapper from './components/ContentWrapper/';
 import EmojiList from './components/EmojiList/';
-import Search, { useFilter } from './components/Search/';
+import Search from './components/Search/';
 import Aside from './styled';
 
 const EmpojiPicker = () => {
@@ -31,8 +32,10 @@ const EmpojiPicker = () => {
                     <SkinTones activeSkinTone={activeSkinTone}
                         setActiveSkinTone={setActiveSkinTone}/>
                 </div>
-                <VariationsMenu/>
-                <EmojiList emojiListRef={emojiListRef}/>
+                <ContentWrapper data-name={state.emojiName}>
+                    <VariationsMenu/>
+                    <EmojiList emojiListRef={emojiListRef}/>
+                </ContentWrapper>
             </Aside>
         </PickerContext.Provider>
     );

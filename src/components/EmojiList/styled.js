@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { rgba } from 'polished';
 import { TEXT_LIGHT, WHITE } from '../../lib/colors';
-import { GLOBAL_PADDING } from '../../styled';
+import { GLOBAL_PADDING, TITLE_LINE_HEIGHT } from '../../styled';
 
 export const Ul = styled.ul`
     clear: both;
@@ -22,7 +22,7 @@ export const Ul = styled.ul`
         z-index: 1;
         top: 0;
         text-transform: uppercase;
-        line-height: 45px;
+        line-height: ${TITLE_LINE_HEIGHT}px;
         font-weight: 700;
     }
 
