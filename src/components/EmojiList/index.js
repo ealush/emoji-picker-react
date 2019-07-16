@@ -1,7 +1,8 @@
 import React, { useContext, useMemo } from 'react';
-import  { groupedEmojis, groups } from '../../../lib/initEMojis';
-import Emoji from '../Emoji';
+import { groupedEmojis, groups } from '../../../lib/initEMojis';
+import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../lib/constants';
 import { PickerContext, actionTypes } from '../../lib/reducer';
+import Emoji from '../Emoji';
 import { ScrollWrapper, Ul } from './styled';
 
 const createEmojiList = ({ name }) => {
@@ -12,7 +13,7 @@ const createEmojiList = ({ name }) => {
     const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });
 
     return useMemo(() => groupedEmojis[name].reduce((accumulator, emoji) => {
-        const hidden = filterResult && !filterResult.hasOwnProperty(emoji.unified);
+        const hidden = filterResult && !filterResult.hasOwnProperty(emoji[EMOJI_PROPERTY_UNIFIED]);
 
         if (!accumulator.shown && !hidden) {
             accumulator.shown = true;
@@ -23,9 +24,9 @@ const createEmojiList = ({ name }) => {
                 openVariationMenu={openVariationMenu}
                 activeSkinTone={activeSkinTone}
                 handleMouseLeave={unsetEmojiName}
-                handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji.name})}
+                handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME]})}
                 hidden={hidden}
-                key={emoji.unified}/>
+                key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
         );
 
         return accumulator;
