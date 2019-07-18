@@ -46,7 +46,7 @@
     "eslint-plugin-react": "^7.5.1",
     "extract-text-webpack-plugin": "^3.0.2",
     "ignore-styles": "^5.0.1",
-    "mocha": "^5.0.0",
+    "mocha": "^6.2.0",
     "node-sass": "^4.7.2",
     "react": "16.2.0",
     "react-dom": "16.2.0",
