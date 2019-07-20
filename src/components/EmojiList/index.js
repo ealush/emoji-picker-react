@@ -46,6 +46,7 @@ const EmojiList = ({ emojiListRef }) => (
 
             return (
                 <Ul data-id={name}
+                    className="emoji-group"
                     data-name={name}
                     children={list}
                     key={name}

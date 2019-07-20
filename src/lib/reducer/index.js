@@ -3,6 +3,7 @@ import { createContext } from 'react';
 export const PickerContext = createContext({});
 
 export const actionTypes = {
+    ACTIVE_CATEGORY_SET: 'ACTIVE_CATEGORY_SET',
     VARIATION_MENU_SET: 'VARIATION_MENU_SET',
     SKIN_TONES_SPREAD: 'SKIN_TONES_SPREAD',
     ACTIVE_SKIN_TONE_SET: 'ACTIVE_SKIN_TONE_SET',
@@ -35,6 +36,7 @@ const reducer = (state, {type, ...action}) => {
                 emojiName: action.name
             }
         case actionTypes.FILTER_SET:
+        case actionTypes.ACTIVE_CATEGORY_SET:
             return {
                 ...state,
                 ...action

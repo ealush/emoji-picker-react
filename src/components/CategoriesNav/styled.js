@@ -7,6 +7,13 @@ const Nav = styled.nav`
     justify-content: space-between;
     box-sizing: border-box;
 
+    &.inactive {
+        button, button.active, button:hover {
+            opacity: .4;
+            cursor: default;
+        }
+    }
+
     button {
         height: 40px;
         width: 20px;
@@ -15,8 +22,12 @@ const Nav = styled.nav`
         background-size: 20px;
         background-position: 50% 50%;
         cursor: pointer;
-        opacity: .6;
+        opacity: .5;
         transition: opacity .1s;
+
+        &.active {
+            opacity: 1;
+        }
 
         &:hover {
             opacity: .7;
