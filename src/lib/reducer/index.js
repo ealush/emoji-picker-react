@@ -39,6 +39,7 @@ const reducer = (state, {type, ...action}) => {
         case actionTypes.ACTIVE_CATEGORY_SET:
             return {
                 ...state,
+                activeActegory: null,
                 ...action
             }
       default:

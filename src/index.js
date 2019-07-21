@@ -48,7 +48,6 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
         });
 
     }, [ root.current, filter ]);
-
 }
 
 const EmpojiPicker = () => {

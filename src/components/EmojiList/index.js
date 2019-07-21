@@ -1,12 +1,30 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useRef, useEffect } from 'react';
 import { groupedEmojis, groups } from '../../../lib/initEMojis';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../lib/constants';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 import { ScrollWrapper, Ul } from './styled';
 
-const createEmojiList = ({ name }) => {
-    const { state: {activeSkinTone, filterResult }, dispatch } = useContext(PickerContext);
+const  useScrollUpOnFilterChange = (value, emojiListRef) => {
+    // The ref object is a generic container whose current property is mutable ...
+    // ... and can hold any value, similar to an instance property on a class
+    const ref = useRef();
+
+    // Store current value in ref
+    useEffect(() => {
+
+        if (emojiListRef && emojiListRef.current) {
+            emojiListRef.current.scrollTop = 0;
+        }
+
+        ref.current = value;
+    }, [value]); // Only re-run if value changes
+
+    // Return previous value (happens before update in useEffect above)
+    return ref.current;
+}
+
+const createEmojiList = ({ name, activeSkinTone, filterResult, dispatch }) => {
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
@@ -33,27 +51,35 @@ const createEmojiList = ({ name }) => {
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name]);
 }
 
-const EmojiList = ({ emojiListRef }) => (
-    <ScrollWrapper ref={emojiListRef}>
-        {groups.map((name) => {
-            const { list, shown } = createEmojiList({
-                name
-            });
+const EmojiList = ({ emojiListRef }) => {
+    const { state: {activeSkinTone, filterResult }, dispatch } = useContext(PickerContext);
+    useScrollUpOnFilterChange(filterResult, emojiListRef);
 
-            const style = {
-                ...!shown && { display: 'none' }
-            };
+    return (
+        <ScrollWrapper ref={emojiListRef}>
+            {groups.map((name) => {
+                const { list, shown } = createEmojiList({
+                    name,
+                    activeSkinTone,
+                    filterResult,
+                    dispatch
+                });
 
-            return (
-                <Ul data-id={name}
-                    className="emoji-group"
-                    data-name={name}
-                    children={list}
-                    key={name}
-                    style={style}/>
-            );
-        })}
-    </ScrollWrapper>
-)
+                const style = {
+                    ...!shown && { display: 'none' }
+                };
+
+                return (
+                    <Ul data-id={name}
+                        className="emoji-group"
+                        data-name={name}
+                        children={list}
+                        key={name}
+                        style={style}/>
+                );
+            })}
+        </ScrollWrapper>
+    );
+}
 
 export default EmojiList;
