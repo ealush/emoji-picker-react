@@ -1,4 +1,4 @@
-export const EMOJI_PROPERTY_NAME = 'name';
-export const EMOJI_PROPERTY_UNIFIED = 'unified';
-export const EMOJI_PROPERTY_SORT_ORDER = 'sort_order';
-export const EMOJI_PROPERTY_SKIN_VARIATIONS = 'skin_variations';
+export const EMOJI_PROPERTY_NAME = 'n';
+export const EMOJI_PROPERTY_UNIFIED = 'u';
+export const EMOJI_PROPERTY_SORT_ORDER = 'o';
+export const EMOJI_PROPERTY_SKIN_VARIATIONS = 'v';

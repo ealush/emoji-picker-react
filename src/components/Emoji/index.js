@@ -24,7 +24,7 @@ const Emoji = React.memo(({ emoji, hidden, activeSkinTone, openVariationMenu, ha
     };
 
     if (hasSkinVariation && emoji[EMOJI_PROPERTY_SKIN_VARIATIONS][activeSkinTone]) {
-        unified = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS][activeSkinTone].unified;
+        unified = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS][activeSkinTone][EMOJI_PROPERTY_UNIFIED];
     }
 
     const handleMouseDown = () => {
