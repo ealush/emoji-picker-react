@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { skinTones } from '../../../lib/initEMojis';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import { Ul, Tone } from './styled';
