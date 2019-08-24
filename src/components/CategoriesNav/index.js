@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { actionTypes, PickerContext } from '../../lib/reducer';
-import { groups } from '../../../lib/initEMojis';
+import groups from '../../groups.json';
 import icons from './svg';
 import Nav from './styled';
 

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { skinTones } from '../../../lib/initEMojis';
+import skinTones from '../../skinTones';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import { Ul, Tone } from './styled';
 import { NEUTRAL, DATA_NAME } from './constants';

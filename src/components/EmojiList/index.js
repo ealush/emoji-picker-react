@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useRef, useEffect } from 'react';
-import { groupedEmojis, groups } from '../../../lib/initEMojis';
+import groups from '../../groups.json';
+import groupedEmojis from '../../emojis.json';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../lib/constants';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
@@ -42,7 +43,7 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, dispatch }) => {
                 openVariationMenu={openVariationMenu}
                 activeSkinTone={activeSkinTone}
                 handleMouseLeave={unsetEmojiName}
-                handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME]})}
+                handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
                 hidden={hidden}
                 key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
         );

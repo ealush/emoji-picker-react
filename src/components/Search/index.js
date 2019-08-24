@@ -1,7 +1,14 @@
 import React, { useContext } from 'react';
-import { searchTerms, mappedSearchTerms } from '../../../lib/initEMojis';
+import keywordsPromise from '../../../lib/initEMojis';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Input from './styled';
+
+let searchTerms, mappedSearchTerms;
+
+keywordsPromise.then((res) => {
+    searchTerms = res.searchTerms;
+    mappedSearchTerms = res.mappedSearchTerms;
+});
 
 export const useFilter = () => {
     const { state: { filter = [] }, dispatch } = useContext(PickerContext);

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { skinTones } from '../../../lib/initEMojis';
+import skinTones from '../../skinTones';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../lib/constants';
 import { PickerContext } from '../../lib/reducer';
 import backgroundImage from '../../lib/backgroundImage';
