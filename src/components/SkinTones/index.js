@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import skinTones from '../../skinTones';
 import { PickerContext, actionTypes } from '../../lib/reducer';
-import { Ul, Tone } from './styled';
 import { NEUTRAL, DATA_NAME } from './constants';
+import './style.css';
 
 export {
     NEUTRAL, DATA_NAME
@@ -26,13 +26,13 @@ const SkinTones = () => {
     }
 
     return (
-        <Ul>
+        <ul className="skin-tones-list">
         {
             skinTones.map((tone, i) => {
                 const isActive = tone === activeSkinTone;
 
                 return (
-                    <Tone key={tone}
+                    <li key={tone}
                         className={`t${tone}`}
                         style={{
                             transform: `translateX(-${skinTonesSpread ? i * 20 : 0}px) scale(${isActive ? '1.5' : 1})`,
@@ -43,11 +43,11 @@ const SkinTones = () => {
                             value={tone}
                             id={`tone_${tone}`}/>
                         <label htmlFor={`tone_${tone}`} data-name={DATA_NAME} onClick={handleClick}/>
-                    </Tone>
+                    </li>
                 );
             })
         }
-        </Ul>
+        </ul>
     )
 }
 

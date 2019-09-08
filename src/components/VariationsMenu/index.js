@@ -1,9 +1,9 @@
 import React, { useContext } from 'react';
 import skinTones from '../../skinTones';
-import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../lib/constants';
+import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
 import { PickerContext } from '../../lib/reducer';
 import backgroundImage from '../../lib/backgroundImage';
-import { VariationList, VariationsWrapper } from './styled';
+import './style.css';
 
 const VariationsMenu = () => {
     const { state: { variationMenu }} = useContext(PickerContext);
@@ -13,8 +13,8 @@ const VariationsMenu = () => {
     }
 
     return (
-        <VariationsWrapper>
-            <VariationList>{skinTones.map((tone, index) => {
+        <div className="variations-wrapper">
+            <ul className="variation-list">{skinTones.map((tone, index) => {
                 const unified = variationMenu[EMOJI_PROPERTY_SKIN_VARIATIONS].find((v) => (
                     v.includes(tone)
                 )) || variationMenu[EMOJI_PROPERTY_UNIFIED];
@@ -25,8 +25,8 @@ const VariationsMenu = () => {
                         <button style={bgImg}/>
                     </li>
                 );
-            })}</VariationList>
-        </VariationsWrapper>
+            })}</ul>
+        </div>
     );
 }
 

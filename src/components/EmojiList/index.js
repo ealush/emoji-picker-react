@@ -1,7 +1,7 @@
 import React, { useContext, useMemo, useRef, useEffect } from 'react';
+import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 import groups from '../../groups.json';
 import groupedEmojis from '../../emojis.json';
-import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../lib/constants';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 import { ScrollWrapper, Ul } from './styled';

@@ -69,7 +69,7 @@ const EmpojiPicker = () => {
 
     return (
         <PickerContext.Provider value={{ state, dispatch }}>
-            <Aside onScroll={closeVariations} onMouseDown={closeVariations}>
+            <Aside className="emoji-picker-react" onScroll={closeVariations} onMouseDown={closeVariations}>
                 <CategoriesNav emojiListRef={emojiListRef}/>
                 <div style={{position: 'relative'}}>
                     <Search/>
