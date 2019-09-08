@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import keywordsPromise from '../../../lib/initEMojis';
 import { PickerContext, actionTypes } from '../../lib/reducer';
-import Input from './styled';
+import './style.css';
 
 let searchTerms, mappedSearchTerms;
 
@@ -72,7 +72,7 @@ export const useFilter = () => {
 const Search = () => {
     const handleChange = useFilter()
     return (
-        <Input onChange={handleChange}/>
+        <input className="emoji-search" onChange={handleChange}/>
     );
 }
 

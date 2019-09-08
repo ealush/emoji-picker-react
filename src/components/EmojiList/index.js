@@ -4,7 +4,7 @@ import groups from '../../groups.json';
 import groupedEmojis from '../../emojis.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
-import { ScrollWrapper, Ul } from './styled';
+import './style.css';
 
 const  useScrollUpOnFilterChange = (value, emojiListRef) => {
     // The ref object is a generic container whose current property is mutable ...
@@ -57,7 +57,7 @@ const EmojiList = ({ emojiListRef }) => {
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     return (
-        <ScrollWrapper ref={emojiListRef}>
+        <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             {groups.map((name) => {
                 const { list, shown } = createEmojiList({
                     name,
@@ -71,7 +71,7 @@ const EmojiList = ({ emojiListRef }) => {
                 };
 
                 return (
-                    <Ul data-id={name}
+                    <ul data-id={name}
                         className="emoji-group"
                         data-name={name}
                         children={list}
@@ -79,7 +79,7 @@ const EmojiList = ({ emojiListRef }) => {
                         style={style}/>
                 );
             })}
-        </ScrollWrapper>
+        </section>
     );
 }
 

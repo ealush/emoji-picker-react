@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
 import icons from './svg';
-import Nav from './styled';
+import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
     const { state: { activeCategory, filter }, dispatch } = useContext(PickerContext);
@@ -36,15 +36,18 @@ const CategoriesNav = ({ emojiListRef }) => {
         current.scrollTop = category.offsetTop;
     }
 
+    let className = 'emoji-categories';
+    className += inactive ? ' inactive' : '';
+
     return (
-        <Nav onClick={handleClick} className={inactive ? 'inactive' : undefined}>{
+        <nav onClick={handleClick} className={className}>{
             groups.map((group) => (
                 <button key={group}
                     className={activeCategory === group ? 'active' : undefined}
                     data-id={group}
                     style={{ backgroundImage: `url(${icons[group.replace(' & ', '_')]})` }}/>
             ))
-        }</Nav>
+        }</nav>
     );
 }
 

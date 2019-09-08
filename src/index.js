@@ -3,10 +3,9 @@ import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
 import CategoriesNav from './components/CategoriesNav';
-import ContentWrapper from './components/ContentWrapper';
 import EmojiList from './components/EmojiList';
 import Search from './components/Search';
-import Aside from './styled';
+import './style.css';
 
 let observer;
 
@@ -69,18 +68,18 @@ const EmpojiPicker = () => {
 
     return (
         <PickerContext.Provider value={{ state, dispatch }}>
-            <Aside className="emoji-picker-react" onScroll={closeVariations} onMouseDown={closeVariations}>
+            <aside className="emoji-picker-react" onScroll={closeVariations} onMouseDown={closeVariations}>
                 <CategoriesNav emojiListRef={emojiListRef}/>
                 <div style={{position: 'relative'}}>
                     <Search/>
                     <SkinTones activeSkinTone={activeSkinTone}
                         setActiveSkinTone={setActiveSkinTone}/>
                 </div>
-                <ContentWrapper data-name={state.emojiName}>
+                <div className="content-wrapper" data-name={state.emojiName}>
                     <VariationsMenu/>
                     <EmojiList emojiListRef={emojiListRef}/>
-                </ContentWrapper>
-            </Aside>
+                </div>
+            </aside>
         </PickerContext.Provider>
     );
 };

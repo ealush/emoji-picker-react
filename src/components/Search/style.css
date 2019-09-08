@@ -1,0 +1,15 @@
+.emoji-picker-react input.emoji-search {
+    width: calc(100% - 30px);
+    margin-left: 15px;
+    outline: none;
+    box-shadow: none;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #efefef;
+    border-radius: 3px;
+    transition: border .1s;
+}
+
+.emoji-picker-react input.emoji-search:focus {
+    border: 1px solid #D6D6D6;
+}
