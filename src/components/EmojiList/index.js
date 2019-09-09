@@ -6,7 +6,7 @@ import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 import './style.css';
 
-const  useScrollUpOnFilterChange = (value, emojiListRef) => {
+const useScrollUpOnFilterChange = (value, emojiListRef) => {
     // The ref object is a generic container whose current property is mutable ...
     // ... and can hold any value, similar to an instance property on a class
     const ref = useRef();
@@ -25,7 +25,7 @@ const  useScrollUpOnFilterChange = (value, emojiListRef) => {
     return ref.current;
 }
 
-const createEmojiList = ({ name, activeSkinTone, filterResult, dispatch }) => {
+const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, dispatch }) => {
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
@@ -40,6 +40,7 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, dispatch }) => {
 
         accumulator.list.push(
             <Emoji emoji={emoji}
+                emojiUrl={emojiUrl}
                 openVariationMenu={openVariationMenu}
                 activeSkinTone={activeSkinTone}
                 handleMouseLeave={unsetEmojiName}
@@ -53,7 +54,7 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, dispatch }) => {
 }
 
 const EmojiList = ({ emojiListRef }) => {
-    const { state: {activeSkinTone, filterResult }, dispatch } = useContext(PickerContext);
+    const { state: {activeSkinTone, filterResult, emojiUrl }, dispatch } = useContext(PickerContext);
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     return (
@@ -63,6 +64,7 @@ const EmojiList = ({ emojiListRef }) => {
                     name,
                     activeSkinTone,
                     filterResult,
+                    emojiUrl,
                     dispatch
                 });
 

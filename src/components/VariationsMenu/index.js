@@ -6,7 +6,7 @@ import backgroundImage from '../../lib/backgroundImage';
 import './style.css';
 
 const VariationsMenu = () => {
-    const { state: { variationMenu }} = useContext(PickerContext);
+    const { state: { variationMenu, emojiUrl }} = useContext(PickerContext);
 
     if (!variationMenu) {
         return null;
@@ -18,7 +18,7 @@ const VariationsMenu = () => {
                 const unified = variationMenu[EMOJI_PROPERTY_SKIN_VARIATIONS].find((v) => (
                     v.includes(tone)
                 )) || variationMenu[EMOJI_PROPERTY_UNIFIED];
-                const bgImg = backgroundImage(unified);
+                const bgImg = backgroundImage(unified, emojiUrl);
 
                 return (
                     <li key={unified}>

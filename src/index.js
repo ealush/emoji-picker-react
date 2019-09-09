@@ -49,8 +49,8 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
     }, [ root.current, filter ]);
 }
 
-const EmpojiPicker = () => {
-    const [state, dispatch] = useReducer(reducer, { activeSkinTone: NEUTRAL });
+const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL }) => {
+    const [state, dispatch] = useReducer(reducer, { activeSkinTone: NEUTRAL, emojiUrl });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);
 

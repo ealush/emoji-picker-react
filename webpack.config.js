@@ -54,6 +54,9 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin(),
+        new webpack.DefinePlugin({
+            DEFAULT_EMOJI_URL: JSON.stringify('https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160')
+        })
     ],
     optimization: {
         minimize: true,
