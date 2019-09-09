@@ -1,4 +1,5 @@
 import React from 'react';
+import cn from 'classnames';
 import backgroundImage from '../../lib/backgroundImage';
 import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
@@ -38,12 +39,9 @@ const Emoji = React.memo(({ emoji, hidden, activeSkinTone, openVariationMenu, ha
         }, 500);
     }
 
-    let className = 'emoji';
-    className += hasSkinVariation ? ' has-skin-variation' : '';
-
-
     return (
-        <li style={style} hasSkinVariation={hasSkinVariation} className={className}>
+        <li style={style} hasSkinVariation={hasSkinVariation}
+            className={cn('emoji', { 'has-skin-variation': hasSkinVariation })}>
             <button onMouseDown={handleMouseDown}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}

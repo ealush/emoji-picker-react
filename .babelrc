@@ -1,0 +1,26 @@
+{
+    "presets": [
+        "@babel/preset-react",
+        ["@babel/preset-env", {
+            "targets": {
+                "browsers": ["last 4 versions", "not ie <= 10"]
+            },
+            "modules": false
+        }]
+    ],
+    "env": {
+        "test": {
+            "presets": [
+                "@babel/preset-react",
+                ["@babel/preset-env", {
+                    "targets": {
+                        "node": "current"
+                    }
+                }]
+            ]
+        }
+    },
+    "plugins": [
+        "@babel/plugin-transform-runtime"
+    ]
+}

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
+import cn from 'classnames';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
-import icons from './svg';
 import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
@@ -36,16 +36,12 @@ const CategoriesNav = ({ emojiListRef }) => {
         current.scrollTop = category.offsetTop;
     }
 
-    let className = 'emoji-categories';
-    className += inactive ? ' inactive' : '';
-
     return (
-        <nav onClick={handleClick} className={className}>{
+        <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>{
             groups.map((group) => (
                 <button key={group}
-                    className={activeCategory === group ? 'active' : undefined}
-                    data-id={group}
-                    style={{ backgroundImage: `url(${icons[group.replace(' & ', '_')]})` }}/>
+                    className={cn(`icn-${group.replace(' & ', '_')}`, { active: activeCategory === group })}
+                    data-id={group}/>
             ))
         }</nav>
     );
