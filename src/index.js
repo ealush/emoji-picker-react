@@ -24,7 +24,12 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
                                 activeCategory: null
                             });
                         }
+
                     } else if (!state.activeCategory) {
+                        dispatch({
+                            type: actionTypes.GROUP_SEEN_SET,
+                            group: id
+                        });
                         dispatch({
                             type: actionTypes.ACTIVE_CATEGORY_SET,
                             activeCategory: id

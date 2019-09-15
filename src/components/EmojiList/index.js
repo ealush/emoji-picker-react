@@ -25,7 +25,7 @@ const useScrollUpOnFilterChange = (value, emojiListRef) => {
     return ref.current;
 }
 
-const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, dispatch }) => {
+const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSeen, dispatch }) => {
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
@@ -46,15 +46,16 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, dispatc
                 handleMouseLeave={unsetEmojiName}
                 handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
                 hidden={hidden}
+                shouldLoad={groupSeen}
                 key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
         );
 
         return accumulator;
-    }, { list: [], shown: false }), [activeSkinTone, filterResult, name]);
+    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen]);
 }
 
 const EmojiList = ({ emojiListRef }) => {
-    const { state: {activeSkinTone, filterResult, emojiUrl }, dispatch } = useContext(PickerContext);
+    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {} }, dispatch } = useContext(PickerContext);
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     return (
@@ -65,11 +66,12 @@ const EmojiList = ({ emojiListRef }) => {
                     activeSkinTone,
                     filterResult,
                     emojiUrl,
+                    groupSeen: !!seenGroups[name],
                     dispatch
                 });
 
                 const style = {
-                    ...!shown && { display: 'none' }
+                    ...!shown && { display: 'none' },
                 };
 
                 return (
