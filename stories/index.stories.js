@@ -9,4 +9,4 @@ import EmojiPicker from '../src';
 import { Button, Welcome } from '@storybook/react/demo';
 
 storiesOf('EmojiPicker', module)
-  .add('EmojiPicker', () => <EmojiPicker emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160"/>);
+  .add('EmojiPicker', () => <EmojiPicker onEmojiClick={(e, em) => console.log(em)} emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-160"/>);

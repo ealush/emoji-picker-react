@@ -1,7 +1,7 @@
 import React from 'react';
 import cn from 'classnames';
 import backgroundImage from '../../lib/backgroundImage';
-import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
+import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
 import './style.css';
 
@@ -12,7 +12,17 @@ let mouseDownTimeout = null;
 
 const handleMouseUp = () => clearTimeout(mouseDownTimeout);
 
-const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone, openVariationMenu, handleMouseEnter, handleMouseLeave}) => {
+const Emoji = ({ emoji,
+    shouldLoad,
+    emojiUrl,
+    hidden,
+    activeSkinTone,
+    openVariationMenu,
+    variationMenuOpen,
+    handleMouseEnter,
+    handleMouseLeave,
+    onEmojiClick
+}) => {
     const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
     let unified;
 
@@ -43,6 +53,21 @@ const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone,
         }, 500);
     }
 
+    const handleEmojiClick = (e) => {
+        console.log(variationMenuOpen)
+        if (variationMenuOpen) {
+            return;
+        }
+
+        onEmojiClick && onEmojiClick(e, {
+            unified,
+            emoji: String.fromCodePoint(parseInt(unified, 16)),
+            originalUnified: emoji[EMOJI_PROPERTY_UNIFIED],
+            names: emoji[EMOJI_PROPERTY_NAME],
+            activeSkinTone
+        });
+    };
+
     return (
         <li style={style}
             className={cn('emoji', { 'has-skin-variation': hasSkinVariation })}>
@@ -50,9 +75,10 @@ const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone,
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
+                onClick={handleEmojiClick}
                 style={{...shouldLoad && backgroundImage(unified, emojiUrl)}}/>
         </li>
     );
-});
+};
 
 export default Emoji;

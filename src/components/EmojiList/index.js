@@ -25,7 +25,7 @@ const useScrollUpOnFilterChange = (value, emojiListRef) => {
     return ref.current;
 }
 
-const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSeen, dispatch }) => {
+const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSeen, onEmojiClick, variationMenuOpen, dispatch }) => {
 
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
@@ -45,18 +45,20 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSe
                 openVariationMenu={openVariationMenu}
                 activeSkinTone={activeSkinTone}
                 handleMouseLeave={unsetEmojiName}
+                variationMenuOpen={variationMenuOpen}
                 handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
                 hidden={hidden}
                 shouldLoad={groupSeen}
+                onEmojiClick={onEmojiClick}
                 key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
         );
 
         return accumulator;
-    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen]);
+    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
 }
 
-const EmojiList = ({ emojiListRef }) => {
-    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {} }, dispatch } = useContext(PickerContext);
+const EmojiList = React.memo(({ emojiListRef, onEmojiClick }) => {
+    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu }, dispatch } = useContext(PickerContext);
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     return (
@@ -68,6 +70,8 @@ const EmojiList = ({ emojiListRef }) => {
                     filterResult,
                     emojiUrl,
                     groupSeen: !!seenGroups[name],
+                    onEmojiClick,
+                    variationMenuOpen: !!variationMenu,
                     dispatch
                 });
 
@@ -86,6 +90,6 @@ const EmojiList = ({ emojiListRef }) => {
             })}
         </section>
     );
-}
+});
 
 export default EmojiList;

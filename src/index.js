@@ -54,7 +54,7 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
     }, [ root.current, filter ]);
 }
 
-const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL }) => {
+const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
     const [state, dispatch] = useReducer(reducer, { activeSkinTone: NEUTRAL, emojiUrl });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);
@@ -82,7 +82,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL }) => {
                 </div>
                 <div className="content-wrapper" data-name={state.emojiName}>
                     <VariationsMenu/>
-                    <EmojiList emojiListRef={emojiListRef}/>
+                    <EmojiList emojiListRef={emojiListRef} onEmojiClick={onEmojiClick}/>
                 </div>
             </aside>
         </PickerContext.Provider>
