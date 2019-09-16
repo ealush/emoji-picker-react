@@ -54,18 +54,12 @@ const Emoji = ({ emoji,
     }
 
     const handleEmojiClick = (e) => {
-        console.log(variationMenuOpen)
+
         if (variationMenuOpen) {
             return;
         }
 
-        onEmojiClick && onEmojiClick(e, {
-            unified,
-            emoji: String.fromCodePoint(parseInt(unified, 16)),
-            originalUnified: emoji[EMOJI_PROPERTY_UNIFIED],
-            names: emoji[EMOJI_PROPERTY_NAME],
-            activeSkinTone
-        });
+        onEmojiClick && onEmojiClick(e, );
     };
 
     return (

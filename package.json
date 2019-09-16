@@ -35,6 +35,8 @@
     "classnames": "^2.2.6",
     "css-loader": "^3.2.0",
     "emoji-datasource": "^4.1.0",
+    "eslint": "^6.4.0",
+    "eslint-plugin-react": "^7.14.3",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.8.0",
     "react": "^16.8.6",

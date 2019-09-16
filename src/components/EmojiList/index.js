@@ -25,8 +25,12 @@ const useScrollUpOnFilterChange = (value, emojiListRef) => {
     return ref.current;
 }
 
-const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSeen, onEmojiClick, variationMenuOpen, dispatch }) => {
+const createEmojiList = (name) => {
 
+    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick }, dispatch } = useContext(PickerContext);
+
+    const groupSeen = !!seenGroups[name];
+    const variationMenuOpen = !!variationMenu;
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
@@ -57,23 +61,16 @@ const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSe
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
 }
 
-const EmojiList = React.memo(({ emojiListRef, onEmojiClick }) => {
-    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu }, dispatch } = useContext(PickerContext);
+const EmojiList = React.memo(({ emojiListRef }) => {
+
+    const { state: { filterResult } } = useContext(PickerContext);
+
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     return (
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             {groups.map((name) => {
-                const { list, shown } = createEmojiList({
-                    name,
-                    activeSkinTone,
-                    filterResult,
-                    emojiUrl,
-                    groupSeen: !!seenGroups[name],
-                    onEmojiClick,
-                    variationMenuOpen: !!variationMenu,
-                    dispatch
-                });
+                const { list, shown } = createEmojiList(name);
 
                 const style = {
                     ...!shown && { display: 'none' },
