@@ -71,6 +71,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
         }
     }
 
+
     return (
         <PickerContext.Provider value={{ state, dispatch }}>
             <aside className="emoji-picker-react" onScroll={closeVariations} onMouseDown={closeVariations}>
@@ -81,7 +82,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
                         setActiveSkinTone={setActiveSkinTone}/>
                 </div>
                 <div className="content-wrapper" data-name={state.emojiName}>
-                    <VariationsMenu/>
+                    <VariationsMenu closeVariations={closeVariations}/>
                     <EmojiList emojiListRef={emojiListRef}/>
                 </div>
             </aside>

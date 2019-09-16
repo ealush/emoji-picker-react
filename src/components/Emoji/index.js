@@ -1,7 +1,8 @@
 import React from 'react';
 import cn from 'classnames';
 import backgroundImage from '../../lib/backgroundImage';
-import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
+import emojiOutput from '../../lib/emojiOutput';
+import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
 import './style.css';
 
@@ -59,7 +60,7 @@ const Emoji = ({ emoji,
             return;
         }
 
-        onEmojiClick && onEmojiClick(e, );
+        onEmojiClick && onEmojiClick(e, emojiOutput(emoji, unified, activeSkinTone));
     };
 
     return (
