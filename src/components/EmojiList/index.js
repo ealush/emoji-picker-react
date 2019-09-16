@@ -27,6 +27,7 @@ const useScrollUpOnFilterChange = (value, emojiListRef) => {
 
 const createEmojiList = ({ name, activeSkinTone, filterResult, emojiUrl, groupSeen, dispatch }) => {
 
+
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
     const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });

@@ -10,13 +10,11 @@ const bgColor = (order) => pastels[order % pastels.length];
 
 let mouseDownTimeout = null;
 
-const handleMouseUp = () => {
-    clearTimeout(mouseDownTimeout);
-}
+const handleMouseUp = () => clearTimeout(mouseDownTimeout);
 
 const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone, openVariationMenu, handleMouseEnter, handleMouseLeave}) => {
     const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
-    let unified = emoji[EMOJI_PROPERTY_UNIFIED];
+    let unified;
 
     const style = {
         order: emoji[EMOJI_PROPERTY_SORT_ORDER],
@@ -24,8 +22,14 @@ const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone,
         color: bgColor(emoji[EMOJI_PROPERTY_SORT_ORDER])
     };
 
-    if (hasSkinVariation && emoji[EMOJI_PROPERTY_SKIN_VARIATIONS][activeSkinTone]) {
-        unified = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS][activeSkinTone][EMOJI_PROPERTY_UNIFIED];
+    if (hasSkinVariation && emoji[EMOJI_PROPERTY_SKIN_VARIATIONS]) {
+        unified = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS].find((u) => (
+            u.indexOf(activeSkinTone) >= 0
+        ));
+    }
+
+    if (!unified) {
+        unified = emoji[EMOJI_PROPERTY_UNIFIED];
     }
 
     const handleMouseDown = () => {
@@ -40,7 +44,7 @@ const Emoji = React.memo(({ emoji, shouldLoad, emojiUrl, hidden, activeSkinTone,
     }
 
     return (
-        <li style={style} hasSkinVariation={hasSkinVariation}
+        <li style={style}
             className={cn('emoji', { 'has-skin-variation': hasSkinVariation })}>
             <button onMouseDown={handleMouseDown}
                 onMouseEnter={handleMouseEnter}
