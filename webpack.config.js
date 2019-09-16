@@ -3,6 +3,8 @@ const path = require('path'),
     TerserPlugin = require('terser-webpack-plugin'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+require('./lib/preBuild');
+
 module.exports = {
     mode: 'production',
     entry: './src/index.js',
