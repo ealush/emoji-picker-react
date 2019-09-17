@@ -6,11 +6,18 @@ module.exports = {
     },
     'extends': [
         'eslint:recommended',
-        "plugin:react/recommended"
+        'plugin:react/recommended',
+        'plugin:import/errors',
+        'plugin:import/warnings',
+        'react-hooks'
     ],
     'parserOptions': {
         'ecmaVersion': 2018,
         'sourceType': 'module'
+    },
+    'globals': {
+        'IntersectionObserver': true,
+        'DEFAULT_EMOJI_URL': true
     },
     'rules': {
         'indent': [
@@ -29,6 +36,15 @@ module.exports = {
             'error',
             'always'
         ],
-        'no-trailing-spaces': ["error", { "ignoreComments": true }]
+        'no-trailing-spaces': ['error', { 'ignoreComments': true }],
+        'consistent-this': 2,
+        'import/no-self-import': 2,
+        'import/no-internal-modules': 0,
+        'import/no-dynamic-require': 0,
+        'import/no-useless-path-segments': 2,
+        'import/order': 1,
+        'import/newline-after-import': 2,
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
     }
 };

@@ -1,29 +1,11 @@
-import React, { useContext, useMemo, useRef, useEffect } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
+import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
 import groupedEmojis from '../../emojis.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 import './style.css';
-
-const useScrollUpOnFilterChange = (value, emojiListRef) => {
-    // The ref object is a generic container whose current property is mutable ...
-    // ... and can hold any value, similar to an instance property on a class
-    const ref = useRef();
-
-    // Store current value in ref
-    useEffect(() => {
-
-        if (emojiListRef && emojiListRef.current) {
-            emojiListRef.current.scrollTop = 0;
-        }
-
-        ref.current = value;
-    }, [value]); // Only re-run if value changes
-
-    // Return previous value (happens before update in useEffect above)
-    return ref.current;
-}
 
 const createEmojiList = (name) => {
 
@@ -37,7 +19,7 @@ const createEmojiList = (name) => {
     const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });
 
     return useMemo(() => groupedEmojis[name].reduce((accumulator, emoji) => {
-        const hidden = filterResult && !filterResult.hasOwnProperty(emoji[EMOJI_PROPERTY_UNIFIED]);
+        const hidden = filterResult && !Object.prototype.hasOwnProperty.call(filterResult, emoji[EMOJI_PROPERTY_UNIFIED]);
 
         if (!accumulator.shown && !hidden) {
             accumulator.shown = true;
@@ -59,10 +41,10 @@ const createEmojiList = (name) => {
 
         return accumulator;
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
-}
+};
 
-const EmojiList = React.memo(({ emojiListRef }) => {
 
+const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
     const { state: { filterResult } } = useContext(PickerContext);
 
     useScrollUpOnFilterChange(filterResult, emojiListRef);
@@ -80,9 +62,8 @@ const EmojiList = React.memo(({ emojiListRef }) => {
                     <ul data-id={name}
                         className="emoji-group"
                         data-name={name}
-                        children={list}
                         key={name}
-                        style={style}/>
+                        style={style}>{list}</ul>
                 );
             })}
         </section>

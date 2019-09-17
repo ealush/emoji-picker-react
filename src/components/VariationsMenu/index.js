@@ -15,7 +15,7 @@ const VariationsMenu = ({closeVariations}) => {
 
     return (
         <div className="variations-wrapper">
-            <ul className="variation-list">{skinTones.map((tone, index) => {
+            <ul className="variation-list">{skinTones.map((tone) => {
                 const unified = variationMenu[EMOJI_PROPERTY_SKIN_VARIATIONS].find((v) => (
                     v.includes(tone)
                 )) || variationMenu[EMOJI_PROPERTY_UNIFIED];
@@ -35,6 +35,6 @@ const VariationsMenu = ({closeVariations}) => {
             })}</ul>
         </div>
     );
-}
+};
 
 export default VariationsMenu;

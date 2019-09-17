@@ -1,5 +1,6 @@
-import React, { useState, useReducer, useRef, useEffect } from 'react';
+import React, { useState, useReducer, useRef } from 'react';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
+import useIntersectionObserver from './hooks/useIntersectionObserver';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
 import CategoriesNav from './components/CategoriesNav';
@@ -7,52 +8,6 @@ import EmojiList from './components/EmojiList';
 import Search from './components/Search';
 import './style.css';
 
-let observer;
-
-const useIntersectionObserver = (root, filter, state, dispatch) => {
-
-    useEffect(() => {
-        if (typeof IntersectionObserver !== 'undefined' && !observer && root.current) {
-            observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    const { target } = entry;
-                    const id = target.getAttribute('data-id');
-                    if (entry.intersectionRatio === 0) {
-                        if (id === state.activeCategory) {
-                            dispatch({
-                                type: actionTypes.ACTIVE_CATEGORY_SET,
-                                activeCategory: null
-                            });
-                        }
-
-                    } else if (!state.activeCategory) {
-                        dispatch({
-                            type: actionTypes.GROUP_SEEN_SET,
-                            group: id
-                        });
-                        dispatch({
-                            type: actionTypes.ACTIVE_CATEGORY_SET,
-                            activeCategory: id
-                        });
-                    }
-                });
-            }, {
-                root: root.current.parentElement
-            });
-        }
-
-        observer.disconnect();
-
-        if (!root || !root.current) {
-            return;
-        }
-
-        [...root.current.querySelectorAll('.emoji-group')].forEach((target) => {
-            observer.observe(target);
-        });
-
-    }, [ root.current, filter ]);
-}
 
 const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
     const [state, dispatch] = useReducer(reducer, { activeSkinTone: NEUTRAL, emojiUrl, onEmojiClick });
@@ -67,9 +22,9 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
         }
 
         if (state.skinTonesSpread && target.getAttribute('data-name') !== DATA_NAME) {
-            dispatch({ type: actionTypes.SKIN_TONES_SPREAD })
+            dispatch({ type: actionTypes.SKIN_TONES_SPREAD });
         }
-    }
+    };
 
 
     return (

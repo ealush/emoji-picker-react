@@ -23,32 +23,32 @@ const SkinTones = () => {
             type: actionTypes.ACTIVE_SKIN_TONE_SET,
             skinTone: value
         });
-    }
+    };
 
     return (
         <ul className="skin-tones-list">
-        {
-            skinTones.map((tone, i) => {
-                const isActive = tone === activeSkinTone;
+            {
+                skinTones.map((tone, i) => {
+                    const isActive = tone === activeSkinTone;
 
-                return (
-                    <li key={tone}
-                        className={`t${tone}`}
-                        style={{
-                            transform: `translateX(-${skinTonesSpread ? i * 20 : 0}px) scale(${isActive ? '1.5' : 1})`,
-                            zIndex: isActive ? 2 : 1}}>
-                        <input type="radio"
-                            onChange={setActiveSkinTone}
-                            name="skin-tone"
-                            value={tone}
-                            id={`tone_${tone}`}/>
-                        <label htmlFor={`tone_${tone}`} data-name={DATA_NAME} onClick={handleClick}/>
-                    </li>
-                );
-            })
-        }
+                    return (
+                        <li key={tone}
+                            className={`t${tone}`}
+                            style={{
+                                transform: `translateX(-${skinTonesSpread ? i * 20 : 0}px) scale(${isActive ? '1.5' : 1})`,
+                                zIndex: isActive ? 2 : 1}}>
+                            <input type="radio"
+                                onChange={setActiveSkinTone}
+                                name="skin-tone"
+                                value={tone}
+                                id={`tone_${tone}`}/>
+                            <label htmlFor={`tone_${tone}`} data-name={DATA_NAME} onClick={handleClick}/>
+                        </li>
+                    );
+                })
+            }
         </ul>
-    )
-}
+    );
+};
 
 export default SkinTones;

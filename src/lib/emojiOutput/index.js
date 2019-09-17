@@ -1,4 +1,4 @@
-import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants'
+import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 
 const emojiOutput = (emoji, unified, activeSkinTone) => ({
     unified,
