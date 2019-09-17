@@ -29,6 +29,10 @@ const CategoriesNav = ({ emojiListRef }) => {
             type: actionTypes.ACTIVE_CATEGORY_SET,
             activeCategory: id
         });
+        dispatch({
+            type: actionTypes.GROUP_SEEN_SET,
+            group: id
+        });
 
         const { current } = emojiListRef;
         const category = current.querySelector(`[data-id="${id}"]`);
