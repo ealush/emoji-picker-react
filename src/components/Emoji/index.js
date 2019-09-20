@@ -47,7 +47,7 @@ const Emoji = ({
 
     const handleMouseDown = () => {
 
-        if (!hasSkinVariation) {
+        if (!hasSkinVariation || !openVariationMenu) {
             return;
         }
 
@@ -67,7 +67,7 @@ const Emoji = ({
 
     return (
         <li style={style}
-            className={cn('emoji', { 'has-skin-variation': hasSkinVariation })}>
+            className={cn('emoji', { 'has-skin-variation': hasSkinVariation && openVariationMenu })}>
             <button onMouseDown={handleMouseDown}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}

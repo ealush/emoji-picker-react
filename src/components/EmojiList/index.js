@@ -7,9 +7,10 @@ import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
+import RecentlyUsed from '../RecentlyUsed';
 import './style.css';
 
-const createEmojiList = (name) => {
+const createEmojiList = (name, { unsetEmojiName }) => {
 
     const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick }, dispatch } = useContext(PickerContext);
 
@@ -17,8 +18,6 @@ const createEmojiList = (name) => {
     const variationMenuOpen = !!variationMenu;
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
-
-    const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });
 
     return useMemo(() => emojiStorage.groups[name].reduce((accumulator, emojiName, index) => {
         const emoji = emojiStorage.emojis[emojiName];
@@ -47,30 +46,18 @@ const createEmojiList = (name) => {
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
 };
 
-const RecentlyUsed = () => {
-    const { state: { recentlyUsed } } = useContext(PickerContext);
-
-    console.log(recentlyUsed);
-
-    return (
-        <ul className="emoji-group"
-            data-name="Recently Used">
-
-        </ul>
-    );
-};
-
-
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
-    const { state: { filterResult } } = useContext(PickerContext);
+    const { state: { filterResult }, dispatch } = useContext(PickerContext);
 
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
+    const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });
+
     return (
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
-            <RecentlyUsed/>
+            <RecentlyUsed unsetEmojiName={unsetEmojiName}/>
             {groups.map((name) => {
-                const { list, shown } = createEmojiList(name);
+                const { list, shown } = createEmojiList(name, { unsetEmojiName });
 
                 const style = {
                     ...!shown && { display: 'none' },
