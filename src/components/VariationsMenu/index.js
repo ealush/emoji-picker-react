@@ -40,5 +40,5 @@ const VariationsMenu = ({ closeVariations }) => {
 export default VariationsMenu;
 
 VariationsMenu.propTypes = {
-    closeVariations: PropTypes.func()
+    closeVariations: PropTypes.func
 };

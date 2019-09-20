@@ -82,14 +82,14 @@ export default Emoji;
 
 Emoji.propTypes = {
     emoji: propTypes.emoji,
-    shouldLoad: PropTypes.bool(),
-    emojiUrl: PropTypes.string(),
-    hidden: PropTypes.bool(),
-    activeSkinTone: PropTypes.string(),
-    openVariationMenu: PropTypes.func(),
-    variationMenuOpen: PropTypes.func(),
-    handleMouseEnter: PropTypes.func(),
-    handleMouseLeave: PropTypes.func(),
-    onEmojiClick: PropTypes.func(),
-    index: PropTypes.number()
+    shouldLoad: PropTypes.bool,
+    emojiUrl: PropTypes.string,
+    hidden: PropTypes.bool,
+    activeSkinTone: PropTypes.string,
+    openVariationMenu: PropTypes.func,
+    variationMenuOpen: PropTypes.func,
+    handleMouseEnter: PropTypes.func,
+    handleMouseLeave: PropTypes.func,
+    onEmojiClick: PropTypes.func,
+    index: PropTypes.number
 };

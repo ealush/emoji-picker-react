@@ -45,7 +45,7 @@ module.exports = {
         'import/no-useless-path-segments': 2,
         'import/order': 1,
         'import/newline-after-import': 2,
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn"
+        // "react-hooks/rules-of-hooks": "error",
+        // "react-hooks/exhaustive-deps": "warn"
     }
 };
