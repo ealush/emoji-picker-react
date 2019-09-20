@@ -27,6 +27,11 @@ const reducer = (state, {type, ...action}) => {
                 skinTonesSpread: !!action.spread
             }
         case actionTypes.ACTIVE_SKIN_TONE_SET:
+
+            if (state.activeSkinTone === action.skinTone) {
+                return state;
+            }
+
             return {
                 ...state,
                 activeSkinTone: action.skinTone

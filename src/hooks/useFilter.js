@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { PickerContext, actionTypes } from '../lib/reducer';
-import keywordsPromise from '../../lib/initEMojis';
+import keywordsPromise from '../../lib/initSearch';
 
 let searchTerms, mappedSearchTerms;
 

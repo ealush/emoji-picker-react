@@ -2,7 +2,7 @@ import React from 'react';
 import cn from 'classnames';
 import backgroundImage from '../../lib/backgroundImage';
 import emojiOutput from '../../lib/emojiOutput';
-import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_SORT_ORDER, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
+import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
 import './style.css';
 
@@ -22,15 +22,15 @@ const Emoji = ({ emoji,
     variationMenuOpen,
     handleMouseEnter,
     handleMouseLeave,
-    onEmojiClick
+    onEmojiClick,
+    index
 }) => {
     const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
     let unified;
 
     const style = {
-        order: emoji[EMOJI_PROPERTY_SORT_ORDER],
         ...hidden && { display: 'none' },
-        color: bgColor(emoji[EMOJI_PROPERTY_SORT_ORDER])
+        color: bgColor(index)
     };
 
     if (hasSkinVariation && emoji[EMOJI_PROPERTY_SKIN_VARIATIONS]) {

@@ -9,7 +9,6 @@ import EmojiList from './components/EmojiList';
 import Search from './components/Search';
 import './style.css';
 
-
 const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
     const [state, dispatch] = useReducer(reducer, {
         activeSkinTone: NEUTRAL,
@@ -31,7 +30,6 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
             dispatch({ type: actionTypes.SKIN_TONES_SPREAD });
         }
     };
-
 
     return (
         <PickerContext.Provider value={{ state, dispatch }}>
