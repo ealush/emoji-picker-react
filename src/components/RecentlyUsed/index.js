@@ -6,7 +6,7 @@ import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 
 const RecentlyUsed = ({ unsetEmojiName }) => {
-    const { state: { recentlyUsed, emojiUrl, onEmojiClick, filterResult }, dispatch } = useContext(PickerContext);
+    const { state: { recentlyUsed, emojiUrl, onEmojiClick, filterResult, failedToLoad = {} }, dispatch } = useContext(PickerContext);
 
     if (!recentlyUsed.length || filterResult) {
         return null;
@@ -15,6 +15,11 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
     return (
         <ul className="emoji-group" data-name={GROUP_NAME_RECENTLY_USED}>
             { recentlyUsed.map((unified, index) => {
+
+                if (failedToLoad[unified]) {
+                    return null;
+                }
+
                 const emoji = emojiStorage.emojis[unified];
 
                 return (
@@ -25,6 +30,7 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
                         onEmojiClick={onEmojiClick}
                         handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
                         emojiUrl={emojiUrl}
+                        dispatch={dispatch}
                         shouldLoad/>
                 );
             })}

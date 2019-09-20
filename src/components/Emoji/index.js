@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import * as propTypes from '../../lib/propTypes';
-import backgroundImage from '../../lib/backgroundImage';
 import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
+import EmojiImg from '../EmojiImg';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
 import './style.css';
 
@@ -17,7 +17,6 @@ const handleMouseUp = () => clearTimeout(mouseDownTimeout);
 const Emoji = ({
     emoji,
     shouldLoad,
-    emojiUrl,
     hidden,
     activeSkinTone,
     openVariationMenu,
@@ -25,7 +24,9 @@ const Emoji = ({
     handleMouseEnter,
     handleMouseLeave,
     onEmojiClick,
-    index
+    index,
+    dispatch,
+    emojiUrl
 }) => {
     const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
     let unified;
@@ -72,8 +73,9 @@ const Emoji = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
-                onClick={handleEmojiClick}
-                style={{...shouldLoad && backgroundImage(unified, emojiUrl)}}/>
+                onClick={handleEmojiClick}>
+                <EmojiImg unified={unified} shouldLoad={shouldLoad} dispatch={dispatch} emojiUrl={emojiUrl}/>
+            </button>
         </li>
     );
 };
@@ -91,5 +93,6 @@ Emoji.propTypes = {
     handleMouseEnter: PropTypes.func,
     handleMouseLeave: PropTypes.func,
     onEmojiClick: PropTypes.func,
-    index: PropTypes.number
+    index: PropTypes.number,
+    dispatch: PropTypes.func
 };

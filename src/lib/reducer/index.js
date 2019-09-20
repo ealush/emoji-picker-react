@@ -9,6 +9,7 @@ export const actionTypes = {
     ACTIVE_SKIN_TONE_SET: 'ACTIVE_SKIN_TONE_SET',
     EMOJI_NAME_SET: 'EMOJI_NAME_SET',
     GROUP_SEEN_SET: 'GROUP_SEEN_SET',
+    EMOJI_NOT_LOADED_SET: 'EMOJI_NOT_LOADED_SET',
     FILTER_SET: 'FILTER_SET'
 };
 
@@ -54,16 +55,24 @@ const reducer = (state, {type, ...action}) => {
             }
         };
     }
+    case actionTypes.EMOJI_NOT_LOADED_SET:
+        return {
+            ...state,
+            failedToLoad: {
+                ...state.failedToLoad,
+                [action.unified]: true
+            }
+        };
     case actionTypes.FILTER_SET:
     case actionTypes.ACTIVE_CATEGORY_SET:
         return {
             ...state,
             activeActegory: null,
             ...action
-        }
+        };
     default:
         return state;
-  }
-}
+    }
+};
 
 export default reducer;

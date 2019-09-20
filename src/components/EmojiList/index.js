@@ -12,7 +12,7 @@ import './style.css';
 
 const createEmojiList = (name, { unsetEmojiName }) => {
 
-    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick }, dispatch } = useContext(PickerContext);
+    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick, failedToLoad = {} }, dispatch } = useContext(PickerContext);
 
     const groupSeen = !!seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function';
     const variationMenuOpen = !!variationMenu;
@@ -20,6 +20,11 @@ const createEmojiList = (name, { unsetEmojiName }) => {
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
     return useMemo(() => emojiStorage.groups[name].reduce((accumulator, emojiName, index) => {
+
+        if (failedToLoad[emojiName]) {
+            return accumulator;
+        }
+
         const emoji = emojiStorage.emojis[emojiName];
         const hidden = filterResult && !Object.prototype.hasOwnProperty.call(filterResult, emoji[EMOJI_PROPERTY_UNIFIED]);
 
@@ -29,6 +34,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
 
         accumulator.list.push(
             <Emoji emoji={emoji}
+                dispatch={dispatch}
                 emojiUrl={emojiUrl}
                 openVariationMenu={openVariationMenu}
                 activeSkinTone={activeSkinTone}
@@ -43,7 +49,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
         );
 
         return accumulator;
-    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
+    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen, failedToLoad]);
 };
 
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name

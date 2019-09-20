@@ -16,13 +16,9 @@
 
 .emoji-picker-react .emoji button {
     color: inherit;
-    height: 35px;
-    width: 35px;
     border-radius: 5px;
-    background-size: 20px 20px;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
     transition: .1s background;
+    padding: 0;
 }
 
 .emoji-picker-react .emoji button:hover {

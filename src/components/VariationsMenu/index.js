@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import skinTones from '../../skinTones';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
 import { PickerContext } from '../../lib/reducer';
-import backgroundImage from '../../lib/backgroundImage';
+import EmojiImg from '../EmojiImg';
 import './style.css';
 
 const VariationsMenu = ({ closeVariations }) => {
-    const { state: { variationMenu, emojiUrl, activeSkinTone, onEmojiClick }} = useContext(PickerContext);
+    const { state: { variationMenu, activeSkinTone, onEmojiClick }} = useContext(PickerContext);
 
     if (!variationMenu) {
         return null;
@@ -19,7 +19,6 @@ const VariationsMenu = ({ closeVariations }) => {
                 const unified = variationMenu[EMOJI_PROPERTY_SKIN_VARIATIONS].find((v) => (
                     v.includes(tone)
                 )) || variationMenu[EMOJI_PROPERTY_UNIFIED];
-                const bgImg = backgroundImage(unified, emojiUrl);
 
                 const handleClick = (e) => {
                     closeVariations(e);
@@ -29,7 +28,9 @@ const VariationsMenu = ({ closeVariations }) => {
 
                 return (
                     <li key={unified}>
-                        <button style={bgImg} onClick={handleClick} onMouseDown={(e) => e.stopPropagation()}/>
+                        <button onClick={handleClick} onMouseDown={(e) => e.stopPropagation()}>
+                            <EmojiImg unified={unified}/>
+                        </button>
                     </li>
                 );
             })}</ul>
