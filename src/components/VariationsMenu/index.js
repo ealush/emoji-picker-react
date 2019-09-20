@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import skinTones from '../../skinTones';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
 import { PickerContext } from '../../lib/reducer';
 import backgroundImage from '../../lib/backgroundImage';
 import './style.css';
 
-const VariationsMenu = ({closeVariations}) => {
+const VariationsMenu = ({ closeVariations }) => {
     const { state: { variationMenu, emojiUrl, activeSkinTone, onEmojiClick }} = useContext(PickerContext);
 
     if (!variationMenu) {
@@ -37,3 +38,7 @@ const VariationsMenu = ({closeVariations}) => {
 };
 
 export default VariationsMenu;
+
+VariationsMenu.propTypes = {
+    closeVariations: PropTypes.func()
+};

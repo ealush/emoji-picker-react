@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import cn from 'classnames';
+import * as propTypes from '../../lib/propTypes';
 import backgroundImage from '../../lib/backgroundImage';
-import emojiOutput from '../../lib/emojiOutput';
 import { EMOJI_PROPERTY_SKIN_VARIATIONS, EMOJI_PROPERTY_UNIFIED } from '../../../lib/constants';
 import { PASTEL_BLUE, PASTEL_RED, PASTEL_GREEN, PASTEL_PURPULE, PASTEL_YELLOW } from './colors';
 import './style.css';
@@ -13,7 +14,8 @@ let mouseDownTimeout = null;
 
 const handleMouseUp = () => clearTimeout(mouseDownTimeout);
 
-const Emoji = ({ emoji,
+const Emoji = ({
+    emoji,
     shouldLoad,
     emojiUrl,
     hidden,
@@ -52,7 +54,7 @@ const Emoji = ({ emoji,
         mouseDownTimeout = setTimeout(() => {
             openVariationMenu(emoji);
         }, 500);
-    }
+    };
 
     const handleEmojiClick = (e) => {
 
@@ -77,3 +79,17 @@ const Emoji = ({ emoji,
 };
 
 export default Emoji;
+
+Emoji.propTypes = {
+    emoji: propTypes.emoji,
+    shouldLoad: PropTypes.bool(),
+    emojiUrl: PropTypes.string(),
+    hidden: PropTypes.bool(),
+    activeSkinTone: PropTypes.string(),
+    openVariationMenu: PropTypes.func(),
+    variationMenuOpen: PropTypes.func(),
+    handleMouseEnter: PropTypes.func(),
+    handleMouseLeave: PropTypes.func(),
+    onEmojiClick: PropTypes.func(),
+    index: PropTypes.number()
+};

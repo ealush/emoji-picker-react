@@ -14,7 +14,7 @@ const getRecentlyUsed = () => {
     return !ruList
         ? []
         : JSON.parse(ruList);
-}
+};
 
 export const setRecentlyUsed = (item) => {
 
@@ -29,6 +29,8 @@ export const setRecentlyUsed = (item) => {
     const output = ruList.splice(0, 14);
 
     localStorage.setItem(RECENTLY_USED_KEY, JSON.stringify(output));
-}
+};
 
 const recentlyUsed = getRecentlyUsed();
+
+export default recentlyUsed;

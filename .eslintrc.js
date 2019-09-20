@@ -9,7 +9,7 @@ module.exports = {
         'plugin:react/recommended',
         'plugin:import/errors',
         'plugin:import/warnings',
-        'react-hooks'
+        // 'plugin:react-hooks'
     ],
     'parserOptions': {
         'ecmaVersion': 2018,
@@ -17,7 +17,8 @@ module.exports = {
     },
     'globals': {
         'IntersectionObserver': true,
-        'DEFAULT_EMOJI_URL': true
+        'DEFAULT_EMOJI_URL': true,
+        'localStorage': true
     },
     'rules': {
         'indent': [
