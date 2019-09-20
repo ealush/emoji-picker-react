@@ -1,6 +1,8 @@
 import React, { useState, useReducer, useRef } from 'react';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
+import clickHandler from './lib/clickHandler';
+import recentlyUsed from './lib/recentlyUsed';
 import useIntersectionObserver from './hooks/useIntersectionObserver';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
@@ -10,11 +12,13 @@ import Search from './components/Search';
 import './style.css';
 
 const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
+
     const [state, dispatch] = useReducer(reducer, {
         activeSkinTone: NEUTRAL,
         emojiUrl,
-        onEmojiClick,
-        seenGroups: { [GROUP_NAME_PEOPLE]: true }
+        onEmojiClick: clickHandler(onEmojiClick),
+        seenGroups: { [GROUP_NAME_PEOPLE]: true },
+        recentlyUsed
     });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);

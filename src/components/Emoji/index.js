@@ -60,7 +60,7 @@ const Emoji = ({ emoji,
             return;
         }
 
-        onEmojiClick && onEmojiClick(e, emojiOutput(emoji, unified, activeSkinTone));
+        onEmojiClick(e, unified, emoji, activeSkinTone);
     };
 
     return (

@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import skinTones from '../../skinTones';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
-import emojiOutput from '../../lib/emojiOutput';
 import { PickerContext } from '../../lib/reducer';
 import backgroundImage from '../../lib/backgroundImage';
 import './style.css';
@@ -24,7 +23,7 @@ const VariationsMenu = ({closeVariations}) => {
                 const handleClick = (e) => {
                     closeVariations(e);
 
-                    return onEmojiClick(e, emojiOutput(variationMenu, unified, activeSkinTone));
+                    return onEmojiClick(e, unified, variationMenu, activeSkinTone);
                 };
 
                 return (
