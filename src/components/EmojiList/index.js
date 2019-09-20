@@ -1,5 +1,6 @@
 import React, { useContext, useMemo } from 'react';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
+import globalObject from '../../lib/globalObject';
 import emojiStorage from '../../../lib/initEmojis';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
@@ -11,7 +12,7 @@ const createEmojiList = (name) => {
 
     const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick }, dispatch } = useContext(PickerContext);
 
-    const groupSeen = !!seenGroups[name] || filterResult;
+    const groupSeen = !!seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function';
     const variationMenuOpen = !!variationMenu;
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
