@@ -16,11 +16,11 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
         <ul className="emoji-group" data-name={GROUP_NAME_RECENTLY_USED}>
             { recentlyUsed.map((unified, index) => {
 
-                if (failedToLoad[unified]) {
+                const emoji = emojiStorage.emojis[unified];
+
+                if (failedToLoad[unified] || !emoji) {
                     return null;
                 }
-
-                const emoji = emojiStorage.emojis[unified];
 
                 return (
                     <Emoji key={unified}

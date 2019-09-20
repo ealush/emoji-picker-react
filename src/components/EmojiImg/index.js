@@ -4,7 +4,7 @@ import emojiSrc from '../../lib/emojiSrc';
 import { actionTypes } from '../../lib/reducer';
 import './style.css';
 
-const handleError = (unified, dispatch) => {
+const handleError = (unified, dispatch = Function.prototype) => {
     dispatch({
         type: actionTypes.EMOJI_NOT_LOADED_SET,
         unified

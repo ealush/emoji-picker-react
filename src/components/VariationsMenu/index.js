@@ -7,7 +7,7 @@ import EmojiImg from '../EmojiImg';
 import './style.css';
 
 const VariationsMenu = ({ closeVariations }) => {
-    const { state: { variationMenu, activeSkinTone, onEmojiClick }} = useContext(PickerContext);
+    const { state: { variationMenu, activeSkinTone, onEmojiClick, emojiUrl }} = useContext(PickerContext);
 
     if (!variationMenu) {
         return null;
@@ -29,7 +29,7 @@ const VariationsMenu = ({ closeVariations }) => {
                 return (
                     <li key={unified}>
                         <button onClick={handleClick} onMouseDown={(e) => e.stopPropagation()}>
-                            <EmojiImg unified={unified}/>
+                            <EmojiImg unified={unified} emojiUrl={emojiUrl}/>
                         </button>
                     </li>
                 );
