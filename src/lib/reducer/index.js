@@ -13,56 +13,56 @@ export const actionTypes = {
 };
 
 const reducer = (state, {type, ...action}) => {
-  switch (type) {
-      case actionTypes.VARIATION_MENU_SET:
-          return state.variationMenu === action.emoji
+    switch (type) {
+    case actionTypes.VARIATION_MENU_SET:
+        return state.variationMenu === action.emoji
             ? state
             : {
                 ...state,
                 variationMenu: action.emoji
             };
-        case actionTypes.SKIN_TONES_SPREAD:
-            return {
-                ...state,
-                skinTonesSpread: !!action.spread
-            }
-        case actionTypes.ACTIVE_SKIN_TONE_SET:
+    case actionTypes.SKIN_TONES_SPREAD:
+        return {
+            ...state,
+            skinTonesSpread: !!action.spread
+        };
+    case actionTypes.ACTIVE_SKIN_TONE_SET:
 
-            if (state.activeSkinTone === action.skinTone) {
-                return state;
-            }
-
-            return {
-                ...state,
-                activeSkinTone: action.skinTone
-            }
-        case actionTypes.EMOJI_NAME_SET:
-            return {
-                ...state,
-                emojiName: action.name
-            }
-        case actionTypes.GROUP_SEEN_SET: {
-            if (state.seenGroups && state.seenGroups[action.group]) {
-                return state;
-            }
-
-            return {
-                ...state,
-                seenGroups: {
-                    ...state.seenGroups,
-                    [action.group]: true
-                }
-            };
+        if (state.activeSkinTone === action.skinTone) {
+            return state;
         }
-        case actionTypes.FILTER_SET:
-        case actionTypes.ACTIVE_CATEGORY_SET:
-            return {
-                ...state,
-                activeActegory: null,
-                ...action
+
+        return {
+            ...state,
+            activeSkinTone: action.skinTone
+        };
+    case actionTypes.EMOJI_NAME_SET:
+        return {
+            ...state,
+            emojiName: action.name
+        };
+    case actionTypes.GROUP_SEEN_SET: {
+        if (state.seenGroups && state.seenGroups[action.group]) {
+            return state;
+        }
+
+        return {
+            ...state,
+            seenGroups: {
+                ...state.seenGroups,
+                [action.group]: true
             }
-      default:
-          return state;
+        };
+    }
+    case actionTypes.FILTER_SET:
+    case actionTypes.ACTIVE_CATEGORY_SET:
+        return {
+            ...state,
+            activeActegory: null,
+            ...action
+        }
+    default:
+        return state;
   }
 }
 

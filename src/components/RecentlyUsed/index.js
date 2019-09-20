@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { EMOJI_PROPERTY_NAME } from '../../../lib/constants';
+import { EMOJI_PROPERTY_NAME, GROUP_NAME_RECENTLY_USED } from '../../../lib/constants';
 import emojiStorage from '../../../lib/initEmojis';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
@@ -13,7 +13,7 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
     }
 
     return (
-        <ul className="emoji-group" data-name="Recently Used">
+        <ul className="emoji-group" data-name={GROUP_NAME_RECENTLY_USED}>
             { recentlyUsed.map((unified, index) => {
                 const emoji = emojiStorage.emojis[unified];
 
