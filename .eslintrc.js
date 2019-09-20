@@ -2,7 +2,8 @@ module.exports = {
     'env': {
         'es6': true,
         'jest': true,
-        'node': true
+        'node': true,
+        'browser': true
     },
     'extends': [
         'eslint:recommended',
@@ -16,9 +17,7 @@ module.exports = {
         'sourceType': 'module'
     },
     'globals': {
-        'IntersectionObserver': true,
         'DEFAULT_EMOJI_URL': true,
-        'localStorage': true
     },
     'rules': {
         'indent': [

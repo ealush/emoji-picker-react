@@ -1,8 +1,9 @@
 import React, { useState, useReducer, useRef } from 'react';
-import reducer, { PickerContext, actionTypes } from './lib/reducer';
+import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
+import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import clickHandler from './lib/clickHandler';
-import recentlyUsed from './lib/recentlyUsed';
+import { getRecentlyUsed } from './lib/recentlyUsed';
 import useIntersectionObserver from './hooks/useIntersectionObserver';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
@@ -18,7 +19,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
         emojiUrl,
         onEmojiClick: clickHandler(onEmojiClick),
         seenGroups: { [GROUP_NAME_PEOPLE]: true },
-        recentlyUsed
+        recentlyUsed: getRecentlyUsed()
     });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);
@@ -54,3 +55,8 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
 };
 
 export default EmpojiPicker;
+
+EmpojiPicker.propTypes = {
+    emojiUrl: PropTypes.string,
+    onEmojiClick: PropTypes.func
+};

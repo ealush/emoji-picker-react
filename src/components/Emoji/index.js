@@ -87,7 +87,7 @@ Emoji.propTypes = {
     hidden: PropTypes.bool,
     activeSkinTone: PropTypes.string,
     openVariationMenu: PropTypes.func,
-    variationMenuOpen: PropTypes.func,
+    variationMenuOpen: PropTypes.bool,
     handleMouseEnter: PropTypes.func,
     handleMouseLeave: PropTypes.func,
     onEmojiClick: PropTypes.func,

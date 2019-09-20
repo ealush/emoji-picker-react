@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { actionTypes } from '../lib/reducer';
-import globalObject from '../lib/globalObject/';
+import globalObject from '../lib/globalObject';
 
 let observer;
 
@@ -11,7 +11,7 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
             observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     const { target } = entry;
-                    const id = target.getAttribute('data-id');
+                    const id = target.getAttribute('data-name');
                     if (entry.intersectionRatio === 0) {
                         if (id === state.activeCategory) {
                             dispatch({

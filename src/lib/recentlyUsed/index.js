@@ -4,7 +4,7 @@ const RECENTLY_USED_KEY = 'epr_ru';
 
 const LOCAL_STORAGE_PRESENT = 'localStorage' in globalObject;
 
-const getRecentlyUsed = () => {
+export const getRecentlyUsed = () => {
     if (!LOCAL_STORAGE_PRESENT) {
         return [];
     }
@@ -30,7 +30,3 @@ export const setRecentlyUsed = (item) => {
 
     localStorage.setItem(RECENTLY_USED_KEY, JSON.stringify(output));
 };
-
-const recentlyUsed = getRecentlyUsed();
-
-export default recentlyUsed;

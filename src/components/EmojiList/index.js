@@ -1,4 +1,5 @@
 import React, { useContext, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 import globalObject from '../../lib/globalObject';
 import emojiStorage from '../../../lib/initEmojis';
@@ -46,6 +47,19 @@ const createEmojiList = (name) => {
     }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen]);
 };
 
+const RecentlyUsed = () => {
+    const { state: { recentlyUsed } } = useContext(PickerContext);
+
+    console.log(recentlyUsed);
+
+    return (
+        <ul className="emoji-group"
+            data-name="Recently Used">
+
+        </ul>
+    );
+};
+
 
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
     const { state: { filterResult } } = useContext(PickerContext);
@@ -54,6 +68,7 @@ const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line reac
 
     return (
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
+            <RecentlyUsed/>
             {groups.map((name) => {
                 const { list, shown } = createEmojiList(name);
 
@@ -62,8 +77,7 @@ const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line reac
                 };
 
                 return (
-                    <ul data-id={name}
-                        className="emoji-group"
+                    <ul className="emoji-group"
                         data-name={name}
                         key={name}
                         style={style}>{list}</ul>
@@ -74,3 +88,7 @@ const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line reac
 });
 
 export default EmojiList;
+
+EmojiList.propTypes = {
+    emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+};

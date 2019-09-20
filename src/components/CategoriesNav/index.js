@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
@@ -19,7 +20,7 @@ const CategoriesNav = ({ emojiListRef }) => {
             return;
         }
 
-        const id = target.getAttribute('data-id');
+        const id = target.getAttribute('data-name');
 
         if (!emojiListRef || !emojiListRef.current || !id) {
             return;
@@ -35,20 +36,24 @@ const CategoriesNav = ({ emojiListRef }) => {
         });
 
         const { current } = emojiListRef;
-        const category = current.querySelector(`[data-id="${id}"]`);
+        const category = current.querySelector(`[data-name="${id}"]`);
 
         current.scrollTop = category.offsetTop;
-    }
+    };
 
     return (
         <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>{
             groups.map((group) => (
                 <button key={group}
                     className={cn(`icn-${group.replace(' & ', '_')}`, { active: activeCategory === group })}
-                    data-id={group}/>
+                    data-name={group}/>
             ))
         }</nav>
     );
-}
+};
 
 export default CategoriesNav;
+
+CategoriesNav.propTypes = {
+    emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+};
