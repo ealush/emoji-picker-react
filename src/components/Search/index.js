@@ -2,11 +2,10 @@ import React from 'react';
 import useFilter from '../../hooks/useFilter';
 import './style.css';
 
-const Search = () => {
-    const handleChange = useFilter();
-    return (
-        <input className="emoji-search" onChange={handleChange}/>
-    );
-};
+const Search = () => (
+    <input className="emoji-search"
+        onChange={useFilter()}
+        autoFocus/>
+);
 
 export default Search;

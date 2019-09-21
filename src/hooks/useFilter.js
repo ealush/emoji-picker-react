@@ -9,7 +9,7 @@ keywordsPromise.then((res) => {
     mappedSearchTerms = res.mappedSearchTerms;
 });
 
-export const useFilter = () => {
+const useFilter = () => {
     const { state: { filter = [] }, dispatch } = useContext(PickerContext);
 
     const handleChange = ({ target: { value } }) => {
