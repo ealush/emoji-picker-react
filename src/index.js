@@ -1,6 +1,7 @@
 import React, { useState, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
+import { PROPERTY_DATA_NAME } from './lib/constants';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import clickHandler from './lib/clickHandler';
 import { getRecentlyUsed } from './lib/recentlyUsed';
@@ -28,7 +29,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
             dispatch({ type: actionTypes.VARIATION_MENU_SET });
         }
 
-        if (state.skinTonesSpread && target.getAttribute('data-name') !== DATA_NAME) {
+        if (state.skinTonesSpread && target.getAttribute(PROPERTY_DATA_NAME) !== DATA_NAME) {
             dispatch({ type: actionTypes.SKIN_TONES_SPREAD });
         }
     };

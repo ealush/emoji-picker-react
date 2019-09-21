@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
+import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
 import './style.css';
@@ -20,7 +21,7 @@ const CategoriesNav = ({ emojiListRef }) => {
             return;
         }
 
-        const id = target.getAttribute('data-name');
+        const id = target.getAttribute(PROPERTY_DATA_NAME);
 
         if (!emojiListRef || !emojiListRef.current || !id) {
             return;
@@ -36,7 +37,7 @@ const CategoriesNav = ({ emojiListRef }) => {
         });
 
         const { current } = emojiListRef;
-        const category = current.querySelector(`[data-name="${id}"]`);
+        const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
 
         current.scrollTop = category.offsetTop;
     };

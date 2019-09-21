@@ -1,5 +1,6 @@
 import { useEffect, useContext } from 'react';
 import { GROUP_NAME_RECENTLY_USED } from '../../lib/constants';
+import { PROPERTY_DATA_NAME } from '../lib/constants';
 import { actionTypes, PickerContext } from '../lib/reducer';
 import globalObject from '../lib/globalObject';
 
@@ -13,7 +14,7 @@ const useIntersectionObserver = (root) => {
             observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     const { target } = entry;
-                    const id = target.getAttribute('data-name');
+                    const id = target.getAttribute(PROPERTY_DATA_NAME);
 
                     if (entry.intersectionRatio === 0) {
                         if (id === activeCategory) {
@@ -25,7 +26,7 @@ const useIntersectionObserver = (root) => {
                             const nextSibling = target.nextSibling;
 
                             if (nextSibling) {
-                                const id = nextSibling.getAttribute('data-name');
+                                const id = nextSibling.getAttribute(PROPERTY_DATA_NAME);
 
                                 dispatch({
                                     type: actionTypes.ACTIVE_CATEGORY_SET,
