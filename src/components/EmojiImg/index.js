@@ -17,7 +17,7 @@ const EmojiImg = ({ unified, emojiUrl, dispatch, shouldLoad = true }) => {
         <img className="emoji-img"
             loading="lazy"
             onError={() => handleError(unified, dispatch)}
-            {... shouldLoad && emojiSrc(unified, emojiUrl)}/>
+            {...shouldLoad && emojiSrc(unified, emojiUrl)}/>
     );
 };
 

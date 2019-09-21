@@ -15,7 +15,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
 
     const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick, failedToLoad = {} }, dispatch } = useContext(PickerContext);
 
-    const groupSeen = !!seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function';
+    const groupSeen = !!(!!seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function');
     const variationMenuOpen = !!variationMenu;
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
