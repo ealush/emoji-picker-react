@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 import globalObject from '../../lib/globalObject';
 import emojiStorage from '../../../lib/initEmojis';
+import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
@@ -55,6 +56,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
     const { state: { filterResult }, dispatch } = useContext(PickerContext);
 
+    useIntersectionObserver(emojiListRef);
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
     const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });

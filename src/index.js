@@ -4,7 +4,6 @@ import { GROUP_NAME_PEOPLE } from '../lib/constants';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import clickHandler from './lib/clickHandler';
 import { getRecentlyUsed } from './lib/recentlyUsed';
-import useIntersectionObserver from './hooks/useIntersectionObserver';
 import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
 import CategoriesNav from './components/CategoriesNav';
@@ -23,8 +22,6 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
     });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);
-
-    useIntersectionObserver(emojiListRef, state.filter, state, dispatch);
 
     const closeVariations = ({ target }) => {
         if (state.variationMenu) {

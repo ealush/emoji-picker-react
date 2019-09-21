@@ -1,11 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import { GROUP_NAME_RECENTLY_USED } from '../../lib/constants';
-import { actionTypes } from '../lib/reducer';
+import { actionTypes, PickerContext } from '../lib/reducer';
 import globalObject from '../lib/globalObject';
 
 let observer;
 
-const useIntersectionObserver = (root, filter, state, dispatch) => {
+const useIntersectionObserver = (root) => {
+    const { state: { filterResult, activeCategory }, dispatch } = useContext(PickerContext);
 
     useEffect(() => {
         if (typeof globalObject.IntersectionObserver !== 'undefined' && !observer && root.current) {
@@ -15,7 +16,7 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
                     const id = target.getAttribute('data-name');
 
                     if (entry.intersectionRatio === 0) {
-                        if (id === state.activeCategory) {
+                        if (id === activeCategory) {
                             dispatch({
                                 type: actionTypes.ACTIVE_CATEGORY_SET,
                                 activeCategory: null
@@ -33,7 +34,7 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
                             }
                         }
 
-                    } else if (!state.activeCategory) {
+                    } else if (!activeCategory) {
                         dispatch({
                             type: actionTypes.GROUP_SEEN_SET,
                             group: id
@@ -59,7 +60,7 @@ const useIntersectionObserver = (root, filter, state, dispatch) => {
             observer.observe(target);
         });
 
-    }, [ root.current, filter ]);
+    }, [ root.current, filterResult ]);
 };
 
 export default useIntersectionObserver;
