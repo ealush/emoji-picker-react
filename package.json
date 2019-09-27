@@ -50,7 +50,7 @@
     "node-sass": "^4.7.2",
     "react": "16.10.0",
     "react-dom": "16.10.0",
-    "react-test-renderer": "^16.2.0",
+    "react-test-renderer": "^16.10.0",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.19.1",
     "svg-url-loader": "^2.3.1",
