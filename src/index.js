@@ -12,14 +12,15 @@ import EmojiList from './components/EmojiList';
 import Search from './components/Search';
 import './style.css';
 
-const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick }) => {
+const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false }) => {
 
     const [state, dispatch] = useReducer(reducer, {
         activeSkinTone: NEUTRAL,
         emojiUrl,
         onEmojiClick: clickHandler(onEmojiClick),
         seenGroups: { [GROUP_NAME_PEOPLE]: true },
-        recentlyUsed: getRecentlyUsed()
+        recentlyUsed: getRecentlyUsed(),
+        preload
     });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
     const emojiListRef = useRef(null);
@@ -56,5 +57,6 @@ export default EmpojiPicker;
 
 EmpojiPicker.propTypes = {
     emojiUrl: PropTypes.string,
-    onEmojiClick: PropTypes.func
+    onEmojiClick: PropTypes.func,
+    preload: PropTypes.bool
 };

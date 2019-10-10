@@ -13,16 +13,26 @@ import './style.css';
 
 const createEmojiList = (name, { unsetEmojiName }) => {
 
-    const { state: { activeSkinTone, filterResult, emojiUrl, seenGroups = {}, variationMenu, onEmojiClick, failedToLoad = {} }, dispatch } = useContext(PickerContext);
+    const { state: {
+        activeSkinTone,
+        filterResult,
+        emojiUrl,
+        seenGroups = {},
+        onEmojiClick,
+        variationMenu,
+        failedToLoad = null,
+        preload,
+    }, dispatch } = useContext(PickerContext);
 
-    const groupSeen = !!(!!seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function');
+    const shouldLoad = preload || !!(seenGroups[name] || filterResult || typeof globalObject.IntersectionObserver !== 'function');
+
     const variationMenuOpen = !!variationMenu;
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
     return useMemo(() => emojiStorage.groups[name].reduce((accumulator, emojiName, index) => {
 
-        if (failedToLoad[emojiName]) {
+        if (failedToLoad && failedToLoad[emojiName]) {
             return accumulator;
         }
 
@@ -43,14 +53,14 @@ const createEmojiList = (name, { unsetEmojiName }) => {
                 variationMenuOpen={variationMenuOpen}
                 handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
                 hidden={hidden}
-                shouldLoad={groupSeen}
+                shouldLoad={shouldLoad}
                 onEmojiClick={onEmojiClick}
                 index={index}
                 key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
         );
 
         return accumulator;
-    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, groupSeen, variationMenuOpen, failedToLoad]);
+    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, shouldLoad, variationMenuOpen, failedToLoad]);
 };
 
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
