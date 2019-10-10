@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { EMOJI_PROPERTY_NAME, GROUP_NAME_RECENTLY_USED } from '../../../lib/constants';
-import emojiStorage from '../../../lib/initEmojis';
+import emojiStorage from '../../../lib/emojiStorage';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
 

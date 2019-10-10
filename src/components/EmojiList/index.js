@@ -2,7 +2,7 @@ import React, { useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_NAME } from '../../../lib/constants';
 import globalObject from '../../lib/globalObject';
-import emojiStorage from '../../../lib/initEmojis';
+import emojiStorage from '../../../lib/emojiStorage';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
@@ -30,37 +30,41 @@ const createEmojiList = (name, { unsetEmojiName }) => {
 
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
-    return useMemo(() => emojiStorage.groups[name].reduce((accumulator, emojiName, index) => {
+    return useMemo(() => {
+        const listToUse = filterResult ? Object.keys(filterResult[name] || {}) : emojiStorage.groups[name];
 
-        if (failedToLoad && failedToLoad[emojiName]) {
+        return listToUse.reduce((accumulator, emojiName, index) => {
+
+            if (failedToLoad && failedToLoad[emojiName]) {
+                return accumulator;
+            }
+
+            const emoji = emojiStorage.emojis[emojiName];
+            const hidden = !listToUse.length;
+
+            if (!accumulator.shown && !hidden) {
+                accumulator.shown = true;
+            }
+
+            accumulator.list.push(
+                <Emoji emoji={emoji}
+                    dispatch={dispatch}
+                    emojiUrl={emojiUrl}
+                    openVariationMenu={openVariationMenu}
+                    activeSkinTone={activeSkinTone}
+                    handleMouseLeave={unsetEmojiName}
+                    variationMenuOpen={variationMenuOpen}
+                    handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
+                    hidden={hidden}
+                    shouldLoad={shouldLoad}
+                    onEmojiClick={onEmojiClick}
+                    index={index}
+                    key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
+            );
+
             return accumulator;
-        }
-
-        const emoji = emojiStorage.emojis[emojiName];
-        const hidden = filterResult && !Object.prototype.hasOwnProperty.call(filterResult, emoji[EMOJI_PROPERTY_UNIFIED]);
-
-        if (!accumulator.shown && !hidden) {
-            accumulator.shown = true;
-        }
-
-        accumulator.list.push(
-            <Emoji emoji={emoji}
-                dispatch={dispatch}
-                emojiUrl={emojiUrl}
-                openVariationMenu={openVariationMenu}
-                activeSkinTone={activeSkinTone}
-                handleMouseLeave={unsetEmojiName}
-                variationMenuOpen={variationMenuOpen}
-                handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
-                hidden={hidden}
-                shouldLoad={shouldLoad}
-                onEmojiClick={onEmojiClick}
-                index={index}
-                key={emoji[EMOJI_PROPERTY_UNIFIED]}/>
-        );
-
-        return accumulator;
-    }, { list: [], shown: false }), [activeSkinTone, filterResult, name, shouldLoad, variationMenuOpen, failedToLoad]);
+        }, { list: [], shown: false });
+    }, [activeSkinTone, filterResult, name, shouldLoad, variationMenuOpen, failedToLoad]);
 };
 
 const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name

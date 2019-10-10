@@ -1,4 +1,7 @@
 import { useContext } from 'react';
+import reduceBatch from '../../lib/reduceBatch';
+import { EMOJI_PROPERTY_GROUP } from '../../lib/constants';
+import emojiStorage from '../../lib/emojiStorage';
 import { PickerContext, actionTypes } from '../lib/reducer';
 import keywordsPromise from '../../lib/initSearch';
 
@@ -8,6 +11,8 @@ keywordsPromise.then((res) => {
     searchTerms = res.searchTerms;
     mappedSearchTerms = res.mappedSearchTerms;
 });
+
+window.es = emojiStorage;
 
 const useFilter = () => {
     const { state: { filter = [] }, dispatch } = useContext(PickerContext);
@@ -45,23 +50,32 @@ const useFilter = () => {
         }
 
         const last = nextFilter[nextFilter.length - 1];
+        const filterPresent = !!(last && last.value);
 
-        const filterPresent = !!last && last.value;
+        if (!filterPresent) {
+            dispatch({
+                type: actionTypes.FILTER_SET,
+                filter: nextFilter,
+                filterResult: null
+            });
+            return;
+        }
 
-        const filterResult = filterPresent
-            ? (last && last.terms || []).reduce((accumulator, term) => {
-                if (!searchTerms[term]){ return accumulator; }
-                return ({
-                    ...accumulator,
-                    ...searchTerms[term]
-                });
-            }, {})
-            : null;
+        reduceBatch((last && last.terms || []), (accumulator, term) => {
+            if (!searchTerms[term]){ return accumulator; }
 
-        dispatch({
-            type: actionTypes.FILTER_SET,
-            filter: nextFilter,
-            filterResult
+            return (searchTerms[term] || []).reduce((accumulator, unified) => {
+                const group = emojiStorage.emojis[unified][EMOJI_PROPERTY_GROUP];
+                accumulator[group] = accumulator[group] || {};
+                accumulator[group][unified] = true;
+                return accumulator;
+            }, accumulator);
+        }, {}).then((filterResult) => {
+            dispatch({
+                type: actionTypes.FILTER_SET,
+                filter: nextFilter,
+                filterResult
+            });
         });
     };
 
