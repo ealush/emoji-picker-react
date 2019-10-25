@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
-import { EMOJI_PROPERTY_NAME, GROUP_NAME_RECENTLY_USED } from '../../../lib/constants';
+import { EMOJI_PROPERTY_NAME, GROUP_NAME_RECENTLY_USED, EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
 import emojiStorage from '../../../lib/emojiStorage';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import Emoji from '../Emoji';
@@ -14,7 +14,9 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
 
     return (
         <ul className="emoji-group" data-name={GROUP_NAME_RECENTLY_USED}>
-            { recentlyUsed.map((unified, index) => {
+            { recentlyUsed.map((item, index) => {
+
+                const unified = item[EMOJI_PROPERTY_UNIFIED];
 
                 const emoji = emojiStorage.emojis[unified];
 
@@ -23,8 +25,9 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
                 }
 
                 return (
-                    <Emoji key={unified}
+                    <Emoji key={index}
                         emoji={emoji}
+                        { ...item[EMOJI_PROPERTY_SKIN_VARIATIONS] && { activeSkinTone: item[EMOJI_PROPERTY_SKIN_VARIATIONS] } }
                         index={index}
                         handleMouseLeave={unsetEmojiName}
                         onEmojiClick={onEmojiClick}
