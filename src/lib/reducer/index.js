@@ -7,7 +7,6 @@ export const actionTypes = {
     VARIATION_MENU_SET: 'VARIATION_MENU_SET',
     SKIN_TONES_SPREAD: 'SKIN_TONES_SPREAD',
     ACTIVE_SKIN_TONE_SET: 'ACTIVE_SKIN_TONE_SET',
-    EMOJI_NAME_SET: 'EMOJI_NAME_SET',
     GROUP_SEEN_SET: 'GROUP_SEEN_SET',
     EMOJI_NOT_LOADED_SET: 'EMOJI_NOT_LOADED_SET',
     FILTER_SET: 'FILTER_SET'
@@ -36,11 +35,6 @@ const reducer = (state, {type, ...action}) => {
         return {
             ...state,
             activeSkinTone: action.skinTone
-        };
-    case actionTypes.EMOJI_NAME_SET:
-        return {
-            ...state,
-            emojiName: action.name
         };
     case actionTypes.GROUP_SEEN_SET: {
         if (state.seenGroups && state.seenGroups[action.group]) {

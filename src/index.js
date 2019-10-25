@@ -13,6 +13,7 @@ import Search from './components/Search';
 import './style.css';
 
 const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false }) => {
+    const emojiListRef = useRef(null);
 
     const [state, dispatch] = useReducer(reducer, {
         activeSkinTone: NEUTRAL,
@@ -23,7 +24,6 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
         preload
     });
     const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
-    const emojiListRef = useRef(null);
 
     const closeVariations = ({ target }) => {
         if (state.variationMenu) {

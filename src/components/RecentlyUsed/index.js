@@ -2,10 +2,11 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { EMOJI_PROPERTY_NAME, GROUP_NAME_RECENTLY_USED, EMOJI_PROPERTY_UNIFIED, EMOJI_PROPERTY_SKIN_VARIATIONS } from '../../../lib/constants';
 import emojiStorage from '../../../lib/emojiStorage';
-import { PickerContext, actionTypes } from '../../lib/reducer';
+import { PickerContext } from '../../lib/reducer';
+import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
 
-const RecentlyUsed = ({ unsetEmojiName }) => {
+const RecentlyUsed = ({ unsetEmojiName, emojiListRef }) => {
     const { state: { recentlyUsed, emojiUrl, onEmojiClick, filterResult, failedToLoad = {} }, dispatch } = useContext(PickerContext);
 
     if (!recentlyUsed.length || filterResult) {
@@ -31,7 +32,7 @@ const RecentlyUsed = ({ unsetEmojiName }) => {
                         index={index}
                         handleMouseLeave={unsetEmojiName}
                         onEmojiClick={onEmojiClick}
-                        handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
+                        handleMouseEnter={() => setEmojiName(emoji[EMOJI_PROPERTY_NAME][0], emojiListRef)}
                         emojiUrl={emojiUrl}
                         dispatch={dispatch}
                         shouldLoad/>

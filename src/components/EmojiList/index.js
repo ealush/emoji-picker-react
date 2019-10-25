@@ -7,11 +7,13 @@ import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
+import setEmojiName from '../../lib/setEmojiName';
+import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import Emoji from '../Emoji';
 import RecentlyUsed from '../RecentlyUsed';
 import './style.css';
 
-const createEmojiList = (name, { unsetEmojiName }) => {
+const createEmojiList = (name, { unsetEmojiName, emojiListRef }) => {
 
     const { state: {
         activeSkinTone,
@@ -31,6 +33,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
     return useMemo(() => {
+
         const listToUse = filterResult ? Object.keys(filterResult[name] || {}) : emojiStorage.groups[name];
 
         return listToUse.reduce((accumulator, emojiName, index) => {
@@ -54,7 +57,7 @@ const createEmojiList = (name, { unsetEmojiName }) => {
                     activeSkinTone={activeSkinTone}
                     handleMouseLeave={unsetEmojiName}
                     variationMenuOpen={variationMenuOpen}
-                    handleMouseEnter={() => dispatch({type: actionTypes.EMOJI_NAME_SET, name: emoji[EMOJI_PROPERTY_NAME][0]})}
+                    handleMouseEnter={() => setEmojiName(emoji[EMOJI_PROPERTY_NAME][0], emojiListRef)}
                     hidden={hidden}
                     shouldLoad={shouldLoad}
                     onEmojiClick={onEmojiClick}
@@ -67,19 +70,19 @@ const createEmojiList = (name, { unsetEmojiName }) => {
     }, [activeSkinTone, filterResult, name, shouldLoad, variationMenuOpen, failedToLoad]);
 };
 
-const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line react/display-name
-    const { state: { filterResult }, dispatch } = useContext(PickerContext);
+const EmojiList = ({ emojiListRef }) => { // eslint-disable-line react/display-name
+    const { state: { filterResult } } = useContext(PickerContext);
 
     useIntersectionObserver(emojiListRef);
     useScrollUpOnFilterChange(filterResult, emojiListRef);
 
-    const unsetEmojiName = () => dispatch({ type: actionTypes.EMOJI_NAME_SET });
+    const unsetEmojiName = () => setEmojiName('', emojiListRef);
 
     return (
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
-            <RecentlyUsed unsetEmojiName={unsetEmojiName}/>
+            <RecentlyUsed unsetEmojiName={unsetEmojiName} emojiListRef={emojiListRef}/>
             {groups.map((name) => {
-                const { list, shown } = createEmojiList(name, { unsetEmojiName });
+                const { list, shown } = createEmojiList(name, { unsetEmojiName, emojiListRef });
 
                 const style = {
                     ...!shown && { display: 'none' },
@@ -94,7 +97,7 @@ const EmojiList = React.memo(({ emojiListRef }) => { // eslint-disable-line reac
             })}
         </section>
     );
-});
+};
 
 export default EmojiList;
 
