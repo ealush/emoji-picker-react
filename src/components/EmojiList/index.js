@@ -8,7 +8,6 @@ import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
 import { PickerContext, actionTypes } from '../../lib/reducer';
 import setEmojiName from '../../lib/setEmojiName';
-import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import Emoji from '../Emoji';
 import RecentlyUsed from '../RecentlyUsed';
 import './style.css';
@@ -18,7 +17,6 @@ const createEmojiList = (name, { unsetEmojiName, emojiListRef }) => {
     const { state: {
         activeSkinTone,
         filterResult,
-        emojiUrl,
         seenGroups = {},
         onEmojiClick,
         variationMenu,
@@ -52,7 +50,6 @@ const createEmojiList = (name, { unsetEmojiName, emojiListRef }) => {
             accumulator.list.push(
                 <Emoji emoji={emoji}
                     dispatch={dispatch}
-                    emojiUrl={emojiUrl}
                     openVariationMenu={openVariationMenu}
                     activeSkinTone={activeSkinTone}
                     handleMouseLeave={unsetEmojiName}

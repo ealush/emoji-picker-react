@@ -11,12 +11,12 @@ const handleError = (unified, dispatch = Function.prototype) => {
     });
 };
 
-const EmojiImg = ({ unified, emojiUrl, dispatch, shouldLoad = true }) => {
+const EmojiImg = ({ unified, dispatch, shouldLoad = true }) => {
 
     return (
         <img className="emoji-img"
             onError={() => handleError(unified, dispatch)}
-            {...shouldLoad && emojiSrc(unified, emojiUrl)}/>
+            {...shouldLoad && emojiSrc(unified)}/>
     );
 };
 
@@ -25,6 +25,5 @@ export default EmojiImg;
 EmojiImg.propTypes = {
     unified: PropTypes.string,
     shouldLoad: PropTypes.bool,
-    emojiUrl: PropTypes.string,
     dispatch: PropTypes.func
 };

@@ -25,8 +25,7 @@ const Emoji = ({
     handleMouseLeave,
     onEmojiClick,
     index,
-    dispatch,
-    emojiUrl
+    dispatch
 }) => {
     const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
     let unified;
@@ -74,7 +73,7 @@ const Emoji = ({
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
                 onClick={handleEmojiClick}>
-                <EmojiImg unified={unified} shouldLoad={shouldLoad} dispatch={dispatch} emojiUrl={emojiUrl}/>
+                <EmojiImg unified={unified} shouldLoad={shouldLoad} dispatch={dispatch}/>
             </button>
         </li>
     );
@@ -85,7 +84,6 @@ export default Emoji;
 Emoji.propTypes = {
     emoji: propTypes.emoji,
     shouldLoad: PropTypes.bool,
-    emojiUrl: PropTypes.string,
     hidden: PropTypes.bool,
     activeSkinTone: PropTypes.string,
     openVariationMenu: PropTypes.func,

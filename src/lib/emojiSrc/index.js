@@ -1,5 +1,7 @@
-const emojiSrc = (unified, emojiUrl, extension = '.png') => ({
-    src: `${emojiUrl}/${unified}${extension}`
+import useEmojiUrl from '../../hooks/useEmojiUrl';
+
+const emojiSrc = (unified) => ({
+    src: useEmojiUrl(unified)
 });
 
 export default emojiSrc;

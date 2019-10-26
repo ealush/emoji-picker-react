@@ -7,7 +7,7 @@ import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
 
 const RecentlyUsed = ({ unsetEmojiName, emojiListRef }) => {
-    const { state: { recentlyUsed, emojiUrl, onEmojiClick, filterResult, failedToLoad = {} }, dispatch } = useContext(PickerContext);
+    const { state: { recentlyUsed, onEmojiClick, filterResult, failedToLoad = {} }, dispatch } = useContext(PickerContext);
 
     if (!recentlyUsed.length || filterResult) {
         return null;
@@ -33,7 +33,6 @@ const RecentlyUsed = ({ unsetEmojiName, emojiListRef }) => {
                         handleMouseLeave={unsetEmojiName}
                         onEmojiClick={onEmojiClick}
                         handleMouseEnter={() => setEmojiName(emoji[EMOJI_PROPERTY_NAME][0], emojiListRef)}
-                        emojiUrl={emojiUrl}
                         dispatch={dispatch}
                         shouldLoad/>
                 );
@@ -45,5 +44,6 @@ const RecentlyUsed = ({ unsetEmojiName, emojiListRef }) => {
 export default RecentlyUsed;
 
 RecentlyUsed.propTypes = {
-    unsetEmojiName: PropTypes.func
+    unsetEmojiName: PropTypes.func,
+    emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
 };
