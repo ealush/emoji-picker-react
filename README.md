@@ -2,6 +2,8 @@
 
 ## V3
 
+[Live Demo](https://stackblitz.com/edit/emoji-picker-react?file=index.js)
+
 ## What you need to know before installing?
 - Version 3 uses React hooks, which means you need to use React 16.8 or higher.
 - Unlike previous versions, this version uses Apple emojis.
@@ -104,3 +106,6 @@ const App = () => {
     );
 };
 ```
+
+## UI Customizations
+In general, UI customizations can be done directly via CSS. Descriptive classnames were added in order for you to be able to easily target whatever it is you want to change, and the markup is guaranteed to stay unchanged until the next major version (4).
