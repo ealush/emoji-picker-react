@@ -4,6 +4,8 @@
 
 [Live Demo](https://stackblitz.com/edit/emoji-picker-react?file=index.js)
 
+![Preview](/assets/captured.gif)
+
 ## What you need to know before installing?
 - Version 3 uses React hooks, which means you need to use React 16.8 or higher.
 - Unlike previous versions, this version uses Apple emojis.
