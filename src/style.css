@@ -1,0 +1,43 @@
+aside.emoji-picker-react {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 320px;
+    width: 280px;
+    font-family: sans-serif;
+    border: 1px solid #efefef;
+    border-radius: 5px;
+    box-sizing: border-box;
+    box-shadow: 0 5px 10px #efefef;
+    overflow: hidden;
+    position: relative;
+}
+
+aside.emoji-picker-react .content-wrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+aside.emoji-picker-react .content-wrapper:before {
+    content: attr(data-name);
+    color: #aaa;
+    font-size: 11px;
+    display: block;
+    position: absolute;
+    right: 15px;
+    z-index: 10;
+    line-height: 45px;
+    max-height: 45px;
+    overflow: hidden;
+    max-width: 100px;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+
+aside.emoji-picker-react button {
+    border: none;
+    cursor: pointer;
+    outline: none;
+    background: none;
+}

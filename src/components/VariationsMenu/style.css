@@ -1,0 +1,33 @@
+.emoji-picker-react .variation-wrapper {
+    position: relative;
+}
+
+.emoji-picker-react .variation-list {
+    background: #F4F4F4;
+    border-bottom: 1px solid #efefef;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-evenly;
+    list-style-type: none;
+}
+
+.emoji-picker-react .variation-list button {
+    display: flex;
+}
+
+.emoji-picker-react .variation-list button {
+    border-radius: 5px;
+    transition: background .1s;
+    background: none;
+    padding: 0;
+}
+
+.emoji-picker-react .variation-list button:hover {
+    background-color: #DBDBDB;
+}

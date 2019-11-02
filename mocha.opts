@@ -1,5 +1,0 @@
---require ./test_setup.js
---require ignore-styles
---full-trace
---inline-diffs
---timeout 400

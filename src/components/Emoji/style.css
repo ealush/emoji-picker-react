@@ -1,0 +1,26 @@
+.emoji-picker-react .emoji {
+    position: relative;
+}
+
+.emoji-picker-react .emoji.has-skin-variation:before {
+    content: '';
+    display: block;
+    height: 5px;
+    width: 5px;
+    background: #070B17;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 0 5px 0 0;
+}
+
+.emoji-picker-react .emoji button {
+    color: inherit;
+    border-radius: 5px;
+    transition: .1s background;
+    padding: 0;
+}
+
+.emoji-picker-react .emoji button:hover {
+    background-color: currentColor;
+}

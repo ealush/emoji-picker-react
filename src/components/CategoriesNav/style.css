@@ -1,0 +1,43 @@
+.emoji-picker-react .emoji-categories button {
+    height: 40px;
+    width: 20px;
+    padding: 5px 0;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 50% 50%;
+    cursor: pointer;
+    opacity: .5;
+    transition: opacity .1s;
+}
+
+.emoji-picker-react .emoji-categories button.icn-activities     { background-image: url(./svg/activities.svg); }
+.emoji-picker-react .emoji-categories button.icn-animals_nature { background-image: url(./svg/animals_nature.svg); }
+.emoji-picker-react .emoji-categories button.icn-flags          { background-image: url(./svg/flags.svg); }
+.emoji-picker-react .emoji-categories button.icn-food_drink     { background-image: url(./svg/food_drink.svg); }
+.emoji-picker-react .emoji-categories button.icn-objects        { background-image: url(./svg/objects.svg); }
+.emoji-picker-react .emoji-categories button.icn-smileys_people { background-image: url(./svg/smileys_people.svg); }
+.emoji-picker-react .emoji-categories button.icn-symbols        { background-image: url(./svg/symbols.svg); }
+.emoji-picker-react .emoji-categories button.icn-travel_places  { background-image: url(./svg/travel_places.svg); }
+
+
+.emoji-picker-react .emoji-categories {
+    padding: 0 15px;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+
+.emoji-picker-react .emoji-categories.inactive button,
+.emoji-picker-react .emoji-categories.inactive button.active,
+.emoji-picker-react .emoji-categories.inactive button:hover {
+    opacity: .4;
+    cursor: default;
+}
+
+.emoji-picker-react .emoji-categories button.active {
+    opacity: 1;
+}
+
+.emoji-picker-react .emoji-categories button:hover {
+    opacity: .7;
+}

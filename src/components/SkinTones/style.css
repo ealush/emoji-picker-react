@@ -1,0 +1,40 @@
+.emoji-picker-react ul.skin-tones-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    position: absolute;
+    top: 13px;
+    right: 40px;
+}
+
+.emoji-picker-react ul.skin-tones-list li {
+    background-color: currentColor;
+    position: absolute;
+    padding: 0;
+    border-radius: 2px;
+    overflow: hidden;
+    transition: transform .3s ease;
+}
+
+.emoji-picker-react ul.skin-tones-list label {
+    height: 10px;
+    width: 10px;
+    padding: 0;
+    display: block;
+    cursor: pointer;
+}
+
+.emoji-picker-react ul.skin-tones-list input {
+    height: 0;
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+    display: none;
+}
+
+.emoji-picker-react ul.skin-tones-list li.tneutral { color: #FFD225; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fb  { color: #FFDFBD; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fc  { color: #E9C197; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fd  { color: #C88E62; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fe  { color: #A86637; }
+.emoji-picker-react ul.skin-tones-list li.t1f3ff  { color: #60463A; }
