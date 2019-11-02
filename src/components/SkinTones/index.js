@@ -1,11 +1,25 @@
 import React, { useContext } from 'react';
 import skinTones from '../../skinTones';
 import { PickerContext, actionTypes } from '../../lib/reducer';
-import { NEUTRAL, DATA_NAME } from './constants';
+import {
+    SKIN_TONE_NEUTRAL,
+    SKIN_TONE_LIGHT,
+    SKIN_TONE_MEDIUM_LIGHT,
+    SKIN_TONE_MEDIUM,
+    SKIN_TONE_MEDIUM_DARK,
+    SKIN_TONE_DARK,
+    DATA_NAME
+} from './constants';
 import './style.css';
 
 export {
-    NEUTRAL, DATA_NAME
+    SKIN_TONE_NEUTRAL,
+    SKIN_TONE_LIGHT,
+    SKIN_TONE_MEDIUM_LIGHT,
+    SKIN_TONE_MEDIUM,
+    SKIN_TONE_MEDIUM_DARK,
+    SKIN_TONE_DARK,
+    DATA_NAME
 };
 
 const SkinTones = () => {

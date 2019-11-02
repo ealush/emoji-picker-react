@@ -1,29 +1,28 @@
-import React, { useState, useReducer, useRef } from 'react';
+import React, { useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
 import { PROPERTY_DATA_NAME } from './lib/constants';
 import reducer, { PickerContext, actionTypes } from './lib/reducer';
 import clickHandler from './lib/clickHandler';
 import { getRecentlyUsed } from './lib/recentlyUsed';
-import SkinTones, { NEUTRAL, DATA_NAME } from './components/SkinTones';
+import SkinTones, { SKIN_TONE_NEUTRAL, SKIN_TONE_LIGHT, SKIN_TONE_MEDIUM_LIGHT, SKIN_TONE_MEDIUM, SKIN_TONE_MEDIUM_DARK, SKIN_TONE_DARK, DATA_NAME } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
 import Search from './components/Search';
 import './style.css';
 
-const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false }) => {
+const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false, skinTone = SKIN_TONE_NEUTRAL }) => {
     const emojiListRef = useRef(null);
 
     const [state, dispatch] = useReducer(reducer, {
-        activeSkinTone: NEUTRAL,
+        activeSkinTone: skinTone,
         emojiUrl,
         onEmojiClick: clickHandler(onEmojiClick),
         seenGroups: { [GROUP_NAME_PEOPLE]: true },
         recentlyUsed: getRecentlyUsed(),
         preload
     });
-    const [ activeSkinTone, setActiveSkinTone ] = useState(NEUTRAL);
 
     const closeVariations = ({ target }) => {
         if (state.variationMenu) {
@@ -41,8 +40,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
                 <CategoriesNav emojiListRef={emojiListRef}/>
                 <div style={{position: 'relative'}}>
                     <Search/>
-                    <SkinTones activeSkinTone={activeSkinTone}
-                        setActiveSkinTone={setActiveSkinTone}/>
+                    <SkinTones/>
                 </div>
                 <div className="content-wrapper" data-name={state.emojiName}>
                     <VariationsMenu closeVariations={closeVariations}/>
@@ -53,10 +51,20 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
     );
 };
 
+export {
+    SKIN_TONE_NEUTRAL,
+    SKIN_TONE_LIGHT,
+    SKIN_TONE_MEDIUM_LIGHT,
+    SKIN_TONE_MEDIUM,
+    SKIN_TONE_MEDIUM_DARK,
+    SKIN_TONE_DARK
+};
+
 export default EmpojiPicker;
 
 EmpojiPicker.propTypes = {
     emojiUrl: PropTypes.string,
     onEmojiClick: PropTypes.func,
-    preload: PropTypes.bool
+    preload: PropTypes.bool,
+    skinTone: PropTypes.string
 };

@@ -18,6 +18,10 @@
 }
 
 .emoji-picker-react .variation-list button {
+    display: flex;
+}
+
+.emoji-picker-react .variation-list button {
     border-radius: 5px;
     transition: background .1s;
     background: none;

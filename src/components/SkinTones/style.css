@@ -32,9 +32,9 @@
     display: none;
 }
 
-.emoji-picker-react ul.skin-tones-list li.tneutral { color: #ffe082; }
-.emoji-picker-react ul.skin-tones-list li.t1f3fb  { color: #ffe0b2; }
-.emoji-picker-react ul.skin-tones-list li.t1f3fc  { color: #ffccbc; }
-.emoji-picker-react ul.skin-tones-list li.t1f3fe  { color: #795548; }
-.emoji-picker-react ul.skin-tones-list li.t1f3ff  { color: #5d4037; }
-.emoji-picker-react ul.skin-tones-list li.t1f3fd  { color: #ca7e55; }
+.emoji-picker-react ul.skin-tones-list li.tneutral { color: #FFD225; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fb  { color: #FFDFBD; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fc  { color: #E9C197; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fd  { color: #C88E62; }
+.emoji-picker-react ul.skin-tones-list li.t1f3fe  { color: #A86637; }
+.emoji-picker-react ul.skin-tones-list li.t1f3ff  { color: #60463A; }
