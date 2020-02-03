@@ -30,7 +30,7 @@
     "@babel/preset-react": "^7.0.0",
     "@storybook/addon-actions": "^5.3.10",
     "@storybook/addon-links": "^5.3.10",
-    "@storybook/addons": "^5.2.1",
+    "@storybook/addons": "^5.3.10",
     "@storybook/react": "^5.2.1",
     "babel-loader": "^8.0.6",
     "classnames": "^2.2.6",
