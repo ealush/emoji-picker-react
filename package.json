@@ -31,7 +31,7 @@
     "@storybook/addon-actions": "^5.3.12",
     "@storybook/addon-links": "^5.3.12",
     "@storybook/addons": "^5.3.12",
-    "@storybook/react": "^5.2.1",
+    "@storybook/react": "^5.3.12",
     "babel-loader": "^8.0.6",
     "classnames": "^2.2.6",
     "css-loader": "^3.2.0",
