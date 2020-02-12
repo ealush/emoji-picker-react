@@ -72,6 +72,7 @@ const Emoji = ({
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
                 onMouseUp={handleMouseUp}
+                type="button"
                 onClick={handleEmojiClick}>
                 <EmojiImg unified={unified} shouldLoad={shouldLoad} dispatch={dispatch}/>
             </button>
