@@ -21,6 +21,8 @@ const useFilter = () => {
         const prevKey = filter[filter.length - 1];
         let nextFilter;
 
+        value = value.trim().toLowerCase();
+
         if (value.length === 1) {
             nextFilter = [{
                 value,
