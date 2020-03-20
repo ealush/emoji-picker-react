@@ -12,8 +12,6 @@ keywordsPromise.then((res) => {
     mappedSearchTerms = res.mappedSearchTerms;
 });
 
-window.es = emojiStorage;
-
 const useFilter = () => {
     const { state: { filter = [] }, dispatch } = useContext(PickerContext);
 

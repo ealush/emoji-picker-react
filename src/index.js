@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from 'react';
+import React, { useReducer, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
 import { PROPERTY_DATA_NAME } from './lib/constants';
@@ -14,8 +14,13 @@ import './style.css';
 
 const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false, skinTone = SKIN_TONE_NEUTRAL }) => {
     const emojiListRef = useRef(null);
+    const isMounted = useRef(true);
 
-    const [state, dispatch] = useReducer(reducer, {
+    useEffect(() => () => {
+        isMounted.current = false;
+    }, []);
+
+    const [state, useReducerDispatch] = useReducer(reducer, {
         activeSkinTone: skinTone,
         emojiUrl,
         onEmojiClick: clickHandler(onEmojiClick),
@@ -23,6 +28,13 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
         recentlyUsed: getRecentlyUsed(),
         preload
     });
+
+    const dispatch = (...props) => {
+        if (!isMounted.current) {
+            return;
+        }
+        return useReducerDispatch(...props);
+    };
 
     const closeVariations = ({ target }) => {
         if (state.variationMenu) {
