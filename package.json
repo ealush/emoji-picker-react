@@ -34,7 +34,7 @@
     "@storybook/react": "^5.2.1",
     "babel-loader": "^8.0.6",
     "classnames": "^2.2.6",
-    "css-loader": "^3.2.0",
+    "css-loader": "^3.5.0",
     "emoji-datasource": "^4.1.0",
     "eslint": "^6.4.0",
     "eslint-plugin-import": "^2.18.2",
