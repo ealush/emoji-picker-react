@@ -26,7 +26,8 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
         onEmojiClick: clickHandler(onEmojiClick),
         seenGroups: { [GROUP_NAME_PEOPLE]: true },
         recentlyUsed: getRecentlyUsed(),
-        preload
+        preload,
+        filterResult: null
     });
 
     const dispatch = (...props) => {

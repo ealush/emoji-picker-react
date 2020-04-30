@@ -31,7 +31,6 @@ const createEmojiList = (name, { unsetEmojiName, emojiListRef }) => {
     const openVariationMenu = (emoji) => dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
     return useMemo(() => {
-
         const listToUse = filterResult ? Object.keys(filterResult[name] || {}) : emojiStorage.groups[name];
 
         return listToUse.reduce((accumulator, emojiName, index) => {
@@ -64,7 +63,7 @@ const createEmojiList = (name, { unsetEmojiName, emojiListRef }) => {
 
             return accumulator;
         }, { list: [], shown: false });
-    }, [activeSkinTone, filterResult, name, shouldLoad, variationMenuOpen, failedToLoad]);
+    }, [activeSkinTone, filterResult, shouldLoad, failedToLoad]);
 };
 
 const EmojiList = ({ emojiListRef }) => { // eslint-disable-line react/display-name

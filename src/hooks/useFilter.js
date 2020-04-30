@@ -24,7 +24,7 @@ const useFilter = () => {
         if (value.length === 1) {
             nextFilter = [{
                 value,
-                terms: mappedSearchTerms[value]
+                terms: mappedSearchTerms[value] || []
             }];
         } else if (prevKey && value.length > prevKey.value.length && value.includes(prevKey.value)) {
             nextFilter = [...filter, {
