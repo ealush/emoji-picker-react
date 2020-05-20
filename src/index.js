@@ -12,7 +12,7 @@ import EmojiList from './components/EmojiList';
 import Search from './components/Search';
 import './style.css';
 
-const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false, skinTone = SKIN_TONE_NEUTRAL }) => {
+const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = false, skinTone = SKIN_TONE_NEUTRAL, disableAutoFocus = false }) => {
     const emojiListRef = useRef(null);
     const isMounted = useRef(true);
 
@@ -52,7 +52,7 @@ const EmpojiPicker = ({ emojiUrl = DEFAULT_EMOJI_URL, onEmojiClick, preload = fa
             <aside className="emoji-picker-react" onScroll={closeVariations} onMouseDown={closeVariations}>
                 <CategoriesNav emojiListRef={emojiListRef}/>
                 <div style={{position: 'relative'}}>
-                    <Search/>
+                    <Search disableAutoFocus={disableAutoFocus}/>
                     <SkinTones/>
                 </div>
                 <div className="content-wrapper" data-name={state.emojiName}>
@@ -79,5 +79,6 @@ EmpojiPicker.propTypes = {
     emojiUrl: PropTypes.string,
     onEmojiClick: PropTypes.func,
     preload: PropTypes.bool,
-    skinTone: PropTypes.string
+    skinTone: PropTypes.string,
+    disableAutoFocus: PropTypes.bool
 };

@@ -64,6 +64,7 @@ const App = () => {
 | `onEmojiClick` | `Function` | `undefined` | Yes | Callback to run when clicking an emoji.
 | `preload` | `Boolean` | `false` | No | Indicates whether all emojis images, should be preloaded, or only when showing each category.
 | `skinTone` | `string` | `neutral` | No | Decides the default skit tone for supported emojis.
+| `disableAutoFocus` | `boolean` | `false` | No | Disables autofocus of the search bar. Useful for safari-iphone devices which zoom in to focused inputs.
 
 #### onEmojiClick Arguments
 `onEmojiClick` is a regular click handler for any of the emojis in the app. It takes two arguments:

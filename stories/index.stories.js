@@ -15,5 +15,5 @@ storiesOf('EmojiPicker', module).add('EmojiPicker', () => {
                 emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"/>
             }
         </div>
-    )
+    );
 });
