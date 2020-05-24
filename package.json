@@ -46,7 +46,7 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "style-loader": "^1.0.0",
-    "svg-url-loader": "^3.0.2",
+    "svg-url-loader": "^5.0.1",
     "terser-webpack-plugin": "^2.1.0",
     "webpack": "^4.40.2",
     "webpack-cli": "^3.3.9"
