@@ -27,7 +27,7 @@
     "@babel/core": "^7.10.0",
     "@babel/plugin-transform-runtime": "^7.10.0",
     "@babel/preset-env": "^7.10.0",
-    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-react": "^7.10.0",
     "@storybook/addon-actions": "^5.2.1",
     "@storybook/addon-links": "^5.2.1",
     "@storybook/addons": "^5.2.1",
