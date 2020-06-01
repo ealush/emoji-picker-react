@@ -1,13 +1,12 @@
 import { useContext } from 'react';
 import { PickerContext } from '../lib/reducer';
 
-const useEmojiUrl = (unified) => {
+const useEmojiUrl = unified => {
+  const {
+    state: { emojiUrl },
+  } = useContext(PickerContext);
 
-    const { state: { emojiUrl } } = useContext(PickerContext);
-
-    return unified
-        ? `${emojiUrl}/${unified}.png`
-        : emojiUrl;
+  return unified ? `${emojiUrl}/${unified}.png` : emojiUrl;
 };
 
 export default useEmojiUrl;

@@ -7,55 +7,61 @@ import groups from '../../groups.json';
 import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
-    const { state: { activeCategory, filter }, dispatch } = useContext(PickerContext);
+  const {
+    state: { activeCategory, filter },
+    dispatch,
+  } = useContext(PickerContext);
 
-    let inactive = false;
+  let inactive = false;
 
-    if (filter && filter.length) {
-        inactive = true;
+  if (filter && filter.length) {
+    inactive = true;
+  }
+
+  const handleClick = ({ target }) => {
+    if (inactive) {
+      return;
     }
 
-    const handleClick = ({ target }) => {
+    const id = target.getAttribute(PROPERTY_DATA_NAME);
 
-        if (inactive) {
-            return;
-        }
+    if (!emojiListRef || !emojiListRef.current || !id) {
+      return;
+    }
 
-        const id = target.getAttribute(PROPERTY_DATA_NAME);
+    dispatch({
+      type: actionTypes.ACTIVE_CATEGORY_SET,
+      activeCategory: id,
+    });
+    dispatch({
+      type: actionTypes.GROUP_SEEN_SET,
+      group: id,
+    });
 
-        if (!emojiListRef || !emojiListRef.current || !id) {
-            return;
-        }
+    const { current } = emojiListRef;
+    const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
 
-        dispatch({
-            type: actionTypes.ACTIVE_CATEGORY_SET,
-            activeCategory: id
-        });
-        dispatch({
-            type: actionTypes.GROUP_SEEN_SET,
-            group: id
-        });
+    current.scrollTop = category.offsetTop;
+  };
 
-        const { current } = emojiListRef;
-        const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
-
-        current.scrollTop = category.offsetTop;
-    };
-
-    return (
-        <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>{
-            groups.map((group) => (
-                <button key={group}
-                    type="button"
-                    className={cn(`icn-${group.replace(' & ', '_')}`, { active: activeCategory === group })}
-                    data-name={group}/>
-            ))
-        }</nav>
-    );
+  return (
+    <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
+      {groups.map(group => (
+        <button
+          key={group}
+          type="button"
+          className={cn(`icn-${group}`, {
+            active: activeCategory === group,
+          })}
+          data-name={group}
+        />
+      ))}
+    </nav>
+  );
 };
 
 export default CategoriesNav;
 
 CategoriesNav.propTypes = {
-    emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) })
+  emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
 };

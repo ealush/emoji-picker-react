@@ -1,13 +1,14 @@
 {
   "name": "emoji-picker-react",
-  "version": "3.1.7",
+  "version": "3.2.0",
   "description": "Emoji picker component for react applications",
   "main": "dist/index.js",
   "typings": "emoji-picker-react.d.ts",
   "scripts": {
     "storybook": "start-storybook -p 6006",
     "build": "webpack --config ./webpack.config.js",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,15 @@
   "license": "unlicense",
   "bugs": {
     "url": "https://github.com/ealush/emoji-picker-react/issues"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "singleQuote": true
   },
   "homepage": "https://github.com/ealush/emoji-picker-react#readme",
   "devDependencies": {
@@ -40,8 +50,11 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-react-hooks": "^2.0.1",
+    "husky": "^4.2.5",
     "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.8.0",
+    "prettier": "2.0.5",
+    "pretty-quick": "^2.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

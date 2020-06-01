@@ -1,5 +1,5 @@
 declare module 'emoji-picker-react' {
-  import React from "react";
+  import React from 'react';
 
   export const SKIN_TONE_NEUTRAL = 'neutral';
   export const SKIN_TONE_LIGHT = '1f3fb';
@@ -7,24 +7,35 @@ declare module 'emoji-picker-react' {
   export const SKIN_TONE_MEDIUM = '1f3fe';
   export const SKIN_TONE_MEDIUM_DARK = '1f3ff';
   export const SKIN_TONE_DARK = '1f3fd';
-  
-  type SkinTones = SKIN_TONE_NEUTRAL | SKIN_TONE_LIGHT | SKIN_TONE_MEDIUM_LIGHT | SKIN_TONE_MEDIUM | SKIN_TONE_MEDIUM_DARK | SKIN_TONE_DARK;
+
+  type SkinTones =
+    | SKIN_TONE_NEUTRAL
+    | SKIN_TONE_LIGHT
+    | SKIN_TONE_MEDIUM_LIGHT
+    | SKIN_TONE_MEDIUM
+    | SKIN_TONE_MEDIUM_DARK
+    | SKIN_TONE_DARK;
 
   export interface IEmojiData {
-    unified: string,
-    originalUnified: string,
-    names: Array<string>,
-    emoji: string,
-    activeSkinTone: SkinTones
+    unified: string;
+    originalUnified: string;
+    names: Array<string>;
+    emoji: string;
+    activeSkinTone: SkinTones;
   }
 
   export interface IEmojiPickerProps {
-    onEmojiClick: (event: MouseEvent, data: IEmojiData) => void,
-    emojiUrl?: string,
-    preload?: boolean,
-    skinTone?: SkinTones
+    onEmojiClick: (event: MouseEvent, data: IEmojiData) => void;
+    emojiUrl?: string;
+    preload?: boolean;
+    skinTone?: SkinTones;
+    disableAutoFocus?: boolean;
+    disableSearchBar?: boolean;
+    disableSkinTonePicker?: boolean;
   }
 
-  const EmojiPicker: React.FC<IEmojiPickerProps> = (props: IEmojiPickerProps) => {};
+  const EmojiPicker: React.FC<IEmojiPickerProps> = (
+    props: IEmojiPickerProps
+  ) => {};
   export default EmojiPicker;
 }
