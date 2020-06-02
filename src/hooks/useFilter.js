@@ -24,6 +24,10 @@ const useFilter = () => {
 
     value = value.trim().toLowerCase();
 
+    if (prevKey && prevKey.value === value) {
+      return;
+    }
+
     if (value.length === 1) {
       nextFilter = [
         {
@@ -69,7 +73,7 @@ const useFilter = () => {
       ];
     }
 
-    const last = nextFilter[nextFilter.length - 1];
+    const last = nextFilter && nextFilter[nextFilter.length - 1];
     const filterPresent = !!(last && last.value);
 
     if (!filterPresent) {

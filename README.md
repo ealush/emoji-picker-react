@@ -70,6 +70,7 @@ const App = () => {
 | `disableAutoFocus`      | `boolean`  | `false`       | No        | Disables autofocus of the search bar. Useful for safari-iphone devices which zoom in to focused inputs. |
 | `disableSearchBar`      | `boolean`  | `false`       | No        | Disables the search bar and the skin tone picker altogether.                                            |
 | `disableSkinTonePicker` | `boolean`  | `false`       | No        | Disables the skin tone picker.                                                                          |
+| `groupNames`            | `Object`   | `undefined`   | No        | Specifies alternative category names to use. See Internationalization section.                          |
 
 #### onEmojiClick Arguments
 
@@ -117,6 +118,39 @@ const App = () => {
   );
 };
 ```
+
+## Internationalization
+
+The emoji names cannot be translated as they come from an external library, but it is possible to rename the categories.
+To rename the categories, pass a prop called `groupNames` which contains an object of group keys and their names as strings. For example:
+
+```js
+<Picker
+  groupNames={{
+    smileys_people: 'yellow faces',
+    animals_nature: 'cute dogs and also trees',
+    food_drink: 'milkshakes and more',
+    travel_places: 'I love trains',
+    activities: 'lets play a game',
+    objects: 'stuff',
+    symbols: 'more stuff',
+    flags: 'fun with flags',
+    recently_used: 'did I really use those?!',
+  }}
+/>
+```
+
+The complete list of keys is:
+
+- smileys_people
+- animals_nature
+- food_drink
+- travel_places
+- activities
+- objects
+- symbols
+- flags
+- recently_used
 
 ## UI Customizations
 
