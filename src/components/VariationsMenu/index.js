@@ -11,7 +11,8 @@ import './style.css';
 
 const VariationsMenu = ({ closeVariations }) => {
   const {
-    state: { variationMenu, activeSkinTone, onEmojiClick },
+    state: { variationMenu, activeSkinTone },
+    onEmojiClick,
   } = useContext(PickerContext);
 
   if (!variationMenu) {

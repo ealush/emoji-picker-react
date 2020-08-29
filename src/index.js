@@ -34,6 +34,9 @@ const EmpojiPicker = ({
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
+  const onClickRef = useRef(onEmojiClick);
+
+  onClickRef.current = onEmojiClick;
 
   useEffect(
     () => () => {
@@ -45,7 +48,6 @@ const EmpojiPicker = ({
   const [state, useReducerDispatch] = useReducer(reducer, {
     activeSkinTone: skinTone,
     emojiUrl,
-    onEmojiClick: clickHandler(onEmojiClick),
     seenGroups: { [GROUP_NAME_PEOPLE]: true },
     recentlyUsed: getRecentlyUsed(),
     preload,
@@ -74,7 +76,9 @@ const EmpojiPicker = ({
   };
 
   return (
-    <PickerContext.Provider value={{ state, dispatch }}>
+    <PickerContext.Provider
+      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef) }}
+    >
       <aside
         className="emoji-picker-react"
         onScroll={closeVariations}

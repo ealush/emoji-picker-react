@@ -27,12 +27,12 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       activeSkinTone,
       filterResult,
       seenGroups = {},
-      onEmojiClick,
       variationMenu,
       failedToLoad = null,
       preload,
     },
     dispatch,
+    onEmojiClick,
   } = useContext(PickerContext);
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));

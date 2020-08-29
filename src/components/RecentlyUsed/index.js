@@ -14,14 +14,9 @@ import Emoji from '../Emoji';
 
 const RecentlyUsed = ({ emojiListRef }) => {
   const {
-    state: {
-      recentlyUsed,
-      groupNames,
-      onEmojiClick,
-      filterResult,
-      failedToLoad = {},
-    },
+    state: { recentlyUsed, groupNames, filterResult, failedToLoad = {} },
     dispatch,
+    onEmojiClick,
   } = useContext(PickerContext);
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
