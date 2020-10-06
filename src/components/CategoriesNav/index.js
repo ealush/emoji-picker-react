@@ -5,6 +5,14 @@ import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
 import './style.css';
+import { Activities } from './svg/activities.js';
+import { AnimalsNature } from './svg/animals_nature.js';
+import { Flags } from './svg/flags.js';
+import { FoodDrink } from './svg/food_drink.js';
+import { Objects } from './svg/objects.js';
+import { SmileysPeople } from './svg/smileys_people.js';
+import { Symbols } from './svg/symbols.js';
+import { TravelPlaces } from './svg/travel_places.js';
 
 const CategoriesNav = ({ emojiListRef }) => {
   const {
@@ -18,34 +26,36 @@ const CategoriesNav = ({ emojiListRef }) => {
     inactive = true;
   }
 
-  const handleClick = ({ target }) => {
+  const handleClick = ({ target }, group) => {
     if (inactive) {
       return;
     }
 
-    const id = target.getAttribute(PROPERTY_DATA_NAME);
+    console.log(group);
 
-    if (!emojiListRef || !emojiListRef.current || !id) {
+    if (!emojiListRef || !emojiListRef.current || !group) {
       return;
     }
 
     dispatch({
       type: actionTypes.ACTIVE_CATEGORY_SET,
-      activeCategory: id,
+      activeCategory: group,
     });
     dispatch({
       type: actionTypes.GROUP_SEEN_SET,
-      group: id,
+      group: group,
     });
 
     const { current } = emojiListRef;
-    const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
+    const category = current.querySelector(
+      `[${PROPERTY_DATA_NAME}="${group}"]`
+    );
 
     current.scrollTop = category.offsetTop;
   };
 
   return (
-    <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
+    <nav className={cn('emoji-categories', { inactive })}>
       {groups.map(group => (
         <button
           key={group}
@@ -54,7 +64,28 @@ const CategoriesNav = ({ emojiListRef }) => {
             active: activeCategory === group,
           })}
           data-name={group}
-        />
+          onClick={event => handleClick(event, group)}
+        >
+          {group === 'animals_nature' ? (
+            <AnimalsNature />
+          ) : group === 'activities' ? (
+            <Activities />
+          ) : group === 'flags' ? (
+            <Flags />
+          ) : group === 'food_drink' ? (
+            <FoodDrink />
+          ) : group === 'objects' ? (
+            <Objects />
+          ) : group === 'smileys_people' ? (
+            <SmileysPeople />
+          ) : group === 'symbols' ? (
+            <Symbols />
+          ) : group === 'travel_places' ? (
+            <TravelPlaces />
+          ) : (
+            <></>
+          )}
+        </button>
       ))}
     </nav>
   );
