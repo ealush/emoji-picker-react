@@ -12,7 +12,7 @@ import { PickerContext } from '../../lib/reducer';
 import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
 
-const RecentlyUsed = ({ emojiListRef }) => {
+const RecentlyUsed = ({ emojiListRef, native = false }) => {
   const {
     state: { recentlyUsed, groupNames, filterResult, failedToLoad = {} },
     dispatch,
@@ -47,6 +47,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
               activeSkinTone: item[EMOJI_PROPERTY_SKIN_VARIATIONS],
             })}
             index={index}
+            native={native}
             handleMouseLeave={unsetEmojiName}
             onEmojiClick={onEmojiClick}
             handleMouseEnter={() =>

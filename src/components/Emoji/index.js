@@ -95,15 +95,12 @@ const Emoji = ({
         type="button"
         onClick={handleEmojiClick}
       >
-        {native ? (
-          emojiOutput(unified, emoji, activeSkinTone)
-        ) : (
-          <EmojiImg
-            unified={unified}
-            shouldLoad={shouldLoad}
-            dispatch={dispatch}
-          />
-        )}
+        <EmojiImg
+          unified={unified}
+          shouldLoad={shouldLoad}
+          dispatch={dispatch}
+          native={native}
+        />
       </button>
     </li>
   );

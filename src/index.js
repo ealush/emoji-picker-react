@@ -94,9 +94,9 @@ const EmpojiPicker = ({
         )}
 
         <div className="content-wrapper" data-name={state.emojiName}>
-          <VariationsMenu closeVariations={closeVariations} />
+          <VariationsMenu native={native} closeVariations={closeVariations} />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
-            <RecentlyUsed emojiListRef={emojiListRef} />
+            <RecentlyUsed native={native} emojiListRef={emojiListRef} />
             <EmojiList native={native} emojiListRef={emojiListRef} />
           </section>
         </div>

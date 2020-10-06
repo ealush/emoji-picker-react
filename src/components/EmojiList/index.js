@@ -139,7 +139,9 @@ const EmojiList = ({ emojiListRef, native = false }) => {
       {!renderOne &&
         groups
           .slice(1)
-          .map(name => <ListRender key={name} name={name} {...props} />)}
+          .map(name => (
+            <ListRender native={native} key={name} name={name} {...props} />
+          ))}
     </React.Fragment>
   );
 };
