@@ -26,34 +26,36 @@ const CategoriesNav = ({ emojiListRef }) => {
     inactive = true;
   }
 
-  const handleClick = ({ target }) => {
+  const handleClick = ({ target }, group) => {
     if (inactive) {
       return;
     }
 
-    const id = target.getAttribute(PROPERTY_DATA_NAME);
+    console.log(group);
 
-    if (!emojiListRef || !emojiListRef.current || !id) {
+    if (!emojiListRef || !emojiListRef.current || !group) {
       return;
     }
 
     dispatch({
       type: actionTypes.ACTIVE_CATEGORY_SET,
-      activeCategory: id,
+      activeCategory: group,
     });
     dispatch({
       type: actionTypes.GROUP_SEEN_SET,
-      group: id,
+      group: group,
     });
 
     const { current } = emojiListRef;
-    const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
+    const category = current.querySelector(
+      `[${PROPERTY_DATA_NAME}="${group}"]`
+    );
 
     current.scrollTop = category.offsetTop;
   };
 
   return (
-    <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
+    <nav className={cn('emoji-categories', { inactive })}>
       {groups.map(group => (
         <button
           key={group}
@@ -62,6 +64,7 @@ const CategoriesNav = ({ emojiListRef }) => {
             active: activeCategory === group,
           })}
           data-name={group}
+          onClick={event => handleClick(event, group)}
         >
           {group === 'animals_nature' ? (
             <AnimalsNature />
