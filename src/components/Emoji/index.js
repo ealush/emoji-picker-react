@@ -15,6 +15,7 @@ import {
   PASTEL_YELLOW,
 } from './colors';
 import './style.css';
+import emojiOutput from '../../lib/emojiOutput';
 
 const pastels = [
   PASTEL_BLUE,
@@ -95,7 +96,7 @@ const Emoji = ({
         onClick={handleEmojiClick}
       >
         {native ? (
-          String.fromCodePoint(parseInt(unified, 16))
+          emojiOutput(unified, emoji, activeSkinTone)
         ) : (
           <EmojiImg
             unified={unified}
