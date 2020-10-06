@@ -5,6 +5,14 @@ import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import { actionTypes, PickerContext } from '../../lib/reducer';
 import groups from '../../groups.json';
 import './style.css';
+import { Activities } from './svg/activities.js';
+import { AnimalsNature } from './svg/animals_nature.js';
+import { Flags } from './svg/flags.js';
+import { FoodDrink } from './svg/food_drink.js';
+import { Objects } from './svg/objects.js';
+import { SmileysPeople } from './svg/smileys_people.js';
+import { Symbols } from './svg/symbols.js';
+import { TravelPlaces } from './svg/travel_places.js';
 
 const CategoriesNav = ({ emojiListRef }) => {
   const {
@@ -54,7 +62,27 @@ const CategoriesNav = ({ emojiListRef }) => {
             active: activeCategory === group,
           })}
           data-name={group}
-        />
+        >
+          {group === 'animals_nature' ? (
+            <AnimalsNature />
+          ) : group === 'activities' ? (
+            <Activities />
+          ) : group === 'flags' ? (
+            <Flags />
+          ) : group === 'food_drink' ? (
+            <FoodDrink />
+          ) : group === 'objects' ? (
+            <Objects />
+          ) : group === 'smileys_people' ? (
+            <SmileysPeople />
+          ) : group === 'symbols' ? (
+            <Symbols />
+          ) : group === 'travel_places' ? (
+            <TravelPlaces />
+          ) : (
+            <></>
+          )}
+        </button>
       ))}
     </nav>
   );
