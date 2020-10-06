@@ -31,6 +31,7 @@ const EmpojiPicker = ({
   disableSearchBar = false,
   disableSkinTonePicker = false,
   groupNames = {},
+  native = false,
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -96,7 +97,7 @@ const EmpojiPicker = ({
           <VariationsMenu closeVariations={closeVariations} />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             <RecentlyUsed emojiListRef={emojiListRef} />
-            <EmojiList emojiListRef={emojiListRef} />
+            <EmojiList native={native} emojiListRef={emojiListRef} />
           </section>
         </div>
       </aside>
@@ -124,4 +125,5 @@ EmpojiPicker.propTypes = {
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
   groupNames: groupNamesPropType,
+  native: PropTypes.bool,
 };

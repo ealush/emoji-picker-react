@@ -21,7 +21,10 @@ import Emoji from '../Emoji';
 import './style.css';
 import { groupNamesPropType } from '../../lib/propTypes';
 
-const createEmojiList = (name, { emojiListRef, searchTerm }) => {
+const createEmojiList = (
+  name,
+  { emojiListRef, searchTerm, native = false }
+) => {
   const {
     state: {
       activeSkinTone,
@@ -84,6 +87,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
             onEmojiClick={onEmojiClick}
             index={index}
             key={emoji[EMOJI_PROPERTY_UNIFIED]}
+            native={native}
           />
         );
 
@@ -94,7 +98,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
   }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad]);
 };
 
-const EmojiList = ({ emojiListRef }) => {
+const EmojiList = ({ emojiListRef, native = false }) => {
   const {
     state: { filterResult, filter, groupNames },
   } = useContext(PickerContext);
@@ -131,7 +135,7 @@ const EmojiList = ({ emojiListRef }) => {
 
   return (
     <React.Fragment>
-      <ListRender name={groups[0]} {...props} />
+      <ListRender name={groups[0]} {...props} native={native} />
       {!renderOne &&
         groups
           .slice(1)
@@ -145,10 +149,12 @@ const ListRender = React.memo(function ListRender({
   searchTerm,
   emojiListRef,
   groupNames,
+  native = false,
 }) {
   const { list, shown } = createEmojiList(name, {
     searchTerm,
     emojiListRef,
+    native,
   });
 
   const style = {
@@ -173,6 +179,7 @@ export default EmojiList;
 EmojiList.propTypes = {
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   unsetEmojiName: PropTypes.func,
+  native: PropTypes.bool,
 };
 
 ListRender.propTypes = {
@@ -180,4 +187,5 @@ ListRender.propTypes = {
   searchTerm: PropTypes.string,
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   groupNames: groupNamesPropType,
+  native: PropTypes.bool,
 };

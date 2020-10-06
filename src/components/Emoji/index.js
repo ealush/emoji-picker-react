@@ -41,6 +41,7 @@ const Emoji = ({
   onEmojiClick,
   index,
   dispatch,
+  native = false,
 }) => {
   const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
   let unified;
@@ -93,11 +94,15 @@ const Emoji = ({
         type="button"
         onClick={handleEmojiClick}
       >
-        <EmojiImg
-          unified={unified}
-          shouldLoad={shouldLoad}
-          dispatch={dispatch}
-        />
+        {native ? (
+          String.fromCodePoint(parseInt(unified, 16))
+        ) : (
+          <EmojiImg
+            unified={unified}
+            shouldLoad={shouldLoad}
+            dispatch={dispatch}
+          />
+        )}
       </button>
     </li>
   );
@@ -117,4 +122,5 @@ Emoji.propTypes = {
   onEmojiClick: PropTypes.func,
   index: PropTypes.number,
   dispatch: PropTypes.func,
+  native: PropTypes.bool,
 };
