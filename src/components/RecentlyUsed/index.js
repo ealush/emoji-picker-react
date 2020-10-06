@@ -12,9 +12,15 @@ import { PickerContext } from '../../lib/reducer';
 import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
 
-const RecentlyUsed = ({ emojiListRef, native = false }) => {
+const RecentlyUsed = ({ emojiListRef }) => {
   const {
-    state: { recentlyUsed, groupNames, filterResult, failedToLoad = {} },
+    state: {
+      recentlyUsed,
+      groupNames,
+      filterResult,
+      failedToLoad = {},
+      native,
+    },
     dispatch,
     onEmojiClick,
   } = useContext(PickerContext);

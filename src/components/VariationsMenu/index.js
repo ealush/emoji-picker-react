@@ -9,9 +9,9 @@ import { PickerContext } from '../../lib/reducer';
 import EmojiImg from '../EmojiImg';
 import './style.css';
 
-const VariationsMenu = ({ closeVariations, native = false }) => {
+const VariationsMenu = ({ closeVariations }) => {
   const {
-    state: { variationMenu, activeSkinTone },
+    state: { variationMenu, activeSkinTone, native },
     onEmojiClick,
   } = useContext(PickerContext);
 
@@ -54,5 +54,4 @@ export default VariationsMenu;
 
 VariationsMenu.propTypes = {
   closeVariations: PropTypes.func,
-  native: PropTypes.bool,
 };

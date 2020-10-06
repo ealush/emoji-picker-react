@@ -26,12 +26,12 @@ const EmpojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
   onEmojiClick,
   preload = false,
+  native = false,
   skinTone = SKIN_TONE_NEUTRAL,
   disableAutoFocus = false,
   disableSearchBar = false,
   disableSkinTonePicker = false,
   groupNames = {},
-  native = false,
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -52,6 +52,7 @@ const EmpojiPicker = ({
     seenGroups: { [GROUP_NAME_PEOPLE]: true },
     recentlyUsed: getRecentlyUsed(),
     preload,
+    native,
     filterResult: null,
     groupNames: Object.assign(GROUP_NAMES_ENGLISH, groupNames),
   });
@@ -94,10 +95,10 @@ const EmpojiPicker = ({
         )}
 
         <div className="content-wrapper" data-name={state.emojiName}>
-          <VariationsMenu native={native} closeVariations={closeVariations} />
+          <VariationsMenu closeVariations={closeVariations} />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
-            <RecentlyUsed native={native} emojiListRef={emojiListRef} />
-            <EmojiList native={native} emojiListRef={emojiListRef} />
+            <RecentlyUsed emojiListRef={emojiListRef} />
+            <EmojiList emojiListRef={emojiListRef} />
           </section>
         </div>
       </aside>

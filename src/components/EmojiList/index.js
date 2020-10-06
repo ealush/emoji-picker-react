@@ -21,10 +21,7 @@ import Emoji from '../Emoji';
 import './style.css';
 import { groupNamesPropType } from '../../lib/propTypes';
 
-const createEmojiList = (
-  name,
-  { emojiListRef, searchTerm, native = false }
-) => {
+const createEmojiList = (name, { emojiListRef, searchTerm }) => {
   const {
     state: {
       activeSkinTone,
@@ -33,6 +30,7 @@ const createEmojiList = (
       variationMenu,
       failedToLoad = null,
       preload,
+      native,
     },
     dispatch,
     onEmojiClick,
@@ -95,10 +93,10 @@ const createEmojiList = (
       },
       { list: [], shown: false }
     );
-  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad]);
+  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad, native]);
 };
 
-const EmojiList = ({ emojiListRef, native = false }) => {
+const EmojiList = ({ emojiListRef }) => {
   const {
     state: { filterResult, filter, groupNames },
   } = useContext(PickerContext);
@@ -135,13 +133,11 @@ const EmojiList = ({ emojiListRef, native = false }) => {
 
   return (
     <React.Fragment>
-      <ListRender name={groups[0]} {...props} native={native} />
+      <ListRender name={groups[0]} {...props} />
       {!renderOne &&
         groups
           .slice(1)
-          .map(name => (
-            <ListRender native={native} key={name} name={name} {...props} />
-          ))}
+          .map(name => <ListRender key={name} name={name} {...props} />)}
     </React.Fragment>
   );
 };
@@ -151,12 +147,10 @@ const ListRender = React.memo(function ListRender({
   searchTerm,
   emojiListRef,
   groupNames,
-  native = false,
 }) {
   const { list, shown } = createEmojiList(name, {
     searchTerm,
     emojiListRef,
-    native,
   });
 
   const style = {
@@ -181,7 +175,6 @@ export default EmojiList;
 EmojiList.propTypes = {
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   unsetEmojiName: PropTypes.func,
-  native: PropTypes.bool,
 };
 
 ListRender.propTypes = {
@@ -189,5 +182,4 @@ ListRender.propTypes = {
   searchTerm: PropTypes.string,
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   groupNames: groupNamesPropType,
-  native: PropTypes.bool,
 };
