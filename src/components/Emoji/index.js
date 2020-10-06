@@ -7,7 +7,6 @@ import {
   EMOJI_PROPERTY_UNIFIED,
 } from '../../../lib/constants';
 import EmojiImg from '../EmojiImg';
-import emojiOutput from '../../lib/emojiOutput';
 import {
   PASTEL_BLUE,
   PASTEL_RED,
