@@ -15,6 +15,9 @@
 }
 
 .emoji-picker-react .emoji button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: inherit;
   border-radius: 5px;
   transition: 0.1s background;
