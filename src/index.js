@@ -26,6 +26,7 @@ const EmpojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
   onEmojiClick,
   preload = false,
+  native = false,
   skinTone = SKIN_TONE_NEUTRAL,
   disableAutoFocus = false,
   disableSearchBar = false,
@@ -51,6 +52,7 @@ const EmpojiPicker = ({
     seenGroups: { [GROUP_NAME_PEOPLE]: true },
     recentlyUsed: getRecentlyUsed(),
     preload,
+    native,
     filterResult: null,
     groupNames: Object.assign(GROUP_NAMES_ENGLISH, groupNames),
   });
@@ -124,4 +126,5 @@ EmpojiPicker.propTypes = {
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
   groupNames: groupNamesPropType,
+  native: PropTypes.bool,
 };

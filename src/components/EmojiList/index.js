@@ -30,6 +30,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       variationMenu,
       failedToLoad = null,
       preload,
+      native,
     },
     dispatch,
     onEmojiClick,
@@ -84,6 +85,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
             onEmojiClick={onEmojiClick}
             index={index}
             key={emoji[EMOJI_PROPERTY_UNIFIED]}
+            native={native}
           />
         );
 
@@ -91,7 +93,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       },
       { list: [], shown: false }
     );
-  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad]);
+  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad, native]);
 };
 
 const EmojiList = ({ emojiListRef }) => {

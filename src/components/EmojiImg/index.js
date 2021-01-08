@@ -11,8 +11,16 @@ const handleError = (unified, dispatch = Function.prototype) => {
   });
 };
 
-const EmojiImg = ({ unified, dispatch, shouldLoad = true }) => {
-  return (
+const EmojiImg = ({ unified, dispatch, shouldLoad = true, native = false }) => {
+  return native ? (
+    <div className="native">
+      {unified
+        .split('-')
+        .map(hex => parseInt(hex, 16))
+        .map(hex => String.fromCodePoint(hex))
+        .join('')}
+    </div>
+  ) : (
     <img
       className="emoji-img"
       onError={() => handleError(unified, dispatch)}
@@ -27,4 +35,5 @@ EmojiImg.propTypes = {
   unified: PropTypes.string,
   shouldLoad: PropTypes.bool,
   dispatch: PropTypes.func,
+  native: PropTypes.bool,
 };

@@ -14,7 +14,13 @@ import Emoji from '../Emoji';
 
 const RecentlyUsed = ({ emojiListRef }) => {
   const {
-    state: { recentlyUsed, groupNames, filterResult, failedToLoad = {} },
+    state: {
+      recentlyUsed,
+      groupNames,
+      filterResult,
+      failedToLoad = {},
+      native,
+    },
     dispatch,
     onEmojiClick,
   } = useContext(PickerContext);
@@ -47,6 +53,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
               activeSkinTone: item[EMOJI_PROPERTY_SKIN_VARIATIONS],
             })}
             index={index}
+            native={native}
             handleMouseLeave={unsetEmojiName}
             onEmojiClick={onEmojiClick}
             handleMouseEnter={() =>

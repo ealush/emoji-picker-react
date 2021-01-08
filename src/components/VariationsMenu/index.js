@@ -11,7 +11,7 @@ import './style.css';
 
 const VariationsMenu = ({ closeVariations }) => {
   const {
-    state: { variationMenu, activeSkinTone },
+    state: { variationMenu, activeSkinTone, native },
     onEmojiClick,
   } = useContext(PickerContext);
 
@@ -40,7 +40,7 @@ const VariationsMenu = ({ closeVariations }) => {
                 onClick={handleClick}
                 onMouseDown={e => e.stopPropagation()}
               >
-                <EmojiImg unified={unified} />
+                <EmojiImg native={native} unified={unified} />
               </button>
             </li>
           );
