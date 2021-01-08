@@ -19,6 +19,22 @@ storiesOf('EmojiPicker', module)
       </div>
     );
   })
+  .add('With custom CSS style', () => {
+    const [isShown, setIsShown] = useState(true);
+
+    return (
+      <div>
+        <button onClick={() => setIsShown(!isShown)}>Toggle</button>
+        {isShown && (
+          <EmojiPicker
+            pickerStyle={{ width: '500px', height: '800px' }}
+            onEmojiClick={(e, em) => console.log(em)}
+            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+          />
+        )}
+      </div>
+    );
+  })
   .add('No Search', () => {
     const [isShown, setIsShown] = useState(true);
 

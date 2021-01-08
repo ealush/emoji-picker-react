@@ -70,6 +70,7 @@ const App = () => {
 | `disableAutoFocus`      | `boolean`  | `false`       | No        | Disables autofocus of the search bar. Useful for safari-iphone devices which zoom in to focused inputs. |
 | `disableSearchBar`      | `boolean`  | `false`       | No        | Disables the search bar and the skin tone picker altogether.                                            |
 | `disableSkinTonePicker` | `boolean`  | `false`       | No        | Disables the skin tone picker.                                                                          |
+| `pickerStyle`           | `string`   | `undefined`   | No        | Overrides style of the component.                                                                       |
 | `groupNames`            | `Object`   | `undefined`   | No        | Specifies alternative category names to use. See Internationalization section.                          |
 | `native`                | `Boolean`  | `false`       | No        | Loads system emojis instead of Apple Emoji pngs                                                         |
 
@@ -120,6 +121,28 @@ const App = () => {
 };
 ```
 
+#### Customize Styling
+
+You can override the style of emoji-picker-react with **pickerStyle** props.
+
+```js
+import React, { useState } from 'react';
+import Picker from 'emoji-picker-react';
+
+const App = () => {
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+
+  const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(emojiObject);
+  };
+
+  return (
+    <div>
+      <Picker onEmojiClick={onEmojiClick} pickerStyle={{ width: '100%' }} />
+    </div>
+  );
+};
+```
 ## Internationalization
 
 The emoji names cannot be translated as they come from an external library, but it is possible to rename the categories.

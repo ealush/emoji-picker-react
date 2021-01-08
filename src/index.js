@@ -32,6 +32,7 @@ const EmpojiPicker = ({
   disableSearchBar = false,
   disableSkinTonePicker = false,
   groupNames = {},
+  pickerStyle,
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -83,6 +84,7 @@ const EmpojiPicker = ({
     >
       <aside
         className="emoji-picker-react"
+        style={pickerStyle}
         onScroll={closeVariations}
         onMouseDown={closeVariations}
       >

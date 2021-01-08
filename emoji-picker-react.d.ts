@@ -32,6 +32,7 @@ declare module 'emoji-picker-react' {
     disableAutoFocus?: boolean;
     disableSearchBar?: boolean;
     disableSkinTonePicker?: boolean;
+    pickerStyle?: { [property: string]: string };
     groupNames?: Record<string, string>;
     native?: boolean;
   }
