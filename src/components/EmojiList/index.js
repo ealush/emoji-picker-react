@@ -27,12 +27,13 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       activeSkinTone,
       filterResult,
       seenGroups = {},
-      onEmojiClick,
       variationMenu,
       failedToLoad = null,
       preload,
+      native,
     },
     dispatch,
+    onEmojiClick,
   } = useContext(PickerContext);
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
@@ -84,6 +85,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
             onEmojiClick={onEmojiClick}
             index={index}
             key={emoji[EMOJI_PROPERTY_UNIFIED]}
+            native={native}
           />
         );
 
@@ -91,7 +93,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       },
       { list: [], shown: false }
     );
-  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad]);
+  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad, native]);
 };
 
 const EmojiList = ({ emojiListRef }) => {

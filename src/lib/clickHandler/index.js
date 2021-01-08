@@ -1,7 +1,7 @@
 import { setRecentlyUsed } from '../recentlyUsed';
 import emojiOutput from '../emojiOutput';
 
-const clickHandler = (onEmojiClick = Function.prototype) => (
+const clickHandler = (onClickRef = {}) => (
   e,
   unified,
   emoji,
@@ -9,7 +9,7 @@ const clickHandler = (onEmojiClick = Function.prototype) => (
 ) => {
   const output = emojiOutput(unified, emoji, activeSkinTone);
   setRecentlyUsed(output);
-  return onEmojiClick(e, output);
+  return onClickRef.current && onClickRef.current(e, output);
 };
 
 export default clickHandler;

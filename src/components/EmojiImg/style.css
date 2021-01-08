@@ -3,3 +3,13 @@
   width: 25px;
   margin: 5px;
 }
+
+.emoji-picker-react .native {
+  height: 25px;
+  width: 25px;
+  margin: 5px;
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

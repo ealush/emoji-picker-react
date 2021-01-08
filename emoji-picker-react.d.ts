@@ -1,5 +1,5 @@
 declare module 'emoji-picker-react' {
-  import React from 'react';
+  import * as React from 'react';
 
   export const SKIN_TONE_NEUTRAL = 'neutral';
   export const SKIN_TONE_LIGHT = '1f3fb';
@@ -9,12 +9,12 @@ declare module 'emoji-picker-react' {
   export const SKIN_TONE_DARK = '1f3fd';
 
   type SkinTones =
-    | SKIN_TONE_NEUTRAL
-    | SKIN_TONE_LIGHT
-    | SKIN_TONE_MEDIUM_LIGHT
-    | SKIN_TONE_MEDIUM
-    | SKIN_TONE_MEDIUM_DARK
-    | SKIN_TONE_DARK;
+    | typeof SKIN_TONE_NEUTRAL
+    | typeof SKIN_TONE_LIGHT
+    | typeof SKIN_TONE_MEDIUM_LIGHT
+    | typeof SKIN_TONE_MEDIUM
+    | typeof SKIN_TONE_MEDIUM_DARK
+    | typeof SKIN_TONE_DARK;
 
   export interface IEmojiData {
     unified: string;
@@ -25,7 +25,7 @@ declare module 'emoji-picker-react' {
   }
 
   export interface IEmojiPickerProps {
-    onEmojiClick: (event: MouseEvent, data: IEmojiData) => void;
+    onEmojiClick: (event: React.MouseEvent, data: IEmojiData) => void;
     emojiUrl?: string;
     preload?: boolean;
     skinTone?: SkinTones;
@@ -33,10 +33,11 @@ declare module 'emoji-picker-react' {
     disableSearchBar?: boolean;
     disableSkinTonePicker?: boolean;
     pickerStyle?: { [property: string]: string };
+    groupNames?: Record<string, string>;
+    native?: boolean;
   }
 
-  const EmojiPicker: React.FC<IEmojiPickerProps> = (
-    props: IEmojiPickerProps
-  ) => {};
+  const EmojiPicker: React.FC<IEmojiPickerProps>;
+
   export default EmojiPicker;
 }

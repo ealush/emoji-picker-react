@@ -41,6 +41,7 @@ const Emoji = ({
   onEmojiClick,
   index,
   dispatch,
+  native = false,
 }) => {
   const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
   let unified;
@@ -97,6 +98,7 @@ const Emoji = ({
           unified={unified}
           shouldLoad={shouldLoad}
           dispatch={dispatch}
+          native={native}
         />
       </button>
     </li>
@@ -117,4 +119,5 @@ Emoji.propTypes = {
   onEmojiClick: PropTypes.func,
   index: PropTypes.number,
   dispatch: PropTypes.func,
+  native: PropTypes.bool,
 };

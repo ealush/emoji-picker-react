@@ -17,11 +17,12 @@ const RecentlyUsed = ({ emojiListRef }) => {
     state: {
       recentlyUsed,
       groupNames,
-      onEmojiClick,
       filterResult,
       failedToLoad = {},
+      native,
     },
     dispatch,
+    onEmojiClick,
   } = useContext(PickerContext);
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
@@ -52,6 +53,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
               activeSkinTone: item[EMOJI_PROPERTY_SKIN_VARIATIONS],
             })}
             index={index}
+            native={native}
             handleMouseLeave={unsetEmojiName}
             onEmojiClick={onEmojiClick}
             handleMouseEnter={() =>

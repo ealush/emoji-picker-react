@@ -85,4 +85,20 @@ storiesOf('EmojiPicker', module)
         )}
       </div>
     );
+  })
+  .add('Native', () => {
+    const [isShown, setIsShown] = useState(true);
+
+    return (
+      <div>
+        <button onClick={() => setIsShown(!isShown)}>Toggle</button>
+        {isShown && (
+          <EmojiPicker
+            onEmojiClick={(e, em) => console.log(em)}
+            native={true}
+            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+          />
+        )}
+      </div>
+    );
   });

@@ -26,6 +26,7 @@ const EmpojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
   onEmojiClick,
   preload = false,
+  native = false,
   skinTone = SKIN_TONE_NEUTRAL,
   disableAutoFocus = false,
   disableSearchBar = false,
@@ -35,6 +36,9 @@ const EmpojiPicker = ({
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
+  const onClickRef = useRef(onEmojiClick);
+
+  onClickRef.current = onEmojiClick;
 
   useEffect(
     () => () => {
@@ -46,10 +50,10 @@ const EmpojiPicker = ({
   const [state, useReducerDispatch] = useReducer(reducer, {
     activeSkinTone: skinTone,
     emojiUrl,
-    onEmojiClick: clickHandler(onEmojiClick),
     seenGroups: { [GROUP_NAME_PEOPLE]: true },
     recentlyUsed: getRecentlyUsed(),
     preload,
+    native,
     filterResult: null,
     groupNames: Object.assign(GROUP_NAMES_ENGLISH, groupNames),
   });
@@ -75,7 +79,9 @@ const EmpojiPicker = ({
   };
 
   return (
-    <PickerContext.Provider value={{ state, dispatch }}>
+    <PickerContext.Provider
+      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef) }}
+    >
       <aside
         className="emoji-picker-react"
         style={pickerStyle}
@@ -122,4 +128,5 @@ EmpojiPicker.propTypes = {
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
   groupNames: groupNamesPropType,
+  native: PropTypes.bool,
 };
