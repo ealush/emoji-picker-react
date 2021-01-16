@@ -2,16 +2,23 @@
   position: relative;
 }
 
-.emoji-picker-react .emoji.has-skin-variation:before {
+.emoji-picker-react .emoji.has-skin-variation button:before {
   content: '';
   display: block;
-  height: 5px;
-  width: 5px;
-  background: #070b17;
+  width: 0;
+  height: 0;
+  right: -2px;
+  bottom: 0px;
   position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 0 5px 0 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid rgba(0, 0, 0, 0.1);
+  transform: rotate(135deg);
+  z-index: 1;
+}
+
+.emoji-picker-react .emoji.has-skin-variation button:hover:before {
+  border-bottom: 4px solid rgba(0, 0, 0, 0.4);
 }
 
 .emoji-picker-react .emoji button {

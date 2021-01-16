@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import cn from 'classnames';
 import PropTypes from 'prop-types';
 import skinTones from '../../skinTones';
 import {
@@ -10,18 +11,33 @@ import EmojiImg from '../EmojiImg';
 import './style.css';
 
 const VariationsMenu = ({ closeVariations }) => {
+  const [showMenu, setShowMenu] = useState(false);
+
   const {
     state: { variationMenu, activeSkinTone, native },
     onEmojiClick,
   } = useContext(PickerContext);
 
+  useEffect(() => {
+    if (variationMenu && !showMenu) {
+      setShowMenu(true);
+    }
+    return () => {
+      setShowMenu(false);
+    };
+  }, [variationMenu]);
+
   if (!variationMenu) {
     return null;
   }
 
+  const classes = cn('variation-list', {
+    visible: showMenu,
+  });
+
   return (
     <div className="variations-wrapper">
-      <ul className="variation-list">
+      <ul className={classes}>
         {skinTones.map(tone => {
           const unified =
             variationMenu[EMOJI_PROPERTY_SKIN_VARIATIONS].find(v =>

@@ -148,6 +148,14 @@ const ListRender = React.memo(function ListRender({
   emojiListRef,
   groupNames,
 }) {
+  const {
+    state: { groupVisibility },
+  } = useContext(PickerContext);
+
+  if (groupVisibility[name] === false) {
+    return null;
+  }
+
   const { list, shown } = createEmojiList(name, {
     searchTerm,
     emojiListRef,

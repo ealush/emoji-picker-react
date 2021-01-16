@@ -16,6 +16,7 @@ aside.emoji-picker-react {
 aside.emoji-picker-react .content-wrapper {
   flex: 1;
   overflow-y: hidden;
+  position: relative;
 }
 
 .emoji-picker-react .emoji-scroll-wrapper {
