@@ -8,7 +8,7 @@ import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
   const {
-    state: { activeCategory, filter },
+    state: { activeCategory, filter, groupVisibility },
     dispatch,
   } = useContext(PickerContext);
 
@@ -44,18 +44,22 @@ const CategoriesNav = ({ emojiListRef }) => {
     current.scrollTop = category.offsetTop;
   };
 
+  console.log(groups, groupVisibility);
+
   return (
     <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
-      {groups.map(group => (
-        <button
-          key={group}
-          type="button"
-          className={cn(`icn-${group}`, {
-            active: activeCategory === group,
-          })}
-          data-name={group}
-        />
-      ))}
+      {groups.map(group =>
+        groupVisibility[group] === false ? null : (
+          <button
+            key={group}
+            type="button"
+            className={cn(`icn-${group}`, {
+              active: activeCategory === group,
+            })}
+            data-name={group}
+          />
+        )
+      )}
     </nav>
   );
 };

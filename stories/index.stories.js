@@ -51,6 +51,22 @@ storiesOf('EmojiPicker', module)
       </div>
     );
   })
+  .add('Excluded groups', () => {
+    const [isShown, setIsShown] = useState(true);
+
+    return (
+      <div>
+        <button onClick={() => setIsShown(!isShown)}>Toggle</button>
+        {isShown && (
+          <EmojiPicker
+            groupVisibility={{ activities: false }}
+            onEmojiClick={(e, em) => console.log(em)}
+            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+          />
+        )}
+      </div>
+    );
+  })
   .add('No Skin tone picker', () => {
     const [isShown, setIsShown] = useState(true);
 

@@ -72,6 +72,7 @@ const App = () => {
 | `disableSkinTonePicker` | `boolean`  | `false`       | No        | Disables the skin tone picker.                                                                          |
 | `pickerStyle`           | `string`   | `undefined`   | No        | Overrides style of the component.                                                                       |
 | `groupNames`            | `Object`   | `undefined`   | No        | Specifies alternative category names to use. See Internationalization section.                          |
+| `groupVisibility`       | `Object`   | `undefined`   | No        | Specifies group names to be disabled.                                                                   |
 | `native`                | `Boolean`  | `false`       | No        | Loads system emojis instead of Apple Emoji pngs                                                         |
 
 #### onEmojiClick Arguments
@@ -143,6 +144,7 @@ const App = () => {
   );
 };
 ```
+
 ## Internationalization
 
 The emoji names cannot be translated as they come from an external library, but it is possible to rename the categories.
@@ -160,6 +162,30 @@ To rename the categories, pass a prop called `groupNames` which contains an obje
     symbols: 'more stuff',
     flags: 'fun with flags',
     recently_used: 'did I really use those?!',
+  }}
+/>
+```
+
+The complete list of keys is:
+
+- smileys_people
+- animals_nature
+- food_drink
+- travel_places
+- activities
+- objects
+- symbols
+- flags
+- recently_used
+
+## Disabling categories
+
+It is possible to disable certain categories by setting the `groupVisibility` prop. The groupVisibility prop takes an object of group names, and a boolean indicating whether they should be shown or not. For example, if you'd like to disable the flags category, set it to false like this:
+
+```js
+<Picker
+  groupVisibility={{
+    flags: false,
   }}
 />
 ```

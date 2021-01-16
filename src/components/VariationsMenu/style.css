@@ -15,6 +15,12 @@
   display: flex;
   justify-content: space-evenly;
   list-style-type: none;
+  transition: transform 0.1s;
+  transform: translateY(-100%);
+}
+
+.emoji-picker-react .variation-list.visible {
+  transform: translateY(0);
 }
 
 .emoji-picker-react .variation-list button {

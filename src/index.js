@@ -32,7 +32,8 @@ const EmpojiPicker = ({
   disableSearchBar = false,
   disableSkinTonePicker = false,
   groupNames = {},
-  pickerStyle,
+  pickerStyle = {},
+  groupVisibility = {},
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -56,6 +57,7 @@ const EmpojiPicker = ({
     native,
     filterResult: null,
     groupNames: Object.assign(GROUP_NAMES_ENGLISH, groupNames),
+    groupVisibility,
   });
 
   const dispatch = (...props) => {
@@ -129,4 +131,6 @@ EmpojiPicker.propTypes = {
   disableSkinTonePicker: PropTypes.bool,
   groupNames: groupNamesPropType,
   native: PropTypes.bool,
+  pickerStyle: PropTypes.objectOf(PropTypes.string),
+  groupVisibility: PropTypes.objectOf(PropTypes.bool),
 };
