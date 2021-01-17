@@ -44,8 +44,6 @@ const CategoriesNav = ({ emojiListRef }) => {
     current.scrollTop = category.offsetTop;
   };
 
-  console.log(groups, groupVisibility);
-
   return (
     <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
       {groups.map(group =>
