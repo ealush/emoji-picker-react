@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useEffect,
   useState,
+  useRef,
 } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -98,8 +99,10 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
 
 const EmojiList = ({ emojiListRef }) => {
   const {
-    state: { filterResult, filter, groupNames },
+    state: { filterResult, filter, groupNames, activeCategory },
   } = useContext(PickerContext);
+  const activeCategoryRef = useRef(activeCategory);
+  const filterResultRef = useRef(filterResult);
 
   const [renderOne, setRenderOne] = useState(true);
 
@@ -122,7 +125,12 @@ const EmojiList = ({ emojiListRef }) => {
     }
   }, [renderOne]);
 
-  useIntersectionObserver(emojiListRef);
+  useIntersectionObserver(
+    emojiListRef,
+    activeCategoryRef,
+    filterResultRef,
+    renderOne
+  );
   useScrollUpOnFilterChange(filterResult, emojiListRef);
 
   const props = {

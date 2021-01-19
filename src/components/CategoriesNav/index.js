@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { PROPERTY_DATA_NAME } from '../../lib/constants';
@@ -7,6 +7,7 @@ import groups from '../../groups.json';
 import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
+  const refNav = useRef(null);
   const {
     state: { activeCategory, filter, groupVisibility },
     dispatch,
@@ -44,21 +45,64 @@ const CategoriesNav = ({ emojiListRef }) => {
     current.scrollTop = category.offsetTop;
   };
 
+  let $group;
+  let left = 0;
+  let index = 0;
+  let barOpacity = '0';
+
+  if (refNav && refNav.current) {
+    $group = refNav.current.querySelector(
+      `[${PROPERTY_DATA_NAME}="${activeCategory}"]`
+    );
+
+    if ($group) {
+      left =
+        ($group && $group.offsetLeft) || refNav.current.firstChild.offsetLeft;
+      barOpacity = '0'; // TODO: Set this to 1 with the next minor version
+    } else {
+      left = refNav.current.firstChild.offsetLeft;
+      barOpacity = '0';
+    }
+  }
+
   return (
-    <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
-      {groups.map(group =>
-        groupVisibility[group] === false ? null : (
-          <button
-            key={group}
-            type="button"
-            className={cn(`icn-${group}`, {
-              active: activeCategory === group,
-            })}
-            data-name={group}
-          />
-        )
-      )}
-    </nav>
+    <>
+      <nav
+        onClick={handleClick}
+        className={cn('emoji-categories', { inactive })}
+        ref={refNav}
+      >
+        {groups.map((group, i) => {
+          if (groupVisibility[group] === false) {
+            return null;
+          }
+          const active = activeCategory === group;
+
+          if (active) {
+            index = i;
+          }
+          return (
+            <button
+              key={group}
+              type="button"
+              className={cn(`icn-${group}`, {
+                active,
+              })}
+              data-name={group}
+            />
+          );
+        })}
+      </nav>
+      <div className="active-category-indicator-wrapper">
+        <div
+          className="active-category-indicator"
+          style={{
+            transform: `translateX(${Math.max(left + index / 2, left)}px)`,
+            opacity: barOpacity,
+          }}
+        ></div>
+      </div>
+    </>
   );
 };
 

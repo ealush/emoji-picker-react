@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import EmojiPicker from '../src';
 
+// eslint-disable-next-line
+const log = console.log;
+
 storiesOf('EmojiPicker', module)
   .add('EmojiPicker', () => {
     const [isShown, setIsShown] = useState(true);
@@ -12,7 +15,7 @@ storiesOf('EmojiPicker', module)
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
           <EmojiPicker
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -27,8 +30,8 @@ storiesOf('EmojiPicker', module)
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
           <EmojiPicker
-            pickerStyle={{ width: '500px', height: '800px' }}
-            onEmojiClick={(e, em) => console.log(em)}
+            pickerStyle={{ width: '800px', height: '800px' }}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -44,7 +47,7 @@ storiesOf('EmojiPicker', module)
         {isShown && (
           <EmojiPicker
             disableSearchBar={true}
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -60,7 +63,7 @@ storiesOf('EmojiPicker', module)
         {isShown && (
           <EmojiPicker
             groupVisibility={{ activities: false }}
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -76,7 +79,7 @@ storiesOf('EmojiPicker', module)
         {isShown && (
           <EmojiPicker
             disableSkinTonePicker={true}
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -95,7 +98,7 @@ storiesOf('EmojiPicker', module)
               recently_used: 'Used Recently!',
               activities: 'named_activities',
             }}
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />
         )}
@@ -110,7 +113,7 @@ storiesOf('EmojiPicker', module)
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
           <EmojiPicker
-            onEmojiClick={(e, em) => console.log(em)}
+            onEmojiClick={(e, em) => log(em)}
             native={true}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />

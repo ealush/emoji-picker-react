@@ -17,7 +17,8 @@
   z-index: 1;
 }
 
-.emoji-picker-react .emoji.has-skin-variation button:hover:before {
+.emoji-picker-react .emoji.has-skin-variation button:hover:before,
+.emoji-picker-react .emoji.has-skin-variation button:focus-visible:before {
   border-bottom: 4px solid rgba(0, 0, 0, 0.4);
 }
 
@@ -32,6 +33,7 @@
   margin: 0;
 }
 
-.emoji-picker-react .emoji button:hover {
+.emoji-picker-react .emoji button:hover,
+.emoji-picker-react .emoji button:focus-visible {
   background-color: currentColor;
 }

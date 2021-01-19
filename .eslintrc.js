@@ -19,6 +19,7 @@ module.exports = {
     DEFAULT_EMOJI_URL: true,
   },
   rules: {
+    'no-console': 2,
     indent: 0,
     quotes: 0,
     semi: ['error', 'always'],

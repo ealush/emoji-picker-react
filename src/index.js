@@ -102,7 +102,7 @@ const EmpojiPicker = ({
           <VariationsMenu closeVariations={closeVariations} />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             <RecentlyUsed emojiListRef={emojiListRef} />
-            <EmojiList emojiListRef={emojiListRef} />
+            <EmojiList emojiListRef={emojiListRef} key={state.filterResult} />
           </section>
         </div>
       </aside>

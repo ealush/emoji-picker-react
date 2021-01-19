@@ -57,10 +57,14 @@ const reducer = (state, { type, ...action }) => {
         },
       };
     case actionTypes.FILTER_SET:
+      return {
+        ...state,
+        activeCategory: null,
+        ...action,
+      };
     case actionTypes.ACTIVE_CATEGORY_SET:
       return {
         ...state,
-        activeActegory: null,
         ...action,
       };
     default:
