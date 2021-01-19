@@ -10,6 +10,22 @@
   transition: opacity 0.1s;
 }
 
+.emoji-picker-react .active-category-indicator {
+  position: relative;
+  width: 100%;
+}
+.emoji-picker-react .active-category-indicator .paint-bar {
+  background: rgb(160, 221, 221);
+  height: 3px;
+  width: 5px;
+  position: absolute;
+  bottom: 3px;
+  border-radius: 5px;
+  transition: 0.3s;
+  width: 30px;
+  left: -7px;
+}
+
 .emoji-picker-react .emoji-categories button.icn-activities {
   background-image: url(./svg/activities.svg);
 }

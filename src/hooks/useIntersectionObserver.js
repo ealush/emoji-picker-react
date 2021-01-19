@@ -4,19 +4,24 @@ import { PROPERTY_DATA_NAME } from '../lib/constants';
 import { actionTypes, PickerContext } from '../lib/reducer';
 import globalObject from '../lib/globalObject';
 
-const useIntersectionObserver = root => {
+const useIntersectionObserver = (
+  root,
+  activeCategoryRef,
+  filterResultRef,
+  renderOne
+) => {
   const observer = useRef(null);
 
-  const {
-    state: { filterResult, activeCategory },
-    dispatch,
-  } = useContext(PickerContext);
+  const { dispatch } = useContext(PickerContext);
 
   useEffect(() => {
+    const activeCategory = activeCategoryRef.current;
+
     if (
       typeof globalObject.IntersectionObserver !== 'undefined' &&
-      !observer.current &&
-      root.current
+      root.current &&
+      !filterResultRef.current &&
+      !renderOne
     ) {
       observer.current = new IntersectionObserver(
         entries => {
@@ -25,12 +30,7 @@ const useIntersectionObserver = root => {
             const id = target.getAttribute(PROPERTY_DATA_NAME);
 
             if (entry.intersectionRatio === 0) {
-              if (id === activeCategory) {
-                dispatch({
-                  type: actionTypes.ACTIVE_CATEGORY_SET,
-                  activeCategory: null,
-                });
-              } else if (id === GROUP_NAME_RECENTLY_USED) {
+              if (id === GROUP_NAME_RECENTLY_USED) {
                 const nextSibling = target.nextSibling;
 
                 if (nextSibling) {
@@ -59,17 +59,16 @@ const useIntersectionObserver = root => {
         }
       );
     }
+    if (observer.current) {
+      [...root.current.querySelectorAll('.emoji-group')].forEach(target => {
+        observer.current.observe(target);
+      });
 
-    observer.current.disconnect();
-
-    if (!root || !root.current) {
-      return;
+      return () => {
+        observer.current.disconnect();
+      };
     }
-
-    [...root.current.querySelectorAll('.emoji-group')].forEach(target => {
-      observer.current.observe(target);
-    });
-  }, [root.current, filterResult]);
+  }, [root.current, renderOne]);
 };
 
 export default useIntersectionObserver;

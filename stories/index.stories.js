@@ -27,7 +27,7 @@ storiesOf('EmojiPicker', module)
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
           <EmojiPicker
-            pickerStyle={{ width: '500px', height: '800px' }}
+            pickerStyle={{ width: '800px', height: '800px' }}
             onEmojiClick={(e, em) => console.log(em)}
             emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
           />

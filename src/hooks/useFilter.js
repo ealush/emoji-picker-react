@@ -66,7 +66,7 @@ const useFilter = () => {
       nextFilter = [
         {
           value,
-          terms: mappedSearchTerms[value[0]].filter(term =>
+          terms: (mappedSearchTerms[value[0]] || []).filter(term =>
             term.includes(value)
           ),
         },

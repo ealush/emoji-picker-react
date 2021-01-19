@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useEffect } from 'react';
+import React, { useReducer, useRef, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../lib/constants';
 import { PROPERTY_DATA_NAME, GROUP_NAMES_ENGLISH } from './lib/constants';
@@ -102,7 +102,7 @@ const EmpojiPicker = ({
           <VariationsMenu closeVariations={closeVariations} />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             <RecentlyUsed emojiListRef={emojiListRef} />
-            <EmojiList emojiListRef={emojiListRef} />
+            <EmojiList emojiListRef={emojiListRef} key={state.filterResult} />
           </section>
         </div>
       </aside>

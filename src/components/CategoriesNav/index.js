@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { PROPERTY_DATA_NAME } from '../../lib/constants';
@@ -7,6 +7,7 @@ import groups from '../../groups.json';
 import './style.css';
 
 const CategoriesNav = ({ emojiListRef }) => {
+  const refNav = useRef(null);
   const {
     state: { activeCategory, filter, groupVisibility },
     dispatch,
@@ -44,21 +45,62 @@ const CategoriesNav = ({ emojiListRef }) => {
     current.scrollTop = category.offsetTop;
   };
 
+  let $group;
+  let left = 0;
+  let index = 0;
+  let barDisplay = 'none';
+
+  if (refNav && refNav.current) {
+    $group = refNav.current.querySelector(
+      `[${PROPERTY_DATA_NAME}="${activeCategory}"]`
+    );
+
+    if ($group) {
+      left = ($group && $group.offsetLeft) || 0;
+      barDisplay = 'block';
+    } else {
+      barDisplay = 'none';
+    }
+  }
+
   return (
-    <nav onClick={handleClick} className={cn('emoji-categories', { inactive })}>
-      {groups.map(group =>
-        groupVisibility[group] === false ? null : (
-          <button
-            key={group}
-            type="button"
-            className={cn(`icn-${group}`, {
-              active: activeCategory === group,
-            })}
-            data-name={group}
-          />
-        )
-      )}
-    </nav>
+    <>
+      <nav
+        onClick={handleClick}
+        className={cn('emoji-categories', { inactive })}
+        ref={refNav}
+      >
+        {groups.map((group, i) => {
+          if (groupVisibility[group] === false) {
+            return null;
+          }
+          const active = activeCategory === group;
+
+          if (active) {
+            index = i;
+          }
+          return (
+            <button
+              key={group}
+              type="button"
+              className={cn(`icn-${group}`, {
+                active,
+              })}
+              data-name={group}
+            />
+          );
+        })}
+      </nav>
+      <div className="active-category-indicator">
+        <div
+          className="paint-bar"
+          style={{
+            transform: `translateX(${left + index / 2}px)`,
+            display: barDisplay,
+          }}
+        ></div>
+      </div>
+    </>
   );
 };
 
