@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import EmojiPicker from '../src';
 
+const CDN_URL =
+  'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@6.0.1/img/apple/64';
+
 // eslint-disable-next-line
 const log = console.log;
 
@@ -14,10 +17,7 @@ storiesOf('EmojiPicker', module)
       <div>
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
-          <EmojiPicker
-            onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
-          />
+          <EmojiPicker onEmojiClick={(e, em) => log(em)} emojiUrl={CDN_URL} />
         )}
       </div>
     );
@@ -32,7 +32,7 @@ storiesOf('EmojiPicker', module)
           <EmojiPicker
             pickerStyle={{ width: '800px', height: '800px' }}
             onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
@@ -48,7 +48,7 @@ storiesOf('EmojiPicker', module)
           <EmojiPicker
             disableSearchBar={true}
             onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
@@ -64,7 +64,7 @@ storiesOf('EmojiPicker', module)
           <EmojiPicker
             groupVisibility={{ activities: false }}
             onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
@@ -80,7 +80,7 @@ storiesOf('EmojiPicker', module)
           <EmojiPicker
             disableSkinTonePicker={true}
             onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
@@ -99,7 +99,7 @@ storiesOf('EmojiPicker', module)
               activities: 'named_activities',
             }}
             onEmojiClick={(e, em) => log(em)}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
@@ -115,7 +115,7 @@ storiesOf('EmojiPicker', module)
           <EmojiPicker
             onEmojiClick={(e, em) => log(em)}
             native={true}
-            emojiUrl="https://cdn.jsdelivr.net/gh/iamcal/emoji-data@master/img-apple-64"
+            emojiUrl={CDN_URL}
           />
         )}
       </div>
