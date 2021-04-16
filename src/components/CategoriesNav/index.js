@@ -58,7 +58,7 @@ const CategoriesNav = ({ emojiListRef }) => {
     if ($group) {
       left =
         ($group && $group.offsetLeft) || refNav.current.firstChild.offsetLeft;
-      barOpacity = '0'; // TODO: Set this to 1 with the next minor version
+      barOpacity = '1';
     } else {
       left = refNav.current.firstChild.offsetLeft;
       barOpacity = '0';
@@ -97,7 +97,7 @@ const CategoriesNav = ({ emojiListRef }) => {
         <div
           className="active-category-indicator"
           style={{
-            transform: `translateX(${Math.max(left + index / 2, left)}px)`,
+            transform: `translateX(${left - 1}px)`,
             opacity: barOpacity,
           }}
         ></div>
