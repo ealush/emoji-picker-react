@@ -20,6 +20,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
       filterResult,
       failedToLoad = {},
       native,
+      groupVisibility,
     },
     dispatch,
     onEmojiClick,
@@ -27,7 +28,11 @@ const RecentlyUsed = ({ emojiListRef }) => {
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
 
-  if (!recentlyUsed.length || filterResult) {
+  if (
+    !recentlyUsed.length ||
+    filterResult ||
+    groupVisibility[GROUP_NAME_RECENTLY_USED] === false
+  ) {
     return null;
   }
 
