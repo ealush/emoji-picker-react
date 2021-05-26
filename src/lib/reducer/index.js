@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { getRecentlyUsed } from '../recentlyUsed';
 
 export const PickerContext = createContext({});
 
@@ -10,6 +11,7 @@ export const actionTypes = {
   GROUP_SEEN_SET: 'GROUP_SEEN_SET',
   EMOJI_NOT_LOADED_SET: 'EMOJI_NOT_LOADED_SET',
   FILTER_SET: 'FILTER_SET',
+  UPDATE_RECENTLY_USED: 'UPDATE_RECENTLY_USED',
 };
 
 const reducer = (state, { type, ...action }) => {
@@ -66,6 +68,11 @@ const reducer = (state, { type, ...action }) => {
       return {
         ...state,
         ...action,
+      };
+	case actionTypes.UPDATE_RECENTLY_USED:
+      return {
+        ...state,
+		recentlyUsed: getRecentlyUsed(),
       };
     default:
       return state;

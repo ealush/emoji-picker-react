@@ -82,7 +82,7 @@ const EmpojiPicker = ({
 
   return (
     <PickerContext.Provider
-      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef) }}
+      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef, dispatch) }}
     >
       <aside
         className="emoji-picker-react"
