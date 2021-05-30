@@ -11,7 +11,7 @@ import {
   PASTEL_BLUE,
   PASTEL_RED,
   PASTEL_GREEN,
-  PASTEL_PURPULE,
+  PASTEL_PURPLE,
   PASTEL_YELLOW,
 } from './colors';
 import './style.css';
@@ -20,7 +20,7 @@ const pastels = [
   PASTEL_BLUE,
   PASTEL_RED,
   PASTEL_GREEN,
-  PASTEL_PURPULE,
+  PASTEL_PURPLE,
   PASTEL_YELLOW,
 ];
 const bgColor = order => pastels[order % pastels.length];
@@ -35,7 +35,7 @@ const Emoji = ({
   hidden,
   activeSkinTone,
   openVariationMenu,
-  variationMenuOpen,
+  variationMenuOpenRef,
   handleMouseEnter,
   handleMouseLeave,
   onEmojiClick,
@@ -72,7 +72,7 @@ const Emoji = ({
   };
 
   const handleEmojiClick = e => {
-    if (variationMenuOpen) {
+    if (variationMenuOpenRef.current) {
       return;
     }
 
@@ -113,7 +113,7 @@ Emoji.propTypes = {
   hidden: PropTypes.bool,
   activeSkinTone: PropTypes.string,
   openVariationMenu: PropTypes.func,
-  variationMenuOpen: PropTypes.bool,
+  variationMenuOpenRef: PropTypes.shape({ current: PropTypes.bool }),
   handleMouseEnter: PropTypes.func,
   handleMouseLeave: PropTypes.func,
   onEmojiClick: PropTypes.func,

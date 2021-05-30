@@ -37,7 +37,12 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
     onEmojiClick,
   } = useContext(PickerContext);
 
+  const variationMenuOpenRef = useRef(!!variationMenu);
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
+
+  useEffect(() => {
+    variationMenuOpenRef.current = !!variationMenu;
+  }, [variationMenu]);
 
   const shouldLoad =
     preload ||
@@ -46,8 +51,6 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       filterResult ||
       typeof globalObject.IntersectionObserver !== 'function'
     );
-
-  const variationMenuOpen = !!variationMenu;
 
   const openVariationMenu = emoji =>
     dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
@@ -77,7 +80,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
             openVariationMenu={openVariationMenu}
             activeSkinTone={activeSkinTone}
             handleMouseLeave={unsetEmojiName}
-            variationMenuOpen={variationMenuOpen}
+            variationMenuOpenRef={variationMenuOpenRef}
             handleMouseEnter={() =>
               setEmojiName(emoji[EMOJI_PROPERTY_NAME][0], emojiListRef)
             }

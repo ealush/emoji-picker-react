@@ -23,10 +23,13 @@ export const setRecentlyUsed = ({ unified, originalUnified }) => {
     return;
   }
 
-  const skinVariation = unified.slice(
-    originalUnified.length + 1,
-    unified.length
-  );
+  const unifiedParts = unified.split('-');
+
+  let skinVariation = '';
+
+  if (unified !== originalUnified && unifiedParts.length > 1) {
+    skinVariation = unifiedParts[1];
+  }
 
   const ruList = [
     {
