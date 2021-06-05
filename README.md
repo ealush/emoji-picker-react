@@ -70,7 +70,7 @@ const App = () => {
 | `disableAutoFocus`      | `boolean`  | `false`       | No        | Disables autofocus of the search bar. Useful for safari-iphone devices which zoom in to focused inputs. |
 | `disableSearchBar`      | `boolean`  | `false`       | No        | Disables the search bar and the skin tone picker altogether.                                            |
 | `disableSkinTonePicker` | `boolean`  | `false`       | No        | Disables the skin tone picker.                                                                          |
-| `pickerStyle`           | `string`   | `undefined`   | No        | Overrides style of the component.                                                                       |
+| `pickerStyle`           | `Object`   | `undefined`   | No        | Overrides style of the component.                                                                       |
 | `groupNames`            | `Object`   | `undefined`   | No        | Specifies alternative category names to use. See Internationalization section.                          |
 | `groupVisibility`       | `Object`   | `undefined`   | No        | Specifies group names to be disabled.                                                                   |
 | `native`                | `Boolean`  | `false`       | No        | Loads system emojis instead of Apple Emoji pngs                                                         |
