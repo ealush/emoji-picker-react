@@ -72,7 +72,7 @@ const Emoji = ({
   };
 
   const handleEmojiClick = e => {
-    if (variationMenuOpenRef.current) {
+    if (variationMenuOpenRef && variationMenuOpenRef.current) {
       return;
     }
 

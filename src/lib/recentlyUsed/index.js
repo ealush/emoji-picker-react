@@ -37,7 +37,7 @@ export const setRecentlyUsed = ({ unified, originalUnified }) => {
       ...(skinVariation && { [EMOJI_PROPERTY_SKIN_VARIATIONS]: skinVariation }),
     },
     ...getRecentlyUsed().filter(
-      item => item[EMOJI_PROPERTY_UNIFIED] !== unified
+      item => item[EMOJI_PROPERTY_UNIFIED] !== originalUnified
     ),
   ];
 
