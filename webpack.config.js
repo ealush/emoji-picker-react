@@ -12,7 +12,6 @@ module.exports = {
   externals: {
     react: 'react',
   },
-  target: 'node',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'index.js',
