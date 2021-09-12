@@ -208,24 +208,12 @@ In general, UI customizations can be done directly via CSS. Descriptive classnam
 
 ## How to use in vite project
 
-### step1. Install rollup-plugin-node-polyfills to polyfill
+For reference, if you only need to shim global, you can add
 
-```shell
-$ npm install --save-dev rollup-plugin-node-polyfills
+```html
+<script>
+  window.global = window;
+</script>
 ```
 
-```shell
-$ yarn add rollup-plugin-node-polyfills -D
-```
-
-### step2. Configure vite.config.ts
-
-```ts
-// vite.config.ts
-import nodePolyfills from 'rollup-plugin-node-polyfills';
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [nodePolyfills({ include: ['emoji-picker-react'] })],
-});
-```
+to your index.html
