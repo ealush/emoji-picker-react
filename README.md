@@ -205,3 +205,27 @@ The complete list of keys is:
 ## UI Customizations
 
 In general, UI customizations can be done directly via CSS. Descriptive classnames were added in order for you to be able to easily target whatever it is you want to change, and the markup is guaranteed to stay unchanged until the next major version (4).
+
+## How to use in vite project
+
+### step1. Install rollup-plugin-node-polyfills to polyfill
+
+```shell
+$ npm install --save-dev rollup-plugin-node-polyfills
+```
+
+```shell
+$ yarn add rollup-plugin-node-polyfills -D
+```
+
+### step2. Configure vite.config.ts
+
+```ts
+// vite.config.ts
+import nodePolyfills from 'rollup-plugin-node-polyfills';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [nodePolyfills({ include: ['emoji-picker-react'] })],
+});
+```
