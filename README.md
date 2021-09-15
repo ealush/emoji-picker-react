@@ -205,3 +205,17 @@ The complete list of keys is:
 ## UI Customizations
 
 In general, UI customizations can be done directly via CSS. Descriptive classnames were added in order for you to be able to easily target whatever it is you want to change, and the markup is guaranteed to stay unchanged until the next major version (4).
+
+# Troubleshooting
+
+## How to use in Vite project
+
+For reference, if you only need to shim global, you can add
+
+```html
+<script>
+  window.global = window;
+</script>
+```
+
+to your index.html
