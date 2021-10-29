@@ -82,7 +82,7 @@ const Emoji = ({
   return (
     <li
       style={style}
-      className={cn('emoji', {
+      className={cn('__emoji_list_item', {
         'has-skin-variation': hasSkinVariation && openVariationMenu,
       })}
     >
