@@ -1,7 +1,7 @@
-import { useEffect, useContext, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { PROPERTY_DATA_NAME } from '../lib/constants';
-import { actionTypes, PickerContext } from '../lib/reducer';
 import globalObject from '../lib/globalObject';
+import { useActiveCategory, useSetSeenGroups } from '../PickerContext';
 
 const useIntersectionObserver = (
   root,
@@ -10,11 +10,11 @@ const useIntersectionObserver = (
   renderOne
 ) => {
   const observer = useRef(null);
-
-  const { dispatch } = useContext(PickerContext);
+  const [, setActiveCategory] = useActiveCategory();
+  const setSeenGroups = useSetSeenGroups();
 
   useEffect(() => {
-    const activeCategory = activeCategoryRef.current;
+    const refActiveCategory = activeCategoryRef.current;
 
     if (
       globalObject.IntersectionObserver !== undefined &&
@@ -30,15 +30,9 @@ const useIntersectionObserver = (
             if (entry.intersectionRatio === 0) {
               return;
             }
-            dispatch({
-              type: actionTypes.GROUP_SEEN_SET,
-              group: id,
-            });
-            if (!activeCategory) {
-              dispatch({
-                type: actionTypes.ACTIVE_CATEGORY_SET,
-                activeCategory: id,
-              });
+            setSeenGroups(id);
+            if (!refActiveCategory) {
+              setActiveCategory(id);
             }
           });
         },

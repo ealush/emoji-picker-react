@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cn from 'classnames';
 import PropTypes from 'prop-types';
 import skinTones from '../../skinTones';
@@ -6,17 +6,24 @@ import {
   EMOJI_PROPERTY_UNIFIED,
   EMOJI_PROPERTY_SKIN_VARIATIONS,
 } from '../../../lib/constants';
-import { PickerContext } from '../../lib/reducer';
 import EmojiImg from '../EmojiImg';
 import './style.css';
+import {
+  useActiveSkinTone,
+  useCloseVariationMenu,
+  useConfig,
+  useOnEmojiClick,
+  useVariationMenuValue,
+} from '../../PickerContext';
 
-const VariationsMenu = ({ closeVariations }) => {
+const VariationsMenu = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const closeVariations = useCloseVariationMenu();
+  const variationMenu = useVariationMenuValue();
+  const activeSkinTone = useActiveSkinTone();
 
-  const {
-    state: { variationMenu, activeSkinTone, native },
-    onEmojiClick,
-  } = useContext(PickerContext);
+  const onEmojiClick = useOnEmojiClick();
+  const config = useConfig();
 
   useEffect(() => {
     if (variationMenu && !showMenu) {
@@ -56,7 +63,7 @@ const VariationsMenu = ({ closeVariations }) => {
                 onClick={handleClick}
                 onMouseDown={e => e.stopPropagation()}
               >
-                <EmojiImg native={native} unified={unified} />
+                <EmojiImg native={config.native} unified={unified} />
               </button>
             </li>
           );

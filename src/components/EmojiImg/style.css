@@ -12,4 +12,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
+    Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
 }

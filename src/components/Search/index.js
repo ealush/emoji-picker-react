@@ -1,18 +1,27 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import useFilter from '../../hooks/useFilter';
 import './style.css';
+import SkinTones from '../SkinTones';
+import { useConfig } from '../../PickerContext';
 
-const Search = ({ disableAutoFocus }) => (
-  <input
-    className="emoji-search"
-    onChange={useFilter()}
-    autoFocus={!disableAutoFocus}
-  />
-);
+function Search() {
+  const config = useConfig();
+  const onChange = useFilter();
 
-Search.propTypes = {
-  disableAutoFocus: PropTypes.bool,
-};
+  if (config.disableSearchBar) {
+    return null;
+  }
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <input
+        className="emoji-search"
+        onChange={onChange}
+        autoFocus={!config.disableAutoFocus}
+      />
+      {config.disableSkinTonePicker ? null : <SkinTones />}
+    </div>
+  );
+}
 
 export default Search;

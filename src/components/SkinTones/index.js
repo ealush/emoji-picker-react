@@ -1,6 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import skinTones from '../../skinTones';
-import { PickerContext, actionTypes } from '../../lib/reducer';
+import {
+  useActiveSkinTone,
+  useSetActiveSkinTone,
+  useSkinToneSpreadValue,
+  useToggleSpreadSkinTones,
+} from '../../PickerContext';
 import {
   SKIN_TONE_NEUTRAL,
   SKIN_TONE_LIGHT,
@@ -23,23 +28,13 @@ export {
 };
 
 const SkinTones = () => {
-  const {
-    state: { skinTonesSpread, activeSkinTone },
-    dispatch,
-  } = useContext(PickerContext);
+  const toggleSkinTonesSpread = useToggleSpreadSkinTones();
+  const skinToneSpread = useSkinToneSpreadValue();
+  const setActiveSkinTone = useSetActiveSkinTone();
+  const activeSkinTone = useActiveSkinTone();
 
   const handleClick = () => {
-    dispatch({
-      type: actionTypes.SKIN_TONES_SPREAD,
-      spread: !skinTonesSpread,
-    });
-  };
-
-  const setActiveSkinTone = ({ target: { value } }) => {
-    dispatch({
-      type: actionTypes.ACTIVE_SKIN_TONE_SET,
-      skinTone: value,
-    });
+    toggleSkinTonesSpread();
   };
 
   return (
@@ -52,15 +47,15 @@ const SkinTones = () => {
             key={tone}
             className={`t${tone}`}
             style={{
-              transform: `translateX(-${
-                skinTonesSpread ? i * 20 : 0
-              }px) scale(${isActive ? '1.5' : 1})`,
+              transform: `translateX(-${skinToneSpread ? i * 20 : 0}px) scale(${
+                isActive ? '1.5' : 1
+              })`,
               zIndex: isActive ? 2 : 1,
             }}
           >
             <input
               type="radio"
-              onChange={setActiveSkinTone}
+              onChange={({ target: { value } }) => setActiveSkinTone(value)}
               name="skin-tone"
               value={tone}
               id={`tone_${tone}`}

@@ -1,9 +1,9 @@
-import { useContext } from 'react';
 import reduceBatch from '../../lib/reduceBatch';
 import { EMOJI_PROPERTY_GROUP } from '../../lib/constants';
 import emojiStorage from '../../lib/emojiStorage';
-import { PickerContext, actionTypes } from '../lib/reducer';
+
 import keywordsPromise from '../../lib/initSearch';
+import { useFilterValue, useSetFilter } from '../PickerContext';
 
 let searchTerms, mappedSearchTerms;
 
@@ -13,10 +13,8 @@ keywordsPromise.then(res => {
 });
 
 const useFilter = () => {
-  const {
-    state: { filter = [] },
-    dispatch,
-  } = useContext(PickerContext);
+  const filter = useFilterValue();
+  const setFilter = useSetFilter();
 
   const handleChange = ({ target: { value } }) => {
     const prevKey = filter[filter.length - 1];
@@ -77,8 +75,7 @@ const useFilter = () => {
     const filterPresent = !!(last && last.value);
 
     if (!filterPresent) {
-      dispatch({
-        type: actionTypes.FILTER_SET,
+      setFilter({
         filter: nextFilter,
         filterResult: null,
       });
@@ -101,8 +98,7 @@ const useFilter = () => {
       },
       {}
     ).then(filterResult => {
-      dispatch({
-        type: actionTypes.FILTER_SET,
+      setFilter({
         filter: nextFilter,
         filterResult,
       });

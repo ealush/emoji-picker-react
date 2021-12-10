@@ -1,17 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import emojiSrc from '../../lib/emojiSrc';
-import { actionTypes } from '../../lib/reducer';
 import './style.css';
+import { useSetMissingEmoji } from '../../PickerContext';
 
-const handleError = (unified, dispatch = Function.prototype) => {
-  dispatch({
-    type: actionTypes.EMOJI_NOT_LOADED_SET,
-    unified,
-  });
-};
-
-const EmojiImg = ({ unified, dispatch, shouldLoad = true, native = false }) => {
+const EmojiImg = ({ unified, shouldLoad = true, native = false }) => {
   return native ? (
     <div className="native">
       {unified
@@ -21,19 +14,31 @@ const EmojiImg = ({ unified, dispatch, shouldLoad = true, native = false }) => {
         .join('')}
     </div>
   ) : (
-    <img
-      className="emoji-img"
-      onError={() => handleError(unified, dispatch)}
-      {...(shouldLoad && emojiSrc(unified))}
-    />
+    <Img shouldLoad={shouldLoad} unified={unified} />
   );
 };
 
+function Img({ unified, shouldLoad }) {
+  const setMissingEmoji = useSetMissingEmoji();
+  const src = emojiSrc(unified);
+  return (
+    <img
+      className="emoji-img"
+      onError={() => setMissingEmoji(unified)}
+      {...(shouldLoad && src)}
+    />
+  );
+}
+
 export default EmojiImg;
+
+Img.propTypes = {
+  unified: PropTypes.string,
+  shouldLoad: PropTypes.bool,
+};
 
 EmojiImg.propTypes = {
   unified: PropTypes.string,
   shouldLoad: PropTypes.bool,
-  dispatch: PropTypes.func,
   native: PropTypes.bool,
 };

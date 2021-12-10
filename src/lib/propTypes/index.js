@@ -24,3 +24,15 @@ export const groupNamesPropType = PropTypes.shape({
   flags: PropTypes.string,
   recently_used: PropTypes.string,
 });
+
+export const configPropTypes = PropTypes.shape({
+  emojiUrl: PropTypes.string,
+  preload: PropTypes.bool,
+  skinTone: PropTypes.string,
+  groupNames: groupNamesPropType,
+  native: PropTypes.bool,
+  groupVisibility: PropTypes.objectOf(PropTypes.bool),
+  disableAutoFocus: PropTypes.bool,
+  disableSearchBar: PropTypes.bool,
+  disableSkinTonePicker: PropTypes.bool,
+});

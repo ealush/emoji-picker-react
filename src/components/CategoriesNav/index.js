@@ -1,20 +1,25 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import { PROPERTY_DATA_NAME } from '../../lib/constants';
-import { actionTypes, PickerContext } from '../../lib/reducer';
+
 import groups from '../../groups.json';
 import './style.css';
+import {
+  useActiveCategory,
+  useConfig,
+  useFilterValue,
+  useSetSeenGroups,
+} from '../../PickerContext';
 
 const CategoriesNav = ({ emojiListRef }) => {
   const refNav = useRef(null);
-  const {
-    state: { activeCategory, filter, groupVisibility },
-    dispatch,
-  } = useContext(PickerContext);
+  const setSeenGroups = useSetSeenGroups();
+  const filter = useFilterValue();
+  const { groupVisibility } = useConfig();
+  const [activeCategory, setActiveCategory] = useActiveCategory();
 
   let inactive = false;
-
   if (filter && filter.length) {
     inactive = true;
   }
@@ -30,14 +35,9 @@ const CategoriesNav = ({ emojiListRef }) => {
       return;
     }
 
-    dispatch({
-      type: actionTypes.ACTIVE_CATEGORY_SET,
-      activeCategory: id,
-    });
-    dispatch({
-      type: actionTypes.GROUP_SEEN_SET,
-      group: id,
-    });
+    setActiveCategory(id);
+
+    setSeenGroups(id);
 
     const { current } = emojiListRef;
     const category = current.querySelector(`[${PROPERTY_DATA_NAME}="${id}"]`);
@@ -58,7 +58,7 @@ const CategoriesNav = ({ emojiListRef }) => {
     if ($group) {
       left =
         ($group && $group.offsetLeft) || refNav.current.firstChild.offsetLeft;
-      barOpacity = '0'; // TODO: Set this to 1 with the next minor version
+      barOpacity = '1';
     } else {
       left = refNav.current.firstChild.offsetLeft;
       barOpacity = '0';
@@ -99,6 +99,11 @@ const CategoriesNav = ({ emojiListRef }) => {
           style={{
             transform: `translateX(${Math.max(left + index / 2, left)}px)`,
             opacity: barOpacity,
+            ...(inactive && {
+              display: 'none',
+              opacity: '0',
+              transform: 'translateX(0)',
+            }),
           }}
         ></div>
       </div>

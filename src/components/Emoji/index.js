@@ -40,7 +40,6 @@ const Emoji = ({
   handleMouseLeave,
   onEmojiClick,
   index,
-  dispatch,
   native = false,
 }) => {
   const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
@@ -94,12 +93,7 @@ const Emoji = ({
         type="button"
         onClick={handleEmojiClick}
       >
-        <EmojiImg
-          unified={unified}
-          shouldLoad={shouldLoad}
-          dispatch={dispatch}
-          native={native}
-        />
+        <EmojiImg unified={unified} shouldLoad={shouldLoad} native={native} />
       </button>
     </li>
   );
@@ -118,6 +112,5 @@ Emoji.propTypes = {
   handleMouseLeave: PropTypes.func,
   onEmojiClick: PropTypes.func,
   index: PropTypes.number,
-  dispatch: PropTypes.func,
   native: PropTypes.bool,
 };

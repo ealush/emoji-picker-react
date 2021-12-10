@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import {
   EMOJI_PROPERTY_NAME,
@@ -8,30 +8,29 @@ import {
 } from '../../../lib/constants';
 
 import emojiStorage from '../../../lib/emojiStorage';
-import { PickerContext } from '../../lib/reducer';
 import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
+import {
+  useConfig,
+  useFilterResult,
+  useMissingEmojis,
+  useOnEmojiClick,
+  useRecentlyUsed,
+} from '../../PickerContext';
 
 const RecentlyUsed = ({ emojiListRef }) => {
-  const {
-    state: {
-      recentlyUsed,
-      groupNames,
-      filterResult,
-      failedToLoad = {},
-      native,
-      groupVisibility,
-    },
-    dispatch,
-    onEmojiClick,
-  } = useContext(PickerContext);
+  const filterResult = useFilterResult();
+  const missingEmoji = useMissingEmojis();
+  const onEmojiClick = useOnEmojiClick();
+  const config = useConfig();
+  const recentlyUsed = useRecentlyUsed();
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
 
   if (
     !recentlyUsed.length ||
     filterResult ||
-    groupVisibility[GROUP_NAME_RECENTLY_USED] === false
+    config.groupVisibility[GROUP_NAME_RECENTLY_USED] === false
   ) {
     return null;
   }
@@ -39,14 +38,15 @@ const RecentlyUsed = ({ emojiListRef }) => {
   return (
     <ul
       className="emoji-group"
-      data-display-name={groupNames[GROUP_NAME_RECENTLY_USED]}
+      data-display-name={config.groupNames[GROUP_NAME_RECENTLY_USED]}
+      data-name={GROUP_NAME_RECENTLY_USED}
     >
       {recentlyUsed.map((item, index) => {
         const unified = item[EMOJI_PROPERTY_UNIFIED];
 
         const emoji = emojiStorage.emojis[unified];
 
-        if (failedToLoad[unified] || !emoji) {
+        if (missingEmoji[unified] || !emoji) {
           return null;
         }
 
@@ -58,13 +58,12 @@ const RecentlyUsed = ({ emojiListRef }) => {
               activeSkinTone: item[EMOJI_PROPERTY_SKIN_VARIATIONS],
             })}
             index={index}
-            native={native}
+            native={config.native}
             handleMouseLeave={unsetEmojiName}
             onEmojiClick={onEmojiClick}
             handleMouseEnter={() =>
               setEmojiName(emoji[EMOJI_PROPERTY_NAME][0], emojiListRef)
             }
-            dispatch={dispatch}
             shouldLoad
           />
         );

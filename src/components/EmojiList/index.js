@@ -1,5 +1,4 @@
 import React, {
-  useContext,
   useMemo,
   useCallback,
   useEffect,
@@ -16,26 +15,32 @@ import emojiStorage from '../../../lib/emojiStorage';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
 import groups from '../../groups.json';
-import { PickerContext, actionTypes } from '../../lib/reducer';
 import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
 import './style.css';
 import { groupNamesPropType } from '../../lib/propTypes';
+import {
+  useActiveCategory,
+  useActiveSkinTone,
+  useConfig,
+  useFilterResult,
+  useFilterValue,
+  useMissingEmojis,
+  useOnEmojiClick,
+  useOpenVariationMenu,
+  useSeenGroups,
+  useVariationMenuValue,
+} from '../../PickerContext';
 
 const createEmojiList = (name, { emojiListRef, searchTerm }) => {
-  const {
-    state: {
-      activeSkinTone,
-      filterResult,
-      seenGroups = {},
-      variationMenu,
-      failedToLoad = null,
-      preload,
-      native,
-    },
-    dispatch,
-    onEmojiClick,
-  } = useContext(PickerContext);
+  const filterResult = useFilterResult();
+  const missingEmoji = useMissingEmojis();
+  const openVariationMenu = useOpenVariationMenu();
+  const variationMenu = useVariationMenuValue();
+  const activeSkinTone = useActiveSkinTone();
+  const onEmojiClick = useOnEmojiClick();
+  const config = useConfig();
+  const seenGroups = useSeenGroups();
 
   const variationMenuOpenRef = useRef(!!variationMenu);
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
@@ -45,15 +50,12 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
   }, [variationMenu]);
 
   const shouldLoad =
-    preload ||
+    config.preload ||
     !!(
       seenGroups[name] ||
       filterResult ||
       typeof globalObject.IntersectionObserver !== 'function'
     );
-
-  const openVariationMenu = emoji =>
-    dispatch({ type: actionTypes.VARIATION_MENU_SET, emoji });
 
   return useMemo(() => {
     const listToUse = filterResult
@@ -62,7 +64,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
 
     return listToUse.reduce(
       (accumulator, emojiName, index) => {
-        if (failedToLoad && failedToLoad[emojiName]) {
+        if (missingEmoji && missingEmoji[emojiName]) {
           return accumulator;
         }
 
@@ -76,7 +78,6 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
         accumulator.list.push(
           <Emoji
             emoji={emoji}
-            dispatch={dispatch}
             openVariationMenu={openVariationMenu}
             activeSkinTone={activeSkinTone}
             handleMouseLeave={unsetEmojiName}
@@ -89,7 +90,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
             onEmojiClick={onEmojiClick}
             index={index}
             key={emoji[EMOJI_PROPERTY_UNIFIED]}
-            native={native}
+            native={config.native}
           />
         );
 
@@ -97,13 +98,14 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       },
       { list: [], shown: false }
     );
-  }, [activeSkinTone, searchTerm, shouldLoad, failedToLoad, native]);
+  }, [activeSkinTone, searchTerm, shouldLoad, missingEmoji, config.native]);
 };
 
 const EmojiList = ({ emojiListRef }) => {
-  const {
-    state: { filterResult, filter, groupNames, activeCategory },
-  } = useContext(PickerContext);
+  const [activeCategory] = useActiveCategory();
+  const { groupNames } = useConfig();
+  const filterResult = useFilterResult();
+  const filter = useFilterValue();
   const activeCategoryRef = useRef(activeCategory);
   const filterResultRef = useRef(filterResult);
 
@@ -159,9 +161,7 @@ const ListRender = React.memo(function ListRender({
   emojiListRef,
   groupNames,
 }) {
-  const {
-    state: { groupVisibility },
-  } = useContext(PickerContext);
+  const { groupVisibility } = useConfig();
 
   if (groupVisibility[name] === false) {
     return null;

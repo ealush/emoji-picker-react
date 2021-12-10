@@ -166,7 +166,7 @@ aside.emoji-picker-react {
     flex-direction: column;
     height: 320px;
     width: 280px;
-    font-family: sans-serif;
+    font-family: font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", Times, Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
     border: 1px solid #efefef;
     border-radius: 5px;
     box-sizing: border-box;
