@@ -4,7 +4,7 @@ import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import clickHandler from './lib/clickHandler';
 import { getRecentlyUsed } from './lib/recentlyUsed';
 import { PickerContextProvider, useCloseVariationMenu } from './PickerContext';
-import SkinTones, {
+import {
   SKIN_TONE_NEUTRAL,
   SKIN_TONE_LIGHT,
   SKIN_TONE_MEDIUM_LIGHT,
@@ -49,7 +49,7 @@ const EmojiPicker = ({
   return (
     <PickerContextProvider
       config={{
-        activeSkinTone: skinTone,
+        skinTone,
         emojiUrl,
         preload,
         native,

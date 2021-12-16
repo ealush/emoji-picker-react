@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { storiesOf } from '@storybook/react';
-import EmojiPicker from '../src';
+import EmojiPicker, { SKIN_TONE_MEDIUM_DARK } from '../src';
 
 const CDN_URL =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@6.0.1/img/apple/64';
@@ -18,6 +18,22 @@ storiesOf('EmojiPicker', module)
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
           <EmojiPicker onEmojiClick={(e, em) => log(em)} emojiUrl={CDN_URL} />
+        )}
+      </div>
+    );
+  })
+  .add('Alternative Default Skin Tone', () => {
+    const [isShown, setIsShown] = useState(true);
+
+    return (
+      <div>
+        <button onClick={() => setIsShown(!isShown)}>Toggle</button>
+        {isShown && (
+          <EmojiPicker
+            skinTone={SKIN_TONE_MEDIUM_DARK}
+            onEmojiClick={(e, em) => log(em)}
+            emojiUrl={CDN_URL}
+          />
         )}
       </div>
     );
