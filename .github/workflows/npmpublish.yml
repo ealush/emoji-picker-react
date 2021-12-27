@@ -8,23 +8,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 12
-      - run: npm ci
-      - run: npm run build
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+        working-directory: packages/emoji-picker-react
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
       - run: npm publish
+        working-directory: packages/emoji-picker-react
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
