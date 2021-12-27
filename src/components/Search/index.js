@@ -1,10 +1,13 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-import useFilter from '../../hooks/useFilter';
-import './style.css';
-import SkinTones from '../SkinTones';
-import { useConfig } from '../../PickerContext';
 
-function Search() {
+import useFilter from '../../hooks/useFilter';
+import { useConfig } from '../../PickerContext';
+import SkinTones from '../SkinTones';
+
+import './style.css';
+
+function Search({ placeholder = 'Search' }) {
   const config = useConfig();
   const onChange = useFilter();
 
@@ -15,6 +18,7 @@ function Search() {
   return (
     <div style={{ position: 'relative' }}>
       <input
+        placeholder={placeholder}
         className="emoji-search"
         onChange={onChange}
         autoFocus={!config.disableAutoFocus}
@@ -25,3 +29,7 @@ function Search() {
 }
 
 export default Search;
+
+Search.propTypes = {
+  placeholder: PropTypes.string,
+};

@@ -1,24 +1,23 @@
+import PropTypes from 'prop-types';
 import React, {
-  useMemo,
   useCallback,
   useEffect,
-  useState,
+  useMemo,
   useRef,
+  useState,
 } from 'react';
-import PropTypes from 'prop-types';
+
 import {
-  EMOJI_PROPERTY_UNIFIED,
   EMOJI_PROPERTY_NAME,
+  EMOJI_PROPERTY_UNIFIED,
 } from '../../../lib/constants';
-import globalObject from '../../lib/globalObject';
 import emojiStorage from '../../../lib/emojiStorage';
+import groups from '../../groups.json';
 import useIntersectionObserver from '../../hooks/useIntersectionObserver';
 import useScrollUpOnFilterChange from '../../hooks/useScrollUpOnFilterChange';
-import groups from '../../groups.json';
-import setEmojiName from '../../lib/setEmojiName';
-import Emoji from '../Emoji';
-import './style.css';
+import globalObject from '../../lib/globalObject';
 import { groupNamesPropType } from '../../lib/propTypes';
+import setEmojiName from '../../lib/setEmojiName';
 import {
   useActiveCategory,
   useActiveSkinTone,
@@ -31,6 +30,9 @@ import {
   useSeenGroups,
   useVariationMenuValue,
 } from '../../PickerContext';
+import Emoji from '../Emoji';
+
+import './style.css';
 
 const createEmojiList = (name, { emojiListRef, searchTerm }) => {
   const filterResult = useFilterResult();

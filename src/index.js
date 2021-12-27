@@ -1,24 +1,26 @@
-import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { GROUP_NAMES_ENGLISH } from './lib/constants';
-import clickHandler from './lib/clickHandler';
-import { getRecentlyUsed } from './lib/recentlyUsed';
-import { PickerContextProvider, useCloseVariationMenu } from './PickerContext';
-import SkinTones, {
-  SKIN_TONE_NEUTRAL,
-  SKIN_TONE_LIGHT,
-  SKIN_TONE_MEDIUM_LIGHT,
-  SKIN_TONE_MEDIUM,
-  SKIN_TONE_MEDIUM_DARK,
-  SKIN_TONE_DARK,
-} from './components/SkinTones';
-import VariationsMenu from './components/VariationsMenu';
+import React, { useEffect, useRef } from 'react';
+
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
-import Search from './components/Search';
 import RecentlyUsed from './components/RecentlyUsed';
-import './style.css';
+import Search from './components/Search';
+import SkinTones, {
+  SKIN_TONE_DARK,
+  SKIN_TONE_LIGHT,
+  SKIN_TONE_MEDIUM,
+  SKIN_TONE_MEDIUM_DARK,
+  SKIN_TONE_MEDIUM_LIGHT,
+  SKIN_TONE_NEUTRAL,
+} from './components/SkinTones';
+import VariationsMenu from './components/VariationsMenu';
+import clickHandler from './lib/clickHandler';
+import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes } from './lib/propTypes';
+import { getRecentlyUsed } from './lib/recentlyUsed';
+import { PickerContextProvider, useCloseVariationMenu } from './PickerContext';
+
+import './style.css';
 
 const EmojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
@@ -32,6 +34,7 @@ const EmojiPicker = ({
   groupNames = {},
   pickerStyle = {},
   groupVisibility = {},
+  placeholder = 'Search',
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -64,7 +67,7 @@ const EmojiPicker = ({
     >
       <Aside pickerStyle={pickerStyle}>
         <CategoriesNav emojiListRef={emojiListRef} />
-        <Search />
+        <Search placeholder={placeholder} />
 
         <div className="content-wrapper">
           <VariationsMenu />
