@@ -8,6 +8,7 @@
     "storybook": "start-storybook -p 6006",
     "build": "webpack --config ./webpack.config.js",
     "build-storybook": "build-storybook",
+    "test": ":",
     "lint": "eslint ."
   },
   "repository": {
