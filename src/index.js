@@ -52,7 +52,7 @@ const EmojiPicker = ({
   return (
     <PickerContextProvider
       config={{
-        activeSkinTone: skinTone,
+        skinTone,
         emojiUrl,
         preload,
         native,
