@@ -1,6 +1,6 @@
+import { storiesOf } from '@storybook/react';
 import React, { useState } from 'react';
 
-import { storiesOf } from '@storybook/react';
 import EmojiPicker from '../src';
 
 const CDN_URL =
@@ -118,6 +118,20 @@ storiesOf('EmojiPicker', module)
             emojiUrl={CDN_URL}
           />
         )}
+      </div>
+    );
+  })
+  .add('Search placeholder', () => {
+    return (
+      <div>
+        (
+        <EmojiPicker
+          searchPlaceholder="Search"
+          onEmojiClick={(e, em) => log(em)}
+          native={true}
+          emojiUrl={CDN_URL}
+        />
+        )
       </div>
     );
   });

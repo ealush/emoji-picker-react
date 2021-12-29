@@ -7,7 +7,7 @@ import SkinTones from '../SkinTones';
 
 import './style.css';
 
-function Search({ placeholder = 'Search' }) {
+function Search({ searchPlaceholder = null }) {
   const config = useConfig();
   const onChange = useFilter();
 
@@ -18,7 +18,7 @@ function Search({ placeholder = 'Search' }) {
   return (
     <div style={{ position: 'relative' }}>
       <input
-        placeholder={placeholder}
+        placeholder={searchPlaceholder}
         className="emoji-search"
         onChange={onChange}
         autoFocus={!config.disableAutoFocus}
@@ -31,5 +31,5 @@ function Search({ placeholder = 'Search' }) {
 export default Search;
 
 Search.propTypes = {
-  placeholder: PropTypes.string,
+  searchPlaceholder: PropTypes.string,
 };

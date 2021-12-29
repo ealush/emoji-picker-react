@@ -74,6 +74,7 @@ const App = () => {
 | `groupNames`            | `Object`   | `undefined`   | No        | Specifies alternative category names to use. See Internationalization section.                          |
 | `groupVisibility`       | `Object`   | `undefined`   | No        | Specifies group names to be disabled.                                                                   |
 | `native`                | `Boolean`  | `false`       | No        | Loads system emojis instead of Apple Emoji pngs                                                         |
+| `searchPlaceholder`     | `string`   | `null`        | No        | Decides the default placeholder for the search input                                                    |
 
 #### onEmojiClick Arguments
 

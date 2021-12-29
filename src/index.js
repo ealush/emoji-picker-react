@@ -5,7 +5,7 @@ import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
 import RecentlyUsed from './components/RecentlyUsed';
 import Search from './components/Search';
-import SkinTones, {
+import {
   SKIN_TONE_DARK,
   SKIN_TONE_LIGHT,
   SKIN_TONE_MEDIUM,
@@ -34,7 +34,7 @@ const EmojiPicker = ({
   groupNames = {},
   pickerStyle = {},
   groupVisibility = {},
-  placeholder = 'Search',
+  searchPlaceholder = null,
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -67,7 +67,7 @@ const EmojiPicker = ({
     >
       <Aside pickerStyle={pickerStyle}>
         <CategoriesNav emojiListRef={emojiListRef} />
-        <Search placeholder={placeholder} />
+        <Search searchPlaceholder={searchPlaceholder} />
 
         <div className="content-wrapper">
           <VariationsMenu />
