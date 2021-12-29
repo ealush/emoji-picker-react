@@ -25,7 +25,11 @@ export const groupNamesPropType = PropTypes.shape({
   recently_used: PropTypes.string,
 });
 
-export const configPropTypes = PropTypes.shape({
+export const configPropsShape = PropTypes.shape({
+  ...configPropTypes,
+});
+
+export const configPropTypes = {
   emojiUrl: PropTypes.string,
   preload: PropTypes.bool,
   skinTone: PropTypes.string,
@@ -35,4 +39,4 @@ export const configPropTypes = PropTypes.shape({
   disableAutoFocus: PropTypes.bool,
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
-});
+};

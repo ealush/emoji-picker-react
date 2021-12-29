@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { GROUP_NAME_PEOPLE } from '../../lib/constants';
 import { PROPERTY_DATA_NAME } from '../lib/constants';
 import { DATA_NAME } from '../components/SkinTones';
-import { configPropTypes } from '../lib/propTypes';
+import { configPropsShape } from '../lib/propTypes';
 
 const PickerContext = createContext({});
 
@@ -21,7 +21,7 @@ export function PickerContextProvider({
   const missingEmojiState = useState({});
   const variationMenuState = useState(null);
   const skinToneSpreadState = useState(false);
-  const activeSkinToneState = useState(null);
+  const activeSkinToneState = useState(config.skinTone);
 
   return (
     <PickerContext.Provider
@@ -189,9 +189,7 @@ export function useOnEmojiClick() {
 
 PickerContextProvider.propTypes = {
   children: PropTypes.node,
-  config: PropTypes.shape({
-    ...configPropTypes,
-  }),
+  config: configPropsShape,
   recentlyUsed: PropTypes.arrayOf(PropTypes.object),
   onEmojiClick: PropTypes.func,
 };
