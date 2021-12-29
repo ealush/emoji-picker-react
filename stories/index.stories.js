@@ -1,7 +1,5 @@
 import { storiesOf } from '@storybook/react';
 import React, { useState } from 'react';
-
-import { storiesOf } from '@storybook/react';
 import EmojiPicker, { SKIN_TONE_MEDIUM_DARK } from '../src';
 
 const CDN_URL =
