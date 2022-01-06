@@ -139,14 +139,12 @@ storiesOf('EmojiPicker', module)
   .add('Search placeholder', () => {
     return (
       <div>
-        (
         <EmojiPicker
           searchPlaceholder="Search"
           onEmojiClick={(e, em) => log(em)}
           native={true}
           emojiUrl={CDN_URL}
         />
-        )
       </div>
     );
   });
