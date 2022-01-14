@@ -85,9 +85,7 @@ const CategoriesNav = ({ emojiListRef }) => {
             <button
               key={group}
               type="button"
-              className={cn(`icn-${group}`, {
-                active,
-              })}
+              className={cn(`icn-${group}`, { active })}
               data-name={group}
             />
           );
