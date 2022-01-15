@@ -1,5 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
+import tinykeys from 'tinykeys';
+
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from './constants';
 
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
@@ -48,6 +51,74 @@ const EmojiPicker = ({
     },
     []
   );
+
+  useEffect(() => {
+    let unsubscribe = tinykeys(window, {
+      ArrowUp: keyEvent => handleKeyboard(keyEvent.key),
+      ArrowDown: keyEvent => handleKeyboard(keyEvent.key),
+      ArrowLeft: keyEvent => handleKeyboard(keyEvent.key),
+      ArrowRight: keyEvent => handleKeyboard(keyEvent.key),
+    });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  const handleKeyboard = key => {
+    const activeElementClass = document.activeElement.getAttribute('class');
+
+    if (activeElementClass && activeElementClass.startsWith('icn-')) {
+      handleCategoriesKeyboard(key);
+    } else if (activeElementClass === 'emoji-search') {
+      handSearchKeyboard(key);
+    } else {
+      handleEmojiesKeyboard(key);
+    }
+  };
+
+  const handleCategoriesKeyboard = key => {
+    switch (key) {
+      case ArrowRight:
+        document.activeElement.nextElementSibling.focus();
+        break;
+      case ArrowLeft:
+        document.activeElement.previousElementSibling.focus();
+        break;
+      case ArrowDown:
+        const searchInput = document.getElementsByClassName('emoji-search')[0];
+        searchInput.focus();
+        break;
+    }
+  };
+
+  const handSearchKeyboard = key => {
+    if (key === ArrowUp) {
+      const emojiCategories = document.getElementsByClassName(
+        'emoji-categories'
+      )[0];
+      emojiCategories.firstChild.focus();
+    }
+    if (key === ArrowDown) {
+      const firstEmoji = document.getElementsByClassName('emoji')[0];
+      firstEmoji.firstChild.focus();
+    }
+  };
+
+  const handleEmojiesKeyboard = key => {
+    if (key === ArrowRight) {
+      document.activeElement.parentElement.nextSibling.firstChild.focus();
+    }
+    if (key === ArrowLeft) {
+      const prevSibling = document.activeElement.parentElement.previousSibling;
+
+      if (prevSibling) {
+        prevSibling.firstChild.focus();
+      } else {
+        const searchInput = document.getElementsByClassName('emoji-search')[0];
+        searchInput.focus();
+      }
+    }
+  };
 
   return (
     <PickerContextProvider
