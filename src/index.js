@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 import tinykeys from 'tinykeys';
 
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from './constants';
-
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
 import RecentlyUsed from './components/RecentlyUsed';
@@ -17,6 +15,7 @@ import {
   SKIN_TONE_NEUTRAL,
 } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
+import useKeyboardNavigation from './hooks/useKeyboardNavigation';
 import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes } from './lib/propTypes';
@@ -40,10 +39,19 @@ const EmojiPicker = ({
   searchPlaceholder = null,
 }) => {
   const emojiListRef = useRef(null);
+  const emojiPickerAsideRef = useRef(null);
+  const emojiSearchRef = useRef(null);
+  const categoriesNavRef = useRef(null);
   const isMounted = useRef(true);
   const onClickRef = useRef(onEmojiClick);
 
   onClickRef.current = onEmojiClick;
+
+  const [handleKeyboard] = useKeyboardNavigation(
+    categoriesNavRef,
+    emojiSearchRef,
+    emojiListRef
+  );
 
   useEffect(
     () => () => {
@@ -53,72 +61,13 @@ const EmojiPicker = ({
   );
 
   useEffect(() => {
-    let unsubscribe = tinykeys(window, {
-      ArrowUp: keyEvent => handleKeyboard(keyEvent.key),
-      ArrowDown: keyEvent => handleKeyboard(keyEvent.key),
-      ArrowLeft: keyEvent => handleKeyboard(keyEvent.key),
-      ArrowRight: keyEvent => handleKeyboard(keyEvent.key),
+    return tinykeys(window, {
+      ArrowUp: handleKeyboard,
+      ArrowDown: handleKeyboard,
+      ArrowLeft: handleKeyboard,
+      ArrowRight: handleKeyboard,
     });
-    return () => {
-      unsubscribe();
-    };
   }, []);
-
-  const handleKeyboard = key => {
-    const activeElementClass = document.activeElement.getAttribute('class');
-
-    if (activeElementClass && activeElementClass.startsWith('icn-')) {
-      handleCategoriesKeyboard(key);
-    } else if (activeElementClass === 'emoji-search') {
-      handSearchKeyboard(key);
-    } else {
-      handleEmojiesKeyboard(key);
-    }
-  };
-
-  const handleCategoriesKeyboard = key => {
-    switch (key) {
-      case ArrowRight:
-        document.activeElement.nextElementSibling.focus();
-        break;
-      case ArrowLeft:
-        document.activeElement.previousElementSibling.focus();
-        break;
-      case ArrowDown:
-        const searchInput = document.getElementsByClassName('emoji-search')[0];
-        searchInput.focus();
-        break;
-    }
-  };
-
-  const handSearchKeyboard = key => {
-    if (key === ArrowUp) {
-      const emojiCategories = document.getElementsByClassName(
-        'emoji-categories'
-      )[0];
-      emojiCategories.firstChild.focus();
-    }
-    if (key === ArrowDown) {
-      const firstEmoji = document.getElementsByClassName('emoji')[0];
-      firstEmoji.firstChild.focus();
-    }
-  };
-
-  const handleEmojiesKeyboard = key => {
-    if (key === ArrowRight) {
-      document.activeElement.parentElement.nextSibling.firstChild.focus();
-    }
-    if (key === ArrowLeft) {
-      const prevSibling = document.activeElement.parentElement.previousSibling;
-
-      if (prevSibling) {
-        prevSibling.firstChild.focus();
-      } else {
-        const searchInput = document.getElementsByClassName('emoji-search')[0];
-        searchInput.focus();
-      }
-    }
-  };
 
   return (
     <PickerContextProvider
@@ -136,9 +85,18 @@ const EmojiPicker = ({
       recentlyUsed={getRecentlyUsed()}
       onEmojiClick={clickHandler(onClickRef)}
     >
-      <Aside pickerStyle={pickerStyle}>
-        <CategoriesNav emojiListRef={emojiListRef} />
-        <Search searchPlaceholder={searchPlaceholder} />
+      <Aside
+        pickerStyle={pickerStyle}
+        emojiPickerAsideRef={emojiPickerAsideRef}
+      >
+        <CategoriesNav
+          emojiListRef={emojiListRef}
+          categoriesNavRef={categoriesNavRef}
+        />
+        <Search
+          searchPlaceholder={searchPlaceholder}
+          emojiSearchRef={emojiSearchRef}
+        />
 
         <div className="content-wrapper">
           <VariationsMenu />
@@ -152,7 +110,7 @@ const EmojiPicker = ({
   );
 };
 
-function Aside({ children, pickerStyle }) {
+function Aside({ children, pickerStyle, emojiPickerAsideRef }) {
   const closeVariations = useCloseVariationMenu();
   return (
     <aside
@@ -160,6 +118,7 @@ function Aside({ children, pickerStyle }) {
       style={pickerStyle}
       onScroll={closeVariations}
       onMouseDown={closeVariations}
+      ref={emojiPickerAsideRef}
     >
       {children}
     </aside>
@@ -180,6 +139,9 @@ export default EmojiPicker;
 Aside.propTypes = {
   children: PropTypes.node,
   pickerStyle: PropTypes.object,
+  emojiPickerAsideRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
 };
 
 EmojiPicker.propTypes = {
