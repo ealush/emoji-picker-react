@@ -20,11 +20,7 @@ const useKeyboardNavigation = ({
   useEffect(() => {
     if (!emojiSearchRef.current) return;
 
-    sections.splice(SEARCH_SECTION_INDEX, 0, {
-      name: 'search bar',
-      focus: () => emojiSearchRef.current.focus(),
-      rootElement: emojiSearchRef,
-    });
+    insertSearchSection();
 
     return tinykeys(emojiSearchRef.current, {
       ArrowRight: focusSkinTonePicker,
@@ -54,6 +50,14 @@ const useKeyboardNavigation = ({
       rootElement: emojiListRef,
     },
   ];
+
+  const insertSearchSection = () => {
+    sections.splice(SEARCH_SECTION_INDEX, 0, {
+      name: 'search bar',
+      focus: () => emojiSearchRef.current.focus(),
+      rootElement: emojiSearchRef,
+    });
+  };
 
   const focusSkinTonePicker = () => {
     /*todo: not implemented*/
