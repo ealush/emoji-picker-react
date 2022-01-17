@@ -32,6 +32,8 @@ const useKeyboardNavigation = ({
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
       ArrowUp: focusPrevSection,
+      ArrowRight: focusNextEmoji,
+      ArrowLeft: focusPrevEmoji,
     });
   }, []);
 
@@ -102,6 +104,15 @@ const useKeyboardNavigation = ({
       currentSectionIndex -= 1;
       sections[currentSectionIndex].focus();
     }
+  };
+
+  const focusNextEmoji = () => {
+    const nextSibling = getActiveElement().parentElement.nextElementSibling;
+    if (nextSibling) nextSibling.firstChild.focus();
+  };
+  const focusPrevEmoji = () => {
+    const prevSibling = getActiveElement().parentElement.previousElementSibling;
+    if (prevSibling) prevSibling.firstChild.focus();
   };
 };
 
