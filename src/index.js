@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
-import tinykeys from 'tinykeys';
 
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
@@ -38,8 +37,8 @@ const EmojiPicker = ({
   groupVisibility = {},
   searchPlaceholder = null,
 }) => {
+  const emojiPickerRef = useRef(null);
   const emojiListRef = useRef(null);
-  const emojiPickerAsideRef = useRef(null);
   const emojiSearchRef = useRef(null);
   const categoriesNavRef = useRef(null);
   const isMounted = useRef(true);
@@ -47,27 +46,13 @@ const EmojiPicker = ({
 
   onClickRef.current = onEmojiClick;
 
-  const [handleKeyboard] = useKeyboardNavigation(
+  useKeyboardNavigation({
     categoriesNavRef,
     emojiSearchRef,
-    emojiListRef
-  );
+    emojiListRef,
+  });
 
-  useEffect(
-    () => () => {
-      isMounted.current = false;
-    },
-    []
-  );
-
-  useEffect(() => {
-    return tinykeys(window, {
-      ArrowUp: handleKeyboard,
-      ArrowDown: handleKeyboard,
-      ArrowLeft: handleKeyboard,
-      ArrowRight: handleKeyboard,
-    });
-  }, []);
+  useEffect(() => () => (isMounted.current = false), []);
 
   return (
     <PickerContextProvider
@@ -85,10 +70,7 @@ const EmojiPicker = ({
       recentlyUsed={getRecentlyUsed()}
       onEmojiClick={clickHandler(onClickRef)}
     >
-      <Aside
-        pickerStyle={pickerStyle}
-        emojiPickerAsideRef={emojiPickerAsideRef}
-      >
+      <Aside pickerStyle={pickerStyle} emojiPickerAsideRef={emojiPickerRef}>
         <CategoriesNav
           emojiListRef={emojiListRef}
           categoriesNavRef={categoriesNavRef}

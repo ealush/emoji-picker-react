@@ -1,52 +1,104 @@
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import tinykeys from 'tinykeys';
 
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp } from './constants';
+const SEARCH_SECTION_INDEX = 1;
 
-const useKeyboardNavigation = (
+const useKeyboardNavigation = ({
   categoriesNavRef,
   emojiSearchRef,
-  emojiListRef
-) => {
-  const handleKeyboard = keyEvent => {
-    if (
-      document.activeElement.closest(`.${categoriesNavRef.current.className}`)
-    ) {
-      handleCategoriesKeyboard(keyEvent);
-    } else if (document.activeElement === emojiSearchRef.current) {
-      handSearchKeyboard(keyEvent);
-    } else {
-      //not implemented
+  emojiListRef,
+}) => {
+  useEffect(() => {
+    return tinykeys(categoriesNavRef.current, {
+      ArrowLeft: focusPrevCategory,
+      ArrowRight: focusNextCategory,
+      ArrowDown: focusNextSection,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!emojiSearchRef.current) return;
+
+    sections.splice(SEARCH_SECTION_INDEX, 0, {
+      name: 'search bar',
+      focus: () => emojiSearchRef.current.focus(),
+      rootElement: emojiSearchRef,
+    });
+
+    return tinykeys(emojiSearchRef.current, {
+      ArrowRight: focusSkinTonePicker,
+      ArrowUp: focusPrevSection,
+      ArrowDown: focusNextSection,
+    });
+  }, []);
+
+  useEffect(() => {
+    return tinykeys(emojiListRef.current, {
+      ArrowUp: focusPrevSection,
+    });
+  }, []);
+
+  const sections = [
+    {
+      name: 'categories',
+      focus: () => categoriesNavRef.current.firstChild.focus(),
+      rootElement: categoriesNavRef,
+    },
+    {
+      name: 'emoji list',
+      focus: () => {
+        const firstEmoji = emojiListRef.current.querySelector('.emoji');
+        firstEmoji.firstChild.focus();
+      },
+      rootElement: emojiListRef,
+    },
+  ];
+
+  const focusSkinTonePicker = () => {
+    /*todo: not implemented*/
+  };
+
+  const focusPrevCategory = () => {
+    const prevSibling = getActiveElement().previousElementSibling;
+    if (prevSibling) prevSibling.focus();
+  };
+
+  const focusNextCategory = () => {
+    const nextSibling = getActiveElement().nextElementSibling;
+    if (nextSibling) nextSibling.focus();
+  };
+
+  const getActiveElement = () => {
+    return document.activeElement;
+  };
+
+  const getCurrentSectionIndex = () => {
+    const activeElement = getActiveElement();
+    const currentSectionIndex = sections.findIndex(section =>
+      section.rootElement.current.contains(activeElement)
+    );
+
+    return currentSectionIndex;
+  };
+
+  const focusNextSection = () => {
+    let currentSectionIndex = getCurrentSectionIndex();
+
+    if (currentSectionIndex < sections.length) {
+      currentSectionIndex += 1;
+      sections[currentSectionIndex].focus();
     }
   };
 
-  const handleCategoriesKeyboard = keyEvent => {
-    switch (keyEvent.key) {
-      case ArrowRight:
-        document.activeElement.nextElementSibling.focus();
-        break;
-      case ArrowLeft:
-        document.activeElement.previousElementSibling.focus();
-        break;
-      case ArrowDown:
-        if (emojiSearchRef.current) emojiSearchRef.current.focus();
-        else {
-          const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          firstEmoji.firstChild.focus();
-        }
-        break;
+  const focusPrevSection = () => {
+    let currentSectionIndex = getCurrentSectionIndex();
+
+    if (currentSectionIndex !== 0) {
+      currentSectionIndex -= 1;
+      sections[currentSectionIndex].focus();
     }
   };
-
-  const handSearchKeyboard = keyEvent => {
-    if (keyEvent.key === ArrowUp) {
-      categoriesNavRef.current.firstChild.focus();
-    } else if (keyEvent.key === ArrowDown) {
-      const firstEmoji = emojiListRef.current.querySelector('.emoji');
-      firstEmoji.firstChild.focus();
-    }
-  };
-
-  return [handleKeyboard];
 };
 
 export default useKeyboardNavigation;
