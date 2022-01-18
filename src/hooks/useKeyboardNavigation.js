@@ -27,7 +27,6 @@ const useKeyboardNavigation = ({
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
-      ArrowUp: focusPrevSection,
       ArrowRight: focusNextEmoji,
       ArrowLeft: focusPrevEmoji,
     });
