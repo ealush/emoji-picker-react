@@ -2,8 +2,6 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-const SEARCH_SECTION_INDEX = 1;
-
 const useKeyboardNavigation = ({
   categoriesNavRef,
   emojiSearchRef,
@@ -20,8 +18,6 @@ const useKeyboardNavigation = ({
   useEffect(() => {
     if (!emojiSearchRef.current) return;
 
-    insertSearchSection();
-
     return tinykeys(emojiSearchRef.current, {
       ArrowRight: focusSkinTonePicker,
       ArrowUp: focusPrevSection,
@@ -37,29 +33,30 @@ const useKeyboardNavigation = ({
     });
   }, []);
 
-  const sections = [
-    {
-      name: 'categories',
-      focus: () => categoriesNavRef.current.firstChild.focus(),
-      rootElement: categoriesNavRef,
-    },
-    {
-      name: 'emoji list',
-      focus: () => {
-        const firstEmoji = emojiListRef.current.querySelector('.emoji');
-        firstEmoji.firstChild.focus();
-      },
-      rootElement: emojiListRef,
-    },
-  ];
+  let sections = [];
 
-  const insertSearchSection = () => {
-    sections.splice(SEARCH_SECTION_INDEX, 0, {
-      name: 'search bar',
-      focus: () => emojiSearchRef.current.focus(),
-      rootElement: emojiSearchRef,
-    });
-  };
+  useEffect(() => {
+    sections = [
+      {
+        //categories
+        focus: () => categoriesNavRef.current.firstChild.focus(),
+        rootElement: categoriesNavRef,
+      },
+      emojiSearchRef.current && {
+        // search bar
+        focus: () => emojiSearchRef.current.focus(),
+        rootElement: emojiSearchRef,
+      },
+      {
+        //emoji list'
+        focus: () => {
+          const firstEmoji = emojiListRef.current.querySelector('.emoji');
+          firstEmoji.firstChild.focus();
+        },
+        rootElement: emojiListRef,
+      },
+    ].filter(Boolean);
+  }, []);
 
   const focusSkinTonePicker = () => {
     /*todo: not implemented*/
@@ -106,12 +103,17 @@ const useKeyboardNavigation = ({
     }
   };
 
+  const closestEmoji = () => {
+    return getActiveElement().closest('.emoji');
+  };
+
   const focusNextEmoji = () => {
-    const nextSibling = getActiveElement().parentElement.nextElementSibling;
+    const nextSibling = closestEmoji().nextElementSibling;
     if (nextSibling) nextSibling.firstChild.focus();
   };
+
   const focusPrevEmoji = () => {
-    const prevSibling = getActiveElement().parentElement.previousElementSibling;
+    const prevSibling = closestEmoji().previousElementSibling;
     if (prevSibling) prevSibling.firstChild.focus();
   };
 };
