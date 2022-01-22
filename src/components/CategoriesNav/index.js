@@ -1,10 +1,9 @@
-import React, { useRef } from 'react';
-import PropTypes from 'prop-types';
 import cn from 'classnames';
-import { PROPERTY_DATA_NAME } from '../../lib/constants';
+import PropTypes from 'prop-types';
+import React from 'react';
 
 import groups from '../../groups.json';
-import './style.css';
+import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import {
   useActiveCategory,
   useConfig,
@@ -12,8 +11,9 @@ import {
   useSetSeenGroups,
 } from '../../PickerContext';
 
-const CategoriesNav = ({ emojiListRef }) => {
-  const refNav = useRef(null);
+import './style.css';
+
+const CategoriesNav = ({ emojiListRef, categoriesNavRef }) => {
   const setSeenGroups = useSetSeenGroups();
   const filter = useFilterValue();
   const { groupVisibility } = useConfig();
@@ -50,17 +50,18 @@ const CategoriesNav = ({ emojiListRef }) => {
   let index = 0;
   let barOpacity = '0';
 
-  if (refNav && refNav.current) {
-    $group = refNav.current.querySelector(
+  if (categoriesNavRef && categoriesNavRef.current) {
+    $group = categoriesNavRef.current.querySelector(
       `[${PROPERTY_DATA_NAME}="${activeCategory}"]`
     );
 
     if ($group) {
       left =
-        ($group && $group.offsetLeft) || refNav.current.firstChild.offsetLeft;
+        ($group && $group.offsetLeft) ||
+        categoriesNavRef.current.firstChild.offsetLeft;
       barOpacity = '1';
     } else {
-      left = refNav.current.firstChild.offsetLeft;
+      left = categoriesNavRef.current.firstChild.offsetLeft;
       barOpacity = '0';
     }
   }
@@ -70,7 +71,7 @@ const CategoriesNav = ({ emojiListRef }) => {
       <nav
         onClick={handleClick}
         className={cn('emoji-categories', { inactive })}
-        ref={refNav}
+        ref={categoriesNavRef}
       >
         {groups.map((group, i) => {
           if (groupVisibility[group] === false) {
@@ -85,9 +86,7 @@ const CategoriesNav = ({ emojiListRef }) => {
             <button
               key={group}
               type="button"
-              className={cn(`icn-${group}`, {
-                active,
-              })}
+              className={cn(`icn-${group}`, { active })}
               data-name={group}
             />
           );
@@ -115,4 +114,5 @@ export default CategoriesNav;
 
 CategoriesNav.propTypes = {
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  categoriesNavRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
 };

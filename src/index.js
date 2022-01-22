@@ -14,6 +14,7 @@ import {
   SKIN_TONE_NEUTRAL,
 } from './components/SkinTones';
 import VariationsMenu from './components/VariationsMenu';
+import useKeyboardNavigation from './hooks/useKeyboardNavigation';
 import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes } from './lib/propTypes';
@@ -36,18 +37,22 @@ const EmojiPicker = ({
   groupVisibility = {},
   searchPlaceholder = null,
 }) => {
+  const emojiPickerRef = useRef(null);
   const emojiListRef = useRef(null);
+  const emojiSearchRef = useRef(null);
+  const categoriesNavRef = useRef(null);
   const isMounted = useRef(true);
   const onClickRef = useRef(onEmojiClick);
 
   onClickRef.current = onEmojiClick;
 
-  useEffect(
-    () => () => {
-      isMounted.current = false;
-    },
-    []
-  );
+  useKeyboardNavigation({
+    categoriesNavRef,
+    emojiSearchRef,
+    emojiListRef,
+  });
+
+  useEffect(() => () => (isMounted.current = false), []);
 
   return (
     <PickerContextProvider
@@ -65,9 +70,15 @@ const EmojiPicker = ({
       recentlyUsed={getRecentlyUsed()}
       onEmojiClick={clickHandler(onClickRef)}
     >
-      <Aside pickerStyle={pickerStyle}>
-        <CategoriesNav emojiListRef={emojiListRef} />
-        <Search searchPlaceholder={searchPlaceholder} />
+      <Aside pickerStyle={pickerStyle} emojiPickerAsideRef={emojiPickerRef}>
+        <CategoriesNav
+          emojiListRef={emojiListRef}
+          categoriesNavRef={categoriesNavRef}
+        />
+        <Search
+          searchPlaceholder={searchPlaceholder}
+          emojiSearchRef={emojiSearchRef}
+        />
 
         <div className="content-wrapper">
           <VariationsMenu />
@@ -81,7 +92,7 @@ const EmojiPicker = ({
   );
 };
 
-function Aside({ children, pickerStyle }) {
+function Aside({ children, pickerStyle, emojiPickerAsideRef }) {
   const closeVariations = useCloseVariationMenu();
   return (
     <aside
@@ -89,6 +100,7 @@ function Aside({ children, pickerStyle }) {
       style={pickerStyle}
       onScroll={closeVariations}
       onMouseDown={closeVariations}
+      ref={emojiPickerAsideRef}
     >
       {children}
     </aside>
@@ -109,6 +121,9 @@ export default EmojiPicker;
 Aside.propTypes = {
   children: PropTypes.node,
   pickerStyle: PropTypes.object,
+  emojiPickerAsideRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
 };
 
 EmojiPicker.propTypes = {
