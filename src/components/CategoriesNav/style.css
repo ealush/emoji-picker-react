@@ -1,6 +1,6 @@
 .emoji-picker-react .emoji-categories button {
   height: 40px;
-  width: 20px;
+  width: 30px;
   padding: 5px 0;
   background-repeat: no-repeat;
   background-size: 20px;
@@ -10,10 +10,15 @@
   transition: opacity 0.1s;
 }
 
+.emoji-picker-react .emoji-categories button:focus-visible {
+  background-color: #99c2f160;
+}
+
 .emoji-picker-react .active-category-indicator-wrapper {
   position: relative;
   width: 100%;
 }
+
 .emoji-picker-react
   .active-category-indicator-wrapper
   .active-category-indicator {
@@ -25,7 +30,6 @@
   border-radius: 5px;
   transition: 0.3s;
   width: 30px;
-  left: -7px;
 }
 
 .emoji-picker-react .emoji-categories button.icn-activities {

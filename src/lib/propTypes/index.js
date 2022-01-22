@@ -40,3 +40,16 @@ export const configPropTypes = {
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
 };
+
+export const customEmojiPropTypes = {
+  customGroups: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      icon: PropTypes.string,
+      emojis: {
+        name: PropTypes.string,
+        url: PropTypes.string,
+      },
+    })
+  ),
+};

@@ -32,7 +32,7 @@ aside.emoji-picker-react .content-wrapper:before {
   font-size: 11px;
   display: block;
   position: absolute;
-  right: 15px;
+  right: 8%;
   z-index: 10;
   line-height: 45px;
   max-height: 45px;
