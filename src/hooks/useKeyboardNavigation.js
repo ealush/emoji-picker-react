@@ -131,7 +131,7 @@ const useKeyboardNavigation = ({
   };
 
   const focusPrevEmojiListGroup = () => {
-    currentEmojiGroup = getCurrentEmojiListGroup();
+    const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
     if (
