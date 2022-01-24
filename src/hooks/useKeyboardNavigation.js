@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
-import { UP, DOWN, LEFT, RIGHT } from './consts';
+
+import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
   categoriesNavRef,
@@ -118,10 +119,8 @@ const useKeyboardNavigation = ({
     ].filter(Boolean);
   }, []);
 
-  let currentEmojiGroup;
-
   const focusNextEmojiListGroup = () => {
-    currentEmojiGroup = getCurrentEmojiListGroup();
+    const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
     if (
       nextEmojiGroup &&
