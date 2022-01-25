@@ -2,10 +2,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-const RIGHT = 'right';
-const LEFT = 'left';
-const DOWN = 'down';
-const UP = 'up';
+import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
   categoriesNavRef,
@@ -59,9 +56,9 @@ const useKeyboardNavigation = ({
   const navigateGrid = direction => {
     const grid = getCurrentEmojiListGroup();
     const active = getActiveElement().parentElement;
-    const activeIndex = Array.from(grid.children).indexOf(active);
-
     const gridChildren = Array.from(grid.children);
+    const activeIndex = gridChildren.indexOf(active);
+
     const gridNum = gridChildren.length;
     const baseOffset = gridChildren[0].offsetTop;
     const breakIndex = gridChildren.findIndex(
@@ -75,19 +72,19 @@ const useKeyboardNavigation = ({
     const isRightColumn =
       activeIndex % numPerRow === numPerRow - 1 || activeIndex === gridNum - 1;
     switch (direction) {
-      case 'up':
+      case UP:
         if (isTopRow) {
           if (!focusPrevEmojiListGroup()) {
             focusPrevSection();
           }
         } else updateActiveItem(gridChildren[activeIndex - numPerRow]);
         break;
-      case 'down':
+      case DOWN:
         if (isBottomRow) {
           focusNextEmojiListGroup();
         } else updateActiveItem(gridChildren[activeIndex + numPerRow]);
         break;
-      case 'left':
+      case LEFT:
         if (isLeftColumn) {
           if (!focusPrevEmoji()) {
             focusPrevEmojiListGroup();
@@ -96,7 +93,7 @@ const useKeyboardNavigation = ({
           updateActiveItem(gridChildren[activeIndex - 1]);
         }
         break;
-      case 'right':
+      case RIGHT:
         if (isRightColumn) {
           if (!focusNextEmoji()) {
             focusNextEmojiListGroup();
@@ -133,10 +130,8 @@ const useKeyboardNavigation = ({
     ].filter(Boolean);
   }, []);
 
-  let currentEmojiGroup;
-
   const focusNextEmojiListGroup = () => {
-    currentEmojiGroup = getCurrentEmojiListGroup();
+    const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
     if (
       nextEmojiGroup &&
@@ -147,7 +142,7 @@ const useKeyboardNavigation = ({
   };
 
   const focusPrevEmojiListGroup = () => {
-    currentEmojiGroup = getCurrentEmojiListGroup();
+    const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
     if (
