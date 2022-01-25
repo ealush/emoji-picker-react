@@ -64,38 +64,42 @@ const useKeyboardNavigation = ({
     const breakIndex = gridChildren.findIndex(
       item => item.offsetTop > baseOffset
     );
-    const numPerRow = breakIndex === -1 ? numOfItems : breakIndex;
+    const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
 
-    const isTopRow = activeIndex <= numPerRow - 1;
-    const isBottomRow = activeIndex >= numOfItems - numPerRow;
-    const isLeftColumn = activeIndex % numPerRow === 0;
+    const isTopRow = activeIndex <= itemsPerRow - 1;
+    const isBottomRow = activeIndex >= numOfItems - itemsPerRow;
+    const isLeftColumn = activeIndex % itemsPerRow === 0;
     const isRightColumn =
-      activeIndex % numPerRow === numPerRow - 1 ||
+      activeIndex % itemsPerRow === itemsPerRow - 1 ||
       activeIndex === numOfItems - 1;
 
-    const isLastRow = activeIndex >= numOfItems - (numOfItems % numPerRow);
+    const isLastRow =
+      activeIndex > numOfItems - (numOfItems % itemsPerRow) ||
+      numOfItems % itemsPerRow === 0;
+
+    const currnetColumn = activeIndex % itemsPerRow;
 
     switch (direction) {
       case UP:
         if (isTopRow) {
-          if (!focusPrevEmojiListGroup()) {
+          if (!focusPrevEmojiListGroup(currnetColumn)) {
             focusPrevSection();
           }
-        } else updateActiveItem(gridChildren[activeIndex - numPerRow]);
+        } else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
         if (isBottomRow) {
           if (isLastRow) {
-            focusNextEmojiListGroup();
+            focusNextEmojiListGroup(currnetColumn);
           } else {
             updateActiveItem(gridChildren[numOfItems - 1]);
           }
-        } else updateActiveItem(gridChildren[activeIndex + numPerRow]);
+        } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
         if (isLeftColumn) {
           if (!focusPrevEmoji()) {
-            focusPrevEmojiListGroup();
+            focusPrevEmojiListGroup(currnetColumn);
           }
         } else {
           updateActiveItem(gridChildren[activeIndex - 1]);
@@ -104,7 +108,7 @@ const useKeyboardNavigation = ({
       case RIGHT:
         if (isRightColumn) {
           if (!focusNextEmoji()) {
-            focusNextEmojiListGroup();
+            focusNextEmojiListGroup(currnetColumn);
           }
         } else {
           updateActiveItem(gridChildren[activeIndex + 1]);
@@ -138,18 +142,16 @@ const useKeyboardNavigation = ({
     ].filter(Boolean);
   }, []);
 
-  const focusNextEmojiListGroup = () => {
+  const focusNextEmojiListGroup = columnIndex => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
-    if (
-      nextEmojiGroup &&
-      nextEmojiGroup.firstChild &&
-      nextEmojiGroup.firstChild.firstChild
-    )
-      nextEmojiGroup.firstChild.firstChild.focus();
+
+    console.log(nextEmojiGroup.children[columnIndex]);
+
+    nextEmojiGroup.children[columnIndex].firstChild.focus();
   };
 
-  const focusPrevEmojiListGroup = () => {
+  const focusPrevEmojiListGroup = columnIndex => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
