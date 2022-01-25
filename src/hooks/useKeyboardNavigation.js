@@ -120,7 +120,7 @@ const useKeyboardNavigation = ({
 
     if (nextEmojiGroup) {
       nextEmojiGroup.children[columnIndex].firstChild.focus();
-      //activateNextCategory();
+      activateNextCategory();
     }
   };
 
@@ -162,7 +162,7 @@ const useKeyboardNavigation = ({
       if (!isInLastRow) nextFocusIndex = numOfItems - 1;
 
       prevEmojiGroup.children[nextFocusIndex].firstChild.focus();
-      //activatePrevCategory();
+      activatePrevCategory();
       return true;
     }
 
@@ -187,23 +187,23 @@ const useKeyboardNavigation = ({
     if (nextSibling) nextSibling.focus();
   };
 
-  // const activateNextCategory = () => {
-  //   const activeCategory = categoriesNavRef.current.querySelector('.active');
+  const activateNextCategory = () => {
+    const activeCategory = categoriesNavRef.current.querySelector('.active');
 
-  //   if (activeCategory && activeCategory.nextElementSibling) {
-  //     activeCategory.classList.remove('active');
-  //     activeCategory.nextElementSibling.classList.add('active');
-  //   }
-  // };
+    if (activeCategory && activeCategory.nextElementSibling) {
+      activeCategory.classList.remove('active');
+      activeCategory.nextElementSibling.classList.add('active');
+    }
+  };
 
-  // const activatePrevCategory = () => {
-  //   const activeCategory = categoriesNavRef.current.querySelector('.active');
+  const activatePrevCategory = () => {
+    const activeCategory = categoriesNavRef.current.querySelector('.active');
 
-  //   if (activeCategory && activeCategory.previousElementSibling) {
-  //     activeCategory.classList.remove('active');
-  //     activeCategory.previousElementSibling.classList.add('active');
-  //   }
-  // };
+    if (activeCategory && activeCategory.previousElementSibling) {
+      activeCategory.classList.remove('active');
+      activeCategory.previousElementSibling.classList.add('active');
+    }
+  };
 
   const getActiveElement = () => {
     return document.activeElement;
