@@ -50,7 +50,8 @@ const useKeyboardNavigation = ({
   };
 
   const updateActiveItem = newActiveItem => {
-    newActiveItem.firstChild.focus();
+    if (newActiveItem && newActiveItem.firstChild)
+      newActiveItem.firstChild.focus();
   };
 
   const navigateGrid = direction => {
@@ -77,7 +78,7 @@ const useKeyboardNavigation = ({
 
     switch (direction) {
       case UP:
-        if (isTopRow && !focusPrevEmojiListGroup(currnetColumn))
+        if (isTopRow && !focusPrevEmojiListGroup(currnetColumn, itemsPerRow))
           focusPrevSection();
         else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
@@ -126,7 +127,10 @@ const useKeyboardNavigation = ({
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
 
-    if (nextEmojiGroup) nextEmojiGroup.children[columnIndex].firstChild.focus();
+    if (nextEmojiGroup) {
+      nextEmojiGroup.children[columnIndex].firstChild.focus();
+      //activateNextCategory();
+    }
   };
 
   const focusPrevEmojiListGroupOnLastItem = () => {
@@ -145,12 +149,22 @@ const useKeyboardNavigation = ({
     return false;
   };
 
-  const focusPrevEmojiListGroup = columnIndex => {
+  const focusPrevEmojiListGroup = (columnIndex, itemsPerRow) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
     if (prevEmojiGroup) {
-      prevEmojiGroup.children[columnIndex].firstChild.focus();
+      let nextFocusIndex;
+
+      for (let i = prevEmojiGroup.children.length - 1; i >= 0; i--) {
+        if (i % itemsPerRow === columnIndex) {
+          nextFocusIndex = i;
+          break;
+        }
+      }
+
+      prevEmojiGroup.children[nextFocusIndex].firstChild.focus();
+      //activatePrevCategory();
       return true;
     }
 
@@ -174,6 +188,24 @@ const useKeyboardNavigation = ({
     const nextSibling = getActiveElement().nextElementSibling;
     if (nextSibling) nextSibling.focus();
   };
+
+  // const activateNextCategory = () => {
+  //   const activeCategory = categoriesNavRef.current.querySelector('.active');
+
+  //   if (activeCategory && activeCategory.nextElementSibling) {
+  //     activeCategory.classList.remove('active');
+  //     activeCategory.nextElementSibling.classList.add('active');
+  //   }
+  // };
+
+  // const activatePrevCategory = () => {
+  //   const activeCategory = categoriesNavRef.current.querySelector('.active');
+
+  //   if (activeCategory && activeCategory.previousElementSibling) {
+  //     activeCategory.classList.remove('active');
+  //     activeCategory.previousElementSibling.classList.add('active');
+  //   }
+  // };
 
   const getActiveElement = () => {
     return document.activeElement;
