@@ -29,25 +29,12 @@ const useKeyboardNavigation = ({
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
-      ArrowRight: moveRight,
-      ArrowLeft: moveLeft,
-      ArrowUp: moveUp,
-      ArrowDown: moveDown,
+      ArrowRight: () => navigateGrid(RIGHT),
+      ArrowLeft: () => navigateGrid(LEFT),
+      ArrowUp: () => navigateGrid(UP),
+      ArrowDown: () => navigateGrid(DOWN),
     });
   }, []);
-
-  const moveRight = () => {
-    navigateGrid(RIGHT);
-  };
-  const moveLeft = () => {
-    navigateGrid(LEFT);
-  };
-  const moveUp = () => {
-    navigateGrid(UP);
-  };
-  const moveDown = () => {
-    navigateGrid(DOWN);
-  };
 
   const updateActiveItem = newActiveItem => {
     if (newActiveItem && newActiveItem.firstChild)
@@ -96,7 +83,7 @@ const useKeyboardNavigation = ({
         else updateActiveItem(gridChildren[activeIndex - 1]);
         break;
       case RIGHT:
-        if (isRightColumn && !focusNextEmoji()) focusNextEmojiListGroup(0);
+        if (isRightColumn && !focusNextEmoji()) focusNextEmojiListGroup();
         else updateActiveItem(gridChildren[activeIndex + 1]);
         break;
     }
@@ -127,7 +114,7 @@ const useKeyboardNavigation = ({
     ].filter(Boolean);
   }, []);
 
-  const focusNextEmojiListGroup = columnIndex => {
+  const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
 
