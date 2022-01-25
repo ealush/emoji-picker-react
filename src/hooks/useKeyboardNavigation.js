@@ -2,7 +2,10 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-import { DOWN, LEFT, RIGHT, UP } from './consts';
+const RIGHT = 'right';
+const LEFT = 'left';
+const DOWN = 'down';
+const UP = 'up';
 
 const useKeyboardNavigation = ({
   categoriesNavRef,
@@ -56,9 +59,9 @@ const useKeyboardNavigation = ({
   const navigateGrid = direction => {
     const grid = getCurrentEmojiListGroup();
     const active = getActiveElement().parentElement;
-    const gridChildren = Array.from(grid.children);
-    const activeIndex = gridChildren.indexOf(active);
+    const activeIndex = Array.from(grid.children).indexOf(active);
 
+    const gridChildren = Array.from(grid.children);
     const gridNum = gridChildren.length;
     const baseOffset = gridChildren[0].offsetTop;
     const breakIndex = gridChildren.findIndex(
@@ -71,25 +74,36 @@ const useKeyboardNavigation = ({
     const isLeftColumn = activeIndex % numPerRow === 0;
     const isRightColumn =
       activeIndex % numPerRow === numPerRow - 1 || activeIndex === gridNum - 1;
-
     switch (direction) {
-      case UP:
+      case 'up':
         if (isTopRow) {
           if (!focusPrevEmojiListGroup()) {
             focusPrevSection();
           }
         } else updateActiveItem(gridChildren[activeIndex - numPerRow]);
         break;
-      case DOWN:
+      case 'down':
         if (isBottomRow) {
           focusNextEmojiListGroup();
         } else updateActiveItem(gridChildren[activeIndex + numPerRow]);
         break;
-      case LEFT:
-        if (!isLeftColumn) updateActiveItem(gridChildren[activeIndex - 1]);
+      case 'left':
+        if (isLeftColumn) {
+          if (!focusPrevEmoji()) {
+            focusPrevEmojiListGroup();
+          }
+        } else {
+          updateActiveItem(gridChildren[activeIndex - 1]);
+        }
         break;
-      case RIGHT:
-        if (!isRightColumn) updateActiveItem(gridChildren[activeIndex + 1]);
+      case 'right':
+        if (isRightColumn) {
+          if (!focusNextEmoji()) {
+            focusNextEmojiListGroup();
+          }
+        } else {
+          updateActiveItem(gridChildren[activeIndex + 1]);
+        }
         break;
     }
   };
@@ -119,8 +133,10 @@ const useKeyboardNavigation = ({
     ].filter(Boolean);
   }, []);
 
+  let currentEmojiGroup;
+
   const focusNextEmojiListGroup = () => {
-    const currentEmojiGroup = getCurrentEmojiListGroup();
+    currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
     if (
       nextEmojiGroup &&
@@ -131,7 +147,7 @@ const useKeyboardNavigation = ({
   };
 
   const focusPrevEmojiListGroup = () => {
-    const currentEmojiGroup = getCurrentEmojiListGroup();
+    currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
     if (
@@ -193,6 +209,30 @@ const useKeyboardNavigation = ({
       currentSectionIndex -= 1;
       sections[currentSectionIndex].focus();
     }
+  };
+
+  const closestEmoji = () => {
+    return getActiveElement().closest('.emoji');
+  };
+
+  const focusNextEmoji = () => {
+    const nextSibling = closestEmoji().nextElementSibling;
+    if (nextSibling) {
+      nextSibling.firstChild.focus();
+      return true;
+    }
+
+    return false;
+  };
+
+  const focusPrevEmoji = () => {
+    const prevSibling = closestEmoji().previousElementSibling;
+    if (prevSibling) {
+      prevSibling.firstChild.focus();
+      return true;
+    }
+
+    return false;
   };
 };
 
