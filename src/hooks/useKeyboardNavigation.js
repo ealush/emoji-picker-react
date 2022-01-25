@@ -49,8 +49,8 @@ const useKeyboardNavigation = ({
     navigateGrid(DOWN);
   };
 
-  const updateActiveItem = next => {
-    next.firstChild.focus();
+  const updateActiveItem = newActiveItem => {
+    newActiveItem.firstChild.focus();
   };
 
   const navigateGrid = direction => {
@@ -59,18 +59,22 @@ const useKeyboardNavigation = ({
     const gridChildren = Array.from(grid.children);
     const activeIndex = gridChildren.indexOf(active);
 
-    const gridNum = gridChildren.length;
+    const numOfItems = gridChildren.length;
     const baseOffset = gridChildren[0].offsetTop;
     const breakIndex = gridChildren.findIndex(
       item => item.offsetTop > baseOffset
     );
-    const numPerRow = breakIndex === -1 ? gridNum : breakIndex;
+    const numPerRow = breakIndex === -1 ? numOfItems : breakIndex;
 
     const isTopRow = activeIndex <= numPerRow - 1;
-    const isBottomRow = activeIndex >= gridNum - numPerRow;
+    const isBottomRow = activeIndex >= numOfItems - numPerRow;
     const isLeftColumn = activeIndex % numPerRow === 0;
     const isRightColumn =
-      activeIndex % numPerRow === numPerRow - 1 || activeIndex === gridNum - 1;
+      activeIndex % numPerRow === numPerRow - 1 ||
+      activeIndex === numOfItems - 1;
+
+    const isLastRow = activeIndex >= numOfItems - (numOfItems % numPerRow);
+
     switch (direction) {
       case UP:
         if (isTopRow) {
@@ -81,7 +85,11 @@ const useKeyboardNavigation = ({
         break;
       case DOWN:
         if (isBottomRow) {
-          focusNextEmojiListGroup();
+          if (isLastRow) {
+            focusNextEmojiListGroup();
+          } else {
+            updateActiveItem(gridChildren[numOfItems - 1]);
+          }
         } else updateActiveItem(gridChildren[activeIndex + numPerRow]);
         break;
       case LEFT:
