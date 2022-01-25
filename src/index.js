@@ -35,6 +35,16 @@ const EmojiPicker = ({
   pickerStyle = {},
   groupVisibility = {},
   searchPlaceholder = null,
+  customGroups = {
+    name: 'Custom Emojis',
+    icon: 'https://www.svgrepo.com/show/154059/custom-coding.svg',
+    emojis: [
+      {
+        name: 'test',
+        url: 'https://cdn-icons-png.flaticon.com/512/1300/1300455.png',
+      },
+    ],
+  },
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -66,14 +76,20 @@ const EmojiPicker = ({
       onEmojiClick={clickHandler(onClickRef)}
     >
       <Aside pickerStyle={pickerStyle}>
-        <CategoriesNav emojiListRef={emojiListRef} />
+        <CategoriesNav
+          emojiListRef={emojiListRef}
+          customGroups={customGroups}
+        />
         <Search searchPlaceholder={searchPlaceholder} />
 
         <div className="content-wrapper">
           <VariationsMenu />
           <section className="emoji-scroll-wrapper" ref={emojiListRef}>
             <RecentlyUsed emojiListRef={emojiListRef} />
-            <EmojiList emojiListRef={emojiListRef} />
+            <EmojiList
+              emojiListRef={emojiListRef}
+              customGroups={customGroups}
+            />
           </section>
         </div>
       </Aside>

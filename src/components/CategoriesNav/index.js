@@ -12,7 +12,7 @@ import {
   useSetSeenGroups,
 } from '../../PickerContext';
 
-const CategoriesNav = ({ emojiListRef }) => {
+const CategoriesNav = ({ emojiListRef, customGroups }) => {
   const refNav = useRef(null);
   const setSeenGroups = useSetSeenGroups();
   const filter = useFilterValue();
@@ -92,6 +92,28 @@ const CategoriesNav = ({ emojiListRef }) => {
             />
           );
         })}
+        {customGroups !== {} &&
+          ['custom'].map((group, i) => {
+            if (groupVisibility[group] === false) {
+              return null;
+            }
+            const active = activeCategory === group;
+
+            if (active) {
+              index = i;
+            }
+            return (
+              <button
+                key={group}
+                type="button"
+                className={cn(`icn-${group}`, {
+                  active,
+                })}
+                style={{ 'background-image': `url(${customGroups.icon})` }}
+                data-name={group}
+              />
+            );
+          })}
       </nav>
       <div className="active-category-indicator-wrapper">
         <div
