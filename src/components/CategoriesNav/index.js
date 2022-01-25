@@ -76,6 +76,9 @@ const CategoriesNav = ({ emojiListRef, customGroups }) => {
           if (groupVisibility[group] === false) {
             return null;
           }
+          if (group === 'custom' && customGroups === {}) {
+            return null;
+          }
           const active = activeCategory === group;
 
           if (active) {
@@ -89,31 +92,14 @@ const CategoriesNav = ({ emojiListRef, customGroups }) => {
                 active,
               })}
               data-name={group}
+              style={
+                group === 'custom'
+                  ? { 'background-image': `url(${customGroups.icon})` }
+                  : {}
+              }
             />
           );
         })}
-        {customGroups !== {} &&
-          ['custom'].map((group, i) => {
-            if (groupVisibility[group] === false) {
-              return null;
-            }
-            const active = activeCategory === group;
-
-            if (active) {
-              index = i;
-            }
-            return (
-              <button
-                key={group}
-                type="button"
-                className={cn(`icn-${group}`, {
-                  active,
-                })}
-                style={{ 'background-image': `url(${customGroups.icon})` }}
-                data-name={group}
-              />
-            );
-          })}
       </nav>
       <div className="active-category-indicator-wrapper">
         <div

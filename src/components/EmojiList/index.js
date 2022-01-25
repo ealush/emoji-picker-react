@@ -103,7 +103,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
   }, [activeSkinTone, searchTerm, shouldLoad, missingEmoji, config.native]);
 };
 
-const EmojiList = ({ emojiListRef }) => {
+const EmojiList = ({ emojiListRef, customGroups }) => {
   const [activeCategory] = useActiveCategory();
   const { groupNames } = useConfig();
   const filterResult = useFilterResult();
@@ -166,6 +166,10 @@ const ListRender = React.memo(function ListRender({
   const { groupVisibility } = useConfig();
 
   if (groupVisibility[name] === false) {
+    return null;
+  }
+
+  if (name === 'custom') {
     return null;
   }
 
