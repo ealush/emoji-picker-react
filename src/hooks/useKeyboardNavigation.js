@@ -74,17 +74,21 @@ const useKeyboardNavigation = ({
       activeIndex % itemsPerRow === itemsPerRow - 1 ||
       activeIndex === numOfItems - 1;
 
-    const currnetColumn = activeIndex % itemsPerRow;
+    const currentColumn = activeIndex % itemsPerRow;
+
+    const isLastRow = activeIndex >= numOfItems - (numOfItems % itemsPerRow);
 
     switch (direction) {
       case UP:
-        if (isTopRow && !focusPrevEmojiListGroup(currnetColumn, itemsPerRow))
+        if (isTopRow && !focusPrevEmojiListGroup(currentColumn, itemsPerRow))
           focusPrevSection();
         else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
-        if (isBottomRow) focusNextEmojiListGroup(currnetColumn);
-        else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
+        if (isBottomRow) {
+          if (isLastRow) focusNextEmojiListGroup(currentColumn);
+          else updateActiveItem(gridChildren[numOfItems - 1]);
+        } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
         if (isLeftColumn && !focusPrevEmoji())
@@ -154,14 +158,21 @@ const useKeyboardNavigation = ({
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
     if (prevEmojiGroup) {
+      const numOfItems = prevEmojiGroup.children.length;
+
       let nextFocusIndex;
 
-      for (let i = prevEmojiGroup.children.length - 1; i >= 0; i--) {
+      for (let i = numOfItems - 1; i >= 0; i--) {
         if (i % itemsPerRow === columnIndex) {
           nextFocusIndex = i;
           break;
         }
       }
+
+      const isInLastRow =
+        nextFocusIndex >= numOfItems - (numOfItems % itemsPerRow);
+
+      if (!isInLastRow) nextFocusIndex = numOfItems - 1;
 
       prevEmojiGroup.children[nextFocusIndex].firstChild.focus();
       //activatePrevCategory();
