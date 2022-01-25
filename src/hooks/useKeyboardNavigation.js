@@ -73,42 +73,26 @@ const useKeyboardNavigation = ({
       activeIndex % itemsPerRow === itemsPerRow - 1 ||
       activeIndex === numOfItems - 1;
 
-    const isLastRow =
-      activeIndex > numOfItems - (numOfItems % itemsPerRow) ||
-      numOfItems % itemsPerRow === 0;
-
     const currnetColumn = activeIndex % itemsPerRow;
 
     switch (direction) {
       case UP:
-        if (isTopRow) {
-          if (!focusPrevEmojiListGroup(currnetColumn)) {
-            focusPrevSection();
-          }
-        } else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
+        if (isTopRow && !focusPrevEmojiListGroup(currnetColumn))
+          focusPrevSection();
+        else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
-        if (isBottomRow) {
-          focusNextEmojiListGroup(currnetColumn);
-        } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
+        if (isBottomRow) focusNextEmojiListGroup(currnetColumn);
+        else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
-        if (isLeftColumn) {
-          if (!focusPrevEmoji()) {
-            focusPrevEmojiListGroupOnLastItem();
-          }
-        } else {
-          updateActiveItem(gridChildren[activeIndex - 1]);
-        }
+        if (isLeftColumn && !focusPrevEmoji())
+          focusPrevEmojiListGroupOnLastItem();
+        else updateActiveItem(gridChildren[activeIndex - 1]);
         break;
       case RIGHT:
-        if (isRightColumn) {
-          if (!focusNextEmoji()) {
-            focusNextEmojiListGroup(0);
-          }
-        } else {
-          updateActiveItem(gridChildren[activeIndex + 1]);
-        }
+        if (isRightColumn && !focusNextEmoji()) focusNextEmojiListGroup(0);
+        else updateActiveItem(gridChildren[activeIndex + 1]);
         break;
     }
   };
