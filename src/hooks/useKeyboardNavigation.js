@@ -89,17 +89,13 @@ const useKeyboardNavigation = ({
         break;
       case DOWN:
         if (isBottomRow) {
-          if (isLastRow) {
-            focusNextEmojiListGroup(currnetColumn);
-          } else {
-            updateActiveItem(gridChildren[numOfItems - 1]);
-          }
+          focusNextEmojiListGroup(currnetColumn);
         } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
         if (isLeftColumn) {
           if (!focusPrevEmoji()) {
-            focusPrevEmojiListGroup(currnetColumn);
+            focusPrevEmojiListGroupOnLastItem();
           }
         } else {
           updateActiveItem(gridChildren[activeIndex - 1]);
@@ -108,7 +104,7 @@ const useKeyboardNavigation = ({
       case RIGHT:
         if (isRightColumn) {
           if (!focusNextEmoji()) {
-            focusNextEmojiListGroup(currnetColumn);
+            focusNextEmojiListGroup(0);
           }
         } else {
           updateActiveItem(gridChildren[activeIndex + 1]);
@@ -146,12 +142,10 @@ const useKeyboardNavigation = ({
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
 
-    console.log(nextEmojiGroup.children[columnIndex]);
-
-    nextEmojiGroup.children[columnIndex].firstChild.focus();
+    if (nextEmojiGroup) nextEmojiGroup.children[columnIndex].firstChild.focus();
   };
 
-  const focusPrevEmojiListGroup = columnIndex => {
+  const focusPrevEmojiListGroupOnLastItem = () => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
@@ -161,6 +155,18 @@ const useKeyboardNavigation = ({
       prevEmojiGroup.lastChild.firstChild
     ) {
       prevEmojiGroup.lastChild.firstChild.focus();
+      return true;
+    }
+
+    return false;
+  };
+
+  const focusPrevEmojiListGroup = columnIndex => {
+    const currentEmojiGroup = getCurrentEmojiListGroup();
+    const prevEmojiGroup = currentEmojiGroup.previousSibling;
+
+    if (prevEmojiGroup) {
+      prevEmojiGroup.children[columnIndex].firstChild.focus();
       return true;
     }
 
