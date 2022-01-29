@@ -112,7 +112,7 @@ const CategoriesNav = ({ emojiListRef, customGroups }) => {
                 className={cn(`icn-${groupName}`, {
                   active,
                 })}
-                style={{ 'background-image': `url(${group.icon})` }}
+                style={{ backgroundImage: `url(${group.icon})` }}
                 data-name={groupName}
               />
             );
