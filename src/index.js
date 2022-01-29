@@ -35,16 +35,7 @@ const EmojiPicker = ({
   pickerStyle = {},
   groupVisibility = {},
   searchPlaceholder = null,
-  customGroups = {
-    name: 'Custom Emojis',
-    icon: 'https://www.svgrepo.com/show/154059/custom-coding.svg',
-    emojis: [
-      {
-        name: 'test',
-        url: 'https://cdn-icons-png.flaticon.com/512/1300/1300455.png',
-      },
-    ],
-  },
+  customGroups = [],
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
