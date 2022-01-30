@@ -154,10 +154,9 @@ const useKeyboardNavigation = ({
       prevEmojiGroup.lastChild.firstChild
     ) {
       focusElement(prevEmojiGroup.lastChild.firstChild);
-      return true;
     }
 
-    return false;
+    return prevEmojiGroup;
   };
 
   const focusPrevEmojiListGroup = (columnIndex, itemsPerRow) => {
@@ -186,10 +185,9 @@ const useKeyboardNavigation = ({
 
       const categoryName = prevEmojiGroup.getAttribute('data-name');
       activateCategoryByName(categoryName);
-      return true;
     }
 
-    return false;
+    return prevEmojiGroup;
   };
 
   const focusSkinTonePicker = () => {
