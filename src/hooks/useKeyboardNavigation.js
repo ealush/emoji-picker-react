@@ -80,13 +80,16 @@ const useKeyboardNavigation = ({
         } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
-        if (isLeftColumn && !focusPrevEmoji())
-          focusPrevEmojiListGroupOnLastItem();
-        else updateActiveItem(gridChildren[activeIndex - 1]);
+        if (isLeftColumn) {
+          const prevEmoji = getPrevEmoji();
+          prevEmoji ? focus(prevEmoji) : focusPrevEmojiListGroupOnLastItem();
+        } else updateActiveItem(gridChildren[activeIndex - 1]);
         break;
       case RIGHT:
-        if (isRightColumn && !focusNextEmoji()) focusNextEmojiListGroup();
-        else updateActiveItem(gridChildren[activeIndex + 1]);
+        if (isRightColumn) {
+          const nextEmoji = getNextEmoji();
+          nextEmoji ? focus(nextEmoji) : focusNextEmojiListGroup();
+        } else updateActiveItem(gridChildren[activeIndex + 1]);
         break;
     }
   };
@@ -240,24 +243,20 @@ const useKeyboardNavigation = ({
     return getActiveElement().closest('.emoji');
   };
 
-  const focusNextEmoji = () => {
-    const nextSibling = closestEmoji().nextElementSibling;
-    if (nextSibling) {
-      nextSibling.firstChild.focus();
-      return true;
-    }
-
-    return false;
+  const getNextEmoji = () => {
+    const nextEmoji = closestEmoji().nextElementSibling;
+    if (!nextEmoji) return null;
+    return nextEmoji.firstChild;
   };
 
-  const focusPrevEmoji = () => {
+  const getPrevEmoji = () => {
     const prevSibling = closestEmoji().previousElementSibling;
-    if (prevSibling) {
-      prevSibling.firstChild.focus();
-      return true;
-    }
+    if (!prevSibling) return null;
+    return prevSibling.firstChild;
+  };
 
-    return false;
+  const focus = element => {
+    element.focus();
   };
 };
 
