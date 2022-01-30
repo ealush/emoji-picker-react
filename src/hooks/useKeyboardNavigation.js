@@ -38,7 +38,7 @@ const useKeyboardNavigation = ({
 
   const updateActiveItem = newActiveItem => {
     if (newActiveItem && newActiveItem.firstChild)
-      newActiveItem.firstChild.focus();
+      focusElement(newActiveItem.firstChild);
   };
 
   const navigateGrid = direction => {
@@ -82,13 +82,15 @@ const useKeyboardNavigation = ({
       case LEFT:
         if (isLeftColumn) {
           const prevEmoji = getPrevEmoji();
-          prevEmoji ? focus(prevEmoji) : focusPrevEmojiListGroupOnLastItem();
+          prevEmoji
+            ? focusElement(prevEmoji)
+            : focusPrevEmojiListGroupOnLastItem();
         } else updateActiveItem(gridChildren[activeIndex - 1]);
         break;
       case RIGHT:
         if (isRightColumn) {
           const nextEmoji = getNextEmoji();
-          nextEmoji ? focus(nextEmoji) : focusNextEmojiListGroup();
+          nextEmoji ? focusElement(nextEmoji) : focusNextEmojiListGroup();
         } else updateActiveItem(gridChildren[activeIndex + 1]);
         break;
     }
@@ -100,19 +102,20 @@ const useKeyboardNavigation = ({
     sections = [
       {
         //categories
-        focus: () => categoriesNavRef.current.firstChild.focus(),
+        focus: () => focusElement(categoriesNavRef.current.firstChild),
         rootElement: categoriesNavRef,
       },
       emojiSearchRef.current && {
         // search bar
-        focus: () => emojiSearchRef.current.focus(),
+        focus: () => focusElement(emojiSearchRef.current),
         rootElement: emojiSearchRef,
       },
       {
         //emoji list'
         focus: () => {
           const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          firstEmoji.firstChild.focus();
+          if (firstEmoji && firstEmoji.firstChild)
+            focusElement(firstEmoji.firstChild);
         },
         rootElement: emojiListRef,
       },
@@ -124,7 +127,7 @@ const useKeyboardNavigation = ({
     const nextEmojiGroup = currentEmojiGroup.nextSibling;
 
     if (nextEmojiGroup) {
-      nextEmojiGroup.children[columnIndex].firstChild.focus();
+      focusElement(nextEmojiGroup.children[columnIndex].firstChild);
 
       const categoryName = nextEmojiGroup.getAttribute('data-name');
       activateCategoryByName(categoryName);
@@ -140,7 +143,7 @@ const useKeyboardNavigation = ({
       prevEmojiGroup.lastChild &&
       prevEmojiGroup.lastChild.firstChild
     ) {
-      prevEmojiGroup.lastChild.firstChild.focus();
+      focusElement(prevEmojiGroup.lastChild.firstChild);
       return true;
     }
 
@@ -169,7 +172,7 @@ const useKeyboardNavigation = ({
 
       if (!isInLastRow) nextFocusIndex = numOfItems - 1;
 
-      prevEmojiGroup.children[nextFocusIndex].firstChild.focus();
+      focusElement(prevEmojiGroup.children[nextFocusIndex].firstChild);
 
       const categoryName = prevEmojiGroup.getAttribute('data-name');
       activateCategoryByName(categoryName);
@@ -189,12 +192,12 @@ const useKeyboardNavigation = ({
 
   const focusPrevCategory = () => {
     const prevSibling = getActiveElement().previousElementSibling;
-    if (prevSibling) prevSibling.focus();
+    if (prevSibling) focusElement(prevSibling);
   };
 
   const focusNextCategory = () => {
     const nextSibling = getActiveElement().nextElementSibling;
-    if (nextSibling) nextSibling.focus();
+    if (nextSibling) focusElement(nextSibling);
   };
 
   const activateCategoryByName = categoryName => {
@@ -226,7 +229,7 @@ const useKeyboardNavigation = ({
 
     if (currentSectionIndex < sections.length) {
       currentSectionIndex += 1;
-      sections[currentSectionIndex].focus();
+      focusElement(sections[currentSectionIndex]);
     }
   };
 
@@ -235,7 +238,7 @@ const useKeyboardNavigation = ({
 
     if (currentSectionIndex !== 0) {
       currentSectionIndex -= 1;
-      sections[currentSectionIndex].focus();
+      focusElement(sections[currentSectionIndex]);
     }
   };
 
@@ -255,8 +258,12 @@ const useKeyboardNavigation = ({
     return prevSibling.firstChild;
   };
 
-  const focus = element => {
-    element.focus();
+  const focusElement = element => {
+    try {
+      if (element) element.focus();
+    } catch (error) {
+      console.error(error);
+    }
   };
 };
 
