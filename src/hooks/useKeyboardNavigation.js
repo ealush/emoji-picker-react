@@ -73,9 +73,9 @@ const useKeyboardNavigation = ({
         if (
           boundariesInfo.isTopRow &&
           !focusPrevEmojiListGroup(currentColumn, itemsPerRow)
-        ) {
+        )
           focusPrevSection();
-        } else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
+        else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
         if (boundariesInfo.isBottomRow) {
@@ -83,20 +83,26 @@ const useKeyboardNavigation = ({
           else updateActiveItem(gridChildren[numOfItems - 1]);
         } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
-      case LEFT:
-        if (boundariesInfo.isLeftColumn) {
-          const prevEmoji = getPrevEmoji();
+      case LEFT: {
+        const prevEmoji = getPrevEmoji();
+
+        if (boundariesInfo.isLeftColumn)
           prevEmoji
             ? focusElement(prevEmoji)
             : focusPrevEmojiListGroupOnLastItem();
-        } else updateActiveItem(gridChildren[activeIndex - 1]);
+        else focusElement(prevEmoji);
+
         break;
-      case RIGHT:
-        if (boundariesInfo.isRightColumn) {
-          const nextEmoji = getNextEmoji();
+      }
+      case RIGHT: {
+        const nextEmoji = getNextEmoji();
+
+        if (boundariesInfo.isRightColumn)
           nextEmoji ? focusElement(nextEmoji) : focusNextEmojiListGroup();
-        } else updateActiveItem(gridChildren[activeIndex + 1]);
+        else focusElement(nextEmoji);
+
         break;
+      }
     }
   };
 
