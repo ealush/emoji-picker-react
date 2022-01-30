@@ -2,6 +2,18 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
+import {
+  getGridInfo,
+  getActiveElement,
+  getCurrentEmojiListGroup,
+  getElementBoundariesInfo,
+  focusElement,
+  getPrevEmoji,
+  getNextEmoji,
+  focusPrevCategory,
+  focusNextCategory,
+} from '../lib/KeyboardNavigationHelper';
+
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
@@ -42,45 +54,37 @@ const useKeyboardNavigation = ({
   };
 
   const navigateGrid = direction => {
-    const grid = getCurrentEmojiListGroup();
-    const active = getActiveElement().parentElement;
-    const gridChildren = Array.from(grid.children);
-    const activeIndex = gridChildren.indexOf(active);
+    const [
+      activeIndex,
+      itemsPerRow,
+      numOfItems,
+      currentColumn,
+      gridChildren,
+    ] = getGridInfo();
 
-    const numOfItems = gridChildren.length;
-    const baseOffset = gridChildren[0].offsetTop;
-    const breakIndex = gridChildren.findIndex(
-      item => item.offsetTop > baseOffset
+    const boundariesInfo = getElementBoundariesInfo(
+      activeIndex,
+      itemsPerRow,
+      numOfItems
     );
-    const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
-
-    const isTopRow = activeIndex <= itemsPerRow - 1;
-    const isBottomRow = activeIndex >= numOfItems - itemsPerRow;
-    const isLeftColumn = activeIndex % itemsPerRow === 0;
-    const isRightColumn =
-      activeIndex % itemsPerRow === itemsPerRow - 1 ||
-      activeIndex === numOfItems - 1;
-
-    const currentColumn = activeIndex % itemsPerRow;
-
-    const isLastRow =
-      activeIndex >= numOfItems - (numOfItems % itemsPerRow) ||
-      numOfItems % itemsPerRow === 0;
 
     switch (direction) {
       case UP:
-        if (isTopRow && !focusPrevEmojiListGroup(currentColumn, itemsPerRow))
+        if (
+          boundariesInfo.isTopRow &&
+          !focusPrevEmojiListGroup(currentColumn, itemsPerRow)
+        ) {
           focusPrevSection();
-        else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
+        } else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
-        if (isBottomRow) {
-          if (isLastRow) focusNextEmojiListGroup(currentColumn);
+        if (boundariesInfo.isBottomRow) {
+          if (boundariesInfo.isLastRow) focusNextEmojiListGroup(currentColumn);
           else updateActiveItem(gridChildren[numOfItems - 1]);
         } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT:
-        if (isLeftColumn) {
+        if (boundariesInfo.isLeftColumn) {
           const prevEmoji = getPrevEmoji();
           prevEmoji
             ? focusElement(prevEmoji)
@@ -88,7 +92,7 @@ const useKeyboardNavigation = ({
         } else updateActiveItem(gridChildren[activeIndex - 1]);
         break;
       case RIGHT:
-        if (isRightColumn) {
+        if (boundariesInfo.isRightColumn) {
           const nextEmoji = getNextEmoji();
           nextEmoji ? focusElement(nextEmoji) : focusNextEmojiListGroup();
         } else updateActiveItem(gridChildren[activeIndex + 1]);
@@ -186,20 +190,6 @@ const useKeyboardNavigation = ({
     /*todo: not implemented*/
   };
 
-  const getCurrentEmojiListGroup = () => {
-    return getActiveElement().closest('.emoji-group');
-  };
-
-  const focusPrevCategory = () => {
-    const prevSibling = getActiveElement().previousElementSibling;
-    if (prevSibling) focusElement(prevSibling);
-  };
-
-  const focusNextCategory = () => {
-    const nextSibling = getActiveElement().nextElementSibling;
-    if (nextSibling) focusElement(nextSibling);
-  };
-
   const activateCategoryByName = categoryName => {
     const activeCategory = categoriesNavRef.current.querySelector('.active');
     if (activeCategory) activeCategory.classList.remove('active');
@@ -209,10 +199,6 @@ const useKeyboardNavigation = ({
     );
 
     if (newCategoryElement) newCategoryElement.classList.add('active');
-  };
-
-  const getActiveElement = () => {
-    return document.activeElement;
   };
 
   const getCurrentSectionIndex = () => {
@@ -239,30 +225,6 @@ const useKeyboardNavigation = ({
     if (currentSectionIndex !== 0) {
       currentSectionIndex -= 1;
       focusElement(sections[currentSectionIndex]);
-    }
-  };
-
-  const closestEmoji = () => {
-    return getActiveElement().closest('.emoji');
-  };
-
-  const getNextEmoji = () => {
-    const nextEmoji = closestEmoji().nextElementSibling;
-    if (!nextEmoji) return null;
-    return nextEmoji.firstChild;
-  };
-
-  const getPrevEmoji = () => {
-    const prevSibling = closestEmoji().previousElementSibling;
-    if (!prevSibling) return null;
-    return prevSibling.firstChild;
-  };
-
-  const focusElement = element => {
-    try {
-      if (element) element.focus();
-    } catch (error) {
-      console.error(error);
     }
   };
 };
