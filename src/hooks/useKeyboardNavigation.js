@@ -14,7 +14,7 @@ import {
   focusNextCategory,
   getEmojiGroupName,
   withCatch,
-} from '../lib/KeyboardNavigationHelper';
+} from '../lib/KeyboardNavigation';
 
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
