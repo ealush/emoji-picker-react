@@ -1,17 +1,26 @@
 export const getGridInfo = () => {
   const grid = getCurrentEmojiListGroup();
   const active = getActiveElement().parentElement;
-  const gridChildren = Array.from(grid.children);
-  const activeIndex = gridChildren.indexOf(active);
-  const numOfItems = gridChildren.length;
-  const baseOffset = gridChildren[0].offsetTop;
-  const breakIndex = gridChildren.findIndex(
+
+  const activeIndex = Array.prototype.indexOf.call(grid.children, active);
+
+  const numOfItems = grid.children.length;
+  const baseOffset = grid.children[0].offsetTop;
+
+  const breakIndex = Array.prototype.findIndex.call(
+    grid.children,
     item => item.offsetTop > baseOffset
   );
 
   const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
   const currentColumn = activeIndex % itemsPerRow;
-  return { activeIndex, itemsPerRow, numOfItems, currentColumn, gridChildren };
+  return {
+    activeIndex,
+    itemsPerRow,
+    numOfItems,
+    currentColumn,
+    gridChildren: grid.children,
+  };
 };
 
 export const getElementBoundariesInfo = ({
