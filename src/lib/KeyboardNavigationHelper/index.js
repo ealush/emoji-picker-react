@@ -62,11 +62,7 @@ export const getPrevEmoji = () => {
 };
 
 export const focusElement = element => {
-  try {
-    if (element) element.focus();
-  } catch (error) {
-    console.error(error);
-  }
+  if (element) element.focus();
 };
 
 export const focusPrevCategory = () => {
@@ -81,4 +77,12 @@ export const focusNextCategory = () => {
 
 export const getEmojiGroupName = emojiGroup => {
   return emojiGroup.getAttribute('data-name');
+};
+
+export const withCatch = cb => {
+  return (...args) => {
+    try {
+      cb(...args);
+    } catch {}
+  };
 };

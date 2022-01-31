@@ -13,6 +13,7 @@ import {
   focusPrevCategory,
   focusNextCategory,
   getEmojiGroupName,
+  withCatch,
 } from '../lib/KeyboardNavigationHelper';
 
 import { DOWN, LEFT, RIGHT, UP } from './consts';
@@ -24,9 +25,9 @@ const useKeyboardNavigation = ({
 }) => {
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
-      ArrowLeft: focusPrevCategory,
-      ArrowRight: focusNextCategory,
-      ArrowDown: focusNextSection,
+      ArrowLeft: withCatch(focusPrevCategory),
+      ArrowRight: withCatch(focusNextCategory),
+      ArrowDown: withCatch(focusNextSection),
     });
   }, []);
 
@@ -34,18 +35,18 @@ const useKeyboardNavigation = ({
     if (!emojiSearchRef.current) return;
 
     return tinykeys(emojiSearchRef.current, {
-      ArrowRight: focusSkinTonePicker,
-      ArrowUp: focusPrevSection,
-      ArrowDown: focusNextSection,
+      ArrowRight: withCatch(focusSkinTonePicker),
+      ArrowUp: withCatch(focusPrevSection),
+      ArrowDown: withCatch(focusNextSection),
     });
   }, []);
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
-      ArrowRight: () => navigateGrid(RIGHT),
-      ArrowLeft: () => navigateGrid(LEFT),
-      ArrowUp: () => navigateGrid(UP),
-      ArrowDown: () => navigateGrid(DOWN),
+      ArrowRight: withCatch(() => navigateGrid(RIGHT)),
+      ArrowLeft: withCatch(() => navigateGrid(LEFT)),
+      ArrowUp: withCatch(() => navigateGrid(UP)),
+      ArrowDown: withCatch(() => navigateGrid(DOWN)),
     });
   }, []);
 
