@@ -12,6 +12,7 @@ import {
   getNextEmoji,
   focusPrevCategory,
   focusNextCategory,
+  getEmojiGroupName,
 } from '../lib/KeyboardNavigationHelper';
 
 import { DOWN, LEFT, RIGHT, UP } from './consts';
@@ -68,7 +69,7 @@ const useKeyboardNavigation = ({
       isLastRow,
       isLeftColumn,
       isRightColumn,
-    } = getElementBoundariesInfo(activeIndex, itemsPerRow, numOfItems);
+    } = getElementBoundariesInfo({ activeIndex, itemsPerRow, numOfItems });
 
     switch (direction) {
       case UP:
@@ -138,7 +139,7 @@ const useKeyboardNavigation = ({
     if (nextEmojiGroup) {
       focusElement(nextEmojiGroup.children[columnIndex].firstChild);
 
-      const categoryName = nextEmojiGroup.getAttribute('data-name');
+      const categoryName = getEmojiGroupName(nextEmojiGroup);
       activateCategoryByName(categoryName);
     }
   };
@@ -182,7 +183,7 @@ const useKeyboardNavigation = ({
 
       focusElement(prevEmojiGroup.children[nextFocusIndex].firstChild);
 
-      const categoryName = prevEmojiGroup.getAttribute('data-name');
+      const categoryName = getEmojiGroupName(prevEmojiGroup);
       activateCategoryByName(categoryName);
     }
 

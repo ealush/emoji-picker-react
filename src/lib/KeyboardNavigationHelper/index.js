@@ -11,18 +11,23 @@ export const getGridInfo = () => {
 
   const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
   const currentColumn = activeIndex % itemsPerRow;
-  return {activeIndex, itemsPerRow, numOfItems, currentColumn, gridChildren};
+  return { activeIndex, itemsPerRow, numOfItems, currentColumn, gridChildren };
 };
 
-export const getElementBoundariesInfo = (index, itemsPerRow, numOfItems) => {
-  const isTopRow = index <= itemsPerRow - 1;
-  const isBottomRow = index >= numOfItems - itemsPerRow;
-  const isLeftColumn = index % itemsPerRow === 0;
+export const getElementBoundariesInfo = ({
+  activeIndex,
+  itemsPerRow,
+  numOfItems,
+}) => {
+  const isTopRow = activeIndex <= itemsPerRow - 1;
+  const isBottomRow = activeIndex >= numOfItems - itemsPerRow;
+  const isLeftColumn = activeIndex % itemsPerRow === 0;
   const isRightColumn =
-    index % itemsPerRow === itemsPerRow - 1 || index === numOfItems - 1;
+    activeIndex % itemsPerRow === itemsPerRow - 1 ||
+    activeIndex === numOfItems - 1;
 
   const isLastRow =
-    index >= numOfItems - (numOfItems % itemsPerRow) ||
+    activeIndex >= numOfItems - (numOfItems % itemsPerRow) ||
     numOfItems % itemsPerRow === 0;
 
   return { isTopRow, isBottomRow, isLeftColumn, isRightColumn, isLastRow };
@@ -72,4 +77,8 @@ export const focusPrevCategory = () => {
 export const focusNextCategory = () => {
   const nextSibling = getActiveElement().nextElementSibling;
   if (nextSibling) focusElement(nextSibling);
+};
+
+export const getEmojiGroupName = emojiGroup => {
+  return emojiGroup.getAttribute('data-name');
 };
