@@ -16,6 +16,7 @@ import {
   withCatch,
 } from '../lib/KeyboardNavigation';
 
+import { useActiveCategory } from '../PickerContext';
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
@@ -23,6 +24,8 @@ const useKeyboardNavigation = ({
   emojiSearchRef,
   emojiListRef,
 }) => {
+  const [, setActiveCategory] = useActiveCategory();
+
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
       ArrowLeft: withCatch(focusPrevCategory),
@@ -141,7 +144,7 @@ const useKeyboardNavigation = ({
       focusElement(nextEmojiGroup.children[columnIndex].firstChild);
 
       const categoryName = getEmojiGroupName(nextEmojiGroup);
-      activateCategoryByName(categoryName);
+      setActiveCategory(categoryName);
     }
   };
 
@@ -185,7 +188,7 @@ const useKeyboardNavigation = ({
       focusElement(prevEmojiGroup.children[nextFocusIndex].firstChild);
 
       const categoryName = getEmojiGroupName(prevEmojiGroup);
-      activateCategoryByName(categoryName);
+      setActiveCategory(categoryName);
     }
 
     return prevEmojiGroup;
@@ -193,17 +196,6 @@ const useKeyboardNavigation = ({
 
   const focusSkinTonePicker = () => {
     /*todo: not implemented*/
-  };
-
-  const activateCategoryByName = categoryName => {
-    const activeCategory = categoriesNavRef.current.querySelector('.active');
-    if (activeCategory) activeCategory.classList.remove('active');
-
-    const newCategoryElement = categoriesNavRef.current.querySelector(
-      `[data-name=${categoryName}]`
-    );
-
-    if (newCategoryElement) newCategoryElement.classList.add('active');
   };
 
   const getCurrentSectionIndex = () => {
