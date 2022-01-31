@@ -54,39 +54,38 @@ const useKeyboardNavigation = ({
   };
 
   const navigateGrid = direction => {
-    const [
+    const {
       activeIndex,
       itemsPerRow,
       numOfItems,
       currentColumn,
       gridChildren,
-    ] = getGridInfo();
+    } = getGridInfo();
 
-    const boundariesInfo = getElementBoundariesInfo(
-      activeIndex,
-      itemsPerRow,
-      numOfItems
-    );
+    const {
+      isTopRow,
+      isBottomRow,
+      isLastRow,
+      isLeftColumn,
+      isRightColumn,
+    } = getElementBoundariesInfo(activeIndex, itemsPerRow, numOfItems);
 
     switch (direction) {
       case UP:
-        if (
-          boundariesInfo.isTopRow &&
-          !focusPrevEmojiListGroup(currentColumn, itemsPerRow)
-        )
+        if (isTopRow && !focusPrevEmojiListGroup(currentColumn, itemsPerRow))
           focusPrevSection();
         else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
         break;
       case DOWN:
-        if (boundariesInfo.isBottomRow) {
-          if (boundariesInfo.isLastRow) focusNextEmojiListGroup(currentColumn);
+        if (isBottomRow) {
+          if (isLastRow) focusNextEmojiListGroup(currentColumn);
           else updateActiveItem(gridChildren[numOfItems - 1]);
         } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
         break;
       case LEFT: {
         const prevEmoji = getPrevEmoji();
 
-        if (boundariesInfo.isLeftColumn)
+        if (isLeftColumn)
           prevEmoji
             ? focusElement(prevEmoji)
             : focusPrevEmojiListGroupOnLastItem();
@@ -97,7 +96,7 @@ const useKeyboardNavigation = ({
       case RIGHT: {
         const nextEmoji = getNextEmoji();
 
-        if (boundariesInfo.isRightColumn)
+        if (isRightColumn)
           nextEmoji ? focusElement(nextEmoji) : focusNextEmojiListGroup();
         else focusElement(nextEmoji);
 
