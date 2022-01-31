@@ -11,7 +11,7 @@ export const getGridInfo = () => {
 
   const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
   const currentColumn = activeIndex % itemsPerRow;
-  return [activeIndex, itemsPerRow, numOfItems, currentColumn, gridChildren];
+  return {activeIndex, itemsPerRow, numOfItems, currentColumn, gridChildren};
 };
 
 export const getElementBoundariesInfo = (index, itemsPerRow, numOfItems) => {
