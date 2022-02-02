@@ -92,31 +92,32 @@ const CategoriesNav = ({ emojiListRef, customGroups }) => {
             />
           );
         })}
-        {customGroups !== [] &&
-          customGroups.map((group, i) => {
-            if (groupVisibility[group.name] === false) {
-              return null;
-            }
-            const active = activeCategory === group.name;
+        {!(Array.isArray(customGroups) && customGroups.length)
+          ? null
+          : customGroups.map((group, i) => {
+              if (groupVisibility[group.name] === false) {
+                return null;
+              }
+              const active = activeCategory === group.name;
 
-            if (active) {
-              index = i;
-            }
+              if (active) {
+                index = i;
+              }
 
-            const groupName = group.name.replace(' ', '-').toLowerCase();
+              const groupName = group.name.replace(' ', '-').toLowerCase();
 
-            return (
-              <button
-                key={groupName}
-                type="button"
-                className={cn(`icn-${groupName}`, {
-                  active,
-                })}
-                style={{ backgroundImage: `url(${group.icon})` }}
-                data-name={groupName}
-              />
-            );
-          })}
+              return (
+                <button
+                  key={groupName}
+                  type="button"
+                  className={cn(`icn-${groupName}`, {
+                    active,
+                  })}
+                  style={{ backgroundImage: `url(${group.icon})` }}
+                  data-name={groupName}
+                />
+              );
+            })}
       </nav>
       <div className="active-category-indicator-wrapper">
         <div
