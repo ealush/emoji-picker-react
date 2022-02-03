@@ -2,16 +2,35 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
+import {
+  getGridInfo,
+  getActiveElement,
+  getCurrentEmojiListGroup,
+  getElementBoundariesInfo,
+  focusElement,
+  getPrevEmoji,
+  getNextEmoji,
+  focusPrevCategory,
+  focusNextCategory,
+  getEmojiGroupName,
+  withCatch,
+} from '../lib/KeyboardNavigation';
+
+import { useActiveCategory } from '../PickerContext';
+import { DOWN, LEFT, RIGHT, UP } from './consts';
+
 const useKeyboardNavigation = ({
   categoriesNavRef,
   emojiSearchRef,
   emojiListRef,
 }) => {
+  const [, setActiveCategory] = useActiveCategory();
+
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
-      ArrowLeft: focusPrevCategory,
-      ArrowRight: focusNextCategory,
-      ArrowDown: focusNextSection,
+      ArrowLeft: withCatch(focusPrevCategory),
+      ArrowRight: withCatch(focusNextCategory),
+      ArrowDown: withCatch(focusNextSection),
     });
   }, []);
 
@@ -19,60 +38,165 @@ const useKeyboardNavigation = ({
     if (!emojiSearchRef.current) return;
 
     return tinykeys(emojiSearchRef.current, {
-      ArrowRight: focusSkinTonePicker,
-      ArrowUp: focusPrevSection,
-      ArrowDown: focusNextSection,
+      ArrowRight: withCatch(focusSkinTonePicker),
+      ArrowUp: withCatch(focusPrevSection),
+      ArrowDown: withCatch(focusNextSection),
     });
   }, []);
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
-      ArrowRight: focusNextEmoji,
-      ArrowLeft: focusPrevEmoji,
+      ArrowRight: withCatch(() => navigateGrid(RIGHT)),
+      ArrowLeft: withCatch(() => navigateGrid(LEFT)),
+      ArrowUp: withCatch(() => navigateGrid(UP)),
+      ArrowDown: withCatch(() => navigateGrid(DOWN)),
     });
   }, []);
 
-  let sections = [];
+  const updateActiveItem = newActiveItem => {
+    if (newActiveItem && newActiveItem.firstChild)
+      focusElement(newActiveItem.firstChild);
+  };
+
+  const navigateGrid = direction => {
+    const {
+      activeIndex,
+      itemsPerRow,
+      numOfItems,
+      currentColumn,
+      gridChildren,
+    } = getGridInfo();
+
+    const {
+      isTopRow,
+      isBottomRow,
+      isLastRow,
+      isLeftColumn,
+      isRightColumn,
+    } = getElementBoundariesInfo({ activeIndex, itemsPerRow, numOfItems });
+
+    switch (direction) {
+      case UP:
+        if (isTopRow && !focusPrevEmojiListGroup(currentColumn, itemsPerRow))
+          focusPrevSection();
+        else updateActiveItem(gridChildren[activeIndex - itemsPerRow]);
+        break;
+      case DOWN:
+        if (isBottomRow) {
+          if (isLastRow) focusNextEmojiListGroup(currentColumn);
+          else updateActiveItem(gridChildren[numOfItems - 1]);
+        } else updateActiveItem(gridChildren[activeIndex + itemsPerRow]);
+        break;
+      case LEFT: {
+        const prevEmoji = getPrevEmoji();
+
+        if (isLeftColumn)
+          prevEmoji
+            ? focusElement(prevEmoji)
+            : focusPrevEmojiListGroupOnLastItem();
+        else focusElement(prevEmoji);
+
+        break;
+      }
+      case RIGHT: {
+        const nextEmoji = getNextEmoji();
+
+        if (isRightColumn)
+          nextEmoji ? focusElement(nextEmoji) : focusNextEmojiListGroup();
+        else focusElement(nextEmoji);
+
+        break;
+      }
+    }
+  };
+
+let sections = [];
 
   useEffect(() => {
     sections = [
       {
         //categories
-        focus: () => categoriesNavRef.current.firstChild.focus(),
+        focus: () => focusElement(categoriesNavRef.current.firstChild),
         rootElement: categoriesNavRef,
       },
       emojiSearchRef.current && {
         // search bar
-        focus: () => emojiSearchRef.current.focus(),
+        focus: () => focusElement(emojiSearchRef.current),
         rootElement: emojiSearchRef,
       },
       {
         //emoji list'
         focus: () => {
           const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          firstEmoji.firstChild.focus();
+          if (firstEmoji && firstEmoji.firstChild)
+            focusElement(firstEmoji.firstChild);
         },
         rootElement: emojiListRef,
       },
     ].filter(Boolean);
   }, []);
 
+
+  const focusNextEmojiListGroup = (columnIndex = 0) => {
+    const currentEmojiGroup = getCurrentEmojiListGroup();
+    const nextEmojiGroup = currentEmojiGroup.nextSibling;
+
+    if (nextEmojiGroup) {
+      focusElement(nextEmojiGroup.children[columnIndex].firstChild);
+
+      const categoryName = getEmojiGroupName(nextEmojiGroup);
+      setActiveCategory(categoryName);
+    }
+  };
+
+  const focusPrevEmojiListGroupOnLastItem = () => {
+    const currentEmojiGroup = getCurrentEmojiListGroup();
+    const prevEmojiGroup = currentEmojiGroup.previousSibling;
+
+    if (
+      prevEmojiGroup &&
+      prevEmojiGroup.lastChild &&
+      prevEmojiGroup.lastChild.firstChild
+    ) {
+      focusElement(prevEmojiGroup.lastChild.firstChild);
+    }
+
+    return prevEmojiGroup;
+  };
+
+  const focusPrevEmojiListGroup = (columnIndex, itemsPerRow) => {
+    const currentEmojiGroup = getCurrentEmojiListGroup();
+    const prevEmojiGroup = currentEmojiGroup.previousSibling;
+
+    if (prevEmojiGroup) {
+      const numOfItems = prevEmojiGroup.children.length;
+
+      let nextFocusIndex;
+
+      for (let i = numOfItems - 1; i >= 0; i--) {
+        if (i % itemsPerRow === columnIndex) {
+          nextFocusIndex = i;
+          break;
+        }
+      }
+
+      const isInLastRow =
+        nextFocusIndex >= numOfItems - (numOfItems % itemsPerRow) ||
+        numOfItems % itemsPerRow === 0;
+
+      if (!isInLastRow) nextFocusIndex = numOfItems - 1;
+
+      focusElement(prevEmojiGroup.children[nextFocusIndex].firstChild);
+
+      const categoryName = getEmojiGroupName(prevEmojiGroup);
+      setActiveCategory(categoryName);
+    }
+
+    return prevEmojiGroup;
+  };
+
   const focusSkinTonePicker = () => {
     /*todo: not implemented*/
-  };
-
-  const focusPrevCategory = () => {
-    const prevSibling = getActiveElement().previousElementSibling;
-    if (prevSibling) prevSibling.focus();
-  };
-
-  const focusNextCategory = () => {
-    const nextSibling = getActiveElement().nextElementSibling;
-    if (nextSibling) nextSibling.focus();
-  };
-
-  const getActiveElement = () => {
-    return document.activeElement;
   };
 
   const getCurrentSectionIndex = () => {
@@ -89,7 +213,7 @@ const useKeyboardNavigation = ({
 
     if (currentSectionIndex < sections.length) {
       currentSectionIndex += 1;
-      sections[currentSectionIndex].focus();
+      focusElement(sections[currentSectionIndex]);
     }
   };
 
@@ -98,22 +222,8 @@ const useKeyboardNavigation = ({
 
     if (currentSectionIndex !== 0) {
       currentSectionIndex -= 1;
-      sections[currentSectionIndex].focus();
+      focusElement(sections[currentSectionIndex]);
     }
-  };
-
-  const closestEmoji = () => {
-    return getActiveElement().closest('.emoji');
-  };
-
-  const focusNextEmoji = () => {
-    const nextSibling = closestEmoji().nextElementSibling;
-    if (nextSibling) nextSibling.firstChild.focus();
-  };
-
-  const focusPrevEmoji = () => {
-    const prevSibling = closestEmoji().previousElementSibling;
-    if (prevSibling) prevSibling.firstChild.focus();
   };
 };
 
