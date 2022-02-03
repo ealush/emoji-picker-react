@@ -110,7 +110,7 @@ const useKeyboardNavigation = ({
     }
   };
 
-  let sections = [];
+let sections = [];
 
   useEffect(() => {
     sections = [
@@ -135,6 +135,7 @@ const useKeyboardNavigation = ({
       },
     ].filter(Boolean);
   }, []);
+
 
   const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
