@@ -2,20 +2,7 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-import {
-  getGridInfo,
-  getActiveElement,
-  getCurrentEmojiListGroup,
-  getElementBoundariesInfo,
-  focusElement,
-  getPrevEmoji,
-  getNextEmoji,
-  focusPrevCategory,
-  focusNextCategory,
-  getEmojiGroupName,
-  withCatch,
-} from '../lib/KeyboardNavigation';
-
+import { focusElement, focusNextCategory, focusPrevCategory, getActiveElement, getCurrentEmojiListGroup, getElementBoundariesInfo, getEmojiGroupName, getGridInfo, getNextEmoji, getPrevEmoji, withCatch } from '../lib/KeyboardNavigation';
 import { useActiveCategory } from '../PickerContext';
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
@@ -54,8 +41,7 @@ const useKeyboardNavigation = ({
   }, []);
 
   const updateActiveItem = newActiveItem => {
-    if (newActiveItem && newActiveItem.firstChild)
-      focusElement(newActiveItem.firstChild);
+    if (newActiveItem?.firstChild) focusElement(newActiveItem.firstChild);
   };
 
   const navigateGrid = direction => {
@@ -110,7 +96,7 @@ const useKeyboardNavigation = ({
     }
   };
 
-let sections = [];
+  let sections = [];
 
   useEffect(() => {
     sections = [
@@ -128,14 +114,12 @@ let sections = [];
         //emoji list'
         focus: () => {
           const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          if (firstEmoji && firstEmoji.firstChild)
-            focusElement(firstEmoji.firstChild);
+          if (firstEmoji?.firstChild) focusElement(firstEmoji.firstChild);
         },
         rootElement: emojiListRef,
       },
     ].filter(Boolean);
   }, []);
-
 
   const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
@@ -153,11 +137,7 @@ let sections = [];
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
 
-    if (
-      prevEmojiGroup &&
-      prevEmojiGroup.lastChild &&
-      prevEmojiGroup.lastChild.firstChild
-    ) {
+    if (prevEmojiGroup?.lastChild?.firstChild) {
       focusElement(prevEmojiGroup.lastChild.firstChild);
     }
 
