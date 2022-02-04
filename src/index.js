@@ -35,6 +35,7 @@ const EmojiPicker = ({
   pickerStyle = {},
   groupVisibility = {},
   searchPlaceholder = null,
+  customGroups = [],
 }) => {
   const emojiListRef = useRef(null);
   const isMounted = useRef(true);
@@ -66,7 +67,10 @@ const EmojiPicker = ({
       onEmojiClick={clickHandler(onClickRef)}
     >
       <Aside pickerStyle={pickerStyle}>
-        <CategoriesNav emojiListRef={emojiListRef} />
+        <CategoriesNav
+          emojiListRef={emojiListRef}
+          customGroups={customGroups}
+        />
         <Search searchPlaceholder={searchPlaceholder} />
 
         <div className="content-wrapper">

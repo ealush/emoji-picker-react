@@ -147,4 +147,26 @@ storiesOf('EmojiPicker', module)
         />
       </div>
     );
+  })
+  .add('Custom Emoji Group', () => {
+    return (
+      <div>
+        <EmojiPicker
+          onEmojiClick={(e, em) => log(em)}
+          emojiUrl={CDN_URL}
+          customGroups={[
+            {
+              name: 'Custom Emojis',
+              icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
+              emojis: [
+                {
+                  name: 'Mr Blob',
+                  url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
+                },
+              ],
+            },
+          ]}
+        />
+      </div>
+    );
   });
