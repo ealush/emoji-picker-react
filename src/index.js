@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useRef } from 'react';
 
-import CategoriesNav from './components/CategoriesNav';
-import EmojiList from './components/EmojiList';
-import RecentlyUsed from './components/RecentlyUsed';
-import Search from './components/Search';
+import EmojiPickerContent from './components/EmojiPickerContent';
+
 import {
   SKIN_TONE_DARK,
   SKIN_TONE_LIGHT,
@@ -13,12 +11,12 @@ import {
   SKIN_TONE_MEDIUM_LIGHT,
   SKIN_TONE_NEUTRAL,
 } from './components/SkinTones';
-import VariationsMenu from './components/VariationsMenu';
+
 import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes } from './lib/propTypes';
 import { getRecentlyUsed } from './lib/recentlyUsed';
-import { PickerContextProvider, useCloseVariationMenu } from './PickerContext';
+import { PickerContextProvider } from './PickerContext';
 
 import './style.css';
 
@@ -32,22 +30,16 @@ const EmojiPicker = ({
   disableSearchBar = false,
   disableSkinTonePicker = false,
   groupNames = {},
-  pickerStyle = {},
   groupVisibility = {},
-  searchPlaceholder = null,
+  ...otherProps
 }) => {
-  const emojiListRef = useRef(null);
+
   const isMounted = useRef(true);
   const onClickRef = useRef(onEmojiClick);
 
   onClickRef.current = onEmojiClick;
 
-  useEffect(
-    () => () => {
-      isMounted.current = false;
-    },
-    []
-  );
+  useEffect(() => () => (isMounted.current = false), []);
 
   return (
     <PickerContextProvider
@@ -65,35 +57,10 @@ const EmojiPicker = ({
       recentlyUsed={getRecentlyUsed()}
       onEmojiClick={clickHandler(onClickRef)}
     >
-      <Aside pickerStyle={pickerStyle}>
-        <CategoriesNav emojiListRef={emojiListRef} />
-        <Search searchPlaceholder={searchPlaceholder} />
-
-        <div className="content-wrapper">
-          <VariationsMenu />
-          <section className="emoji-scroll-wrapper" ref={emojiListRef}>
-            <RecentlyUsed emojiListRef={emojiListRef} />
-            <EmojiList emojiListRef={emojiListRef} />
-          </section>
-        </div>
-      </Aside>
+      <EmojiPickerContent {...otherProps} />
     </PickerContextProvider>
   );
 };
-
-function Aside({ children, pickerStyle }) {
-  const closeVariations = useCloseVariationMenu();
-  return (
-    <aside
-      className="emoji-picker-react"
-      style={pickerStyle}
-      onScroll={closeVariations}
-      onMouseDown={closeVariations}
-    >
-      {children}
-    </aside>
-  );
-}
 
 export {
   SKIN_TONE_NEUTRAL,
@@ -105,11 +72,6 @@ export {
 };
 
 export default EmojiPicker;
-
-Aside.propTypes = {
-  children: PropTypes.node,
-  pickerStyle: PropTypes.object,
-};
 
 EmojiPicker.propTypes = {
   onEmojiClick: PropTypes.func,
