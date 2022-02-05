@@ -104,7 +104,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
 };
 
 const EmojiList = ({ emojiListRef }) => {
-  const [activeCategory] = useActiveCategory();
+  const activeCategory = useActiveCategory();
   const { groupNames } = useConfig();
   const filterResult = useFilterResult();
   const filter = useFilterValue();
@@ -114,7 +114,7 @@ const EmojiList = ({ emojiListRef }) => {
   const [renderOne, setRenderOne] = useState(true);
 
   const searchTerm =
-    filter && filter.length ? filter[filter.length - 1].value : '';
+    filter?.length ? filter[filter.length - 1].value : '';
 
   useEffect(() => {
     if (!searchTerm) {

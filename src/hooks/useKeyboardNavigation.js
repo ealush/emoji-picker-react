@@ -2,8 +2,21 @@ import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
-import { focusElement, focusNextCategory, focusPrevCategory, getActiveElement, getCurrentEmojiListGroup, getElementBoundariesInfo, getEmojiGroupName, getGridInfo, getNextEmoji, getPrevEmoji, withCatch } from '../lib/KeyboardNavigation';
-import { useActiveCategory } from '../PickerContext';
+import {
+  focusElement,
+  focusNextCategory,
+  focusPrevCategory,
+  getActiveElement,
+  getCurrentEmojiListGroup,
+  getElementBoundariesInfo,
+  getEmojiGroupName,
+  getGridInfo,
+  getNextEmoji,
+  getPrevEmoji,
+  withCatch,
+} from '../lib/KeyboardNavigation';
+
+import { useSetActiveCategory } from '../PickerContext';
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
@@ -11,7 +24,7 @@ const useKeyboardNavigation = ({
   emojiSearchRef,
   emojiListRef,
 }) => {
-  const [, setActiveCategory] = useActiveCategory();
+  const setActiveCategory = useSetActiveCategory();
 
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {

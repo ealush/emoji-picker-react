@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { PROPERTY_DATA_NAME } from '../lib/constants';
 import globalObject from '../lib/globalObject';
-import { useActiveCategory, useSetSeenGroups } from '../PickerContext';
+import { useSetActiveCategory, useSetSeenGroups } from '../PickerContext';
 
 const useIntersectionObserver = (
   root,
@@ -10,7 +10,7 @@ const useIntersectionObserver = (
   renderOne
 ) => {
   const observer = useRef(null);
-  const [, setActiveCategory] = useActiveCategory();
+  const setActiveCategory = useSetActiveCategory();
   const setSeenGroups = useSetSeenGroups();
 
   useEffect(() => {
