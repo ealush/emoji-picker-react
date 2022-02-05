@@ -37,6 +37,7 @@ const EmojiPicker = ({
   groupVisibility = {},
   ...otherProps
 }) => {
+
   const isMounted = useRef(true);
   const onClickRef = useRef(onEmojiClick);
 
