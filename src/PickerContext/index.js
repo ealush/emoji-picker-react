@@ -55,15 +55,11 @@ export function useActiveCategory() {
 
 export function useSetActiveCategory() {
   const [, setActiveCategory] = useContext(PickerContext).activeCategoryState;
-  const [, setSeenGroups] = useContext(PickerContext).seenGroupsState;
+  const setSeenGroups = useSetSeenGroups();
 
   return categoryName => {
     setActiveCategory(categoryName);
-    setSeenGroups((seenGroups = {}) => {
-      return seenGroups[categoryName]
-        ? seenGroups
-        : { ...seenGroups, [categoryName]: true };
-    });
+    setSeenGroups(categoryName);
   };
 }
 
