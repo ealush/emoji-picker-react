@@ -54,7 +54,7 @@ const useKeyboardNavigation = ({
   }, []);
 
   const updateActiveItem = newActiveItem => {
-    if (newActiveItem?.firstChild) focusElement(newActiveItem.firstChild);
+    focusElement(newActiveItem?.firstChild);
   };
 
   const navigateGrid = direction => {
@@ -127,7 +127,7 @@ const useKeyboardNavigation = ({
         //emoji list'
         focus: () => {
           const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          if (firstEmoji?.firstChild) focusElement(firstEmoji.firstChild);
+          focusElement(firstEmoji?.firstChild);
         },
         rootElement: emojiListRef,
       },
@@ -149,11 +149,7 @@ const useKeyboardNavigation = ({
   const focusPrevEmojiListGroupOnLastItem = () => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
-
-    if (prevEmojiGroup?.lastChild?.firstChild) {
-      focusElement(prevEmojiGroup.lastChild.firstChild);
-    }
-
+    focusElement(prevEmojiGroup?.lastChild?.firstChild);
     return prevEmojiGroup;
   };
 

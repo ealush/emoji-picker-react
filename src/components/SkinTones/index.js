@@ -1,5 +1,5 @@
-import skinTones from '../../skinTones';
 import React from 'react';
+import skinTones from '../../skinTones';
 
 import { useActiveSkinTone, useSetActiveSkinTone, useSkinToneSpreadValue, useToggleSpreadSkinTones } from '../../PickerContext';
 import { DATA_NAME, SKIN_TONE_DARK, SKIN_TONE_LIGHT, SKIN_TONE_MEDIUM, SKIN_TONE_MEDIUM_DARK, SKIN_TONE_MEDIUM_LIGHT, SKIN_TONE_NEUTRAL } from './constants';
