@@ -6,6 +6,7 @@ import groups from '../../groups.json';
 import { PROPERTY_DATA_NAME } from '../../lib/constants';
 import {
   useActiveCategory,
+  useSetActiveCategory,
   useConfig,
   useFilterValue,
   useSetSeenGroups,
@@ -17,7 +18,8 @@ const CategoriesNav = ({ emojiListRef, categoriesNavRef, customGroups }) => {
   const setSeenGroups = useSetSeenGroups();
   const filter = useFilterValue();
   const { groupVisibility } = useConfig();
-  const [activeCategory, setActiveCategory] = useActiveCategory();
+  const activeCategory = useActiveCategory();
+  const setActiveCategory = useSetActiveCategory();
 
   let inactive = false;
   if (filter && filter.length) {

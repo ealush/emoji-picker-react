@@ -49,7 +49,18 @@ PickerContextProvider.propTypes = {
 };
 
 export function useActiveCategory() {
-  return useContext(PickerContext).activeCategoryState;
+  const [activeCategory] = useContext(PickerContext).activeCategoryState;
+  return activeCategory;
+}
+
+export function useSetActiveCategory() {
+  const [, setActiveCategory] = useContext(PickerContext).activeCategoryState;
+  const setSeenGroups = useSetSeenGroups();
+
+  return categoryName => {
+    setActiveCategory(categoryName);
+    setSeenGroups(categoryName);
+  };
 }
 
 export function useSetFilter() {

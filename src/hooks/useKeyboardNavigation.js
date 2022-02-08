@@ -3,20 +3,20 @@ import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
 import {
-  getGridInfo,
+  focusElement,
+  focusNextCategory,
+  focusPrevCategory,
   getActiveElement,
   getCurrentEmojiListGroup,
   getElementBoundariesInfo,
-  focusElement,
-  getPrevEmoji,
-  getNextEmoji,
-  focusPrevCategory,
-  focusNextCategory,
   getEmojiGroupName,
+  getGridInfo,
+  getNextEmoji,
+  getPrevEmoji,
   withCatch,
 } from '../lib/KeyboardNavigation';
 
-import { useActiveCategory } from '../PickerContext';
+import { useSetActiveCategory } from '../PickerContext';
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
@@ -24,7 +24,7 @@ const useKeyboardNavigation = ({
   emojiSearchRef,
   emojiListRef,
 }) => {
-  const [, setActiveCategory] = useActiveCategory();
+  const setActiveCategory = useSetActiveCategory();
 
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
@@ -54,8 +54,7 @@ const useKeyboardNavigation = ({
   }, []);
 
   const updateActiveItem = newActiveItem => {
-    if (newActiveItem && newActiveItem.firstChild)
-      focusElement(newActiveItem.firstChild);
+    focusElement(newActiveItem?.firstChild);
   };
 
   const navigateGrid = direction => {
@@ -110,7 +109,7 @@ const useKeyboardNavigation = ({
     }
   };
 
-let sections = [];
+  let sections = [];
 
   useEffect(() => {
     sections = [
@@ -128,14 +127,12 @@ let sections = [];
         //emoji list'
         focus: () => {
           const firstEmoji = emojiListRef.current.querySelector('.emoji');
-          if (firstEmoji && firstEmoji.firstChild)
-            focusElement(firstEmoji.firstChild);
+          focusElement(firstEmoji?.firstChild);
         },
         rootElement: emojiListRef,
       },
     ].filter(Boolean);
   }, []);
-
 
   const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
@@ -152,15 +149,7 @@ let sections = [];
   const focusPrevEmojiListGroupOnLastItem = () => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
     const prevEmojiGroup = currentEmojiGroup.previousSibling;
-
-    if (
-      prevEmojiGroup &&
-      prevEmojiGroup.lastChild &&
-      prevEmojiGroup.lastChild.firstChild
-    ) {
-      focusElement(prevEmojiGroup.lastChild.firstChild);
-    }
-
+    focusElement(prevEmojiGroup?.lastChild?.firstChild);
     return prevEmojiGroup;
   };
 
