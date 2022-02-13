@@ -7,7 +7,11 @@ import SkinTones from '../SkinTones';
 
 import './style.css';
 
-function Search({ searchPlaceholder = null, emojiSearchRef }) {
+function Search({
+  searchPlaceholder = null,
+  emojiSearchRef,
+  skinToneSpreadRef,
+}) {
   const config = useConfig();
   const onChange = useFilter();
 
@@ -24,7 +28,9 @@ function Search({ searchPlaceholder = null, emojiSearchRef }) {
         autoFocus={!config.disableAutoFocus}
         ref={emojiSearchRef}
       />
-      {config.disableSkinTonePicker ? null : <SkinTones />}
+      {config.disableSkinTonePicker ? null : (
+        <SkinTones skinToneSpreadRef={skinToneSpreadRef} />
+      )}
     </div>
   );
 }
@@ -34,6 +40,9 @@ export default Search;
 Search.propTypes = {
   searchPlaceholder: PropTypes.string,
   emojiSearchRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
+  skinToneSpreadRef: PropTypes.shape({
     current: PropTypes.instanceOf(Element),
   }),
 };

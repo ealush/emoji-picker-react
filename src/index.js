@@ -48,8 +48,6 @@ const EmojiPicker = ({
 
   onClickRef.current = onEmojiClick;
 
-  useEffect(() => () => (isMounted.current = false), []);
-
   return (
     <PickerContextProvider
       config={{
@@ -75,6 +73,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
   const emojiPickerRef = useRef(null);
   const emojiListRef = useRef(null);
   const emojiSearchRef = useRef(null);
+  const skinToneSpreadRef = useRef(null);
   const categoriesNavRef = useRef(null);
   const isMounted = useRef(true);
 
@@ -82,6 +81,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
     categoriesNavRef,
     emojiSearchRef,
     emojiListRef,
+    skinToneSpreadRef,
   });
 
   useEffect(() => () => (isMounted.current = false), []);
@@ -95,6 +95,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
       <Search
         searchPlaceholder={searchPlaceholder}
         emojiSearchRef={emojiSearchRef}
+        skinToneSpreadRef={skinToneSpreadRef}
       />
 
       <div className="content-wrapper">

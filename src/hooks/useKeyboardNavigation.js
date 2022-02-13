@@ -16,15 +16,26 @@ import {
   withCatch,
 } from '../lib/KeyboardNavigation';
 
-import { useSetActiveCategory } from '../PickerContext';
+import {
+  useActiveSkinTone,
+  useCollapseSkinTones,
+  useSetActiveCategory,
+  useSkinToneSpreadValue,
+  useToggleSpreadSkinTones,
+} from '../PickerContext';
 import { DOWN, LEFT, RIGHT, UP } from './consts';
 
 const useKeyboardNavigation = ({
   categoriesNavRef,
   emojiSearchRef,
   emojiListRef,
+  skinToneSpreadRef,
 }) => {
   const setActiveCategory = useSetActiveCategory();
+  const toggleSkinTonesSpread = useToggleSpreadSkinTones();
+  const activeSkinTone = useActiveSkinTone();
+  const isSkinToneSpreadOpen = useSkinToneSpreadValue();
+  const collapseSkinTones = useCollapseSkinTones();
 
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
@@ -42,7 +53,20 @@ const useKeyboardNavigation = ({
       ArrowUp: withCatch(focusPrevSection),
       ArrowDown: withCatch(focusNextSection),
     });
-  }, []);
+  }, [activeSkinTone]);
+
+  useEffect(() => {
+    if (!emojiSearchRef.current) return;
+
+    return tinykeys(skinToneSpreadRef.current, {
+      ArrowLeft: withCatch(
+        isSkinToneSpreadOpen ? focusNextSkinTone : exitSkinTones
+      ),
+      ArrowRight: withCatch(focusPrevSkinTone),
+      Escape: withCatch(exitSkinTones),
+      Enter: withCatch(exitSkinTones),
+    });
+  }, [activeSkinTone, isSkinToneSpreadOpen]);
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
@@ -132,7 +156,7 @@ const useKeyboardNavigation = ({
         rootElement: emojiListRef,
       },
     ].filter(Boolean);
-  }, []);
+  }, [activeSkinTone, isSkinToneSpreadOpen]);
 
   const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
@@ -184,8 +208,46 @@ const useKeyboardNavigation = ({
     return prevEmojiGroup;
   };
 
+  const exitSkinTones = () => {
+    requestAnimationFrame(() => {
+      collapseSkinTones();
+      focusSearch();
+    });
+  };
+
+  const focusSearch = () => {
+    if (emojiSearchRef.current) {
+      focusElement(emojiSearchRef.current);
+    }
+  };
+
+  const focusPrevSkinTone = () => {
+    const current = getActiveElement();
+    if (current) {
+      const prev = current.previousSibling;
+      if (prev) focusElement(prev);
+    }
+  };
+  const focusNextSkinTone = () => {
+    const current = getActiveElement();
+
+    if (current) {
+      const next = current.nextSibling;
+      focusElement(next);
+    }
+  };
+  const focusActiveSkinTone = () => {
+    focusElement(getActiveSkinToneElement());
+  };
+  const getActiveSkinToneElement = () => {
+    return skinToneSpreadRef.current.querySelector(`#t${activeSkinTone}`);
+  };
+
   const focusSkinTonePicker = () => {
-    /*todo: not implemented*/
+    if (!skinToneSpreadRef.current) return;
+
+    toggleSkinTonesSpread();
+    focusActiveSkinTone();
   };
 
   const getCurrentSectionIndex = () => {
@@ -226,6 +288,9 @@ useKeyboardNavigation.propTypes = {
     current: PropTypes.instanceOf(Element),
   }),
   emojiListRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
+  skinToneSpreadRef: PropTypes.shape({
     current: PropTypes.instanceOf(Element),
   }),
 };

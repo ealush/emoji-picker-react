@@ -1,4 +1,4 @@
-.emoji-picker-react ul.skin-tones-list {
+.emoji-picker-react div.skin-tones-list {
   padding: 0;
   margin: 0;
   list-style-type: none;
@@ -7,46 +7,43 @@
   right: 40px;
 }
 
-.emoji-picker-react ul.skin-tones-list li {
+.emoji-picker-react div.skin-tones-list button {
   background-color: currentColor;
   position: absolute;
-  padding: 0;
   border-radius: 2px;
-  overflow: hidden;
   transition: transform 0.3s ease;
 }
+.emoji-picker-react div.skin-tones-list button:focus {
+  border: 1px solid #a6a6a6;
+  border-radius: 3px;
+}
 
-.emoji-picker-react ul.skin-tones-list label {
+.emoji-picker-react div.skin-tones-list button {
   height: 10px;
   width: 10px;
   padding: 0;
   display: block;
-  cursor: pointer;
 }
 
-.emoji-picker-react ul.skin-tones-list input {
-  height: 0;
-  width: 0;
-  opacity: 0;
-  visibility: hidden;
-  display: none;
+.emoji-picker-react div.skin-tones-list button:focus {
+  padding: 2px;
 }
 
-.emoji-picker-react ul.skin-tones-list li.tneutral {
+.emoji-picker-react div.skin-tones-list button#tneutral {
   color: #ffd225;
 }
-.emoji-picker-react ul.skin-tones-list li.t1f3fb {
+.emoji-picker-react div.skin-tones-list button#t1f3fb {
   color: #ffdfbd;
 }
-.emoji-picker-react ul.skin-tones-list li.t1f3fc {
+.emoji-picker-react div.skin-tones-list button#t1f3fc {
   color: #e9c197;
 }
-.emoji-picker-react ul.skin-tones-list li.t1f3fd {
+.emoji-picker-react div.skin-tones-list button#t1f3fd {
   color: #c88e62;
 }
-.emoji-picker-react ul.skin-tones-list li.t1f3fe {
+.emoji-picker-react div.skin-tones-list button#t1f3fe {
   color: #a86637;
 }
-.emoji-picker-react ul.skin-tones-list li.t1f3ff {
+.emoji-picker-react div.skin-tones-list button#t1f3ff {
   color: #60463a;
 }

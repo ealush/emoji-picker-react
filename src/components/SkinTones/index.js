@@ -1,8 +1,22 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import skinTones from '../../skinTones';
 
-import { useActiveSkinTone, useSetActiveSkinTone, useSkinToneSpreadValue, useToggleSpreadSkinTones } from '../../PickerContext';
-import { DATA_NAME, SKIN_TONE_DARK, SKIN_TONE_LIGHT, SKIN_TONE_MEDIUM, SKIN_TONE_MEDIUM_DARK, SKIN_TONE_MEDIUM_LIGHT, SKIN_TONE_NEUTRAL } from './constants';
+import {
+  useActiveSkinTone,
+  useSetActiveSkinTone,
+  useSkinToneSpreadValue,
+  useToggleSpreadSkinTones,
+} from '../../PickerContext';
+import {
+  DATA_NAME,
+  SKIN_TONE_DARK,
+  SKIN_TONE_LIGHT,
+  SKIN_TONE_MEDIUM,
+  SKIN_TONE_MEDIUM_DARK,
+  SKIN_TONE_MEDIUM_LIGHT,
+  SKIN_TONE_NEUTRAL,
+} from './constants';
 
 import './style.css';
 
@@ -16,49 +30,49 @@ export {
   DATA_NAME,
 };
 
-const SkinTones = () => {
+const SkinTones = ({ skinToneSpreadRef }) => {
   const toggleSkinTonesSpread = useToggleSpreadSkinTones();
-  const skinToneSpread = useSkinToneSpreadValue();
+  const isOpen = useSkinToneSpreadValue();
   const setActiveSkinTone = useSetActiveSkinTone();
   const activeSkinTone = useActiveSkinTone();
 
-  const handleClick = () => {
-    toggleSkinTonesSpread();
-  };
-
   return (
-    <ul className="skin-tones-list">
+    <div
+      className="skin-tones-list"
+      ref={skinToneSpreadRef}
+      onClick={e => e.preventDefault()}
+    >
       {skinTones.map((tone, i) => {
         const isActive = tone === activeSkinTone;
 
         return (
-          <li
+          <button
             key={tone}
-            className={`t${tone}`}
+            id={`t${tone}`}
+            tabIndex={i + 1}
             style={{
-              transform: `translateX(-${skinToneSpread ? i * 20 : 0}px) scale(${
+              transform: `translateX(-${isOpen ? i * 20 : 0}px) scale(${
                 isActive ? '1.5' : 1
               })`,
               zIndex: isActive ? 2 : 1,
             }}
-          >
-            <input
-              type="radio"
-              onChange={({ target: { value } }) => setActiveSkinTone(value)}
-              name="skin-tone"
-              value={tone}
-              id={`tone_${tone}`}
-            />
-            <label
-              htmlFor={`tone_${tone}`}
-              data-name={DATA_NAME}
-              onClick={handleClick}
-            />
-          </li>
+            onClick={() => {
+              if (isOpen) {
+                setActiveSkinTone(tone);
+              }
+              toggleSkinTonesSpread();
+            }}
+          />
         );
       })}
-    </ul>
+    </div>
   );
 };
 
 export default SkinTones;
+
+SkinTones.propTypes = {
+  skinToneSpreadRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
+};
