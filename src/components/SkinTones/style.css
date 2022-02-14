@@ -16,6 +16,10 @@
 .emoji-picker-react div.skin-tones-list button:focus {
   border: 1px solid #a6a6a6;
   border-radius: 3px;
+  height: 14px;
+  width: 14px;
+  top: -2px;
+  left: -2px;
 }
 
 .emoji-picker-react div.skin-tones-list button {
