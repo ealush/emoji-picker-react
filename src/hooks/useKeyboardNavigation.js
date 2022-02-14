@@ -70,10 +70,10 @@ const useKeyboardNavigation = ({
 
   useEffect(() => {
     return tinykeys(emojiListRef.current, {
-      ArrowRight: withCatch(() => navigateGrid(RIGHT)),
-      ArrowLeft: withCatch(() => navigateGrid(LEFT)),
-      ArrowUp: withCatch(() => navigateGrid(UP)),
-      ArrowDown: withCatch(() => navigateGrid(DOWN)),
+      ArrowRight: withPreventDefault(withCatch(() => navigateGrid(RIGHT))),
+      ArrowLeft: withPreventDefault(withCatch(() => navigateGrid(LEFT))),
+      ArrowUp: withPreventDefault(withCatch(() => navigateGrid(UP))),
+      ArrowDown: withPreventDefault(withCatch(() => navigateGrid(DOWN))),
     });
   }, []);
 
@@ -294,3 +294,10 @@ useKeyboardNavigation.propTypes = {
     current: PropTypes.instanceOf(Element),
   }),
 };
+
+function withPreventDefault(callback) {
+  return event => {
+    event.preventDefault();
+    return callback(event);
+  };
+}
