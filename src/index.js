@@ -9,7 +9,7 @@ import VariationsMenu from './components/VariationsMenu';
 import useKeyboardNavigation from './hooks/useKeyboardNavigation';
 import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
-import { configPropTypes } from './lib/propTypes';
+import { configPropTypes, customEmojiPropTypes } from './lib/propTypes';
 import { getRecentlyUsed } from './lib/recentlyUsed';
 import {
   PickerContextProvider,
@@ -25,12 +25,6 @@ import {
   SKIN_TONE_MEDIUM_LIGHT,
   SKIN_TONE_NEUTRAL,
 } from './components/SkinTones';
-
-import clickHandler from './lib/clickHandler';
-import { GROUP_NAMES_ENGLISH } from './lib/constants';
-import { configPropTypes, customEmojiPropTypes } from './lib/propTypes';
-import { getRecentlyUsed } from './lib/recentlyUsed';
-import { PickerContextProvider } from './PickerContext';
 
 import './style.css';
 
