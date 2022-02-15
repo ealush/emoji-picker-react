@@ -135,22 +135,13 @@ export function useOpenVariationMenu() {
 
 export function useCloseVariationMenu() {
   const [, setVariationMenu] = useContext(PickerContext).variationMenuState;
-  const skinToneSpreadValue = useSkinToneSpreadValue();
-  const collapseSkinTones = useCollapseSkinTones();
 
-  return ({ target }) => {
+  return () => {
     setVariationMenu(current => {
       if (current) {
         return null;
       }
     });
-
-    if (
-      skinToneSpreadValue &&
-      target.getAttribute(PROPERTY_DATA_NAME) !== DATA_NAME
-    ) {
-      collapseSkinTones();
-    }
   };
 }
 
@@ -167,9 +158,19 @@ export function useToggleSpreadSkinTones() {
 }
 
 export function useCollapseSkinTones() {
+  const [skinTonesOpen, setSkinToneSpread] = useContext(
+    PickerContext
+  ).skinToneSpreadState;
+
+  return () => {
+    if (skinTonesOpen) setSkinToneSpread(false);
+  };
+}
+
+export function useExpendSkinTones() {
   const [, setSkinToneSpread] = useContext(PickerContext).skinToneSpreadState;
 
-  return () => setSkinToneSpread(false);
+  return () => setSkinToneSpread(true);
 }
 
 export function useActiveSkinTone() {

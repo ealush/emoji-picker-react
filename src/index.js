@@ -11,7 +11,11 @@ import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes } from './lib/propTypes';
 import { getRecentlyUsed } from './lib/recentlyUsed';
-import { PickerContextProvider, useCloseVariationMenu } from './PickerContext';
+import {
+  PickerContextProvider,
+  useCloseVariationMenu,
+  useCollapseSkinTones,
+} from './PickerContext';
 
 import {
   SKIN_TONE_DARK,
@@ -87,7 +91,11 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
   useEffect(() => () => (isMounted.current = false), []);
 
   return (
-    <Aside pickerStyle={pickerStyle} emojiPickerAsideRef={emojiPickerRef}>
+    <Aside
+      pickerStyle={pickerStyle}
+      emojiPickerAsideRef={emojiPickerRef}
+      skinToneSpreadRef={skinToneSpreadRef}
+    >
       <CategoriesNav
         emojiListRef={emojiListRef}
         categoriesNavRef={categoriesNavRef}
@@ -109,14 +117,29 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
   );
 };
 
-function Aside({ children, pickerStyle, emojiPickerAsideRef }) {
+function Aside({
+  children,
+  pickerStyle,
+  emojiPickerAsideRef,
+  skinToneSpreadRef,
+}) {
   const closeVariations = useCloseVariationMenu();
+  const collapseSkinTones = useCollapseSkinTones();
   return (
     <aside
       className="emoji-picker-react"
       style={pickerStyle}
-      onScroll={closeVariations}
-      onMouseDown={closeVariations}
+      onScroll={() => {
+        closeVariations();
+        collapseSkinTones();
+      }}
+      onMouseDown={e => {
+        closeVariations();
+
+        if (!skinToneSpreadRef.current.contains(e.target)) {
+          collapseSkinTones();
+        }
+      }}
       ref={emojiPickerAsideRef}
     >
       {children}
@@ -128,6 +151,9 @@ Aside.propTypes = {
   children: PropTypes.node,
   pickerStyle: PropTypes.object,
   emojiPickerAsideRef: PropTypes.shape({
+    current: PropTypes.instanceOf(Element),
+  }),
+  skinToneSpreadRef: PropTypes.shape({
     current: PropTypes.instanceOf(Element),
   }),
 };

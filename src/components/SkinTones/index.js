@@ -1,9 +1,11 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import skinTones from '../../skinTones';
 
 import {
   useActiveSkinTone,
+  useCollapseSkinTones,
+  useExpendSkinTones,
   useSetActiveSkinTone,
   useSkinToneSpreadValue,
   useToggleSpreadSkinTones,
@@ -31,17 +33,17 @@ export {
 };
 
 const SkinTones = ({ skinToneSpreadRef }) => {
-  const toggleSkinTonesSpread = useToggleSpreadSkinTones();
   const isOpen = useSkinToneSpreadValue();
   const setActiveSkinTone = useSetActiveSkinTone();
   const activeSkinTone = useActiveSkinTone();
+  const collapseSkinTones = useCollapseSkinTones();
+  const expandSkinTones = useExpendSkinTones();
 
+  useEffect(() => {
+    collapseSkinTones();
+  }, [activeSkinTone]);
   return (
-    <div
-      className="skin-tones-list"
-      ref={skinToneSpreadRef}
-      onClick={e => e.preventDefault()}
-    >
+    <div className="skin-tones-list" ref={skinToneSpreadRef}>
       {skinTones.map((tone, i) => {
         const isActive = tone === activeSkinTone;
 
@@ -59,8 +61,9 @@ const SkinTones = ({ skinToneSpreadRef }) => {
             onClick={() => {
               if (isOpen) {
                 setActiveSkinTone(tone);
+              } else {
+                expandSkinTones();
               }
-              toggleSkinTonesSpread();
             }}
           />
         );

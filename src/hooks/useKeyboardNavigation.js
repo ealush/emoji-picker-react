@@ -18,7 +18,6 @@ import {
 
 import {
   useActiveSkinTone,
-  useCollapseSkinTones,
   useSetActiveCategory,
   useSkinToneSpreadValue,
   useToggleSpreadSkinTones,
@@ -35,7 +34,6 @@ const useKeyboardNavigation = ({
   const toggleSkinTonesSpread = useToggleSpreadSkinTones();
   const activeSkinTone = useActiveSkinTone();
   const isSkinToneSpreadOpen = useSkinToneSpreadValue();
-  const collapseSkinTones = useCollapseSkinTones();
 
   useEffect(() => {
     return tinykeys(categoriesNavRef.current, {
@@ -208,10 +206,7 @@ const useKeyboardNavigation = ({
   };
 
   const exitSkinTones = withCatch(() => {
-    requestAnimationFrame(() => {
-      collapseSkinTones();
-      focusSearch();
-    });
+    focusSearch();
   });
 
   const focusSearch = withCatch(() => {
