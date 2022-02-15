@@ -1,3 +1,11 @@
+export const withCatch = cb => {
+  return (...args) => {
+    try {
+      cb(...args);
+    } catch {}
+  };
+};
+
 export const getGridInfo = () => {
   const grid = getCurrentEmojiListGroup();
   const active = getActiveElement().parentElement;
@@ -70,28 +78,20 @@ export const getPrevEmoji = () => {
   return prevSibling.firstChild;
 };
 
-export const focusElement = element => {
-  if (element) element.focus();
-};
+export const focusElement = withCatch(element => {
+  if (element) requestAnimationFrame(() => element.focus());
+});
 
 export const focusPrevCategory = () => {
-  const prevSibling = getActiveElement().previousElementSibling;
-  if (prevSibling) focusElement(prevSibling);
+  const prevSibling = getActiveElement()?.previousElementSibling;
+  focusElement(prevSibling);
 };
 
 export const focusNextCategory = () => {
-  const nextSibling = getActiveElement().nextElementSibling;
-  if (nextSibling) focusElement(nextSibling);
+  const nextSibling = getActiveElement()?.nextElementSibling;
+  focusElement(nextSibling);
 };
 
 export const getEmojiGroupName = emojiGroup => {
   return emojiGroup.getAttribute('data-name');
-};
-
-export const withCatch = cb => {
-  return (...args) => {
-    try {
-      cb(...args);
-    } catch {}
-  };
 };
