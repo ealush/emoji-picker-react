@@ -1,7 +1,5 @@
 # emoji-picker-react
 
-## V3
-
 [Live Demo](https://stackblitz.com/edit/emoji-picker-react?file=index.js)
 
 ![Preview](/assets/captured.gif)
