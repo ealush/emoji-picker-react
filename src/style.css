@@ -13,7 +13,7 @@ aside.emoji-picker-react {
   position: relative;
 }
 
-aside.emoji-picker-react .content-wrapper {
+aside.emoji-picker-react .content-wrapper-epr {
   flex: 1;
   overflow-y: hidden;
   position: relative;
@@ -26,7 +26,7 @@ aside.emoji-picker-react .content-wrapper {
   box-sizing: border-box;
 }
 
-aside.emoji-picker-react .content-wrapper:before {
+aside.emoji-picker-react .content-wrapper-epr:before {
   content: attr(data-name);
   color: #aaa;
   font-size: 11px;
