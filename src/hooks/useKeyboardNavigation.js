@@ -70,9 +70,14 @@ const useKeyboardNavigation = ({
       ArrowLeft: withPreventDefault(() => navigateGrid(LEFT)),
       ArrowUp: withPreventDefault(() => navigateGrid(UP)),
       ArrowDown: withPreventDefault(() => navigateGrid(DOWN)),
-      Escape: focusSearch,
+      Escape: exitEmojiList,
     });
   }, []);
+
+  function exitEmojiList() {
+    focusSearch();
+    scrollEmojiListToTop();
+  }
 
   const updateActiveItem = newActiveItem => {
     focusElement(newActiveItem?.firstChild);
