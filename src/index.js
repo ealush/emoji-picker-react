@@ -100,7 +100,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
         skinToneSpreadRef={skinToneSpreadRef}
       />
 
-      <div className="content-wrapper">
+      <div className="content-wrapper-epr">
         <VariationsMenu />
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
           <RecentlyUsed emojiListRef={emojiListRef} />
