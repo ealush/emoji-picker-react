@@ -40,6 +40,7 @@ const useKeyboardNavigation = ({
       ArrowLeft: focusPrevCategory,
       ArrowRight: focusNextCategory,
       ArrowDown: focusNextSection,
+      Escape: exitEmojiList,
     });
   }, []);
 

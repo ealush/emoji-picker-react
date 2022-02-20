@@ -10,7 +10,8 @@
   transition: opacity 0.1s;
 }
 
-.emoji-picker-react .emoji-categories button:focus-visible {
+.emoji-picker-react .emoji-categories button:focus-visible,
+.emoji-picker-react .emoji-categories button:focus:where(:not(.active)) {
   background-color: #99c2f160;
 }
 

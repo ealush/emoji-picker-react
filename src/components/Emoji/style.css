@@ -34,6 +34,7 @@
 }
 
 .emoji-picker-react .emoji button:hover,
-.emoji-picker-react .emoji button:focus-visible {
+.emoji-picker-react .emoji button:focus-visible,
+.emoji-picker-react .emoji button:focus {
   background-color: currentColor;
 }
