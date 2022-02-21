@@ -41,7 +41,6 @@ const EmojiPicker = ({
   groupVisibility = {},
   ...otherProps
 }) => {
-  const isMounted = useRef(true);
   const onClickRef = useRef(onEmojiClick);
 
   onClickRef.current = onEmojiClick;
@@ -73,7 +72,6 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
   const emojiSearchRef = useRef(null);
   const skinToneSpreadRef = useRef(null);
   const categoriesNavRef = useRef(null);
-  const isMounted = useRef(true);
 
   useKeyboardNavigation({
     categoriesNavRef,
@@ -81,8 +79,6 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
     emojiListRef,
     skinToneSpreadRef,
   });
-
-  useEffect(() => () => (isMounted.current = false), []);
 
   return (
     <Aside

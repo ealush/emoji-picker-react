@@ -89,7 +89,7 @@ const useFilter = () => {
           return accumulator;
         }
 
-        return (searchTerms[term] || []).reduce((accumulator, unified) => {
+        return [...(searchTerms[term] || [])].reduce((accumulator, unified) => {
           const group = emojiStorage.emojis[unified][EMOJI_PROPERTY_GROUP];
           accumulator[group] = accumulator[group] || {};
           accumulator[group][unified] = true;

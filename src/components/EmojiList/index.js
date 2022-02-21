@@ -34,7 +34,7 @@ import Emoji from '../Emoji';
 
 import './style.css';
 
-const createEmojiList = (name, { emojiListRef, searchTerm }) => {
+const createEmojiList = (name, { emojiListRef }) => {
   const filterResult = useFilterResult();
   const missingEmoji = useMissingEmojis();
   const openVariationMenu = useOpenVariationMenu();
@@ -100,7 +100,7 @@ const createEmojiList = (name, { emojiListRef, searchTerm }) => {
       },
       { list: [], shown: false }
     );
-  }, [activeSkinTone, searchTerm, shouldLoad, missingEmoji, config.native]);
+  }, [activeSkinTone, filterResult, shouldLoad, missingEmoji, config.native]);
 };
 
 const EmojiList = ({ emojiListRef }) => {
@@ -113,8 +113,7 @@ const EmojiList = ({ emojiListRef }) => {
 
   const [renderOne, setRenderOne] = useState(true);
 
-  const searchTerm =
-    filter?.length ? filter[filter.length - 1].value : '';
+  const searchTerm = filter?.length ? filter[filter.length - 1].value : '';
 
   useEffect(() => {
     if (!searchTerm) {
@@ -159,7 +158,6 @@ const EmojiList = ({ emojiListRef }) => {
 
 const ListRender = React.memo(function ListRender({
   name,
-  searchTerm,
   emojiListRef,
   groupNames,
 }) {
@@ -170,7 +168,6 @@ const ListRender = React.memo(function ListRender({
   }
 
   const { list, shown } = createEmojiList(name, {
-    searchTerm,
     emojiListRef,
   });
 
