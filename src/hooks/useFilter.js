@@ -5,7 +5,8 @@ import emojiStorage from '../../lib/emojiStorage';
 import keywordsPromise from '../../lib/initSearch';
 import { useFilterValue, useSetFilter } from '../PickerContext';
 
-let searchTerms, mappedSearchTerms;
+let searchTerms = {},
+  mappedSearchTerms = {};
 
 keywordsPromise.then(res => {
   searchTerms = res.searchTerms;
