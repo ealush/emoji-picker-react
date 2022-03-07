@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes, { any } from 'prop-types';
 import React, {
   useCallback,
   useEffect,
@@ -103,7 +103,7 @@ const createEmojiList = (name, { emojiListRef }) => {
   }, [activeSkinTone, filterResult, shouldLoad, missingEmoji, config.native]);
 };
 
-const EmojiList = ({ emojiListRef }) => {
+const EmojiList = ({ emojiListRef, customGroups }) => {
   const activeCategory = useActiveCategory();
   const { groupNames } = useConfig();
   const filterResult = useFilterResult();
@@ -114,6 +114,10 @@ const EmojiList = ({ emojiListRef }) => {
   const [renderOne, setRenderOne] = useState(true);
 
   const searchTerm = filter?.length ? filter[filter.length - 1].value : '';
+
+  useEffect(() => {
+    console.log(customGroups);
+  }, [customGroups]);
 
   useEffect(() => {
     if (!searchTerm) {
@@ -193,6 +197,7 @@ export default EmojiList;
 EmojiList.propTypes = {
   emojiListRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   unsetEmojiName: PropTypes.func,
+  customGroups: any,
 };
 
 ListRender.propTypes = {

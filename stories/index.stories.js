@@ -165,6 +165,16 @@ storiesOf('EmojiPicker', module)
                 },
               ],
             },
+            {
+              name: 'Custom Emojis2',
+              icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
+              emojis: [
+                {
+                  name: 'Mr Blob',
+                  url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
+                },
+              ],
+            },
           ]}
         />
       </div>

@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import PropTypes, { any } from 'prop-types';
+import React, { useRef } from 'react';
 
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
@@ -66,7 +66,11 @@ const EmojiPicker = ({
   );
 };
 
-const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
+const EmojiPickerContent = ({
+  pickerStyle = {},
+  searchPlaceholder = null,
+  customGroups = null,
+}) => {
   const emojiPickerRef = useRef(null);
   const emojiListRef = useRef(null);
   const emojiSearchRef = useRef(null);
@@ -89,6 +93,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
       <CategoriesNav
         emojiListRef={emojiListRef}
         categoriesNavRef={categoriesNavRef}
+        customGroups={customGroups}
       />
       <Search
         searchPlaceholder={searchPlaceholder}
@@ -100,7 +105,7 @@ const EmojiPickerContent = ({ pickerStyle = {}, searchPlaceholder = null }) => {
         <VariationsMenu />
         <section className="emoji-scroll-wrapper" ref={emojiListRef}>
           <RecentlyUsed emojiListRef={emojiListRef} />
-          <EmojiList emojiListRef={emojiListRef} />
+          <EmojiList emojiListRef={emojiListRef} customGroups={customGroups} />
         </section>
       </div>
     </Aside>
@@ -151,6 +156,7 @@ Aside.propTypes = {
 EmojiPickerContent.propTypes = {
   pickerStyle: PropTypes.objectOf(PropTypes.string),
   searchPlaceholder: PropTypes.string,
+  customGroups: any, // todo:erez use interface
 };
 
 export {
