@@ -156,7 +156,7 @@ storiesOf('EmojiPicker', module)
           emojiUrl={CDN_URL}
           customGroups={[
             {
-              name: 'Custom Emojis',
+              name: 'CustomEmojis',
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {
@@ -166,7 +166,7 @@ storiesOf('EmojiPicker', module)
               ],
             },
             {
-              name: 'Custom Emojis2',
+              name: 'CustomEmojis2',
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {

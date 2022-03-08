@@ -1,4 +1,4 @@
-import PropTypes, { any } from 'prop-types';
+import PropTypes, { any, object } from 'prop-types';
 import React, {
   useCallback,
   useEffect,
@@ -112,12 +112,28 @@ const EmojiList = ({ emojiListRef, customGroups }) => {
   const filterResultRef = useRef(filterResult);
 
   const [renderOne, setRenderOne] = useState(true);
+  const [groupNamesWithCustomGroups, setGroupNamesWithCustomGroups] = useState(
+    []
+  );
 
   const searchTerm = filter?.length ? filter[filter.length - 1].value : '';
 
+  const [groupsWithCustomGroups, setGroupsWithCustomGroups] = useState([
+    ...groups,
+  ]);
+
   useEffect(() => {
-    console.log(customGroups);
-  }, [customGroups]);
+    const customGroupsNames = customGroups.map(group => group.name);
+    var obj = customGroupsNames.reduce((o, val) => ({ ...o, [val]: val }), {});
+    const x = { ...groupNames, ...obj };
+    setGroupNamesWithCustomGroups(x);
+  }, [groupNames]);
+
+  useEffect(() => {
+    const customGroupsNames = customGroups.map(group => group.name);
+    const x = [...groupsWithCustomGroups, ...customGroupsNames];
+    setGroupsWithCustomGroups(x);
+  }, [customGroups, groups]);
 
   useEffect(() => {
     if (!searchTerm) {
@@ -146,14 +162,14 @@ const EmojiList = ({ emojiListRef, customGroups }) => {
   const props = {
     emojiListRef,
     searchTerm,
-    groupNames,
+    groupNames: groupNamesWithCustomGroups,
   };
 
   return (
     <React.Fragment>
-      <ListRender name={groups[0]} {...props} />
+      <ListRender name={groupsWithCustomGroups[0]} {...props} />
       {!renderOne &&
-        groups
+        groupsWithCustomGroups
           .slice(1)
           .map(name => <ListRender key={name} name={name} {...props} />)}
     </React.Fragment>
