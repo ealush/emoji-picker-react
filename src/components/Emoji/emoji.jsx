@@ -6,7 +6,7 @@ import {
   EMOJI_PROPERTY_SKIN_VARIATIONS,
   EMOJI_PROPERTY_UNIFIED,
 } from '../../../lib/constants';
-import EmojiImg from '../EmojiImg';
+import EmojiImg from '../EmojiImg/emojiImg.jsx';
 import {
   PASTEL_BLUE,
   PASTEL_RED,
@@ -41,6 +41,7 @@ const Emoji = ({
   onEmojiClick,
   index,
   native = false,
+  urlSrc,
 }) => {
   const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
   let unified;
@@ -93,7 +94,12 @@ const Emoji = ({
         type="button"
         onClick={handleEmojiClick}
       >
-        <EmojiImg unified={unified} shouldLoad={shouldLoad} native={native} />
+        <EmojiImg
+          unified={unified}
+          shouldLoad={shouldLoad}
+          native={native}
+          urlSrc={urlSrc}
+        />
       </button>
     </li>
   );
@@ -113,4 +119,5 @@ Emoji.propTypes = {
   onEmojiClick: PropTypes.func,
   index: PropTypes.number,
   native: PropTypes.bool,
+  urlSrc: PropTypes.string,
 };

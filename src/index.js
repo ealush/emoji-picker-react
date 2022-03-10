@@ -1,8 +1,8 @@
 import PropTypes, { any } from 'prop-types';
 import React, { useRef } from 'react';
 
-import CategoriesNav from './components/CategoriesNav';
-import EmojiList from './components/EmojiList';
+import CategoriesNav from './components/CategoriesNav/categoriesNav.jsx';
+import EmojiList from './components/EmojiList/EmojiList.jsx';
 import RecentlyUsed from './components/RecentlyUsed';
 import Search from './components/Search';
 import VariationsMenu from './components/VariationsMenu';

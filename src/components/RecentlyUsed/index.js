@@ -9,7 +9,7 @@ import {
 
 import emojiStorage from '../../../lib/emojiStorage';
 import setEmojiName from '../../lib/setEmojiName';
-import Emoji from '../Emoji';
+import Emoji from '../Emoji/emoji.jsx';
 import {
   useConfig,
   useFilterResult,

@@ -6,7 +6,7 @@ import {
   EMOJI_PROPERTY_UNIFIED,
   EMOJI_PROPERTY_SKIN_VARIATIONS,
 } from '../../../lib/constants';
-import EmojiImg from '../EmojiImg';
+import EmojiImg from '../EmojiImg/emojiImg.jsx';
 import './style.css';
 import {
   useActiveSkinTone,

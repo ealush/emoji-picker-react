@@ -160,7 +160,7 @@ storiesOf('EmojiPicker', module)
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {
-                  name: 'Mr Blob',
+                  name: 'Mr Blob1',
                   url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
                 },
               ],
@@ -170,7 +170,11 @@ storiesOf('EmojiPicker', module)
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {
-                  name: 'Mr Blob',
+                  name: 'Mr Blob 2.1',
+                  url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
+                },
+                {
+                  name: 'Mr Blob 2.2',
                   url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
                 },
               ],

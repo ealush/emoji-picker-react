@@ -4,7 +4,7 @@ import emojiSrc from '../../lib/emojiSrc';
 import './style.css';
 import { useSetMissingEmoji } from '../../PickerContext';
 
-const EmojiImg = ({ unified, shouldLoad = true, native = false }) => {
+const EmojiImg = ({ unified, shouldLoad = true, native = false, urlSrc }) => {
   return native ? (
     <div className="native">
       {unified
@@ -14,13 +14,18 @@ const EmojiImg = ({ unified, shouldLoad = true, native = false }) => {
         .join('')}
     </div>
   ) : (
-    <Img shouldLoad={shouldLoad} unified={unified} />
+    <Img
+      shouldLoad={shouldLoad}
+      unified={unified}
+      isCustom={true}
+      urlSrc={urlSrc}
+    />
   );
 };
 
-function Img({ unified, shouldLoad }) {
+function Img({ unified, shouldLoad, urlSrc }) {
   const setMissingEmoji = useSetMissingEmoji();
-  const src = emojiSrc(unified);
+  const src = urlSrc ?? emojiSrc(unified);
   return (
     <img
       className="emoji-img"
@@ -35,10 +40,13 @@ export default EmojiImg;
 Img.propTypes = {
   unified: PropTypes.string,
   shouldLoad: PropTypes.bool,
+  isCustom: PropTypes.bool,
+  urlSrc: PropTypes.string,
 };
 
 EmojiImg.propTypes = {
   unified: PropTypes.string,
   shouldLoad: PropTypes.bool,
   native: PropTypes.bool,
+  urlSrc: PropTypes.string,
 };
