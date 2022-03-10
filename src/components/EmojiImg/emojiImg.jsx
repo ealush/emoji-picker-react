@@ -14,25 +14,31 @@ const EmojiImg = ({ unified, shouldLoad = true, native = false, urlSrc }) => {
         .join('')}
     </div>
   ) : (
-    <Img
-      shouldLoad={shouldLoad}
-      unified={unified}
-      isCustom={true}
-      urlSrc={urlSrc}
-    />
+    <Img shouldLoad={shouldLoad} unified={unified} urlSrc={urlSrc} />
   );
 };
 
 function Img({ unified, shouldLoad, urlSrc }) {
   const setMissingEmoji = useSetMissingEmoji();
   const src = urlSrc ?? emojiSrc(unified);
-  return (
-    <img
-      className="emoji-img"
-      onError={() => setMissingEmoji(unified)}
-      {...(shouldLoad && src)}
-    />
-  );
+  //todo:erez should make more wise condition
+  if (urlSrc) {
+    return (
+      <img
+        className="emoji-img"
+        onError={() => setMissingEmoji(unified)}
+        src={urlSrc}
+      />
+    );
+  } else {
+    return (
+      <img
+        className="emoji-img"
+        onError={() => setMissingEmoji(unified)}
+        {...(shouldLoad && src)}
+      />
+    );
+  }
 }
 
 export default EmojiImg;
