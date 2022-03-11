@@ -105,7 +105,7 @@ const CategoriesNav = ({ emojiListRef, categoriesNavRef, customGroups }) => {
                 index = i;
               }
 
-              const groupName = group.name.replace(' ', '-').toLowerCase();
+              const groupName = group.name;
 
               return (
                 <button

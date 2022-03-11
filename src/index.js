@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 
 import CategoriesNav from './components/CategoriesNav/categoriesNav.jsx';
 import EmojiList from './components/EmojiList/EmojiList.jsx';
-import RecentlyUsed from './components/RecentlyUsed';
+import RecentlyUsed from './components/RecentlyUsed/recentlyUsed.jsx';
 import Search from './components/Search';
 import VariationsMenu from './components/VariationsMenu';
 import useKeyboardNavigation from './hooks/useKeyboardNavigation';
