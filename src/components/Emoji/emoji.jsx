@@ -76,7 +76,7 @@ const Emoji = ({
       return;
     }
 
-    onEmojiClick(e, unified, emoji, activeSkinTone);
+    onEmojiClick(e, unified, urlSrc, emoji, activeSkinTone);
   };
 
   return (
