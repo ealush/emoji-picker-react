@@ -156,17 +156,17 @@ storiesOf('EmojiPicker', module)
           emojiUrl={CDN_URL}
           customGroups={[
             {
-              name: 'CustomEmojis',
+              name: 'Custom Group 1',
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {
-                  name: 'Mr Blob1',
+                  name: 'Mr Blob 1',
                   url: 'https://emoji.gg/assets/emoji/3939_MrBlob.png',
                 },
               ],
             },
             {
-              name: 'CustomEmojis2',
+              name: 'Custom Group 2',
               icon: 'https://www.svgrepo.com/show/1000/pencil.svg',
               emojis: [
                 {

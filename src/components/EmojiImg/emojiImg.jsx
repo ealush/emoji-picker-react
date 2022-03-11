@@ -4,7 +4,7 @@ import './style.css';
 import Img from './img.jsx';
 
 const EmojiImg = ({ unified, shouldLoad = true, native = false, urlSrc }) => {
-  return native ? (
+  return native && unified ? (
     <div className="native">
       {unified
         .split('-')

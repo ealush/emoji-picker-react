@@ -68,12 +68,10 @@ const CreateEmojiList = (name, { emojiListRef }, customGroups) => {
             hidden={false} //hidden={hidden}
             shouldLoad={shouldLoad}
             onEmojiClick={onEmojiClick}
-            // index={index}
             index={index}
             // key={emoji[EMOJI_PROPERTY_UNIFIED]}
             key={index}
-            // native={config.native}
-            native={false}
+            native={config.native}
             urlSrc={emoji.url}
           />
         )),
