@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
@@ -162,6 +162,7 @@ export {
   SKIN_TONE_DARK,
 };
 
+export { default as groupedEmojis } from './emojis.json';
 export default EmojiPicker;
 
 EmojiPicker.propTypes = {
