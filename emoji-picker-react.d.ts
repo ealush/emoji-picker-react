@@ -36,6 +36,7 @@ declare module 'emoji-picker-react' {
     groupNames?: Record<string, string>;
     groupVisibility?: Record<string, boolean>;
     native?: boolean;
+    searchPlaceholder?: string
   }
 
   const EmojiPicker: React.FC<IEmojiPickerProps>;
