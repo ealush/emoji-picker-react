@@ -6,12 +6,7 @@ import { configPropsShape } from '../lib/propTypes';
 
 const PickerContext = createContext({});
 
-export function PickerContextProvider({
-  children,
-  config,
-  recentlyUsed,
-  onEmojiClick,
-}) {
+export function PickerContextProvider({ children, config, onEmojiClick }) {
   const activeCategoryState = useState(null);
   const filterState = useState([]);
   const filterResult = useState(null);
@@ -33,7 +28,6 @@ export function PickerContextProvider({
         skinToneSpreadState,
         activeSkinToneState,
         config,
-        recentlyUsed,
         onEmojiClick,
       }}
     >
@@ -189,10 +183,6 @@ export function useConfig() {
   return useContext(PickerContext).config;
 }
 
-export function useRecentlyUsed() {
-  return useContext(PickerContext).recentlyUsed;
-}
-
 export function useOnEmojiClick() {
   return useContext(PickerContext).onEmojiClick;
 }
@@ -200,6 +190,5 @@ export function useOnEmojiClick() {
 PickerContextProvider.propTypes = {
   children: PropTypes.node,
   config: configPropsShape,
-  recentlyUsed: PropTypes.arrayOf(PropTypes.object),
   onEmojiClick: PropTypes.func,
 };

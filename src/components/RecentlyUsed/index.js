@@ -10,12 +10,13 @@ import {
 import emojiStorage from '../../../lib/emojiStorage';
 import setEmojiName from '../../lib/setEmojiName';
 import Emoji from '../Emoji';
+import { getRecentlyUsed } from '../../lib/recentlyUsed';
+
 import {
   useConfig,
   useFilterResult,
   useMissingEmojis,
   useOnEmojiClick,
-  useRecentlyUsed,
 } from '../../PickerContext';
 
 const RecentlyUsed = ({ emojiListRef }) => {
@@ -23,7 +24,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
   const missingEmoji = useMissingEmojis();
   const onEmojiClick = useOnEmojiClick();
   const config = useConfig();
-  const recentlyUsed = useRecentlyUsed();
+  const recentlyUsed = getRecentlyUsed();
 
   const unsetEmojiName = useCallback(() => setEmojiName('', emojiListRef));
 

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import CategoriesNav from './components/CategoriesNav';
 import EmojiList from './components/EmojiList';
@@ -10,7 +10,6 @@ import useKeyboardNavigation from './hooks/useKeyboardNavigation';
 import clickHandler from './lib/clickHandler';
 import { GROUP_NAMES_ENGLISH } from './lib/constants';
 import { configPropTypes, customEmojiPropTypes } from './lib/propTypes';
-import { getRecentlyUsed } from './lib/recentlyUsed';
 import {
   PickerContextProvider,
   useCloseVariationMenu,
@@ -58,7 +57,6 @@ const EmojiPicker = ({
         disableAutoFocus,
         disableSkinTonePicker,
       }}
-      recentlyUsed={getRecentlyUsed()}
       onEmojiClick={clickHandler(onClickRef)}
     >
       <EmojiPickerContent {...props} />

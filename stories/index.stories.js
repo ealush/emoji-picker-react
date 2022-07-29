@@ -11,12 +11,19 @@ const log = console.log;
 storiesOf('EmojiPicker', module)
   .add('EmojiPicker', () => {
     const [isShown, setIsShown] = useState(true);
+    const [chosen, setChosen] = useState(null);
 
     return (
       <div>
         <button onClick={() => setIsShown(!isShown)}>Toggle</button>
         {isShown && (
-          <EmojiPicker onEmojiClick={(e, em) => log(em)} emojiUrl={CDN_URL} />
+          <EmojiPicker
+            onEmojiClick={(e, em) => {
+              log(em);
+              setChosen(em);
+            }}
+            emojiUrl={CDN_URL}
+          />
         )}
       </div>
     );
