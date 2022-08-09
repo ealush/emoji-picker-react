@@ -36,7 +36,7 @@ const useKeyboardNavigation = ({
   const isSkinToneSpreadOpen = useSkinToneSpreadValue();
 
   useEffect(() => {
-    return tinykeys(categoriesNavRef.current, {
+    return tryTinyKeys(categoriesNavRef.current, {
       ArrowLeft: focusPrevCategory,
       ArrowRight: focusNextCategory,
       ArrowDown: focusNextSection,
@@ -47,7 +47,7 @@ const useKeyboardNavigation = ({
   useEffect(() => {
     if (!emojiSearchRef.current) return;
 
-    return tinykeys(emojiSearchRef.current, {
+    return tryTinyKeys(emojiSearchRef.current, {
       ArrowRight: focusSkinTonePicker,
       ArrowUp: focusPrevSection,
       ArrowDown: focusNextSection,
@@ -57,7 +57,7 @@ const useKeyboardNavigation = ({
   useEffect(() => {
     if (!emojiSearchRef.current) return;
 
-    return tinykeys(skinToneSpreadRef.current, {
+    return tryTinyKeys(skinToneSpreadRef.current, {
       ArrowLeft: isSkinToneSpreadOpen ? focusNextSkinTone : exitSkinTones,
       ArrowRight: focusPrevSkinTone,
       Escape: exitSkinTones,
@@ -66,7 +66,7 @@ const useKeyboardNavigation = ({
   }, [activeSkinTone, isSkinToneSpreadOpen]);
 
   useEffect(() => {
-    return tinykeys(emojiListRef.current, {
+    return tryTinyKeys(emojiListRef.current, {
       ArrowRight: withPreventDefault(() => navigateGrid(RIGHT)),
       ArrowLeft: withPreventDefault(() => navigateGrid(LEFT)),
       ArrowUp: withPreventDefault(() => navigateGrid(UP)),
@@ -310,4 +310,12 @@ function withPreventDefault(callback) {
     event.preventDefault();
     return callback(event);
   };
+}
+
+function tryTinyKeys(...args) {
+  try {
+    return tinykeys(...args);
+  } catch (e) {
+    return () => {};
+  }
 }
