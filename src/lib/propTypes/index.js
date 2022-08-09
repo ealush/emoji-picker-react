@@ -39,6 +39,7 @@ export const configPropTypes = {
   disableAutoFocus: PropTypes.bool,
   disableSearchBar: PropTypes.bool,
   disableSkinTonePicker: PropTypes.bool,
+  searchPlaceholder: PropTypes.string
 };
 
 export const customEmojiPropTypes = {
