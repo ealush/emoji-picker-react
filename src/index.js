@@ -124,7 +124,8 @@ function Aside({
       onMouseDown={e => {
         closeVariations();
 
-        if (!skinToneSpreadRef.current.contains(e.target)) {
+        // TODO: Add a more generic approach to handling disabled skinTone picker
+        if (!skinToneSpreadRef.current?.contains(e.target)) {
           collapseSkinTones();
         }
       }}
