@@ -218,3 +218,18 @@ For reference, if you only need to shim global, you can add
 ```
 
 to your index.html
+
+## How to avoid SSR loading of the library in Next.js
+
+To avoid errors such as "document is not defined" on the server side, you should make sure the library is only imported on the client side. Here is how to do that:
+
+```javascript
+import dynamic from "next/dynamic";
+
+const Picker = dynamic(
+    () => {
+        return import("emoji-picker-react");
+    },
+    { ssr: false }
+);
+```
