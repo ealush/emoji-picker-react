@@ -1,68 +1,71 @@
 {
-  "name": "emoji-picker-react",
-  "version": "3.6.1",
-  "description": "Emoji picker component for react applications",
+  "version": "0.1.0",
+  "license": "MIT",
   "main": "dist/index.js",
-  "typings": "emoji-picker-react.d.ts",
-  "scripts": {
-    "storybook": "start-storybook -p 6006",
-    "build": "webpack --config ./webpack.config.js",
-    "build-storybook": "build-storybook",
-    "lint": "eslint ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ealush/emoji-picker-react.git"
-  },
-  "keywords": [
-    "emoji-picker",
-    "react"
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
   ],
-  "author": "ealush",
-  "license": "unlicense",
-  "bugs": {
-    "url": "https://github.com/ealush/emoji-picker-react/issues"
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
+  },
+  "peerDependencies": {
+    "react": ">=16"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "tsdx lint"
     }
   },
   "prettier": {
-    "arrowParens": "avoid",
-    "singleQuote": true
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
   },
-  "homepage": "https://github.com/ealush/emoji-picker-react#readme",
+  "name": "emoji-picker-react",
+  "author": "ealush",
+  "module": "dist/emoji-picker-react.esm.js",
+  "size-limit": [
+    {
+      "path": "dist/emoji-picker-react.cjs.production.min.js",
+      "limit": "10 KB"
+    },
+    {
+      "path": "dist/emoji-picker-react.esm.js",
+      "limit": "10 KB"
+    }
+  ],
   "devDependencies": {
-    "@babel/core": "^7.6.0",
-    "@babel/plugin-transform-runtime": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/preset-react": "^7.0.0",
-    "@storybook/addon-actions": "^6.4.18",
-    "@storybook/addon-links": "^6.4.18",
-    "@storybook/addons": "^6.4.18",
-    "@storybook/react": "^6.4.18",
-    "babel-loader": "^8.0.6",
-    "classnames": "^2.2.6",
-    "css-loader": "^3.2.0",
-    "emoji-datasource": "^7.0.2",
-    "eslint": "^7.5.0",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-react": "^7.14.3",
-    "eslint-plugin-react-hooks": "^2.0.1",
-    "husky": "^4.2.5",
-    "lodash": "^4.17.15",
-    "mini-css-extract-plugin": "^0.8.0",
-    "prettier": "2.0.5",
-    "pretty-quick": "^2.0.1",
-    "prop-types": "^15.7.2",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "style-loader": "^1.0.0",
-    "svg-url-loader": "^3.0.2",
-    "terser-webpack-plugin": "^2.1.0",
-    "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9",
-    "tinykeys": "^1.3.0"
+    "@babel/core": "^7.18.10",
+    "@size-limit/preset-small-lib": "^8.0.1",
+    "@storybook/addon-essentials": "^6.5.10",
+    "@storybook/addon-info": "^5.3.21",
+    "@storybook/addon-links": "^6.5.10",
+    "@storybook/addons": "^6.5.10",
+    "@storybook/react": "^6.5.10",
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "babel-loader": "^8.2.5",
+    "husky": "^8.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-is": "^18.2.0",
+    "size-limit": "^8.0.1",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.4.0",
+    "typescript": "^4.7.4"
   }
 }
