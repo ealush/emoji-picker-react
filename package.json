@@ -32,8 +32,7 @@
   "prettier": {
     "printWidth": 80,
     "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
+    "singleQuote": true
   },
   "name": "emoji-picker-react",
   "author": "ealush",
@@ -59,11 +58,14 @@
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "babel-loader": "^8.2.5",
+    "clsx": "^1.2.1",
+    "emoji-datasource": "^14.0.0",
     "husky": "^8.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "size-limit": "^8.0.1",
+    "tinykeys": "^1.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
