@@ -1,5 +1,6 @@
 import { HTMLAttributes, ReactChild } from 'react';
 import * as React from 'react';
+import EmojiPickerMain from 'EmojiPickerMain';
 
 export interface Props extends HTMLAttributes<HTMLDivElement> {
   /** custom content, defaults to 'the snozzberries taste like snozzberries' */
@@ -13,5 +14,10 @@ export interface Props extends HTMLAttributes<HTMLDivElement> {
  */
 
 export function Picker() {
-  return <div>Picker</div>;
+  return (
+    <EmojiPickerMain>
+      <Header />
+      <EmojiList />
+    </EmojiPickerMain>
+  );
 }
