@@ -1,16 +1,16 @@
-.EmojiPickerReact header.epr-header {
+.EmojiPickerReact footer.epr-footer {
   width: 100%;
-  padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 15px;
-  height: 100px;
+  height: 75px;
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
   left: 0;
   z-index: 1;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
   background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0px -5px 15px rgba(0, 0, 0, 0.05);
 }
