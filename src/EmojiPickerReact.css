@@ -1,0 +1,13 @@
+:root {
+}
+
+.EmojiPickerReact * {
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.EmojiPickerReact button {
+  cursor: pointer;
+  border: 0;
+  background: none;
+}

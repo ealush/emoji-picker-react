@@ -1,5 +1,13 @@
 import * as React from 'react';
+import { CategoryNavigation } from './CategoryNavigation';
+import './Header.css';
+import { Search } from './Search';
 
 export function Header() {
-  return <div>Header</div>;
+  return (
+    <header className="epr-header">
+      <CategoryNavigation />
+      <Search />
+    </header>
+  );
 }

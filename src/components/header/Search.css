@@ -1,0 +1,14 @@
+.EmojiPickerReact .epr-search-container {
+  width: 100%;
+  display: flex;
+}
+
+.EmojiPickerReact input.epr-search {
+  border-radius: 20px;
+  border: 0;
+  flex: 1;
+  padding: 0 20px;
+  display: block;
+  height: 40px;
+  outline: none;
+}

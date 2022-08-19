@@ -1,0 +1,15 @@
+.EmojiPickerReact li.epr-emoji-category:before {
+  content: attr(data-name);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  display: block;
+  padding: 10px 15px;
+  backdrop-filter: blur(3px);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.EmojiPickerReact li.epr-emoji-category {
+  position: relative;
+  display: block;
+}

@@ -1,14 +1,8 @@
 {
-  "include": [
-    "src",
-    "types"
-  ],
+  "include": ["src", "types"],
   "compilerOptions": {
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
@@ -19,42 +13,11 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
     "jsx": "react",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "paths": {
-      "Emoji": [
-        "./src/components/body/Emoji.tsx"
-      ],
-      "EmojiCategory": [
-        "./src/components/body/EmojiCategory.tsx"
-      ],
-      "EmojiList": [
-        "./src/components/body/EmojiList.tsx"
-      ],
-      "EmojiPickerMain": [
-        "./src/components/container/EmojiPickerMain.tsx"
-      ],
-      "PickerContextProvider": [
-        "./src/components/container/PickerContextProvider.tsx"
-      ],
-      "CategoryNavigation": [
-        "./src/components/header/CategoryNavigation.tsx"
-      ],
-      "Header": [
-        "./src/components/header/Header.tsx"
-      ],
-      "Search": [
-        "./src/components/header/Search.tsx"
-      ],
-      "SkinTonePicker": [
-        "./src/components/header/SkinTonePicker.tsx"
-      ],
-      "index": [
-        "./src/index.tsx"
-      ]
-    }
+    "noEmit": true
   }
 }
