@@ -4,3 +4,10 @@
   font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
 }
+
+.EmojiPickerReact button.epr-emoji.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
