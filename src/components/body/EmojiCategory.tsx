@@ -11,7 +11,8 @@ type Props = Readonly<{
 export function EmojiCategory({ category }: Props) {
   const emojis = emojisByCategory(category);
   return (
-    <li data-name={category} className="epr-emoji-category">
+    <li className="epr-emoji-category" data-name={category}>
+      <div className="epr-emoji-category-label">{category}</div>
       {emojis.map(emoji => (
         <Emoji key={emoji.u} emoji={emoji} />
       ))}
