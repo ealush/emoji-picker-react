@@ -1,4 +1,5 @@
-import { DataEmoji } from './DataTypes';
+import emojis from '../data/emojis';
+import { DataEmoji, DataEmojis } from './DataTypes';
 
 export function emojiNames(emoji: DataEmoji): string[] {
   return emoji[EmojiProperties.name] ?? [];
@@ -23,6 +24,8 @@ export function emojiUrlByUnified(unified: string): string {
 export function emojiVariations(emoji: DataEmoji): string[] {
   return emoji[EmojiProperties.variations] ?? [];
 }
+
+export const allEmojis: DataEmojis = Object.values(emojis).flat();
 
 const CDN_URL =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/';
