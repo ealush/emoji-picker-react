@@ -3,6 +3,6 @@
   overflow-y: scroll;
   overflow-x: hidden;
   backdrop-filter: blur(20px);
-  padding-bottom: 75px;
-  padding-top: 100px;
+  padding-bottom: var(--epr-footer-height);
+  padding-top: var(--epr-header-height);
 }

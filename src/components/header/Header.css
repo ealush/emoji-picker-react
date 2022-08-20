@@ -1,6 +1,6 @@
 .EmojiPickerReact header.epr-header {
   width: 100%;
-  height: 100px;
+  height: var(--epr-header-height);
   padding: 10px;
   display: flex;
   flex-direction: column;
