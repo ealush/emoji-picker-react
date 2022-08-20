@@ -17,5 +17,3 @@ export function Picker(/*props: Props*/) {
     </PickerMain>
   );
 }
-
-createAlphaNumericEmojiIndex();
