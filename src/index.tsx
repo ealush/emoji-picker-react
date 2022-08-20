@@ -4,7 +4,6 @@ import { Header } from './components/header/Header';
 import { Body } from './components/body/Body';
 import './EmojiPickerReact.css';
 import { Footer } from './components/footer/Footer';
-import { createAlphaNumericEmojiIndex } from './dataUtils/createAlphaNumericEmojiIndex';
 
 export interface Props {}
 
