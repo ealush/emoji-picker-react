@@ -3,7 +3,7 @@ import { useFilter } from '../../hooks/useFilter';
 import './Search.css';
 
 export function Search() {
-  const { onChange, value, emojiFilterRef } = useFilter();
+  const { onChange } = useFilter();
 
   return (
     <div className="epr-search-container">
