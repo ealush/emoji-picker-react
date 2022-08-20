@@ -1,4 +1,6 @@
 :root {
+  --epr-header-height: 100px;
+  --epr-footer-height: 75px;
 }
 
 .EmojiPickerReact * {
