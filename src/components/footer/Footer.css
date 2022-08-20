@@ -1,8 +1,7 @@
 .EmojiPickerReact footer.epr-footer {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: row;
   gap: 15px;
   height: 75px;
   position: absolute;
