@@ -23,6 +23,9 @@ export function Body() {
               'I should probably ignore this',
               entry.target.textContent
             );
+          } else if (entry.isIntersecting) {
+            // This seems to be doing it when scrolling up
+            console.log('could be next?', entry.target?.textContent);
           } else {
             // Yeah, we're probably at the top
             console.log(
@@ -34,7 +37,7 @@ export function Body() {
       },
       {
         threshold: [0, 1],
-        rootMargin: '-1px 0px 0px 0px'
+        rootMargin: '-140px 0px 0px 0px' // compensate for the header
       }
     );
     bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
