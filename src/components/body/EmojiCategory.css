@@ -18,3 +18,9 @@
   justify-content: space-evenly;
   padding: 5px 10px;
 }
+
+.EmojiPickerReact li.epr-emoji-category:after {
+  content: '';
+  display: inline-block;
+  flex: 1;
+}
