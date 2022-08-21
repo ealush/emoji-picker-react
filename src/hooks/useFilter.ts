@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { findLastIndex } from 'lodash';
 import { createAlphaNumericEmojiIndex } from '../dataUtils/createAlphaNumericEmojiIndex';
 import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
