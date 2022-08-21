@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { DataEmoji, DataEmojis } from '../../dataUtils/DataTypes';
 import { FilterDict } from '../../hooks/useFilter';
 
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
   filterState: [FilterState, React.Dispatch<React.SetStateAction<FilterState>>];
-}>({});
+}>({
+  PickerMainRef: React.createRef(),
+  filterState: [[], () => {}]
+});
 
 type Props = Readonly<{
   children: React.ReactNode;

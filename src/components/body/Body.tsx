@@ -8,9 +8,14 @@ export function Body() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
+        const refCurrent = bodyRef.current;
+        if (!refCurrent) {
+          return;
+        }
+
         // This seems to work well for detecting all category transitions via scroll
         for (const entry of entries) {
-          if (bodyRef.current.scrollTop < entry.target.offsetTop) {
+          if (refCurrent.scrollTop < (entry.target as HTMLElement).offsetTop) {
             // If the entry came into view, but is not the first visible entry
             // it probably means that there is another entry that's already sticky
             // DO NOTHING
@@ -32,7 +37,7 @@ export function Body() {
         rootMargin: '-1px 0px 0px 0px'
       }
     );
-    bodyRef.current.querySelectorAll('.epr-emoji-category').forEach(el => {
+    bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
       observer.observe(el);
     });
   }, []);
