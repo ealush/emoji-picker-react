@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { DataEmoji, DataEmojis } from '../../dataUtils/DataTypes';
+import { FilterDict } from '../../hooks/useFilter';
 
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
-  filterState: [
-    [string, Record<string, DataEmoji>][],
-    React.Dispatch<React.SetStateAction<[string, Record<string, DataEmoji>][]>>
-  ];
+  filterState: [FilterState, React.Dispatch<React.SetStateAction<FilterState>>];
 }>({});
 
 type Props = Readonly<{
@@ -16,7 +14,7 @@ type Props = Readonly<{
 }>;
 
 export function PickerContextProvider({ children, PickerMainRef }: Props) {
-  const filterState = useState<[string, Record<string, DataEmoji>][]>([]);
+  const filterState = useState<FilterState>([]);
 
   return (
     <PickerContext.Provider
@@ -39,3 +37,5 @@ export function useFilterState() {
   const { filterState } = React.useContext(PickerContext);
   return filterState;
 }
+
+type FilterState = [string, FilterDict][];
