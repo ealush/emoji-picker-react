@@ -10,20 +10,11 @@
   color: #888;
 }
 
-/* .EmojiPickerReact li.epr-emoji-category:before {
-  content: attr(data-name);
-  position: sticky;
-  top: 0;
-  width: 100%;
-  display: block;
-  padding: 10px 15px;
-  backdrop-filter: blur(3px);
-  background-color: rgba(255, 255, 255, 0.7);
-  font-weight: bold;
-  color: #888;
-} */
-
 .EmojiPickerReact li.epr-emoji-category {
   position: relative;
-  display: block;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding: 5px 10px;
 }

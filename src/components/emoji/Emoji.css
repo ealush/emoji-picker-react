@@ -5,6 +5,11 @@
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
 }
 
+.EmojiPickerReact button.epr-emoji:hover {
+  border-radius: 8px;
+  background-color: currentColor;
+}
+
 .EmojiPickerReact button.epr-emoji.hidden {
   display: none;
   opacity: 0;
