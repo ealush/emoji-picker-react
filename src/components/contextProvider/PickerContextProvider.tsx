@@ -66,10 +66,11 @@ export function useActiveCategoryState(): [
     PickerContext
   );
 
-  const [activeCategory /*setActiveCategory*/] = activeCategoryState;
+  const [activeCategory, setActiveCategory] = activeCategoryState;
   return [activeCategory, setCategory];
 
   function setCategory(category: DataGroups) {
+    setActiveCategory(category);
     PickerMainRef.current
       ?.querySelector(`[data-name="${category}"]`)
       ?.scrollIntoView();
