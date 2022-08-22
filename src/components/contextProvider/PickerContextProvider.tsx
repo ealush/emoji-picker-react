@@ -61,6 +61,7 @@ export function useSearchTermState() {
 
 export function useActiveCategoryState(): [
   ActiveCategoryState,
+  (nextActive: DataGroups) => void,
   (nextActive: DataGroups) => void
 ] {
   const { activeCategoryState, PickerMainRef } = React.useContext(
@@ -68,7 +69,7 @@ export function useActiveCategoryState(): [
   );
 
   const [activeCategory, setActiveCategory] = activeCategoryState;
-  return [activeCategory, setCategory];
+  return [activeCategory, setCategory, setActiveCategoryAndScroll];
 
   function setCategory(category: DataGroups) {
     if (category === activeCategory) {
@@ -76,6 +77,10 @@ export function useActiveCategoryState(): [
     }
 
     setActiveCategory(category);
+  }
+
+  function setActiveCategoryAndScroll(category: DataGroups) {
+    setCategory(category);
     scrollCategoryIntoView(PickerMainRef.current, category);
   }
 }

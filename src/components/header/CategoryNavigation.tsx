@@ -5,7 +5,11 @@ import categories from '../../dataUtils/categories';
 import { useActiveCategoryState } from '../contextProvider/PickerContextProvider';
 
 export function CategoryNavigation() {
-  const [activeCategory, setActiveCategory] = useActiveCategoryState();
+  const [
+    activeCategory,
+    ,
+    setActiveCategoryAndScroll
+  ] = useActiveCategoryState();
   return (
     <div className="epr-category-nav">
       {categories.map(category => (
@@ -14,7 +18,7 @@ export function CategoryNavigation() {
             active: category === activeCategory
           })}
           key={category}
-          onClick={() => setActiveCategory(category)}
+          onClick={() => setActiveCategoryAndScroll(category)}
         />
       ))}
     </div>
