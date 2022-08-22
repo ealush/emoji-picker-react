@@ -9,6 +9,25 @@
   display: inline-block;
   height: 20px;
   width: 20px;
+  opacity: 0.5;
+  transition: opacity 0.2s ease-in-out;
+  position: relative;
+}
+
+.EmojiPickerReact .epr-category-nav > button.epr-cat-btn:hover,
+.EmojiPickerReact .epr-category-nav > button.epr-cat-btn.active {
+  opacity: 1;
+}
+
+.EmojiPickerReact .epr-category-nav > button.epr-cat-btn.active:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -5px;
+  height: 3px;
+  background-color: #6396ff;
+  border-radius: 5px;
 }
 
 .EmojiPickerReact button.epr-cat-btn.epr-icn-activities {
