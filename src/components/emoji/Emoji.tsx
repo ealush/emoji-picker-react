@@ -30,6 +30,7 @@ export function Emoji({ emoji, genVisibilityIndex }: Props) {
         src={emojiUrl(emoji)}
         alt={emojiName(emoji)}
         className="epr-emoji-img"
+        loading="lazy"
       />
     </button>
   );
