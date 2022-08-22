@@ -9,8 +9,8 @@ const PickerContext = React.createContext<{
   filterState: [FilterState, React.Dispatch<React.SetStateAction<FilterState>>];
   searchTerm: [string, React.Dispatch<React.SetStateAction<string>>];
   activeCategoryState: [
-    null | DataGroups,
-    React.Dispatch<React.SetStateAction<null | DataGroups>>
+    ActiveCategoryState,
+    React.Dispatch<React.SetStateAction<ActiveCategoryState>>
   ];
 }>({
   PickerMainRef: React.createRef(),
@@ -27,7 +27,7 @@ type Props = Readonly<{
 export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const filterState = useState<FilterState>(null);
   const searchTerm = useState<string>('');
-  const activeCategoryState = useState<DataGroups | null>(categories[0]);
+  const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
 
   return (
     <PickerContext.Provider
@@ -58,9 +58,24 @@ export function useSearchTermState() {
   return searchTerm;
 }
 
-export function useActiveCategoryState() {
-  const { activeCategoryState } = React.useContext(PickerContext);
-  return activeCategoryState;
+export function useActiveCategoryState(): [
+  ActiveCategoryState,
+  (nextActive: DataGroups) => void
+] {
+  const { activeCategoryState, PickerMainRef } = React.useContext(
+    PickerContext
+  );
+
+  const [activeCategory /*setActiveCategory*/] = activeCategoryState;
+  return [activeCategory, setCategory];
+
+  function setCategory(category: DataGroups) {
+    PickerMainRef.current
+      ?.querySelector(`[data-name="${category}"]`)
+      ?.scrollIntoView();
+  }
 }
 
 type FilterState = null | Record<string, FilterDict>;
+
+type ActiveCategoryState = null | DataGroups;
