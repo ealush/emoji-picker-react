@@ -3,7 +3,7 @@ import { useFilter } from '../../hooks/useFilter';
 import './Search.css';
 
 export function Search() {
-  const { onChange } = useFilter();
+  const { onChange, searchTerm } = useFilter();
 
   return (
     <div className="epr-search-container">
@@ -12,6 +12,7 @@ export function Search() {
         type="text"
         placeholder="Search"
         onChange={event => onChange(event.target.value)}
+        value={searchTerm}
       />
     </div>
   );

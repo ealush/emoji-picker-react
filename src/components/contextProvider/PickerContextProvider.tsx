@@ -5,9 +5,11 @@ import { FilterDict } from '../../hooks/useFilter';
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
   filterState: [FilterState, React.Dispatch<React.SetStateAction<FilterState>>];
+  searchTerm: [string, React.Dispatch<React.SetStateAction<string>>];
 }>({
   PickerMainRef: React.createRef(),
-  filterState: [[], () => {}]
+  filterState: [{}, () => {}],
+  searchTerm: ['', () => {}]
 });
 
 type Props = Readonly<{
@@ -16,13 +18,15 @@ type Props = Readonly<{
 }>;
 
 export function PickerContextProvider({ children, PickerMainRef }: Props) {
-  const filterState = useState<FilterState>([]);
+  const filterState = useState<FilterState>(null);
+  const searchTerm = useState<string>('');
 
   return (
     <PickerContext.Provider
       value={{
         PickerMainRef,
-        filterState
+        filterState,
+        searchTerm
       }}
     >
       {children}
@@ -40,4 +44,9 @@ export function useFilterState() {
   return filterState;
 }
 
-type FilterState = [string, FilterDict][];
+export function useSearchTermState() {
+  const { searchTerm } = React.useContext(PickerContext);
+  return searchTerm;
+}
+
+type FilterState = null | Record<string, FilterDict>;
