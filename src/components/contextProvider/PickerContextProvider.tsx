@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import categories from '../../dataUtils/categories';
 import { DataGroups } from '../../dataUtils/DataTypes';
+import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 
 const PickerContext = React.createContext<{
@@ -71,9 +72,7 @@ export function useActiveCategoryState(): [
 
   function setCategory(category: DataGroups) {
     setActiveCategory(category);
-    PickerMainRef.current
-      ?.querySelector(`[data-name="${category}"]`)
-      ?.scrollIntoView();
+    scrollCategoryIntoView(PickerMainRef.current, category);
   }
 }
 
