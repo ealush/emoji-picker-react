@@ -33,16 +33,20 @@ export function useFilter() {
       return;
     }
 
+    if (filter?.[nextValue]) {
+      return;
+    }
+
     const longestMatch = findLongestMatch(nextValue, filter);
 
     if (!longestMatch) {
-      setFilter({
-        [nextValue]: filterEmojiListByKeyword(allEmojis, nextValue)
-      });
+      // Can we even get here?
+      // If so, we need to search among all emojis
       return;
     }
 
     setFilter({
+      ...filter,
       [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
     });
   }
@@ -63,19 +67,6 @@ function filterEmojiObjectByKeyword(
   }
 
   return filtered;
-}
-
-function filterEmojiListByKeyword(
-  emojiList: DataEmojis,
-  keyword: string
-): FilterDict {
-  return emojiList.reduce((dict, emoji) => {
-    if (hasMatch(emoji, keyword)) {
-      dict[emojiUnified(emoji)] = emoji;
-    }
-
-    return dict;
-  }, {} as FilterDict);
 }
 
 function hasMatch(emoji: DataEmoji, keyword: string): boolean {
