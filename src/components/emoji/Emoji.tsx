@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiUnified, emojiUrl } from '../../dataUtils/emojiSelectors';
-import { useIsEmojiFiltered } from '../../hooks/useFilter';
 import './Emoji.css';
 import { emojiColors } from './emojiColors';
 

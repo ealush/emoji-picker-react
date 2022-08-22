@@ -1,4 +1,3 @@
-import { findLastIndex } from 'lodash';
 import { createAlphaNumericEmojiIndex } from '../dataUtils/createAlphaNumericEmojiIndex';
 import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
 import {
@@ -6,50 +5,45 @@ import {
   emojiNames,
   emojiUnified
 } from '../dataUtils/emojiSelectors';
-import { useFilterState } from '../components/contextProvider/PickerContextProvider';
+import {
+  useFilterState,
+  useSearchTermState
+} from '../components/contextProvider/PickerContextProvider';
 
 export function useFilter() {
   const [filter, setFilter] = useFilterState();
+  const [searchTerm, setSearchTerm] = useSearchTermState();
 
   return {
-    onChange
+    onChange,
+    searchTerm
   };
 
   function onChange(nextValue: string) {
+    setSearchTerm(nextValue);
+
     if (nextValue.length === 0) {
-      setFilter([]);
+      setFilter(null);
       return;
     } else if (nextValue.length === 1) {
       const index = createAlphaNumericEmojiIndex();
-      setFilter([[nextValue, listToObject(Array.from(index[nextValue]))]]);
+      setFilter({
+        [nextValue]: index[nextValue]
+      });
       return;
     }
 
-    const lastRelatedIndex = findLastIndex(filter, ([value]) => {
-      return nextValue.includes(value);
-    });
+    const longestMatch = findLongestMatch(nextValue, filter);
 
-    if (lastRelatedIndex === -1) {
-      // We get here if the user copy-pasted something unrelated to what was in the search box.
-      setFilter([[nextValue, filterEmojiListByKeyword(allEmojis, nextValue)]]);
+    if (!longestMatch) {
+      setFilter({
+        [nextValue]: filterEmojiListByKeyword(allEmojis, nextValue)
+      });
       return;
     }
 
-    const [lastKeyword, lastEmojis] = filter[lastRelatedIndex];
-
-    if (lastKeyword === nextValue) {
-      if (filter.length !== nextValue.length) {
-        setFilter(current => current.slice(0, lastRelatedIndex + 1));
-      }
-      return;
-    }
-
-    setFilter(current => {
-      current.splice(lastRelatedIndex + 1);
-
-      return current.concat([
-        [nextValue, filterEmojiObjectByKeyword(lastEmojis, nextValue)]
-      ]);
+    setFilter({
+      [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
     });
   }
 }
@@ -71,13 +65,6 @@ function filterEmojiObjectByKeyword(
   return filtered;
 }
 
-function listToObject(list: DataEmojis): FilterDict {
-  return list.reduce((dict, emoji) => {
-    dict[emojiUnified(emoji)] = emoji;
-    return dict;
-  }, {} as FilterDict);
-}
-
 function filterEmojiListByKeyword(
   emojiList: DataEmojis,
   keyword: string
@@ -97,14 +84,36 @@ function hasMatch(emoji: DataEmoji, keyword: string): boolean {
 
 export function useIsEmojiFiltered(unified: string): boolean {
   const [filter] = useFilterState();
+  const [searchTerm] = useSearchTermState();
 
-  const last = filter[filter.length - 1];
-
-  if (!last) {
+  if (!filter) {
     return false;
   }
 
-  return !last[1][unified];
+  return !filter[searchTerm]?.[unified];
 }
 
 export type FilterDict = Record<string, DataEmoji>;
+
+function findLongestMatch(
+  keyword: string,
+  dict: Record<string, FilterDict> | null
+): FilterDict | null {
+  if (!dict) {
+    return null;
+  }
+
+  if (dict[keyword]) {
+    return dict[keyword];
+  }
+
+  const longestMatchingKey = Object.keys(dict)
+    .sort((a, b) => b.length - a.length)
+    .find(key => keyword.includes(key));
+
+  if (longestMatchingKey) {
+    return dict[longestMatchingKey];
+  }
+
+  return null;
+}
