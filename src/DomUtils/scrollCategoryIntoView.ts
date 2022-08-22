@@ -2,5 +2,10 @@ export function scrollCategoryIntoView(
   root: HTMLElement | null,
   category: string
 ) {
-  root?.querySelector(`[data-name="${category}"]`)?.scrollIntoView();
+  requestAnimationFrame(() => {
+    root?.querySelector(`[data-name="${category}"]`)?.scrollIntoView({
+      block: 'start',
+      inline: 'start'
+    });
+  });
 }
