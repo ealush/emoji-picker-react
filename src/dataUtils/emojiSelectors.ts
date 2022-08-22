@@ -1,6 +1,12 @@
 import emojis from '../data/emojis';
 import { DataEmoji, DataEmojis } from './DataTypes';
 
+enum EmojiProperties {
+  name = 'n',
+  unified = 'u',
+  variations = 'v'
+}
+
 export function emojiNames(emoji: DataEmoji): string[] {
   return emoji[EmojiProperties.name] ?? [];
 }
@@ -29,9 +35,3 @@ export const allEmojis: DataEmojis = Object.values(emojis).flat();
 
 const CDN_URL =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/';
-
-enum EmojiProperties {
-  name = 'n',
-  unified = 'u',
-  variations = 'v'
-}

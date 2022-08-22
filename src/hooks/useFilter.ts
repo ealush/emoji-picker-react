@@ -1,10 +1,6 @@
 import { createAlphaNumericEmojiIndex } from '../dataUtils/createAlphaNumericEmojiIndex';
-import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
-import {
-  allEmojis,
-  emojiNames,
-  emojiUnified
-} from '../dataUtils/emojiSelectors';
+import { DataEmoji } from '../dataUtils/DataTypes';
+import { emojiNames } from '../dataUtils/emojiSelectors';
 import {
   useFilterState,
   useSearchTermState
@@ -77,7 +73,7 @@ export function useIsEmojiFiltered(unified: string): boolean {
   const [filter] = useFilterState();
   const [searchTerm] = useSearchTermState();
 
-  if (!filter) {
+  if (!filter || !searchTerm) {
     return false;
   }
 

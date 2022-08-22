@@ -3,8 +3,6 @@ import { DataGroups } from '../../dataUtils/DataTypes';
 import emojisByCategory from '../../dataUtils/emojisByCategory';
 import { useRef } from 'react';
 import './EmojiCategory.css';
-import { useIsEmojiFiltered } from '../../hooks/useFilter';
-import { emojiUnified } from '../../dataUtils/emojiSelectors';
 import { Emoji } from '../emoji/Emoji';
 
 type Props = Readonly<{
@@ -21,21 +19,18 @@ export function EmojiCategory({ category }: Props) {
     <li className="epr-emoji-category" data-name={category}>
       <div className="epr-emoji-category-label">{category}</div>
       {emojis.map(emoji => {
-        const hidden = useIsEmojiFiltered(emojiUnified(emoji));
-
-        if (!hidden) {
-          visibleEmojiCounter.current++;
-        }
-
         return (
           <Emoji
             key={emoji.u}
             emoji={emoji}
-            hidden={hidden}
-            index={visibleEmojiCounter.current}
+            genVisibilityIndex={genVisibilityIndex}
           />
         );
       })}
     </li>
   );
+
+  function genVisibilityIndex(isHidden: boolean): number {
+    return isHidden ? 0 : visibleEmojiCounter.current++;
+  }
 }
