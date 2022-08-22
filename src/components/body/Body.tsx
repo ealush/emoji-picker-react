@@ -2,9 +2,11 @@ import * as React from 'react';
 import './Body.css';
 import { EmojiList } from './EmojiList';
 import { useEffect, useRef } from 'react';
+import { useActiveCategoryState } from '../contextProvider/PickerContextProvider';
 
 export function Body() {
   const bodyRef = useRef<null | HTMLDivElement>(null);
+  const [, setActiveCategory] = useActiveCategoryState();
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
@@ -13,25 +15,33 @@ export function Body() {
           return;
         }
 
+        let categoryToSet = null;
+
         // This seems to work well for detecting all category transitions via scroll
         for (const entry of entries) {
           if (refCurrent.scrollTop < (entry.target as HTMLElement).offsetTop) {
             // If the entry came into view, but is not the first visible entry
             // it probably means that there is another entry that's already sticky
             // DO NOTHING
-            console.log(
-              'I should probably ignore this',
-              entry.target.textContent
-            );
           } else if (entry.isIntersecting) {
+            categoryToSet = entry.target.getAttribute('data-name');
             // This seems to be doing it when scrolling up
             console.log('could be next?', entry.target?.textContent);
-          } else {
+          } else if (isNextTargetWithinScrollArea(entry.target, refCurrent)) {
+            // } else {
+            categoryToSet = entry.target.nextElementSibling?.getAttribute(
+              'data-name'
+            );
             // Yeah, we're probably at the top
             console.log(
               'could be next?',
               entry.target.nextElementSibling?.textContent
             );
+          }
+
+          if (categoryToSet) {
+            setActiveCategory(categoryToSet);
+            break;
           }
         }
       },
@@ -49,5 +59,19 @@ export function Body() {
     <div className="epr-body" ref={bodyRef}>
       <EmojiList />
     </div>
+  );
+}
+
+function isNextTargetWithinScrollArea(
+  target: HTMLElement,
+  scrollRoot: HTMLElement
+) {
+  const bodyHeight = scrollRoot.clientHeight;
+
+  return (
+    scrollRoot.scrollTop +
+      bodyHeight -
+      (target.nextElementSibling as HTMLElement)?.offsetTop <
+    bodyHeight
   );
 }

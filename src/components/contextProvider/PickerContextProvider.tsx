@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import categories from '../../dataUtils/categories';
-import { DataGroups } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 
@@ -61,8 +60,8 @@ export function useSearchTermState() {
 
 export function useActiveCategoryState(): [
   ActiveCategoryState,
-  (nextActive: DataGroups) => void,
-  (nextActive: DataGroups) => void
+  (nextActive: string) => void,
+  (nextActive: string) => void
 ] {
   const { activeCategoryState, PickerMainRef } = React.useContext(
     PickerContext
@@ -71,7 +70,7 @@ export function useActiveCategoryState(): [
   const [activeCategory, setActiveCategory] = activeCategoryState;
   return [activeCategory, setCategory, setActiveCategoryAndScroll];
 
-  function setCategory(category: DataGroups) {
+  function setCategory(category: string) {
     if (category === activeCategory) {
       return;
     }
@@ -79,7 +78,7 @@ export function useActiveCategoryState(): [
     setActiveCategory(category);
   }
 
-  function setActiveCategoryAndScroll(category: DataGroups) {
+  function setActiveCategoryAndScroll(category: string) {
     setCategory(category);
     scrollCategoryIntoView(PickerMainRef.current, category);
   }
@@ -87,4 +86,4 @@ export function useActiveCategoryState(): [
 
 type FilterState = null | Record<string, FilterDict>;
 
-type ActiveCategoryState = null | DataGroups;
+type ActiveCategoryState = null | string;
