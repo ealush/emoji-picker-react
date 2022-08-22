@@ -71,6 +71,10 @@ export function useActiveCategoryState(): [
   return [activeCategory, setCategory];
 
   function setCategory(category: DataGroups) {
+    if (category === activeCategory) {
+      return;
+    }
+
     setActiveCategory(category);
     scrollCategoryIntoView(PickerMainRef.current, category);
   }
