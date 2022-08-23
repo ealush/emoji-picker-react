@@ -14,12 +14,14 @@ const PickerContext = React.createContext<{
     React.Dispatch<React.SetStateAction<ActiveCategoryState>>
   ];
   activeSkinTone: [SkinTones, React.Dispatch<React.SetStateAction<SkinTones>>];
+  emojisThatFailedToLoad: React.MutableRefObject<Set<string>>;
 }>({
   PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
-  activeSkinTone: [SkinTones.NEUTRAL, () => {}]
+  activeSkinTone: [SkinTones.NEUTRAL, () => {}],
+  emojisThatFailedToLoad: { current: new Set() }
 });
 
 type Props = Readonly<{
@@ -32,6 +34,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const searchTerm = useState<string>('');
   const activeSkinTone = useState<SkinTones>(SkinTones.NEUTRAL);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
+  const emojisThatFailedToLoad = React.useRef<Set<string>>(new Set());
 
   return (
     <PickerContext.Provider
@@ -40,7 +43,8 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         filterState,
         searchTerm,
         activeCategoryState,
-        activeSkinTone
+        activeSkinTone,
+        emojisThatFailedToLoad
       }}
     >
       {children}
@@ -91,6 +95,25 @@ export function useActiveSkinToneState(): [
 ] {
   const { activeSkinTone } = React.useContext(PickerContext);
   return activeSkinTone;
+}
+
+export function useEmojisThatFailedToLoad(): {
+  markAsFailedToLoad: (unified: string) => void;
+  didFailToLoad: (unified: string) => boolean;
+} {
+  const { emojisThatFailedToLoad } = React.useContext(PickerContext);
+
+  function markAsFailedToLoad(unified: string) {
+    emojisThatFailedToLoad.current.add(unified);
+  }
+
+  function didFailToLoad(unified: string): boolean {
+    return emojisThatFailedToLoad.current.has(unified);
+  }
+  return {
+    markAsFailedToLoad,
+    didFailToLoad
+  };
 }
 
 type FilterState = null | Record<string, FilterDict>;
