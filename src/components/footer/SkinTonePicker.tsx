@@ -4,17 +4,16 @@ import { useState } from 'react';
 
 import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';
+import { useActiveSkinToneState } from '../contextProvider/PickerContextProvider';
 
 export function SkinTonePicker() {
   const [fanOpen, setFanOpen] = useState(false);
-  const [selectedSkinTone, setSelectedSkinTone] = useState<string>(
-    skinToneVariations[0]
-  );
+  const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
 
   return (
     <div className="epr-skin-tones" onClick={() => setFanOpen(!fanOpen)}>
       {skinToneVariations.map((skinToneVariation, i) => {
-        const isActive = skinToneVariation === selectedSkinTone;
+        const isActive = skinToneVariation === activeSkinTone;
         return (
           <button
             style={{
@@ -24,7 +23,7 @@ export function SkinTonePicker() {
               )
             }}
             onClick={() => {
-              fanOpen && setSelectedSkinTone(skinToneVariation);
+              fanOpen && setActiveSkinTone(skinToneVariation);
             }}
             key={skinToneVariation}
             className={clsx(

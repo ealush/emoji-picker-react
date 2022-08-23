@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { SkinTones } from '../../data/skinToneVariations';
 import categories from '../../dataUtils/categories';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
@@ -12,11 +13,13 @@ const PickerContext = React.createContext<{
     ActiveCategoryState,
     React.Dispatch<React.SetStateAction<ActiveCategoryState>>
   ];
+  activeSkinTone: [SkinTones, React.Dispatch<React.SetStateAction<SkinTones>>];
 }>({
   PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
   searchTerm: ['', () => {}],
-  activeCategoryState: [null, () => {}]
+  activeCategoryState: [null, () => {}],
+  activeSkinTone: [SkinTones.NEUTRAL, () => {}]
 });
 
 type Props = Readonly<{
@@ -27,6 +30,7 @@ type Props = Readonly<{
 export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const filterState = useState<FilterState>(null);
   const searchTerm = useState<string>('');
+  const activeSkinTone = useState<SkinTones>(SkinTones.NEUTRAL);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
 
   return (
@@ -35,7 +39,8 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         PickerMainRef,
         filterState,
         searchTerm,
-        activeCategoryState
+        activeCategoryState,
+        activeSkinTone
       }}
     >
       {children}
@@ -78,6 +83,14 @@ export function useActiveCategoryState(): [
     setCategory(category);
     scrollCategoryIntoView(PickerMainRef.current, category);
   }
+}
+
+export function useActiveSkinToneState(): [
+  SkinTones,
+  (skinTone: SkinTones) => void
+] {
+  const { activeSkinTone } = React.useContext(PickerContext);
+  return activeSkinTone;
 }
 
 type FilterState = null | Record<string, FilterDict>;
