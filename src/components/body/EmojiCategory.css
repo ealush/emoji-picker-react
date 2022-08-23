@@ -8,6 +8,7 @@
   background-color: rgba(255, 255, 255, 0.7);
   font-weight: bold;
   color: #888;
+  height: 40px;
 }
 
 .EmojiPickerReact li.epr-emoji-category {

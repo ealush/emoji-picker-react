@@ -24,22 +24,17 @@ export function Body() {
             // it probably means that there is another entry that's already sticky
             // DO NOTHING
           } else if (entry.isIntersecting) {
-            categoryToSet = entry.target.getAttribute('data-name');
             // This seems to be doing it when scrolling up
-            console.log('could be next?', entry.target?.textContent);
+            categoryToSet = entry.target.getAttribute('data-name');
           } else if (
             isTargetWithinScrollArea(
               entry.target.nextElementSibling as HTMLElement,
               refCurrent
             )
           ) {
+            // Yeah, we're probably at the top
             categoryToSet = entry.target.nextElementSibling?.getAttribute(
               'data-name'
-            );
-            // Yeah, we're probably at the top
-            console.log(
-              'could be next?',
-              entry.target.nextElementSibling?.textContent
             );
           }
 
@@ -51,7 +46,9 @@ export function Body() {
       },
       {
         threshold: [0, 1],
-        rootMargin: '-140px 0px 0px 0px' // compensate for the header
+        rootMargin: '-165px 0px 0px 0px'
+        // compensate for the header and sticky category
+        //FIXME: this is a hack, need to understand why this exact number
       }
     );
     bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
