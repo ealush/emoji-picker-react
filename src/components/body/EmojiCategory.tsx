@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { DataGroups } from '../../dataUtils/DataTypes';
-import emojisByCategory from '../../dataUtils/emojisByCategory';
+import { DataEmojis, DataGroups } from '../../dataUtils/DataTypes';
 import { useRef } from 'react';
 import './EmojiCategory.css';
 import { Emoji } from '../emoji/Emoji';
@@ -8,11 +7,11 @@ import { categoryName } from '../../dataUtils/categorySelector';
 
 type Props = Readonly<{
   category: DataGroups;
+  emojis: DataEmojis;
 }>;
 
-export function EmojiCategory({ category }: Props) {
+export function EmojiCategory({ category, emojis }: Props) {
   const visibleEmojiCounter = useRef(0);
-  const emojis = emojisByCategory(category);
 
   visibleEmojiCounter.current = 0;
 
