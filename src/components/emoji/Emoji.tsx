@@ -1,10 +1,12 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { SkinTones } from '../../data/skinToneVariations';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiName,
   emojiUnified,
-  emojiUrl
+  emojiUrl,
+  emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiFiltered } from '../../hooks/useFilter';
 import './Emoji.css';
@@ -19,15 +21,16 @@ export function Emoji({ emoji, genVisibilityIndex }: Props) {
   const hidden = useIsEmojiFiltered(emojiUnified(emoji));
   const index = genVisibilityIndex(hidden);
   const color = bgColor(index);
+  const unified = emojiUnified(emoji);
 
   return (
     <button
       className={clsx('epr-emoji', { hidden })}
-      data-unified={emojiUnified(emoji)}
+      data-unified={unified}
       style={{ color }}
     >
       <img
-        src={emojiUrl(emoji)}
+        src={emojiUrlByUnified(unified)}
         alt={emojiName(emoji)}
         className="epr-emoji-img"
         loading="lazy"
