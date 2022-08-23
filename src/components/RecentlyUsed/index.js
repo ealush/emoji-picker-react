@@ -31,6 +31,8 @@ const RecentlyUsed = ({ emojiListRef }) => {
     return null;
   }
 
+  const recently = true;
+
   return (
     <ul
       className="emoji-group"
@@ -47,6 +49,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
 
         return (
           <Emoji
+            className="recently-emojies"
             key={index}
             emoji={emoji}
             {...(item[EMOJI_PROPERTY_SKIN_VARIATIONS] && {
@@ -61,6 +64,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
             }
             dispatch={dispatch}
             shouldLoad
+            recently={recently}
           />
         );
       })}

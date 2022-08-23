@@ -11,7 +11,7 @@ const clickHandler = (onClickRef = {}, dispatch) => (
   const output = emojiOutput(unified, emoji, activeSkinTone);
 
   setRecentlyUsed(output);
-  dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
+  //   dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
 
   return onClickRef.current && onClickRef.current(e, output);
 };

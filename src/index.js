@@ -82,7 +82,11 @@ const EmpojiPicker = ({
 
   return (
     <PickerContext.Provider
-      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef, dispatch) }}
+      value={{
+        state,
+        dispatch,
+        onEmojiClick: clickHandler(onClickRef, dispatch),
+      }}
     >
       <aside
         className="emoji-picker-react"
@@ -110,6 +114,17 @@ const EmpojiPicker = ({
   );
 };
 
+const emojiDispatch = () => {
+  const dispatch = (...props) => {
+    if (!isMounted.current) {
+      return;
+    }
+    return useReducerDispatch(...props);
+  };
+
+  return dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
+};
+
 export {
   SKIN_TONE_NEUTRAL,
   SKIN_TONE_LIGHT,
@@ -117,6 +132,7 @@ export {
   SKIN_TONE_MEDIUM,
   SKIN_TONE_MEDIUM_DARK,
   SKIN_TONE_DARK,
+  emojiDispatch,
 };
 
 export default EmpojiPicker;
