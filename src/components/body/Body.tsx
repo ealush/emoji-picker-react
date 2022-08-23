@@ -27,8 +27,12 @@ export function Body() {
             categoryToSet = entry.target.getAttribute('data-name');
             // This seems to be doing it when scrolling up
             console.log('could be next?', entry.target?.textContent);
-          } else if (isNextTargetWithinScrollArea(entry.target, refCurrent)) {
-            // } else {
+          } else if (
+            isTargetWithinScrollArea(
+              entry.target.nextElementSibling as HTMLElement,
+              refCurrent
+            )
+          ) {
             categoryToSet = entry.target.nextElementSibling?.getAttribute(
               'data-name'
             );
@@ -62,16 +66,14 @@ export function Body() {
   );
 }
 
-function isNextTargetWithinScrollArea(
+function isTargetWithinScrollArea(
   target: HTMLElement,
   scrollRoot: HTMLElement
 ) {
   const bodyHeight = scrollRoot.clientHeight;
 
   return (
-    scrollRoot.scrollTop +
-      bodyHeight -
-      (target.nextElementSibling as HTMLElement)?.offsetTop <
+    scrollRoot.scrollTop + bodyHeight - (target as HTMLElement)?.offsetTop <
     bodyHeight
   );
 }
