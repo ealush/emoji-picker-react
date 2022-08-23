@@ -1,11 +1,9 @@
 import clsx from 'clsx';
 import * as React from 'react';
-import { SkinTones } from '../../data/skinToneVariations';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiName,
   emojiUnified,
-  emojiUrl,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiFiltered } from '../../hooks/useFilter';

@@ -45,7 +45,9 @@ export function emojiVariationUnified(
   emoji: DataEmoji,
   skinTone?: string
 ): string | undefined {
-  return emojiVariations(emoji).find(variation => variation.includes(skinTone));
+  return skinTone
+    ? emojiVariations(emoji).find(variation => variation.includes(skinTone))
+    : emojiUnified(emoji);
 }
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
