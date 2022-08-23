@@ -21,7 +21,6 @@ import Search from './components/Search';
 import RecentlyUsed from './components/RecentlyUsed';
 import './style.css';
 import { groupNamesPropType } from './lib/propTypes';
-import reducer from './lib/reducer';
 
 const emojiPickerDispatcher = {};
 

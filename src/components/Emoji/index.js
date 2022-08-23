@@ -42,7 +42,6 @@ const Emoji = ({
   index,
   dispatch,
   native = false,
-  recently,
 }) => {
   const hasSkinVariation = emoji[EMOJI_PROPERTY_SKIN_VARIATIONS];
   let unified;
@@ -76,8 +75,6 @@ const Emoji = ({
     if (variationMenuOpen) {
       return;
     }
-    // if(recently)
-    // 	return;
 
     onEmojiClick(e, unified, emoji, activeSkinTone);
   };

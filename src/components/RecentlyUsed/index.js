@@ -31,8 +31,6 @@ const RecentlyUsed = ({ emojiListRef }) => {
     return null;
   }
 
-  const recently = true;
-
   return (
     <ul
       className="emoji-group"
@@ -64,7 +62,6 @@ const RecentlyUsed = ({ emojiListRef }) => {
             }
             dispatch={dispatch}
             shouldLoad
-            recently={recently}
           />
         );
       })}
