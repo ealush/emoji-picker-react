@@ -7,7 +7,9 @@ export function scrollCategoryIntoView(
   if (!root || !$eprBody) {
     return;
   }
-  const $category = root?.querySelector(`[data-name="${category}"]`);
+  const $category = root?.querySelector(
+    `[data-name="${category}"]`
+  ) as HTMLElement;
 
   if (!$category) {
     return;
