@@ -11,6 +11,11 @@
   height: 40px;
   text-transform: uppercase;
 }
+.EmojiPickerReact.epr-search-active
+  li.epr-emoji-category
+  > .epr-emoji-category-label {
+  display: none;
+}
 
 .EmojiPickerReact li.epr-emoji-category {
   position: relative;
