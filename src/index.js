@@ -21,6 +21,9 @@ import Search from './components/Search';
 import RecentlyUsed from './components/RecentlyUsed';
 import './style.css';
 import { groupNamesPropType } from './lib/propTypes';
+import reducer from './lib/reducer';
+
+const emojiPickerDispatcher = {};
 
 const EmpojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
@@ -66,6 +69,12 @@ const EmpojiPicker = ({
     }
     return useReducerDispatch(...props);
   };
+
+  const updateRecentlyUse = () => {
+    return dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
+  };
+
+  emojiPickerDispatcher.updateRecentlyUse = updateRecentlyUse;
 
   const closeVariations = ({ target }) => {
     if (state.variationMenu) {
@@ -114,17 +123,6 @@ const EmpojiPicker = ({
   );
 };
 
-const emojiDispatch = () => {
-  const dispatch = (...props) => {
-    if (!isMounted.current) {
-      return;
-    }
-    return useReducerDispatch(...props);
-  };
-
-  return dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
-};
-
 export {
   SKIN_TONE_NEUTRAL,
   SKIN_TONE_LIGHT,
@@ -132,7 +130,7 @@ export {
   SKIN_TONE_MEDIUM,
   SKIN_TONE_MEDIUM_DARK,
   SKIN_TONE_DARK,
-  emojiDispatch,
+  emojiPickerDispatcher,
 };
 
 export default EmpojiPicker;
