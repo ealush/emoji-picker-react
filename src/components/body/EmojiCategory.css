@@ -4,7 +4,7 @@
   width: 100%;
   display: block;
   padding: 10px 15px;
-  backdrop-filter: blur(3px);
+  backdrop-filter: blur(5px);
   background-color: rgba(255, 255, 255, 0.7);
   font-weight: bold;
   color: #888;
@@ -17,7 +17,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-evenly;
-  padding: 5px 10px;
+  padding: 0 10px;
 }
 
 .EmojiPickerReact li.epr-emoji-category:after {
