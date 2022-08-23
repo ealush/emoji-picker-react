@@ -5,6 +5,8 @@ import {
 } from '../contextProvider/PickerContextProvider';
 import './PickerMain.css';
 import { useRef } from 'react';
+import useIsSearchMode from '../../hooks/useIsSearchMode';
+import clsx from 'clsx';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -24,9 +26,15 @@ type RootProps = Readonly<{
 }>;
 
 function PickerRootElement({ children }: RootProps) {
+  const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
   return (
-    <aside className="EmojiPickerReact epr-main" ref={PickerMainRef}>
+    <aside
+      className={clsx('EmojiPickerReact', 'epr-main', {
+        'epr-search-active': searchModeActive
+      })}
+      ref={PickerMainRef}
+    >
       {children}
     </aside>
   );
