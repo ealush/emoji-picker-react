@@ -4,6 +4,7 @@ import emojisByCategory from '../../dataUtils/emojisByCategory';
 import { useRef } from 'react';
 import './EmojiCategory.css';
 import { Emoji } from '../emoji/Emoji';
+import { categoryName } from '../../dataUtils/categorySelector';
 
 type Props = Readonly<{
   category: DataGroups;
@@ -17,7 +18,7 @@ export function EmojiCategory({ category }: Props) {
 
   return (
     <li className="epr-emoji-category" data-name={category}>
-      <div className="epr-emoji-category-label">{category}</div>
+      <div className="epr-emoji-category-label">{categoryName(category)}</div>
       {emojis.map(emoji => {
         return (
           <Emoji
