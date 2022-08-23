@@ -93,7 +93,7 @@ const EmpojiPicker = ({
       value={{
         state,
         dispatch,
-        onEmojiClick: clickHandler(onClickRef, dispatch),
+        onEmojiClick: clickHandler(onClickRef),
       }}
     >
       <aside
