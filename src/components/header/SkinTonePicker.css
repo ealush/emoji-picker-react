@@ -1,12 +1,11 @@
 .EmojiPickerReact .epr-skin-tones {
-  position: relative;
-  padding: 5px;
-  height: 100%;
+  position: absolute;
+  right: 20px;
+  top: 12px;
 }
 
 .EmojiPickerReact .epr-skin-tones .epr-tone {
   display: inline-block;
-  margin-right: 10px;
   cursor: pointer;
   border-radius: 5px;
   height: 15px;
