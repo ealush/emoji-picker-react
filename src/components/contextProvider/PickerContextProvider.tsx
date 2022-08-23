@@ -71,10 +71,6 @@ export function useActiveCategoryState(): [
   return [activeCategory, setCategory, setActiveCategoryAndScroll];
 
   function setCategory(category: string) {
-    if (category === activeCategory) {
-      return;
-    }
-
     setActiveCategory(category);
   }
 
