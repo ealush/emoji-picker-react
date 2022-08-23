@@ -1,6 +1,6 @@
 aside.EmojiPickerReact.epr-main {
-  width: 300px;
-  height: 500px;
+  width: var(--epr-picker-width);
+  height: var(--epr-picker-height);
   border-radius: 10px;
   position: relative;
   display: flex;
