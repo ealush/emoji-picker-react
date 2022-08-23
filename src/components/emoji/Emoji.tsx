@@ -9,6 +9,7 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiFiltered } from '../../hooks/useFilter';
+import { useActiveSkinToneState } from '../contextProvider/PickerContextProvider';
 import './Emoji.css';
 import { emojiColors } from './emojiColors';
 
@@ -18,10 +19,11 @@ type Props = Readonly<{
 }>;
 
 export function Emoji({ emoji, genVisibilityIndex }: Props) {
+  const [activeSkinTone] = useActiveSkinToneState();
   const hidden = useIsEmojiFiltered(emojiUnified(emoji));
   const index = genVisibilityIndex(hidden);
   const color = bgColor(index);
-  const unified = emojiUnified(emoji);
+  const unified = emojiUnified(emoji, activeSkinTone);
 
   return (
     <button
