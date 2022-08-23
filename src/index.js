@@ -22,6 +22,8 @@ import RecentlyUsed from './components/RecentlyUsed';
 import './style.css';
 import { groupNamesPropType } from './lib/propTypes';
 
+const emojiPickerDispatcher = {};
+
 const EmpojiPicker = ({
   emojiUrl = DEFAULT_EMOJI_URL,
   onEmojiClick,
@@ -67,6 +69,12 @@ const EmpojiPicker = ({
     return useReducerDispatch(...props);
   };
 
+  const updateRecentlyUsed = () => {
+    dispatch({ type: actionTypes.UPDATE_RECENTLY_USED });
+  };
+
+  emojiPickerDispatcher.updateRecentlyUsed = updateRecentlyUsed;
+
   const closeVariations = ({ target }) => {
     if (state.variationMenu) {
       dispatch({ type: actionTypes.VARIATION_MENU_SET });
@@ -82,7 +90,7 @@ const EmpojiPicker = ({
 
   return (
     <PickerContext.Provider
-      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef, dispatch) }}
+      value={{ state, dispatch, onEmojiClick: clickHandler(onClickRef) }}
     >
       <aside
         className="emoji-picker-react"
@@ -117,6 +125,7 @@ export {
   SKIN_TONE_MEDIUM,
   SKIN_TONE_MEDIUM_DARK,
   SKIN_TONE_DARK,
+  emojiPickerDispatcher,
 };
 
 export default EmpojiPicker;

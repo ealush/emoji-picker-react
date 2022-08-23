@@ -8,6 +8,12 @@ declare module 'emoji-picker-react' {
   export const SKIN_TONE_MEDIUM_DARK = '1f3ff';
   export const SKIN_TONE_DARK = '1f3fd';
 
+  interface IEmojiPickerDispatcher {
+    updateRecentlyUsed: () => void;
+  }
+
+  export const emojiPickerDispatcher: IEmojiPickerDispatcher;
+
   type SkinTones =
     | typeof SKIN_TONE_NEUTRAL
     | typeof SKIN_TONE_LIGHT
