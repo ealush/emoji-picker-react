@@ -1,26 +1,64 @@
 .EmojiPickerReact .epr-skin-tones {
+  margin: 0 5px 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.EmojiPickerReact .epr-skin-tone-select {
+  position: relative;
+  width: 16px;
+  height: 16px;
+}
+
+.EmojiPickerReact .epr-skin-tone-select.epr-skin-tone-select-open:before {
+  content: '';
   position: absolute;
-  right: 20px;
-  top: 12px;
+  background: #f1f8ff;
+  top: -7px;
+  left: -7px;
+  right: -7px;
+  bottom: -7px;
+  border-radius: 6px;
+}
+
+.EmojiPickerReact .epr-skin-tone-select.epr-skin-tone-select-open .epr-tone {
+  transition: transform 0.3s ease-in-out, opacity 0.1s ease-in-out;
+}
+
+.EmojiPickerReact
+  .epr-skin-tone-select:not(.epr-skin-tone-select-open)
+  .epr-tone {
+  opacity: 0;
 }
 
 .EmojiPickerReact .epr-skin-tones .epr-tone {
-  display: inline-block;
+  display: block;
   cursor: pointer;
-  border-radius: 5px;
-  height: 15px;
-  width: 15px;
+  border-radius: 4px;
+  height: 100%;
+  width: 100%;
   position: absolute;
   right: 0;
-  transition: all 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
   z-index: 0;
 }
 
-.EmojiPickerReact .epr-skin-tones .epr-tone:focus {
-  border: 1px solid #a6a6a6;
+.EmojiPickerReact
+  .epr-skin-tone-select.epr-skin-tone-select-open
+  .epr-tone.active:after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 5px;
+  border: 1px solid #007aeb;
 }
 
 .EmojiPickerReact .epr-skin-tones .epr-tone.active {
+  opacity: 1;
   z-index: 1;
 }
 

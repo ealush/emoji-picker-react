@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Relative from '../Layout/Relative';
+import Flex from '../Layout/Flex';
 import { CategoryNavigation } from './CategoryNavigation';
 import './Header.css';
 import { Search } from './Search';
@@ -9,10 +9,10 @@ export function Header() {
   return (
     <header className="epr-header">
       <CategoryNavigation />
-      <Relative>
-        <SkinTonePicker />
+      <Flex>
         <Search />
-      </Relative>
+        <SkinTonePicker />
+      </Flex>
     </header>
   );
 }
