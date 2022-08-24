@@ -20,24 +20,22 @@ export function SkinTonePicker() {
         onClick={() => setFanOpen(!fanOpen)}
       >
         {skinToneVariations.map((skinToneVariation, i) => {
-          const isActive = skinToneVariation === activeSkinTone;
+          const active = skinToneVariation === activeSkinTone;
           return (
             <button
               style={{
                 transform: clsx(
                   `translateX(-${i * (fanOpen ? 25 : 0)}px)`,
-                  fanOpen && isActive && 'scale(1.3)'
+                  fanOpen && active && 'scale(1.3)'
                 )
               }}
               onClick={() => {
                 fanOpen && setActiveSkinTone(skinToneVariation);
               }}
               key={skinToneVariation}
-              className={clsx(
-                `epr-tone-${skinToneVariation}`,
-                'epr-tone',
-                isActive ? 'active' : null
-              )}
+              className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
+                active
+              })}
             ></button>
           );
         })}

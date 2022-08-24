@@ -14,7 +14,7 @@
 .EmojiPickerReact .epr-skin-tone-select.epr-skin-tone-select-open:before {
   content: '';
   position: absolute;
-  background: #f1f8ff;
+  background: var(--epr-active-skin-backdrop-color);
   top: -7px;
   left: -7px;
   right: -7px;
@@ -54,7 +54,7 @@
   right: -2px;
   bottom: -2px;
   border-radius: 5px;
-  border: 1px solid #007aeb;
+  border: 1px solid var(--epr-active-skin-tone-indicator-border-color);
 }
 
 .EmojiPickerReact .epr-skin-tones .epr-tone.active {

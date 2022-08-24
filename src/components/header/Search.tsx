@@ -6,14 +6,12 @@ export function Search() {
   const { onChange, searchTerm } = useFilter();
 
   return (
-    <div className="epr-search-container">
-      <input
-        className="epr-search"
-        type="text"
-        placeholder="Search"
-        onChange={event => onChange(event.target.value)}
-        value={searchTerm}
-      />
-    </div>
+    <input
+      className="epr-search"
+      type="text"
+      placeholder="Search"
+      onChange={event => onChange(event.target.value)}
+      value={searchTerm}
+    />
   );
 }

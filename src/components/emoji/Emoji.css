@@ -1,17 +1,17 @@
 .EmojiPickerReact button.epr-emoji {
-  padding: 5px;
+  padding: var(--epr-emoji-padding);
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-img {
-  height: 25px;
-  width: 25px;
+  height: var(--epr-emoji-size);
+  width: var(--epr-emoji-size);
   font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
 }
 
 .EmojiPickerReact button.epr-emoji:hover {
   border-radius: 8px;
-  background-color: currentColor;
+  background-color: var(--epr-emoji-hover-bg-color);
 }
 
 .EmojiPickerReact button.epr-emoji.hidden {

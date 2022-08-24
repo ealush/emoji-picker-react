@@ -1,11 +1,10 @@
 .EmojiPickerReact header.epr-header {
   position: relative;
-  width: 100%;
   height: var(--epr-header-height);
-  padding: 10px;
+  padding: var(--epr-header-padding);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   gap: 15px;
   z-index: 1;
   backdrop-filter: blur(10px);
@@ -13,5 +12,5 @@
   top: 0;
   right: 0;
   left: 0;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: var(--epr-header-background-color);
 }

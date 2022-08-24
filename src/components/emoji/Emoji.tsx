@@ -12,27 +12,19 @@ import {
   useEmojisThatFailedToLoad
 } from '../contextProvider/PickerContextProvider';
 import './Emoji.css';
-import { emojiColors } from './emojiColors';
 
 type Props = Readonly<{
   emoji: DataEmoji;
-  genVisibilityIndex: (isHidden: boolean) => number;
 }>;
 
-export function Emoji({ emoji, genVisibilityIndex }: Props) {
+export function Emoji({ emoji }: Props) {
   const [activeSkinTone] = useActiveSkinToneState();
   const hidden = useIsEmojiHidden(emoji);
-  const index = genVisibilityIndex(hidden);
-  const color = bgColor(index);
   const unified = emojiUnified(emoji, activeSkinTone);
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
 
   return (
-    <button
-      className={clsx('epr-emoji', { hidden })}
-      data-unified={unified}
-      style={{ color }}
-    >
+    <button className={clsx('epr-emoji', { hidden })} data-unified={unified}>
       <img
         src={emojiUrlByUnified(unified)}
         alt={emojiName(emoji)}
@@ -56,8 +48,4 @@ function useIsEmojiHidden(emoji: DataEmoji): boolean {
   return (
     emojisThatFailedToLoad.didFailToLoad(unifiedWithoutSkinTone) || isFiltered
   );
-}
-
-function bgColor(order: number): string {
-  return emojiColors[order % emojiColors.length];
 }
