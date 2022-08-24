@@ -20,6 +20,6 @@ export function scrollCategoryIntoView(
   requestAnimationFrame(() => {
     // compensate for padding and sticky header
     // FIXME: Need to understand why this is needed
-    $eprBody.scrollTop = offsetTop - 98;
+    $eprBody.scrollTop = offsetTop - 68;
   });
 }
