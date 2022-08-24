@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import tinykeys from 'tinykeys';
 
@@ -103,11 +102,6 @@ const useKeyboardNavigation = ({
       isRightColumn
     } = getElementBoundariesInfo({ activeIndex, itemsPerRow, numOfItems });
 
-    // ------------TODO: FIX THE HACK BELLOW
-    const itemsPerRow_X = itemsPerRow ?? -1;
-    const numOfItems_X = numOfItems ?? -1;
-    // ------------
-
     switch (direction) {
       case UP:
         if (
@@ -115,13 +109,13 @@ const useKeyboardNavigation = ({
           !focusPrevEmojiListGroup(currentColumn, itemsPerRow ?? -1)
         )
           focusPrevSection();
-        else updateActiveItem(gridChildren?.[activeIndex - itemsPerRow_X]);
+        else updateActiveItem(gridChildren?.[activeIndex - itemsPerRow]);
         break;
       case DOWN:
         if (isBottomRow) {
           if (isLastRow) focusNextEmojiListGroup(currentColumn);
-          else updateActiveItem(gridChildren?.[numOfItems_X - 1]);
-        } else updateActiveItem(gridChildren?.[activeIndex + itemsPerRow_X]);
+          else updateActiveItem(gridChildren?.[numOfItems - 1]);
+        } else updateActiveItem(gridChildren?.[activeIndex + itemsPerRow]);
         break;
       case LEFT: {
         const prevEmoji = getPrevEmoji();
@@ -200,7 +194,7 @@ const useKeyboardNavigation = ({
     if (prevEmojiGroup) {
       const numOfItems = (prevEmojiGroup as HTMLElement).children.length;
 
-      let nextFocusIndex = -1;
+      let nextFocusIndex;
 
       for (let i = numOfItems - 1; i >= 0; i--) {
         if (i % itemsPerRow === columnIndex) {
@@ -302,21 +296,6 @@ const useKeyboardNavigation = ({
 };
 
 export default useKeyboardNavigation;
-
-useKeyboardNavigation.propTypes = {
-  categoriesNavRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element)
-  }),
-  emojiSearchRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element)
-  }),
-  emojiListRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element)
-  }),
-  skinToneSpreadRef: PropTypes.shape({
-    current: PropTypes.instanceOf(Element)
-  })
-};
 
 function withPreventDefault(callback: any) {
   return (event: Event) => {

@@ -13,16 +13,15 @@ export const getGridInfo = () => {
   const activeIndex = Array.prototype.indexOf.call(grid?.children, active);
 
   const numOfItems = grid?.children.length;
-  const baseOffset = (grid?.children[0] as HTMLElement).offsetTop;
+  const baseOffset = (grid?.children[1] as HTMLElement).offsetTop;
 
   const breakIndex = Array.prototype.findIndex.call(
     grid?.children,
     item => item.offsetTop > baseOffset
   );
 
-  //const itemsPerRow = breakIndex === -1 ? numOfItems : breakIndex;
-  let itemsPerRow = 7;
-  const currentColumn = activeIndex % (itemsPerRow ?? 0); //todo: erez - not sure about 0 need to check if it's correct
+  const itemsPerRow = (breakIndex === -1 ? numOfItems : breakIndex) - 1;
+  const currentColumn = activeIndex % itemsPerRow;
   return {
     activeIndex,
     itemsPerRow,
