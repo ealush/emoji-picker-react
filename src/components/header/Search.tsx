@@ -2,7 +2,11 @@ import * as React from 'react';
 import { useFilter } from '../../hooks/useFilter';
 import './Search.css';
 
-export function Search() {
+type Props = {
+  emojiSearchRef:any
+}
+
+export function Search ({emojiSearchRef}:Props) {
   const { onChange, searchTerm } = useFilter();
 
   return (
@@ -13,6 +17,7 @@ export function Search() {
         placeholder="Search"
         onChange={event => onChange(event.target.value)}
         value={searchTerm}
+        ref={emojiSearchRef}
       />
     </div>
   );

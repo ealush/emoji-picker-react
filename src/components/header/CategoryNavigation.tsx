@@ -4,14 +4,18 @@ import clsx from 'clsx';
 import categories from '../../dataUtils/categories';
 import { useActiveCategoryState } from '../contextProvider/PickerContextProvider';
 
-export function CategoryNavigation() {
+interface Props { 
+  categoriesNavRef:any
+}
+
+export function CategoryNavigation({categoriesNavRef}:Props) {
   const [
     activeCategory,
     ,
     setActiveCategoryAndScroll
   ] = useActiveCategoryState();
   return (
-    <div className="epr-category-nav">
+    <div className="epr-category-nav" ref={categoriesNavRef}>
       {categories.map(category => (
         <button
           className={clsx('epr-cat-btn', `epr-icn-${category}`, {

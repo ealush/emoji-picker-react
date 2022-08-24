@@ -3,11 +3,17 @@ import { CategoryNavigation } from './CategoryNavigation';
 import './Header.css';
 import { Search } from './Search';
 
-export function Header() {
+interface Props { 
+  categoriesNavRef: any,
+  emojiSearchRef:any
+}
+
+export function Header({categoriesNavRef,emojiSearchRef}:Props) {
+
   return (
     <header className="epr-header">
-      <CategoryNavigation />
-      <Search />
+      <CategoryNavigation categoriesNavRef={categoriesNavRef}/>
+      <Search emojiSearchRef={emojiSearchRef}/>
     </header>
   );
 }

@@ -4,7 +4,11 @@ import { EmojiList } from './EmojiList';
 import { useEffect, useRef } from 'react';
 import { useActiveCategoryState } from '../contextProvider/PickerContextProvider';
 
-export function Body() {
+interface Props { 
+  emojiListRef: any;
+}
+
+export function Body({emojiListRef}: Props) {
   const bodyRef = useRef<null | HTMLDivElement>(null);
   const [, setActiveCategory] = useActiveCategoryState();
   useEffect(() => {
@@ -61,7 +65,7 @@ export function Body() {
 
   return (
     <div className="epr-body" ref={bodyRef}>
-      <EmojiList />
+      <EmojiList emojiListRef={emojiListRef}/>
     </div>
   );
 }
