@@ -46,7 +46,7 @@ export function Body() {
       },
       {
         threshold: [0, 1],
-        rootMargin: '-165px 0px 0px 0px'
+        rootMargin: '-166px 0px 0px 0px'
         // compensate for the header and sticky category
         //FIXME: this is a hack, need to understand why this exact number
       }
