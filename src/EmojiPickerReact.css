@@ -1,5 +1,5 @@
 :root {
-  --epr-header-height: 100px;
+  --epr-header-height: 115px;
   --epr-picker-width: 350px;
   --epr-picker-height: 500px;
   --epr-emoji-size: 33px;
@@ -14,7 +14,7 @@
   --epr-header-background-color: rgba(255, 255, 255, 0.8);
   --epr-emoji-hover-bg-color: #f1f8ff;
   --epr-emoji-padding: 5px;
-  --epr-header-padding: 10px;
+  --epr-header-padding: 15px 10px;
   --epr-emoji-gap: 4px;
   --epr-category-padding: 0 10px;
   --epr-search-input-padding: 0 20px;

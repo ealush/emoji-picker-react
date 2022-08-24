@@ -8,11 +8,11 @@ import { SkinTonePicker } from './SkinTonePicker';
 export function Header() {
   return (
     <header className="epr-header">
-      <CategoryNavigation />
       <Flex>
         <Search />
         <SkinTonePicker />
       </Flex>
+      <CategoryNavigation />
     </header>
   );
 }
