@@ -4,11 +4,15 @@ import useFilter from '../../hooks/useFilter';
 import './style.css';
 
 const Search = ({ disableAutoFocus }) => (
-  <input
-    className="emoji-search"
-    onChange={useFilter()}
-    autoFocus={!disableAutoFocus}
-  />
+  <>
+    <span className="search-container__search-icon">x</span>
+    <input
+      className="emoji-search"
+      onChange={useFilter()}
+      autoFocus={!disableAutoFocus}
+      placeholder="Search"
+    />
+  </>
 );
 
 Search.propTypes = {
