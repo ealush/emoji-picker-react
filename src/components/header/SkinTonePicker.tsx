@@ -12,11 +12,13 @@ export function SkinTonePicker() {
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
 
   return (
-    <Relative className="epr-skin-tones">
+    <Relative
+      className={clsx('epr-skin-tones', {
+        open: fanOpen
+      })}
+    >
       <div
-        className={clsx('epr-skin-tone-select', {
-          'epr-skin-tone-select-open': fanOpen
-        })}
+        className="epr-skin-tone-select"
         onClick={() => setFanOpen(!fanOpen)}
       >
         {skinToneVariations.map((skinToneVariation, i) => {
@@ -25,7 +27,7 @@ export function SkinTonePicker() {
             <button
               style={{
                 transform: clsx(
-                  `translateX(-${i * (fanOpen ? 25 : 0)}px)`,
+                  `translateX(-${i * (fanOpen ? 28 : 0)}px)`,
                   fanOpen && active && 'scale(1.3)'
                 )
               }}
