@@ -22,10 +22,8 @@ export default meta;
 const Template: Story<Props> = args => (
   <div
     style={{
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
       display: 'inline-block',
-      overflow: 'hidden',
-      borderRadius: '10px'
+      padding: '15px'
     }}
   >
     <Picker {...args} />
