@@ -36,7 +36,7 @@ export const getElementBoundariesInfo = ({
   itemsPerRow,
   numOfItems
 }: any) => {
-  const isTopRow = activeIndex <= itemsPerRow - 1;
+  const isTopRow = activeIndex <= itemsPerRow;
   const isBottomRow = activeIndex >= numOfItems - itemsPerRow;
   const isLeftColumn = activeIndex % itemsPerRow === 0;
   const isRightColumn =
