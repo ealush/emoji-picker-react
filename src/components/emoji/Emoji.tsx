@@ -1,32 +1,49 @@
 import clsx from 'clsx';
 import * as React from 'react';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import {
-  emojiName,
-  emojiUrlByUnified
-} from '../../dataUtils/emojiSelectors';
-import { useEmojisThatFailedToLoad } from '../contextProvider/PickerContextProvider';
+import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiSelectors';
+import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { useEmojisThatFailedToLoad } from '../context/PickerContext';
 import './Emoji.css';
 
 type Props = Readonly<{
+  hidden?: boolean;
+  native: boolean;
   emoji: DataEmoji;
   unified: string;
-  hidden?: boolean;
 }>;
 
-export function Emoji({ emoji, unified, hidden }: Props) {
+export function Emoji({ emoji, unified, hidden, native }: Props) {
+  return (
+    <button className={clsx('epr-emoji', { hidden })} data-unified={unified}>
+      {native ? (
+        <NativeEmoji unified={unified} />
+      ) : (
+        <EmojiImg emoji={emoji} unified={unified} />
+      )}
+    </button>
+  );
+}
+
+function NativeEmoji({ unified }: { unified: string }) {
+  return (
+    <span className="epr-emoji-native" data-unified={unified}>
+      {parseNativeEmoji(unified)}
+    </span>
+  );
+}
+
+function EmojiImg({ emoji, unified }: { emoji: DataEmoji; unified: string }) {
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
 
   return (
-    <button className={clsx('epr-emoji', { hidden })} data-unified={unified}>
-      <img
-        src={emojiUrlByUnified(unified)}
-        alt={emojiName(emoji)}
-        className="epr-emoji-img"
-        loading="lazy"
-        onError={onError}
-      />
-    </button>
+    <img
+      src={emojiUrlByUnified(unified)}
+      alt={emojiName(emoji)}
+      className="epr-emoji-img"
+      loading="lazy"
+      onError={onError}
+    />
   );
 
   function onError() {

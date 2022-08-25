@@ -2,7 +2,7 @@ import * as React from 'react';
 import {
   PickerContextProvider,
   usePickerMainRef
-} from '../contextProvider/PickerContextProvider';
+} from '../context/PickerContext';
 import './PickerMain.css';
 import { useRef } from 'react';
 import useIsSearchMode from '../../hooks/useIsSearchMode';

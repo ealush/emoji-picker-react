@@ -1,4 +1,4 @@
-import { useEmojisThatFailedToLoad } from '../components/contextProvider/PickerContextProvider';
+import { useEmojisThatFailedToLoad } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiSelectors';
 import { useIsEmojiFiltered } from './useFilter';

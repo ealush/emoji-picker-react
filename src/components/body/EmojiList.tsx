@@ -1,7 +1,7 @@
 import * as React from 'react';
 import categories from '../../dataUtils/categories';
 import emojisByCategory from '../../dataUtils/emojisByCategory';
-import { useIsPastInitialLoad } from '../contextProvider/PickerContextProvider';
+import { useIsPastInitialLoad } from '../context/PickerContext';
 import { EmojiCategory } from './EmojiCategory';
 import './EmojiList.css';
 

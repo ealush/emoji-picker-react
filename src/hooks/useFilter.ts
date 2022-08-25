@@ -6,7 +6,7 @@ import {
   useFilterState,
   usePickerMainRef,
   useSearchTermState
-} from '../components/contextProvider/PickerContextProvider';
+} from '../components/context/PickerContext';
 import { scrollTo } from '../DomUtils/scrollTo';
 
 export function useFilter() {

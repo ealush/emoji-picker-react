@@ -1,4 +1,4 @@
-import { usePickerMainRef } from '../components/contextProvider/PickerContextProvider';
+import { usePickerMainRef } from '../components/context/PickerContext';
 
 export function useEmojiElements() {
   const { current } = usePickerMainRef();

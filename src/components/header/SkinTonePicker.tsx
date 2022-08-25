@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';
-import { useActiveSkinToneState } from '../contextProvider/PickerContextProvider';
+import { useActiveSkinToneState } from '../context/PickerContext';
 import Relative from '../Layout/Relative';
 
 export function SkinTonePicker() {

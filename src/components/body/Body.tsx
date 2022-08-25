@@ -2,7 +2,7 @@ import * as React from 'react';
 import './Body.css';
 import { EmojiList } from './EmojiList';
 import { useEffect, useRef } from 'react';
-import { useActiveCategoryState } from '../contextProvider/PickerContextProvider';
+import { useActiveCategoryState } from '../context/PickerContext';
 
 export function Body() {
   const bodyRef = useRef<null | HTMLDivElement>(null);
