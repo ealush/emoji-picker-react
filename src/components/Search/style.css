@@ -15,11 +15,6 @@
   background-color: rgba(53, 80, 105, 0.07);
 }
 
-input::-webkit-input-placeholder,
-input::-moz-placeholder {
-  color: rgba(53, 80, 105, 0.3);
-}
-
 .emoji-picker-react input.emoji-search:focus {
   border: 1px solid #d6d6d6;
 }
