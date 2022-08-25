@@ -5,7 +5,7 @@ import { Emoji } from '../emoji/Emoji';
 import { categoryName } from '../../dataUtils/categorySelector';
 import { emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useActiveSkinToneState } from '../contextProvider/PickerContextProvider';
-import { useIsEmojiFiltered } from '../../hooks/useFilter';
+import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 
 type Props = Readonly<{
   category: DataGroups;
@@ -14,20 +14,21 @@ type Props = Readonly<{
 
 export function EmojiCategory({ category, emojis }: Props) {
   const [activeSkinTone] = useActiveSkinToneState();
-  const isEmojiFiltered = useIsEmojiFiltered();
+  const isEmojiHidden = useIsEmojiHidden();
 
   return (
     <li className="epr-emoji-category" data-name={category}>
       <div className="epr-emoji-category-label">{categoryName(category)}</div>
       {emojis.map(emoji => {
         const unified = emojiUnified(emoji, activeSkinTone);
-        const isFiltered = isEmojiFiltered(unified);
+        const hidden = isEmojiHidden(emoji);
+
         return (
           <Emoji
             key={unified}
             emoji={emoji}
             unified={unified}
-            filtered={isFiltered}
+            hidden={hidden}
           />
         );
       })}
