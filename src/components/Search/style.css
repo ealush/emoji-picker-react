@@ -5,7 +5,7 @@
   margin-left: 15px;
   outline: none;
   box-shadow: none;
-  padding: 10px 10px 10px 20px;
+  padding: 10px 10px 10px 25px;
   box-sizing: border-box;
   border: 1px solid #efefef;
   border-radius: 8px;
@@ -21,9 +21,10 @@
 
 .search-container__search-icon {
   position: absolute;
-  top: 9px;
-  left: 22px;
+  top: 11px;
+  left: 21px;
   display: flex;
   width: 16px;
   height: 16px;
+  background-image: url(../CategoriesNav/svg/search_grey.svg);
 }

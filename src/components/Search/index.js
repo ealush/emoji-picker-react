@@ -5,7 +5,7 @@ import './style.css';
 
 const Search = ({ disableAutoFocus }) => (
   <>
-    <span className="search-container__search-icon">x</span>
+    <span className="search-container__search-icon"></span>
     <input
       className="emoji-search"
       onChange={useFilter()}
