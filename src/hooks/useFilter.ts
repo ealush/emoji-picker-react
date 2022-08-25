@@ -4,12 +4,15 @@ import { emojiNames } from '../dataUtils/emojiSelectors';
 import {
   FilterState,
   useFilterState,
+  usePickerMainRef,
   useSearchTermState
 } from '../components/contextProvider/PickerContextProvider';
+import { scrollTo } from '../DomUtils/scrollTo';
 
 export function useFilter() {
   const [filter = {}, setFilter] = useFilterState();
   const [searchTerm, setSearchTerm] = useSearchTermState();
+  const PickerMainRef = usePickerMainRef();
 
   return {
     onChange,
@@ -17,6 +20,7 @@ export function useFilter() {
   };
 
   function onChange(nextValue: string) {
+    scrollTo(PickerMainRef.current, 0);
     setSearchTerm(nextValue);
 
     if (nextValue.length === 0) {
