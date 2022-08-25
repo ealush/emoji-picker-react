@@ -47,3 +47,8 @@ export function useSkinTonesDisabledConfig(): boolean {
   const { skinTonesDisabled } = usePickerConfig();
   return skinTonesDisabled;
 }
+
+export function useCdnUrlConfig(): string {
+  const { cdnUrl } = usePickerConfig();
+  return cdnUrl;
+}

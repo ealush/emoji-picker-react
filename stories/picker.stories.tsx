@@ -31,6 +31,12 @@ export const SkinTonesDisabled = (args: Props) => (
 export const AlternativeDefaultSkinTone = (args: Props) => (
   <Template {...args} defaultSkinTone={SkinTones.MEDIUM} />
 );
+export const CustomCdn = (args: Props) => (
+  <Template
+    {...args}
+    cdnUrl="https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/"
+  />
+);
 
 const Template: Story<Props> = args => (
   <div

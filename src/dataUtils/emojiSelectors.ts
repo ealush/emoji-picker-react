@@ -15,8 +15,12 @@ export function emojiName(emoji: DataEmoji): string {
   return emojiNames(emoji)[0];
 }
 
-export function emojiUrl(emoji: DataEmoji, skinTone?: string): string {
-  return emojiUrlByUnified(emojiUnified(emoji, skinTone));
+export function emojiUrl(
+  cdnUrl: string,
+  emoji: DataEmoji,
+  skinTone?: string
+): string {
+  return emojiUrlByUnified(cdnUrl, emojiUnified(emoji, skinTone));
 }
 
 export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
@@ -29,8 +33,8 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   return emojiVariationUnified(emoji, skinTone) ?? unified;
 }
 
-export function emojiUrlByUnified(unified: string): string {
-  return `${CDN_URL}${unified}.png`;
+export function emojiUrlByUnified(cdnUrl: string, unified: string): string {
+  return `${cdnUrl}${unified}.png`;
 }
 
 export function emojiVariations(emoji: DataEmoji): string[] {
@@ -51,6 +55,3 @@ export function emojiVariationUnified(
 }
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
-
-const CDN_URL =
-  'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/';

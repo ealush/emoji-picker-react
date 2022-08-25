@@ -3,6 +3,7 @@ import * as React from 'react';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { useCdnUrlConfig } from '../context/PickerConfigContext';
 import { useEmojisThatFailedToLoad } from '../context/PickerContext';
 import './Emoji.css';
 
@@ -35,10 +36,11 @@ function NativeEmoji({ unified }: { unified: string }) {
 
 function EmojiImg({ emoji, unified }: { emoji: DataEmoji; unified: string }) {
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
+  const cdnUrl = useCdnUrlConfig();
 
   return (
     <img
-      src={emojiUrlByUnified(unified)}
+      src={emojiUrlByUnified(cdnUrl, unified)}
       alt={emojiName(emoji)}
       className="epr-emoji-img"
       loading="lazy"
