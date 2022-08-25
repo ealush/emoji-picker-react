@@ -1,5 +1,6 @@
 .EmojiPickerReact button.epr-emoji {
   padding: var(--epr-emoji-padding);
+  display: flex;
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-img {
@@ -13,6 +14,7 @@
   font-size: var(--epr-emoji-size);
   font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
+  line-height: 100%;
 }
 
 .EmojiPickerReact button.epr-emoji:hover {
