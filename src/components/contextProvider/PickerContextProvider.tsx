@@ -4,6 +4,7 @@ import { SkinTones } from '../../data/skinToneVariations';
 import categories from '../../dataUtils/categories';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
+import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
@@ -15,13 +16,15 @@ const PickerContext = React.createContext<{
   ];
   activeSkinTone: [SkinTones, React.Dispatch<React.SetStateAction<SkinTones>>];
   emojisThatFailedToLoad: React.MutableRefObject<Set<string>>;
+  isPastInitialLoad: boolean;
 }>({
   PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
-  emojisThatFailedToLoad: { current: new Set() }
+  emojisThatFailedToLoad: { current: new Set() },
+  isPastInitialLoad: true
 });
 
 type Props = Readonly<{
@@ -35,6 +38,9 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const activeSkinTone = useState<SkinTones>(SkinTones.NEUTRAL);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
   const emojisThatFailedToLoad = React.useRef<Set<string>>(new Set());
+  const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
+
+  useMarkInitialLoad(setIsPastInitialLoad);
 
   return (
     <PickerContext.Provider
@@ -44,7 +50,8 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         searchTerm,
         activeCategoryState,
         activeSkinTone,
-        emojisThatFailedToLoad
+        emojisThatFailedToLoad,
+        isPastInitialLoad
       }}
     >
       {children}
@@ -114,6 +121,11 @@ export function useEmojisThatFailedToLoad(): {
     markAsFailedToLoad,
     didFailToLoad
   };
+}
+
+export function useIsPastInitialLoad(): boolean {
+  const { isPastInitialLoad } = React.useContext(PickerContext);
+  return isPastInitialLoad;
 }
 
 export type FilterState = null | Record<string, FilterDict>;
