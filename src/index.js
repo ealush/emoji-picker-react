@@ -102,6 +102,7 @@ const EmpojiPicker = ({
         {!disableSearchBar && (
           <div style={{ position: 'relative' }}>
             <Search disableAutoFocus={disableAutoFocus} />
+            {!disableSkinTonePicker && <SkinTones />}
           </div>
         )}
 
