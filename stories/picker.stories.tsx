@@ -1,6 +1,7 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Picker, Props } from '../src';
+import { SkinTones } from '../src/data/skinToneVariations';
 
 const meta: Meta = {
   title: 'Picker',
@@ -23,6 +24,12 @@ export const Native = (args: Props) => <Template {...args} native={true} />;
 export const EmojiImage = (args: Props) => <Template {...args} />;
 export const CustomSearchPlaceholder = (args: Props) => (
   <Template searchPlaceHolder="👀 Find" />
+);
+export const SkinTonesDisabled = (args: Props) => (
+  <Template {...args} skinTonesDisabled />
+);
+export const AlternativeDefaultSkinTone = (args: Props) => (
+  <Template {...args} defaultSkinTone={SkinTones.MEDIUM} />
 );
 
 const Template: Story<Props> = args => (

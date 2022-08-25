@@ -6,10 +6,16 @@ import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';
 import { useActiveSkinToneState } from '../context/PickerContext';
 import Relative from '../Layout/Relative';
+import { useSkinTonesDisabledConfig } from '../context/PickerConfigContext';
 
 export function SkinTonePicker() {
+  const isDisabled = useSkinTonesDisabledConfig();
   const [fanOpen, setFanOpen] = useState(false);
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
+
+  if (isDisabled) {
+    return null;
+  }
 
   return (
     <Relative

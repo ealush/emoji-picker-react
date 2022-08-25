@@ -5,6 +5,7 @@ import {
   PickerConfig,
   PickerConfigInternal
 } from '../../config/config';
+import { SkinTones } from '../../data/skinToneVariations';
 
 type Props = PickerConfig &
   Readonly<{
@@ -35,4 +36,14 @@ export function useNativeConfig(): boolean {
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();
   return searchPlaceHolder;
+}
+
+export function useDefaultSkinToneConfig(): SkinTones {
+  const { defaultSkinTone } = usePickerConfig();
+  return defaultSkinTone;
+}
+
+export function useSkinTonesDisabledConfig(): boolean {
+  const { skinTonesDisabled } = usePickerConfig();
+  return skinTonesDisabled;
 }

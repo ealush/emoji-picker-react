@@ -5,6 +5,36 @@ import categories from '../../dataUtils/categories';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
+import { useDefaultSkinToneConfig } from './PickerConfigContext';
+
+export function PickerContextProvider({ children, PickerMainRef }: Props) {
+  const defaultSkinTone = useDefaultSkinToneConfig();
+
+  const filterState = useState<FilterState>(null);
+  const searchTerm = useState<string>('');
+  const activeSkinTone = useState<SkinTones>(defaultSkinTone);
+  const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
+  const emojisThatFailedToLoad = React.useRef<Set<string>>(new Set());
+  const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
+
+  useMarkInitialLoad(setIsPastInitialLoad);
+
+  return (
+    <PickerContext.Provider
+      value={{
+        PickerMainRef,
+        filterState,
+        searchTerm,
+        activeCategoryState,
+        activeSkinTone,
+        emojisThatFailedToLoad,
+        isPastInitialLoad
+      }}
+    >
+      {children}
+    </PickerContext.Provider>
+  );
+}
 
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
@@ -31,33 +61,6 @@ type Props = Readonly<{
   children: React.ReactNode;
   PickerMainRef: React.RefObject<HTMLElement>;
 }>;
-
-export function PickerContextProvider({ children, PickerMainRef }: Props) {
-  const filterState = useState<FilterState>(null);
-  const searchTerm = useState<string>('');
-  const activeSkinTone = useState<SkinTones>(SkinTones.NEUTRAL);
-  const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
-  const emojisThatFailedToLoad = React.useRef<Set<string>>(new Set());
-  const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
-
-  useMarkInitialLoad(setIsPastInitialLoad);
-
-  return (
-    <PickerContext.Provider
-      value={{
-        PickerMainRef,
-        filterState,
-        searchTerm,
-        activeCategoryState,
-        activeSkinTone,
-        emojisThatFailedToLoad,
-        isPastInitialLoad
-      }}
-    >
-      {children}
-    </PickerContext.Provider>
-  );
-}
 
 export function usePickerMainRef() {
   const { PickerMainRef } = React.useContext(PickerContext);
