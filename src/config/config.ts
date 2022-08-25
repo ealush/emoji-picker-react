@@ -5,12 +5,13 @@ export function mergeConfig(userConfig: PickerConfig = {}) {
   };
 }
 
-export function basePickerConfig() {
-  return { native: false };
+export function basePickerConfig(): PickerConfigInternal {
+  return { native: false, searchPlaceHolder: 'Search' };
 }
 
 export type PickerConfigInternal = {
   native: boolean;
+  searchPlaceHolder: string;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

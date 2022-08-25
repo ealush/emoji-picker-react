@@ -20,6 +20,10 @@ const meta: Meta = {
 export default meta;
 
 export const Native = (args: Props) => <Template {...args} native={true} />;
+export const EmojiImage = (args: Props) => <Template {...args} />;
+export const CustomSearchPlaceholder = (args: Props) => (
+  <Template searchPlaceHolder="👀 Find" />
+);
 
 const Template: Story<Props> = args => (
   <div
@@ -31,7 +35,3 @@ const Template: Story<Props> = args => (
     <Picker {...args} />
   </div>
 );
-
-// By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
-// https://storybook.js.org/docs/react/workflows/unit-testing
-export const EmojiImage = (args: Props) => <Template {...args} />;

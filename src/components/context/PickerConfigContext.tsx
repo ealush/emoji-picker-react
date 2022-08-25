@@ -31,3 +31,8 @@ export function useNativeConfig(): boolean {
   const { native } = usePickerConfig();
   return native;
 }
+
+export function useSearchPlaceHolderConfig(): string {
+  const { searchPlaceHolder } = usePickerConfig();
+  return searchPlaceHolder;
+}
