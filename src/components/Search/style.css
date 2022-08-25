@@ -2,7 +2,7 @@
   width: calc(100% - 30px);
   height: 28px;
   margin-top: 5px;
-  margin-left: 15px;
+  margin-left: 13px;
   outline: none;
   box-shadow: none;
   padding: 10px 10px 10px 25px;
@@ -19,10 +19,10 @@
   border: 1px solid #d6d6d6;
 }
 
-.search-container__search-icon {
+.search-container__search--emoji-icon {
   position: absolute;
   top: 11px;
-  left: 21px;
+  left: 18px;
   display: flex;
   width: 16px;
   height: 16px;
