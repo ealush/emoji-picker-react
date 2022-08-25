@@ -13,7 +13,8 @@ export function basePickerConfig(): PickerConfigInternal {
     searchPlaceHolder: 'Search',
     defaultSkinTone: SkinTones.NEUTRAL,
     skinTonesDisabled: false,
-    cdnUrl: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/'
+    cdnUrl: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/',
+    autoFocusSearch: true
   };
 }
 
@@ -23,6 +24,7 @@ export type PickerConfigInternal = {
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
   cdnUrl: string;
+  autoFocusSearch: boolean;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

@@ -52,3 +52,8 @@ export function useCdnUrlConfig(): string {
   const { cdnUrl } = usePickerConfig();
   return cdnUrl;
 }
+
+export function useAutoFocusSearchConfig(): boolean {
+  const { autoFocusSearch } = usePickerConfig();
+  return autoFocusSearch;
+}

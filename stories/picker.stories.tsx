@@ -37,6 +37,9 @@ export const CustomCdn = (args: Props) => (
     cdnUrl="https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/"
   />
 );
+export const AutoFocusDisabled = (args: Props) => (
+  <Template {...args} autoFocusSearch={false} />
+);
 
 const Template: Story<Props> = args => (
   <div
