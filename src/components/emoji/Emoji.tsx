@@ -6,17 +6,17 @@ import {
   emojiUnified,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
-import { useIsEmojiFiltered } from '../../hooks/useFilter';
 import { useEmojisThatFailedToLoad } from '../contextProvider/PickerContextProvider';
 import './Emoji.css';
 
 type Props = Readonly<{
   emoji: DataEmoji;
   unified: string;
+  filtered?: boolean;
 }>;
 
-export function Emoji({ emoji, unified }: Props) {
-  const hidden = useIsEmojiHidden(emoji);
+export function Emoji({ emoji, unified, filtered }: Props) {
+  const hidden = filtered || useIsEmojiHidden(emoji);
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
 
   return (
@@ -38,10 +38,7 @@ export function Emoji({ emoji, unified }: Props) {
 
 function useIsEmojiHidden(emoji: DataEmoji): boolean {
   const unifiedWithoutSkinTone = emojiUnified(emoji);
-  const isFiltered = useIsEmojiFiltered(unifiedWithoutSkinTone);
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
 
-  return (
-    emojisThatFailedToLoad.didFailToLoad(unifiedWithoutSkinTone) || isFiltered
-  );
+  return emojisThatFailedToLoad.didFailToLoad(unifiedWithoutSkinTone);
 }

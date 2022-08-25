@@ -71,14 +71,14 @@ function hasMatch(emoji: DataEmoji, keyword: string): boolean {
   return emojiNames(emoji).some(name => name.includes(keyword));
 }
 
-export function useIsEmojiFiltered(unified: string): boolean {
+export function useIsEmojiFiltered(): (unified: string) => boolean {
   const [filter] = useFilterState();
   const [searchTerm] = useSearchTermState();
 
-  return isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
 }
 
-export function isEmojiFilteredBySearchTerm(
+function isEmojiFilteredBySearchTerm(
   unified: string,
   filter: FilterState,
   searchTerm: string
