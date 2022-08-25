@@ -1,12 +1,9 @@
+import { scrollTo } from './scrollTo';
+
 export function scrollCategoryIntoView(
   root: HTMLElement | null,
   category: string
 ) {
-  const $eprBody = root ? root.querySelector('.epr-body') : null;
-
-  if (!root || !$eprBody) {
-    return;
-  }
   const $category = root?.querySelector(
     `[data-name="${category}"]`
   ) as HTMLElement;
@@ -17,7 +14,5 @@ export function scrollCategoryIntoView(
 
   const offsetTop = $category.offsetTop || 0;
 
-  requestAnimationFrame(() => {
-    $eprBody.scrollTop = offsetTop;
-  });
+  scrollTo(root, offsetTop);
 }
