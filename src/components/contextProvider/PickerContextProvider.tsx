@@ -116,6 +116,6 @@ export function useEmojisThatFailedToLoad(): {
   };
 }
 
-type FilterState = null | Record<string, FilterDict>;
+export type FilterState = null | Record<string, FilterDict>;
 
 type ActiveCategoryState = null | string;
