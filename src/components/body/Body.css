@@ -3,5 +3,4 @@
   overflow-y: scroll;
   overflow-x: hidden;
   backdrop-filter: blur(20px);
-  padding-top: var(--epr-header-height);
 }

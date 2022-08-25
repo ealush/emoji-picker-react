@@ -7,10 +7,5 @@
   justify-content: space-around;
   gap: 15px;
   z-index: 1;
-  backdrop-filter: blur(10px);
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 0;
   background-color: var(--epr-header-background-color);
 }
