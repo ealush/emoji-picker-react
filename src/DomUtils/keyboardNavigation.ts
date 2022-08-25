@@ -78,7 +78,7 @@ export const getPrevEmoji = () => {
   return prevSibling;
 };
 
-export const focusElement = withCatch((element: any) => {
+export const focusElement = withCatch((element: HTMLElement) => {
   if (element) requestAnimationFrame(() => element.focus());
 });
 
@@ -92,6 +92,6 @@ export const focusNextCategory = () => {
   focusElement(nextSibling);
 };
 
-export const getEmojiGroupName = (emojiGroup: any) => {
+export const getEmojiGroupName = (emojiGroup: HTMLElement) => {
   return emojiGroup.getAttribute('data-name');
 };

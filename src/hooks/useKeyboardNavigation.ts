@@ -167,10 +167,10 @@ const useKeyboardNavigation = ({
 
   const focusNextEmojiListGroup = (columnIndex = 0) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
-    const nextEmojiGroup = currentEmojiGroup?.nextSibling;
+    const nextEmojiGroup = currentEmojiGroup?.nextSibling as HTMLElement;
 
     if (nextEmojiGroup) {
-      focusElement((nextEmojiGroup as HTMLElement).children[columnIndex]);
+      focusElement(nextEmojiGroup.children[columnIndex]);
 
       const categoryName = getEmojiGroupName(nextEmojiGroup);
       setCategory(categoryName);
@@ -189,10 +189,10 @@ const useKeyboardNavigation = ({
     itemsPerRow: number
   ) => {
     const currentEmojiGroup = getCurrentEmojiListGroup();
-    const prevEmojiGroup = currentEmojiGroup?.previousSibling;
+    const prevEmojiGroup = currentEmojiGroup?.previousSibling as HTMLElement;
 
     if (prevEmojiGroup) {
-      const numOfItems = (prevEmojiGroup as HTMLElement).children.length;
+      const numOfItems = prevEmojiGroup.children.length;
 
       let nextFocusIndex;
 
@@ -209,7 +209,7 @@ const useKeyboardNavigation = ({
 
       if (!isInLastRow) nextFocusIndex = numOfItems - 1;
 
-      focusElement((prevEmojiGroup as HTMLElement).children[nextFocusIndex]);
+      focusElement(prevEmojiGroup.children[nextFocusIndex]);
 
       const categoryName = getEmojiGroupName(prevEmojiGroup);
       setCategory(categoryName);

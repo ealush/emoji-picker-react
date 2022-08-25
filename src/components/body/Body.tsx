@@ -77,7 +77,6 @@ function isTargetWithinScrollArea(
   const bodyHeight = scrollRoot.clientHeight;
 
   return (
-    scrollRoot.scrollTop + bodyHeight - (target as HTMLElement)?.offsetTop <
-    bodyHeight
+    scrollRoot.scrollTop + bodyHeight - target?.offsetTop < bodyHeight
   );
 }
