@@ -7,20 +7,16 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiFiltered } from '../../hooks/useFilter';
-import {
-  useActiveSkinToneState,
-  useEmojisThatFailedToLoad
-} from '../contextProvider/PickerContextProvider';
+import { useEmojisThatFailedToLoad } from '../contextProvider/PickerContextProvider';
 import './Emoji.css';
 
 type Props = Readonly<{
   emoji: DataEmoji;
+  unified: string;
 }>;
 
-export function Emoji({ emoji }: Props) {
-  const [activeSkinTone] = useActiveSkinToneState();
+export function Emoji({ emoji, unified }: Props) {
   const hidden = useIsEmojiHidden(emoji);
-  const unified = emojiUnified(emoji, activeSkinTone);
   const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
 
   return (

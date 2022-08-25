@@ -8,7 +8,7 @@ import {
 } from '../components/contextProvider/PickerContextProvider';
 
 export function useFilter() {
-  const [filter, setFilter] = useFilterState();
+  const [filter = {}, setFilter] = useFilterState();
   const [searchTerm, setSearchTerm] = useSearchTermState();
 
   return {
@@ -20,11 +20,12 @@ export function useFilter() {
     setSearchTerm(nextValue);
 
     if (nextValue.length === 0) {
-      setFilter(null);
+      // setFilter(null);
       return;
     } else if (nextValue.length === 1) {
       const index = createAlphaNumericEmojiIndex();
       setFilter({
+        ...filter,
         [nextValue]: index[nextValue]
       });
       return;
