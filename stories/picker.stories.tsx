@@ -19,6 +19,8 @@ const meta: Meta = {
 
 export default meta;
 
+export const Native = (args: Props) => <Template {...args} native={true} />;
+
 const Template: Story<Props> = args => (
   <div
     style={{
@@ -32,6 +34,4 @@ const Template: Story<Props> = args => (
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const Default = Template.bind({});
-
-Default.args = {};
+export const EmojiImage = (args: Props) => <Template {...args} />;
