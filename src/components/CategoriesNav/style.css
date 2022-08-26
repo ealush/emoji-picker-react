@@ -6,7 +6,7 @@
   background-size: 30px;
   background-position: center;
   cursor: pointer;
-  opacity: 0.5;
+  opacity: 0.7;
   transition: opacity 0.1s;
 }
 
@@ -17,7 +17,7 @@
 .emoji-picker-react
   .active-category-indicator-wrapper
   .active-category-indicator {
-  background: #99c2f1;
+  background: #3fa3d4;
   height: 3px;
   width: 5px;
   position: absolute;
@@ -66,14 +66,10 @@
 .emoji-picker-react .emoji-categories.inactive button,
 .emoji-picker-react .emoji-categories.inactive button.active,
 .emoji-picker-react .emoji-categories.inactive button:hover {
-  opacity: 0.4;
+  opacity: 0.85;
   cursor: default;
 }
 
 .emoji-picker-react .emoji-categories button.active {
   opacity: 1;
-}
-
-.emoji-picker-react .emoji-categories button:hover {
-  opacity: 0.7;
 }

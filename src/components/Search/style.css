@@ -1,15 +1,30 @@
 .emoji-picker-react input.emoji-search {
   width: calc(100% - 30px);
-  margin-left: 15px;
+  height: 28px;
+  margin-top: 5px;
+  margin-left: 13px;
   outline: none;
   box-shadow: none;
-  padding: 10px;
+  padding: 10px 10px 10px 25px;
   box-sizing: border-box;
   border: 1px solid #efefef;
-  border-radius: 3px;
+  border-radius: 8px;
   transition: border 0.1s;
+  font-family: HeroNewRegular, sans-serif;
+  font-size: 12px;
+  background-color: rgba(53, 80, 105, 0.07);
 }
 
 .emoji-picker-react input.emoji-search:focus {
   border: 1px solid #d6d6d6;
+}
+
+.search-container__search--emoji-icon {
+  position: absolute;
+  top: 11px;
+  left: 18px;
+  display: flex;
+  width: 16px;
+  height: 16px;
+  background-image: url(../CategoriesNav/svg/search_grey.svg);
 }
