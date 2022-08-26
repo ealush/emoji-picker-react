@@ -9,11 +9,13 @@ import {
 } from '../context/PickerContext';
 import Relative from '../Layout/Relative';
 import { useSkinTonesDisabledConfig } from '../context/PickerConfigContext';
+import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 
 export function SkinTonePicker() {
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
+  const { closeAllOpenToggles } = useCloseAllOpenToggles();
 
   if (isDisabled) {
     return null;
@@ -38,6 +40,7 @@ export function SkinTonePicker() {
               }}
               onClick={() => {
                 isOpen && setActiveSkinTone(skinToneVariation);
+                closeAllOpenToggles();
               }}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {

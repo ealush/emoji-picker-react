@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFilter } from '../../hooks/useFilter';
 import {
   useAutoFocusSearchConfig,
@@ -7,6 +8,8 @@ import {
 import './Search.css';
 
 export function Search() {
+  const { closeAllOpenToggles } = useCloseAllOpenToggles();
+
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
   const { onChange, searchTerm } = useFilter();
@@ -14,6 +17,7 @@ export function Search() {
   return (
     <input
       autoFocus={autoFocus}
+      onFocus={closeAllOpenToggles}
       className="epr-search"
       type="text"
       placeholder={placeholder}
