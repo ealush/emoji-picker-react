@@ -4,6 +4,7 @@ import { EmojiList } from './EmojiList';
 import { useEffect, useRef } from 'react';
 import { useActiveCategoryState } from '../context/PickerContext';
 import { categoryNameFromDom } from '../../DomUtils/categoryNameFromDom';
+import { EmojiVariationPicker } from './EmojiVariationPicker';
 
 export function Body() {
   const bodyRef = useRef<null | HTMLDivElement>(null);
@@ -48,6 +49,7 @@ export function Body() {
 
   return (
     <div className="epr-body" ref={bodyRef}>
+      <EmojiVariationPicker />
       <EmojiList />
     </div>
   );
