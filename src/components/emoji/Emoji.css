@@ -1,6 +1,26 @@
 .EmojiPickerReact button.epr-emoji {
+  position: relative;
   padding: var(--epr-emoji-padding);
   display: flex;
+}
+
+.EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  right: -2px;
+  bottom: 0px;
+  position: absolute;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid rgba(0, 0, 0, 0.1);
+  transform: rotate(135deg);
+  z-index: 1;
+}
+
+.EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:hover:after {
+  border-bottom: 4px solid rgba(0, 0, 0, 0.4);
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-img {

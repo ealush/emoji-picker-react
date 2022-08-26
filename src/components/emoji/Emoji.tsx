@@ -2,7 +2,11 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { EmojiStyle } from '../../config/config';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiSelectors';
+import {
+  emojiHasVariations,
+  emojiName,
+  emojiUrlByUnified
+} from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
@@ -15,8 +19,15 @@ type Props = Readonly<{
 }>;
 
 export function Emoji({ emoji, unified, hidden, emojiStyle }: Props) {
+  const hasVariations = emojiHasVariations(emoji);
   return (
-    <button className={clsx('epr-emoji', { hidden })} data-unified={unified}>
+    <button
+      className={clsx('epr-emoji', {
+        hidden,
+        ['epr-emoji-has-variations']: hasVariations
+      })}
+      data-unified={unified}
+    >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji unified={unified} />
       ) : (
