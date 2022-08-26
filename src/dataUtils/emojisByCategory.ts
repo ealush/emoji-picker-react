@@ -1,6 +1,7 @@
+import { Categories } from './../config/categoryConfig';
 import emojis from '../data/emojis';
-import { DataEmojis, DataGroups } from './DataTypes';
+import { DataEmojis } from './DataTypes';
 
-export default function emojisByCategory(group: DataGroups): DataEmojis {
-  return emojis[group] ?? [];
+export default function emojisByCategory(category: Categories): DataEmojis {
+  return emojis[category] ?? [];
 }

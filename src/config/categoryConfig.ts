@@ -1,9 +1,5 @@
 import { DataGroups } from '../dataUtils/DataTypes';
 
-function getConfigByCategory(category: DataGroups) {
-  return configByCategory[category];
-}
-
 export enum Categories {
   SMILEYS_PEOPLE = 'smileys_people',
   ANIMALS_NATURE = 'animals_nature',
@@ -25,19 +21,6 @@ const categoriesOrdered: Categories[] = [
   Categories.SYMBOLS,
   Categories.FLAGS
 ];
-
-export const baseCategoriesConfig = categoriesOrdered.map(
-  category => configByCategory[category]
-);
-
-export type CategoriesConfig = CategoryConfig[];
-
-export type CategoryConfig = {
-  category: Categories;
-  name: string;
-};
-
-export type UserCategoryConfig = Array<DataGroups | CategoryConfig>;
 
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SMILEYS_PEOPLE]: {
@@ -74,6 +57,27 @@ const configByCategory: Record<Categories, CategoryConfig> = {
   }
 };
 
+export const baseCategoriesConfig = categoriesOrdered.map(
+  category => configByCategory[category]
+);
+
+export function categoryFromCategoryConfig(category: CategoryConfig) {
+  return category.category;
+}
+
+export function categoryNameFromCategoryConfig(category: CategoryConfig) {
+  return category.name;
+}
+
+export type CategoriesConfig = CategoryConfig[];
+
+export type CategoryConfig = {
+  category: Categories;
+  name: string;
+};
+
+export type UserCategoryConfig = Array<Categories | CategoryConfig>;
+
 export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = []
 ): CategoriesConfig {
@@ -84,12 +88,16 @@ export function mergeCategoriesConfig(
 
   return userCategoriesConfig.map(category => {
     if (typeof category === 'string') {
-      return getConfigByCategory(category);
+      return getBaseConfigByCategory(category);
     }
 
     return {
-      ...getConfigByCategory(category.category),
+      ...getBaseConfigByCategory(category.category),
       ...category
     };
   });
+}
+
+function getBaseConfigByCategory(category: DataGroups) {
+  return configByCategory[category];
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { SkinTones } from '../../data/skinToneVariations';
-import categories from '../../dataUtils/categories';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
@@ -15,7 +14,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const searchTerm = useState<string>('');
   const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
-  const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
+  const activeCategoryState = useState<ActiveCategoryState>(null);
   const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);

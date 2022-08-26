@@ -3,6 +3,7 @@ import { Meta, Story } from '@storybook/react';
 import { Picker, Props } from '../src';
 import { SkinTones } from '../src/data/skinToneVariations';
 import { EmojiStyle } from '../src/config/config';
+import { Categories } from '../src/config/categoryConfig';
 
 const meta: Meta = {
   title: 'Picker',
@@ -48,6 +49,29 @@ export const AlternativeDefaultSkinTone = (args: Props) => (
 );
 export const AutoFocusDisabled = (args: Props) => (
   <Template {...args} autoFocusSearch={false} />
+);
+export const CustomCategoryConfig = (args: Props) => (
+  <Template
+    {...args}
+    categories={[
+      {
+        name: 'Fun and Games',
+        category: Categories.ACTIVITIES
+      },
+      {
+        name: 'Smileys & Emotion',
+        category: Categories.SMILEYS_PEOPLE
+      },
+      {
+        name: 'Flags',
+        category: Categories.FLAGS
+      },
+      {
+        name: 'Yum Yum',
+        category: Categories.FOOD_DRINK
+      }
+    ]}
+  />
 );
 
 const Template: Story<Props> = args => (

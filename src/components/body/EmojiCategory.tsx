@@ -1,26 +1,32 @@
 import * as React from 'react';
-import { DataEmojis, DataGroups } from '../../dataUtils/DataTypes';
+import { DataEmojis } from '../../dataUtils/DataTypes';
 import './EmojiCategory.css';
 import { Emoji } from '../emoji/Emoji';
-import { categoryName } from '../../dataUtils/categorySelector';
 import { emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useActiveSkinToneState } from '../context/PickerContext';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import { useEmojiStyleConfig } from '../context/PickerConfigContext';
+import {
+  CategoryConfig,
+  categoryFromCategoryConfig,
+  categoryNameFromCategoryConfig
+} from '../../config/categoryConfig';
 
 type Props = Readonly<{
-  category: DataGroups;
+  categoryConfig: CategoryConfig;
   emojis: DataEmojis;
 }>;
 
-export function EmojiCategory({ category, emojis }: Props) {
+export function EmojiCategory({ categoryConfig, emojis }: Props) {
   const emojiStyle = useEmojiStyleConfig();
   const [activeSkinTone] = useActiveSkinToneState();
   const isEmojiHidden = useIsEmojiHidden();
+  const category = categoryFromCategoryConfig(categoryConfig);
+  const categoryName = categoryNameFromCategoryConfig(categoryConfig);
 
   return (
     <li className="epr-emoji-category" data-name={category}>
-      <div className="epr-emoji-category-label">{categoryName(category)}</div>
+      <div className="epr-emoji-category-label">{categoryName}</div>
       {emojis.map(emoji => {
         const unified = emojiUnified(emoji, activeSkinTone);
         const hidden = isEmojiHidden(emoji);
