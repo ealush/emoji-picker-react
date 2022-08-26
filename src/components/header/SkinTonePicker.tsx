@@ -1,6 +1,5 @@
 import * as React from 'react';
 import './SkinTonePicker.css';
-import { useState } from 'react';
 
 import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';

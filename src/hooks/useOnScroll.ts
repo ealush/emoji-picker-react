@@ -1,10 +1,14 @@
 import { useEffect } from 'react';
-import { useEmojiVariationPickerState } from '../components/context/PickerContext';
+import {
+  useEmojiVariationPickerState,
+  useSkinToneFanOpenState
+} from '../components/context/PickerContext';
 
 export function useOnScroll(
   bodyRef: React.MutableRefObject<HTMLDivElement | null>
 ) {
   const [variationPicker, setVariationPicker] = useEmojiVariationPickerState();
+  const [skinToneFanOpen, setSkinToneFanOpen] = useSkinToneFanOpenState();
 
   useEffect(() => {
     if (!bodyRef.current) {
@@ -19,10 +23,14 @@ export function useOnScroll(
       if (variationPicker) {
         setVariationPicker(null);
       }
+
+      if (skinToneFanOpen) {
+        setSkinToneFanOpen(false);
+      }
     }
 
     return () => {
       bodyRef.current?.removeEventListener('scroll', onScroll);
     };
-  }, [variationPicker]);
+  }, [variationPicker, skinToneFanOpen]);
 }
