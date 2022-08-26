@@ -8,7 +8,9 @@ import { categoryNameFromDom } from '../../DomUtils/categoryNameFromDom';
 export function Body() {
   const bodyRef = useRef<null | HTMLDivElement>(null);
   const [, setActiveCategory] = useActiveCategoryState();
+
   useEffect(() => {
+    const visibleCategories = new Map();
     const observer = new IntersectionObserver(
       entries => {
         const refCurrent = bodyRef.current;
@@ -16,40 +18,27 @@ export function Body() {
           return;
         }
 
-        let categoryToSet = null;
-
-        // This seems to work well for detecting all category transitions via scroll
         for (const entry of entries) {
-          if (refCurrent.scrollTop < (entry.target as HTMLElement).offsetTop) {
-            // If the entry came into view, but is not the first visible entry
-            // it probably means that there is another entry that's already sticky
-            // DO NOTHING
-          } else if (entry.isIntersecting) {
-            // This seems to be doing it when scrolling up
-            categoryToSet = categoryNameFromDom(entry.target);
-          } else if (
-            isTargetWithinScrollArea(
-              entry.target.nextElementSibling as HTMLElement,
-              refCurrent
-            )
-          ) {
-            // Yeah, we're probably at the top
-            categoryToSet = categoryNameFromDom(
-              entry.target.nextElementSibling
-            );
-          }
+          const id = categoryNameFromDom(entry.target);
+          visibleCategories.set(id, entry.intersectionRatio);
+        }
 
-          if (categoryToSet) {
-            setActiveCategory(categoryToSet);
+        const ratios = Array.from(visibleCategories);
+        const lastCategory = ratios[ratios.length - 1];
+
+        if (lastCategory[1] == 1) {
+          return setActiveCategory(lastCategory[0]);
+        }
+
+        for (const [id, ratio] of ratios) {
+          if (ratio) {
+            setActiveCategory(id);
             break;
           }
         }
       },
       {
-        threshold: [0, 1],
-        rootMargin: '-160px 0px 0px 0px'
-        // compensate for the header and sticky category
-        //FIXME: this is a hack, need to understand why this exact number
+        threshold: [0, 1]
       }
     );
     bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
@@ -61,17 +50,5 @@ export function Body() {
     <div className="epr-body" ref={bodyRef}>
       <EmojiList />
     </div>
-  );
-}
-
-function isTargetWithinScrollArea(
-  target: HTMLElement,
-  scrollRoot: HTMLElement
-) {
-  const bodyHeight = scrollRoot.clientHeight;
-
-  return (
-    scrollRoot.scrollTop + bodyHeight - (target as HTMLElement)?.offsetTop <
-    bodyHeight
   );
 }
