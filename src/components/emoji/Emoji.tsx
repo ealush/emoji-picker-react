@@ -8,6 +8,10 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import {
+  handleEmojiMouseUp,
+  useHandleEmojiMouseDown
+} from '../../hooks/useEmojiMousedown';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
 
@@ -20,6 +24,7 @@ type Props = Readonly<{
 
 export function Emoji({ emoji, unified, hidden, emojiStyle }: Props) {
   const hasVariations = emojiHasVariations(emoji);
+  const handleMouseDown = useHandleEmojiMouseDown(emoji);
   return (
     <button
       className={clsx('epr-emoji', {
@@ -27,6 +32,8 @@ export function Emoji({ emoji, unified, hidden, emojiStyle }: Props) {
         ['epr-emoji-has-variations']: hasVariations
       })}
       data-unified={unified}
+      onMouseUp={handleEmojiMouseUp}
+      onMouseDown={handleMouseDown}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji unified={unified} />
