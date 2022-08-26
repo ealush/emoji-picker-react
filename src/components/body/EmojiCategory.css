@@ -10,6 +10,7 @@
   color: var(--epr-category-label-text-color);
   height: var(--epr-category-label-height);
   text-transform: capitalize;
+  z-index: 1;
 }
 .EmojiPickerReact.epr-search-active
   li.epr-emoji-category
