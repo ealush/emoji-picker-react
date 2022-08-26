@@ -4,7 +4,7 @@ import { EmojiStyle } from '../../config/config';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
-import { useEmojisThatFailedToLoad } from '../context/PickerContext';
+import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
 
 type Props = Readonly<{
@@ -43,7 +43,7 @@ function EmojiImg({
   unified: string;
   emojiStyle: EmojiStyle;
 }) {
-  const emojisThatFailedToLoad = useEmojisThatFailedToLoad();
+  const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
 
   return (
     <img
@@ -56,6 +56,6 @@ function EmojiImg({
   );
 
   function onError() {
-    emojisThatFailedToLoad.markAsFailedToLoad(unified);
+    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
   }
 }

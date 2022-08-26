@@ -14,7 +14,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const searchTerm = useState<string>('');
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
-  const emojisThatFailedToLoad = React.useRef<Set<string>>(new Set());
+  const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
 
   useMarkInitialLoad(setIsPastInitialLoad);
@@ -27,7 +27,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         searchTerm,
         activeCategoryState,
         activeSkinTone,
-        emojisThatFailedToLoad,
+        emojisThatFailedToLoadState,
         isPastInitialLoad
       }}
     >
@@ -44,7 +44,7 @@ const PickerContext = React.createContext<{
   searchTerm: ReactState<string>;
   activeCategoryState: ReactState<ActiveCategoryState>;
   activeSkinTone: ReactState<SkinTones>;
-  emojisThatFailedToLoad: React.MutableRefObject<Set<string>>;
+  emojisThatFailedToLoadState: ReactState<Set<string>>;
   isPastInitialLoad: boolean;
 }>({
   PickerMainRef: React.createRef(),
@@ -52,7 +52,7 @@ const PickerContext = React.createContext<{
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
-  emojisThatFailedToLoad: { current: new Set() },
+  emojisThatFailedToLoadState: [new Set(), () => {}],
   isPastInitialLoad: true
 });
 
@@ -106,23 +106,9 @@ export function useActiveSkinToneState(): [
   return activeSkinTone;
 }
 
-export function useEmojisThatFailedToLoad(): {
-  markAsFailedToLoad: (unified: string) => void;
-  didFailToLoad: (unified: string) => boolean;
-} {
-  const { emojisThatFailedToLoad } = React.useContext(PickerContext);
-
-  function markAsFailedToLoad(unified: string) {
-    emojisThatFailedToLoad.current.add(unified);
-  }
-
-  function didFailToLoad(unified: string): boolean {
-    return emojisThatFailedToLoad.current.has(unified);
-  }
-  return {
-    markAsFailedToLoad,
-    didFailToLoad
-  };
+export function useEmojisThatFailedToLoadState() {
+  const { emojisThatFailedToLoadState } = React.useContext(PickerContext);
+  return emojisThatFailedToLoadState;
 }
 
 export function useIsPastInitialLoad(): boolean {
