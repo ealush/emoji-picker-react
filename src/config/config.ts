@@ -1,9 +1,16 @@
 import { SkinTones } from '../data/skinToneVariations';
+import {
+  CategoriesConfig,
+  baseCategoriesConfig,
+  mergeCategoriesConfig
+} from './categoryConfig';
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
+  const categories = mergeCategoriesConfig(userConfig.categories);
   return {
     ...basePickerConfig(),
-    ...userConfig
+    ...userConfig,
+    categories
   };
 }
 
@@ -13,7 +20,8 @@ export function basePickerConfig(): PickerConfigInternal {
     defaultSkinTone: SkinTones.NEUTRAL,
     skinTonesDisabled: false,
     autoFocusSearch: true,
-    emojiStyle: EmojiStyle.APPLE
+    emojiStyle: EmojiStyle.APPLE,
+    categories: baseCategoriesConfig
   };
 }
 
@@ -23,6 +31,7 @@ export type PickerConfigInternal = {
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
+  categories: CategoriesConfig;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

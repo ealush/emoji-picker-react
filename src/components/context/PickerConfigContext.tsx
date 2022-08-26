@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CategoriesConfig } from '../../config/categoryConfig';
 import {
   basePickerConfig,
   EmojiStyle,
@@ -52,4 +53,9 @@ export function useEmojiStyleConfig(): EmojiStyle {
 export function useAutoFocusSearchConfig(): boolean {
   const { autoFocusSearch } = usePickerConfig();
   return autoFocusSearch;
+}
+
+export function useCategoriesConfig(): CategoriesConfig {
+  const { categories } = usePickerConfig();
+  return categories;
 }
