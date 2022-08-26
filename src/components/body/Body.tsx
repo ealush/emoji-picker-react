@@ -3,6 +3,7 @@ import './Body.css';
 import { EmojiList } from './EmojiList';
 import { useEffect, useRef } from 'react';
 import { useActiveCategoryState } from '../context/PickerContext';
+import { categoryNameFromDom } from '../../DomUtils/categoryNameFromDom';
 
 export function Body() {
   const bodyRef = useRef<null | HTMLDivElement>(null);
@@ -25,7 +26,7 @@ export function Body() {
             // DO NOTHING
           } else if (entry.isIntersecting) {
             // This seems to be doing it when scrolling up
-            categoryToSet = entry.target.getAttribute('data-name');
+            categoryToSet = categoryNameFromDom(entry.target);
           } else if (
             isTargetWithinScrollArea(
               entry.target.nextElementSibling as HTMLElement,
@@ -33,8 +34,8 @@ export function Body() {
             )
           ) {
             // Yeah, we're probably at the top
-            categoryToSet = entry.target.nextElementSibling?.getAttribute(
-              'data-name'
+            categoryToSet = categoryNameFromDom(
+              entry.target.nextElementSibling
             );
           }
 
