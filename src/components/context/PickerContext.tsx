@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { SkinTones } from '../../data/skinToneVariations';
 import categories from '../../dataUtils/categories';
+import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
@@ -15,6 +16,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
   const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
+  const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
 
   useMarkInitialLoad(setIsPastInitialLoad);
@@ -28,7 +30,8 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         activeCategoryState,
         activeSkinTone,
         emojisThatFailedToLoadState,
-        isPastInitialLoad
+        isPastInitialLoad,
+        emojiVariationPickerState
       }}
     >
       {children}
@@ -46,6 +49,7 @@ const PickerContext = React.createContext<{
   activeSkinTone: ReactState<SkinTones>;
   emojisThatFailedToLoadState: ReactState<Set<string>>;
   isPastInitialLoad: boolean;
+  emojiVariationPickerState: ReactState<DataEmoji | null>;
 }>({
   PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
@@ -53,7 +57,8 @@ const PickerContext = React.createContext<{
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
-  isPastInitialLoad: true
+  isPastInitialLoad: true,
+  emojiVariationPickerState: [null, () => {}]
 });
 
 type Props = Readonly<{
@@ -114,6 +119,11 @@ export function useEmojisThatFailedToLoadState() {
 export function useIsPastInitialLoad(): boolean {
   const { isPastInitialLoad } = React.useContext(PickerContext);
   return isPastInitialLoad;
+}
+
+export function useEmojiVariationPickerState() {
+  const { emojiVariationPickerState } = React.useContext(PickerContext);
+  return emojiVariationPickerState;
 }
 
 export type FilterState = null | Record<string, FilterDict>;
