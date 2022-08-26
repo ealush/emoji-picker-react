@@ -36,15 +36,14 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   );
 }
 
+type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
+
 const PickerContext = React.createContext<{
   PickerMainRef: React.RefObject<HTMLElement>;
-  filterState: [FilterState, React.Dispatch<React.SetStateAction<FilterState>>];
-  searchTerm: [string, React.Dispatch<React.SetStateAction<string>>];
-  activeCategoryState: [
-    ActiveCategoryState,
-    React.Dispatch<React.SetStateAction<ActiveCategoryState>>
-  ];
-  activeSkinTone: [SkinTones, React.Dispatch<React.SetStateAction<SkinTones>>];
+  filterState: ReactState<FilterState>;
+  searchTerm: ReactState<string>;
+  activeCategoryState: ReactState<ActiveCategoryState>;
+  activeSkinTone: ReactState<SkinTones>;
   emojisThatFailedToLoad: React.MutableRefObject<Set<string>>;
   isPastInitialLoad: boolean;
 }>({
