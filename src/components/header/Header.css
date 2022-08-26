@@ -1,11 +1,6 @@
-.EmojiPickerReact .epr-header {
+.EmojiPickerReact .epr-header .epr-header-overlay {
+  z-index: 3;
   position: relative;
-  height: var(--epr-header-height);
   padding: var(--epr-header-padding);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  gap: 15px;
-  z-index: 1;
   background-color: var(--epr-header-background-color);
 }

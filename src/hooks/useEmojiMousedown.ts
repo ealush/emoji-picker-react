@@ -20,6 +20,6 @@ export function useHandleEmojiMouseDown(emoji: DataEmoji) {
     mouseDownTimer = window?.setTimeout(() => {
       setEmojiVariationPicker(emoji);
       mouseDownTimer = undefined;
-    }, 500);
+    }, 200);
   };
 }

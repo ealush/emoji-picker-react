@@ -9,11 +9,11 @@ import { SkinTonePicker } from './SkinTonePicker';
 export function Header() {
   return (
     <Relative className="epr-header">
-      <Flex>
+      <EmojiVariationPicker />
+      <Flex className="epr-header-overlay">
         <Search />
         <SkinTonePicker />
       </Flex>
-      <EmojiVariationPicker />
     </Relative>
   );
 }

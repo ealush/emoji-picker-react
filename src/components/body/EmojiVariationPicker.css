@@ -1,14 +1,25 @@
 .EmojiPickerReact .epr-emoji-variation-picker {
   position: absolute;
-  top: 100%;
+  top: 0;
   right: 20px;
   left: 20px;
   padding: 5px;
-  z-index: 2;
+  height: 0;
+  z-index: 1;
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.2);
   border-radius: 15px;
   display: flex;
   align-items: center;
   background: var(--epr-emoji-variation-picker-bg-color);
   justify-content: space-around;
+  opacity: 0;
+  min-height: 55px;
+  pointer-events: none;
+  transition: opacity 0.2s ease-in-out, top 0.4s ease-in-out;
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker.visible {
+  opacity: 1;
+  top: 100%;
+  pointer-events: all;
 }

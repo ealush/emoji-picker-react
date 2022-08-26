@@ -8,7 +8,6 @@ import {
   useSearchTermState
 } from '../components/context/PickerContext';
 import { scrollTo } from '../DomUtils/scrollTo';
-import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 export function useFilter() {
   const [filter = {}, setFilter] = useFilterState();
