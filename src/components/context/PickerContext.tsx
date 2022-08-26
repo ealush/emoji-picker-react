@@ -13,6 +13,7 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
 
   const filterState = useState<FilterState>(null);
   const searchTerm = useState<string>('');
+  const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
   const activeCategoryState = useState<ActiveCategoryState>(categories[0]);
   const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
@@ -31,7 +32,8 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
         activeSkinTone,
         emojisThatFailedToLoadState,
         isPastInitialLoad,
-        emojiVariationPickerState
+        emojiVariationPickerState,
+        skinToneFanOpenState
       }}
     >
       {children}
@@ -50,6 +52,7 @@ const PickerContext = React.createContext<{
   emojisThatFailedToLoadState: ReactState<Set<string>>;
   isPastInitialLoad: boolean;
   emojiVariationPickerState: ReactState<DataEmoji | null>;
+  skinToneFanOpenState: ReactState<boolean>;
 }>({
   PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
@@ -58,7 +61,8 @@ const PickerContext = React.createContext<{
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
   isPastInitialLoad: true,
-  emojiVariationPickerState: [null, () => {}]
+  emojiVariationPickerState: [null, () => {}],
+  skinToneFanOpenState: [false, () => {}]
 });
 
 type Props = Readonly<{
@@ -124,6 +128,11 @@ export function useIsPastInitialLoad(): boolean {
 export function useEmojiVariationPickerState() {
   const { emojiVariationPickerState } = React.useContext(PickerContext);
   return emojiVariationPickerState;
+}
+
+export function useSkinToneFanOpenState() {
+  const { skinToneFanOpenState } = React.useContext(PickerContext);
+  return skinToneFanOpenState;
 }
 
 export type FilterState = null | Record<string, FilterDict>;

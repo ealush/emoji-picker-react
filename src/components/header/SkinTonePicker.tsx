@@ -4,13 +4,16 @@ import { useState } from 'react';
 
 import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';
-import { useActiveSkinToneState } from '../context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useSkinToneFanOpenState
+} from '../context/PickerContext';
 import Relative from '../Layout/Relative';
 import { useSkinTonesDisabledConfig } from '../context/PickerConfigContext';
 
 export function SkinTonePicker() {
   const isDisabled = useSkinTonesDisabledConfig();
-  const [fanOpen, setFanOpen] = useState(false);
+  const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
 
   if (isDisabled) {
@@ -20,25 +23,22 @@ export function SkinTonePicker() {
   return (
     <Relative
       className={clsx('epr-skin-tones', {
-        open: fanOpen
+        open: isOpen
       })}
     >
-      <div
-        className="epr-skin-tone-select"
-        onClick={() => setFanOpen(!fanOpen)}
-      >
+      <div className="epr-skin-tone-select" onClick={() => setIsOpen(!isOpen)}>
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
           return (
             <button
               style={{
                 transform: clsx(
-                  `translateX(-${i * (fanOpen ? 28 : 0)}px)`,
-                  fanOpen && active && 'scale(1.3)'
+                  `translateX(-${i * (isOpen ? 28 : 0)}px)`,
+                  isOpen && active && 'scale(1.3)'
                 )
               }}
               onClick={() => {
-                fanOpen && setActiveSkinTone(skinToneVariation);
+                isOpen && setActiveSkinTone(skinToneVariation);
               }}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
