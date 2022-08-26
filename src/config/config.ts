@@ -9,22 +9,28 @@ export function mergeConfig(userConfig: PickerConfig = {}) {
 
 export function basePickerConfig(): PickerConfigInternal {
   return {
-    native: false,
     searchPlaceHolder: 'Search',
     defaultSkinTone: SkinTones.NEUTRAL,
     skinTonesDisabled: false,
-    cdnUrl: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/',
-    autoFocusSearch: true
+    autoFocusSearch: true,
+    emojiStyle: EmojiStyle.APPLE
   };
 }
 
 export type PickerConfigInternal = {
-  native: boolean;
   searchPlaceHolder: string;
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
-  cdnUrl: string;
   autoFocusSearch: boolean;
+  emojiStyle: EmojiStyle;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;
+
+export enum EmojiStyle {
+  NATIVE = 'native',
+  APPLE = 'apple',
+  TWITTER = 'twitter',
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook'
+}

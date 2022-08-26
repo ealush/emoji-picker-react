@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {
   basePickerConfig,
+  EmojiStyle,
   mergeConfig,
   PickerConfig,
   PickerConfigInternal
@@ -28,11 +29,6 @@ export function usePickerConfig() {
   return React.useContext(ConfigContext);
 }
 
-export function useNativeConfig(): boolean {
-  const { native } = usePickerConfig();
-  return native;
-}
-
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();
   return searchPlaceHolder;
@@ -48,9 +44,9 @@ export function useSkinTonesDisabledConfig(): boolean {
   return skinTonesDisabled;
 }
 
-export function useCdnUrlConfig(): string {
-  const { cdnUrl } = usePickerConfig();
-  return cdnUrl;
+export function useEmojiStyleConfig(): EmojiStyle {
+  const { emojiStyle } = usePickerConfig();
+  return emojiStyle;
 }
 
 export function useAutoFocusSearchConfig(): boolean {

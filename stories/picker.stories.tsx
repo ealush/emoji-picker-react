@@ -2,6 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Picker, Props } from '../src';
 import { SkinTones } from '../src/data/skinToneVariations';
+import { EmojiStyle } from '../src/config/config';
 
 const meta: Meta = {
   title: 'Picker',
@@ -20,8 +21,22 @@ const meta: Meta = {
 
 export default meta;
 
-export const Native = (args: Props) => <Template {...args} native={true} />;
-export const EmojiImage = (args: Props) => <Template {...args} />;
+export const Native = (args: Props) => (
+  <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
+);
+export const Default = (args: Props) => <Template {...args} />;
+export const EmojiImageApple = (args: Props) => (
+  <Template {...args} emojiStyle={EmojiStyle.APPLE} />
+);
+export const EmojiImageFacebook = (args: Props) => (
+  <Template {...args} emojiStyle={EmojiStyle.FACEBOOK} />
+);
+export const EmojiImageGoogle = (args: Props) => (
+  <Template {...args} emojiStyle={EmojiStyle.GOOGLE} />
+);
+export const EmojiImageTwitter = (args: Props) => (
+  <Template {...args} emojiStyle={EmojiStyle.TWITTER} />
+);
 export const CustomSearchPlaceholder = (args: Props) => (
   <Template searchPlaceHolder="👀 Find" />
 );
@@ -30,12 +45,6 @@ export const SkinTonesDisabled = (args: Props) => (
 );
 export const AlternativeDefaultSkinTone = (args: Props) => (
   <Template {...args} defaultSkinTone={SkinTones.MEDIUM} />
-);
-export const CustomCdn = (args: Props) => (
-  <Template
-    {...args}
-    cdnUrl="https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/"
-  />
 );
 export const AutoFocusDisabled = (args: Props) => (
   <Template {...args} autoFocusSearch={false} />

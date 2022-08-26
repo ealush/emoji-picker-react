@@ -1,3 +1,5 @@
+import { cdnUrl } from '../config/cdnUrls';
+import { EmojiStyle } from '../config/config';
 import emojis from '../data/emojis';
 import { DataEmoji, DataEmojis } from './DataTypes';
 
@@ -16,11 +18,11 @@ export function emojiName(emoji: DataEmoji): string {
 }
 
 export function emojiUrl(
-  cdnUrl: string,
+  emojiStyle: EmojiStyle,
   emoji: DataEmoji,
   skinTone?: string
 ): string {
-  return emojiUrlByUnified(cdnUrl, emojiUnified(emoji, skinTone));
+  return emojiUrlByUnified(emojiStyle, emojiUnified(emoji, skinTone));
 }
 
 export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
@@ -33,8 +35,11 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   return emojiVariationUnified(emoji, skinTone) ?? unified;
 }
 
-export function emojiUrlByUnified(cdnUrl: string, unified: string): string {
-  return `${cdnUrl}${unified}.png`;
+export function emojiUrlByUnified(
+  emojiStyle: EmojiStyle,
+  unified: string
+): string {
+  return `${cdnUrl(emojiStyle)}${unified}.png`;
 }
 
 export function emojiVariations(emoji: DataEmoji): string[] {

@@ -6,7 +6,7 @@ import { categoryName } from '../../dataUtils/categorySelector';
 import { emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useActiveSkinToneState } from '../context/PickerContext';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
-import { useNativeConfig } from '../context/PickerConfigContext';
+import { useEmojiStyleConfig } from '../context/PickerConfigContext';
 
 type Props = Readonly<{
   category: DataGroups;
@@ -14,7 +14,7 @@ type Props = Readonly<{
 }>;
 
 export function EmojiCategory({ category, emojis }: Props) {
-  const native = useNativeConfig();
+  const emojiStyle = useEmojiStyleConfig();
   const [activeSkinTone] = useActiveSkinToneState();
   const isEmojiHidden = useIsEmojiHidden();
 
@@ -31,7 +31,7 @@ export function EmojiCategory({ category, emojis }: Props) {
             emoji={emoji}
             unified={unified}
             hidden={hidden}
-            native={native}
+            emojiStyle={emojiStyle}
           />
         );
       })}
