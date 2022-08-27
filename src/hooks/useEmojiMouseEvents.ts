@@ -14,6 +14,7 @@ import {
   emojiNames,
   emojiUrlByUnified
 } from '../dataUtils/emojiSelectors';
+import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
 
 let mouseDownTimer: undefined | number;
 
@@ -66,6 +67,7 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
     }
 
     closeAllOpenToggles();
+    setRecentlyUsed(emoji, activeSkinTone);
     onEmojiClick(event, emojiClickOutput(emoji, activeSkinTone));
   }
 }
