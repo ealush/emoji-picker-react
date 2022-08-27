@@ -59,4 +59,21 @@ export function emojiVariationUnified(
     : emojiUnified(emoji);
 }
 
+export function emojiByUnified(unified: string): DataEmoji | undefined {
+  return allEmojisByUnified[unified];
+}
+
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
+
+// FIXME: Consider deferring
+export const allEmojisByUnified: {
+  [unified: string]: DataEmoji;
+} = allEmojis.reduce(
+  (allEmojis, Emoji) => {
+    allEmojis[emojiUnified(Emoji)] = Emoji;
+    return allEmojis;
+  },
+  {} as {
+    [unified: string]: DataEmoji;
+  }
+);
