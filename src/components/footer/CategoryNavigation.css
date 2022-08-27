@@ -49,6 +49,9 @@
   border-radius: 5px;
 }
 
+.EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {
+  background-image: url(./svg/objects.svg);
+}
 .EmojiPickerReact button.epr-cat-btn.epr-icn-activities {
   background-image: url(./svg/activities.svg);
 }

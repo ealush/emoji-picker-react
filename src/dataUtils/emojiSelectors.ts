@@ -1,3 +1,4 @@
+import { Categories } from './../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import { EmojiStyle } from '../config/config';
 import emojis from '../data/emojis';
@@ -33,6 +34,11 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   }
 
   return emojiVariationUnified(emoji, skinTone) ?? unified;
+}
+
+export function emojisByCategory(category: Categories): DataEmojis {
+  // @ts-ignore
+  return emojis?.[category] ?? [];
 }
 
 export function emojiUrlByUnified(

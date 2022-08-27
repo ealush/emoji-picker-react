@@ -1,6 +1,5 @@
-import { DataGroups } from '../dataUtils/DataTypes';
-
 export enum Categories {
+  RECENTLY_USED = 'recently_used',
   SMILEYS_PEOPLE = 'smileys_people',
   ANIMALS_NATURE = 'animals_nature',
   FOOD_DRINK = 'food_drink',
@@ -12,6 +11,7 @@ export enum Categories {
 }
 
 const categoriesOrdered: Categories[] = [
+  Categories.RECENTLY_USED,
   Categories.SMILEYS_PEOPLE,
   Categories.ANIMALS_NATURE,
   Categories.FOOD_DRINK,
@@ -23,6 +23,10 @@ const categoriesOrdered: Categories[] = [
 ];
 
 const configByCategory: Record<Categories, CategoryConfig> = {
+  [Categories.RECENTLY_USED]: {
+    category: Categories.RECENTLY_USED,
+    name: 'Recently Used'
+  },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,
     name: 'Smileys & People'
@@ -98,6 +102,6 @@ export function mergeCategoriesConfig(
   });
 }
 
-function getBaseConfigByCategory(category: DataGroups) {
+function getBaseConfigByCategory(category: Categories) {
   return configByCategory[category];
 }

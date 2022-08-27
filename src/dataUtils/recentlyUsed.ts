@@ -32,7 +32,7 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
   let nextList;
 
   if (existing) {
-    nextList = recent.filter(i => i === existing);
+    nextList = [existing].concat(recent.filter(i => i !== existing));
   } else {
     existing = {
       unified,
@@ -44,7 +44,7 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
 
   existing.count++;
 
-  nextList.length = Math.min(nextList.length, 10);
+  nextList.length = Math.min(nextList.length, 14);
 
   try {
     window?.localStorage.setItem(
