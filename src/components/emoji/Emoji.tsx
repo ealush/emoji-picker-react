@@ -8,7 +8,6 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
-import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useEmojiMouseEvents } from '../../hooks/useEmojiMouseEvents';
 
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
@@ -30,12 +29,9 @@ export function Emoji({
   disableTip
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
-  const { closeAllOpenToggles } = useCloseAllOpenToggles();
-  const {
-    handleMouseDown,
-    handleMouseUp,
-    disallowClickRef
-  } = useEmojiMouseEvents(emoji);
+  const { handleMouseDown, handleMouseUp, handleClick } = useEmojiMouseEvents(
+    emoji
+  );
   return (
     <button
       className={clsx('epr-emoji', {
@@ -45,7 +41,7 @@ export function Emoji({
       data-unified={unified}
       onMouseUp={handleMouseUp}
       onMouseDown={handleMouseDown}
-      onClick={onClick}
+      onClick={handleClick}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji unified={unified} />
@@ -54,14 +50,6 @@ export function Emoji({
       )}
     </button>
   );
-
-  function onClick() {
-    if (disallowClickRef.current) {
-      return;
-    }
-
-    closeAllOpenToggles();
-  }
 }
 
 function NativeEmoji({ unified }: { unified: string }) {
