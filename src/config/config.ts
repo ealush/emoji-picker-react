@@ -1,6 +1,8 @@
 import { SkinTones } from '../data/skinToneVariations';
-import { DataEmoji } from '../dataUtils/DataTypes';
-import { defaultOnClickHandler } from '../hooks/useEmojiMouseEvents';
+import {
+  defaultOnClickHandler,
+  EmojiClickData
+} from '../hooks/useEmojiMouseEvents';
 import {
   CategoriesConfig,
   baseCategoriesConfig,
@@ -35,7 +37,7 @@ export type PickerConfigInternal = {
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
-  onEmojiClick: (event: React.MouseEvent, emoji: DataEmoji) => void;
+  onEmojiClick: (event: React.MouseEvent, emoji: EmojiClickData) => void;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

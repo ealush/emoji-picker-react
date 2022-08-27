@@ -8,7 +8,7 @@ import {
   PickerConfigInternal
 } from '../../config/config';
 import { SkinTones } from '../../data/skinToneVariations';
-import { DataEmoji } from '../../dataUtils/DataTypes';
+import { EmojiClickData } from '../../hooks/useEmojiMouseEvents';
 
 type Props = PickerConfig &
   Readonly<{
@@ -63,7 +63,7 @@ export function useCategoriesConfig(): CategoriesConfig {
 
 export function useOnEmojiClickConfig(): (
   event: React.MouseEvent,
-  emoji: DataEmoji
+  emoji: EmojiClickData
 ) => void {
   const { onEmojiClick } = usePickerConfig();
   return onEmojiClick;

@@ -1,8 +1,19 @@
+import { EmojiStyle } from './../config/config';
+import { SkinTones } from './../data/skinToneVariations';
 import { useRef } from 'react';
 import { useOnEmojiClickConfig } from '../components/context/PickerConfigContext';
-import { useEmojiVariationPickerState } from '../components/context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useEmojiVariationPickerState
+} from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
+import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
+import {
+  emojiUnified,
+  emojiNames,
+  emojiUrlByUnified
+} from '../dataUtils/emojiSelectors';
 
 let mouseDownTimer: undefined | number;
 
@@ -10,6 +21,7 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
   const disallowClickRef = useRef(false);
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const { closeAllOpenToggles } = useCloseAllOpenToggles();
+  const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
 
   return {
@@ -48,19 +60,45 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
     }, 200);
   }
 
-  function handleClick(emoji: DataEmoji) {
-    return function onClick(event: React.MouseEvent) {
-      if (disallowClickRef.current) {
-        return;
-      }
+  function handleClick(event: React.MouseEvent) {
+    if (disallowClickRef.current) {
+      return;
+    }
 
-      closeAllOpenToggles();
-      onEmojiClick(event, emoji);
-    };
+    closeAllOpenToggles();
+    onEmojiClick(event, emojiClickOutput(emoji, activeSkinTone));
   }
 }
 
+function emojiClickOutput(
+  emoji: DataEmoji,
+  activeSkinTone: SkinTones
+): EmojiClickData {
+  const unified = emojiUnified(emoji, activeSkinTone);
+  return {
+    activeSkinTone,
+    unified: unified,
+    unifiedWithoutSkinTone: emojiUnified(emoji),
+    emoji: parseNativeEmoji(unified),
+    names: emojiNames(emoji),
+    getImageUrl(emojiStyle: EmojiStyle) {
+      return emojiUrlByUnified(emojiStyle, unified);
+    }
+  };
+}
+
 export function defaultOnClickHandler(
+  // @ts-ignore
   event: React.MouseEvent,
-  emoji: DataEmoji
+  // @ts-ignore
+  emoji: EmojiClickData
 ) {}
+
+export type EmojiClickData = {
+  activeSkinTone: SkinTones;
+  unified: string;
+  unifiedWithoutSkinTone: string;
+  emoji: string;
+  names: string[];
+  getImageUrl: (emojiStyle: EmojiStyle) => string;
+};

@@ -41,7 +41,7 @@ export function Emoji({
       data-unified={unified}
       onMouseUp={handleMouseUp}
       onMouseDown={handleMouseDown}
-      onClick={handleClick(emoji)}
+      onClick={handleClick}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji unified={unified} />
