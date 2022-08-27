@@ -22,6 +22,10 @@ const meta: Meta = {
 
 export default meta;
 
+function onClick(...args) {
+  console.log(...args);
+}
+
 export const Native = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
@@ -81,6 +85,6 @@ const Template: Story<Props> = args => (
       padding: '15px'
     }}
   >
-    <Picker {...args} />
+    <Picker {...args} onEmojiClick={(...args) => console.log(...args)} />
   </div>
 );
