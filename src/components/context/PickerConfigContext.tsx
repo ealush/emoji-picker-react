@@ -8,6 +8,7 @@ import {
   PickerConfigInternal
 } from '../../config/config';
 import { SkinTones } from '../../data/skinToneVariations';
+import { DataEmoji } from '../../dataUtils/DataTypes';
 
 type Props = PickerConfig &
   Readonly<{
@@ -58,4 +59,12 @@ export function useAutoFocusSearchConfig(): boolean {
 export function useCategoriesConfig(): CategoriesConfig {
   const { categories } = usePickerConfig();
   return categories;
+}
+
+export function useOnEmojiClickConfig(): (
+  event: React.MouseEvent,
+  emoji: DataEmoji
+) => void {
+  const { onEmojiClick } = usePickerConfig();
+  return onEmojiClick;
 }

@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useOnEmojiClickConfig } from '../components/context/PickerConfigContext';
 import { useEmojiVariationPickerState } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
@@ -9,6 +10,7 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
   const disallowClickRef = useRef(false);
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const { closeAllOpenToggles } = useCloseAllOpenToggles();
+  const onEmojiClick = useOnEmojiClickConfig();
 
   return {
     handleMouseUp,
@@ -46,11 +48,19 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
     }, 200);
   }
 
-  function handleClick() {
-    if (disallowClickRef.current) {
-      return;
-    }
+  function handleClick(emoji: DataEmoji) {
+    return function onClick(event: React.MouseEvent) {
+      if (disallowClickRef.current) {
+        return;
+      }
 
-    closeAllOpenToggles();
+      closeAllOpenToggles();
+      onEmojiClick(event, emoji);
+    };
   }
 }
+
+export function defaultOnClickHandler(
+  event: React.MouseEvent,
+  emoji: DataEmoji
+) {}
