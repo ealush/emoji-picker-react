@@ -1,4 +1,4 @@
-import { createAlphaNumericEmojiIndex } from '../dataUtils/createAlphaNumericEmojiIndex';
+import { alphaNumericEmojiIndex } from '../dataUtils/alphaNumericEmojiIndex';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 import {
@@ -27,7 +27,7 @@ export function useFilter() {
       // setFilter(null);
       return;
     } else if (nextValue.length === 1) {
-      const index = createAlphaNumericEmojiIndex();
+      const index = alphaNumericEmojiIndex;
       setFilter({
         ...filter,
         [nextValue]: index[nextValue]
