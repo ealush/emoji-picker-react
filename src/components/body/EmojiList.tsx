@@ -11,7 +11,8 @@ import {
 } from '../context/PickerConfigContext';
 import {
   useActiveSkinToneState,
-  useIsPastInitialLoad
+  useIsPastInitialLoad,
+  useSearchTermState
 } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';
@@ -24,41 +25,44 @@ export function EmojiList() {
   const [activeSkinTone] = useActiveSkinToneState();
   const isEmojiHidden = useIsEmojiHidden();
   const emojiStyle = useEmojiStyleConfig();
+  const [searchTerm] = useSearchTermState();
 
   return (
     <ul className="epr-emoji-list">
-      {categories.map((categoryConfig, index) => {
-        const category = categoryFromCategoryConfig(categoryConfig);
+      {React.useMemo(() => {
+        return categories.map((categoryConfig, index) => {
+          const category = categoryFromCategoryConfig(categoryConfig);
 
-        if (category === Categories.RECENTLY_USED) {
+          if (category === Categories.RECENTLY_USED) {
+            return (
+              <RecentlyUsed key={category} categoryConfig={categoryConfig} />
+            );
+          }
+          // Small trick to defer the rendering of all emoji categories until the first category is visible
+          // This way the user gets to actually see something and not wait for the whole picker to render.
+          let emojisToPush =
+            !isPastInitialLoad && index > 1 ? [] : emojisByCategory(category);
+
           return (
-            <RecentlyUsed key={category} categoryConfig={categoryConfig} />
+            <EmojiCategory categoryConfig={categoryConfig} key={category}>
+              {emojisToPush.map(emoji => {
+                const unified = emojiUnified(emoji, activeSkinTone);
+                const hidden = isEmojiHidden(emoji);
+
+                return (
+                  <Emoji
+                    key={unified}
+                    emoji={emoji}
+                    unified={unified}
+                    hidden={hidden}
+                    emojiStyle={emojiStyle}
+                  />
+                );
+              })}
+            </EmojiCategory>
           );
-        }
-        // Small trick to defer the rendering of all emoji categories until the first category is visible
-        // This way the user gets to actually see something and not wait for the whole picker to render.
-        let emojisToPush =
-          !isPastInitialLoad && index > 1 ? [] : emojisByCategory(category);
-
-        return (
-          <EmojiCategory categoryConfig={categoryConfig} key={category}>
-            {emojisToPush.map(emoji => {
-              const unified = emojiUnified(emoji, activeSkinTone);
-              const hidden = isEmojiHidden(emoji);
-
-              return (
-                <Emoji
-                  key={unified}
-                  emoji={emoji}
-                  unified={unified}
-                  hidden={hidden}
-                  emojiStyle={emojiStyle}
-                />
-              );
-            })}
-          </EmojiCategory>
-        );
-      })}
+        });
+      }, [searchTerm, activeSkinTone, isPastInitialLoad])}
     </ul>
   );
 }
