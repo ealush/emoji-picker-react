@@ -3,6 +3,7 @@ import { cdnUrl } from '../config/cdnUrls';
 import { EmojiStyle } from '../config/config';
 import emojis from '../data/emojis';
 import { DataEmoji, DataEmojis } from './DataTypes';
+import skinToneVariations, { SkinTones } from '../data/skinToneVariations';
 
 enum EmojiProperties {
   name = 'n',
@@ -83,3 +84,10 @@ export const allEmojisByUnified: {
     [unified: string]: DataEmoji;
   }
 );
+
+export function activeVariationFromUnified(unified: string): SkinTones | null {
+  const [, suspectedSkinTone] = unified.split('-') as [string, SkinTones];
+  return skinToneVariations.includes(suspectedSkinTone)
+    ? suspectedSkinTone
+    : null;
+}

@@ -12,7 +12,8 @@ import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import {
   emojiUnified,
   emojiNames,
-  emojiUrlByUnified
+  emojiUrlByUnified,
+  activeVariationFromUnified
 } from '../dataUtils/emojiSelectors';
 import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
 
@@ -61,14 +62,19 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
     }, 200);
   }
 
-  function handleClick(event: React.MouseEvent) {
-    if (disallowClickRef.current) {
-      return;
-    }
+  function handleClick(unified: string) {
+    return function onClick(event: React.MouseEvent) {
+      if (disallowClickRef.current) {
+        return;
+      }
 
-    closeAllOpenToggles();
-    setRecentlyUsed(emoji, activeSkinTone);
-    onEmojiClick(event, emojiClickOutput(emoji, activeSkinTone));
+      const skinToneToUse =
+        activeVariationFromUnified(unified) || activeSkinTone;
+
+      closeAllOpenToggles();
+      setRecentlyUsed(emoji, skinToneToUse);
+      onEmojiClick(event, emojiClickOutput(emoji, skinToneToUse));
+    };
   }
 }
 
