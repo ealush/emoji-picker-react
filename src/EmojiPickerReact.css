@@ -23,6 +23,11 @@
   --epr-search-input-height: 40px;
   --epr-category-label-padding: 0 10px;
   --epr-category-label-height: 40px;
+
+  --epr-header-overlay-z-index: 3;
+  --epr-emoji-variations-indictator-z-index: 1;
+  --epr-category-label-z-index: 2;
+  --epr-skin-variation-picker-z-index: 5;
 }
 
 .EmojiPickerReact * {

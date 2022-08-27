@@ -11,7 +11,7 @@
   height: var(--epr-category-label-height);
   text-transform: capitalize;
   backdrop-filter: blur(3px);
-  z-index: 2;
+  z-index: var(--epr-category-label-z-index);
 }
 .EmojiPickerReact.epr-search-active
   li.epr-emoji-category

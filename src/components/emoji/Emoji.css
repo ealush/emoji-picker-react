@@ -16,7 +16,7 @@
   border-right: 4px solid transparent;
   border-bottom: 4px solid rgba(0, 0, 0, 0.1);
   transform: rotate(135deg);
-  z-index: 1;
+  z-index: var(--epr-emoji-variations-indictator-z-index);
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:hover:after {
