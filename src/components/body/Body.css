@@ -2,5 +2,4 @@
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
-  backdrop-filter: blur(20px);
 }
