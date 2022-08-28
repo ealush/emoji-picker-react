@@ -5,9 +5,10 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
+import { usePickerMainRef } from './ElementRefContext';
 import { useDefaultSkinToneConfig } from './PickerConfigContext';
 
-export function PickerContextProvider({ children, PickerMainRef }: Props) {
+export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
 
   const filterState = useState<FilterState>(null);
@@ -24,7 +25,6 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
   return (
     <PickerContext.Provider
       value={{
-        PickerMainRef,
         filterState,
         searchTerm,
         activeCategoryState,
@@ -43,7 +43,6 @@ export function PickerContextProvider({ children, PickerMainRef }: Props) {
 type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const PickerContext = React.createContext<{
-  PickerMainRef: React.RefObject<HTMLElement>;
   filterState: ReactState<FilterState>;
   searchTerm: ReactState<string>;
   activeCategoryState: ReactState<ActiveCategoryState>;
@@ -53,7 +52,6 @@ const PickerContext = React.createContext<{
   emojiVariationPickerState: ReactState<DataEmoji | null>;
   skinToneFanOpenState: ReactState<boolean>;
 }>({
-  PickerMainRef: React.createRef(),
   filterState: [{}, () => {}],
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
@@ -66,13 +64,7 @@ const PickerContext = React.createContext<{
 
 type Props = Readonly<{
   children: React.ReactNode;
-  PickerMainRef: React.RefObject<HTMLElement>;
 }>;
-
-export function usePickerMainRef() {
-  const { PickerMainRef } = React.useContext(PickerContext);
-  return PickerMainRef;
-}
 
 export function useFilterState() {
   const { filterState } = React.useContext(PickerContext);
@@ -89,9 +81,8 @@ export function useActiveCategoryState(): [
   (nextActive: string) => void,
   (nextActive: string) => void
 ] {
-  const { activeCategoryState, PickerMainRef } = React.useContext(
-    PickerContext
-  );
+  const { activeCategoryState } = React.useContext(PickerContext);
+  const PickerMainRef = usePickerMainRef();
 
   const [activeCategory, setActiveCategory] = activeCategoryState;
   return [activeCategory, setCategory, setActiveCategoryAndScroll];

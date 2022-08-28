@@ -4,10 +4,10 @@ import { emojiNames } from '../dataUtils/emojiSelectors';
 import {
   FilterState,
   useFilterState,
-  usePickerMainRef,
   useSearchTermState
 } from '../components/context/PickerContext';
 import { scrollTo } from '../DomUtils/scrollTo';
+import { usePickerMainRef } from '../components/context/ElementRefContext';
 
 export function useFilter() {
   const [filter = {}, setFilter] = useFilterState();

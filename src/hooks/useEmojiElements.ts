@@ -1,7 +1,7 @@
-import { usePickerMainRef } from '../components/context/PickerContext';
+import { usePickerMainRef } from '../components/context/ElementRefContext';
 
 export function useEmojiElements() {
-  const { current } = usePickerMainRef();
+  const PickerMainRef = usePickerMainRef();
 
-  return current?.querySelectorAll('button.epr-emoji');
+  return PickerMainRef.current?.querySelectorAll('button.epr-emoji');
 }

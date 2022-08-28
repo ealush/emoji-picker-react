@@ -1,21 +1,17 @@
 import * as React from 'react';
-import {
-  PickerContextProvider,
-  usePickerMainRef
-} from '../context/PickerContext';
+import { PickerContextProvider } from '../context/PickerContext';
 import './PickerMain.css';
-import { useRef } from 'react';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import clsx from 'clsx';
+import { usePickerMainRef } from '../context/ElementRefContext';
 
 type Props = Readonly<{
   children: React.ReactNode;
 }>;
 
 export default function PickerMain({ children }: Props) {
-  const PickerMainRef = useRef<HTMLElement>(null);
   return (
-    <PickerContextProvider PickerMainRef={PickerMainRef}>
+    <PickerContextProvider>
       <PickerRootElement>{children}</PickerRootElement>
     </PickerContextProvider>
   );
