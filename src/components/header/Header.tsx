@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { EmojiVariationPicker } from '../body/EmojiVariationPicker';
 import { CategoryNavigation } from '../footer/CategoryNavigation';
 import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
@@ -10,7 +9,6 @@ import { SkinTonePicker } from './SkinTonePicker';
 export function Header() {
   return (
     <Relative className="epr-header">
-      <EmojiVariationPicker />
       <Flex className="epr-header-overlay">
         <Search />
         <SkinTonePicker />

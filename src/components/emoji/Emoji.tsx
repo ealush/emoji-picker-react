@@ -36,7 +36,7 @@ export function Emoji({
     <button
       className={clsx('epr-emoji', {
         hidden,
-        ['epr-emoji-has-variations']: hasVariations && showVariations
+        'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}
       onMouseUp={showVariations ? handleMouseUp : undefined}

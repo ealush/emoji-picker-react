@@ -16,10 +16,12 @@ import {
   activeVariationFromUnified
 } from '../dataUtils/emojiSelectors';
 import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
+import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
 
 let mouseDownTimer: undefined | number;
 
 export function useEmojiMouseEvents(emoji: DataEmoji) {
+  const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const disallowClickRef = useRef(false);
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const { closeAllOpenToggles } = useCloseAllOpenToggles();
@@ -49,7 +51,7 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
     }
   }
 
-  function handleMouseDown() {
+  function handleMouseDown(event: React.MouseEvent) {
     if (mouseDownTimer) {
       clearTimeout(mouseDownTimer);
     }
@@ -58,8 +60,9 @@ export function useEmojiMouseEvents(emoji: DataEmoji) {
       disallowClickRef.current = true;
       mouseDownTimer = undefined;
       closeAllOpenToggles();
+      setAnchoredEmojiRef(event.target as HTMLElement);
       setEmojiVariationPicker(emoji);
-    }, 200);
+    }, 250);
   }
 
   function handleClick(unified: string) {

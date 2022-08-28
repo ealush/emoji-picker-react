@@ -1,10 +1,9 @@
 import { useActiveCategoryState } from '../components/context/PickerContext';
 import { useEffect } from 'react';
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
+import { ElementRef } from '../components/context/ElementRefContext';
 
-export function useActiveCategoryScrollDetection(
-  bodyRef: React.MutableRefObject<HTMLDivElement | null>
-) {
+export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
   const [, setActiveCategory] = useActiveCategoryState();
 
   useEffect(() => {

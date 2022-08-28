@@ -1,4 +1,5 @@
 .EmojiPickerReact .epr-body {
+  position: relative;
   flex: 1;
   overflow-y: scroll;
   overflow-x: hidden;
