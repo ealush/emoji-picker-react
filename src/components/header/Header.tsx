@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { EmojiVariationPicker } from '../body/EmojiVariationPicker';
+import { CategoryNavigation } from '../footer/CategoryNavigation';
 import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
 import './Header.css';
@@ -14,6 +15,7 @@ export function Header() {
         <Search />
         <SkinTonePicker />
       </Flex>
+      <CategoryNavigation />
     </Relative>
   );
 }

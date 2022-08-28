@@ -35,7 +35,7 @@ export function RecentlyUsed({ categoryConfig }: Props) {
 
         return (
           <Emoji
-            disableTip
+            showVariations={false}
             unified={recentlyUsedItem.unified}
             emojiStyle={emojiStyle}
             emoji={emoji}

@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  padding: 5px 0;
+  padding: var(--epr-header-padding);
 }
 
 .EmojiPickerReact .epr-category-nav > button.epr-cat-btn {

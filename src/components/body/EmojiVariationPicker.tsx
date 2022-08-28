@@ -28,7 +28,7 @@ export function EmojiVariationPicker() {
               emoji={emoji}
               unified={unified}
               emojiStyle={emojiStyle}
-              disableTip
+              showVariations={false}
             />
           ))
         : null}

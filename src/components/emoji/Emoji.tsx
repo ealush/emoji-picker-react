@@ -18,7 +18,7 @@ type Props = Readonly<{
   emojiStyle: EmojiStyle;
   emoji: DataEmoji;
   unified: string;
-  disableTip?: boolean;
+  showVariations?: boolean;
 }>;
 
 export function Emoji({
@@ -26,7 +26,7 @@ export function Emoji({
   unified,
   hidden,
   emojiStyle,
-  disableTip
+  showVariations = true
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
   const { handleMouseDown, handleMouseUp, handleClick } = useEmojiMouseEvents(
@@ -36,11 +36,11 @@ export function Emoji({
     <button
       className={clsx('epr-emoji', {
         hidden,
-        ['epr-emoji-has-variations']: hasVariations && !disableTip
+        ['epr-emoji-has-variations']: hasVariations && showVariations
       })}
       data-unified={unified}
-      onMouseUp={handleMouseUp}
-      onMouseDown={handleMouseDown}
+      onMouseUp={showVariations ? handleMouseUp : undefined}
+      onMouseDown={showVariations ? handleMouseDown : undefined}
       onClick={handleClick(unified)}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
