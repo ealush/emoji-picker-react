@@ -39,6 +39,7 @@ export function RecentlyUsed({ categoryConfig }: Props) {
             unified={recentlyUsedItem.unified}
             emojiStyle={emojiStyle}
             emoji={emoji}
+            key={recentlyUsedItem.unified}
           />
         );
       })}
