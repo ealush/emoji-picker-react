@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 import {
   emojiHasVariations,
+  emojiUnified,
   emojiVariations
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiStyleConfig } from '../context/PickerConfigContext';
@@ -22,15 +23,18 @@ export function EmojiVariationPicker() {
       })}
     >
       {visible
-        ? emojiVariations(emoji).map(unified => (
-            <Emoji
-              key={unified}
-              emoji={emoji}
-              unified={unified}
-              emojiStyle={emojiStyle}
-              showVariations={false}
-            />
-          ))
+        ? [emojiUnified(emoji)]
+            .concat(emojiVariations(emoji))
+            .slice(0, 6)
+            .map(unified => (
+              <Emoji
+                key={unified}
+                emoji={emoji}
+                unified={unified}
+                emojiStyle={emojiStyle}
+                showVariations={false}
+              />
+            ))
         : null}
     </div>
   );

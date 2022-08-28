@@ -1,6 +1,6 @@
 .EmojiPickerReact .epr-emoji-variation-picker {
   position: absolute;
-  top: 0;
+  top: 60%;
   right: 20px;
   left: 20px;
   padding: 5px;
@@ -15,7 +15,7 @@
   opacity: 0;
   min-height: 55px;
   pointer-events: none;
-  transition: opacity 0.2s ease-in-out, top 0.4s ease-in-out;
+  transition: opacity 0.2s ease-in-out, top 0.2s ease-in-out;
 }
 
 .EmojiPickerReact .epr-emoji-variation-picker.visible {
