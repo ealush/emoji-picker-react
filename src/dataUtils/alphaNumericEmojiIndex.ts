@@ -1,8 +1,10 @@
 import { DataEmoji } from './DataTypes';
 import { allEmojis, emojiNames, emojiUnified } from './emojiSelectors';
 
-export const alphaNumericEmojiIndex: BaseIndex = allEmojis.reduce(
-  (searchIndex, emoji) => {
+export const alphaNumericEmojiIndex: BaseIndex = {};
+
+window?.setTimeout(() => {
+  allEmojis.reduce((searchIndex, emoji) => {
     const joinedNameString = emojiNames(emoji)
       .flat()
       .join('')
@@ -15,8 +17,7 @@ export const alphaNumericEmojiIndex: BaseIndex = allEmojis.reduce(
       searchIndex[char][emojiUnified(emoji)] = emoji;
     });
     return searchIndex;
-  },
-  {} as BaseIndex
-);
+  }, alphaNumericEmojiIndex as BaseIndex);
+});
 
 type BaseIndex = Record<string, Record<string, DataEmoji>>;

@@ -72,18 +72,16 @@ export function emojiByUnified(unified: string): DataEmoji | undefined {
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
 
-// FIXME: Consider deferring
-export const allEmojisByUnified: {
+const allEmojisByUnified: {
   [unified: string]: DataEmoji;
-} = allEmojis.reduce(
-  (allEmojis, Emoji) => {
+} = {};
+
+window?.setTimeout(() => {
+  allEmojis.reduce((allEmojis, Emoji) => {
     allEmojis[emojiUnified(Emoji)] = Emoji;
     return allEmojis;
-  },
-  {} as {
-    [unified: string]: DataEmoji;
-  }
-);
+  }, allEmojisByUnified);
+});
 
 export function activeVariationFromUnified(unified: string): SkinTones | null {
   const [, suspectedSkinTone] = unified.split('-') as [string, SkinTones];
