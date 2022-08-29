@@ -50,29 +50,29 @@
 }
 
 .EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {
-  background-image: url(./svg/objects.svg);
+  background-image: svg-load(./svg/objects.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-activities {
-  background-image: url(./svg/activities.svg);
+  background-image: svg-load(./svg/activities.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-animals_nature {
-  background-image: url(./svg/animals_nature.svg);
+  background-image: svg-load(./svg/animals_nature.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-flags {
-  background-image: url(./svg/flags.svg);
+  background-image: svg-load(./svg/flags.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-food_drink {
-  background-image: url(./svg/food_drink.svg);
+  background-image: svg-load(./svg/food_drink.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-objects {
-  background-image: url(./svg/objects.svg);
+  background-image: svg-load(./svg/objects.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-smileys_people {
-  background-image: url(./svg/smileys_people.svg);
+  background-image: svg-load(./svg/smileys_people.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-symbols {
-  background-image: url(./svg/symbols.svg);
+  background-image: svg-load(./svg/symbols.svg);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-travel_places {
-  background-image: url(./svg/travel_places.svg);
+  background-image: svg-load(./svg/travel_places.svg);
 }
