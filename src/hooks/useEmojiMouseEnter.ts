@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
+import { useBodyRef } from '../components/context/ElementRefContext';
 import {
   buttonFromEmoji,
   originalUnifiedFromEmojiElement,
   unifiedFromEmojiElement
 } from '../DomUtils/selectors';
 
-export function useEmojiMouseEnter(BodyRef: React.RefObject<HTMLDivElement>) {
+export function useEmojiMouseEnter() {
+  const BodyRef = useBodyRef();
   useEffect(() => {
     BodyRef.current?.addEventListener('mouseover', onMouseOver, {
       passive: true
@@ -29,10 +31,7 @@ export function useEmojiMouseEnter(BodyRef: React.RefObject<HTMLDivElement>) {
     }
     const unified = unifiedFromEmojiElement(button);
     const original = originalUnifiedFromEmojiElement(button);
-    console.log(unified, original);
   }
 
-  function onMouseOut() {
-    console.log('out!');
-  }
+  function onMouseOut() {}
 }
