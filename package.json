@@ -65,14 +65,19 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "size-limit": "^8.0.1",
+    "@storybook/addon-postcss": "^2.0.0",
     "tinykeys": "^1.4.0",
+    "cssnano": "^5.1.13",
     "tsdx": "^0.14.1",
-    "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
-    "lodash": "^4.17.21"
-  }
+    "tslib": "^2.4.0",
+    "postcss": "^8.4.16",
+    "rollup-plugin-postcss": "^4.0.2",
+    "typescript": "^4.7.4",
+    "autoprefixer": "^10.4.8",
+    "fs-extra": "^10.1.0",
+    "lodash": "^4.17.21",
+    "tiny-invariant": "^1.2.0"
+  },
+  "dependencies": {}
 }

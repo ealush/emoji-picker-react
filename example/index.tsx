@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Thing } from '../.';
+import { Picker } from '../.';
 
 const App = () => {
   return (
     <div>
-      <Thing />
+      <Picker />
     </div>
   );
 };

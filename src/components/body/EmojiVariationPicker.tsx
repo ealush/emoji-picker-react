@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiHasVariations,
   emojiUnified,
@@ -27,7 +28,7 @@ export function EmojiVariationPicker() {
   const getTop = useVariationPickerTop(VariationPickerRef);
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
 
-  const visible = !!emoji && emojiHasVariations(emoji);
+  const visible = emoji && emojiHasVariations(emoji);
   let top;
 
   if (!visible) {
@@ -35,6 +36,8 @@ export function EmojiVariationPicker() {
   } else {
     top = getTop();
   }
+
+  const safeEmoji = asEmoji(emoji);
 
   return (
     <div
@@ -45,13 +48,13 @@ export function EmojiVariationPicker() {
       style={{ top }}
     >
       {visible
-        ? [emojiUnified(emoji)]
-            .concat(emojiVariations(emoji))
+        ? [emojiUnified(safeEmoji)]
+            .concat(emojiVariations(safeEmoji))
             .slice(0, 6)
             .map(unified => (
               <Emoji
                 key={unified}
-                emoji={emoji}
+                emoji={safeEmoji}
                 unified={unified}
                 emojiStyle={emojiStyle}
                 showVariations={false}

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { asEmoji } from '../../dataUtils/asEmoji';
 import { emojiByUnified, emojiName } from '../../dataUtils/emojiSelectors';
 import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
 import {
@@ -22,27 +23,36 @@ export function Preview() {
 
   const emoji = emojiByUnified(hoveredEmoji?.originalUnified);
 
-  const show = emoji && hoveredEmoji;
+  const show = emoji != null && hoveredEmoji != null;
 
   return (
     <Flex className="epr-preview">
-      <div>
-        {show ? (
-          <Emoji
-            unified={hoveredEmoji.unified}
-            emoji={emoji}
-            showVariations={false}
-            emojiStyle={emojiStyle}
-            hidden={false}
-            size={45}
-          />
-        ) : null}
-      </div>
-      {show ? (
-        <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
-      ) : null}
+      <PreviewContent />
     </Flex>
   );
+
+  function PreviewContent() {
+    if (emoji == undefined) return null;
+    return (
+      <>
+        <div>
+          {show ? (
+            <Emoji
+              unified={hoveredEmoji?.unified as string}
+              emoji={asEmoji(emoji)}
+              showVariations={false}
+              emojiStyle={emojiStyle}
+              hidden={false}
+              size={45}
+            />
+          ) : null}
+        </div>
+        {show ? (
+          <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
+        ) : null}
+      </>
+    );
+  }
 }
 
 export type HoveredEmoji = null | {
