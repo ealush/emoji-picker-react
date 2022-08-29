@@ -19,10 +19,11 @@ export function Footer() {
       {emoji && hoveredEmoji ? (
         <Emoji
           unified={hoveredEmoji.unified}
-          emoji={emojiByUnified(hoveredEmoji.originalUnified)}
+          emoji={emoji}
           showVariations={false}
-          style={emojiStyle}
+          emojiStyle={emojiStyle}
           hidden={false}
+          size={45}
         />
       ) : null}
     </Flex>

@@ -20,6 +20,7 @@ type Props = Readonly<{
   emoji: DataEmoji;
   unified: string;
   showVariations?: boolean;
+  size?: number;
 }>;
 
 export function Emoji({
@@ -27,12 +28,24 @@ export function Emoji({
   unified,
   hidden,
   emojiStyle,
-  showVariations = true
+  showVariations = true,
+  size
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
   const { handleMouseDown, handleMouseUp, handleClick } = useEmojiMouseEvents(
     emoji
   );
+
+  let style = {} as React.CSSProperties;
+  if (size) {
+    style.width = style.height = style.fontSize = `${size}px`;
+  }
+
+  const base = {
+    style,
+    unified
+  };
+
   return (
     <button
       className={clsx('epr-emoji', {
@@ -46,17 +59,23 @@ export function Emoji({
       onClick={handleClick(unified)}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
-        <NativeEmoji unified={unified} />
+        <NativeEmoji {...base} />
       ) : (
-        <EmojiImg emoji={emoji} unified={unified} emojiStyle={emojiStyle} />
+        <EmojiImg {...base} emoji={emoji} emojiStyle={emojiStyle} />
       )}
     </button>
   );
 }
 
-function NativeEmoji({ unified }: { unified: string }) {
+function NativeEmoji({
+  unified,
+  style
+}: {
+  unified: string;
+  style: React.CSSProperties;
+}) {
   return (
-    <span className="epr-emoji-native" data-unified={unified}>
+    <span className="epr-emoji-native" data-unified={unified} style={style}>
       {parseNativeEmoji(unified)}
     </span>
   );
@@ -65,11 +84,13 @@ function NativeEmoji({ unified }: { unified: string }) {
 function EmojiImg({
   emoji,
   unified,
-  emojiStyle
+  emojiStyle,
+  style
 }: {
   emoji: DataEmoji;
   unified: string;
   emojiStyle: EmojiStyle;
+  style: React.CSSProperties;
 }) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
 
@@ -80,6 +101,7 @@ function EmojiImg({
       className="epr-emoji-img"
       loading="lazy"
       onError={onError}
+      style={style}
     />
   );
 

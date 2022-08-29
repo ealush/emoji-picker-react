@@ -66,7 +66,10 @@ export function emojiVariationUnified(
     : emojiUnified(emoji);
 }
 
-export function emojiByUnified(unified: string): DataEmoji | undefined {
+export function emojiByUnified(unified?: string): DataEmoji | undefined {
+  if (!unified) {
+    return;
+  }
   return allEmojisByUnified[unified];
 }
 

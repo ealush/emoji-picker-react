@@ -19,19 +19,21 @@
   z-index: var(--epr-emoji-variations-indictator-z-index);
 }
 
+.EmojiPickerReact button.epr-emoji > * {
+  height: var(--epr-emoji-size);
+  width: var(--epr-emoji-size);
+  font-size: var(--epr-emoji-size);
+}
+
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:hover:after {
   border-bottom: 4px solid rgba(0, 0, 0, 0.4);
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-img {
-  height: var(--epr-emoji-size);
-  width: var(--epr-emoji-size);
+  font-size: 0;
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-native {
-  height: var(--epr-emoji-size);
-  width: var(--epr-emoji-size);
-  font-size: var(--epr-emoji-size);
   font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
   line-height: 100%;
