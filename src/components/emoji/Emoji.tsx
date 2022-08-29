@@ -5,6 +5,7 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiHasVariations,
   emojiName,
+  emojiUnified,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
@@ -39,6 +40,7 @@ export function Emoji({
         'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}
+      data-original={emojiUnified(emoji)}
       onMouseUp={showVariations ? handleMouseUp : undefined}
       onMouseDown={showVariations ? handleMouseDown : undefined}
       onClick={handleClick(unified)}

@@ -3,14 +3,30 @@ import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 import {
   FilterState,
-  useFilterState,
+  useFilterRef,
   useSearchTermState
 } from '../components/context/PickerContext';
 import { scrollTo } from '../DomUtils/scrollTo';
 import { usePickerMainRef } from '../components/context/ElementRefContext';
 
+function useSetFilterRef() {
+  const filterRef = useFilterRef();
+
+  return function setFilter(
+    setter: FilterState | ((current: FilterState) => FilterState)
+  ): void {
+    if (typeof setter === 'function') {
+      return setFilter(setter(filterRef.current));
+    }
+
+    filterRef.current = setter;
+  };
+}
+
 export function useFilter() {
-  const [filter = {}, setFilter] = useFilterState();
+  const filterRef = useFilterRef();
+  const setFilterRef = useSetFilterRef();
+
   const [searchTerm, setSearchTerm] = useSearchTermState();
   const PickerMainRef = usePickerMainRef();
 
@@ -22,16 +38,17 @@ export function useFilter() {
   function onChange(nextValue: string) {
     scrollTo(PickerMainRef.current, 0);
     setSearchTerm(nextValue);
+    const filter = filterRef.current;
 
     if (nextValue.length === 0) {
       // setFilter(null);
       return;
     } else if (nextValue.length === 1) {
       const index = alphaNumericEmojiIndex;
-      setFilter({
-        ...filter,
+      setFilterRef(current => ({
+        ...current,
         [nextValue]: index[nextValue]
-      });
+      }));
       return;
     }
 
@@ -47,10 +64,10 @@ export function useFilter() {
       return;
     }
 
-    setFilter({
-      ...filter,
+    setFilterRef(current => ({
+      ...current,
       [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
-    });
+    }));
   }
 }
 
@@ -76,7 +93,7 @@ function hasMatch(emoji: DataEmoji, keyword: string): boolean {
 }
 
 export function useIsEmojiFiltered(): (unified: string) => boolean {
-  const [filter] = useFilterState();
+  const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
   return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);

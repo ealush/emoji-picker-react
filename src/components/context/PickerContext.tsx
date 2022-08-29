@@ -10,8 +10,8 @@ import { useDefaultSkinToneConfig } from './PickerConfigContext';
 
 export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
+  const filterRef = React.useRef<FilterState>({});
 
-  const filterState = useState<FilterState>(null);
   const searchTerm = useState<string>('');
   const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
@@ -25,7 +25,7 @@ export function PickerContextProvider({ children }: Props) {
   return (
     <PickerContext.Provider
       value={{
-        filterState,
+        filterRef,
         searchTerm,
         activeCategoryState,
         activeSkinTone,
@@ -43,7 +43,6 @@ export function PickerContextProvider({ children }: Props) {
 type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const PickerContext = React.createContext<{
-  filterState: ReactState<FilterState>;
   searchTerm: ReactState<string>;
   activeCategoryState: ReactState<ActiveCategoryState>;
   activeSkinTone: ReactState<SkinTones>;
@@ -51,24 +50,25 @@ const PickerContext = React.createContext<{
   isPastInitialLoad: boolean;
   emojiVariationPickerState: ReactState<DataEmoji | null>;
   skinToneFanOpenState: ReactState<boolean>;
+  filterRef: React.MutableRefObject<FilterState>;
 }>({
-  filterState: [{}, () => {}],
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
   isPastInitialLoad: true,
   emojiVariationPickerState: [null, () => {}],
-  skinToneFanOpenState: [false, () => {}]
+  skinToneFanOpenState: [false, () => {}],
+  filterRef: { current: {} }
 });
 
 type Props = Readonly<{
   children: React.ReactNode;
 }>;
 
-export function useFilterState() {
-  const { filterState } = React.useContext(PickerContext);
-  return filterState;
+export function useFilterRef() {
+  const { filterRef } = React.useContext(PickerContext);
+  return filterRef;
 }
 
 export function useSearchTermState() {
@@ -125,6 +125,6 @@ export function useSkinToneFanOpenState() {
   return skinToneFanOpenState;
 }
 
-export type FilterState = null | Record<string, FilterDict>;
+export type FilterState = Record<string, FilterDict>;
 
 type ActiveCategoryState = null | string;
