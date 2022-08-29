@@ -5,7 +5,6 @@ import {
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
-import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useCategoriesConfig,
@@ -22,13 +21,11 @@ import './EmojiList.css';
 import { RecentlyUsed } from './RecentlyUsed';
 
 export function EmojiList() {
-  const EmojiListRef = React.useRef(null);
   const categories = useCategoriesConfig();
   const [searchTerm] = useSearchTermState();
-  useMouseDownHandlers(EmojiListRef);
 
   return (
-    <ul className="epr-emoji-list" ref={EmojiListRef}>
+    <ul className="epr-emoji-list">
       {React.useMemo(() => {
         return categories.map((categoryConfig, index) => {
           const category = categoryFromCategoryConfig(categoryConfig);

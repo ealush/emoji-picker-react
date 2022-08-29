@@ -36,7 +36,7 @@ export type PickerConfigInternal = {
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
-  onEmojiClick: (event: React.MouseEvent, emoji: EmojiClickData) => void;
+  onEmojiClick: (event: MouseEvent, emoji: EmojiClickData) => void;
   showPreview: boolean;
 };
 

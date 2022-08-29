@@ -62,7 +62,7 @@ export function useCategoriesConfig(): CategoriesConfig {
 }
 
 export function useOnEmojiClickConfig(): (
-  event: React.MouseEvent,
+  event: MouseEvent,
   emoji: EmojiClickData
 ) => void {
   const { onEmojiClick } = usePickerConfig();
