@@ -16,7 +16,8 @@
 .EmojiPickerReact.epr-search-active
   li.epr-emoji-category
   > .epr-emoji-category-label {
-  display: none;
+  position: relative;
+  opacity: 0.4;
 }
 
 .EmojiPickerReact li.epr-emoji-category {

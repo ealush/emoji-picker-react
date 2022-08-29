@@ -35,6 +35,13 @@
   overflow: hidden;
 }
 
+.EmojiPickerReact .hidden {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 .EmojiPickerReact * {
   box-sizing: border-box;
   font-family: sans-serif;

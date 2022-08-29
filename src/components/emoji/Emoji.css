@@ -41,10 +41,3 @@
   border-radius: 8px;
   background-color: var(--epr-emoji-hover-bg-color);
 }
-
-.EmojiPickerReact button.epr-emoji.hidden {
-  display: none;
-  opacity: 0;
-  pointer-events: none;
-  visibility: hidden;
-}

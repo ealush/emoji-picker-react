@@ -5,18 +5,20 @@ import {
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
 } from '../../config/categoryConfig';
+import clsx from 'clsx';
 
 type Props = Readonly<{
   categoryConfig: CategoryConfig;
   children?: React.ReactNode;
+  hidden?: boolean;
 }>;
 
-export function EmojiCategory({ categoryConfig, children }: Props) {
+export function EmojiCategory({ categoryConfig, children, hidden }: Props) {
   const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
 
   return (
-    <li className="epr-emoji-category" data-name={category}>
+    <li className={clsx('epr-emoji-category', { hidden })} data-name={category}>
       <div className="epr-emoji-category-label">{categoryName}</div>
       {children}
     </li>
