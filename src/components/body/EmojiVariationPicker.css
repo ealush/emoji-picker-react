@@ -25,3 +25,7 @@
   pointer-events: all;
   backdrop-filter: blur(3px);
 }
+
+.EmojiPickerReact .epr-emoji-variation-picker button.epr-emoji:hover {
+  background: none;
+}
