@@ -37,3 +37,26 @@ export function emojiTrueOffsetTop(element: HTMLElement | null): number {
 function elementOffsetTop(element: HTMLElement | null): number {
   return element?.offsetTop ?? 0;
 }
+
+export function unifiedFromEmojiElement(
+  emoji: HTMLElement | null
+): string | null {
+  return elementDataSetKey(buttonFromEmoji(emoji), 'unified') ?? null;
+}
+
+export function originalUnifiedFromEmojiElement(
+  emoji: HTMLElement | null
+): string | null {
+  return elementDataSetKey(buttonFromEmoji(emoji), 'original') ?? null;
+}
+
+function elementDataSetKey(
+  element: HTMLElement | null,
+  key: string
+): string | null {
+  return elementDataSet(element)[key] ?? null;
+}
+
+function elementDataSet(element: HTMLElement | null): DOMStringMap {
+  return element?.dataset ?? {};
+}
