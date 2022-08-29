@@ -1,7 +1,28 @@
+import { emojiByUnified } from '../dataUtils/emojiSelectors';
+import { DataEmoji } from '../dataUtils/DataTypes';
+
 export function buttonFromEmoji(
   emojiElement: HTMLElement | null
 ): HTMLButtonElement | null {
   return emojiElement?.closest('button.epr-emoji') ?? null;
+}
+
+export function emojiFromElement(
+  element: HTMLElement | null
+): DataEmoji | undefined {
+  const unified = originalUnifiedFromEmojiElement(element);
+
+  if (!unified) {
+    return;
+  }
+  return emojiByUnified(unified);
+}
+
+export function isEmojiElement(element: HTMLElement | null): boolean {
+  return Boolean(
+    element?.matches('button.epr-emoji') ||
+      element?.parentElement?.matches('button.epr-emoji')
+  );
 }
 
 export function closestCategory(

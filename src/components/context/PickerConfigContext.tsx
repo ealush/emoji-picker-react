@@ -8,7 +8,7 @@ import {
   PickerConfigInternal
 } from '../../config/config';
 import { SkinTones } from '../../data/skinToneVariations';
-import { EmojiClickData } from '../../hooks/useEmojiMouseEvents';
+import { EmojiClickData } from '../../hooks/useMouseDownHandlers';
 
 type Props = PickerConfig &
   Readonly<{

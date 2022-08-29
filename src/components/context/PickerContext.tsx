@@ -11,6 +11,7 @@ import { useDefaultSkinToneConfig } from './PickerConfigContext';
 export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
   const filterRef = React.useRef<FilterState>({});
+  const disallowClickRef = React.useRef<boolean>(false);
 
   const searchTerm = useState<string>('');
   const skinToneFanOpenState = useState<boolean>(false);
@@ -32,7 +33,8 @@ export function PickerContextProvider({ children }: Props) {
         emojisThatFailedToLoadState,
         isPastInitialLoad,
         emojiVariationPickerState,
-        skinToneFanOpenState
+        skinToneFanOpenState,
+        disallowClickRef
       }}
     >
       {children}
@@ -51,6 +53,7 @@ const PickerContext = React.createContext<{
   emojiVariationPickerState: ReactState<DataEmoji | null>;
   skinToneFanOpenState: ReactState<boolean>;
   filterRef: React.MutableRefObject<FilterState>;
+  disallowClickRef: React.MutableRefObject<boolean>;
 }>({
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
@@ -59,7 +62,8 @@ const PickerContext = React.createContext<{
   isPastInitialLoad: true,
   emojiVariationPickerState: [null, () => {}],
   skinToneFanOpenState: [false, () => {}],
-  filterRef: { current: {} }
+  filterRef: { current: {} },
+  disallowClickRef: { current: false }
 });
 
 type Props = Readonly<{
@@ -69,6 +73,11 @@ type Props = Readonly<{
 export function useFilterRef() {
   const { filterRef } = React.useContext(PickerContext);
   return filterRef;
+}
+
+export function useDisallowClickRef() {
+  const { disallowClickRef } = React.useContext(PickerContext);
+  return disallowClickRef;
 }
 
 export function useSearchTermState() {

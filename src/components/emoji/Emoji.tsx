@@ -1,17 +1,27 @@
 import clsx from 'clsx';
 import * as React from 'react';
 import { EmojiStyle } from '../../config/config';
+import { SkinTones } from '../../data/skinToneVariations';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
+  activeVariationFromUnified,
   emojiHasVariations,
   emojiName,
+  emojiNames,
   emojiUnified,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
-import { useEmojiMouseEvents } from '../../hooks/useEmojiMouseEvents';
+import { setRecentlyUsed } from '../../dataUtils/recentlyUsed';
+import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
+import { EmojiClickData } from '../../hooks/useMouseDownHandlers';
+import { useOnEmojiClickConfig } from '../context/PickerConfigContext';
 
-import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useDisallowClickRef,
+  useEmojisThatFailedToLoadState
+} from '../context/PickerContext';
 import './Emoji.css';
 
 type Props = Readonly<{
@@ -23,6 +33,28 @@ type Props = Readonly<{
   size?: number;
 }>;
 
+function useHandleClick(emoji: DataEmoji) {
+  const disallowClickRef = useDisallowClickRef();
+  const [activeSkinTone] = useActiveSkinToneState();
+  const onEmojiClick = useOnEmojiClickConfig();
+  const { closeAllOpenToggles } = useCloseAllOpenToggles();
+
+  return function onClick(event: React.MouseEvent) {
+    if (disallowClickRef.current) {
+      return;
+    }
+
+    closeAllOpenToggles();
+
+    const unified = emojiUnified(emoji);
+
+    const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
+
+    setRecentlyUsed(emoji, skinToneToUse);
+    onEmojiClick(event, emojiClickOutput(emoji, skinToneToUse));
+  };
+}
+
 export function Emoji({
   emoji,
   unified,
@@ -32,9 +64,7 @@ export function Emoji({
   size
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
-  const { handleMouseDown, handleMouseUp, handleClick } = useEmojiMouseEvents(
-    emoji
-  );
+  const onClick = useHandleClick(emoji);
 
   let style = {} as React.CSSProperties;
   if (size) {
@@ -54,9 +84,7 @@ export function Emoji({
       })}
       data-unified={unified}
       data-original={emojiUnified(emoji)}
-      onMouseUp={showVariations ? handleMouseUp : undefined}
-      onMouseDown={showVariations ? handleMouseDown : undefined}
-      onClick={handleClick(unified)}
+      onClick={onClick}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji {...base} />
@@ -108,4 +136,21 @@ function EmojiImg({
   function onError() {
     setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
   }
+}
+
+function emojiClickOutput(
+  emoji: DataEmoji,
+  activeSkinTone: SkinTones
+): EmojiClickData {
+  const unified = emojiUnified(emoji, activeSkinTone);
+  return {
+    activeSkinTone,
+    unified: unified,
+    unifiedWithoutSkinTone: emojiUnified(emoji),
+    emoji: parseNativeEmoji(unified),
+    names: emojiNames(emoji),
+    getImageUrl(emojiStyle: EmojiStyle) {
+      return emojiUrlByUnified(emojiStyle, unified);
+    }
+  };
 }

@@ -1,8 +1,6 @@
+import { EmojiClickData } from './../hooks/useMouseDownHandlers';
 import { SkinTones } from '../data/skinToneVariations';
-import {
-  defaultOnClickHandler,
-  EmojiClickData
-} from '../hooks/useEmojiMouseEvents';
+import { defaultOnClickHandler } from '../hooks/useMouseDownHandlers';
 import {
   CategoriesConfig,
   baseCategoriesConfig,
