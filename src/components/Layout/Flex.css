@@ -1,0 +1,11 @@
+.EmojiPickerReact .Flex {
+  display: flex;
+}
+
+.EmojiPickerReact .Flex.FlexRow {
+  flex-direction: row;
+}
+
+.EmojiPickerReact .Flex.FlexColumn {
+  flex-direction: column;
+}

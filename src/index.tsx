@@ -3,7 +3,7 @@ import PickerMain from './components/main/PickerMain';
 import { Header } from './components/header/Header';
 import { Body } from './components/body/Body';
 import './EmojiPickerReact.css';
-import { Footer } from './components/footer/Footer';
+import { Preview } from './components/footer/Preview';
 import { PickerConfigProvider } from './components/context/PickerConfigContext';
 import { PickerConfig } from './config/config';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
@@ -17,7 +17,7 @@ export function Picker(props: Props) {
         <PickerMain>
           <Header />
           <Body />
-          <Footer />
+          <Preview />
         </PickerMain>
       </PickerConfigProvider>
     </ElementRefContextProvider>

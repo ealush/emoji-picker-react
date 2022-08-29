@@ -1,0 +1,12 @@
+.EmojiPickerReact .epr-preview {
+  padding: 10px;
+  box-shadow: 0 -1px 0 0 #ebebeb;
+  height: var(--epr-preview-height);
+  align-items: center;
+}
+
+.EmojiPickerReact .epr-preview .epr-preview-emoji-label {
+  color: var(--epr-preview-text-color);
+  font-size: var(--epr-preview-text-size);
+  padding: var(--epr-preview-text-padding);
+}

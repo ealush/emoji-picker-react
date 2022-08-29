@@ -68,3 +68,8 @@ export function useOnEmojiClickConfig(): (
   const { onEmojiClick } = usePickerConfig();
   return onEmojiClick;
 }
+
+export function useShowPreviewConfig(): boolean {
+  const { showPreview } = usePickerConfig();
+  return showPreview;
+}

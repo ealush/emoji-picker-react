@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { HoveredEmoji } from '../components/footer/Footer';
+import { HoveredEmoji } from '../components/footer/Preview';
 import {
   buttonFromEmoji,
   originalUnifiedFromEmojiElement,
@@ -8,10 +8,16 @@ import {
 } from '../DomUtils/selectors';
 
 export function useEmojiMouseEnter(
+  allow: boolean,
   setHoveredEmoji: React.Dispatch<React.SetStateAction<HoveredEmoji>>
 ) {
   const BodyRef = useBodyRef();
+
   useEffect(() => {
+    if (!allow) {
+      return;
+    }
+
     BodyRef.current?.addEventListener('mouseover', onMouseOver, {
       passive: true
     });

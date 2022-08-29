@@ -26,7 +26,8 @@ export function basePickerConfig(): PickerConfigInternal {
     autoFocusSearch: true,
     emojiStyle: EmojiStyle.APPLE,
     categories: baseCategoriesConfig,
-    onEmojiClick: defaultOnClickHandler
+    onEmojiClick: defaultOnClickHandler,
+    showPreview: true
   };
 }
 
@@ -38,6 +39,7 @@ export type PickerConfigInternal = {
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
   onEmojiClick: (event: React.MouseEvent, emoji: EmojiClickData) => void;
+  showPreview: boolean;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

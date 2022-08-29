@@ -54,6 +54,9 @@ export const AlternativeDefaultSkinTone = (args: Props) => (
 export const AutoFocusDisabled = (args: Props) => (
   <Template {...args} autoFocusSearch={false} />
 );
+export const HidePreview = (args: Props) => (
+  <Template {...args} showPreview={false} />
+);
 export const CustomCategoryConfig = (args: Props) => (
   <Template
     {...args}
