@@ -2,17 +2,18 @@
   position: sticky;
   top: 0;
   width: 100%;
-  padding: var(--epr-category-label-padding);
   display: flex;
   align-items: center;
-  background-color: var(--epr-category-label-background-color);
   font-weight: bold;
-  color: var(--epr-category-label-text-color);
-  height: var(--epr-category-label-height);
   text-transform: capitalize;
   backdrop-filter: blur(3px);
+  padding: var(--epr-category-label-padding);
+  background-color: var(--epr-category-label-background-color);
+  color: var(--epr-category-label-text-color);
   z-index: var(--epr-category-label-z-index);
+  height: var(--epr-category-label-height);
 }
+
 .EmojiPickerReact.epr-search-active
   li.epr-emoji-category
   > .epr-emoji-category-label {

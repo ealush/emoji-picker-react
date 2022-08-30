@@ -1,7 +1,6 @@
 .EmojiPickerReact button.epr-emoji {
   position: relative;
   padding: var(--epr-emoji-padding);
-  display: flex;
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:after {

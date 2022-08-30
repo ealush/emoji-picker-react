@@ -5,6 +5,7 @@
   --epr-emoji-size: 33px;
   --epr-category-navigation-button-size: 20px;
   --epr-emoji-variation-picker-bg-color: rgba(245, 245, 245, 0.7);
+  --epr-emoji-variation-picker-height: 55px;
   --epr-preview-height: 70px;
   --epr-preview-text-color: #858585;
   --epr-preview-text-size: 14px;
@@ -32,6 +33,9 @@
   --epr-emoji-variations-indictator-z-index: 1;
   --epr-category-label-z-index: 2;
   --epr-skin-variation-picker-z-index: 5;
+
+  --epr-picker-border-radius: 8px;
+  --epr-picker-border-color: #e7e7e7;
 }
 
 .EmojiPickerReact {

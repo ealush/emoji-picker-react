@@ -1,15 +1,14 @@
 .EmojiPickerReact .epr-skin-tones {
-  margin: 0 5px 0 15px;
+  /* margin: 0 5px 0 15px; */
   display: flex;
   align-items: center;
   justify-content: flex-end;
   transition: all 0.3s ease-in-out;
-  flex-basis: 10px;
+  flex-basis: 30px;
 }
 
 .EmojiPickerReact .epr-skin-tones.open {
   flex-basis: 170px;
-  margin: 0 5px 0 0;
 }
 
 .EmojiPickerReact .epr-skin-tone-select {
@@ -21,12 +20,12 @@
 .EmojiPickerReact .epr-skin-tones.open .epr-skin-tone-select:before {
   content: '';
   position: absolute;
-  background: var(--epr-active-skin-backdrop-color);
   top: -7px;
   left: -7px;
   right: -7px;
   bottom: -7px;
   border-radius: 6px;
+  background: var(--epr-active-skin-backdrop-color);
 }
 
 .EmojiPickerReact .epr-skin-tones.open .epr-tone {

@@ -7,12 +7,11 @@
 
 .EmojiPickerReact .epr-category-nav > button.epr-cat-btn {
   display: inline-block;
-  height: var(--epr-category-navigation-button-size);
-  width: var(--epr-category-navigation-button-size);
-  background-size: fit;
   opacity: 0.5;
   transition: opacity 0.2s ease-in-out;
   position: relative;
+  height: var(--epr-category-navigation-button-size);
+  width: var(--epr-category-navigation-button-size);
 }
 
 .EmojiPickerReact.epr-search-active .epr-category-nav > button.epr-cat-btn,
@@ -45,8 +44,8 @@
   right: 0;
   bottom: -5px;
   height: 3px;
-  background-color: var(--epr-active-category-indicator-color);
   border-radius: 5px;
+  background-color: var(--epr-active-category-indicator-color);
 }
 
 .EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {

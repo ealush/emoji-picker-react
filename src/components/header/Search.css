@@ -1,13 +1,13 @@
 .EmojiPickerReact input.epr-search {
-  border-radius: var(--epr-search-input-border-radius);
   flex: 1;
-  padding: var(--epr-search-input-padding);
   display: block;
-  height: var(--epr-search-input-height);
   outline: none;
+  min-width: 0;
+  border-radius: var(--epr-search-input-border-radius);
+  padding: var(--epr-search-input-padding);
+  height: var(--epr-search-input-height);
   background-color: var(--epr-search-bar-color);
   border: 1px solid var(--epr-search-bar-color);
-  min-width: 0;
 }
 
 .EmojiPickerReact input.epr-search:focus {

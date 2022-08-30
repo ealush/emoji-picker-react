@@ -5,18 +5,18 @@
   left: 5px;
   padding: 5px;
   height: 0;
-  z-index: var(--epr-skin-variation-picker-z-index);
   box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.3);
   border-radius: 3px;
   display: flex;
   align-items: center;
-  background: var(--epr-emoji-variation-picker-bg-color);
   justify-content: space-around;
   opacity: 0;
   visibility: hidden;
-  height: 55px;
   pointer-events: none;
   top: -100%;
+  height: var(--epr-emoji-variation-picker-height);
+  z-index: var(--epr-skin-variation-picker-z-index);
+  background: var(--epr-emoji-variation-picker-bg-color);
 }
 
 .EmojiPickerReact .epr-emoji-variation-picker.visible {
