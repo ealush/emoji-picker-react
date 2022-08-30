@@ -13,8 +13,8 @@
   position: absolute;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  border-bottom: 4px solid rgba(0, 0, 0, 0.1);
   transform: rotate(135deg);
+  border-bottom: 4px solid var(--epr-emoji-variation-indicator-color);
   z-index: var(--epr-emoji-variations-indictator-z-index);
 }
 
@@ -25,7 +25,7 @@
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:hover:after {
-  border-bottom: 4px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 4px solid var(--epr-emoji-variation-indicator-color-hover);
 }
 
 .EmojiPickerReact button.epr-emoji > .epr-emoji-img {

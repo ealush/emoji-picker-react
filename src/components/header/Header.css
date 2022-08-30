@@ -1,5 +1,4 @@
 .EmojiPickerReact .epr-header .epr-header-overlay {
   padding: var(--epr-header-padding);
-  background-color: var(--epr-header-background-color);
   z-index: var(--epr-header-overlay-z-index);
 }

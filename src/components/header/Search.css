@@ -3,13 +3,15 @@
   display: block;
   outline: none;
   min-width: 0;
+  color: var(--epr-search-bar-text-color);
   border-radius: var(--epr-search-input-border-radius);
   padding: var(--epr-search-input-padding);
   height: var(--epr-search-input-height);
-  background-color: var(--epr-search-bar-color);
-  border: 1px solid var(--epr-search-bar-color);
+  background-color: var(--epr-search-bar-bg-color);
+  border: 1px solid var(--epr-search-bar-bg-color);
 }
 
 .EmojiPickerReact input.epr-search:focus {
+  background-color: var(--epr-search-bar-bg-color-active);
   border: 1px solid var(--epr-search-outline);
 }

@@ -1,7 +1,8 @@
 .EmojiPickerReact .epr-preview {
   padding: 10px;
-  box-shadow: 0 -1px 5px #e1e1e1;
+  z-index: 1;
   align-items: center;
+  box-shadow: 0 -1px 5px var(--epr-preview-box-shadow-color);
   height: var(--epr-preview-height);
 }
 
