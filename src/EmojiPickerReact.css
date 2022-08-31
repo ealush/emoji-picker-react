@@ -1,4 +1,7 @@
 .EmojiPickerReact {
+  --highlight-color: #007aeb;
+  --hover-backdrop-color: #f1f8ff;
+  --text-color-base: #858585;
   --epr-header-height: 70px;
   --epr-picker-width: 350px;
   --epr-picker-height: 500px;
@@ -7,17 +10,17 @@
   --epr-emoji-variation-picker-bg-color: rgba(245, 245, 245, 0.7);
   --epr-emoji-variation-picker-height: 55px;
   --epr-preview-height: 70px;
-  --epr-preview-text-color: #858585;
+  --epr-preview-text-color: var(--text-color-base);
   --epr-preview-text-size: 14px;
   --epr-preview-text-padding: 0 10px;
   --epr-search-bar-bg-color: #f6f6f6;
-  --epr-active-category-indicator-color: #007aeb;
-  --epr-active-skin-tone-indicator-border-color: #007aeb;
-  --epr-search-outline: #007aeb;
-  --epr-active-skin-backdrop-color: #f1f8ff;
-  --epr-category-label-text-color: #858585;
+  --epr-active-category-indicator-color: var(--highlight-color);
+  --epr-active-skin-tone-indicator-border-color: var(--highlight-color);
+  --epr-search-outline: var(--highlight-color);
+  --epr-active-skin-hover-color: var(--hover-backdrop-color);
+  --epr-emoji-hover-olor: var(--hover-backdrop-color);
+  --epr-category-label-text-color: var(--text-color-base);
   --epr-category-label-background-color: #ffffffe6;
-  --epr-emoji-hover-bg-color: #f1f8ff;
   --epr-emoji-padding: 5px;
   --epr-header-padding: 15px 10px;
   --epr-emoji-gap: 4px;
@@ -35,29 +38,30 @@
 
   --epr-picker-border-radius: 8px;
   --epr-search-bar-text-color: #1e1e1e;
+  --epr-search-bar-placeholder-color: #2e2e2e;
   --epr-picker-border-color: #e7e7e7;
   --epr-background-color: #fff;
-  --epr-preview-box-shadow-color: #e1e1e1;
+  --epr-preview-border-color: var(--epr-picker-border-color);
   --epr-search-bar-bg-color-active: var(--epr-search-bar-bg-color);
   --epr-emoji-variation-indicator-color: rgba(0, 0, 0, 0.1);
   --epr-emoji-variation-indicator-color-hover: rgba(0, 0, 0, 0.4);
 }
 
 .EmojiPickerReact.epr-dark-theme {
-  --epr-emoji-variation-picker-bg-color: #2d2e2fe6;
-  --epr-preview-text-color: #b1b1b1;
-  --epr-search-bar-bg-color: #2d2e2f;
-  --epr-active-category-indicator-color: #2877c1;
-  --epr-active-skin-tone-indicator-border-color: #2877c1;
-  --epr-search-outline: #2877c1;
-  --epr-search-bar-text-color: #f1f8ff;
-  --epr-active-skin-backdrop-color: #f1f8ff;
-  --epr-category-label-text-color: #b1b1b1;
-  --epr-category-label-background-color: #151617e6;
-  --epr-emoji-hover-bg-color: #2d2e2fe6;
+  --highlight-color: #2877c1;
+  --hover-backdrop-color: #363636f6;
+  --text-color-base: #cacaca;
+  --epr-emoji-variation-picker-bg-color: var(--hover-backdrop-color);
+  --epr-preview-text-color: var(--text-color-base);
+  --epr-category-label-text-color: var(--text-color-base);
+  --epr-search-bar-bg-color: #404040;
+  --epr-search-bar-text-color: #f1ffff;
+  --epr-search-bar-placeholder-color: #c9c9c9;
+  --epr-active-skin-hover-color: var(--hover-backdrop-color);
+  --epr-emoji-hover-olor: var(--hover-backdrop-color);
+  --epr-category-label-background-color: #21252fe6;
   --epr-picker-border-color: #151617;
-  --epr-preview-box-shadow-color: #252525;
-  --epr-background-color: #151617;
+  --epr-background-color: #21252f;
   --epr-search-bar-bg-color-active: #262b3c;
   --epr-emoji-variation-indicator-color: rgba(255, 255, 255, 0.1);
   --epr-emoji-variation-indicator-color-hover: rgba(255, 255, 255, 0.4);

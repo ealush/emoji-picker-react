@@ -11,6 +11,10 @@
   border: 1px solid var(--epr-search-bar-bg-color);
 }
 
+.EmojiPickerReact input.epr-search::placeholder {
+  color: var(--epr-search-bar-placeholder-color);
+}
+
 .EmojiPickerReact input.epr-search:focus {
   background-color: var(--epr-search-bar-bg-color-active);
   border: 1px solid var(--epr-search-outline);

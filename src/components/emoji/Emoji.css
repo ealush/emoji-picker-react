@@ -40,5 +40,5 @@
 
 .EmojiPickerReact button.epr-emoji:hover {
   border-radius: 8px;
-  background-color: var(--epr-emoji-hover-bg-color);
+  background-color: var(--epr-emoji-hover-olor);
 }

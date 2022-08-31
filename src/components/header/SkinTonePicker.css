@@ -17,23 +17,17 @@
   height: 16px;
 }
 
-.EmojiPickerReact .epr-skin-tones.open .epr-skin-tone-select:before {
-  content: '';
-  position: absolute;
-  top: -7px;
-  left: -7px;
-  right: -7px;
-  bottom: -7px;
-  border-radius: 6px;
-  background: var(--epr-active-skin-backdrop-color);
-}
-
 .EmojiPickerReact .epr-skin-tones.open .epr-tone {
   transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
 }
 
 .EmojiPickerReact .epr-skin-tones:not(.open) .epr-tone {
+  z-index: 0;
   opacity: 0;
+}
+
+.EmojiPickerReact .epr-skin-tones .epr-tone.active {
+  z-index: 1;
 }
 
 .EmojiPickerReact .epr-skin-tones .epr-tone {
@@ -45,7 +39,12 @@
   position: absolute;
   right: 0;
   transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
-  z-index: 0;
+  z-index: 1;
+  box-shadow: 0 0 0 0px var(--epr-active-skin-hover-color);
+}
+
+.EmojiPickerReact .epr-skin-tones .epr-tone:hover {
+  box-shadow: 0 0 0 5px var(--epr-active-skin-hover-color);
 }
 
 .EmojiPickerReact
