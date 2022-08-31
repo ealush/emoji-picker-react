@@ -4,6 +4,8 @@ import './PickerMain.css';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import clsx from 'clsx';
 import { usePickerMainRef } from '../context/ElementRefContext';
+import { useThemeConfig } from '../context/PickerConfigContext';
+import { Theme } from '../../config/config';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -22,12 +24,14 @@ type RootProps = Readonly<{
 }>;
 
 function PickerRootElement({ children }: RootProps) {
+  const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
   return (
     <aside
       className={clsx('EmojiPickerReact', 'epr-main', {
-        'epr-search-active': searchModeActive
+        'epr-search-active': searchModeActive,
+        'epr-dark-theme': theme === Theme.DARK
       })}
       ref={PickerMainRef}
     >

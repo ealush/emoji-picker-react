@@ -73,3 +73,8 @@ export function useShowPreviewConfig(): boolean {
   const { showPreview } = usePickerConfig();
   return showPreview;
 }
+
+export function useThemeConfig(): string {
+  const { theme } = usePickerConfig();
+  return theme;
+}

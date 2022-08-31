@@ -25,7 +25,8 @@ export function basePickerConfig(): PickerConfigInternal {
     emojiStyle: EmojiStyle.APPLE,
     categories: baseCategoriesConfig,
     onEmojiClick: defaultOnClickHandler,
-    showPreview: true
+    showPreview: true,
+    theme: Theme.LIGHT
   };
 }
 
@@ -38,6 +39,7 @@ export type PickerConfigInternal = {
   categories: CategoriesConfig;
   onEmojiClick: (event: MouseEvent, emoji: EmojiClickData) => void;
   showPreview: boolean;
+  theme: Theme;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;
@@ -48,4 +50,10 @@ export enum EmojiStyle {
   TWITTER = 'twitter',
   GOOGLE = 'google',
   FACEBOOK = 'facebook'
+}
+
+export enum Theme {
+  DARK = 'dark',
+  LIGHT = 'light',
+  AUTO = 'auto'
 }

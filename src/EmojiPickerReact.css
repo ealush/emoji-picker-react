@@ -43,7 +43,7 @@
   --epr-emoji-variation-indicator-color-hover: rgba(0, 0, 0, 0.4);
 }
 
-.EmojiPickerReact.dark {
+.EmojiPickerReact.epr-dark-theme {
   --epr-emoji-variation-picker-bg-color: #2d2e2fe6;
   --epr-preview-text-color: #b1b1b1;
   --epr-search-bar-bg-color: #2d2e2f;

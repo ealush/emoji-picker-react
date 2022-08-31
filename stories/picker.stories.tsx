@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import { Picker, Props } from '../src';
 import { SkinTones } from '../src/data/skinToneVariations';
-import { EmojiStyle } from '../src/config/config';
+import { EmojiStyle, Theme } from '../src/config/config';
 import { Categories } from '../src/config/categoryConfig';
 
 const meta: Meta = {
@@ -30,6 +30,9 @@ export const Native = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
 export const Default = (args: Props) => <Template {...args} />;
+export const Dark = (args: Props) => (
+  <TemplateDark {...args} theme={Theme.DARK} />
+);
 export const EmojiImageApple = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.APPLE} />
 );
@@ -81,6 +84,19 @@ export const CustomCategoryConfig = (args: Props) => (
   />
 );
 
+const TemplateDark: Story<Props> = args => (
+  <div
+    style={{
+      display: 'inline-block',
+      padding: '15px',
+      backgroundColor: '#292D3E',
+      height: '100vh',
+      width: '100vw'
+    }}
+  >
+    <Picker {...args} onEmojiClick={(...args) => console.log(...args)} />
+  </div>
+);
 const Template: Story<Props> = args => (
   <div
     style={{
