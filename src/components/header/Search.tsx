@@ -5,6 +5,7 @@ import {
   useAutoFocusSearchConfig,
   useSearchPlaceHolderConfig
 } from '../context/PickerConfigContext';
+import Relative from '../Layout/Relative';
 import './Search.css';
 
 export function Search() {
@@ -15,14 +16,17 @@ export function Search() {
   const { onChange, searchTerm } = useFilter();
 
   return (
-    <input
-      autoFocus={autoFocus}
-      onFocus={closeAllOpenToggles}
-      className="epr-search"
-      type="text"
-      placeholder={placeholder}
-      onChange={event => onChange(event.target.value)}
-      value={searchTerm}
-    />
+    <Relative className="epr-search-container">
+      <input
+        autoFocus={autoFocus}
+        onFocus={closeAllOpenToggles}
+        className="epr-search"
+        type="text"
+        placeholder={placeholder}
+        onChange={event => onChange(event.target.value)}
+        value={searchTerm}
+      />
+      <div className="epr-icn-search" />
+    </Relative>
   );
 }

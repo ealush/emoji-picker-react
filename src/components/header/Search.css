@@ -1,8 +1,11 @@
-.EmojiPickerReact input.epr-search {
+.EmojiPickerReact .epr-search-container {
   flex: 1;
   display: block;
-  outline: none;
   min-width: 0;
+}
+
+.EmojiPickerReact input.epr-search {
+  outline: none;
   transition: all 0.2s ease-in-out;
   color: var(--epr-search-bar-text-color);
   border-radius: var(--epr-search-input-border-radius);
@@ -10,6 +13,25 @@
   height: var(--epr-search-input-height);
   background-color: var(--epr-search-bar-bg-color);
   border: 1px solid var(--epr-search-bar-bg-color);
+  width: 100%;
+}
+
+.EmojiPickerReact .epr-search-container .epr-icn-search {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-image: svg-load(./svg/magnifier.svg);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 20px;
+}
+
+.EmojiPickerReact.epr-dark-theme .epr-search-container .epr-icn-search {
+  background-position-y: -20px;
 }
 
 .EmojiPickerReact input.epr-search::placeholder {
