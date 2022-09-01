@@ -3,7 +3,6 @@
   flex-direction: row;
   justify-content: space-around;
   padding: var(--epr-header-padding);
-  border-bottom: 1px solid var(--epr-picker-border-color);
 }
 
 .EmojiPickerReact .epr-category-nav > button.epr-cat-btn {

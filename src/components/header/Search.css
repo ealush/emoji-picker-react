@@ -3,6 +3,7 @@
   display: block;
   outline: none;
   min-width: 0;
+  transition: all 0.2s ease-in-out;
   color: var(--epr-search-bar-text-color);
   border-radius: var(--epr-search-input-border-radius);
   padding: var(--epr-search-input-padding);
@@ -17,5 +18,5 @@
 
 .EmojiPickerReact input.epr-search:focus {
   background-color: var(--epr-search-bar-bg-color-active);
-  border: 1px solid var(--epr-search-outline);
+  border: 1px solid var(--epr-search-border-color);
 }

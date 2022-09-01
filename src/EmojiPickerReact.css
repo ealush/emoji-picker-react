@@ -16,7 +16,7 @@
   --epr-search-bar-bg-color: #f6f6f6;
   --epr-active-category-indicator-color: var(--highlight-color);
   --epr-active-skin-tone-indicator-border-color: var(--highlight-color);
-  --epr-search-outline: var(--highlight-color);
+  --epr-search-border-color: var(--highlight-color);
   --epr-active-skin-hover-color: var(--hover-backdrop-color);
   --epr-emoji-hover-olor: var(--hover-backdrop-color);
   --epr-category-label-text-color: var(--text-color-base);
@@ -38,7 +38,7 @@
 
   --epr-picker-border-radius: 8px;
   --epr-search-bar-text-color: #1e1e1e;
-  --epr-search-bar-placeholder-color: #2e2e2e;
+  --epr-search-bar-placeholder-color: var(--text-color-base);
   --epr-picker-border-color: #e7e7e7;
   --epr-background-color: #fff;
   --epr-preview-border-color: var(--epr-picker-border-color);
@@ -48,21 +48,19 @@
 }
 
 .EmojiPickerReact.epr-dark-theme {
-  --highlight-color: #2877c1;
+  --highlight-color: #c0c0c0;
+  --text-color-base: var(--highlight-color);
   --hover-backdrop-color: #363636f6;
-  --text-color-base: #cacaca;
   --epr-emoji-variation-picker-bg-color: var(--hover-backdrop-color);
   --epr-preview-text-color: var(--text-color-base);
   --epr-category-label-text-color: var(--text-color-base);
-  --epr-search-bar-bg-color: #404040;
-  --epr-search-bar-text-color: #f1ffff;
-  --epr-search-bar-placeholder-color: #c9c9c9;
+  --epr-search-bar-bg-color: #333333;
   --epr-active-skin-hover-color: var(--hover-backdrop-color);
   --epr-emoji-hover-olor: var(--hover-backdrop-color);
   --epr-category-label-background-color: #222222e6;
   --epr-picker-border-color: #151617;
   --epr-background-color: #222222;
-  --epr-search-bar-bg-color-active: #262b3c;
+  --epr-search-bar-bg-color-active: #000000;
   --epr-emoji-variation-indicator-color: rgba(255, 255, 255, 0.1);
   --epr-emoji-variation-indicator-color-hover: rgba(255, 255, 255, 0.4);
 }
