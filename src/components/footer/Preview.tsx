@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { asEmoji } from '../../dataUtils/asEmoji';
-import { emojiByUnified, emojiName } from '../../dataUtils/emojiSelectors';
+import {
+  emojiByUnified,
+  emojiName,
+  emojiUnified
+} from '../../dataUtils/emojiSelectors';
 import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
 import {
   useEmojiStyleConfig,
@@ -32,7 +36,8 @@ export function Preview() {
   );
 
   function PreviewContent() {
-    if (emoji == undefined) return null;
+    const defaultEmoji = asEmoji(emojiByUnified('1f60a'));
+
     return (
       <>
         <div>
@@ -45,11 +50,22 @@ export function Preview() {
               hidden={false}
               size={45}
             />
-          ) : null}
+          ) : (
+            <Emoji
+              unified={emojiUnified(defaultEmoji)}
+              emoji={defaultEmoji}
+              showVariations={false}
+              emojiStyle={emojiStyle}
+              hidden={false}
+              size={45}
+            />
+          )}
         </div>
         {show ? (
           <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
-        ) : null}
+        ) : (
+          <div className="epr-preview-emoji-label">What's your mood?</div>
+        )}
       </>
     );
   }
