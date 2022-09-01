@@ -7,7 +7,7 @@
   --epr-picker-height: 500px;
   --epr-emoji-size: 33px;
   --epr-category-navigation-button-size: 30px;
-  --epr-emoji-variation-picker-bg-color: rgba(245, 245, 245, 0.7);
+  --epr-emoji-variation-picker-bg-color: var(--hover-backdrop-color);
   --epr-emoji-variation-picker-height: 55px;
   --epr-preview-height: 70px;
   --epr-preview-text-color: var(--text-color-base);
@@ -18,7 +18,7 @@
   --epr-active-skin-tone-indicator-border-color: var(--highlight-color);
   --epr-search-border-color: var(--highlight-color);
   --epr-active-skin-hover-color: var(--hover-backdrop-color);
-  --epr-emoji-hover-olor: var(--hover-backdrop-color);
+  --epr-emoji-hover-color: var(--hover-backdrop-color);
   --epr-category-label-text-color: var(--text-color-base);
   --epr-category-label-background-color: #ffffffe6;
   --epr-emoji-padding: 5px;
@@ -37,7 +37,7 @@
   --epr-skin-variation-picker-z-index: 5;
 
   --epr-picker-border-radius: 8px;
-  --epr-search-bar-text-color: #1e1e1e;
+  --epr-search-bar-text-color: var(--text-color-base);
   --epr-search-bar-placeholder-color: var(--text-color-base);
   --epr-picker-border-color: #e7e7e7;
   --epr-background-color: #fff;
@@ -51,12 +51,7 @@
   --highlight-color: #c0c0c0;
   --text-color-base: var(--highlight-color);
   --hover-backdrop-color: #363636f6;
-  --epr-emoji-variation-picker-bg-color: var(--hover-backdrop-color);
-  --epr-preview-text-color: var(--text-color-base);
-  --epr-category-label-text-color: var(--text-color-base);
   --epr-search-bar-bg-color: #333333;
-  --epr-active-skin-hover-color: var(--hover-backdrop-color);
-  --epr-emoji-hover-olor: var(--hover-backdrop-color);
   --epr-category-label-background-color: #222222e6;
   --epr-picker-border-color: #151617;
   --epr-background-color: #222222;
