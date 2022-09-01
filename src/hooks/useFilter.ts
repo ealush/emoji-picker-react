@@ -32,8 +32,13 @@ export function useFilter() {
 
   return {
     onChange,
-    searchTerm
+    searchTerm,
+    clearSearch
   };
+
+  function clearSearch() {
+    setSearchTerm('');
+  }
 
   function onChange(nextValue: string) {
     scrollTo(PickerMainRef.current, 0);

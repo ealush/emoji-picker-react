@@ -4,7 +4,7 @@
   min-width: 0;
 }
 
-.EmojiPickerReact input.epr-search {
+.EmojiPickerReact .epr-search-container input.epr-search {
   outline: none;
   transition: all 0.2s ease-in-out;
   color: var(--epr-search-bar-text-color);
@@ -14,6 +14,34 @@
   background-color: var(--epr-search-bar-bg-color);
   border: 1px solid var(--epr-search-bar-bg-color);
   width: 100%;
+}
+
+.EmojiPickerReact .epr-search-container button.epr-btn-clear-search {
+  background-image: svg-load(./svg/times.svg);
+  height: 20px;
+  width: 20px;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background-size: 20px;
+}
+.EmojiPickerReact .epr-search-container button.epr-btn-clear-search:hover {
+  background-position-y: -20px;
+}
+
+.EmojiPickerReact..epr-dark-theme
+  .epr-search-container
+  button.epr-btn-clear-search {
+  background-position-y: -40px;
+}
+
+.EmojiPickerReact..epr-dark-theme
+  .epr-search-container
+  button.epr-btn-clear-search:hover {
+  background-position-y: -60px;
 }
 
 .EmojiPickerReact .epr-search-container .epr-icn-search {
@@ -34,11 +62,11 @@
   background-position-y: -20px;
 }
 
-.EmojiPickerReact input.epr-search::placeholder {
+.EmojiPickerReact .epr-search-container input.epr-search::placeholder {
   color: var(--epr-search-bar-placeholder-color);
 }
 
-.EmojiPickerReact input.epr-search:focus {
+.EmojiPickerReact .epr-search-container input.epr-search:focus {
   background-color: var(--epr-search-bar-bg-color-active);
   border: 1px solid var(--epr-search-border-color);
 }

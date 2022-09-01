@@ -13,7 +13,7 @@ export function Search() {
 
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { onChange, searchTerm } = useFilter();
+  const { onChange, searchTerm, clearSearch } = useFilter();
 
   return (
     <Relative className="epr-search-container">
@@ -27,6 +27,9 @@ export function Search() {
         value={searchTerm}
       />
       <div className="epr-icn-search" />
+      {searchTerm ? (
+        <button className="epr-btn-clear-search" onClick={clearSearch} />
+      ) : null}
     </Relative>
   );
 }
