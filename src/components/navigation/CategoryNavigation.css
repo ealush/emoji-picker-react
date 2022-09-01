@@ -8,7 +8,6 @@
 
 .EmojiPickerReact .epr-category-nav > button.epr-cat-btn {
   display: inline-block;
-  opacity: 0.5;
   transition: opacity 0.2s ease-in-out;
   position: relative;
   height: var(--epr-category-navigation-button-size);
@@ -29,9 +28,15 @@
   pointer-events: none;
 }
 
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn:focus,
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn:hover,
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn.active {
+.EmojiPickerReact:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn:focus,
+.EmojiPickerReact:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn:hover,
+.EmojiPickerReact:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn.active {
   opacity: 1;
   background-position-y: var(--epr-category-navigation-button-size);
 }
@@ -44,9 +49,15 @@
   background-position-y: calc(var(--epr-category-navigation-button-size) * 2);
 }
 
-.EmojiPickerReact.epr-dark-theme .epr-category-nav > button.epr-cat-btn:focus,
-.EmojiPickerReact.epr-dark-theme .epr-category-nav > button.epr-cat-btn:hover,
-.EmojiPickerReact.epr-dark-theme .epr-category-nav > button.epr-cat-btn.active {
+.EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn:focus,
+.EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn:hover,
+.EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
+  .epr-category-nav
+  > button.epr-cat-btn.active {
   background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {

@@ -59,9 +59,9 @@
   --epr-search-bar-placeholder-color: #c9c9c9;
   --epr-active-skin-hover-color: var(--hover-backdrop-color);
   --epr-emoji-hover-olor: var(--hover-backdrop-color);
-  --epr-category-label-background-color: #21252fe6;
+  --epr-category-label-background-color: #222222e6;
   --epr-picker-border-color: #151617;
-  --epr-background-color: #21252f;
+  --epr-background-color: #222222;
   --epr-search-bar-bg-color-active: #262b3c;
   --epr-emoji-variation-indicator-color: rgba(255, 255, 255, 0.1);
   --epr-emoji-variation-indicator-color-hover: rgba(255, 255, 255, 0.4);
