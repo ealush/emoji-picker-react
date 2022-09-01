@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { CategoryNavigation } from '../footer/CategoryNavigation';
 import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
+import { CategoryNavigation } from '../navigation/CategoryNavigation';
 import './Header.css';
 import { Search } from './Search';
 import { SkinTonePicker } from './SkinTonePicker';
