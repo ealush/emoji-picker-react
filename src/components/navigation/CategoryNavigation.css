@@ -29,9 +29,6 @@
 
 .EmojiPickerReact:not(.epr-search-active)
   .epr-category-nav
-  > button.epr-cat-btn:focus,
-.EmojiPickerReact:not(.epr-search-active)
-  .epr-category-nav
   > button.epr-cat-btn:hover,
 .EmojiPickerReact:not(.epr-search-active)
   .epr-category-nav
@@ -48,9 +45,6 @@
   background-position-y: calc(var(--epr-category-navigation-button-size) * 2);
 }
 
-.EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
-  .epr-category-nav
-  > button.epr-cat-btn:focus,
 .EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
   .epr-category-nav
   > button.epr-cat-btn:hover,
