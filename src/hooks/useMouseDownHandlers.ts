@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { EmojiStyle } from './../config/config';
+import { useEffect, useRef } from 'react';
 
 import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
@@ -7,12 +8,15 @@ import {
   useDisallowClickRef,
   useEmojiVariationPickerState
 } from '../components/context/PickerContext';
-import { EmojiStyle } from '../config/config';
-import { useOnEmojiClickConfig } from '../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useOnEmojiClickConfig
+} from '../config/useConfig';
 import { SkinTones } from '../data/skinToneVariations';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   activeVariationFromUnified,
+  emojiHasVariations,
   emojiNames,
   emojiUnified,
   emojiUrlByUnified
@@ -22,18 +26,21 @@ import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
 import { EmojiClickData } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
+import { preloadEmoji } from './preloadEmoji';
 
 let mouseDownTimer: undefined | number;
 
 export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<HTMLElement | null>
 ) {
+  const preloading = useRef(false);
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const { closeAllOpenToggles, dependencyArray } = useCloseAllOpenToggles();
   const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
+  const emojiStyle = useEmojiStyleConfig();
 
   useEffect(() => {
     if (!BodyRef.current) {
@@ -86,9 +93,18 @@ export function useMouseDownHandlers(
 
     const emoji = emojiFromEvent(event);
 
-    if (!emoji) {
+    if (!emoji || !emojiHasVariations(emoji)) {
       return;
     }
+
+    preloading.current = true;
+
+    window?.setTimeout(() => {
+      if (preloading.current) {
+        preloadEmoji(emoji, emojiStyle);
+        preloading.current = false;
+      }
+    }, 50);
 
     mouseDownTimer = window?.setTimeout(() => {
       disallowClickRef.current = true;
@@ -99,6 +115,8 @@ export function useMouseDownHandlers(
     }, 250);
   }
   function onMouseUp() {
+    preloading.current = false;
+
     if (mouseDownTimer) {
       clearTimeout(mouseDownTimer);
       mouseDownTimer = undefined;
