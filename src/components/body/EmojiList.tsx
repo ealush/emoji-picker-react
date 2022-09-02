@@ -4,12 +4,13 @@ import {
   CategoryConfig,
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
-import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
-import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useCategoriesConfig,
   useEmojiStyleConfig
-} from '../context/PickerConfigContext';
+} from '../../config/useConfig';
+import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
+import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
+import {} from '../context/PickerConfigContext';
 import {
   useActiveSkinToneState,
   useIsPastInitialLoad,

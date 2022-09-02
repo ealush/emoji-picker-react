@@ -4,8 +4,8 @@ import './PickerMain.css';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import clsx from 'clsx';
 import { usePickerMainRef } from '../context/ElementRefContext';
-import { useThemeConfig } from '../context/PickerConfigContext';
 import { Theme } from '../../config/config';
+import { useThemeConfig } from '../../config/useConfig';
 
 type Props = Readonly<{
   children: React.ReactNode;

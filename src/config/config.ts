@@ -1,6 +1,5 @@
-import { EmojiClickData } from './../hooks/useMouseDownHandlers';
+import { EmojiClickData } from './../types/exposedTypes';
 import { SkinTones } from '../data/skinToneVariations';
-import { defaultOnClickHandler } from '../hooks/useMouseDownHandlers';
 import {
   CategoriesConfig,
   baseCategoriesConfig,
@@ -24,7 +23,12 @@ export function basePickerConfig(): PickerConfigInternal {
     autoFocusSearch: true,
     emojiStyle: EmojiStyle.APPLE,
     categories: baseCategoriesConfig,
-    onEmojiClick: defaultOnClickHandler,
+    onEmojiClick: function defaultOnClickHandler(
+      // @ts-ignore
+      event: MouseEvent,
+      // @ts-ignore
+      emoji: EmojiClickData
+    ) {},
     showPreview: true,
     theme: Theme.LIGHT
   };

@@ -2,8 +2,8 @@ import * as React from 'react';
 import './CategoryNavigation.css';
 import clsx from 'clsx';
 import { useActiveCategoryState } from '../context/PickerContext';
-import { useCategoriesConfig } from '../context/PickerConfigContext';
 import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import { useCategoriesConfig } from '../../config/useConfig';
 
 export function CategoryNavigation() {
   const categoriesConfig = useCategoriesConfig();

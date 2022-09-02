@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useFilter } from '../../hooks/useFilter';
 import {
   useAutoFocusSearchConfig,
   useSearchPlaceHolderConfig
-} from '../context/PickerConfigContext';
+} from '../../config/useConfig';
+import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
+import { useFilter } from '../../hooks/useFilter';
+
 import Relative from '../Layout/Relative';
 import './Search.css';
 

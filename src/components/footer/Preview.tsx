@@ -1,5 +1,9 @@
 import * as React from 'react';
 import { useState } from 'react';
+import {
+  useEmojiStyleConfig,
+  useShowPreviewConfig
+} from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
@@ -7,10 +11,7 @@ import {
   emojiUnified
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
-import {
-  useEmojiStyleConfig,
-  useShowPreviewConfig
-} from '../context/PickerConfigContext';
+
 import { Emoji } from '../emoji/Emoji';
 import Flex from '../Layout/Flex';
 import './Preview.css';
@@ -62,7 +63,9 @@ export function Preview() {
           )}
         </div>
         {show ? (
-          <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
+          <div className="epr-preview-emoji-label">
+            {emojiName(asEmoji(emoji))}
+          </div>
         ) : (
           <div className="epr-preview-emoji-label">What's your mood?</div>
         )}

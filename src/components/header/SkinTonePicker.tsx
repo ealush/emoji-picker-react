@@ -8,8 +8,8 @@ import {
   useSkinToneFanOpenState
 } from '../context/PickerContext';
 import Relative from '../Layout/Relative';
-import { useSkinTonesDisabledConfig } from '../context/PickerConfigContext';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
+import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 
 export function SkinTonePicker() {
   const isDisabled = useSkinTonesDisabledConfig();

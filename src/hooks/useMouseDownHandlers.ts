@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
-import { useOnEmojiClickConfig } from '../components/context/PickerConfigContext';
 import {
   useActiveSkinToneState,
   useDisallowClickRef,
   useEmojiVariationPickerState
 } from '../components/context/PickerContext';
 import { EmojiStyle } from '../config/config';
+import { useOnEmojiClickConfig } from '../config/useConfig';
 import { SkinTones } from '../data/skinToneVariations';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
@@ -19,6 +19,7 @@ import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
 
 import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
+import { EmojiClickData } from '../types/exposedTypes';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 let mouseDownTimer: undefined | number;
@@ -121,22 +122,6 @@ function emojiFromEvent(event: MouseEvent): DataEmoji | undefined {
 
   return emojiFromElement(target);
 }
-
-export function defaultOnClickHandler(
-  // @ts-ignore
-  event: MouseEvent,
-  // @ts-ignore
-  emoji: EmojiClickData
-) {}
-
-export type EmojiClickData = {
-  activeSkinTone: SkinTones;
-  unified: string;
-  unifiedWithoutSkinTone: string;
-  emoji: string;
-  names: string[];
-  getImageUrl: (emojiStyle: EmojiStyle) => string;
-};
 
 function emojiClickOutput(
   emoji: DataEmoji,

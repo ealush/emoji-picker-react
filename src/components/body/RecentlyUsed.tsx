@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { CategoryConfig } from '../../config/categoryConfig';
+import { useEmojiStyleConfig } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getRecentlyUsed } from '../../dataUtils/recentlyUsed';
-import { useEmojiStyleConfig } from '../context/PickerConfigContext';
 import { useSearchTermState } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';

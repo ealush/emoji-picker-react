@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { useEmojiStyleConfig } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiHasVariations,
@@ -17,7 +18,6 @@ import {
   useBodyRef,
   useSetAnchoredEmojiRef
 } from '../context/ElementRefContext';
-import { useEmojiStyleConfig } from '../context/PickerConfigContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 import './EmojiVariationPicker.css';

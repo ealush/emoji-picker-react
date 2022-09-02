@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { SkinTones } from '../../data/skinToneVariations';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { usePickerMainRef } from './ElementRefContext';
-import { useDefaultSkinToneConfig } from './PickerConfigContext';
 
 export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
