@@ -1,14 +1,6 @@
-export enum Categories {
-  RECENTLY_USED = 'recently_used',
-  SMILEYS_PEOPLE = 'smileys_people',
-  ANIMALS_NATURE = 'animals_nature',
-  FOOD_DRINK = 'food_drink',
-  TRAVEL_PLACES = 'travel_places',
-  ACTIVITIES = 'activities',
-  OBJECTS = 'objects',
-  SYMBOLS = 'symbols',
-  FLAGS = 'flags'
-}
+import { Categories } from '../types/exposedTypes';
+
+export { Categories };
 
 const categoriesOrdered: Categories[] = [
   Categories.RECENTLY_USED,
