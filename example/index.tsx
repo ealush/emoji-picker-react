@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Picker } from '../.';
+import { EmojiPicker } from '../.';
 
 const App = () => {
   return (
     <div>
-      <Picker />
+      <EmojiPicker />
     </div>
   );
 };

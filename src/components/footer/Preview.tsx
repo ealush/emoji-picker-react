@@ -51,7 +51,7 @@ export function Preview() {
               hidden={false}
               size={45}
             />
-          ) : (
+          ) : defaultEmoji ? (
             <Emoji
               unified={emojiUnified(defaultEmoji)}
               emoji={defaultEmoji}
@@ -60,7 +60,7 @@ export function Preview() {
               hidden={false}
               size={45}
             />
-          )}
+          ) : null}
         </div>
         {show ? (
           <div className="epr-preview-emoji-label">
