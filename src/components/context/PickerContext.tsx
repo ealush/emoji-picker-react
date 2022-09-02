@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useDefaultSkinToneConfig } from '../../config/useConfig';
+import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { FilterDict } from '../../hooks/useFilter';
@@ -10,7 +11,9 @@ import { usePickerMainRef } from './ElementRefContext';
 
 export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
-  const filterRef = React.useRef<FilterState>({});
+
+  // Initialize the filter with the inititial dictionary
+  const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
 
   const searchTerm = useState<string>('');

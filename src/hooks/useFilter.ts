@@ -6,7 +6,6 @@ import {
   useSearchTermState
 } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { alphaNumericEmojiIndex } from '../dataUtils/alphaNumericEmojiIndex';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 
 function useSetFilterRef() {
@@ -45,19 +44,7 @@ export function useFilter() {
     setSearchTerm(nextValue);
     const filter = filterRef.current;
 
-    if (nextValue.length === 0) {
-      // setFilter(null);
-      return;
-    } else if (nextValue.length === 1) {
-      const index = alphaNumericEmojiIndex;
-      setFilterRef(current => ({
-        ...current,
-        [nextValue]: index[nextValue]
-      }));
-      return;
-    }
-
-    if (filter?.[nextValue]) {
+    if (filter?.[nextValue] || nextValue.length <= 1) {
       return;
     }
 
@@ -69,10 +56,11 @@ export function useFilter() {
       return;
     }
 
-    setFilterRef(current => ({
-      ...current,
-      [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
-    }));
+    setFilterRef(current =>
+      Object.assign(current, {
+        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
+      })
+    );
   }
 }
 
