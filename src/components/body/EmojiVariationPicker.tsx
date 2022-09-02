@@ -9,7 +9,8 @@ import {
 import {
   buttonFromEmoji,
   elementHeight,
-  emojiTrueOffsetTop
+  emojiTrueOffsetTop,
+  emojiTruOffsetLeft
 } from '../../DomUtils/selectors';
 import {
   useAnchoredEmojiRef,
@@ -25,16 +26,20 @@ export function EmojiVariationPicker() {
   const VariationPickerRef = React.useRef<HTMLDivElement>(null);
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
-  const getTop = useVariationPickerTop(VariationPickerRef);
+  const { getTop, getMenuDirection } = useVariationPickerTop(
+    VariationPickerRef
+  );
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
+  const getPointerStyle = usePointerStyle(VariationPickerRef);
 
   const visible = emoji && emojiHasVariations(emoji);
-  let top;
+  let top, pointerStyle;
 
   if (!visible) {
     setAnchoredEmojiRef(null);
   } else {
     top = getTop();
+    pointerStyle = getPointerStyle();
   }
 
   const safeEmoji = asEmoji(emoji);
@@ -61,8 +66,39 @@ export function EmojiVariationPicker() {
               />
             ))
         : null}
+      <div
+        className={clsx('epr-emoji-pointer', {
+          ['pointing-up']: getMenuDirection() === Direction.Down
+        })}
+        style={pointerStyle}
+      />
     </div>
   );
+}
+
+function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
+  const AnchoredEmojiRef = useAnchoredEmojiRef();
+  return function getPointerStyle() {
+    const style: React.CSSProperties = {};
+    if (!VariationPickerRef.current) {
+      return style;
+    }
+
+    if (AnchoredEmojiRef.current) {
+      const button = buttonFromEmoji(AnchoredEmojiRef.current);
+
+      const offsetLeft = emojiTruOffsetLeft(button);
+
+      if (!button) {
+        return style;
+      }
+
+      // half of the button
+      style.left = offsetLeft + button?.clientWidth / 2 - 12;
+    }
+
+    return style;
+  };
 }
 
 function useVariationPickerTop(
@@ -70,8 +106,19 @@ function useVariationPickerTop(
 ) {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const BodyRef = useBodyRef();
+  let direction = Direction.Up;
 
-  return function getTop() {
+  return {
+    getMenuDirection,
+    getTop
+  };
+
+  function getMenuDirection() {
+    return direction;
+  }
+
+  function getTop() {
+    direction = Direction.Up;
     let emojiOffsetTop = 0;
 
     if (!VariationPickerRef.current) {
@@ -91,10 +138,16 @@ function useVariationPickerTop(
       let scrollTop = bodyRef?.scrollTop ?? 0;
 
       if (scrollTop > emojiOffsetTop - height) {
+        direction = Direction.Down;
         emojiOffsetTop += buttonHeight + height;
       }
     }
 
     return emojiOffsetTop - height;
-  };
+  }
+}
+
+enum Direction {
+  Up,
+  Down
 }

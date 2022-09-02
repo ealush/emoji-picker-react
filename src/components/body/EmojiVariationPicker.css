@@ -25,7 +25,41 @@
   visibility: visible;
   pointer-events: all;
 }
-
-.EmojiPickerReact .epr-emoji-variation-picker button.epr-emoji:hover {
+.EmojiPickerReact
+  .epr-emoji-variation-picker
+  .EmojiPickerReact
+  .epr-emoji-variation-picker
+  button.epr-emoji:hover {
   background: none;
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
+  content: '';
+  position: absolute;
+  top: -10px;
+  width: 25px;
+  height: 15px;
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
+  background-image: svg-load(./svg/triangle.svg);
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  background-size: 50px 15px;
+}
+
+.EmojiPickerReact.epr-dark-theme
+  .epr-emoji-variation-picker
+  .epr-emoji-pointer {
+  background-position: -25px 0;
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
+  top: 100%;
+  transform: translateX(-7px);
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer.pointing-up {
+  top: 0;
+  transform: rotate(180deg) translateY(100%) translateX(7px);
 }

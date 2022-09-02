@@ -54,9 +54,19 @@ export function emojiTrueOffsetTop(element: HTMLElement | null): number {
 
   return elementOffsetTop(button) + elementOffsetTop(category);
 }
+export function emojiTruOffsetLeft(element: HTMLElement | null): number {
+  const button = buttonFromEmoji(element);
+  const category = closestCategory(button);
+
+  return elementOffsetLeft(button) + elementOffsetLeft(category);
+}
 
 function elementOffsetTop(element: HTMLElement | null): number {
   return element?.offsetTop ?? 0;
+}
+
+function elementOffsetLeft(element: HTMLElement | null): number {
+  return element?.offsetLeft ?? 0;
 }
 
 export function unifiedFromEmojiElement(
