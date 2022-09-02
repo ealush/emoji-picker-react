@@ -6,6 +6,6 @@ export function scrollTo(root: HTMLElement | null, top: number = 0) {
   }
 
   requestAnimationFrame(() => {
-    $eprBody.scrollTop = top;
+    $eprBody.scrollTop = top + 1;
   });
 }
