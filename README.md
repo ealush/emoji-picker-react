@@ -2,6 +2,15 @@
 
 [Live Demo](https://stackblitz.com/edit/emoji-picker-react?file=index.js)
 
+
+## Try out version 4 before its official release!
+Try it live:  [here](https://codesandbox.io/s/floral-rgb-z2gkzp?file=/src/App.tsx)
+
+And if it works well for you, you can add it to your app:
+```
+npm i emoji-picker-react --tag rc
+```
+
 ![Preview](/assets/captured.gif)
 
 ## What you need to know before installing?
