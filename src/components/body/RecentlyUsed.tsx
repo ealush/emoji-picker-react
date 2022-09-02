@@ -27,7 +27,7 @@ export function RecentlyUsed({ categoryConfig }: Props) {
   }
 
   return (
-    <EmojiCategory categoryConfig={categoryConfig}>
+    <EmojiCategory categoryConfig={categoryConfig} hiddenOnSearch>
       {recentlyUsed.map(recentlyUsedItem => {
         const emoji = emojiByUnified(recentlyUsedItem.original);
 

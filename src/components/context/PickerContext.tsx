@@ -4,6 +4,7 @@ import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
+import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
@@ -16,7 +17,7 @@ export function PickerContextProvider({ children }: Props) {
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
 
-  const searchTerm = useState<string>('');
+  const searchTerm = useDebouncedState('', 100);
   const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
   const activeCategoryState = useState<ActiveCategoryState>(null);
@@ -48,7 +49,7 @@ export function PickerContextProvider({ children }: Props) {
 type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const PickerContext = React.createContext<{
-  searchTerm: ReactState<string>;
+  searchTerm: [string, (term: string) => void];
   activeCategoryState: ReactState<ActiveCategoryState>;
   activeSkinTone: ReactState<SkinTones>;
   emojisThatFailedToLoadState: ReactState<Set<string>>;

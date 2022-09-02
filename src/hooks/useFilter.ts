@@ -7,7 +7,14 @@ import {
 } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
-import { iterateEmojiRef } from '../DomUtils/emojiElementRef';
+import {
+  hideElement,
+  hideEmoji,
+  iterateEmojiRef,
+  showElement
+} from '../DomUtils/emojiElementRef';
+import { useRef } from 'react';
+import { ClassNames } from '../DomUtils/classNames';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
@@ -24,6 +31,7 @@ function useSetFilterRef() {
 }
 
 export function useFilter() {
+  const SearchInputRef = useRef<HTMLInputElement>(null);
   const filterRef = useFilterRef();
   const setFilterRef = useSetFilterRef();
 
@@ -33,11 +41,15 @@ export function useFilter() {
   return {
     onChange,
     searchTerm,
-    clearSearch
+    clearSearch,
+    SearchInputRef
   };
 
   function clearSearch() {
-    applyFilterToDom('');
+    if (SearchInputRef.current) {
+      SearchInputRef.current.value = '';
+    }
+    onChange('');
   }
 
   function onChange(nextValue: string) {
@@ -65,18 +77,26 @@ export function useFilter() {
     applyFilterToDom(nextValue);
   }
 
+  // This function is the farthest from being "React" as it can be
+  // It performs DOM manipulation and is not a pure function
+  // But it is the most performant way to do it, at least 5 times faster than
+  // react re-rendering. The reason I trust it to work correctly is because we
+  // eventually do update the state, which keeps the DOM in sync - after the fact
   function applyFilterToDom(searchTerm: string): void {
-    requestAnimationFrame(() => {
-      iterateEmojiRef((element, unified) => {
-        if (
-          isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)
-        ) {
-          element.classList.add('hidden');
-          return;
-        }
-        element.classList.remove('hidden');
-      });
+    PickerMainRef.current?.classList.toggle(
+      ClassNames.searchActive,
+      !!searchTerm
+    );
 
+    iterateEmojiRef((element, unified) => {
+      if (isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)) {
+        hideElement(element);
+        return;
+      }
+      showElement(element);
+    });
+
+    requestAnimationFrame(() => {
       setSearchTerm(searchTerm);
     });
   }
@@ -93,6 +113,8 @@ function filterEmojiObjectByKeyword(
 
     if (hasMatch(emoji, keyword)) {
       filtered[unified] = emoji;
+    } else {
+      hideEmoji(unified);
     }
   }
 

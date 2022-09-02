@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { useThemeConfig } from '../../config/useConfig';
+import { ClassNames } from '../../DomUtils/classNames';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
@@ -31,7 +32,7 @@ function PickerRootElement({ children }: RootProps) {
   return (
     <aside
       className={clsx('EmojiPickerReact', 'epr-main', {
-        'epr-search-active': searchModeActive,
+        [ClassNames.searchActive]: searchModeActive,
         'epr-dark-theme': theme === Theme.DARK
       })}
       ref={PickerMainRef}

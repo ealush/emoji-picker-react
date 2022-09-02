@@ -66,7 +66,14 @@
   overflow: hidden;
 }
 
-.EmojiPickerReact .hidden {
+.EmojiPickerReact .epr-hidden {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+.EmojiPickerReact.epr-search-active .epr-hidden-on-search {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;

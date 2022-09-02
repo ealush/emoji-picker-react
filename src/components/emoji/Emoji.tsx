@@ -9,6 +9,7 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { ClassNames } from '../../DomUtils/classNames';
 import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
@@ -48,7 +49,7 @@ export function Emoji({
   return (
     <button
       className={clsx('epr-emoji', {
-        hidden,
+        [ClassNames.hidden]: hidden,
         'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}

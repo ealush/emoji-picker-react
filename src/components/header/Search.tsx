@@ -14,7 +14,7 @@ export function Search() {
 
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { onChange, searchTerm, clearSearch } = useFilter();
+  const { onChange, searchTerm, clearSearch, SearchInputRef } = useFilter();
 
   return (
     <Relative className="epr-search-container">
@@ -24,8 +24,12 @@ export function Search() {
         className="epr-search"
         type="text"
         placeholder={placeholder}
-        onChange={event => onChange(event.target.value)}
-        value={searchTerm}
+        onChange={event => {
+          setTimeout(() => {
+            onChange(event.target.value);
+          });
+        }}
+        ref={SearchInputRef}
       />
       <div className="epr-icn-search" />
       {searchTerm ? (
