@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "4.0.0-rc.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -79,10 +79,10 @@
     "tinykeys": "^1.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
+    "typescript": "^4.7.4",
     "postcss-inline-svg": "^5.0.0",
     "postcss-svgo": "^5.1.0"
+  },
+  "dependencies": {
   }
 }

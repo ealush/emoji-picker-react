@@ -11,7 +11,7 @@ import './EmojiPickerReact.css';
 
 export interface Props extends PickerConfig {}
 
-export function Picker(props: Props) {
+export function EmojiPicker(props: Props) {
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Picker, Props } from '../src';
+import { EmojiPicker, Props } from '../src';
 import { SkinTones } from '../src/data/skinToneVariations';
 import { EmojiStyle, Theme } from '../src/config/config';
 import { Categories } from '../src/config/categoryConfig';
 
 const meta: Meta = {
   title: 'Picker',
-  component: Picker,
+  component: EmojiPicker,
   argTypes: {
     children: {
       control: {
@@ -94,7 +94,7 @@ const TemplateDark: Story<Props> = args => (
       width: '100vw'
     }}
   >
-    <Picker {...args} onEmojiClick={(...args) => console.log(...args)} />
+    <EmojiPicker {...args} onEmojiClick={(...args) => console.log(...args)} />
   </div>
 );
 const Template: Story<Props> = args => (
@@ -104,6 +104,6 @@ const Template: Story<Props> = args => (
       padding: '15px'
     }}
   >
-    <Picker {...args} onEmojiClick={(...args) => console.log(...args)} />
+    <EmojiPicker {...args} onEmojiClick={(...args) => console.log(...args)} />
   </div>
 );
