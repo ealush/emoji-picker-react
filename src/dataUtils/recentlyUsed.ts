@@ -33,7 +33,7 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
 
   let existing = recent.find(({ unified: u }) => u === unified);
 
-  let nextList;
+  let nextList: RecentlyUsedItem[];
 
   if (existing) {
     nextList = [existing].concat(recent.filter(i => i !== existing));
@@ -51,10 +51,13 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
   nextList.length = Math.min(nextList.length, 14);
 
   try {
-    window?.localStorage.setItem(
-      RECENTLY_USED_LS_KEY,
-      JSON.stringify(nextList)
-    );
+    setTimeout(() => {
+      window?.localStorage.setItem(
+        RECENTLY_USED_LS_KEY,
+        JSON.stringify(nextList)
+      );
+      // Prevents the change from being seen immediately.
+    }, 10);
   } catch {
     // ignore
   }
