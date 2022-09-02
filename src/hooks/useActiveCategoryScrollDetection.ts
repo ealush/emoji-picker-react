@@ -1,7 +1,8 @@
-import { useActiveCategoryState } from '../components/context/PickerContext';
 import { useEffect } from 'react';
+
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
 import { ElementRef } from '../components/context/ElementRefContext';
+import { useActiveCategoryState } from '../components/context/PickerContext';
 
 export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
   const [, setActiveCategory] = useActiveCategoryState();
@@ -41,5 +42,5 @@ export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
     bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
       observer.observe(el);
     });
-  }, []);
+  }, [bodyRef]);
 }

@@ -1,6 +1,7 @@
 import { useEmojisThatFailedToLoadState } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiSelectors';
+
 import { useIsEmojiFiltered } from './useFilter';
 
 export function useIsEmojiHidden(): (emoji: DataEmoji) => boolean {

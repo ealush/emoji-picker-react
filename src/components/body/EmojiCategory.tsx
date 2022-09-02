@@ -1,11 +1,12 @@
+import clsx from 'clsx';
 import * as React from 'react';
-import './EmojiCategory.css';
+
 import {
   CategoryConfig,
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
 } from '../../config/categoryConfig';
-import clsx from 'clsx';
+import './EmojiCategory.css';
 
 type Props = Readonly<{
   categoryConfig: CategoryConfig;

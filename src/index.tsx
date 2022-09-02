@@ -1,12 +1,13 @@
 import * as React from 'react';
-import PickerMain from './components/main/PickerMain';
-import { Header } from './components/header/Header';
+
 import { Body } from './components/body/Body';
-import './EmojiPickerReact.css';
-import { Preview } from './components/footer/Preview';
-import { PickerConfigProvider } from './components/context/PickerConfigContext';
-import { PickerConfig } from './config/config';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
+import { PickerConfigProvider } from './components/context/PickerConfigContext';
+import { Preview } from './components/footer/Preview';
+import { Header } from './components/header/Header';
+import PickerMain from './components/main/PickerMain';
+import { PickerConfig } from './config/config';
+import './EmojiPickerReact.css';
 
 export interface Props extends PickerConfig {}
 

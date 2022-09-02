@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
-import { useBodyRef } from '../components/context/ElementRefContext';
-import { HoveredEmoji } from '../components/footer/Preview';
+
 import {
   buttonFromEmoji,
   originalUnifiedFromEmojiElement,
   unifiedFromEmojiElement
 } from '../DomUtils/selectors';
+import { useBodyRef } from '../components/context/ElementRefContext';
+import { HoveredEmoji } from '../components/footer/Preview';
 
 export function useEmojiMouseEnter(
   allow: boolean,
@@ -17,18 +18,19 @@ export function useEmojiMouseEnter(
     if (!allow) {
       return;
     }
+    const bodyRef = BodyRef.current;
 
-    BodyRef.current?.addEventListener('mouseover', onMouseOver, {
+    bodyRef?.addEventListener('mouseover', onMouseOver, {
       passive: true
     });
 
-    BodyRef.current?.addEventListener('mouseout', onMouseOut, {
+    bodyRef?.addEventListener('mouseout', onMouseOut, {
       passive: true
     });
 
     return () => {
-      BodyRef.current?.removeEventListener('mouseover', onMouseOver);
-      BodyRef.current?.removeEventListener('mouseout', onMouseOut);
+      bodyRef?.removeEventListener('mouseover', onMouseOver);
+      bodyRef?.removeEventListener('mouseout', onMouseOut);
     };
   }, [BodyRef.current]);
 

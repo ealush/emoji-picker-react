@@ -3,7 +3,7 @@ import { allEmojis, emojiNames, emojiUnified } from './emojiSelectors';
 
 export const alphaNumericEmojiIndex: BaseIndex = {};
 
-window?.setTimeout(() => {
+setTimeout(() => {
   allEmojis.reduce((searchIndex, emoji) => {
     const joinedNameString = emojiNames(emoji)
       .flat()

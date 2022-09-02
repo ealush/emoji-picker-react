@@ -1,11 +1,13 @@
 import * as React from 'react';
-import './Body.css';
-import { EmojiList } from './EmojiList';
+
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
-import { useOnScroll } from '../../hooks/useOnScroll';
-import { EmojiVariationPicker } from './EmojiVariationPicker';
-import { useBodyRef } from '../context/ElementRefContext';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
+import { useOnScroll } from '../../hooks/useOnScroll';
+import { useBodyRef } from '../context/ElementRefContext';
+
+import { EmojiList } from './EmojiList';
+import { EmojiVariationPicker } from './EmojiVariationPicker';
+import './Body.css';
 
 export function Body() {
   const BodyRef = useBodyRef();

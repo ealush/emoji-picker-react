@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
+
 import { EmojiStyle } from '../../config/config';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
@@ -9,7 +10,6 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
-
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
 
@@ -32,7 +32,7 @@ export function Emoji({
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
 
-  let style = {} as React.CSSProperties;
+  const style = {} as React.CSSProperties;
   if (size) {
     style.width = style.height = style.fontSize = `${size}px`;
   }

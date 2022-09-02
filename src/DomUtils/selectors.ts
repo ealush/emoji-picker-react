@@ -1,5 +1,5 @@
-import { emojiByUnified } from '../dataUtils/emojiSelectors';
 import { DataEmoji } from '../dataUtils/DataTypes';
+import { emojiByUnified } from '../dataUtils/emojiSelectors';
 
 export function buttonFromEmoji(
   emojiElement: HTMLElement | null

@@ -1,5 +1,6 @@
 import { EmojiStyle } from '../config/config';
-import { SkinTones } from './../data/skinToneVariations';
+import { SkinTones } from '../data/skinToneVariations';
+
 export type EmojiClickData = {
   activeSkinTone: SkinTones;
   unified: string;

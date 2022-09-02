@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+
 import {
   useEmojiStyleConfig,
   useShowPreviewConfig
@@ -11,9 +12,8 @@ import {
   emojiUnified
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
-
-import { Emoji } from '../emoji/Emoji';
 import Flex from '../Layout/Flex';
+import { Emoji } from '../emoji/Emoji';
 import './Preview.css';
 
 export function Preview() {

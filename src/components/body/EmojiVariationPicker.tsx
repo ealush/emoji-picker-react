@@ -1,5 +1,12 @@
 import clsx from 'clsx';
 import * as React from 'react';
+
+import {
+  buttonFromEmoji,
+  elementHeight,
+  emojiTrueOffsetTop,
+  emojiTruOffsetLeft
+} from '../../DomUtils/selectors';
 import { useEmojiStyleConfig } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
@@ -8,12 +15,6 @@ import {
   emojiVariations
 } from '../../dataUtils/emojiSelectors';
 import {
-  buttonFromEmoji,
-  elementHeight,
-  emojiTrueOffsetTop,
-  emojiTruOffsetLeft
-} from '../../DomUtils/selectors';
-import {
   useAnchoredEmojiRef,
   useBodyRef,
   useSetAnchoredEmojiRef
@@ -21,6 +22,11 @@ import {
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 import './EmojiVariationPicker.css';
+
+enum Direction {
+  Up,
+  Down
+}
 
 export function EmojiVariationPicker() {
   const VariationPickerRef = React.useRef<HTMLDivElement>(null);
@@ -68,7 +74,7 @@ export function EmojiVariationPicker() {
         : null}
       <div
         className={clsx('epr-emoji-pointer', {
-          ['pointing-up']: getMenuDirection() === Direction.Down
+          'pointing-up': getMenuDirection() === Direction.Down
         })}
         style={pointerStyle}
       />
@@ -135,7 +141,7 @@ function useVariationPickerTop(
 
       emojiOffsetTop = emojiTrueOffsetTop(button);
 
-      let scrollTop = bodyRef?.scrollTop ?? 0;
+      const scrollTop = bodyRef?.scrollTop ?? 0;
 
       if (scrollTop > emojiOffsetTop - height) {
         direction = Direction.Down;
@@ -145,9 +151,4 @@ function useVariationPickerTop(
 
     return emojiOffsetTop - height;
   }
-}
-
-enum Direction {
-  Up,
-  Down
 }

@@ -1,16 +1,19 @@
 import { useEffect } from 'react';
+
 import { ElementRef } from '../components/context/ElementRefContext';
+
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 export function useOnScroll(BodyRef: ElementRef) {
   const { closeAllOpenToggles, dependencyArray } = useCloseAllOpenToggles();
 
   useEffect(() => {
-    if (!BodyRef.current) {
+    const bodyRef = BodyRef.current;
+    if (!bodyRef) {
       return;
     }
 
-    BodyRef.current.addEventListener('scroll', onScroll, {
+    bodyRef.addEventListener('scroll', onScroll, {
       passive: true
     });
 
@@ -19,7 +22,7 @@ export function useOnScroll(BodyRef: ElementRef) {
     }
 
     return () => {
-      BodyRef.current?.removeEventListener('scroll', onScroll);
+      bodyRef?.removeEventListener('scroll', onScroll);
     };
-  }, dependencyArray);
+  }, [...dependencyArray, BodyRef, closeAllOpenToggles]);
 }

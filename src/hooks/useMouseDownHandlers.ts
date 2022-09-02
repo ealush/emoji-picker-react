@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+
+import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
 import {
   useActiveSkinToneState,
@@ -17,9 +19,8 @@ import {
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
-
-import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
 import { EmojiClickData } from '../types/exposedTypes';
+
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 let mouseDownTimer: undefined | number;
@@ -38,23 +39,24 @@ export function useMouseDownHandlers(
     if (!BodyRef.current) {
       return;
     }
-    BodyRef.current.addEventListener('click', onClick, {
+    const bodyRef = BodyRef.current;
+    bodyRef.addEventListener('click', onClick, {
       passive: true
     });
 
-    BodyRef.current.addEventListener('mousedown', onMouseDown, {
+    bodyRef.addEventListener('mousedown', onMouseDown, {
       passive: true
     });
-    BodyRef.current.addEventListener('mouseup', onMouseUp, {
+    bodyRef.addEventListener('mouseup', onMouseUp, {
       passive: true
     });
 
     return () => {
-      BodyRef.current?.removeEventListener('click', onClick);
-      BodyRef.current?.removeEventListener('mousedown', onMouseDown);
-      BodyRef.current?.removeEventListener('mouseup', onMouseUp);
+      bodyRef?.removeEventListener('click', onClick);
+      bodyRef?.removeEventListener('mousedown', onMouseDown);
+      bodyRef?.removeEventListener('mouseup', onMouseUp);
     };
-  }, [BodyRef.current, ...dependencyArray]);
+  }, [BodyRef, ...dependencyArray]);
 
   function onClick(event: MouseEvent) {
     if (disallowClickRef.current) {
@@ -130,12 +132,12 @@ function emojiClickOutput(
   const unified = emojiUnified(emoji, activeSkinTone);
   return {
     activeSkinTone,
-    unified: unified,
-    unifiedWithoutSkinTone: emojiUnified(emoji),
     emoji: parseNativeEmoji(unified),
-    names: emojiNames(emoji),
     getImageUrl(emojiStyle: EmojiStyle) {
       return emojiUrlByUnified(emojiStyle, unified);
-    }
+    },
+    names: emojiNames(emoji),
+    unified,
+    unifiedWithoutSkinTone: emojiUnified(emoji)
   };
 }

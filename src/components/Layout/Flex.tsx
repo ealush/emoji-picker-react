@@ -2,6 +2,11 @@ import clsx from 'clsx';
 import * as React from 'react';
 import './Flex.css';
 
+export enum FlexDirection {
+  ROW = 'FlexRow',
+  COLUMN = 'FlexColumn'
+}
+
 type Props = Readonly<{
   children: React.ReactNode;
   className?: string;
@@ -20,9 +25,4 @@ export default function Flex({
       {children}
     </div>
   );
-}
-
-export enum FlexDirection {
-  ROW = 'FlexRow',
-  COLUMN = 'FlexColumn'
 }

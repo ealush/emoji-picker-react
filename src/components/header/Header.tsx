@@ -1,10 +1,12 @@
 import * as React from 'react';
+
 import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
 import { CategoryNavigation } from '../navigation/CategoryNavigation';
-import './Header.css';
+
 import { Search } from './Search';
 import { SkinTonePicker } from './SkinTonePicker';
+import './Header.css';
 
 export function Header() {
   return (

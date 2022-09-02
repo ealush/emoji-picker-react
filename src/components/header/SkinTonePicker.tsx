@@ -1,15 +1,15 @@
-import * as React from 'react';
-import './SkinTonePicker.css';
-
-import skinToneVariations from '../../data/skinToneVariations';
 import clsx from 'clsx';
+import * as React from 'react';
+
+import { useSkinTonesDisabledConfig } from '../../config/useConfig';
+import skinToneVariations from '../../data/skinToneVariations';
+import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
+import Relative from '../Layout/Relative';
 import {
   useActiveSkinToneState,
   useSkinToneFanOpenState
 } from '../context/PickerContext';
-import Relative from '../Layout/Relative';
-import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useSkinTonesDisabledConfig } from '../../config/useConfig';
+import './SkinTonePicker.css';
 
 export function SkinTonePicker() {
   const isDisabled = useSkinTonesDisabledConfig();

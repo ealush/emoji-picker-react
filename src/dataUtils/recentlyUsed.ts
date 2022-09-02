@@ -1,6 +1,8 @@
-import { SkinTones } from './../data/skinToneVariations';
+import { SkinTones } from '../data/skinToneVariations';
+
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiSelectors';
+
 const RECENTLY_USED_LS_KEY = 'epr_recentlyUsed';
 
 type RecentlyUsedItem = {
@@ -12,6 +14,9 @@ type RecentlyUsedItem = {
 type RecentlyUsed = RecentlyUsedItem[];
 
 export function getRecentlyUsed(): RecentlyUsed {
+  if (!window?.localStorage) {
+    return [];
+  }
   try {
     return JSON.parse(
       window?.localStorage.getItem(RECENTLY_USED_LS_KEY) ?? '[]'

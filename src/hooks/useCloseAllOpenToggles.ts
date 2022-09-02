@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
   useEmojiVariationPickerState,
   useSkinToneFanOpenState
@@ -7,16 +9,18 @@ export function useCloseAllOpenToggles() {
   const [variationPicker, setVariationPicker] = useEmojiVariationPickerState();
   const [skinToneFanOpen, setSkinToneFanOpen] = useSkinToneFanOpenState();
 
-  return {
-    closeAllOpenToggles() {
-      if (variationPicker) {
-        setVariationPicker(null);
-      }
+  const closeAllOpenToggles = useCallback(() => {
+    if (variationPicker) {
+      setVariationPicker(null);
+    }
 
-      if (skinToneFanOpen) {
-        setSkinToneFanOpen(false);
-      }
-    },
+    if (skinToneFanOpen) {
+      setSkinToneFanOpen(false);
+    }
+  }, [[variationPicker, skinToneFanOpen]]);
+
+  return {
+    closeAllOpenToggles,
     dependencyArray: [variationPicker, skinToneFanOpen]
   };
 }

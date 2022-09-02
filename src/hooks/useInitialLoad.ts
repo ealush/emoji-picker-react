@@ -5,5 +5,5 @@ export function useMarkInitialLoad(
 ) {
   useEffect(() => {
     dispatch(true);
-  }, []);
+  }, [dispatch]);
 }

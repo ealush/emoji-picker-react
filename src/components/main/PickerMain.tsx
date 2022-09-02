@@ -1,11 +1,12 @@
-import * as React from 'react';
-import { PickerContextProvider } from '../context/PickerContext';
-import './PickerMain.css';
-import useIsSearchMode from '../../hooks/useIsSearchMode';
 import clsx from 'clsx';
-import { usePickerMainRef } from '../context/ElementRefContext';
+import * as React from 'react';
+
 import { Theme } from '../../config/config';
 import { useThemeConfig } from '../../config/useConfig';
+import useIsSearchMode from '../../hooks/useIsSearchMode';
+import { usePickerMainRef } from '../context/ElementRefContext';
+import { PickerContextProvider } from '../context/PickerContext';
+import './PickerMain.css';
 
 type Props = Readonly<{
   children: React.ReactNode;

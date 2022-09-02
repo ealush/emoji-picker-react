@@ -1,13 +1,13 @@
-import { alphaNumericEmojiIndex } from '../dataUtils/alphaNumericEmojiIndex';
-import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiNames } from '../dataUtils/emojiSelectors';
+import { scrollTo } from '../DomUtils/scrollTo';
+import { usePickerMainRef } from '../components/context/ElementRefContext';
 import {
   FilterState,
   useFilterRef,
   useSearchTermState
 } from '../components/context/PickerContext';
-import { scrollTo } from '../DomUtils/scrollTo';
-import { usePickerMainRef } from '../components/context/ElementRefContext';
+import { DataEmoji } from '../dataUtils/DataTypes';
+import { alphaNumericEmojiIndex } from '../dataUtils/alphaNumericEmojiIndex';
+import { emojiNames } from '../dataUtils/emojiSelectors';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
@@ -80,7 +80,7 @@ function filterEmojiObjectByKeyword(
   emojis: FilterDict,
   keyword: string
 ): FilterDict {
-  let filtered: FilterDict = {};
+  const filtered: FilterDict = {};
 
   for (const unified in emojis) {
     const emoji = emojis[unified];

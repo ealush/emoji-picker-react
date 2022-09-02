@@ -1,10 +1,25 @@
-import { EmojiClickData } from './../types/exposedTypes';
 import { SkinTones } from '../data/skinToneVariations';
+import { EmojiClickData } from '../types/exposedTypes';
+
 import {
   CategoriesConfig,
   baseCategoriesConfig,
   mergeCategoriesConfig
 } from './categoryConfig';
+
+export enum EmojiStyle {
+  NATIVE = 'native',
+  APPLE = 'apple',
+  TWITTER = 'twitter',
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook'
+}
+
+export enum Theme {
+  DARK = 'dark',
+  LIGHT = 'light',
+  AUTO = 'auto'
+}
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
   const categories = mergeCategoriesConfig(userConfig.categories);
@@ -17,19 +32,19 @@ export function mergeConfig(userConfig: PickerConfig = {}) {
 
 export function basePickerConfig(): PickerConfigInternal {
   return {
-    searchPlaceHolder: 'Search',
-    defaultSkinTone: SkinTones.NEUTRAL,
-    skinTonesDisabled: false,
     autoFocusSearch: true,
-    emojiStyle: EmojiStyle.APPLE,
     categories: baseCategoriesConfig,
+    defaultSkinTone: SkinTones.NEUTRAL,
+    emojiStyle: EmojiStyle.APPLE,
     onEmojiClick: function defaultOnClickHandler(
       // @ts-ignore
       event: MouseEvent,
       // @ts-ignore
       emoji: EmojiClickData
     ) {},
+    searchPlaceHolder: 'Search',
     showPreview: true,
+    skinTonesDisabled: false,
     theme: Theme.LIGHT
   };
 }
@@ -47,17 +62,3 @@ export type PickerConfigInternal = {
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;
-
-export enum EmojiStyle {
-  NATIVE = 'native',
-  APPLE = 'apple',
-  TWITTER = 'twitter',
-  GOOGLE = 'google',
-  FACEBOOK = 'facebook'
-}
-
-export enum Theme {
-  DARK = 'dark',
-  LIGHT = 'light',
-  AUTO = 'auto'
-}
