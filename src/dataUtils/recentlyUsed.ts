@@ -1,5 +1,4 @@
-import { SkinTones } from '../data/skinToneVariations';
-
+import { SkinTones } from '../types/exposedTypes';
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiSelectors';
 

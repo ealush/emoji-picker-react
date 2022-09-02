@@ -1,9 +1,7 @@
 import { usePickerConfig } from '../components/context/PickerConfigContext';
-import { SkinTones } from '../data/skinToneVariations';
-import { EmojiClickData } from '../types/exposedTypes';
+import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
-import { EmojiStyle } from './config';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();

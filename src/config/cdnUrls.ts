@@ -1,4 +1,4 @@
-import { EmojiStyle } from './config';
+import { EmojiStyle } from "../types/exposedTypes";
 
 const CDN_URL_APPLE =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/';

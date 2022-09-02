@@ -1,11 +1,4 @@
-export enum SkinTones {
-  NEUTRAL = 'neutral',
-  LIGHT = '1f3fb',
-  MEDIUM_LIGHT = '1f3fc',
-  MEDIUM = '1f3fd',
-  MEDIUM_DARK = '1f3fe',
-  DARK = '1f3ff'
-}
+import { SkinTones } from '../types/exposedTypes';
 
 const skinToneVariations = [
   SkinTones.NEUTRAL,

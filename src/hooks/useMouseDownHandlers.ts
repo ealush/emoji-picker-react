@@ -1,4 +1,4 @@
-import { EmojiStyle } from './../config/config';
+import { SkinTones } from './../types/exposedTypes';
 import { useEffect, useRef } from 'react';
 
 import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
@@ -12,7 +12,6 @@ import {
   useEmojiStyleConfig,
   useOnEmojiClickConfig
 } from '../config/useConfig';
-import { SkinTones } from '../data/skinToneVariations';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   activeVariationFromUnified,
@@ -23,7 +22,7 @@ import {
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
-import { EmojiClickData } from '../types/exposedTypes';
+import { EmojiClickData, EmojiStyle } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { preloadEmoji } from './preloadEmoji';

@@ -1,9 +1,9 @@
 import { Categories } from './../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
-import { EmojiStyle } from '../config/config';
 import emojis from '../data/emojis';
 import { DataEmoji, DataEmojis } from './DataTypes';
-import skinToneVariations, { SkinTones } from '../data/skinToneVariations';
+import skinToneVariations from '../data/skinToneVariations';
+import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 enum EmojiProperties {
   name = 'n',

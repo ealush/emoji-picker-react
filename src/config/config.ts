@@ -1,5 +1,4 @@
-import { SkinTones } from '../data/skinToneVariations';
-import { EmojiClickData } from '../types/exposedTypes';
+import { EmojiClickData, EmojiStyle, SkinTones, Theme } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
@@ -7,19 +6,6 @@ import {
   mergeCategoriesConfig
 } from './categoryConfig';
 
-export enum EmojiStyle {
-  NATIVE = 'native',
-  APPLE = 'apple',
-  TWITTER = 'twitter',
-  GOOGLE = 'google',
-  FACEBOOK = 'facebook'
-}
-
-export enum Theme {
-  DARK = 'dark',
-  LIGHT = 'light',
-  AUTO = 'auto'
-}
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
   const categories = mergeCategoriesConfig(userConfig.categories);
