@@ -7,6 +7,7 @@ import {
 } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
+import { iterateEmojiRef } from '../DomUtils/emojiElementRef';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
@@ -36,16 +37,16 @@ export function useFilter() {
   };
 
   function clearSearch() {
-    setSearchTerm('');
+    applyFilterToDom('');
   }
 
   function onChange(nextValue: string) {
     scrollTo(PickerMainRef.current, 0);
-    setSearchTerm(nextValue);
+
     const filter = filterRef.current;
 
     if (filter?.[nextValue] || nextValue.length <= 1) {
-      return;
+      return applyFilterToDom(nextValue);
     }
 
     const longestMatch = findLongestMatch(nextValue, filter);
@@ -53,7 +54,7 @@ export function useFilter() {
     if (!longestMatch) {
       // Can we even get here?
       // If so, we need to search among all emojis
-      return;
+      return applyFilterToDom(nextValue);
     }
 
     setFilterRef(current =>
@@ -61,6 +62,23 @@ export function useFilter() {
         [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
       })
     );
+    applyFilterToDom(nextValue);
+  }
+
+  function applyFilterToDom(searchTerm: string): void {
+    requestAnimationFrame(() => {
+      iterateEmojiRef((element, unified) => {
+        if (
+          isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)
+        ) {
+          element.classList.add('hidden');
+          return;
+        }
+        element.classList.remove('hidden');
+      });
+
+      setSearchTerm(searchTerm);
+    });
   }
 }
 

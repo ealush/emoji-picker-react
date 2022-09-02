@@ -9,6 +9,7 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
@@ -20,6 +21,7 @@ type Props = Readonly<{
   unified: string;
   showVariations?: boolean;
   size?: number;
+  emojiRef?: EmojiRef;
 }>;
 
 export function Emoji({
@@ -28,7 +30,8 @@ export function Emoji({
   hidden,
   emojiStyle,
   showVariations = true,
-  size
+  size,
+  emojiRef
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -50,6 +53,8 @@ export function Emoji({
       })}
       data-unified={unified}
       data-original={emojiUnified(emoji)}
+      // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
+      ref={emojiRef}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
         <NativeEmoji {...base} />

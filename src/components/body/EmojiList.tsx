@@ -20,6 +20,7 @@ import { Emoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';
 import { RecentlyUsed } from './RecentlyUsed';
 import './EmojiList.css';
+import { getEmojiRef } from '../../DomUtils/emojiElementRef';
 
 export function EmojiList() {
   const categories = useCategoriesConfig();
@@ -72,6 +73,7 @@ function RenderCategory({
   const emojis = emojisToPush.map(emoji => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const hidden = isEmojiHidden(emoji);
+    const emojiRef = getEmojiRef(emojiUnified(emoji));
 
     if (hidden) {
       hiddenCounter++;
@@ -84,6 +86,7 @@ function RenderCategory({
         unified={unified}
         hidden={hidden}
         emojiStyle={emojiStyle}
+        emojiRef={emojiRef}
       />
     );
   });
