@@ -32,9 +32,11 @@ export function showEmoji(unified: string): void {
 export function hideElement(element: HTMLElement | null): void {
   if (!element) return;
   element.classList.add(ClassNames.hidden);
+  element.classList.remove(ClassNames.visible);
 }
 
 export function showElement(element: HTMLElement | null): void {
   if (!element) return;
   element.classList.remove(ClassNames.hidden);
+  element.classList.add(ClassNames.visible);
 }

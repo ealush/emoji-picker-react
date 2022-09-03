@@ -50,6 +50,7 @@ export function Emoji({
     <button
       className={clsx('epr-emoji', {
         [ClassNames.hidden]: hidden,
+        [ClassNames.visible]: !hidden,
         'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}

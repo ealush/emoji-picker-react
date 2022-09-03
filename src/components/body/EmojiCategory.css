@@ -36,3 +36,7 @@
   display: inline-block;
   flex: 1;
 }
+
+.EmojiPickerReact li.epr-emoji-category:not(:has(.epr-visible)) {
+  display: none;
+}
