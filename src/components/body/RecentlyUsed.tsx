@@ -4,7 +4,10 @@ import { CategoryConfig } from '../../config/categoryConfig';
 import { useEmojiStyleConfig } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getRecentlyUsed } from '../../dataUtils/recentlyUsed';
-import { useSearchTermState } from '../context/PickerContext';
+import {
+  useSearchTermState,
+  useUpdateRecentlyUsed
+} from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
@@ -14,8 +17,11 @@ type Props = Readonly<{
 }>;
 
 export function RecentlyUsed({ categoryConfig }: Props) {
+  const [recentlyUsedUpdated] = useUpdateRecentlyUsed();
   const [searchTerm] = useSearchTermState();
-  const recentlyUsed = getRecentlyUsed();
+  const recentlyUsed = React.useMemo(() => getRecentlyUsed(), [
+    recentlyUsedUpdated
+  ]);
   const emojiStyle = useEmojiStyleConfig();
 
   if (searchTerm) {

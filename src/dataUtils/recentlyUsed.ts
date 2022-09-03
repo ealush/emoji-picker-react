@@ -51,13 +51,11 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
   nextList.length = Math.min(nextList.length, 14);
 
   try {
-    setTimeout(() => {
-      window?.localStorage.setItem(
-        RECENTLY_USED_LS_KEY,
-        JSON.stringify(nextList)
-      );
-      // Prevents the change from being seen immediately.
-    }, 10);
+    window?.localStorage.setItem(
+      RECENTLY_USED_LS_KEY,
+      JSON.stringify(nextList)
+    );
+    // Prevents the change from being seen immediately.
   } catch {
     // ignore
   }

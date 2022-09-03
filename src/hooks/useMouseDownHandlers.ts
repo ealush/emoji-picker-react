@@ -6,7 +6,8 @@ import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext'
 import {
   useActiveSkinToneState,
   useDisallowClickRef,
-  useEmojiVariationPickerState
+  useEmojiVariationPickerState,
+  useUpdateRecentlyUsed
 } from '../components/context/PickerContext';
 import {
   useEmojiStyleConfig,
@@ -40,6 +41,7 @@ export function useMouseDownHandlers(
   const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
   const emojiStyle = useEmojiStyleConfig();
+  const [, updateRecentlyUsed] = useUpdateRecentlyUsed();
 
   useEffect(() => {
     if (!BodyRef.current) {
@@ -81,6 +83,7 @@ export function useMouseDownHandlers(
 
     const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
 
+    updateRecentlyUsed();
     setRecentlyUsed(emoji, skinToneToUse);
     onEmojiClick(event, emojiClickOutput(emoji, skinToneToUse));
   }
@@ -111,7 +114,7 @@ export function useMouseDownHandlers(
       closeAllOpenToggles();
       setAnchoredEmojiRef(event.target as HTMLElement);
       setEmojiVariationPicker(emoji);
-    }, 250);
+    }, 500);
   }
   function onMouseUp() {
     preloading.current = false;
