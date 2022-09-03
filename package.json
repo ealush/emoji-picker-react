@@ -12,7 +12,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "tsdx build",
+    "build": "node ./scripts/prepare.js && tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
     "prepare": "tsdx build",
@@ -48,8 +48,6 @@
     }
   ],
   "devDependencies": {
-    "eslint-import-resolver-typescript": "^3.3.0",
-    "eslint-plugin-import": "^2.26.0",
     "@babel/core": "^7.18.10",
     "@size-limit/preset-small-lib": "^8.0.1",
     "@storybook/addon-essentials": "^6.5.10",
@@ -64,11 +62,15 @@
     "babel-loader": "^8.2.5",
     "cssnano": "^5.1.13",
     "emoji-datasource": "^14.0.0",
+    "eslint-import-resolver-typescript": "^3.3.0",
+    "eslint-plugin-import": "^2.26.0",
     "fs-extra": "^10.1.0",
     "glob": "^8.0.3",
     "husky": "^8.0.1",
     "lodash": "^4.17.21",
     "postcss": "^8.4.16",
+    "postcss-inline-svg": "^5.0.0",
+    "postcss-svgo": "^5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
@@ -78,9 +80,7 @@
     "tinykeys": "^1.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4",
-    "postcss-inline-svg": "^5.0.0",
-    "postcss-svgo": "^5.1.0"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
     "clsx": "^1.2.1"
