@@ -15,11 +15,14 @@ import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
 import Flex from '../Layout/Flex';
 import { Emoji } from '../emoji/Emoji';
 import './Preview.css';
+import { useEmojiVariationPickerState } from '../context/PickerContext';
 
 export function Preview() {
   const showPreview = useShowPreviewConfig();
   const [hoveredEmoji, setHoveredEmoji] = useState<HoveredEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
+  const [variationPickerEmoji] = useEmojiVariationPickerState();
+
   useEmojiMouseEnter(showPreview, setHoveredEmoji);
 
   if (!showPreview) {
@@ -37,7 +40,12 @@ export function Preview() {
   );
 
   function PreviewContent() {
-    const defaultEmoji = asEmoji(emojiByUnified('1f60a'));
+    const defaultEmoji = asEmoji(
+      variationPickerEmoji ?? emojiByUnified('1f60a')
+    );
+    const defaultText = variationPickerEmoji
+      ? emojiName(variationPickerEmoji)
+      : "What's your mood?";
 
     return (
       <>
@@ -67,7 +75,7 @@ export function Preview() {
             {emojiName(asEmoji(emoji))}
           </div>
         ) : (
-          <div className="epr-preview-emoji-label">What's your mood?</div>
+          <div className="epr-preview-emoji-label">{defaultText}</div>
         )}
       </>
     );
