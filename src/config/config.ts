@@ -1,11 +1,15 @@
-import { EmojiClickData, EmojiStyle, SkinTones, Theme } from '../types/exposedTypes';
+import {
+  EmojiClickData,
+  EmojiStyle,
+  SkinTones,
+  Theme
+} from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
   baseCategoriesConfig,
   mergeCategoriesConfig
 } from './categoryConfig';
-
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
   const categories = mergeCategoriesConfig(userConfig.categories);

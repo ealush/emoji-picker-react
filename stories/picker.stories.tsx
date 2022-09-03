@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { EmojiPicker, EmojiStyle, Props, SkinTones, Theme } from '../src';
+import EmojiPicker, { EmojiStyle, Props, SkinTones, Theme } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 
 const meta: Meta = {
@@ -30,6 +30,9 @@ export const Native = (args: Props) => (
 export const Default = (args: Props) => <Template {...args} />;
 export const Dark = (args: Props) => (
   <TemplateDark {...args} theme={Theme.DARK} />
+);
+export const AutoTheme = (args: Props) => (
+  <TemplateDark {...args} theme={Theme.AUTO} />
 );
 export const EmojiImageApple = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.APPLE} />

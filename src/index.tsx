@@ -18,7 +18,7 @@ export {
 
 export interface Props extends PickerConfig {}
 
-export function EmojiPicker(props: Props) {
+export default function EmojiPicker(props: Props) {
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>

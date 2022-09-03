@@ -1,5 +1,11 @@
 import { usePickerConfig } from '../components/context/PickerConfigContext';
-import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
+import { isSystemDarkTheme } from '../DomUtils/isDarkTheme';
+import {
+  EmojiClickData,
+  EmojiStyle,
+  SkinTones,
+  Theme
+} from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
 
@@ -46,7 +52,12 @@ export function useShowPreviewConfig(): boolean {
   return showPreview;
 }
 
-export function useThemeConfig(): string {
+export function useThemeConfig(): Theme {
   const { theme } = usePickerConfig();
+
+  if (theme === Theme.AUTO) {
+    return isSystemDarkTheme() ? Theme.DARK : Theme.LIGHT;
+  }
+
   return theme;
 }

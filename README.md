@@ -6,7 +6,7 @@ An emoji picker component for React applications.
 
 ## What to know before using
 
-- This package assumes it runs in the browser. I have taken many steps to prevent it from failing on the server, but still, it is recommended to only render the component on the client.
+- This package assumes it runs in the browser. I have taken many steps to prevent it from failing on the server, but still, it is recommended to only render the component on the client. See troubleshooting section for more information.
 
 ## Installation
 
@@ -38,7 +38,7 @@ npm install emoji-picker-react
   }
   ```
 
-- _theme_ `Theme` - The theme of the picker. Can be either `light` or `dark`. Default is `light`.
+- _theme_ `Theme` - The theme of the picker. Can be `light`, `dark` or auto. Default is `light`.
   The `Theme` enum can be imported from the package.
 
   ```ts
@@ -102,4 +102,31 @@ For a more in-depth configuration, you can pass an array with category config:
   category: Categories.SMILEYS_PEOPLE;
   name: "Faces...";
 }]
+```
+
+# Troubleshooting
+
+## Next.js
+
+To avoid errors such as "document is not defined" on the server side, you should make sure the library is only imported on the client side. Here is how to do that:
+
+```javascript
+import dynamic from 'next/dynamic';
+
+const Picker = dynamic(
+  () => {
+    return import('emoji-picker-react');
+  },
+  { ssr: false }
+);
+```
+
+## Vite
+
+For reference, if you only need to shim global, you can add
+
+```html
+<script>
+  window.global = window;
+</script>
 ```
