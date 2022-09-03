@@ -79,7 +79,7 @@ const allEmojisByUnified: {
   [unified: string]: DataEmoji;
 } = {};
 
-window?.setTimeout(() => {
+setTimeout(() => {
   allEmojis.reduce((allEmojis, Emoji) => {
     allEmojis[emojiUnified(Emoji)] = Emoji;
     return allEmojis;

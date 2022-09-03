@@ -12,7 +12,7 @@ export function useDebouncedState<T>(
       clearTimeout(timer.current);
     }
 
-    timer.current = window.setTimeout(() => {
+    timer.current = window?.setTimeout(() => {
       setState(value);
     }, delay);
   }
