@@ -1,8 +1,6 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { EmojiPicker, Props } from '../src';
-import { SkinTones } from '../src/data/skinToneVariations';
-import { EmojiStyle, Theme } from '../src/config/config';
+import { EmojiPicker, EmojiStyle, Props, SkinTones, Theme } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 
 const meta: Meta = {

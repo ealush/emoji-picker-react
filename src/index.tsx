@@ -8,7 +8,13 @@ import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
 import { PickerConfig } from './config/config';
 import './EmojiPickerReact.css';
-export { EmojiStyle, SkinTones, Theme, Categories } from './types/exposedTypes';
+export {
+  EmojiStyle,
+  SkinTones,
+  Theme,
+  Categories,
+  EmojiClickData
+} from './types/exposedTypes';
 
 export interface Props extends PickerConfig {}
 
