@@ -4,6 +4,7 @@ import {
   EmojiClickData,
   EmojiStyle,
   SkinTones,
+  SuggestionMode,
   Theme
 } from '../types/exposedTypes';
 
@@ -60,4 +61,9 @@ export function useThemeConfig(): Theme {
   }
 
   return theme;
+}
+
+export function useSuggestedEmojisModeConfig(): SuggestionMode {
+  const { suggestedEmojisMode } = usePickerConfig();
+  return suggestedEmojisMode;
 }

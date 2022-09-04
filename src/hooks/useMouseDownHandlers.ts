@@ -7,7 +7,7 @@ import {
   useActiveSkinToneState,
   useDisallowClickRef,
   useEmojiVariationPickerState,
-  useUpdateRecentlyUsed
+  useUpdateSuggested
 } from '../components/context/PickerContext';
 import {
   useEmojiStyleConfig,
@@ -22,7 +22,7 @@ import {
   emojiUrlByUnified
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
-import { setRecentlyUsed } from '../dataUtils/recentlyUsed';
+import { setSeggested } from '../dataUtils/suggested';
 import { EmojiClickData, EmojiStyle } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
@@ -41,7 +41,7 @@ export function useMouseDownHandlers(
   const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
   const emojiStyle = useEmojiStyleConfig();
-  const [, updateRecentlyUsed] = useUpdateRecentlyUsed();
+  const [, updateSuggested] = useUpdateSuggested();
 
   useEffect(() => {
     if (!BodyRef.current) {
@@ -81,8 +81,8 @@ export function useMouseDownHandlers(
 
     const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
 
-    updateRecentlyUsed();
-    setRecentlyUsed(emoji, skinToneToUse);
+    updateSuggested();
+    setSeggested(emoji, skinToneToUse);
     onEmojiClick(emojiClickOutput(emoji, skinToneToUse), event);
   }
 

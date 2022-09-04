@@ -18,7 +18,7 @@ import {
 import { Emoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
-import { RecentlyUsed } from './RecentlyUsed';
+import { Suggested } from './Suggested';
 import './EmojiList.css';
 import { getEmojiRef } from '../../DomUtils/emojiElementRef';
 
@@ -30,10 +30,8 @@ export function EmojiList() {
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
-        if (category === Categories.RECENTLY_USED) {
-          return (
-            <RecentlyUsed key={category} categoryConfig={categoryConfig} />
-          );
+        if (category === Categories.SUGGESTED) {
+          return <Suggested key={category} categoryConfig={categoryConfig} />;
         }
 
         return (

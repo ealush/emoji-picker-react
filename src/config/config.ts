@@ -2,6 +2,7 @@ import {
   EmojiClickData,
   EmojiStyle,
   SkinTones,
+  SuggestionMode,
   Theme
 } from '../types/exposedTypes';
 
@@ -35,7 +36,8 @@ export function basePickerConfig(): PickerConfigInternal {
     searchPlaceHolder: 'Search',
     showPreview: true,
     skinTonesDisabled: false,
-    theme: Theme.LIGHT
+    theme: Theme.LIGHT,
+    suggestedEmojisMode: SuggestionMode.FREQUENT
   };
 }
 
@@ -49,6 +51,7 @@ export type PickerConfigInternal = {
   onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
   showPreview: boolean;
   theme: Theme;
+  suggestedEmojisMode: SuggestionMode;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;

@@ -1,12 +1,15 @@
 import * as React from 'react';
 
 import { CategoryConfig } from '../../config/categoryConfig';
-import { useEmojiStyleConfig } from '../../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useSuggestedEmojisModeConfig
+} from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
-import { getRecentlyUsed } from '../../dataUtils/recentlyUsed';
+import { getSeggested } from '../../dataUtils/suggested';
 import {
   useSearchTermState,
-  useUpdateRecentlyUsed
+  useUpdateSuggested
 } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 
@@ -16,26 +19,28 @@ type Props = Readonly<{
   categoryConfig: CategoryConfig;
 }>;
 
-export function RecentlyUsed({ categoryConfig }: Props) {
-  const [recentlyUsedUpdated] = useUpdateRecentlyUsed();
+export function Suggested({ categoryConfig }: Props) {
+  const [suggestedUpdated] = useUpdateSuggested();
   const [searchTerm] = useSearchTermState();
-  const recentlyUsed = React.useMemo(() => getRecentlyUsed(), [
-    recentlyUsedUpdated
-  ]);
+  const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
+  const suggested = React.useMemo(
+    () => getSeggested(suggestedEmojisModeConfig),
+    [suggestedUpdated]
+  );
   const emojiStyle = useEmojiStyleConfig();
 
   if (searchTerm) {
     return null;
   }
 
-  if (recentlyUsed.length === 0) {
+  if (suggested.length === 0) {
     return null;
   }
 
   return (
     <EmojiCategory categoryConfig={categoryConfig} hiddenOnSearch>
-      {recentlyUsed.map(recentlyUsedItem => {
-        const emoji = emojiByUnified(recentlyUsedItem.original);
+      {suggested.map(suggestedItem => {
+        const emoji = emojiByUnified(suggestedItem.original);
 
         if (!emoji) {
           return null;
@@ -44,10 +49,10 @@ export function RecentlyUsed({ categoryConfig }: Props) {
         return (
           <Emoji
             showVariations={false}
-            unified={recentlyUsedItem.unified}
+            unified={suggestedItem.unified}
             emojiStyle={emojiStyle}
             emoji={emoji}
-            key={recentlyUsedItem.unified}
+            key={suggestedItem.unified}
           />
         );
       })}

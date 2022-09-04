@@ -17,7 +17,7 @@ export function PickerContextProvider({ children }: Props) {
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
 
-  const recentlyUsedUpdateState = useDebouncedState(Date.now(), 250);
+  const suggestedUpdateState = useDebouncedState(Date.now(), 250);
   const searchTerm = useDebouncedState('', 100);
   const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
@@ -31,7 +31,7 @@ export function PickerContextProvider({ children }: Props) {
   return (
     <PickerContext.Provider
       value={{
-        recentlyUsedUpdateState,
+        suggestedUpdateState,
         filterRef,
         searchTerm,
         activeCategoryState,
@@ -52,7 +52,7 @@ type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const PickerContext = React.createContext<{
   searchTerm: [string, (term: string) => void];
-  recentlyUsedUpdateState: [number, (term: number) => void];
+  suggestedUpdateState: [number, (term: number) => void];
   activeCategoryState: ReactState<ActiveCategoryState>;
   activeSkinTone: ReactState<SkinTones>;
   emojisThatFailedToLoadState: ReactState<Set<string>>;
@@ -62,7 +62,7 @@ const PickerContext = React.createContext<{
   filterRef: React.MutableRefObject<FilterState>;
   disallowClickRef: React.MutableRefObject<boolean>;
 }>({
-  recentlyUsedUpdateState: [Date.now(), () => {}],
+  suggestedUpdateState: [Date.now(), () => {}],
   searchTerm: ['', () => {}],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
@@ -142,14 +142,14 @@ export function useSkinToneFanOpenState() {
   return skinToneFanOpenState;
 }
 
-export function useUpdateRecentlyUsed(): [number, () => void] {
-  const { recentlyUsedUpdateState } = React.useContext(PickerContext);
+export function useUpdateSuggested(): [number, () => void] {
+  const { suggestedUpdateState } = React.useContext(PickerContext);
 
-  const [recentlyUsedUpdated, setRecentlyUsedUpdate] = recentlyUsedUpdateState;
+  const [suggestedUpdated, setSeggestedUpdate] = suggestedUpdateState;
   return [
-    recentlyUsedUpdated,
-    function updateRecentlyUsed() {
-      setRecentlyUsedUpdate(Date.now());
+    suggestedUpdated,
+    function updateSuggested() {
+      setSeggestedUpdate(Date.now());
     }
   ];
 }

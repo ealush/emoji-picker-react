@@ -95,7 +95,7 @@ import { SkinTones } from 'emoji-picker-react';
 - categories: Allows full config over ordering, naming and display of categories.
   To only sort/omit categories, you can simply pass an array of category names to display:
 
-  - 'recently_used',
+  - 'seggested',
   - 'smileys_people',
   - 'animals_nature',
   - 'food_drink',
@@ -110,7 +110,7 @@ import { SkinTones } from 'emoji-picker-react';
   ```ts
   [
     {
-      category: 'recently_used',
+      category: 'seggested',
       name: 'Recently Used'
     },
     {
@@ -118,6 +118,13 @@ import { SkinTones } from 'emoji-picker-react';
       name: 'Faces...'
     }
   ];
+  ```
+
+- `suggestedEmojisMode`: `SuggestedEmojisMode` - The mode to use for the suggested emojis. Can be either `recent` or `frequent`. Defaults to `recent`.
+  The `SuggestionMode` enum can be imported from the package.
+
+  ```ts
+  import { SuggestionMode } from 'emoji-picker-react';
   ```
 
 # Troubleshooting

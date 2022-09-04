@@ -2,6 +2,7 @@ import React from 'react';
 import { Meta, Story } from '@storybook/react';
 import EmojiPicker, { EmojiStyle, Props, SkinTones, Theme } from '../src';
 import { Categories } from '../src/config/categoryConfig';
+import { SuggestionMode } from '../src/types/exposedTypes';
 
 const meta: Meta = {
   title: 'Picker',
@@ -60,6 +61,9 @@ export const AutoFocusDisabled = (args: Props) => (
 );
 export const HidePreview = (args: Props) => (
   <Template {...args} showPreview={false} />
+);
+export const FrequentlyUsed = (args: Props) => (
+  <Template {...args} suggestedEmojisMode={SuggestionMode.FREQUENT} />
 );
 export const CustomCategoryConfig = (args: Props) => (
   <Template

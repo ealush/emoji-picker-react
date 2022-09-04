@@ -1,39 +1,45 @@
-import { SkinTones } from '../types/exposedTypes';
+import { SkinTones, SuggestionMode } from '../types/exposedTypes';
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiSelectors';
 
-const RECENTLY_USED_LS_KEY = 'epr_recentlyUsed';
+const SUGGESTED_LS_KEY = 'epr_suggested';
 
-type RecentlyUsedItem = {
+type SuggestedItem = {
   unified: string;
   original: string;
   count: number;
 };
 
-type RecentlyUsed = RecentlyUsedItem[];
+type Suggested = SuggestedItem[];
 
-export function getRecentlyUsed(): RecentlyUsed {
+export function getSeggested(mode?: SuggestionMode): Suggested {
   if (!window?.localStorage) {
     return [];
   }
   try {
-    return JSON.parse(
-      window?.localStorage.getItem(RECENTLY_USED_LS_KEY) ?? '[]'
-    );
+    const recent = JSON.parse(
+      window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]'
+    ) as Suggested;
+
+    if (mode === SuggestionMode.FREQUENT) {
+      return recent.sort((a, b) => b.count - a.count);
+    }
+
+    return recent;
   } catch {
     return [];
   }
 }
 
-export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
-  const recent = getRecentlyUsed();
+export function setSeggested(emoji: DataEmoji, skinTone: SkinTones) {
+  const recent = getSeggested();
 
   const unified = emojiUnified(emoji, skinTone);
   const originalUnified = emojiUnified(emoji);
 
   let existing = recent.find(({ unified: u }) => u === unified);
 
-  let nextList: RecentlyUsedItem[];
+  let nextList: SuggestedItem[];
 
   if (existing) {
     nextList = [existing].concat(recent.filter(i => i !== existing));
@@ -51,10 +57,7 @@ export function setRecentlyUsed(emoji: DataEmoji, skinTone: SkinTones) {
   nextList.length = Math.min(nextList.length, 14);
 
   try {
-    window?.localStorage.setItem(
-      RECENTLY_USED_LS_KEY,
-      JSON.stringify(nextList)
-    );
+    window?.localStorage.setItem(SUGGESTED_LS_KEY, JSON.stringify(nextList));
     // Prevents the change from being seen immediately.
   } catch {
     // ignore

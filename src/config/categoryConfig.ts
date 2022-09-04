@@ -3,7 +3,7 @@ import { Categories } from '../types/exposedTypes';
 export { Categories };
 
 const categoriesOrdered: Categories[] = [
-  Categories.RECENTLY_USED,
+  Categories.SUGGESTED,
   Categories.SMILEYS_PEOPLE,
   Categories.ANIMALS_NATURE,
   Categories.FOOD_DRINK,
@@ -15,9 +15,9 @@ const categoriesOrdered: Categories[] = [
 ];
 
 const configByCategory: Record<Categories, CategoryConfig> = {
-  [Categories.RECENTLY_USED]: {
-    category: Categories.RECENTLY_USED,
-    name: 'Recently Used'
+  [Categories.SUGGESTED]: {
+    category: Categories.SUGGESTED,
+    name: 'Frequently Used'
   },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,

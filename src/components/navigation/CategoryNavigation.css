@@ -53,7 +53,7 @@
   > button.epr-cat-btn.epr-active {
   background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
 }
-.EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {
+.EmojiPickerReact button.epr-cat-btn.epr-icn-seggested {
   background-position-x: calc(var(--epr-category-navigation-button-size) * -8);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-activities {

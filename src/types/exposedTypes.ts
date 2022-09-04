@@ -7,6 +7,11 @@ export type EmojiClickData = {
   getImageUrl: (emojiStyle: EmojiStyle) => string;
 };
 
+export enum SuggestionMode {
+  RECENT = 'recent',
+  FREQUENT = 'frequent'
+}
+
 export enum EmojiStyle {
   NATIVE = 'native',
   APPLE = 'apple',
@@ -31,7 +36,7 @@ export enum SkinTones {
 }
 
 export enum Categories {
-  RECENTLY_USED = 'recently_used',
+  SUGGESTED = 'seggested',
   SMILEYS_PEOPLE = 'smileys_people',
   ANIMALS_NATURE = 'animals_nature',
   FOOD_DRINK = 'food_drink',
