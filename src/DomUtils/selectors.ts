@@ -9,13 +9,21 @@ export function buttonFromEmoji(
 
 export function emojiFromElement(
   element: HTMLElement | null
-): DataEmoji | undefined {
-  const unified = originalUnifiedFromEmojiElement(element);
+): [emoji: DataEmoji, unified: string] | [] {
+  const originalUnified = originalUnifiedFromEmojiElement(element);
+  const unified = unifiedFromEmojiElement(element);
 
-  if (!unified) {
-    return;
+  if (!originalUnified) {
+    return [];
   }
-  return emojiByUnified(unified);
+
+  const emoji = emojiByUnified(originalUnified);
+
+  if (!emoji) {
+    return [];
+  }
+
+  return [emoji, unified as string];
 }
 
 export function isEmojiElement(element: HTMLElement | null): boolean {

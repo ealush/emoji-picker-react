@@ -73,13 +73,11 @@ export function useMouseDownHandlers(
 
     closeAllOpenToggles();
 
-    const emoji = emojiFromEvent(event);
+    const [emoji, unified] = emojiFromEvent(event);
 
-    if (!emoji) {
+    if (!emoji|| !unified) {
       return;
     }
-
-    const unified = emojiUnified(emoji);
 
     const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
 
@@ -93,7 +91,7 @@ export function useMouseDownHandlers(
       clearTimeout(mouseDownTimer);
     }
 
-    const emoji = emojiFromEvent(event);
+    const [emoji] = emojiFromEvent(event);
 
     if (!emoji || !emojiHasVariations(emoji)) {
       return;
@@ -136,10 +134,10 @@ export function useMouseDownHandlers(
   }
 }
 
-function emojiFromEvent(event: MouseEvent): DataEmoji | undefined {
+function emojiFromEvent(event: MouseEvent): [emoji: DataEmoji, unified: string] | []{
   const target = event?.target as HTMLElement;
   if (!isEmojiElement(target)) {
-    return;
+    return [];
   }
 
   return emojiFromElement(target);
