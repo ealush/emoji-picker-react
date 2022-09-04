@@ -75,7 +75,7 @@ export function useMouseDownHandlers(
 
     const [emoji, unified] = emojiFromEvent(event);
 
-    if (!emoji|| !unified) {
+    if (!emoji || !unified) {
       return;
     }
 
@@ -134,7 +134,7 @@ export function useMouseDownHandlers(
   }
 }
 
-function emojiFromEvent(event: MouseEvent): [emoji: DataEmoji, unified: string] | []{
+function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
   const target = event?.target as HTMLElement;
   if (!isEmojiElement(target)) {
     return [];
