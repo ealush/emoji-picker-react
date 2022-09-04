@@ -7,6 +7,13 @@
 Try it live:  [here](https://codesandbox.io/s/floral-rgb-z2gkzp?file=/src/App.tsx)
 
 And if it works well for you, you can add it to your app:
+
+
+
+https://user-images.githubusercontent.com/11255103/188325308-02f336fd-e78e-4c66-b972-d481313e0a73.mov
+
+
+
 ```
 npm i emoji-picker-react --tag rc
 ```
