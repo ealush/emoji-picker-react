@@ -20,7 +20,7 @@ export function CategoryNavigation() {
         return (
           <button
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
-              active: category === activeCategory
+              ['epr-active']: category === activeCategory
             })}
             key={category}
             onClick={() => setActiveCategoryAndScroll(category)}

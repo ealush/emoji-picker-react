@@ -44,7 +44,7 @@ export function SkinTonePicker() {
               }}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
-                active
+                ['epr-active']: active
               })}
             ></button>
           );

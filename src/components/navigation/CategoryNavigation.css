@@ -21,7 +21,7 @@
   > button.epr-cat-btn:hover,
 .EmojiPickerReact.epr-search-active
   .epr-category-nav
-  > button.epr-cat-btn.active {
+  > button.epr-cat-btn.epr-active {
   opacity: 0.3;
   cursor: default;
   pointer-events: none;
@@ -32,7 +32,7 @@
   > button.epr-cat-btn:hover,
 .EmojiPickerReact:not(.epr-search-active)
   .epr-category-nav
-  > button.epr-cat-btn.active {
+  > button.epr-cat-btn.epr-active {
   opacity: 1;
   background-position-y: var(--epr-category-navigation-button-size);
 }
@@ -50,7 +50,7 @@
   > button.epr-cat-btn:hover,
 .EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
   .epr-category-nav
-  > button.epr-cat-btn.active {
+  > button.epr-cat-btn.epr-active {
   background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
 }
 .EmojiPickerReact button.epr-cat-btn.epr-icn-recently_used {

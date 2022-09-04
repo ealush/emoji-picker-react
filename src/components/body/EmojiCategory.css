@@ -8,7 +8,7 @@
   text-transform: capitalize;
   backdrop-filter: blur(3px);
   padding: var(--epr-category-label-padding);
-  background-color: var(--epr-category-label-background-color);
+  background-color: var(--epr-category-label-bg-color);
   color: var(--epr-category-label-text-color);
   z-index: var(--epr-category-label-z-index);
   height: var(--epr-category-label-height);
