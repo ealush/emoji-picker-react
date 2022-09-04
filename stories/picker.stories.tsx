@@ -62,8 +62,8 @@ export const AutoFocusDisabled = (args: Props) => (
 export const HidePreview = (args: Props) => (
   <Template {...args} showPreview={false} />
 );
-export const FrequentlyUsed = (args: Props) => (
-  <Template {...args} suggestedEmojisMode={SuggestionMode.FREQUENT} />
+export const RecentlyUsed = (args: Props) => (
+  <Template {...args} suggestedEmojisMode={SuggestionMode.RECENT} />
 );
 export const CustomCategoryConfig = (args: Props) => (
   <Template

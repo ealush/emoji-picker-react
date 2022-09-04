@@ -13,10 +13,14 @@ import {
 } from './categoryConfig';
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
-  const categories = mergeCategoriesConfig(userConfig.categories);
+  const config = { ...basePickerConfig(), ...userConfig };
+
+  const categories = mergeCategoriesConfig(userConfig.categories, {
+    suggestionMode: config.suggestedEmojisMode
+  });
+
   return {
-    ...basePickerConfig(),
-    ...userConfig,
+    ...config,
     categories
   };
 }
@@ -24,7 +28,7 @@ export function mergeConfig(userConfig: PickerConfig = {}) {
 export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
-    categories: baseCategoriesConfig,
+    categories: baseCategoriesConfig(),
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
     onEmojiClick: function defaultOnClickHandler(

@@ -1,4 +1,4 @@
-import { Categories } from '../types/exposedTypes';
+import { Categories, SuggestionMode } from '../types/exposedTypes';
 
 export { Categories };
 
@@ -13,6 +13,11 @@ const categoriesOrdered: Categories[] = [
   Categories.SYMBOLS,
   Categories.FLAGS
 ];
+
+export const SuggestedRecent: CategoryConfig = {
+  name: 'Recently Used',
+  category: Categories.SUGGESTED
+};
 
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {
@@ -53,9 +58,16 @@ const configByCategory: Record<Categories, CategoryConfig> = {
   }
 };
 
-export const baseCategoriesConfig = categoriesOrdered.map(
-  category => configByCategory[category]
-);
+export function baseCategoriesConfig(
+  modifiers?: Record<Categories, CategoryConfig>
+): CategoriesConfig {
+  return categoriesOrdered.map(category => {
+    return {
+      ...configByCategory[category],
+      ...(modifiers && modifiers[category] && modifiers[category])
+    };
+  });
+}
 
 export function categoryFromCategoryConfig(category: CategoryConfig) {
   return category.category;
@@ -75,25 +87,39 @@ export type CategoryConfig = {
 export type UserCategoryConfig = Array<Categories | CategoryConfig>;
 
 export function mergeCategoriesConfig(
-  userCategoriesConfig: UserCategoryConfig = []
+  userCategoriesConfig: UserCategoryConfig = [],
+  modifiers: CategoryConfigModifiers = {}
 ): CategoriesConfig {
-  const base = baseCategoriesConfig;
+  const extra = {} as Record<Categories, CategoryConfig>;
+
+  if (modifiers.suggestionMode === SuggestionMode.RECENT) {
+    extra[Categories.SUGGESTED] = SuggestedRecent;
+  }
+
+  const base = baseCategoriesConfig(extra);
   if (!userCategoriesConfig?.length) {
     return base;
   }
 
   return userCategoriesConfig.map(category => {
     if (typeof category === 'string') {
-      return getBaseConfigByCategory(category);
+      return getBaseConfigByCategory(category, extra[category]);
     }
 
     return {
-      ...getBaseConfigByCategory(category.category),
+      ...getBaseConfigByCategory(category.category, extra[category.category]),
       ...category
     };
   });
 }
 
-function getBaseConfigByCategory(category: Categories) {
-  return configByCategory[category];
+function getBaseConfigByCategory(
+  category: Categories,
+  modifier: CategoryConfig = {} as CategoryConfig
+) {
+  return Object.assign(configByCategory[category], modifier);
 }
+
+type CategoryConfigModifiers = {
+  suggestionMode?: SuggestionMode;
+};
