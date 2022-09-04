@@ -1,5 +1,5 @@
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiByUnified } from '../dataUtils/emojiSelectors';
+import { emojiByUnified, unifiedWithoutSkinTone } from '../dataUtils/emojiSelectors';
 
 export function buttonFromEmoji(
   emojiElement: HTMLElement | null
@@ -86,7 +86,12 @@ export function unifiedFromEmojiElement(
 export function originalUnifiedFromEmojiElement(
   emoji: HTMLElement | null
 ): string | null {
-  return elementDataSetKey(buttonFromEmoji(emoji), 'original') ?? null;
+  const unified = unifiedFromEmojiElement(emoji);
+
+  if (unified) {
+    return unifiedWithoutSkinTone(unified);
+  }
+  return null;
 }
 
 function elementDataSetKey(

@@ -5,7 +5,6 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiHasVariations,
   emojiName,
-  emojiUnified,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
@@ -54,7 +53,6 @@ export function Emoji({
         'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}
-      data-original={emojiUnified(emoji)}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
     >

@@ -2,7 +2,9 @@ import { Categories } from './../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import emojis from '../data/emojis';
 import { DataEmoji, DataEmojis } from './DataTypes';
-import skinToneVariations from '../data/skinToneVariations';
+import skinToneVariations, {
+  skinTonesMapped
+} from '../data/skinToneVariations';
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 enum EmojiProperties {
@@ -17,6 +19,17 @@ export function emojiNames(emoji: DataEmoji): string[] {
 
 export function emojiName(emoji: DataEmoji): string {
   return emojiNames(emoji)[0];
+}
+
+export function unifiedWithoutSkinTone(unified: string): string {
+  const splat = unified.split('-');
+  const [skinTone] = splat.splice(1, 1);
+
+  if (skinTonesMapped[skinTone]) {
+    return splat.join('-');
+  }
+
+  return unified;
 }
 
 export function emojiUrl(

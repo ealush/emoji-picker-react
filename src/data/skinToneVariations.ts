@@ -9,4 +9,15 @@ const skinToneVariations = [
   SkinTones.DARK
 ];
 
+export const skinTonesMapped: Record<
+  string,
+  string
+> = skinToneVariations.reduce(
+  (mapped, skinTone) =>
+    Object.assign(mapped, {
+      [skinTone]: skinTone
+    }),
+  {}
+);
+
 export default skinToneVariations;
