@@ -28,9 +28,9 @@ export function basePickerConfig(): PickerConfigInternal {
     emojiStyle: EmojiStyle.APPLE,
     onEmojiClick: function defaultOnClickHandler(
       // @ts-ignore
-      event: MouseEvent,
+      emoji: EmojiClickData,
       // @ts-ignore
-      emoji: EmojiClickData
+      event: MouseEvent
     ) {},
     searchPlaceHolder: 'Search',
     showPreview: true,
@@ -46,7 +46,7 @@ export type PickerConfigInternal = {
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
-  onEmojiClick: (event: MouseEvent, emoji: EmojiClickData) => void;
+  onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
   showPreview: boolean;
   theme: Theme;
 };

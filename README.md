@@ -42,7 +42,7 @@ function App() {
 
 The following props are accepted by them picker:
 
-- `onEmojiClick`: `(event: MouseEvent, emoji: EmojiClickData) => void` - Callback function when an emoji is clicked. The callback receives the event and the emoji data. The emoji data is comprised of the following properties:
+- `onEmojiClick`: `(emojiData: EmojiClickData, event: MouseEvent) => void` - Callback function when an emoji is clicked. The callback receives the event and the emoji data. The emoji data is comprised of the following properties:
 
   ```ts
   {

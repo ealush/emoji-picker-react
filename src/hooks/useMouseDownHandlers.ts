@@ -85,7 +85,7 @@ export function useMouseDownHandlers(
 
     updateRecentlyUsed();
     setRecentlyUsed(emoji, skinToneToUse);
-    onEmojiClick(event, emojiClickOutput(emoji, skinToneToUse));
+    onEmojiClick(emojiClickOutput(emoji, skinToneToUse), event);
   }
 
   function onMouseDown(event: MouseEvent) {

@@ -40,8 +40,8 @@ export function useCategoriesConfig(): CategoriesConfig {
 }
 
 export function useOnEmojiClickConfig(): (
-  event: MouseEvent,
-  emoji: EmojiClickData
+  emoji: EmojiClickData,
+  event: MouseEvent
 ) => void {
   const { onEmojiClick } = usePickerConfig();
   return onEmojiClick;
