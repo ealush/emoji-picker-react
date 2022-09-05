@@ -90,7 +90,6 @@ const CategoriesNav = ({ emojiListRef, categoriesNavRef, customGroups }) => {
               type="button"
               className={cn(`icn-${group}`, { active })}
               data-name={group}
-              aria-label={group.replace('_', '/')}
             />
           );
         })}
