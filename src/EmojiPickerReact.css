@@ -9,10 +9,9 @@
   --epr-emoji-variation-indicator-color: var(--epr-picker-border-color);
   --epr-emoji-variation-indicator-color-hover: var(--epr-text-color);
 
-  --epr-header-height: 70px;
   --epr-picker-width: 350px;
-  --epr-picker-height: 500px;
-  --epr-emoji-size: 33px;
+  --epr-picker-height: 450px;
+  --epr-emoji-size: 30px;
   --epr-category-navigation-button-size: 30px;
   --epr-emoji-variation-picker-bg-color: var(--epr-bg-color);
   --epr-emoji-variation-picker-height: 55px;
@@ -28,7 +27,7 @@
   --epr-category-label-text-color: var(--epr-text-color);
   --epr-emoji-padding: 5px;
   --epr-header-padding: 15px 10px;
-  --epr-emoji-gap: 4px;
+  --epr-emoji-gap: 2px;
   --epr-category-padding: 0 10px;
   --epr-search-input-padding: 0 30px;
   --epr-search-input-border-radius: 8px;
