@@ -42,9 +42,11 @@ const cleanEmoji = emoji => {
   emoji.short_names = emoji.short_names || [];
   emoji[keys.EMOJI_PROPERTY_NAME] = [
     ...new Set(
-      [emoji.name, ...emoji.short_names, emoji.short_name].filter(Boolean)
+      [emoji.name, ...emoji.short_names, emoji.short_name]
+        .filter(Boolean)
+        .map(n => n.replace(/_/g, ' '))
     )
-  ];
+  ].sort((a, b) => a.length - b.length);
   emoji[keys.EMOJI_PROPERTY_UNIFIED] = emoji.unified;
 
   if (emoji.skin_variations) {
