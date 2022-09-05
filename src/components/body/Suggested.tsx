@@ -24,21 +24,19 @@ export function Suggested({ categoryConfig }: Props) {
   const [searchTerm] = useSearchTermState();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const suggested = React.useMemo(
-    () => getSeggested(suggestedEmojisModeConfig),
+    () => getSeggested(suggestedEmojisModeConfig) ?? [],
     [suggestedUpdated]
   );
   const emojiStyle = useEmojiStyleConfig();
 
-  if (searchTerm) {
-    return null;
-  }
-
-  if (suggested.length === 0) {
-    return null;
-  }
+  const hidden = !!(searchTerm || suggested.length === 0);
 
   return (
-    <EmojiCategory categoryConfig={categoryConfig} hiddenOnSearch>
+    <EmojiCategory
+      categoryConfig={categoryConfig}
+      hiddenOnSearch
+      hidden={hidden}
+    >
       {suggested.map(suggestedItem => {
         const emoji = emojiByUnified(suggestedItem.original);
 
