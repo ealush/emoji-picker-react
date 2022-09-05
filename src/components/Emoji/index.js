@@ -92,6 +92,7 @@ const Emoji = ({
         onMouseUp={handleMouseUp}
         type="button"
         onClick={handleEmojiClick}
+        aria-label={emoji.n[0]}
       >
         <EmojiImg unified={unified} shouldLoad={shouldLoad} native={native} />
       </button>
