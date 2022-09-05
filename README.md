@@ -70,6 +70,8 @@ The following props are accepted by them picker:
   ```
 
 * `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
+*
+* `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
 
 * `defaultSkinTone`: `SkinTones` - The default skin tone to use when an emoji is clicked. Defaults to `SkinTones.Neutral`. Possible skin tones are:
 
@@ -111,12 +113,12 @@ import { SkinTones } from 'emoji-picker-react';
   [
     {
       category: 'suggested',
-      name: 'Recently Used'
+      name: 'Recently Used',
     },
     {
       category: 'smileys_people',
-      name: 'Faces...'
-    }
+      name: 'Faces...',
+    },
   ];
   ```
 

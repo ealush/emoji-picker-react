@@ -3,24 +3,25 @@ import * as React from 'react';
 import {
   Categories,
   CategoryConfig,
-  categoryFromCategoryConfig
+  categoryFromCategoryConfig,
 } from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
-  useEmojiStyleConfig
+  useEmojiStyleConfig,
+  useLazyLoadEmojisConfig,
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useActiveSkinToneState,
-  useIsPastInitialLoad
+  useIsPastInitialLoad,
 } from '../context/PickerContext';
-import { Emoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 import './EmojiList.css';
 import { getEmojiRef } from '../../DomUtils/emojiElementRef';
+import { Emoji } from '../emoji/Emoji';
 
 export function EmojiList() {
   const categories = useCategoriesConfig();
@@ -50,13 +51,14 @@ export function EmojiList() {
 function RenderCategory({
   index,
   category,
-  categoryConfig
+  categoryConfig,
 }: {
   index: number;
   category: Categories;
   categoryConfig: CategoryConfig;
 }) {
   const isEmojiHidden = useIsEmojiHidden();
+  const lazyLoadEmojis = useLazyLoadEmojisConfig();
   const emojiStyle = useEmojiStyleConfig();
   const isPastInitialLoad = useIsPastInitialLoad();
   const [activeSkinTone] = useActiveSkinToneState();
@@ -68,7 +70,7 @@ function RenderCategory({
 
   let hiddenCounter = 0;
 
-  const emojis = emojisToPush.map(emoji => {
+  const emojis = emojisToPush.map((emoji) => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const hidden = isEmojiHidden(emoji);
     const emojiRef = getEmojiRef(emojiUnified(emoji));
@@ -85,6 +87,7 @@ function RenderCategory({
         hidden={hidden}
         emojiStyle={emojiStyle}
         emojiRef={emojiRef}
+        lazyLoad={lazyLoadEmojis}
       />
     );
   });

@@ -65,6 +65,9 @@ export const HidePreview = (args: Props) => (
 export const RecentlyUsed = (args: Props) => (
   <Template {...args} suggestedEmojisMode={SuggestionMode.RECENT} />
 );
+export const LazyLoaded = (args: Props) => (
+  <Template {...args} lazyLoadEmojis={true} />
+);
 export const CustomCategoryConfig = (args: Props) => (
   <Template
     {...args}

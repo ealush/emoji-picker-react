@@ -3,25 +3,25 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme
+  Theme,
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
   baseCategoriesConfig,
-  mergeCategoriesConfig
+  mergeCategoriesConfig,
 } from './categoryConfig';
 
 export function mergeConfig(userConfig: PickerConfig = {}) {
   const config = { ...basePickerConfig(), ...userConfig };
 
   const categories = mergeCategoriesConfig(userConfig.categories, {
-    suggestionMode: config.suggestedEmojisMode
+    suggestionMode: config.suggestedEmojisMode,
   });
 
   return {
     ...config,
-    categories
+    categories,
   };
 }
 
@@ -41,7 +41,8 @@ export function basePickerConfig(): PickerConfigInternal {
     showPreview: true,
     skinTonesDisabled: false,
     theme: Theme.LIGHT,
-    suggestedEmojisMode: SuggestionMode.FREQUENT
+    suggestedEmojisMode: SuggestionMode.FREQUENT,
+    lazyLoadEmojis: false,
   };
 }
 
@@ -56,6 +57,7 @@ export type PickerConfigInternal = {
   showPreview: boolean;
   theme: Theme;
   suggestedEmojisMode: SuggestionMode;
+  lazyLoadEmojis: boolean;
 };
 
 export type PickerConfig = Partial<PickerConfigInternal>;
