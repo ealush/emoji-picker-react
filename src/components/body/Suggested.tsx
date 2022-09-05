@@ -6,7 +6,7 @@ import {
   useSuggestedEmojisModeConfig
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
-import { getSeggested } from '../../dataUtils/suggested';
+import { getsuggested } from '../../dataUtils/suggested';
 import {
   useSearchTermState,
   useUpdateSuggested
@@ -24,7 +24,7 @@ export function Suggested({ categoryConfig }: Props) {
   const [searchTerm] = useSearchTermState();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const suggested = React.useMemo(
-    () => getSeggested(suggestedEmojisModeConfig) ?? [],
+    () => getsuggested(suggestedEmojisModeConfig) ?? [],
     [suggestedUpdated]
   );
   const emojiStyle = useEmojiStyleConfig();

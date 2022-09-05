@@ -95,7 +95,7 @@ import { SkinTones } from 'emoji-picker-react';
 - categories: Allows full config over ordering, naming and display of categories.
   To only sort/omit categories, you can simply pass an array of category names to display:
 
-  - 'seggested',
+  - 'suggested',
   - 'smileys_people',
   - 'animals_nature',
   - 'food_drink',
@@ -110,7 +110,7 @@ import { SkinTones } from 'emoji-picker-react';
   ```ts
   [
     {
-      category: 'seggested',
+      category: 'suggested',
       name: 'Recently Used'
     },
     {

@@ -145,11 +145,11 @@ export function useSkinToneFanOpenState() {
 export function useUpdateSuggested(): [number, () => void] {
   const { suggestedUpdateState } = React.useContext(PickerContext);
 
-  const [suggestedUpdated, setSeggestedUpdate] = suggestedUpdateState;
+  const [suggestedUpdated, setsuggestedUpdate] = suggestedUpdateState;
   return [
     suggestedUpdated,
     function updateSuggested() {
-      setSeggestedUpdate(Date.now());
+      setsuggestedUpdate(Date.now());
     }
   ];
 }

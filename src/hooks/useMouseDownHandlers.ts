@@ -22,7 +22,7 @@ import {
   emojiUrlByUnified
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
-import { setSeggested } from '../dataUtils/suggested';
+import { setsuggested } from '../dataUtils/suggested';
 import { EmojiClickData, EmojiStyle } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
@@ -82,7 +82,7 @@ export function useMouseDownHandlers(
     const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
 
     updateSuggested();
-    setSeggested(emoji, skinToneToUse);
+    setsuggested(emoji, skinToneToUse);
     onEmojiClick(emojiClickOutput(emoji, skinToneToUse), event);
   }
 

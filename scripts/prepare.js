@@ -15,7 +15,7 @@ const keys = {
   GROUP_NAME_OBJECTS: 'objects',
   GROUP_NAME_SYMBOLS: 'symbols',
   GROUP_NAME_FLAGS: 'flags',
-  GROUP_NAME_SUGGESTED: 'seggested'
+  GROUP_NAME_SUGGESTED: 'suggested'
 };
 
 const groupConversion = {

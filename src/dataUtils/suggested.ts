@@ -12,7 +12,7 @@ type SuggestedItem = {
 
 type Suggested = SuggestedItem[];
 
-export function getSeggested(mode?: SuggestionMode): Suggested {
+export function getsuggested(mode?: SuggestionMode): Suggested {
   if (!window?.localStorage) {
     return [];
   }
@@ -31,8 +31,8 @@ export function getSeggested(mode?: SuggestionMode): Suggested {
   }
 }
 
-export function setSeggested(emoji: DataEmoji, skinTone: SkinTones) {
-  const recent = getSeggested();
+export function setsuggested(emoji: DataEmoji, skinTone: SkinTones) {
+  const recent = getsuggested();
 
   const unified = emojiUnified(emoji, skinTone);
   const originalUnified = emojiUnified(emoji);

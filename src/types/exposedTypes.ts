@@ -36,7 +36,7 @@ export enum SkinTones {
 }
 
 export enum Categories {
-  SUGGESTED = 'seggested',
+  SUGGESTED = 'suggested',
   SMILEYS_PEOPLE = 'smileys_people',
   ANIMALS_NATURE = 'animals_nature',
   FOOD_DRINK = 'food_drink',
