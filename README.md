@@ -129,6 +129,23 @@ import { SkinTones } from 'emoji-picker-react';
   import { SuggestionMode } from 'emoji-picker-react';
   ```
 
+# Customization
+
+The picker can be customized via css variables. The root selector for the picker is `.EmojiPickerReact`, when overriding, make sure to provide a more specific selector.
+
+In dark mode, the specific selector is `.EmojiPickerReact.epr-dark-theme`.
+
+The list of possible variables is quite extensive, but the main ones you may want to override are:
+
+- `--epr-picker-width`: The width of the picker.
+- `--epr-picker-height`: The height of the picker.
+- `--epr-emoji-size`: The size of the emojis.
+- `--epr-emoji-gap`: The space between emojis.
+
+- `--epr-hover-bg-color` Hovered emoji background color.
+- `--epr-bg-color`: The background color of the picker. When changing it, you should also change `--epr-category-label-bg-color` as they are usually the same color.
+- `--epr-text-color`: The text color in the picker.
+
 # Troubleshooting
 
 ## Error Boundary
