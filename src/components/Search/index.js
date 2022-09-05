@@ -27,6 +27,7 @@ function Search({
         onChange={onChange}
         autoFocus={!config.disableAutoFocus}
         ref={emojiSearchRef}
+        aria-label={'Type to search for emoji'}
       />
       {config.disableSkinTonePicker ? null : (
         <SkinTones skinToneSpreadRef={skinToneSpreadRef} />
