@@ -58,6 +58,8 @@ const SkinTones = ({ skinToneSpreadRef }) => {
               })`,
               zIndex: isActive ? 2 : 1,
             }}
+            aria-label={`Choose skin tone ${i + 1}`}
+            aria-pressed={activeSkinTone === tone}
             onClick={() => {
               if (isOpen) {
                 setActiveSkinTone(tone);

@@ -40,6 +40,7 @@ const RecentlyUsed = ({ emojiListRef }) => {
     <ul
       className="emoji-group"
       data-display-name={config.groupNames[GROUP_NAME_RECENTLY_USED]}
+      aria-label={config.groupNames[GROUP_NAME_RECENTLY_USED]}
       data-name={GROUP_NAME_RECENTLY_USED}
     >
       {recentlyUsed.map((item, index) => {

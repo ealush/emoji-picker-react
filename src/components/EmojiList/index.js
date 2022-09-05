@@ -180,6 +180,7 @@ const ListRender = React.memo(function ListRender({
       className="emoji-group"
       data-name={name}
       data-display-name={groupNames[name]}
+      aria-label={groupNames[name]}
       key={name}
       style={style}
     >
