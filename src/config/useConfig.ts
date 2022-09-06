@@ -5,10 +5,11 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme,
+  Theme
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
+import { PreviewConfig } from './config';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();
@@ -48,9 +49,9 @@ export function useOnEmojiClickConfig(): (
   return onEmojiClick;
 }
 
-export function useShowPreviewConfig(): boolean {
-  const { showPreview } = usePickerConfig();
-  return showPreview;
+export function usePreviewConfig(): PreviewConfig {
+  const { previewConfig } = usePickerConfig();
+  return previewConfig;
 }
 
 export function useThemeConfig(): Theme {

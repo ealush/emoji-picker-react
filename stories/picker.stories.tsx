@@ -60,13 +60,22 @@ export const AutoFocusDisabled = (args: Props) => (
   <Template {...args} autoFocusSearch={false} />
 );
 export const HidePreview = (args: Props) => (
-  <Template {...args} showPreview={false} />
+  <Template {...args} previewConfig={{ showPreview: false }} />
 );
 export const RecentlyUsed = (args: Props) => (
   <Template {...args} suggestedEmojisMode={SuggestionMode.RECENT} />
 );
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
+);
+export const CustomPreviewConfig = (args: Props) => (
+  <Template
+    {...args}
+    previewConfig={{
+      defaultEmoji: '1fae5',
+      defaultCaption: 'What have we here?'
+    }}
+  />
 );
 export const CustomCategoryConfig = (args: Props) => (
   <Template

@@ -3,25 +3,34 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme,
+  Theme
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
   baseCategoriesConfig,
-  mergeCategoriesConfig,
+  mergeCategoriesConfig
 } from './categoryConfig';
 
-export function mergeConfig(userConfig: PickerConfig = {}) {
-  const config = { ...basePickerConfig(), ...userConfig };
+export function mergeConfig(
+  userConfig: PickerConfig = {}
+): PickerConfigInternal {
+  const base = basePickerConfig();
+
+  const previewConfig = Object.assign(
+    base.previewConfig,
+    userConfig.previewConfig ?? {}
+  );
+  const config = Object.assign(base, userConfig);
 
   const categories = mergeCategoriesConfig(userConfig.categories, {
-    suggestionMode: config.suggestedEmojisMode,
+    suggestionMode: config.suggestedEmojisMode
   });
 
   return {
     ...config,
     categories,
+    previewConfig
   };
 }
 
@@ -38,11 +47,13 @@ export function basePickerConfig(): PickerConfigInternal {
       event: MouseEvent
     ) {},
     searchPlaceHolder: 'Search',
-    showPreview: true,
     skinTonesDisabled: false,
     theme: Theme.LIGHT,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     lazyLoadEmojis: false,
+    previewConfig: {
+      ...basePreviewConfig
+    }
   };
 }
 
@@ -54,10 +65,26 @@ export type PickerConfigInternal = {
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
   onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
-  showPreview: boolean;
   theme: Theme;
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
+  previewConfig: PreviewConfig;
 };
 
-export type PickerConfig = Partial<PickerConfigInternal>;
+export type PreviewConfig = {
+  defaultEmoji: string;
+  defaultCaption: string;
+  showPreview: boolean;
+};
+
+const basePreviewConfig: PreviewConfig = {
+  defaultEmoji: '1f60a',
+  defaultCaption: "What's your mood?",
+  showPreview: true
+};
+
+type ConfigExternal = {
+  previewConfig: Partial<PreviewConfig>;
+} & Omit<PickerConfigInternal, 'previewConfig'>;
+
+export type PickerConfig = Partial<ConfigExternal>;

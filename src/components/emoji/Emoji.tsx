@@ -42,6 +42,11 @@ export function Emoji({
     style.width = style.height = style.fontSize = `${size}px`;
   }
 
+  const base = {
+    style,
+    unified
+  };
+
   return (
     <button
       className={clsx('epr-emoji', {
@@ -50,22 +55,34 @@ export function Emoji({
         'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}
-      style={style}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
-        parseNativeEmoji(unified)
+        <NativeEmoji {...base} />
       ) : (
         <EmojiImg
-          unified={unified}
+          {...base}
           emoji={emoji}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
-          style={style}
         />
       )}
     </button>
+  );
+}
+
+function NativeEmoji({
+  unified,
+  style
+}: {
+  unified: string;
+  style: React.CSSProperties;
+}) {
+  return (
+    <span className="epr-emoji-native" data-unified={unified} style={style}>
+      {parseNativeEmoji(unified)}
+    </span>
   );
 }
 
@@ -73,14 +90,14 @@ function EmojiImg({
   emoji,
   unified,
   emojiStyle,
-  lazyLoad = false,
-  style
+  style,
+  lazyLoad = false
 }: {
   emoji: DataEmoji;
   unified: string;
   emojiStyle: EmojiStyle;
-  lazyLoad?: boolean;
   style: React.CSSProperties;
+  lazyLoad?: boolean;
 }) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
 

@@ -90,7 +90,15 @@ import { SkinTones } from 'emoji-picker-react';
 
 - `skinTonesDisabled`: `boolean` - Whether to disable the skin tone selection. Defaults to `false`.
 
-- `showPreview`: `boolean` - Whether to show the preview of the selected emoji. Defaults to `true`.
+- `previewConfig`: `PreviewConfig` - Full control over the Preview component, either to show/hide it, change the default emoji or the default caption.
+
+```ts
+{
+  defaultEmoji: string; // defaults to: "1f60a"
+  defaultCaption: string; // defaults to: "What's your mood?"
+  showPreview: boolean; // defaults to: true
+}
+```
 
 - `searchPlaceholder`: `string` - The placeholder text for the search input. Defaults to `Search`.
 
@@ -113,12 +121,12 @@ import { SkinTones } from 'emoji-picker-react';
   [
     {
       category: 'suggested',
-      name: 'Recently Used',
+      name: 'Recently Used'
     },
     {
       category: 'smileys_people',
-      name: 'Faces...',
-    },
+      name: 'Faces...'
+    }
   ];
   ```
 

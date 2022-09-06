@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import {
-  useEmojiStyleConfig,
-  useShowPreviewConfig
-} from '../../config/useConfig';
+import { useEmojiStyleConfig, usePreviewConfig } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
@@ -18,14 +15,14 @@ import './Preview.css';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 
 export function Preview() {
-  const showPreview = useShowPreviewConfig();
+  const previewConfig = usePreviewConfig();
   const [hoveredEmoji, setHoveredEmoji] = useState<HoveredEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
 
-  useEmojiMouseEnter(showPreview, setHoveredEmoji);
+  useEmojiMouseEnter(previewConfig.showPreview, setHoveredEmoji);
 
-  if (!showPreview) {
+  if (!previewConfig.showPreview) {
     return null;
   }
 
@@ -41,11 +38,11 @@ export function Preview() {
 
   function PreviewContent() {
     const defaultEmoji = asEmoji(
-      variationPickerEmoji ?? emojiByUnified('1f60a')
+      variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji)
     );
     const defaultText = variationPickerEmoji
       ? emojiName(variationPickerEmoji)
-      : "What's your mood?";
+      : previewConfig.defaultCaption;
 
     return (
       <>
