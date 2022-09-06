@@ -5,7 +5,7 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiHasVariations,
   emojiName,
-  emojiUrlByUnified,
+  emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { ClassNames } from '../../DomUtils/classNames';
@@ -33,7 +33,7 @@ export function Emoji({
   showVariations = true,
   size,
   emojiRef,
-  lazyLoad,
+  lazyLoad
 }: Props) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -42,47 +42,30 @@ export function Emoji({
     style.width = style.height = style.fontSize = `${size}px`;
   }
 
-  const base = {
-    style,
-    unified,
-  };
-
   return (
     <button
       className={clsx('epr-emoji', {
         [ClassNames.hidden]: hidden,
         [ClassNames.visible]: !hidden,
-        'epr-emoji-has-variations': hasVariations && showVariations,
+        'epr-emoji-has-variations': hasVariations && showVariations
       })}
       data-unified={unified}
+      style={style}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
     >
       {emojiStyle === EmojiStyle.NATIVE ? (
-        <NativeEmoji {...base} />
+        parseNativeEmoji(unified)
       ) : (
         <EmojiImg
-          {...base}
+          unified={unified}
           emoji={emoji}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
+          style={style}
         />
       )}
     </button>
-  );
-}
-
-function NativeEmoji({
-  unified,
-  style,
-}: {
-  unified: string;
-  style: React.CSSProperties;
-}) {
-  return (
-    <span className="epr-emoji-native" data-unified={unified} style={style}>
-      {parseNativeEmoji(unified)}
-    </span>
   );
 }
 
@@ -90,14 +73,14 @@ function EmojiImg({
   emoji,
   unified,
   emojiStyle,
-  style,
   lazyLoad = false,
+  style
 }: {
   emoji: DataEmoji;
   unified: string;
   emojiStyle: EmojiStyle;
-  style: React.CSSProperties;
   lazyLoad?: boolean;
+  style: React.CSSProperties;
 }) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
 
@@ -113,6 +96,6 @@ function EmojiImg({
   );
 
   function onError() {
-    setEmojisThatFailedToLoad((prev) => new Set(prev).add(unified));
+    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
   }
 }
