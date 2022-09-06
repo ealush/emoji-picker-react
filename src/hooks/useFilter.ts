@@ -53,8 +53,6 @@ export function useFilter() {
   }
 
   function onChange(nextValue: string) {
-    scrollTo(PickerMainRef.current, 0);
-
     const filter = filterRef.current;
 
     if (filter?.[nextValue] || nextValue.length <= 1) {
@@ -97,7 +95,9 @@ export function useFilter() {
     });
 
     requestAnimationFrame(() => {
-      setSearchTerm(searchTerm);
+      setSearchTerm(searchTerm).then(() => {
+        scrollTo(PickerMainRef.current, 0);
+      });
     });
   }
 }

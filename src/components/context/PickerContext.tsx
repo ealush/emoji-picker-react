@@ -17,7 +17,7 @@ export function PickerContextProvider({ children }: Props) {
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
 
-  const suggestedUpdateState = useDebouncedState(Date.now(), 250);
+  const suggestedUpdateState = useDebouncedState(Date.now(), 200);
   const searchTerm = useDebouncedState('', 100);
   const skinToneFanOpenState = useState<boolean>(false);
   const activeSkinTone = useState<SkinTones>(defaultSkinTone);
@@ -51,7 +51,7 @@ export function PickerContextProvider({ children }: Props) {
 type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
 const PickerContext = React.createContext<{
-  searchTerm: [string, (term: string) => void];
+  searchTerm: [string, (term: string) => Promise<string>];
   suggestedUpdateState: [number, (term: number) => void];
   activeCategoryState: ReactState<ActiveCategoryState>;
   activeSkinTone: ReactState<SkinTones>;
@@ -63,7 +63,7 @@ const PickerContext = React.createContext<{
   disallowClickRef: React.MutableRefObject<boolean>;
 }>({
   suggestedUpdateState: [Date.now(), () => {}],
-  searchTerm: ['', () => {}],
+  searchTerm: ['', () => new Promise<string>(() => undefined)],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
