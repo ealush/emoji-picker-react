@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useSyncExternalStore } from 'react';
 import { Meta, Story } from '@storybook/react';
 import EmojiPicker, { EmojiStyle, Props, SkinTones, Theme } from '../src';
 import { Categories } from '../src/config/categoryConfig';
@@ -10,13 +10,13 @@ const meta: Meta = {
   argTypes: {
     children: {
       control: {
-        type: 'text'
-      }
-    }
+        type: 'text',
+      },
+    },
   },
   parameters: {
-    controls: { expanded: true }
-  }
+    controls: { expanded: true },
+  },
 };
 
 export default meta;
@@ -73,7 +73,7 @@ export const CustomPreviewConfig = (args: Props) => (
     {...args}
     previewConfig={{
       defaultEmoji: '1fae5',
-      defaultCaption: 'What have we here?'
+      defaultCaption: 'What have we here?',
     }}
   />
 );
@@ -83,44 +83,64 @@ export const CustomCategoryConfig = (args: Props) => (
     categories={[
       {
         name: 'Fun and Games',
-        category: Categories.ACTIVITIES
+        category: Categories.ACTIVITIES,
       },
       {
         name: 'Smileys & Emotion',
-        category: Categories.SMILEYS_PEOPLE
+        category: Categories.SMILEYS_PEOPLE,
       },
       {
         name: 'Flags',
-        category: Categories.FLAGS
+        category: Categories.FLAGS,
       },
       {
         name: 'Yum Yum',
-        category: Categories.FOOD_DRINK
-      }
+        category: Categories.FOOD_DRINK,
+      },
     ]}
   />
 );
 
-const TemplateDark: Story<Props> = args => (
-  <div
-    style={{
-      display: 'inline-block',
-      padding: '15px',
-      backgroundColor: '#292D3E',
-      height: '100vh',
-      width: '100vw'
-    }}
-  >
-    <EmojiPicker {...args} onEmojiClick={(...args) => console.log(...args)} />
-  </div>
-);
-const Template: Story<Props> = args => (
-  <div
-    style={{
-      display: 'inline-block',
-      padding: '15px'
-    }}
-  >
-    <EmojiPicker {...args} onEmojiClick={(...args) => console.log(...args)} />
-  </div>
-);
+function TemplateDark(args) {
+  const [shown, setShown] = useState(true);
+  return (
+    <div
+      style={{
+        display: 'inline-block',
+        padding: '15px',
+        backgroundColor: '#292D3E',
+        height: '100vh',
+        width: '100vw',
+      }}
+    >
+      <button onClick={() => setShown(!shown)}>Toggle</button>
+      <br />
+      {shown ? (
+        <EmojiPicker
+          {...args}
+          onEmojiClick={(...args) => console.log(...args)}
+        />
+      ) : null}
+    </div>
+  );
+}
+function Template(args) {
+  const [shown, setShown] = useState(true);
+  return (
+    <div
+      style={{
+        display: 'inline-block',
+        padding: '15px',
+      }}
+    >
+      <button onClick={() => setShown(!shown)}>Toggle</button>
+      <br />
+      {shown ? (
+        <EmojiPicker
+          {...args}
+          onEmojiClick={(...args) => console.log(...args)}
+        />
+      ) : null}
+    </div>
+  );
+}
