@@ -7,12 +7,12 @@
 .EmojiPickerReact .epr-search-container input.epr-search {
   outline: none;
   transition: all 0.2s ease-in-out;
-  color: var(--epr-search-bar-text-color);
+  color: var(--epr-search-input-text-color);
   border-radius: var(--epr-search-input-border-radius);
   padding: var(--epr-search-input-padding);
   height: var(--epr-search-input-height);
-  background-color: var(--epr-search-bar-bg-color);
-  border: 1px solid var(--epr-search-bar-bg-color);
+  background-color: var(--epr-search-input-bg-color);
+  border: 1px solid var(--epr-search-input-bg-color);
   width: 100%;
 }
 
@@ -24,7 +24,7 @@
   background-repeat: no-repeat;
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: var(--epr-search-bar-inner-padding);
   transform: translateY(-50%);
   background-size: 20px;
 }
@@ -48,7 +48,7 @@
   content: '';
   position: absolute;
   top: 50%;
-  left: 10px;
+  left: var(--epr-search-bar-inner-padding);
   transform: translateY(-50%);
   width: 20px;
   height: 20px;
@@ -63,10 +63,10 @@
 }
 
 .EmojiPickerReact .epr-search-container input.epr-search::placeholder {
-  color: var(--epr-search-bar-placeholder-color);
+  color: var(--epr-search-input-placeholder-color);
 }
 
 .EmojiPickerReact .epr-search-container input.epr-search:focus {
-  background-color: var(--epr-search-bar-bg-color-active);
+  background-color: var(--epr-search-input-bg-color-active);
   border: 1px solid var(--epr-search-border-color);
 }

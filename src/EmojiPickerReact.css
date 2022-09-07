@@ -2,49 +2,69 @@
   --epr-highlight-color: #007aeb;
   --epr-hover-bg-color: #f1f8ff;
   --epr-text-color: #858585;
-  --epr-search-bar-bg-color: #f6f6f6;
-  --epr-category-label-bg-color: #ffffffe6;
+  --epr-search-input-bg-color: #f6f6f6;
   --epr-picker-border-color: #e7e7e7;
   --epr-bg-color: #fff;
-  --epr-emoji-variation-indicator-color: var(--epr-picker-border-color);
-  --epr-emoji-variation-indicator-color-hover: var(--epr-text-color);
+  --epr-horizontal-padding: 10px;
 
+  /*  Picker Dimensions */
   --epr-picker-width: 350px;
   --epr-picker-height: 450px;
-  --epr-emoji-size: 30px;
-  --epr-category-navigation-button-size: 30px;
-  --epr-emoji-variation-picker-bg-color: var(--epr-bg-color);
-  --epr-emoji-variation-picker-height: 55px;
-  --epr-preview-height: 70px;
-  --epr-preview-text-color: var(--epr-text-color);
-  --epr-preview-text-size: 14px;
-  --epr-preview-text-padding: 0 10px;
-  --epr-active-category-indicator-color: var(--epr-highlight-color);
-  --epr-active-skin-tone-indicator-border-color: var(--epr-highlight-color);
+  --epr-picker-border-radius: 8px;
+
+  /* Header */
   --epr-search-border-color: var(--epr-highlight-color);
+  --epr-header-padding: 15px var(--epr-horizontal-padding);
+
+  /* Skin Tone Picker */
+  --epr-active-skin-tone-indicator-border-color: var(--epr-highlight-color);
   --epr-active-skin-hover-color: var(--epr-hover-bg-color);
-  --epr-emoji-hover-color: var(--epr-hover-bg-color);
-  --epr-category-label-text-color: var(--epr-text-color);
-  --epr-emoji-padding: 5px;
-  --epr-header-padding: 15px 10px;
-  --epr-emoji-gap: 2px;
-  --epr-category-padding: 0 10px;
+
+  /* Search */
+  --epr-search-input-bg-color-active: var(--epr-search-input-bg-color);
   --epr-search-input-padding: 0 30px;
   --epr-search-input-border-radius: 8px;
   --epr-search-input-height: 40px;
-  --epr-category-label-padding: 0 10px;
+  --epr-search-input-text-color: var(--epr-text-color);
+  --epr-search-input-placeholder-color: var(--epr-text-color);
+  --epr-search-bar-inner-padding: var(--epr-horizontal-padding);
+
+  /*  Category Navigation */
+  --epr-category-navigation-button-size: 30px;
+
+  /* Variation Picker */
+  --epr-emoji-variation-picker-height: 55px;
+  --epr-emoji-variation-picker-bg-color: var(--epr-bg-color);
+
+  /*  Preview */
+  --epr-preview-height: 70px;
+  --epr-preview-text-size: 14px;
+  --epr-preview-text-padding: 0 var(--epr-horizontal-padding);
+  --epr-preview-border-color: var(--epr-picker-border-color);
+  --epr-preview-text-color: var(--epr-text-color);
+
+  /* Category */
+  --epr-category-padding: 0 var(--epr-horizontal-padding);
+
+  /*  Category Label */
+  --epr-category-label-bg-color: #ffffffe6;
+  --epr-category-label-text-color: var(--epr-text-color);
+  --epr-category-label-padding: 0 var(--epr-horizontal-padding);
   --epr-category-label-height: 40px;
 
+  /*  Emoji */
+  --epr-emoji-size: 30px;
+  --epr-emoji-gap: 2px;
+  --epr-emoji-padding: 5px;
+  --epr-emoji-hover-color: var(--epr-hover-bg-color);
+  --epr-emoji-variation-indicator-color: var(--epr-picker-border-color);
+  --epr-emoji-variation-indicator-color-hover: var(--epr-text-color);
+
+  /* Z-Index */
   --epr-header-overlay-z-index: 3;
   --epr-emoji-variations-indictator-z-index: 1;
   --epr-category-label-z-index: 2;
   --epr-skin-variation-picker-z-index: 5;
-
-  --epr-picker-border-radius: 8px;
-  --epr-search-bar-text-color: var(--epr-text-color);
-  --epr-search-bar-placeholder-color: var(--epr-text-color);
-  --epr-preview-border-color: var(--epr-picker-border-color);
-  --epr-search-bar-bg-color-active: var(--epr-search-bar-bg-color);
 }
 
 .EmojiPickerReact.epr-dark-theme {
@@ -53,11 +73,11 @@
   --epr-highlight-color: #c0c0c0;
   --epr-text-color: var(--epr-highlight-color);
   --epr-hover-bg-color: #363636f6;
-  --epr-search-bar-bg-color: #333333;
+  --epr-search-input-bg-color: #333333;
   --epr-category-label-bg-color: #222222e6;
   --epr-picker-border-color: #151617;
   --epr-bg-color: #222222;
-  --epr-search-bar-bg-color-active: var(--epr-dark);
+  --epr-search-input-bg-color-active: var(--epr-dark);
   --epr-emoji-variation-indicator-color: #444;
 }
 
@@ -89,4 +109,5 @@
   cursor: pointer;
   border: 0;
   background: none;
+  outline: none;
 }
