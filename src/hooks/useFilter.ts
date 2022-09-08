@@ -1,5 +1,8 @@
 import { scrollTo } from '../DomUtils/scrollTo';
-import { usePickerMainRef } from '../components/context/ElementRefContext';
+import {
+  usePickerMainRef,
+  useSearchInputRef
+} from '../components/context/ElementRefContext';
 import {
   FilterState,
   useFilterRef,
@@ -13,7 +16,7 @@ import {
   iterateEmojiRef,
   showElement
 } from '../DomUtils/emojiElementRef';
-import { useRef } from 'react';
+
 import { ClassNames } from '../DomUtils/classNames';
 
 function useSetFilterRef() {
@@ -31,7 +34,7 @@ function useSetFilterRef() {
 }
 
 export function useFilter() {
-  const SearchInputRef = useRef<HTMLInputElement>(null);
+  const SearchInputRef = useSearchInputRef();
   const filterRef = useFilterRef();
   const setFilterRef = useSetFilterRef();
 
