@@ -42,6 +42,21 @@ function App() {
 
 The following props are accepted by them picker:
 
+| Prop                | Type     | Default    | Description                                                                                                       |
+| ------------------- | -------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
+| onEmojiClick        | function |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter. |
+| autoFocusSearch     | boolean  | `true`     | Controls the auto focus of the search input.                                                                      |
+| Theme               | string   | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                 |
+| emojiStyle          | string   | `apple`    | Controls the emoji style. Possible values are `google`, `apple`, `facebook`, `twitter` and `native`.              |
+| defaultSkinTone     | string   | `neutral`  | Controls the default skin tone.                                                                                   |
+| lazyLoadEmojis      | boolean  | `false`    | Controls whether the emojis are loaded lazily or not.                                                             |
+| previewConfig       | object   | `{}`       | Controls the preview of the emoji. See below for more information.                                                |
+| searchPlaceholder   | string   | `Search`   | Controls the placeholder of the search input.                                                                     |
+| suggestedEmojisMode | string   | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                  |
+| skinTonesDisabled   | boolean  | `false`    | Controls whether the skin tones are disabled or not.                                                              |
+
+## Full details
+
 - `onEmojiClick`: `(emojiData: EmojiClickData, event: MouseEvent) => void` - Callback function when an emoji is clicked. The callback receives the event and the emoji data. The emoji data is comprised of the following properties:
 
   ```ts
