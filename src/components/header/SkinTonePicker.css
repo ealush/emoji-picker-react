@@ -1,5 +1,8 @@
 .EmojiPickerReact .epr-skin-tones {
-  /* margin: 0 5px 0 15px; */
+  --epr-skin-tone-size: 16px;
+}
+
+.EmojiPickerReact .epr-skin-tones {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -13,8 +16,8 @@
 
 .EmojiPickerReact .epr-skin-tone-select {
   position: relative;
-  width: 16px;
-  height: 16px;
+  width: var(--epr-skin-tone-size);
+  height: var(--epr-skin-tone-size);
 }
 
 .EmojiPickerReact .epr-skin-tones.open .epr-tone {
@@ -34,8 +37,8 @@
   display: block;
   cursor: pointer;
   border-radius: 4px;
-  height: 100%;
-  width: 100%;
+  height: var(--epr-skin-tone-size);
+  width: var(--epr-skin-tone-size);
   position: absolute;
   right: 0;
   transition: transform 0.3s ease-in-out, opacity 0.5s ease-in-out;
