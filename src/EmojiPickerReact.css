@@ -5,6 +5,8 @@
   --epr-search-input-bg-color: #f6f6f6;
   --epr-picker-border-color: #e7e7e7;
   --epr-bg-color: #fff;
+  --epr-category-icon-active-color: #6aa8de;
+
   --epr-horizontal-padding: 10px;
 
   /*  Picker Dimensions */
@@ -79,6 +81,7 @@
   --epr-bg-color: #222222;
   --epr-search-input-bg-color-active: var(--epr-dark);
   --epr-emoji-variation-indicator-color: #444;
+  --epr-category-icon-active-color: #3271b7;
 }
 
 .EmojiPickerReact {

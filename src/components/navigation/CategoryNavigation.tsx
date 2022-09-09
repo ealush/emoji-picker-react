@@ -6,16 +6,18 @@ import { categoryFromCategoryConfig } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryState } from '../context/PickerContext';
 import { ClassNames } from '../../DomUtils/classNames';
+import { useCategoryNavigationRef } from '../context/ElementRefContext';
 
 export function CategoryNavigation() {
   const categoriesConfig = useCategoriesConfig();
+  const CategoryNavigationRef = useCategoryNavigationRef();
   const [
     activeCategory,
     ,
     setActiveCategoryAndScroll
   ] = useActiveCategoryState();
   return (
-    <div className="epr-category-nav">
+    <div className="epr-category-nav" ref={CategoryNavigationRef}>
       {categoriesConfig.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
         return (

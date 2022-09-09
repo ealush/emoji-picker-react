@@ -14,7 +14,11 @@ import {
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { useClearSearch } from './useFilter';
-import { useFocusSearchInput, useFocusSkinTonePicker } from './useFocus';
+import {
+  useFocusCategoryNavigation,
+  useFocusSearchInput,
+  useFocusSkinTonePicker
+} from './useFocus';
 
 export function usePickerMainKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
@@ -64,6 +68,7 @@ export function useSearchInputKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
+  const focusCategoryNavigation = useFocusCategoryNavigation();
 
   useEffect(() => {
     const current = SearchInputRef.current;
@@ -82,9 +87,14 @@ export function useSearchInputKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
-    if (key === 'ArrowRight') {
-      setSkinToneFanOpenState(true);
-      focusSkinTonePicker();
+    switch (key) {
+      case 'ArrowRight':
+        setSkinToneFanOpenState(true);
+        focusSkinTonePicker();
+        break;
+      case 'ArrowDown':
+        focusCategoryNavigation();
+        break;
     }
   }
 }

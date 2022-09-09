@@ -1,10 +1,11 @@
-import { ClassNames } from './../DomUtils/classNames';
 import { useCallback } from 'react';
 import {
+  useCategoryNavigationRef,
   useSearchInputRef,
   useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
 import { focusElement } from '../DomUtils/focusElement';
+import { focusFirstElementChild } from '../DomUtils/keyboardNavigation';
 
 export function useFocusSearchInput() {
   const SearchInputRef = useSearchInputRef();
@@ -22,10 +23,18 @@ export function useFocusSkinTonePicker() {
       return;
     }
 
-    const skinTone = SkinTonePickerRef.current.querySelector(
-      `.${ClassNames.active}`
-    ) as HTMLElement;
-
-    focusElement(skinTone);
+    focusFirstElementChild(SkinTonePickerRef.current);
   }, [SkinTonePickerRef.current]);
+}
+
+export function useFocusCategoryNavigation() {
+  const CategoryNavigationRef = useCategoryNavigationRef();
+
+  return useCallback(() => {
+    if (!CategoryNavigationRef.current) {
+      return;
+    }
+
+    focusFirstElementChild(CategoryNavigationRef.current);
+  }, [CategoryNavigationRef.current]);
 }

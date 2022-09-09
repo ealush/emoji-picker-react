@@ -15,6 +15,17 @@
   outline: none;
 }
 
+.EmojiPickerReact .epr-category-nav > button.epr-cat-btn:focus:before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid var(--epr-category-icon-active-color);
+  border-radius: 50%;
+}
+
 .EmojiPickerReact.epr-search-active .epr-category-nav > button.epr-cat-btn,
 .EmojiPickerReact.epr-search-active
   .epr-category-nav
