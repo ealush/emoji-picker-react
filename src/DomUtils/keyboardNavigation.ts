@@ -69,6 +69,58 @@ export function firstVisibleEmoji(parent: HTMLElement | null) {
   return emoji as HTMLElement;
 }
 
+export function focusNextVisibleEmoji(element: HTMLElement | null) {
+  if (!element) {
+    return;
+  }
+
+  const next = nextVisibleEmoji(element);
+
+  if (!next) {
+    return focusFirstVisibleEmoji(nextCategory(element));
+  }
+
+  next.focus();
+}
+
+function closestCategory(element: HTMLElement) {
+  return element.closest(`.${ClassNames.category}`) as HTMLElement;
+}
+
+function nextCategory(element: HTMLElement) {
+  const category = closestCategory(element);
+
+  if (!category) {
+    return null;
+  }
+
+  return category.nextElementSibling as HTMLElement;
+}
+
+export function focusPrevVisibleEmoji(element: HTMLElement | null) {
+  if (!element) {
+    return;
+  }
+
+  const prev = prevVisibleEmoji(element);
+
+  if (!prev) {
+    return focusLastElementChild(prevCategory(element));
+  }
+
+  prev.focus();
+}
+
+function prevCategory(element: HTMLElement) {
+  const category = closestCategory(element);
+
+  if (!category) {
+    return null;
+  }
+
+  return category.previousElementSibling as HTMLElement;
+}
+
 export function nextVisibleEmoji(element: HTMLElement) {
   const next = element.nextElementSibling as HTMLElement;
 
@@ -95,4 +147,16 @@ export function prevVisibleEmoji(element: HTMLElement) {
   }
 
   return prev;
+}
+
+function focusLastElementChild(element: HTMLElement | null) {
+  if (!element) return;
+
+  const last = element.lastElementChild as HTMLElement;
+
+  if (!last) {
+    return;
+  }
+
+  last.focus();
 }

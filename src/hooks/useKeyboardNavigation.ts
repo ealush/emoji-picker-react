@@ -10,7 +10,9 @@ import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 import {
   focusFirstVisibleEmoji,
   focusNextElementSibling,
+  focusNextVisibleEmoji,
   focusPrevElementSibling,
+  focusPrevVisibleEmoji,
   getActiveElement,
   hasNextElementSibling
 } from '../DomUtils/keyboardNavigation';
@@ -28,6 +30,7 @@ export function useKeyboardNavigation() {
   useSearchInputKeyboardEvents();
   useSkinTonePickerKeyboardEvents();
   useCategoryNavigationKeyboardEvents();
+  useBodyKeyboardEvents();
 }
 
 function usePickerMainKeyboardEvents() {
@@ -176,6 +179,42 @@ function useCategoryNavigationKeyboardEvents() {
         break;
       case 'ArrowDown':
         focusFirstVisibleEmoji(BodyRef.current);
+        break;
+    }
+  }
+}
+
+function useBodyKeyboardEvents() {
+  const BodyRef = useBodyRef();
+  useEffect(() => {
+    const current = BodyRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      current.removeEventListener('keydown', onKeyDown);
+    };
+  }, [BodyRef.current]);
+
+  function onKeyDown(event: KeyboardEvent) {
+    const { key } = event;
+
+    switch (key) {
+      case 'ArrowRight':
+        focusNextVisibleEmoji(getActiveElement());
+        break;
+      case 'ArrowLeft':
+        focusPrevVisibleEmoji(getActiveElement());
+        break;
+      case 'ArrowDown':
+        // focusNextElementSibling(getActiveElement());
+        break;
+      case 'ArrowUp':
+        // focusPrevElementSibling(getActiveElement());
         break;
     }
   }

@@ -27,7 +27,7 @@ export function EmojiCategory({
 
   return (
     <li
-      className={clsx('epr-emoji-category', {
+      className={clsx(ClassNames.category, {
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch
       })}
