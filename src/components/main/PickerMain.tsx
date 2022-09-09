@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useThemeConfig } from '../../config/useConfig';
 import { ClassNames } from '../../DomUtils/classNames';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
+import { usePickerMainKeyboardEvents } from '../../hooks/useKeyboardNavigation';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import { PickerContextProvider } from '../context/PickerContext';
@@ -29,6 +30,9 @@ function PickerRootElement({ children }: RootProps) {
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
+
+  usePickerMainKeyboardEvents();
+
   return (
     <aside
       className={clsx('EmojiPickerReact', 'epr-main', {

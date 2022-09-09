@@ -5,7 +5,7 @@ import {
   useSearchPlaceHolderConfig
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useFilter } from '../../hooks/useFilter';
+import { useClearSearch, useFilter } from '../../hooks/useFilter';
 import { useSearchInputRef } from '../context/ElementRefContext';
 import Relative from '../Layout/Relative';
 import './Search.css';
@@ -13,10 +13,10 @@ import './Search.css';
 export function Search() {
   const { closeAllOpenToggles } = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
-
+  const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { onChange, searchTerm, clearSearch } = useFilter();
+  const { onChange, searchTerm } = useFilter();
 
   return (
     <Relative className="epr-search-container">

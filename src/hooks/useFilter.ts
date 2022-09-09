@@ -33,6 +33,18 @@ function useSetFilterRef() {
   };
 }
 
+export function useClearSearch() {
+  const SearchInputRef = useSearchInputRef();
+  const [, setSearchTerm] = useSearchTermState();
+
+  return function clearSearch() {
+    if (SearchInputRef.current) {
+      SearchInputRef.current.value = '';
+    }
+    setSearchTerm('');
+  };
+}
+
 export function useFilter() {
   const SearchInputRef = useSearchInputRef();
   const filterRef = useFilterRef();
@@ -44,16 +56,8 @@ export function useFilter() {
   return {
     onChange,
     searchTerm,
-    clearSearch,
     SearchInputRef
   };
-
-  function clearSearch() {
-    if (SearchInputRef.current) {
-      SearchInputRef.current.value = '';
-    }
-    onChange('');
-  }
 
   function onChange(nextValue: string) {
     const filter = filterRef.current;
