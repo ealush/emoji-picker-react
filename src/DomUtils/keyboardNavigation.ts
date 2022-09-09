@@ -2,7 +2,9 @@ export function getActiveElement() {
   return document.activeElement as HTMLElement | null;
 }
 
-export function focusPrevElementSibling(element: HTMLElement) {
+export function focusPrevElementSibling(element: HTMLElement | null) {
+  if (!element) return;
+
   const prev = element.previousElementSibling as HTMLElement;
 
   if (!prev) {
@@ -12,7 +14,9 @@ export function focusPrevElementSibling(element: HTMLElement) {
   prev.focus();
 }
 
-export function focusNextElementSibling(element: HTMLElement) {
+export function focusNextElementSibling(element: HTMLElement | null) {
+  if (!element) return;
+
   const next = element.nextElementSibling as HTMLElement;
 
   if (!next) {
@@ -22,7 +26,9 @@ export function focusNextElementSibling(element: HTMLElement) {
   next.focus();
 }
 
-export function focusFirstElementChild(element: HTMLElement) {
+export function focusFirstElementChild(element: HTMLElement | null) {
+  if (!element) return;
+
   const first = element.firstElementChild as HTMLElement;
 
   if (!first) {

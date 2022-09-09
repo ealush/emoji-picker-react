@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import {
+  useCategoryNavigationRef,
   usePickerMainRef,
   useSearchInputRef,
   useSkinTonePickerRef
@@ -20,7 +21,14 @@ import {
   useFocusSkinTonePicker
 } from './useFocus';
 
-export function usePickerMainKeyboardEvents() {
+export function useKeyboardNavigation() {
+  usePickerMainKeyboardEvents();
+  useSearchInputKeyboardEvents();
+  useSkinTonePickerKeyboardEvents();
+  useCategoryNavigationKeyboardEvents();
+}
+
+function usePickerMainKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
   const clearSearch = useClearSearch();
   const scrollTo = useScrollTo();
@@ -63,7 +71,7 @@ export function usePickerMainKeyboardEvents() {
   }
 }
 
-export function useSearchInputKeyboardEvents() {
+function useSearchInputKeyboardEvents() {
   const focusSkinTonePicker = useFocusSkinTonePicker();
   const PickerMainRef = usePickerMainRef();
   const SearchInputRef = useSearchInputRef();
@@ -99,7 +107,7 @@ export function useSearchInputKeyboardEvents() {
   }
 }
 
-export function useSkinTonePickerKeyboardEvents() {
+function useSkinTonePickerKeyboardEvents() {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const focusSearchInput = useFocusSearchInput();
   const SearchInputRef = useSearchInputRef();
@@ -127,6 +135,41 @@ export function useSkinTonePickerKeyboardEvents() {
         break;
       case 'ArrowRight':
         focusPrevSkinTone();
+        break;
+    }
+  }
+}
+
+function useCategoryNavigationKeyboardEvents() {
+  const focusSearchInput = useFocusSearchInput();
+  const CategoryNavigationRef = useCategoryNavigationRef();
+
+  useEffect(() => {
+    const current = CategoryNavigationRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      current.removeEventListener('keydown', onKeyDown);
+    };
+  }, [CategoryNavigationRef.current]);
+
+  function onKeyDown(event: KeyboardEvent) {
+    const { key } = event;
+
+    switch (key) {
+      case 'ArrowUp':
+        focusSearchInput();
+        break;
+      case 'ArrowRight':
+        focusNextElementSibling(getActiveElement());
+        break;
+      case 'ArrowLeft':
+        focusPrevElementSibling(getActiveElement());
         break;
     }
   }
