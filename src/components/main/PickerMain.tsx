@@ -6,7 +6,8 @@ import { ClassNames } from '../../DomUtils/classNames';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import {
   usePickerMainKeyboardEvents,
-  useSearchInputKeyboardEvents
+  useSearchInputKeyboardEvents,
+  useSkinTonePickerKeyboardEvents
 } from '../../hooks/useKeyboardNavigation';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
@@ -36,6 +37,7 @@ function PickerRootElement({ children }: RootProps) {
 
   usePickerMainKeyboardEvents();
   useSearchInputKeyboardEvents();
+  useSkinTonePickerKeyboardEvents();
 
   return (
     <aside

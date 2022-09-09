@@ -1,9 +1,16 @@
 import { useEffect } from 'react';
 import {
   usePickerMainRef,
-  useSearchInputRef
+  useSearchInputRef,
+  useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+import {
+  focusNextElementSibling,
+  focusPrevElementSibling,
+  getActiveElement,
+  hasNextElementSibling
+} from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { useClearSearch } from './useFilter';
@@ -14,6 +21,8 @@ export function usePickerMainKeyboardEvents() {
   const clearSearch = useClearSearch();
   const scrollTo = useScrollTo();
   const SearchInputRef = useSearchInputRef();
+  const focusSearchInput = useFocusSearchInput();
+
   const {
     closeAllOpenToggles,
     dependencyArray: CloseTogglesDependencyArray
@@ -45,7 +54,7 @@ export function usePickerMainKeyboardEvents() {
       clearSearch();
       closeAllOpenToggles();
       scrollTo(0);
-      useFocusSearchInput();
+      focusSearchInput();
     }
   }
 }
@@ -78,6 +87,63 @@ export function useSearchInputKeyboardEvents() {
       focusSkinTonePicker();
     }
   }
+}
+
+export function useSkinTonePickerKeyboardEvents() {
+  const SkinTonePickerRef = useSkinTonePickerRef();
+  const focusSearchInput = useFocusSearchInput();
+  const SearchInputRef = useSearchInputRef();
+
+  useEffect(() => {
+    const current = SkinTonePickerRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      current.removeEventListener('keydown', onKeyDown);
+    };
+  }, [SkinTonePickerRef.current, SearchInputRef.current]);
+
+  function onKeyDown(event: KeyboardEvent) {
+    const { key } = event;
+
+    switch (key) {
+      case 'ArrowLeft':
+        focusNextSkinTone(focusSearchInput);
+        break;
+      case 'ArrowRight':
+        focusPrevSkinTone();
+        break;
+    }
+  }
+}
+
+function focusNextSkinTone(exitLeft: () => void) {
+  const currentSkinTone = getActiveElement();
+
+  if (!currentSkinTone) {
+    return;
+  }
+
+  if (!hasNextElementSibling(currentSkinTone)) {
+    exitLeft();
+  }
+
+  focusNextElementSibling(currentSkinTone);
+}
+
+function focusPrevSkinTone() {
+  const currentSkinTone = getActiveElement();
+
+  if (!currentSkinTone) {
+    return;
+  }
+
+  focusPrevElementSibling(currentSkinTone);
 }
 
 // const handleKeyDown = (event: KeyboardEvent) => {
