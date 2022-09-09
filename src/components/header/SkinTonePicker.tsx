@@ -10,8 +10,11 @@ import {
   useSkinToneFanOpenState
 } from '../context/PickerContext';
 import './SkinTonePicker.css';
+import { useSkinTonePickerRef } from '../context/ElementRefContext';
+import { ClassNames } from '../../DomUtils/classNames';
 
 export function SkinTonePicker() {
+  const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
@@ -27,7 +30,11 @@ export function SkinTonePicker() {
         open: isOpen
       })}
     >
-      <div className="epr-skin-tone-select" onClick={() => setIsOpen(!isOpen)}>
+      <div
+        className="epr-skin-tone-select"
+        onClick={() => setIsOpen(!isOpen)}
+        ref={SkinTonePickerRef}
+      >
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
           return (
@@ -44,7 +51,7 @@ export function SkinTonePicker() {
               }}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
-                ['epr-active']: active
+                [ClassNames.active]: active
               })}
             ></button>
           );

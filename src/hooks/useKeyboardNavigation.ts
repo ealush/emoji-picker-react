@@ -3,10 +3,11 @@ import {
   usePickerMainRef,
   useSearchInputRef
 } from '../components/context/ElementRefContext';
-import { focusElement } from '../DomUtils/focusElement';
+import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { useClearSearch } from './useFilter';
+import { useFocusSearchInput, useFocusSkinTonePicker } from './useFocus';
 
 export function usePickerMainKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
@@ -44,7 +45,37 @@ export function usePickerMainKeyboardEvents() {
       clearSearch();
       closeAllOpenToggles();
       scrollTo(0);
-      focusElement(SearchInputRef.current);
+      useFocusSearchInput();
+    }
+  }
+}
+
+export function useSearchInputKeyboardEvents() {
+  const focusSkinTonePicker = useFocusSkinTonePicker();
+  const PickerMainRef = usePickerMainRef();
+  const SearchInputRef = useSearchInputRef();
+  const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
+
+  useEffect(() => {
+    const current = SearchInputRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      current.removeEventListener('keydown', onKeyDown);
+    };
+  }, [PickerMainRef.current, SearchInputRef.current]);
+
+  function onKeyDown(event: KeyboardEvent) {
+    const { key } = event;
+
+    if (key === 'ArrowRight') {
+      setSkinToneFanOpenState(true);
+      focusSkinTonePicker();
     }
   }
 }

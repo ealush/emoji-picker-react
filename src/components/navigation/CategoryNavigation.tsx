@@ -5,6 +5,7 @@ import './CategoryNavigation.css';
 import { categoryFromCategoryConfig } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryState } from '../context/PickerContext';
+import { ClassNames } from '../../DomUtils/classNames';
 
 export function CategoryNavigation() {
   const categoriesConfig = useCategoriesConfig();
@@ -20,7 +21,7 @@ export function CategoryNavigation() {
         return (
           <button
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
-              ['epr-active']: category === activeCategory
+              [ClassNames.active]: category === activeCategory
             })}
             key={category}
             onClick={() => setActiveCategoryAndScroll(category)}

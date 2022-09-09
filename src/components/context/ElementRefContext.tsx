@@ -7,12 +7,19 @@ export function ElementRefContextProvider({
 }) {
   const PickerMainRef = React.useRef<HTMLElement>(null);
   const AnchoredEmojiRef = React.useRef<HTMLElement>(null);
-  const BodyRef = React.useRef<HTMLElement>(null);
+  const BodyRef = React.useRef<HTMLDivElement>(null);
   const SearchInputRef = React.useRef<HTMLInputElement>(null);
+  const SkinTonePickerRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <ElementRefContext.Provider
-      value={{ PickerMainRef, AnchoredEmojiRef, BodyRef, SearchInputRef }}
+      value={{
+        PickerMainRef,
+        AnchoredEmojiRef,
+        BodyRef,
+        SearchInputRef,
+        SkinTonePickerRef
+      }}
     >
       {children}
     </ElementRefContext.Provider>
@@ -26,15 +33,17 @@ export type ElementRef<
 type ElementRefs = {
   PickerMainRef: ElementRef;
   AnchoredEmojiRef: ElementRef;
+  SkinTonePickerRef: ElementRef<HTMLDivElement>;
   SearchInputRef: ElementRef<HTMLInputElement>;
-  BodyRef: React.MutableRefObject<HTMLElement | null>;
+  BodyRef: ElementRef<HTMLDivElement>;
 };
 
 const ElementRefContext = React.createContext<ElementRefs>({
   PickerMainRef: React.createRef(),
   AnchoredEmojiRef: React.createRef(),
   BodyRef: React.createRef(),
-  SearchInputRef: React.createRef()
+  SearchInputRef: React.createRef(),
+  SkinTonePickerRef: React.createRef()
 });
 
 function useElementRef() {
@@ -56,12 +65,14 @@ export function useSetAnchoredEmojiRef(): (target: null | HTMLElement) => void {
   };
 }
 
-export function useBodyRef(): React.MutableRefObject<HTMLDivElement | null> {
-  return useElementRef()[
-    'BodyRef'
-  ] as React.MutableRefObject<HTMLDivElement | null>;
+export function useBodyRef() {
+  return useElementRef()['BodyRef'];
 }
 
 export function useSearchInputRef() {
   return useElementRef()['SearchInputRef'];
+}
+
+export function useSkinTonePickerRef() {
+  return useElementRef()['SkinTonePickerRef'];
 }
