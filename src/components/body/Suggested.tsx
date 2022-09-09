@@ -51,6 +51,7 @@ export function Suggested({ categoryConfig }: Props) {
             emojiStyle={emojiStyle}
             emoji={emoji}
             key={suggestedItem.unified}
+            hidden={hidden}
           />
         );
       })}

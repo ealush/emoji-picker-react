@@ -3,5 +3,6 @@ export enum ClassNames {
   searchActive = 'epr-search-active',
   hidden = 'epr-hidden',
   visible = 'epr-visible',
-  active = 'epr-active'
+  active = 'epr-active',
+  emoji = 'epr-emoji'
 }

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import {
+  useBodyRef,
   useCategoryNavigationRef,
   usePickerMainRef,
   useSearchInputRef,
@@ -7,6 +8,7 @@ import {
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 import {
+  focusFirstVisibleEmoji,
   focusNextElementSibling,
   focusPrevElementSibling,
   getActiveElement,
@@ -143,6 +145,7 @@ function useSkinTonePickerKeyboardEvents() {
 function useCategoryNavigationKeyboardEvents() {
   const focusSearchInput = useFocusSearchInput();
   const CategoryNavigationRef = useCategoryNavigationRef();
+  const BodyRef = useBodyRef();
 
   useEffect(() => {
     const current = CategoryNavigationRef.current;
@@ -156,7 +159,7 @@ function useCategoryNavigationKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [CategoryNavigationRef.current]);
+  }, [CategoryNavigationRef.current, BodyRef.current]);
 
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
@@ -170,6 +173,9 @@ function useCategoryNavigationKeyboardEvents() {
         break;
       case 'ArrowLeft':
         focusPrevElementSibling(getActiveElement());
+        break;
+      case 'ArrowDown':
+        focusFirstVisibleEmoji(BodyRef.current);
         break;
     }
   }

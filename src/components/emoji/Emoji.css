@@ -38,7 +38,8 @@
   line-height: 100%;
 }
 
-.EmojiPickerReact button.epr-emoji:hover {
+.EmojiPickerReact button.epr-emoji:hover,
+.EmojiPickerReact button.epr-emoji:focus {
   border-radius: 8px;
   background-color: var(--epr-emoji-hover-color);
 }

@@ -49,7 +49,7 @@ export function Emoji({
 
   return (
     <button
-      className={clsx('epr-emoji', {
+      className={clsx(ClassNames.emoji, {
         [ClassNames.hidden]: hidden,
         [ClassNames.visible]: !hidden,
         'epr-emoji-has-variations': hasVariations && showVariations
