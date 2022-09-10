@@ -8,7 +8,7 @@ import {
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
 
-export function useEmojiMouseEnter(
+export function useEmojiPreviewEvents(
   allow: boolean,
   setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
 ) {
@@ -20,31 +20,36 @@ export function useEmojiMouseEnter(
     }
     const bodyRef = BodyRef.current;
 
-    bodyRef?.addEventListener('mouseover', onMouseOver, {
+    bodyRef?.addEventListener('mouseover', onEnter, {
       passive: true
     });
 
-    bodyRef?.addEventListener('mouseout', onMouseOut, {
+    bodyRef?.addEventListener('focus', onEnter, true);
+
+    bodyRef?.addEventListener('mouseout', onLeave, {
       passive: true
     });
+    bodyRef?.addEventListener('blur', onLeave, true);
 
     return () => {
-      bodyRef?.removeEventListener('mouseover', onMouseOver);
-      bodyRef?.removeEventListener('mouseout', onMouseOut);
+      bodyRef?.removeEventListener('mouseover', onEnter);
+      bodyRef?.removeEventListener('mouseout', onLeave);
+      bodyRef?.removeEventListener('focus', onEnter, true);
+      bodyRef?.removeEventListener('blur', onLeave, true);
     };
   }, [BodyRef.current]);
 
-  function onMouseOver(e: MouseEvent) {
+  function onEnter(e: MouseEvent | FocusEvent) {
     const button = buttonFromTarget(e.target as HTMLElement);
 
     if (!button) {
-      return onMouseOut();
+      return onLeave();
     }
     const unified = unifiedFromEmojiElement(button);
     const originalUnified = originalUnifiedFromEmojiElement(button);
 
     if (!unified || !originalUnified) {
-      return onMouseOut();
+      return onLeave();
     }
 
     setPreviewEmoji({
@@ -53,7 +58,7 @@ export function useEmojiMouseEnter(
     });
   }
 
-  function onMouseOut() {
+  function onLeave() {
     setPreviewEmoji(null);
   }
 }

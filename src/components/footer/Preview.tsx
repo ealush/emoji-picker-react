@@ -8,7 +8,7 @@ import {
   emojiName,
   emojiUnified
 } from '../../dataUtils/emojiSelectors';
-import { useEmojiMouseEnter } from '../../hooks/useEmojiMouseEnter';
+import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
 import { Emoji } from '../emoji/Emoji';
 import './Preview.css';
@@ -20,7 +20,7 @@ export function Preview() {
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
 
-  useEmojiMouseEnter(previewConfig.showPreview, setPreviewEmoji);
+  useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
   if (!previewConfig.showPreview) {
     return null;
