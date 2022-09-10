@@ -160,12 +160,24 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
   }
 
   const category = closestCategory(element);
-
   const indexInRow = elementIndexInRow(category, element);
-
   const row = rowNumber(category, element);
-
   const countInRow = elementCountInRow(category, element);
+
+  if (row === 0) {
+    const prevVisibleCategory = prevCategory(category);
+
+    if (!prevVisibleCategory) {
+      return null;
+    }
+
+    return getElementInRow(
+      allVisibleEmojis(prevVisibleCategory),
+      -1, // last row
+      countInRow,
+      indexInRow
+    );
+  }
 
   return getElementInPrevRow(
     allVisibleEmojis(category),

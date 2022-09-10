@@ -63,6 +63,13 @@ function getRowElements(
   row: number,
   elementsInRow: number
 ): HTMLElement[] {
+  if (row === -1) {
+    const lastRow = Math.floor(elements.length / elementsInRow);
+    const firstElementIndex = lastRow * elementsInRow;
+    const lastElementIndex = elements.length - 1;
+    return elements.slice(firstElementIndex, lastElementIndex + 1);
+  }
+
   return elements.slice(row * elementsInRow, (row + 1) * elementsInRow);
 }
 
@@ -123,5 +130,10 @@ export function getElementInPrevRow(
     elementsInRow
   );
 
-  return prevRowElements[index] || null;
+  // default to last
+  return (
+    prevRowElements[index] ||
+    prevRowElements[prevRowElements.length - 1] ||
+    null
+  );
 }
