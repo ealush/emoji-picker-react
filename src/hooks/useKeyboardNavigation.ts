@@ -71,6 +71,7 @@ function usePickerMainKeyboardEvents() {
     const { key } = event;
 
     if (key === 'Escape') {
+      event.preventDefault();
       clearSearch();
       closeAllOpenToggles();
       scrollTo(0);
@@ -103,14 +104,14 @@ function useSearchInputKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
-    event.preventDefault();
-
     switch (key) {
       case 'ArrowRight':
+        event.preventDefault();
         setSkinToneFanOpenState(true);
         focusSkinTonePicker();
         break;
       case 'ArrowDown':
+        event.preventDefault();
         focusCategoryNavigation();
         break;
     }
@@ -139,13 +140,13 @@ function useSkinTonePickerKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
-    event.preventDefault();
-
     switch (key) {
       case 'ArrowLeft':
+        event.preventDefault();
         focusNextSkinTone(focusSearchInput);
         break;
       case 'ArrowRight':
+        event.preventDefault();
         focusPrevSkinTone();
         break;
     }
@@ -174,19 +175,21 @@ function useCategoryNavigationKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
-    event.preventDefault();
-
     switch (key) {
       case 'ArrowUp':
+        event.preventDefault();
         focusSearchInput();
         break;
       case 'ArrowRight':
+        event.preventDefault();
         focusNextElementSibling(getActiveElement());
         break;
       case 'ArrowLeft':
+        event.preventDefault();
         focusPrevElementSibling(getActiveElement());
         break;
       case 'ArrowDown':
+        event.preventDefault();
         focusFirstVisibleEmoji(BodyRef.current);
         break;
     }
@@ -212,20 +215,23 @@ function useBodyKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
-    event.preventDefault();
     const activeElement = buttonFromTarget(getActiveElement());
 
     switch (key) {
       case 'ArrowRight':
+        event.preventDefault();
         focusNextVisibleEmoji(activeElement);
         break;
       case 'ArrowLeft':
+        event.preventDefault();
         focusPrevVisibleEmoji(activeElement);
         break;
       case 'ArrowDown':
+        event.preventDefault();
         focusVisibleEmojiOneRowDown(activeElement);
         break;
       case 'ArrowUp':
+        event.preventDefault();
         focusVisibleEmojiOneRowUp(activeElement);
         break;
     }
