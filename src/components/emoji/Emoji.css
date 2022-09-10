@@ -1,6 +1,7 @@
 .EmojiPickerReact button.epr-emoji {
   position: relative;
   padding: var(--epr-emoji-padding);
+  border-radius: 8px;
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:after {
@@ -39,8 +40,10 @@
   font-size: var(--epr-emoji-size);
 }
 
-.EmojiPickerReact button.epr-emoji:hover,
-.EmojiPickerReact button.epr-emoji:focus {
-  border-radius: 8px;
+.EmojiPickerReact button.epr-emoji:hover {
   background-color: var(--epr-emoji-hover-color);
+}
+
+.EmojiPickerReact button.epr-emoji:focus-visible {
+  background-color: var(--epr-focus-bg-color);
 }

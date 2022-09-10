@@ -1,6 +1,7 @@
 .EmojiPickerReact {
   --epr-highlight-color: #007aeb;
   --epr-hover-bg-color: #f1f8ff;
+  --epr-focus-bg-color: #e0f0ff;
   --epr-text-color: #858585;
   --epr-search-input-bg-color: #f6f6f6;
   --epr-picker-border-color: #e7e7e7;
@@ -74,6 +75,7 @@
   --epr-highlight-color: #c0c0c0;
   --epr-text-color: var(--epr-highlight-color);
   --epr-hover-bg-color: #363636f6;
+  --epr-focus-bg-color: #474747;
   --epr-search-input-bg-color: #333333;
   --epr-category-label-bg-color: #222222e6;
   --epr-picker-border-color: #151617;

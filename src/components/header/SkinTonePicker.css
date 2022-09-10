@@ -46,9 +46,12 @@
   box-shadow: 0 0 0 0px var(--epr-active-skin-hover-color);
 }
 
-.EmojiPickerReact .epr-skin-tones .epr-tone:hover,
-.EmojiPickerReact .epr-skin-tones .epr-tone:focus {
+.EmojiPickerReact .epr-skin-tones .epr-tone:hover {
   box-shadow: 0 0 0 5px var(--epr-active-skin-hover-color);
+}
+
+.EmojiPickerReact .epr-skin-tones .epr-tone:focus-visible {
+  box-shadow: 0 0 0 5px var(--epr-focus-bg-color);
 }
 
 .EmojiPickerReact
