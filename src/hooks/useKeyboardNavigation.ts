@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
@@ -29,6 +29,7 @@ import {
   useFocusSearchInput,
   useFocusSkinTonePicker
 } from './useFocus';
+import useIsSearchMode from './useIsSearchMode';
 
 export function useKeyboardNavigation() {
   usePickerMainKeyboardEvents();
@@ -83,7 +84,7 @@ function useSearchInputKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
-  const focusCategoryNavigation = useFocusCategoryNavigation();
+  const goDownFromSearchInput = useGoDownFromSearchInput();
 
   const onKeyDown = useMemo(
     () =>
@@ -98,11 +99,11 @@ function useSearchInputKeyboardEvents() {
             break;
           case 'ArrowDown':
             event.preventDefault();
-            focusCategoryNavigation();
+            goDownFromSearchInput();
             break;
         }
       },
-    [focusSkinTonePicker, focusCategoryNavigation, setSkinToneFanOpenState]
+    [focusSkinTonePicker, goDownFromSearchInput, setSkinToneFanOpenState]
   );
 
   useEffect(() => {
@@ -124,7 +125,8 @@ function useSkinTonePickerKeyboardEvents() {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const focusSearchInput = useFocusSearchInput();
   const SearchInputRef = useSearchInputRef();
-  const [isOpen] = useSkinToneFanOpenState();
+  const goDownFromSearchInput = useGoDownFromSearchInput();
+  const [isOpen, setIsOpen] = useSkinToneFanOpenState();
 
   const onKeyDown = useMemo(
     () =>
@@ -146,9 +148,16 @@ function useSkinTonePickerKeyboardEvents() {
             }
             focusPrevSkinTone();
             break;
+          case 'ArrowDown':
+            event.preventDefault();
+            if (isOpen) {
+              setIsOpen(false);
+            }
+            goDownFromSearchInput();
+            break;
         }
       },
-    [isOpen, focusSearchInput]
+    [isOpen, focusSearchInput, setIsOpen, goDownFromSearchInput]
   );
 
   useEffect(() => {
@@ -215,7 +224,7 @@ function useCategoryNavigationKeyboardEvents() {
 
 function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
-  const focusCategoryNavigation = useFocusCategoryNavigation();
+  const goUpFromBody = useGoUpFromBody();
 
   const onKeyDown = useMemo(
     () =>
@@ -239,11 +248,11 @@ function useBodyKeyboardEvents() {
             break;
           case 'ArrowUp':
             event.preventDefault();
-            focusVisibleEmojiOneRowUp(activeElement, focusCategoryNavigation);
+            focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
             break;
         }
       },
-    [focusCategoryNavigation]
+    [goUpFromBody]
   );
 
   useEffect(() => {
@@ -259,6 +268,38 @@ function useBodyKeyboardEvents() {
       current.removeEventListener('keydown', onKeyDown);
     };
   }, [BodyRef, onKeyDown]);
+}
+
+function useGoDownFromSearchInput() {
+  const focusCategoryNavigation = useFocusCategoryNavigation();
+  const isSearchMode = useIsSearchMode();
+  const BodyRef = useBodyRef();
+
+  return useCallback(
+    function goDownFromSearchInput() {
+      if (isSearchMode) {
+        return focusFirstVisibleEmoji(BodyRef.current);
+      }
+      return focusCategoryNavigation();
+    },
+    [BodyRef, focusCategoryNavigation, isSearchMode]
+  );
+}
+
+function useGoUpFromBody() {
+  const focusSearchInput = useFocusSearchInput();
+  const focusCategoryNavigation = useFocusCategoryNavigation();
+  const isSearchMode = useIsSearchMode();
+
+  return useCallback(
+    function goUpFromEmoji() {
+      if (isSearchMode) {
+        return focusSearchInput();
+      }
+      return focusCategoryNavigation();
+    },
+    [focusSearchInput, isSearchMode, focusCategoryNavigation]
+  );
 }
 
 function focusNextSkinTone(exitLeft: () => void) {
