@@ -56,7 +56,6 @@
 
   /*  Emoji */
   --epr-emoji-size: 30px;
-  --epr-emoji-gap: 2px;
   --epr-emoji-padding: 5px;
   --epr-emoji-hover-color: var(--epr-hover-bg-color);
   --epr-emoji-variation-indicator-color: var(--epr-picker-border-color);

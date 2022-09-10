@@ -28,7 +28,6 @@
   flex-wrap: wrap;
   justify-content: space-around;
   padding: var(--epr-category-padding);
-  gap: var(--epr-emoji-gap);
 }
 
 .EmojiPickerReact li.epr-emoji-category:after {
