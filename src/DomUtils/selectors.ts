@@ -10,7 +10,7 @@ export type NullableElement = HTMLElement | null;
 
 export const VisibleEmojiSelector = `.${ClassNames.emoji}.${ClassNames.visible}:not(.${ClassNames.hidden})`;
 
-export function buttonFromEmoji(
+export function buttonFromTarget(
   emojiElement: NullableElement
 ): HTMLButtonElement | null {
   return emojiElement?.closest('button.epr-emoji') ?? null;
@@ -60,13 +60,13 @@ export function elementHeight(element: NullableElement): number {
 }
 
 export function emojiTrueOffsetTop(element: NullableElement): number {
-  const button = buttonFromEmoji(element);
+  const button = buttonFromTarget(element);
   const category = closestCategory(button);
 
   return elementOffsetTop(button) + elementOffsetTop(category);
 }
 export function emojiTruOffsetLeft(element: NullableElement): number {
-  const button = buttonFromEmoji(element);
+  const button = buttonFromTarget(element);
   const category = closestCategory(button);
 
   return elementOffsetLeft(button) + elementOffsetLeft(category);
@@ -81,7 +81,7 @@ function elementOffsetLeft(element: NullableElement): number {
 }
 
 export function unifiedFromEmojiElement(emoji: NullableElement): string | null {
-  return elementDataSetKey(buttonFromEmoji(emoji), 'unified') ?? null;
+  return elementDataSetKey(buttonFromTarget(emoji), 'unified') ?? null;
 }
 
 export function originalUnifiedFromEmojiElement(

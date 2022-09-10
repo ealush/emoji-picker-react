@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import {
-  buttonFromEmoji,
+  buttonFromTarget,
   originalUnifiedFromEmojiElement,
   unifiedFromEmojiElement
 } from '../DomUtils/selectors';
@@ -35,7 +35,7 @@ export function useEmojiMouseEnter(
   }, [BodyRef.current]);
 
   function onMouseOver(e: MouseEvent) {
-    const button = buttonFromEmoji(e.target as HTMLElement);
+    const button = buttonFromTarget(e.target as HTMLElement);
 
     if (!button) {
       return onMouseOut();

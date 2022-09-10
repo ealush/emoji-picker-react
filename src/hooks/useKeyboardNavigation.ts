@@ -19,6 +19,7 @@ import {
   hasNextElementSibling
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
+import { buttonFromTarget } from '../DomUtils/selectors';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { useClearSearch } from './useFilter';
 import {
@@ -102,6 +103,8 @@ function useSearchInputKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
+    event.preventDefault();
+
     switch (key) {
       case 'ArrowRight':
         setSkinToneFanOpenState(true);
@@ -136,6 +139,8 @@ function useSkinTonePickerKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
+    event.preventDefault();
+
     switch (key) {
       case 'ArrowLeft':
         focusNextSkinTone(focusSearchInput);
@@ -168,6 +173,8 @@ function useCategoryNavigationKeyboardEvents() {
 
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
+
+    event.preventDefault();
 
     switch (key) {
       case 'ArrowUp':
@@ -205,20 +212,21 @@ function useBodyKeyboardEvents() {
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
+    event.preventDefault();
+    const activeElement = buttonFromTarget(getActiveElement());
+
     switch (key) {
       case 'ArrowRight':
-        focusNextVisibleEmoji(getActiveElement());
+        focusNextVisibleEmoji(activeElement);
         break;
       case 'ArrowLeft':
-        focusPrevVisibleEmoji(getActiveElement());
+        focusPrevVisibleEmoji(activeElement);
         break;
       case 'ArrowDown':
-        event.preventDefault();
-        focusVisibleEmojiOneRowDown(getActiveElement());
+        focusVisibleEmojiOneRowDown(activeElement);
         break;
       case 'ArrowUp':
-        event.preventDefault();
-        focusVisibleEmojiOneRowUp(getActiveElement());
+        focusVisibleEmojiOneRowUp(activeElement);
         break;
     }
   }

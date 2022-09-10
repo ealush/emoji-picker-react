@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import {
-  buttonFromEmoji,
+  buttonFromTarget,
   elementHeight,
   emojiTrueOffsetTop,
   emojiTruOffsetLeft
@@ -91,7 +91,7 @@ function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
     }
 
     if (AnchoredEmojiRef.current) {
-      const button = buttonFromEmoji(AnchoredEmojiRef.current);
+      const button = buttonFromTarget(AnchoredEmojiRef.current);
 
       const offsetLeft = emojiTruOffsetLeft(button);
 
@@ -135,7 +135,7 @@ function useVariationPickerTop(
 
     if (AnchoredEmojiRef.current) {
       const bodyRef = BodyRef.current;
-      const button = buttonFromEmoji(AnchoredEmojiRef.current);
+      const button = buttonFromTarget(AnchoredEmojiRef.current);
 
       const buttonHeight = elementHeight(button);
 
