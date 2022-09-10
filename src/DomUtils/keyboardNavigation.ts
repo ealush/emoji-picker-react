@@ -1,4 +1,11 @@
 import { ClassNames } from './classNames';
+import {
+  elementCountInRow,
+  elementIndexInRow,
+  getElementInNextRow,
+  getElementInPrevRow,
+  rowNumber
+} from './elementPositionInRow';
 import { focusElement } from './focusElement';
 
 export function getActiveElement() {
@@ -131,6 +138,79 @@ export function focusPrevVisibleEmoji(element: HTMLElement | null) {
   prev.focus();
 }
 
+export function focusVisibleEmojiOneRowUp(element: HTMLElement | null) {
+  if (!element) {
+    return;
+  }
+
+  const prev = visibleEmojiOneRowUp(element);
+
+  if (!prev) {
+    return;
+  }
+
+  prev.focus();
+}
+
+function visibleEmojiOneRowUp(element: HTMLElement) {
+  if (!element) {
+    return null;
+  }
+
+  const category = element.closest(`.${ClassNames.category}`) as HTMLElement;
+
+  const indexInRow = elementIndexInRow(category, element);
+
+  const row = rowNumber(category, element);
+
+  const countInRow = elementCountInRow(category, element);
+
+  return getElementInPrevRow(
+    allVisibleEmojis(category),
+    row,
+    countInRow,
+    indexInRow
+  );
+}
+
+export function focusVisibleEmojiOneRowDown(element: HTMLElement | null) {
+  if (!element) {
+    return;
+  }
+
+  const next = visibleEmojiOneRowDown(element);
+
+  if (!next) {
+    return;
+  }
+
+  if (next) {
+    focusElement(next);
+  }
+  // Handle next category
+}
+
+function visibleEmojiOneRowDown(element: HTMLElement) {
+  if (!element) {
+    return;
+  }
+
+  const category = element.closest(`.${ClassNames.category}`) as HTMLElement;
+
+  const indexInRow = elementIndexInRow(category, element);
+
+  const row = rowNumber(category, element);
+
+  const countInRow = elementCountInRow(category, element);
+
+  return getElementInNextRow(
+    allVisibleEmojis(category),
+    row,
+    countInRow,
+    indexInRow
+  );
+}
+
 function prevCategory(element: HTMLElement): HTMLElement | null {
   const category = closestCategory(element);
 
@@ -199,4 +279,14 @@ function lastElementChild(element: HTMLElement | null) {
   if (!element) return null;
 
   return element.lastElementChild as HTMLElement;
+}
+
+export function allVisibleEmojis(parent: HTMLElement | null) {
+  if (!parent) {
+    return [];
+  }
+
+  return Array.from(
+    parent.querySelectorAll(`.${ClassNames.emoji}.${ClassNames.visible}`)
+  ) as HTMLElement[];
 }

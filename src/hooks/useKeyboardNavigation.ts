@@ -13,6 +13,8 @@ import {
   focusNextVisibleEmoji,
   focusPrevElementSibling,
   focusPrevVisibleEmoji,
+  focusVisibleEmojiOneRowDown,
+  focusVisibleEmojiOneRowUp,
   getActiveElement,
   hasNextElementSibling
 } from '../DomUtils/keyboardNavigation';
@@ -211,10 +213,12 @@ function useBodyKeyboardEvents() {
         focusPrevVisibleEmoji(getActiveElement());
         break;
       case 'ArrowDown':
-        // focusNextElementSibling(getActiveElement());
+        event.preventDefault();
+        focusVisibleEmojiOneRowDown(getActiveElement());
         break;
       case 'ArrowUp':
-        // focusPrevElementSibling(getActiveElement());
+        event.preventDefault();
+        focusVisibleEmojiOneRowUp(getActiveElement());
         break;
     }
   }
@@ -243,32 +247,3 @@ function focusPrevSkinTone() {
 
   focusPrevElementSibling(currentSkinTone);
 }
-
-// const handleKeyDown = (event: KeyboardEvent) => {
-//   switch (event.key) {
-//     case 'Enter':
-//       onEnter?.();
-//       break;
-//     case 'Escape':
-//       onEscape?.();
-//       break;
-//     case ' ':
-//       onSpace?.();
-//       break;
-//     case 'Tab':
-//       onTab?.();
-//       break;
-//     case 'ArrowUp':
-//       onUp?.();
-//       break;
-//     case 'ArrowDown':
-//       onDown?.();
-//       break;
-//     case 'ArrowLeft':
-//       onLeft?.();
-//       break;
-//     case 'ArrowRight':
-//       onRight?.();
-//       break;
-//   }
-// };
