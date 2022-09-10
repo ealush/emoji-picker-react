@@ -205,6 +205,7 @@ function useCategoryNavigationKeyboardEvents() {
 
 function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
+  const focusCategoryNavigation = useFocusCategoryNavigation();
   useEffect(() => {
     const current = BodyRef.current;
 
@@ -239,7 +240,7 @@ function useBodyKeyboardEvents() {
         break;
       case 'ArrowUp':
         event.preventDefault();
-        focusVisibleEmojiOneRowUp(activeElement);
+        focusVisibleEmojiOneRowUp(activeElement, focusCategoryNavigation);
         break;
     }
   }

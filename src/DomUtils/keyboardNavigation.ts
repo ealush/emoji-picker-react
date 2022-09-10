@@ -88,12 +88,19 @@ export function focusPrevVisibleEmoji(element: NullableElement) {
   focusElement(prev);
 }
 
-export function focusVisibleEmojiOneRowUp(element: NullableElement) {
+export function focusVisibleEmojiOneRowUp(
+  element: NullableElement,
+  exitUp: () => void
+) {
   if (!element) {
     return;
   }
 
   const prev = visibleEmojiOneRowUp(element);
+
+  if (!prev) {
+    return exitUp();
+  }
 
   focusElement(prev);
 }
