@@ -1,7 +1,8 @@
 import { scrollTo } from './scrollTo';
+import { NullableElement } from './selectors';
 
 export function scrollCategoryIntoView(
-  root: HTMLElement | null,
+  root: NullableElement,
   category: string
 ) {
   const $category = root?.querySelector(

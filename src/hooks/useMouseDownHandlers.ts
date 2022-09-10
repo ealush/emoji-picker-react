@@ -1,3 +1,4 @@
+import { NullableElement } from './../DomUtils/selectors';
 import { SkinTones } from './../types/exposedTypes';
 import { useEffect, useRef } from 'react';
 
@@ -31,7 +32,7 @@ import { preloadEmoji } from './preloadEmoji';
 let mouseDownTimer: undefined | number;
 
 export function useMouseDownHandlers(
-  BodyRef: React.MutableRefObject<HTMLElement | null>
+  BodyRef: React.MutableRefObject<NullableElement>
 ) {
   const preloading = useRef(false);
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();

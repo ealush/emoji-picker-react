@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { useBodyRef } from '../components/context/ElementRefContext';
+import { NullableElement } from './selectors';
 
-export function scrollTo(root: HTMLElement | null, top: number = 0) {
+export function scrollTo(root: NullableElement, top: number = 0) {
   const $eprBody = root ? root.querySelector('.epr-body') : null;
 
   if (!root || !$eprBody) {

@@ -1,4 +1,3 @@
-import { ClassNames } from './classNames';
 import {
   elementCountInRow,
   elementIndexInRow,
@@ -9,45 +8,40 @@ import {
   rowNumber
 } from './elementPositionInRow';
 import { focusElement } from './focusElement';
+import {
+  allVisibleEmojis,
+  closestCategory,
+  firstVisibleEmoji,
+  lastVisibleEmoji,
+  nextCategory,
+  nextVisibleEmoji,
+  NullableElement,
+  prevCategory,
+  prevVisibleEmoji
+} from './selectors';
 
-export function getActiveElement() {
-  return document.activeElement as HTMLElement | null;
-}
-
-export function focusPrevElementSibling(element: HTMLElement | null) {
+export function focusPrevElementSibling(element: NullableElement) {
   if (!element) return;
 
   const prev = element.previousElementSibling as HTMLElement;
 
-  if (!prev) {
-    return;
-  }
-
-  prev.focus();
+  focusElement(prev);
 }
 
-export function focusNextElementSibling(element: HTMLElement | null) {
+export function focusNextElementSibling(element: NullableElement) {
   if (!element) return;
 
   const next = element.nextElementSibling as HTMLElement;
 
-  if (!next) {
-    return;
-  }
-
-  next.focus();
+  focusElement(next);
 }
 
-export function focusFirstElementChild(element: HTMLElement | null) {
+export function focusFirstElementChild(element: NullableElement) {
   if (!element) return;
 
   const first = element.firstElementChild as HTMLElement;
 
-  if (!first) {
-    return;
-  }
-
-  first.focus();
+  focusElement(first);
 }
 
 export function hasNextElementSibling(element: HTMLElement) {
@@ -58,31 +52,15 @@ export function hasPrevElementSibling(element: HTMLElement) {
   return !!element.previousElementSibling;
 }
 
-export function focusFirstVisibleEmoji(parent: HTMLElement | null) {
+export function focusFirstVisibleEmoji(parent: NullableElement) {
   focusElement(firstVisibleEmoji(parent));
 }
 
-export function firstVisibleEmoji(parent: HTMLElement | null) {
-  if (!parent) {
-    return null;
-  }
-
-  const emoji = parent.querySelector(
-    `.${ClassNames.emoji}.${ClassNames.visible}`
-  );
-
-  if (!emoji) {
-    return null;
-  }
-
-  return emoji as HTMLElement;
-}
-
-export function focusLastVisibleEmoji(parent: HTMLElement | null) {
+export function focusLastVisibleEmoji(parent: NullableElement) {
   focusElement(lastVisibleEmoji(parent));
 }
 
-export function focusNextVisibleEmoji(element: HTMLElement | null) {
+export function focusNextVisibleEmoji(element: NullableElement) {
   if (!element) {
     return;
   }
@@ -93,40 +71,10 @@ export function focusNextVisibleEmoji(element: HTMLElement | null) {
     return focusFirstVisibleEmoji(nextCategory(element));
   }
 
-  next.focus();
+  focusElement(next);
 }
 
-function closestCategory(element: HTMLElement) {
-  return element.closest(`.${ClassNames.category}`) as HTMLElement;
-}
-
-function nextCategory(element: HTMLElement): HTMLElement | null {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const next = category.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return null;
-  }
-
-  if (isHidden(next)) {
-    return nextCategory(next);
-  }
-
-  return next;
-}
-
-function isHidden(element: HTMLElement | null) {
-  if (!element) return true;
-
-  return element.classList.contains(ClassNames.hidden);
-}
-
-export function focusPrevVisibleEmoji(element: HTMLElement | null) {
+export function focusPrevVisibleEmoji(element: NullableElement) {
   if (!element) {
     return;
   }
@@ -137,21 +85,17 @@ export function focusPrevVisibleEmoji(element: HTMLElement | null) {
     return focusLastVisibleEmoji(prevCategory(element));
   }
 
-  prev.focus();
+  focusElement(prev);
 }
 
-export function focusVisibleEmojiOneRowUp(element: HTMLElement | null) {
+export function focusVisibleEmojiOneRowUp(element: NullableElement) {
   if (!element) {
     return;
   }
 
   const prev = visibleEmojiOneRowUp(element);
 
-  if (!prev) {
-    return;
-  }
-
-  prev.focus();
+  focusElement(prev);
 }
 
 function visibleEmojiOneRowUp(element: HTMLElement) {
@@ -187,16 +131,12 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
   );
 }
 
-export function focusVisibleEmojiOneRowDown(element: HTMLElement | null) {
+export function focusVisibleEmojiOneRowDown(element: NullableElement) {
   if (!element) {
     return;
   }
 
   const next = visibleEmojiOneRowDown(element);
-
-  if (!next) {
-    return;
-  }
 
   if (next) {
     return focusElement(next);
@@ -236,84 +176,4 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
   );
 
   return itemInNextRow;
-}
-
-function prevCategory(element: HTMLElement): HTMLElement | null {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const prev = category.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return null;
-  }
-
-  if (isHidden(prev)) {
-    return prevCategory(prev);
-  }
-
-  return prev;
-}
-
-export function nextVisibleEmoji(element: HTMLElement): HTMLElement | null {
-  const next = element.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return firstVisibleEmoji(nextCategory(element));
-  }
-
-  if (!next.classList.contains(ClassNames.visible)) {
-    return nextVisibleEmoji(next);
-  }
-
-  return next;
-}
-
-export function prevVisibleEmoji(element: HTMLElement): HTMLElement | null {
-  const prev = element.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return lastVisibleEmoji(prevCategory(element));
-  }
-
-  if (!prev.classList.contains(ClassNames.visible)) {
-    return prevVisibleEmoji(prev);
-  }
-
-  return prev;
-}
-
-function lastVisibleEmoji(element: HTMLElement | null): HTMLElement | null {
-  if (!element) return null;
-
-  const last = lastElementChild(element);
-
-  if (!last) {
-    return null;
-  }
-
-  if (!last.classList.contains(ClassNames.visible)) {
-    return prevVisibleEmoji(last);
-  }
-
-  return last;
-}
-
-function lastElementChild(element: HTMLElement | null) {
-  if (!element) return null;
-
-  return element.lastElementChild as HTMLElement;
-}
-
-export function allVisibleEmojis(parent: HTMLElement | null) {
-  if (!parent) {
-    return [];
-  }
-
-  return Array.from(
-    parent.querySelectorAll(`.${ClassNames.emoji}.${ClassNames.visible}`)
-  ) as HTMLElement[];
 }

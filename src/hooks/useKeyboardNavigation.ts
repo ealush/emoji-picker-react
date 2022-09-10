@@ -7,6 +7,7 @@ import {
   useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
   focusFirstVisibleEmoji,
   focusNextElementSibling,
@@ -15,7 +16,6 @@ import {
   focusPrevVisibleEmoji,
   focusVisibleEmojiOneRowDown,
   focusVisibleEmojiOneRowUp,
-  getActiveElement,
   hasNextElementSibling
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';

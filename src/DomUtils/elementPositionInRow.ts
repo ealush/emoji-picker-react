@@ -1,6 +1,8 @@
+import { NullableElement } from './selectors';
+
 export function elementCountInRow(
-  parent: HTMLElement | null,
-  element: HTMLElement | null
+  parent: NullableElement,
+  element: NullableElement
 ): number {
   if (!parent || !element) {
     return 0;
@@ -13,8 +15,8 @@ export function elementCountInRow(
 }
 
 export function elementIndexInRow(
-  parent: HTMLElement | null,
-  element: HTMLElement | null
+  parent: NullableElement,
+  element: NullableElement
 ): number {
   if (!parent || !element) {
     return 0;
@@ -28,8 +30,8 @@ export function elementIndexInRow(
 }
 
 export function rowNumber(
-  parent: HTMLElement | null,
-  element: HTMLElement | null
+  parent: NullableElement,
+  element: NullableElement
 ): number {
   if (!parent || !element) {
     return 0;
@@ -43,8 +45,8 @@ export function rowNumber(
 }
 
 export function hasNextRow(
-  parent: HTMLElement | null,
-  element: HTMLElement | null
+  parent: NullableElement,
+  element: NullableElement
 ): boolean {
   if (!parent || !element) {
     return false;
@@ -92,7 +94,7 @@ export function getElementInRow(
   row: number,
   elementsInRow: number,
   indexInRow: number
-): HTMLElement | null {
+): NullableElement {
   const rowElements = getRowElements(elements, row, elementsInRow);
   // get element, default to last
   return rowElements[indexInRow] || rowElements[rowElements.length - 1] || null;
@@ -103,7 +105,7 @@ export function getElementInNextRow(
   currentRow: number,
   elementsInRow: number,
   index: number
-): HTMLElement | null {
+): NullableElement {
   const nextRowElements = getNextRowElements(
     allElements,
     currentRow,
@@ -123,7 +125,7 @@ export function getElementInPrevRow(
   currentRow: number,
   elementsInRow: number,
   index: number
-): HTMLElement | null {
+): NullableElement {
   const prevRowElements = getRowElements(
     allElements,
     currentRow - 1,

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NullableElement } from '../../DomUtils/selectors';
 
 export function ElementRefContextProvider({
   children
@@ -62,9 +63,9 @@ export function useAnchoredEmojiRef() {
   return useElementRef()['AnchoredEmojiRef'];
 }
 
-export function useSetAnchoredEmojiRef(): (target: null | HTMLElement) => void {
+export function useSetAnchoredEmojiRef(): (target: NullableElement) => void {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
-  return (target: null | HTMLElement) => {
+  return (target: NullableElement) => {
     AnchoredEmojiRef.current = target;
   };
 }
