@@ -7,6 +7,7 @@ import {
 } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
+import { focusElement } from '../DomUtils/focusElement';
 
 export function useEmojiPreviewEvents(
   allow: boolean,
@@ -20,7 +21,7 @@ export function useEmojiPreviewEvents(
     }
     const bodyRef = BodyRef.current;
 
-    bodyRef?.addEventListener('mouseover', onEnter, {
+    bodyRef?.addEventListener('mouseover', onMouseOver, {
       passive: true
     });
 
@@ -32,14 +33,14 @@ export function useEmojiPreviewEvents(
     bodyRef?.addEventListener('blur', onLeave, true);
 
     return () => {
-      bodyRef?.removeEventListener('mouseover', onEnter);
+      bodyRef?.removeEventListener('mouseover', onMouseOver);
       bodyRef?.removeEventListener('mouseout', onLeave);
       bodyRef?.removeEventListener('focus', onEnter, true);
       bodyRef?.removeEventListener('blur', onLeave, true);
     };
   }, [BodyRef.current]);
 
-  function onEnter(e: MouseEvent | FocusEvent) {
+  function onEnter(e: FocusEvent) {
     const button = buttonFromTarget(e.target as HTMLElement);
 
     if (!button) {
@@ -56,6 +57,14 @@ export function useEmojiPreviewEvents(
       unified,
       originalUnified
     });
+  }
+
+  function onMouseOver(e: MouseEvent) {
+    const button = buttonFromTarget(e.target as HTMLElement);
+
+    if (button) {
+      focusElement(button);
+    }
   }
 
   function onLeave() {

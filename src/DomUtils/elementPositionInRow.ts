@@ -139,3 +139,27 @@ export function getElementInPrevRow(
     null
   );
 }
+
+export function firstVisibleElementInContainer(
+  parent: NullableElement,
+  elements: HTMLElement[]
+): NullableElement {
+  if (!parent || !elements.length) {
+    return null;
+  }
+
+  const parentTop = parent.getBoundingClientRect().top;
+  const parentBottom = parent.getBoundingClientRect().bottom;
+
+  const visibleElements = elements.filter(element => {
+    const elementTop = element.getBoundingClientRect().top;
+    const elementBottom = element.getBoundingClientRect().bottom;
+
+    return (
+      (elementTop >= parentTop && elementTop <= parentBottom) ||
+      (elementBottom >= parentTop && elementBottom <= parentBottom)
+    );
+  });
+
+  return visibleElements[0] || null;
+}
