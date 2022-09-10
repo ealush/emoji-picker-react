@@ -87,8 +87,8 @@ export function getElementInRow(
   indexInRow: number
 ): HTMLElement | null {
   const rowElements = getRowElements(elements, row, elementsInRow);
-
-  return rowElements[indexInRow] || null;
+  // get element, default to last
+  return rowElements[indexInRow] || rowElements[rowElements.length - 1] || null;
 }
 
 export function getElementInNextRow(
