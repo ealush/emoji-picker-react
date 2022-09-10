@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 
-import { focusElement } from '../DomUtils/focusElement';
-import { focusFirstElementChild } from '../DomUtils/keyboardNavigation';
+import { focusElement, focusFirstElementChild } from '../DomUtils/focusElement';
 import {
   useCategoryNavigationRef,
   useSearchInputRef,

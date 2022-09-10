@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
+import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
+import {
+  focusNextElementSibling,
+  focusPrevElementSibling
+} from '../DomUtils/focusElement';
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
   focusFirstVisibleEmoji,
-  focusNextElementSibling,
   focusNextVisibleEmoji,
-  focusPrevElementSibling,
   focusPrevVisibleEmoji,
   focusVisibleEmojiOneRowDown,
-  focusVisibleEmojiOneRowUp,
-  hasNextElementSibling
+  focusVisibleEmojiOneRowUp
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';

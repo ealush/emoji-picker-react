@@ -151,7 +151,7 @@ export function firstVisibleElementInContainer(
   const parentTop = parent.getBoundingClientRect().top;
   const parentBottom = parent.getBoundingClientRect().bottom;
 
-  const visibleElements = elements.filter(element => {
+  const visibleElements = elements.find(element => {
     const elementTop = element.getBoundingClientRect().top;
     const elementBottom = element.getBoundingClientRect().bottom;
 
@@ -161,5 +161,9 @@ export function firstVisibleElementInContainer(
     );
   });
 
-  return visibleElements[0] || null;
+  return visibleElements || null;
+}
+
+export function hasNextElementSibling(element: HTMLElement) {
+  return !!element.nextElementSibling;
 }

@@ -20,38 +20,6 @@ import {
   prevVisibleEmoji
 } from './selectors';
 
-export function focusPrevElementSibling(element: NullableElement) {
-  if (!element) return;
-
-  const prev = element.previousElementSibling as HTMLElement;
-
-  focusElement(prev);
-}
-
-export function focusNextElementSibling(element: NullableElement) {
-  if (!element) return;
-
-  const next = element.nextElementSibling as HTMLElement;
-
-  focusElement(next);
-}
-
-export function focusFirstElementChild(element: NullableElement) {
-  if (!element) return;
-
-  const first = element.firstElementChild as HTMLElement;
-
-  focusElement(first);
-}
-
-export function hasNextElementSibling(element: HTMLElement) {
-  return !!element.nextElementSibling;
-}
-
-export function hasPrevElementSibling(element: HTMLElement) {
-  return !!element.previousElementSibling;
-}
-
 export function focusFirstVisibleEmoji(parent: NullableElement) {
   const allEmojis = allVisibleEmojis(parent);
   focusElement(firstVisibleElementInContainer(parent, allEmojis));
@@ -106,6 +74,16 @@ export function focusVisibleEmojiOneRowUp(
   focusElement(prev);
 }
 
+export function focusVisibleEmojiOneRowDown(element: NullableElement) {
+  if (!element) {
+    return;
+  }
+
+  const next = visibleEmojiOneRowDown(element);
+
+  return focusElement(next);
+}
+
 function visibleEmojiOneRowUp(element: HTMLElement) {
   if (!element) {
     return null;
@@ -139,21 +117,9 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
   );
 }
 
-export function focusVisibleEmojiOneRowDown(element: NullableElement) {
-  if (!element) {
-    return;
-  }
-
-  const next = visibleEmojiOneRowDown(element);
-
-  if (next) {
-    return focusElement(next);
-  }
-}
-
 function visibleEmojiOneRowDown(element: HTMLElement) {
   if (!element) {
-    return;
+    return null;
   }
 
   const category = closestCategory(element);
@@ -165,7 +131,7 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
     const nextVisibleCategory = nextCategory(category);
 
     if (!nextVisibleCategory) {
-      return;
+      return null;
     }
 
     return getElementInRow(
