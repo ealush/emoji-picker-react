@@ -6,11 +6,11 @@ import {
   unifiedFromEmojiElement
 } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { HoveredEmoji } from '../components/footer/Preview';
+import { PreviewEmoji } from '../components/footer/Preview';
 
 export function useEmojiMouseEnter(
   allow: boolean,
-  setHoveredEmoji: React.Dispatch<React.SetStateAction<HoveredEmoji>>
+  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
 ) {
   const BodyRef = useBodyRef();
 
@@ -47,13 +47,13 @@ export function useEmojiMouseEnter(
       return onMouseOut();
     }
 
-    setHoveredEmoji({
+    setPreviewEmoji({
       unified,
       originalUnified
     });
   }
 
   function onMouseOut() {
-    setHoveredEmoji(null);
+    setPreviewEmoji(null);
   }
 }

@@ -122,6 +122,7 @@ function useSkinTonePickerKeyboardEvents() {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const focusSearchInput = useFocusSearchInput();
   const SearchInputRef = useSearchInputRef();
+  const [isOpen] = useSkinToneFanOpenState();
 
   useEffect(() => {
     const current = SkinTonePickerRef.current;
@@ -135,7 +136,7 @@ function useSkinTonePickerKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [SkinTonePickerRef.current, SearchInputRef.current]);
+  }, [SkinTonePickerRef.current, SearchInputRef.current, isOpen]);
 
   function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
@@ -143,10 +144,16 @@ function useSkinTonePickerKeyboardEvents() {
     switch (key) {
       case 'ArrowLeft':
         event.preventDefault();
+        if (!isOpen) {
+          return focusSearchInput();
+        }
         focusNextSkinTone(focusSearchInput);
         break;
       case 'ArrowRight':
         event.preventDefault();
+        if (!isOpen) {
+          return focusSearchInput();
+        }
         focusPrevSkinTone();
         break;
     }

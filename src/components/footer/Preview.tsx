@@ -16,19 +16,19 @@ import { useEmojiVariationPickerState } from '../context/PickerContext';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
-  const [hoveredEmoji, setHoveredEmoji] = useState<HoveredEmoji>(null);
+  const [previewEmoji, setPreviewEmoji] = useState<PreviewEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
 
-  useEmojiMouseEnter(previewConfig.showPreview, setHoveredEmoji);
+  useEmojiMouseEnter(previewConfig.showPreview, setPreviewEmoji);
 
   if (!previewConfig.showPreview) {
     return null;
   }
 
-  const emoji = emojiByUnified(hoveredEmoji?.originalUnified);
+  const emoji = emojiByUnified(previewEmoji?.originalUnified);
 
-  const show = emoji != null && hoveredEmoji != null;
+  const show = emoji != null && previewEmoji != null;
 
   return (
     <Flex className="epr-preview">
@@ -49,7 +49,7 @@ export function Preview() {
         <div>
           {show ? (
             <Emoji
-              unified={hoveredEmoji?.unified as string}
+              unified={previewEmoji?.unified as string}
               emoji={asEmoji(emoji)}
               showVariations={false}
               emojiStyle={emojiStyle}
@@ -79,7 +79,7 @@ export function Preview() {
   }
 }
 
-export type HoveredEmoji = null | {
+export type PreviewEmoji = null | {
   unified: string;
   originalUnified: string;
 };

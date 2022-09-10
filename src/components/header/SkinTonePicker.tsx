@@ -53,6 +53,7 @@ export function SkinTonePicker() {
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
                 [ClassNames.active]: active
               })}
+              tabIndex={isOpen ? 0 : -1}
             ></button>
           );
         })}
