@@ -4,17 +4,22 @@ import {
   unifiedWithoutSkinTone
 } from '../dataUtils/emojiSelectors';
 
-import { ClassNames } from './classNames';
+import { asSelectors, ClassNames } from './classNames';
 import { lastElementChild } from './lastElementChild';
 
 export type NullableElement = HTMLElement | null;
 
-export const VisibleEmojiSelector = `.${ClassNames.emoji}.${ClassNames.visible}:not(.${ClassNames.hidden})`;
+export const EmojiButtonSelector = `button${asSelectors(ClassNames.emoji)}`;
+export const VisibleEmojiSelector = [
+  EmojiButtonSelector,
+  asSelectors(ClassNames.visible),
+  `:not(${asSelectors(ClassNames.hidden)})`
+].join('');
 
 export function buttonFromTarget(
   emojiElement: NullableElement
 ): HTMLButtonElement | null {
-  return emojiElement?.closest('button.epr-emoji') ?? null;
+  return emojiElement?.closest(EmojiButtonSelector) ?? null;
 }
 
 export function emojiFromElement(
@@ -38,15 +43,15 @@ export function emojiFromElement(
 
 export function isEmojiElement(element: NullableElement): boolean {
   return Boolean(
-    element?.matches('button.epr-emoji') ||
-      element?.parentElement?.matches('button.epr-emoji')
+    element?.matches(EmojiButtonSelector) ||
+      element?.parentElement?.matches(EmojiButtonSelector)
   );
 }
 
 export function categoryLabelFromCategory(
   category: NullableElement
 ): NullableElement {
-  return category?.querySelector('.epr-emoji-category-label') ?? null;
+  return category?.querySelector(asSelectors(ClassNames.label)) ?? null;
 }
 
 export function closestCategoryLabel(
@@ -225,5 +230,5 @@ export function closestCategory(element: NullableElement) {
   if (!element) {
     return null;
   }
-  return element.closest(`.${ClassNames.category}`) as HTMLElement;
+  return element.closest(asSelectors(ClassNames.category)) as HTMLElement;
 }

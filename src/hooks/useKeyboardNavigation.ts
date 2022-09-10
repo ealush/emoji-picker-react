@@ -33,6 +33,14 @@ import {
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
 
+enum KeyboardEvents {
+  ArrowDown = 'ArrowDown',
+  ArrowUp = 'ArrowUp',
+  ArrowLeft = 'ArrowLeft',
+  ArrowRight = 'ArrowRight',
+  Escape = 'Escape'
+}
+
 export function useKeyboardNavigation() {
   usePickerMainKeyboardEvents();
   useSearchInputKeyboardEvents();
@@ -94,12 +102,12 @@ function useSearchInputKeyboardEvents() {
         const { key } = event;
 
         switch (key) {
-          case 'ArrowRight':
+          case KeyboardEvents.ArrowRight:
             event.preventDefault();
             setSkinToneFanOpenState(true);
             focusSkinTonePicker();
             break;
-          case 'ArrowDown':
+          case KeyboardEvents.ArrowDown:
             event.preventDefault();
             goDownFromSearchInput();
             break;
@@ -136,21 +144,21 @@ function useSkinTonePickerKeyboardEvents() {
         const { key } = event;
 
         switch (key) {
-          case 'ArrowLeft':
+          case KeyboardEvents.ArrowLeft:
             event.preventDefault();
             if (!isOpen) {
               return focusSearchInput();
             }
             focusNextSkinTone(focusSearchInput);
             break;
-          case 'ArrowRight':
+          case KeyboardEvents.ArrowRight:
             event.preventDefault();
             if (!isOpen) {
               return focusSearchInput();
             }
             focusPrevSkinTone();
             break;
-          case 'ArrowDown':
+          case KeyboardEvents.ArrowDown:
             event.preventDefault();
             if (isOpen) {
               setIsOpen(false);
@@ -188,19 +196,19 @@ function useCategoryNavigationKeyboardEvents() {
         const { key } = event;
 
         switch (key) {
-          case 'ArrowUp':
+          case KeyboardEvents.ArrowUp:
             event.preventDefault();
             focusSearchInput();
             break;
-          case 'ArrowRight':
+          case KeyboardEvents.ArrowRight:
             event.preventDefault();
             focusNextElementSibling(getActiveElement());
             break;
-          case 'ArrowLeft':
+          case KeyboardEvents.ArrowLeft:
             event.preventDefault();
             focusPrevElementSibling(getActiveElement());
             break;
-          case 'ArrowDown':
+          case KeyboardEvents.ArrowDown:
             event.preventDefault();
             focusFirstVisibleEmoji(BodyRef.current);
             break;
@@ -236,19 +244,19 @@ function useBodyKeyboardEvents() {
         const activeElement = buttonFromTarget(getActiveElement());
 
         switch (key) {
-          case 'ArrowRight':
+          case KeyboardEvents.ArrowRight:
             event.preventDefault();
             focusNextVisibleEmoji(activeElement);
             break;
-          case 'ArrowLeft':
+          case KeyboardEvents.ArrowLeft:
             event.preventDefault();
             focusPrevVisibleEmoji(activeElement);
             break;
-          case 'ArrowDown':
+          case KeyboardEvents.ArrowDown:
             event.preventDefault();
             focusVisibleEmojiOneRowDown(activeElement);
             break;
-          case 'ArrowUp':
+          case KeyboardEvents.ArrowUp:
             event.preventDefault();
             focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
             break;

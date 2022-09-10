@@ -5,5 +5,10 @@ export enum ClassNames {
   visible = 'epr-visible',
   active = 'epr-active',
   emoji = 'epr-emoji',
-  category = 'epr-emoji-category'
+  category = 'epr-emoji-category',
+  label = 'epr-emoji-category-label',
+}
+
+export function asSelectors(...classNames: ClassNames[]): string {
+  return classNames.map(c => `.${c}`).join('');
 }
