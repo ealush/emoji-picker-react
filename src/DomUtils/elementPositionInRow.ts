@@ -80,6 +80,17 @@ function getNextRowElements(
   return getRowElements(allElements, nextRow, elementsInRow);
 }
 
+export function getElementInRow(
+  elements: HTMLElement[],
+  row: number,
+  elementsInRow: number,
+  indexInRow: number
+): HTMLElement | null {
+  const rowElements = getRowElements(elements, row, elementsInRow);
+
+  return rowElements[indexInRow] || null;
+}
+
 export function getElementInNextRow(
   allElements: HTMLElement[],
   currentRow: number,
@@ -92,7 +103,12 @@ export function getElementInNextRow(
     elementsInRow
   );
 
-  return nextRowElements[index] || null;
+  // return item in index, or last item in row
+  return (
+    nextRowElements[index] ||
+    nextRowElements[nextRowElements.length - 1] ||
+    null
+  );
 }
 
 export function getElementInPrevRow(

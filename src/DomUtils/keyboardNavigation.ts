@@ -4,6 +4,8 @@ import {
   elementIndexInRow,
   getElementInNextRow,
   getElementInPrevRow,
+  getElementInRow,
+  hasNextRow,
   rowNumber
 } from './elementPositionInRow';
 import { focusElement } from './focusElement';
@@ -157,7 +159,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
     return null;
   }
 
-  const category = element.closest(`.${ClassNames.category}`) as HTMLElement;
+  const category = closestCategory(element);
 
   const indexInRow = elementIndexInRow(category, element);
 
@@ -185,9 +187,8 @@ export function focusVisibleEmojiOneRowDown(element: HTMLElement | null) {
   }
 
   if (next) {
-    focusElement(next);
+    return focusElement(next);
   }
-  // Handle next category
 }
 
 function visibleEmojiOneRowDown(element: HTMLElement) {
@@ -195,20 +196,34 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
     return;
   }
 
-  const category = element.closest(`.${ClassNames.category}`) as HTMLElement;
-
+  const category = closestCategory(element);
   const indexInRow = elementIndexInRow(category, element);
-
   const row = rowNumber(category, element);
-
   const countInRow = elementCountInRow(category, element);
 
-  return getElementInNextRow(
+  if (!hasNextRow(category, element)) {
+    const nextVisibleCategory = nextCategory(category);
+
+    if (!nextVisibleCategory) {
+      return;
+    }
+
+    return getElementInRow(
+      allVisibleEmojis(nextVisibleCategory),
+      0,
+      countInRow,
+      indexInRow
+    );
+  }
+
+  const itemInNextRow = getElementInNextRow(
     allVisibleEmojis(category),
     row,
     countInRow,
     indexInRow
   );
+
+  return itemInNextRow;
 }
 
 function prevCategory(element: HTMLElement): HTMLElement | null {
