@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
+
 import { useBodyRef } from '../components/context/ElementRefContext';
+
 import { NullableElement } from './selectors';
 
 export function scrollTo(root: NullableElement, top: number = 0) {
@@ -25,6 +27,6 @@ export function useScrollTo() {
         }
       });
     },
-    [BodyRef.current]
+    [BodyRef]
   );
 }

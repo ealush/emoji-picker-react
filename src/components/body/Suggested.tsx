@@ -25,7 +25,8 @@ export function Suggested({ categoryConfig }: Props) {
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const suggested = React.useMemo(
     () => getsuggested(suggestedEmojisModeConfig) ?? [],
-    [suggestedUpdated]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [suggestedUpdated, suggestedEmojisModeConfig]
   );
   const emojiStyle = useEmojiStyleConfig();
 

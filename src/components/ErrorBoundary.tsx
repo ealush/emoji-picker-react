@@ -14,6 +14,7 @@ export default class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: any) {
+    // eslint-disable-next-line no-console
     console.error('Emoji Picker React failed to render:', error, errorInfo);
   }
 

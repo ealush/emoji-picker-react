@@ -1,4 +1,5 @@
 import * as React from 'react';
+
 import { NullableElement } from '../../DomUtils/selectors';
 
 export function ElementRefContextProvider({
@@ -16,12 +17,12 @@ export function ElementRefContextProvider({
   return (
     <ElementRefContext.Provider
       value={{
-        PickerMainRef,
         AnchoredEmojiRef,
         BodyRef,
+        CategoryNavigationRef,
+        PickerMainRef,
         SearchInputRef,
-        SkinTonePickerRef,
-        CategoryNavigationRef
+        SkinTonePickerRef
       }}
     >
       {children}
@@ -43,12 +44,12 @@ type ElementRefs = {
 };
 
 const ElementRefContext = React.createContext<ElementRefs>({
-  PickerMainRef: React.createRef(),
   AnchoredEmojiRef: React.createRef(),
   BodyRef: React.createRef(),
+  CategoryNavigationRef: React.createRef(),
+  PickerMainRef: React.createRef(),
   SearchInputRef: React.createRef(),
-  SkinTonePickerRef: React.createRef(),
-  CategoryNavigationRef: React.createRef()
+  SkinTonePickerRef: React.createRef()
 });
 
 function useElementRef() {

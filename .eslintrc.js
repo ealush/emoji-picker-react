@@ -1,5 +1,30 @@
 module.exports = {
+  env: {
+    browser: true,
+    es6: true
+  },
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'plugin:@typescript-eslint/eslint-recommended'
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly'
+  },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    },
+    ecmaVersion: 2018,
+    sourceType: 'module'
+  },
+  plugins: ['react', '@typescript-eslint', 'import'],
   rules: {
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'no-unused-vars': 'off',
     'import/extensions': [2, 'never'],
     'import/first': 2,
     'import/newline-after-import': 1,
@@ -16,7 +41,7 @@ module.exports = {
         'newlines-between': 'always'
       }
     ],
-    complexity: [2, { max: 5 }],
+    complexity: [2, { max: 8 }],
     'max-params': [1, { max: 4 }],
     'no-console': 2,
     'no-else-return': 1,

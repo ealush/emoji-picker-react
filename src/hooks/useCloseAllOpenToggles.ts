@@ -17,10 +17,12 @@ export function useCloseAllOpenToggles() {
     if (skinToneFanOpen) {
       setSkinToneFanOpen(false);
     }
-  }, [[variationPicker, skinToneFanOpen]]);
+  }, [
+    variationPicker,
+    skinToneFanOpen,
+    setVariationPicker,
+    setSkinToneFanOpen
+  ]);
 
-  return {
-    closeAllOpenToggles,
-    dependencyArray: [variationPicker, skinToneFanOpen]
-  };
+  return closeAllOpenToggles;
 }

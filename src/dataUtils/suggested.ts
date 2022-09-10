@@ -1,4 +1,5 @@
 import { SkinTones, SuggestionMode } from '../types/exposedTypes';
+
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiSelectors';
 

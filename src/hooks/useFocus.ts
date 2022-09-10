@@ -1,18 +1,19 @@
 import { useCallback } from 'react';
+
+import { focusElement } from '../DomUtils/focusElement';
+import { focusFirstElementChild } from '../DomUtils/keyboardNavigation';
 import {
   useCategoryNavigationRef,
   useSearchInputRef,
   useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
-import { focusElement } from '../DomUtils/focusElement';
-import { focusFirstElementChild } from '../DomUtils/keyboardNavigation';
 
 export function useFocusSearchInput() {
   const SearchInputRef = useSearchInputRef();
 
   return useCallback(() => {
     focusElement(SearchInputRef.current);
-  }, [SearchInputRef.current]);
+  }, [SearchInputRef]);
 }
 
 export function useFocusSkinTonePicker() {
@@ -24,7 +25,7 @@ export function useFocusSkinTonePicker() {
     }
 
     focusFirstElementChild(SkinTonePickerRef.current);
-  }, [SkinTonePickerRef.current]);
+  }, [SkinTonePickerRef]);
 }
 
 export function useFocusCategoryNavigation() {
@@ -36,5 +37,5 @@ export function useFocusCategoryNavigation() {
     }
 
     focusFirstElementChild(CategoryNavigationRef.current);
-  }, [CategoryNavigationRef.current]);
+  }, [CategoryNavigationRef]);
 }

@@ -1,8 +1,8 @@
 import clsx from 'clsx';
 import * as React from 'react';
 
-import { useThemeConfig } from '../../config/useConfig';
 import { ClassNames } from '../../DomUtils/classNames';
+import { useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { Theme } from '../../types/exposedTypes';

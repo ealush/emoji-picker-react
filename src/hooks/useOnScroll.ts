@@ -5,7 +5,7 @@ import { ElementRef } from '../components/context/ElementRefContext';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 export function useOnScroll(BodyRef: ElementRef) {
-  const { closeAllOpenToggles, dependencyArray } = useCloseAllOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
 
   useEffect(() => {
     const bodyRef = BodyRef.current;
@@ -24,5 +24,5 @@ export function useOnScroll(BodyRef: ElementRef) {
     return () => {
       bodyRef?.removeEventListener('scroll', onScroll);
     };
-  }, [...dependencyArray, BodyRef, closeAllOpenToggles]);
+  }, [BodyRef, closeAllOpenToggles]);
 }

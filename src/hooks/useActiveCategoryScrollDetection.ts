@@ -42,5 +42,5 @@ export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
     bodyRef.current?.querySelectorAll('.epr-emoji-category').forEach(el => {
       observer.observe(el);
     });
-  }, [bodyRef]);
+  }, [bodyRef, setActiveCategory]);
 }

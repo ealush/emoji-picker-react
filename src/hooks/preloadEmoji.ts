@@ -1,9 +1,9 @@
+import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   emojiUnified,
   emojiUrlByUnified,
   emojiVariations
 } from '../dataUtils/emojiSelectors';
-import { DataEmoji } from '../dataUtils/DataTypes';
 import { EmojiStyle } from '../types/exposedTypes';
 
 export function preloadEmoji(emoji: DataEmoji, emojiStyle: EmojiStyle): void {

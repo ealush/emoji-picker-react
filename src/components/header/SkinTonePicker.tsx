@@ -1,24 +1,24 @@
 import clsx from 'clsx';
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
 import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 import skinToneVariations from '../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import Relative from '../Layout/Relative';
+import { useSkinTonePickerRef } from '../context/ElementRefContext';
 import {
   useActiveSkinToneState,
   useSkinToneFanOpenState
 } from '../context/PickerContext';
 import './SkinTonePicker.css';
-import { useSkinTonePickerRef } from '../context/ElementRefContext';
-import { ClassNames } from '../../DomUtils/classNames';
 
 export function SkinTonePicker() {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
-  const { closeAllOpenToggles } = useCloseAllOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
 
   if (isDisabled) {
     return null;

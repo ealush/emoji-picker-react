@@ -40,20 +40,22 @@ export function basePickerConfig(): PickerConfigInternal {
     categories: baseCategoriesConfig(),
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
+    lazyLoadEmojis: false,
     onEmojiClick: function defaultOnClickHandler(
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       emoji: EmojiClickData,
       // @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       event: MouseEvent
     ) {},
-    searchPlaceHolder: 'Search',
-    skinTonesDisabled: false,
-    theme: Theme.LIGHT,
-    suggestedEmojisMode: SuggestionMode.FREQUENT,
-    lazyLoadEmojis: false,
     previewConfig: {
       ...basePreviewConfig
-    }
+    },
+    searchPlaceHolder: 'Search',
+    skinTonesDisabled: false,
+    suggestedEmojisMode: SuggestionMode.FREQUENT,
+    theme: Theme.LIGHT
   };
 }
 

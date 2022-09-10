@@ -1,8 +1,11 @@
-import { NullableElement } from './../DomUtils/selectors';
-import { SkinTones } from './../types/exposedTypes';
+import * as React from 'react';
 import { useEffect, useRef } from 'react';
 
-import { emojiFromElement, isEmojiElement } from '../DomUtils/selectors';
+import {
+  emojiFromElement,
+  isEmojiElement,
+  NullableElement
+} from '../DomUtils/selectors';
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
 import {
   useActiveSkinToneState,
@@ -24,10 +27,10 @@ import {
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setsuggested } from '../dataUtils/suggested';
-import { EmojiClickData, EmojiStyle } from '../types/exposedTypes';
+import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
-import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { preloadEmoji } from './preloadEmoji';
+import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
 let mouseDownTimer: undefined | number;
 
@@ -38,11 +41,100 @@ export function useMouseDownHandlers(
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
-  const { closeAllOpenToggles, dependencyArray } = useCloseAllOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
   const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
   const emojiStyle = useEmojiStyleConfig();
   const [, updateSuggested] = useUpdateSuggested();
+
+  const onClick = React.useCallback(
+    function onClick(event: MouseEvent) {
+      if (disallowClickRef.current) {
+        return;
+      }
+
+      closeAllOpenToggles();
+
+      const [emoji, unified] = emojiFromEvent(event);
+
+      if (!emoji || !unified) {
+        return;
+      }
+
+      const skinToneToUse =
+        activeVariationFromUnified(unified) || activeSkinTone;
+
+      updateSuggested();
+      setsuggested(emoji, skinToneToUse);
+      onEmojiClick(emojiClickOutput(emoji, skinToneToUse), event);
+    },
+    [
+      activeSkinTone,
+      closeAllOpenToggles,
+      disallowClickRef,
+      onEmojiClick,
+      updateSuggested
+    ]
+  );
+
+  const onMouseDown = React.useCallback(
+    function onMouseDown(event: MouseEvent) {
+      if (mouseDownTimer) {
+        clearTimeout(mouseDownTimer);
+      }
+
+      const [emoji] = emojiFromEvent(event);
+
+      if (!emoji || !emojiHasVariations(emoji)) {
+        return;
+      }
+
+      preloading.current = true;
+
+      window?.setTimeout(() => {
+        if (preloading.current) {
+          preloadEmoji(emoji, emojiStyle);
+          preloading.current = false;
+        }
+      }, 50);
+
+      mouseDownTimer = window?.setTimeout(() => {
+        disallowClickRef.current = true;
+        mouseDownTimer = undefined;
+        closeAllOpenToggles();
+        setAnchoredEmojiRef(event.target as HTMLElement);
+        setEmojiVariationPicker(emoji);
+      }, 500);
+    },
+    [
+      disallowClickRef,
+      closeAllOpenToggles,
+      setAnchoredEmojiRef,
+      emojiStyle,
+      setEmojiVariationPicker
+    ]
+  );
+  const onMouseUp = React.useCallback(
+    function onMouseUp() {
+      preloading.current = false;
+
+      if (mouseDownTimer) {
+        clearTimeout(mouseDownTimer);
+        mouseDownTimer = undefined;
+      } else if (disallowClickRef.current) {
+        // The problem we're trying to overcome here
+        // is that the emoji has both mouseup and click events
+        // and when releasing a mouseup event
+        // the click gets triggered too
+        // So we're disallowing the click event for a short time
+
+        requestAnimationFrame(() => {
+          disallowClickRef.current = false;
+        });
+      }
+    },
+    [disallowClickRef]
+  );
 
   useEffect(() => {
     if (!BodyRef.current) {
@@ -65,74 +157,7 @@ export function useMouseDownHandlers(
       bodyRef?.removeEventListener('mousedown', onMouseDown);
       bodyRef?.removeEventListener('mouseup', onMouseUp);
     };
-  }, [BodyRef, ...dependencyArray]);
-
-  function onClick(event: MouseEvent) {
-    if (disallowClickRef.current) {
-      return;
-    }
-
-    closeAllOpenToggles();
-
-    const [emoji, unified] = emojiFromEvent(event);
-
-    if (!emoji || !unified) {
-      return;
-    }
-
-    const skinToneToUse = activeVariationFromUnified(unified) || activeSkinTone;
-
-    updateSuggested();
-    setsuggested(emoji, skinToneToUse);
-    onEmojiClick(emojiClickOutput(emoji, skinToneToUse), event);
-  }
-
-  function onMouseDown(event: MouseEvent) {
-    if (mouseDownTimer) {
-      clearTimeout(mouseDownTimer);
-    }
-
-    const [emoji] = emojiFromEvent(event);
-
-    if (!emoji || !emojiHasVariations(emoji)) {
-      return;
-    }
-
-    preloading.current = true;
-
-    window?.setTimeout(() => {
-      if (preloading.current) {
-        preloadEmoji(emoji, emojiStyle);
-        preloading.current = false;
-      }
-    }, 50);
-
-    mouseDownTimer = window?.setTimeout(() => {
-      disallowClickRef.current = true;
-      mouseDownTimer = undefined;
-      closeAllOpenToggles();
-      setAnchoredEmojiRef(event.target as HTMLElement);
-      setEmojiVariationPicker(emoji);
-    }, 500);
-  }
-  function onMouseUp() {
-    preloading.current = false;
-
-    if (mouseDownTimer) {
-      clearTimeout(mouseDownTimer);
-      mouseDownTimer = undefined;
-    } else if (disallowClickRef.current) {
-      // The problem we're trying to overcome here
-      // is that the emoji has both mouseup and click events
-      // and when releasing a mouseup event
-      // the click gets triggered too
-      // So we're disallowing the click event for a short time
-
-      requestAnimationFrame(() => {
-        disallowClickRef.current = false;
-      });
-    }
-  }
+  }, [BodyRef, onClick, onMouseDown, onMouseUp]);
 }
 
 function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {

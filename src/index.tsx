@@ -1,7 +1,9 @@
 import * as React from 'react';
+
 import EmojiPickerReact from './EmojiPickerReact';
-import { PickerConfig } from './config/config';
 import ErrorBoundary from './components/ErrorBoundary';
+import { PickerConfig } from './config/config';
+
 export {
   EmojiStyle,
   SkinTones,

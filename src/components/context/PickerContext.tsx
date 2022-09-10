@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useDefaultSkinToneConfig } from '../../config/useConfig';
-import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
-import { DataEmoji } from '../../dataUtils/DataTypes';
+
 import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
+import { useDefaultSkinToneConfig } from '../../config/useConfig';
+import { DataEmoji } from '../../dataUtils/DataTypes';
+import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
+
 import { usePickerMainRef } from './ElementRefContext';
 
 export function PickerContextProvider({ children }: Props) {
@@ -31,16 +33,16 @@ export function PickerContextProvider({ children }: Props) {
   return (
     <PickerContext.Provider
       value={{
-        suggestedUpdateState,
-        filterRef,
-        searchTerm,
         activeCategoryState,
         activeSkinTone,
-        emojisThatFailedToLoadState,
-        isPastInitialLoad,
+        disallowClickRef,
         emojiVariationPickerState,
+        emojisThatFailedToLoadState,
+        filterRef,
+        isPastInitialLoad,
+        searchTerm,
         skinToneFanOpenState,
-        disallowClickRef
+        suggestedUpdateState
       }}
     >
       {children}
@@ -62,16 +64,16 @@ const PickerContext = React.createContext<{
   filterRef: React.MutableRefObject<FilterState>;
   disallowClickRef: React.MutableRefObject<boolean>;
 }>({
-  suggestedUpdateState: [Date.now(), () => {}],
-  searchTerm: ['', () => new Promise<string>(() => undefined)],
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
-  emojisThatFailedToLoadState: [new Set(), () => {}],
-  isPastInitialLoad: true,
+  disallowClickRef: { current: false },
   emojiVariationPickerState: [null, () => {}],
-  skinToneFanOpenState: [false, () => {}],
+  emojisThatFailedToLoadState: [new Set(), () => {}],
   filterRef: { current: {} },
-  disallowClickRef: { current: false }
+  isPastInitialLoad: true,
+  searchTerm: ['', () => new Promise<string>(() => undefined)],
+  skinToneFanOpenState: [false, () => {}],
+  suggestedUpdateState: [Date.now(), () => {}]
 });
 
 type Props = Readonly<{

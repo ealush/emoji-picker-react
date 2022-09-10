@@ -14,7 +14,7 @@
     "start": "tsdx watch",
     "build": "node ./scripts/prepare.js && tsdx build",
     "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
+    "lint": "eslint ./src --ext .ts,.tsx",
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
@@ -58,6 +58,8 @@
     "@storybook/react": "^6.5.10",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.36.2",
+    "@typescript-eslint/parser": "^5.36.2",
     "autoprefixer": "^10.4.8",
     "babel-loader": "^8.2.5",
     "cssnano": "^5.1.13",
@@ -82,6 +84,8 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "clsx": "^1.2.1"
+    "clsx": "^1.2.1",
+    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0"
   }
 }

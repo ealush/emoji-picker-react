@@ -1,3 +1,10 @@
+import { ClassNames } from '../DomUtils/classNames';
+import {
+  hideElement,
+  hideEmoji,
+  iterateEmojiRef,
+  showElement
+} from '../DomUtils/emojiElementRef';
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
@@ -10,14 +17,7 @@ import {
 } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
-import {
-  hideElement,
-  hideEmoji,
-  iterateEmojiRef,
-  showElement
-} from '../DomUtils/emojiElementRef';
 
-import { ClassNames } from '../DomUtils/classNames';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();

@@ -6,12 +6,12 @@ import {
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useClearSearch, useFilter } from '../../hooks/useFilter';
-import { useSearchInputRef } from '../context/ElementRefContext';
 import Relative from '../Layout/Relative';
+import { useSearchInputRef } from '../context/ElementRefContext';
 import './Search.css';
 
 export function Search() {
-  const { closeAllOpenToggles } = useCloseAllOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();

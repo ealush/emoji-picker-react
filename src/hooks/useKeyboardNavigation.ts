@@ -1,12 +1,5 @@
-import { useEffect } from 'react';
-import {
-  useBodyRef,
-  useCategoryNavigationRef,
-  usePickerMainRef,
-  useSearchInputRef,
-  useSkinTonePickerRef
-} from '../components/context/ElementRefContext';
-import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+import { useEffect, useMemo } from 'react';
+
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
   focusFirstVisibleEmoji,
@@ -20,6 +13,15 @@ import {
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';
+import {
+  useBodyRef,
+  useCategoryNavigationRef,
+  usePickerMainRef,
+  useSearchInputRef,
+  useSkinTonePickerRef
+} from '../components/context/ElementRefContext';
+import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import { useClearSearch } from './useFilter';
 import {
@@ -43,10 +45,23 @@ function usePickerMainKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
 
-  const {
-    closeAllOpenToggles,
-    dependencyArray: CloseTogglesDependencyArray
-  } = useCloseAllOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+
+        if (key === 'Escape') {
+          event.preventDefault();
+          clearSearch();
+          closeAllOpenToggles();
+          scrollTo(0);
+          focusSearchInput();
+        }
+      },
+    [scrollTo, clearSearch, closeAllOpenToggles, focusSearchInput]
+  );
 
   useEffect(() => {
     const current = PickerMainRef.current;
@@ -60,24 +75,7 @@ function usePickerMainKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [
-    PickerMainRef.current,
-    SearchInputRef.current,
-    scrollTo,
-    ...CloseTogglesDependencyArray
-  ]);
-
-  function onKeyDown(event: KeyboardEvent) {
-    const { key } = event;
-
-    if (key === 'Escape') {
-      event.preventDefault();
-      clearSearch();
-      closeAllOpenToggles();
-      scrollTo(0);
-      focusSearchInput();
-    }
-  }
+  }, [PickerMainRef, SearchInputRef, scrollTo, onKeyDown]);
 }
 
 function useSearchInputKeyboardEvents() {
@@ -86,6 +84,26 @@ function useSearchInputKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
   const focusCategoryNavigation = useFocusCategoryNavigation();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+
+        switch (key) {
+          case 'ArrowRight':
+            event.preventDefault();
+            setSkinToneFanOpenState(true);
+            focusSkinTonePicker();
+            break;
+          case 'ArrowDown':
+            event.preventDefault();
+            focusCategoryNavigation();
+            break;
+        }
+      },
+    [focusSkinTonePicker, focusCategoryNavigation, setSkinToneFanOpenState]
+  );
 
   useEffect(() => {
     const current = SearchInputRef.current;
@@ -99,23 +117,7 @@ function useSearchInputKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [PickerMainRef.current, SearchInputRef.current]);
-
-  function onKeyDown(event: KeyboardEvent) {
-    const { key } = event;
-
-    switch (key) {
-      case 'ArrowRight':
-        event.preventDefault();
-        setSkinToneFanOpenState(true);
-        focusSkinTonePicker();
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        focusCategoryNavigation();
-        break;
-    }
-  }
+  }, [PickerMainRef, SearchInputRef, onKeyDown]);
 }
 
 function useSkinTonePickerKeyboardEvents() {
@@ -123,6 +125,31 @@ function useSkinTonePickerKeyboardEvents() {
   const focusSearchInput = useFocusSearchInput();
   const SearchInputRef = useSearchInputRef();
   const [isOpen] = useSkinToneFanOpenState();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+
+        switch (key) {
+          case 'ArrowLeft':
+            event.preventDefault();
+            if (!isOpen) {
+              return focusSearchInput();
+            }
+            focusNextSkinTone(focusSearchInput);
+            break;
+          case 'ArrowRight':
+            event.preventDefault();
+            if (!isOpen) {
+              return focusSearchInput();
+            }
+            focusPrevSkinTone();
+            break;
+        }
+      },
+    [isOpen, focusSearchInput]
+  );
 
   useEffect(() => {
     const current = SkinTonePickerRef.current;
@@ -136,34 +163,40 @@ function useSkinTonePickerKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [SkinTonePickerRef.current, SearchInputRef.current, isOpen]);
-
-  function onKeyDown(event: KeyboardEvent) {
-    const { key } = event;
-
-    switch (key) {
-      case 'ArrowLeft':
-        event.preventDefault();
-        if (!isOpen) {
-          return focusSearchInput();
-        }
-        focusNextSkinTone(focusSearchInput);
-        break;
-      case 'ArrowRight':
-        event.preventDefault();
-        if (!isOpen) {
-          return focusSearchInput();
-        }
-        focusPrevSkinTone();
-        break;
-    }
-  }
+  }, [SkinTonePickerRef, SearchInputRef, isOpen, onKeyDown]);
 }
 
 function useCategoryNavigationKeyboardEvents() {
   const focusSearchInput = useFocusSearchInput();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const BodyRef = useBodyRef();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+
+        switch (key) {
+          case 'ArrowUp':
+            event.preventDefault();
+            focusSearchInput();
+            break;
+          case 'ArrowRight':
+            event.preventDefault();
+            focusNextElementSibling(getActiveElement());
+            break;
+          case 'ArrowLeft':
+            event.preventDefault();
+            focusPrevElementSibling(getActiveElement());
+            break;
+          case 'ArrowDown':
+            event.preventDefault();
+            focusFirstVisibleEmoji(BodyRef.current);
+            break;
+        }
+      },
+    [BodyRef, focusSearchInput]
+  );
 
   useEffect(() => {
     const current = CategoryNavigationRef.current;
@@ -177,35 +210,42 @@ function useCategoryNavigationKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [CategoryNavigationRef.current, BodyRef.current]);
-
-  function onKeyDown(event: KeyboardEvent) {
-    const { key } = event;
-
-    switch (key) {
-      case 'ArrowUp':
-        event.preventDefault();
-        focusSearchInput();
-        break;
-      case 'ArrowRight':
-        event.preventDefault();
-        focusNextElementSibling(getActiveElement());
-        break;
-      case 'ArrowLeft':
-        event.preventDefault();
-        focusPrevElementSibling(getActiveElement());
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        focusFirstVisibleEmoji(BodyRef.current);
-        break;
-    }
-  }
+  }, [CategoryNavigationRef, BodyRef, onKeyDown]);
 }
 
 function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
   const focusCategoryNavigation = useFocusCategoryNavigation();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+
+        const activeElement = buttonFromTarget(getActiveElement());
+
+        switch (key) {
+          case 'ArrowRight':
+            event.preventDefault();
+            focusNextVisibleEmoji(activeElement);
+            break;
+          case 'ArrowLeft':
+            event.preventDefault();
+            focusPrevVisibleEmoji(activeElement);
+            break;
+          case 'ArrowDown':
+            event.preventDefault();
+            focusVisibleEmojiOneRowDown(activeElement);
+            break;
+          case 'ArrowUp':
+            event.preventDefault();
+            focusVisibleEmojiOneRowUp(activeElement, focusCategoryNavigation);
+            break;
+        }
+      },
+    [focusCategoryNavigation]
+  );
+
   useEffect(() => {
     const current = BodyRef.current;
 
@@ -218,32 +258,7 @@ function useBodyKeyboardEvents() {
     return () => {
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [BodyRef.current]);
-
-  function onKeyDown(event: KeyboardEvent) {
-    const { key } = event;
-
-    const activeElement = buttonFromTarget(getActiveElement());
-
-    switch (key) {
-      case 'ArrowRight':
-        event.preventDefault();
-        focusNextVisibleEmoji(activeElement);
-        break;
-      case 'ArrowLeft':
-        event.preventDefault();
-        focusPrevVisibleEmoji(activeElement);
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        focusVisibleEmojiOneRowDown(activeElement);
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        focusVisibleEmojiOneRowUp(activeElement, focusCategoryNavigation);
-        break;
-    }
-  }
+  }, [BodyRef, onKeyDown]);
 }
 
 function focusNextSkinTone(exitLeft: () => void) {

@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
+import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiHasVariations,
@@ -8,8 +10,6 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
-import { ClassNames } from '../../DomUtils/classNames';
-import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';

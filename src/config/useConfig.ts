@@ -1,5 +1,5 @@
-import { usePickerConfig } from '../components/context/PickerConfigContext';
 import { isSystemDarkTheme } from '../DomUtils/isDarkTheme';
+import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
   EmojiStyle,

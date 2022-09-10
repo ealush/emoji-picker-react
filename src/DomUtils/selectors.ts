@@ -3,6 +3,7 @@ import {
   emojiByUnified,
   unifiedWithoutSkinTone
 } from '../dataUtils/emojiSelectors';
+
 import { ClassNames } from './classNames';
 import { lastElementChild } from './lastElementChild';
 

@@ -10,9 +10,9 @@ import {
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
+import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { Emoji } from '../emoji/Emoji';
 import './Preview.css';
-import { useEmojiVariationPickerState } from '../context/PickerContext';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
