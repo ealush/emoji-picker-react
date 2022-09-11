@@ -47,3 +47,9 @@
 .EmojiPickerReact button.epr-emoji:focus-visible {
   background-color: var(--epr-focus-bg-color);
 }
+
+@supports not selector(:focus-visible) {
+  .EmojiPickerReact button.epr-emoji:focus {
+    background-color: var(--epr-focus-bg-color);
+  }
+}
