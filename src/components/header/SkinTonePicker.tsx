@@ -5,6 +5,7 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 import skinToneVariations from '../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
+import { useFocusSearchInput } from '../../hooks/useFocus';
 import Relative from '../Layout/Relative';
 import { useSkinTonePickerRef } from '../context/ElementRefContext';
 import {
@@ -19,6 +20,7 @@ export function SkinTonePicker() {
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const [activeSkinTone, setActiveSkinTone] = useActiveSkinToneState();
   const closeAllOpenToggles = useCloseAllOpenToggles();
+  const focusSearchInput = useFocusSearchInput();
 
   if (isDisabled) {
     return null;
@@ -46,7 +48,10 @@ export function SkinTonePicker() {
                 )
               }}
               onClick={() => {
-                isOpen && setActiveSkinTone(skinToneVariation);
+                if (isOpen) {
+                  setActiveSkinTone(skinToneVariation);
+                  focusSearchInput();
+                }
                 closeAllOpenToggles();
               }}
               key={skinToneVariation}

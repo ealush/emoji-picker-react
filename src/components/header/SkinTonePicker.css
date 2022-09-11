@@ -50,14 +50,8 @@
   box-shadow: 0 0 0 5px var(--epr-active-skin-hover-color);
 }
 
-.EmojiPickerReact .epr-skin-tones .epr-tone:focus-visible {
+.EmojiPickerReact .epr-skin-tones .epr-tone:focus {
   box-shadow: 0 0 0 5px var(--epr-focus-bg-color);
-}
-
-@supports not selector(: focus-visible) {
-  .EmojiPickerReact .epr-skin-tones .epr-tone:focus {
-    box-shadow: 0 0 0 5px var(--epr-focus-bg-color);
-  }
 }
 
 .EmojiPickerReact
