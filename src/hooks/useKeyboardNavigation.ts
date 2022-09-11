@@ -7,6 +7,7 @@ import {
 } from '../DomUtils/focusElement';
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
+  focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
   focusNextVisibleEmoji,
   focusPrevVisibleEmoji,
@@ -38,7 +39,8 @@ enum KeyboardEvents {
   ArrowUp = 'ArrowUp',
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
-  Escape = 'Escape'
+  Escape = 'Escape',
+  Enter = 'Enter'
 }
 
 export function useKeyboardNavigation() {
@@ -63,7 +65,7 @@ function usePickerMainKeyboardEvents() {
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
-        if (key === 'Escape') {
+        if (key === KeyboardEvents.Escape) {
           event.preventDefault();
           clearSearch();
           closeAllOpenToggles();
@@ -92,6 +94,7 @@ function usePickerMainKeyboardEvents() {
 function useSearchInputKeyboardEvents() {
   const focusSkinTonePicker = useFocusSkinTonePicker();
   const PickerMainRef = usePickerMainRef();
+  const BodyRef = useBodyRef();
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
   const goDownFromSearchInput = useGoDownFromSearchInput();
@@ -111,9 +114,18 @@ function useSearchInputKeyboardEvents() {
             event.preventDefault();
             goDownFromSearchInput();
             break;
+          case KeyboardEvents.Enter:
+            event.preventDefault();
+            focusAndClickFirstVisibleEmoji(BodyRef.current);
+            break;
         }
       },
-    [focusSkinTonePicker, goDownFromSearchInput, setSkinToneFanOpenState]
+    [
+      focusSkinTonePicker,
+      goDownFromSearchInput,
+      setSkinToneFanOpenState,
+      BodyRef
+    ]
   );
 
   useEffect(() => {

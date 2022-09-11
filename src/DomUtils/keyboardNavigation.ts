@@ -1,7 +1,6 @@
 import {
   elementCountInRow,
   elementIndexInRow,
-  firstVisibleElementInContainer,
   getElementInNextRow,
   getElementInPrevRow,
   getElementInRow,
@@ -12,6 +11,7 @@ import { focusElement } from './focusElement';
 import {
   allVisibleEmojis,
   closestCategory,
+  firstVisibleEmoji,
   lastVisibleEmoji,
   nextCategory,
   nextVisibleEmoji,
@@ -21,8 +21,14 @@ import {
 } from './selectors';
 
 export function focusFirstVisibleEmoji(parent: NullableElement) {
-  const allEmojis = allVisibleEmojis(parent);
-  focusElement(firstVisibleElementInContainer(parent, allEmojis));
+  focusElement(firstVisibleEmoji(parent));
+}
+
+export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
+  const firstEmoji = firstVisibleEmoji(parent);
+
+  focusElement(firstEmoji);
+  firstEmoji?.click();
 }
 
 export function focusLastVisibleEmoji(parent: NullableElement) {

@@ -5,6 +5,7 @@ import {
 } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
+import { firstVisibleElementInContainer } from './elementPositionInRow';
 import { lastElementChild } from './lastElementChild';
 
 export type NullableElement = HTMLElement | null;
@@ -181,9 +182,9 @@ export function firstVisibleEmoji(parent: NullableElement) {
     return null;
   }
 
-  const emoji = parent.querySelector(VisibleEmojiSelector);
+  const allEmojis = allVisibleEmojis(parent);
 
-  return emoji as HTMLElement;
+  return firstVisibleElementInContainer(parent, allEmojis);
 }
 
 export function prevCategory(element: NullableElement): NullableElement {
