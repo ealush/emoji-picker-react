@@ -3,9 +3,12 @@ import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { useSkinTonesDisabledConfig } from '../../config/useConfig';
-import skinToneVariations from '../../data/skinToneVariations';
+import skinToneVariations, {
+  skinTonesNamed
+} from '../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
+import { SkinTones } from '../../types/exposedTypes';
 import Relative from '../Layout/Relative';
 import { useSkinTonePickerRef } from '../context/ElementRefContext';
 import {
@@ -32,11 +35,7 @@ export function SkinTonePicker() {
         open: isOpen
       })}
     >
-      <div
-        className="epr-skin-tone-select"
-        onClick={() => setIsOpen(!isOpen)}
-        ref={SkinTonePickerRef}
-      >
+      <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
           return (
@@ -51,6 +50,8 @@ export function SkinTonePicker() {
                 if (isOpen) {
                   setActiveSkinTone(skinToneVariation);
                   focusSearchInput();
+                } else {
+                  setIsOpen(true);
                 }
                 closeAllOpenToggles();
               }}
@@ -59,6 +60,10 @@ export function SkinTonePicker() {
                 [ClassNames.active]: active
               })}
               tabIndex={isOpen ? 0 : -1}
+              aria-pressed={active}
+              aria-label={`Skin tone ${
+                skinTonesNamed[skinToneVariation as SkinTones]
+              }`}
             ></button>
           );
         })}

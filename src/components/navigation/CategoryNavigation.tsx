@@ -3,7 +3,10 @@ import * as React from 'react';
 import './CategoryNavigation.css';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import {
+  categoryFromCategoryConfig,
+  categoryNameFromCategoryConfig
+} from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 import { useActiveCategoryState } from '../context/PickerContext';
@@ -27,6 +30,7 @@ export function CategoryNavigation() {
             })}
             key={category}
             onClick={() => setActiveCategoryAndScroll(category)}
+            aria-label={categoryNameFromCategoryConfig(categoryConfig)}
           />
         );
       })}

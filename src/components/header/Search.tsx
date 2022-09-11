@@ -21,7 +21,9 @@ export function Search() {
   return (
     <Relative className="epr-search-container">
       <input
+        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
+        aria-label={'Type to search for an emoji'}
         onFocus={closeAllOpenToggles}
         className="epr-search"
         type="text"

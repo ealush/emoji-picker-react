@@ -52,6 +52,7 @@ export function ClickableEmoji({
       data-unified={unified}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
+      aria-label={emojiName(emoji)}
     >
       <ViewOnlyEmoji
         unified={unified}

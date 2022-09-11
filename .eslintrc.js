@@ -7,7 +7,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
-    'plugin:@typescript-eslint/eslint-recommended'
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:jsx-a11y/recommended'
   ],
   globals: {
     Atomics: 'readonly',
@@ -21,7 +22,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module'
   },
-  plugins: ['react', '@typescript-eslint', 'import'],
+  plugins: ['react', '@typescript-eslint', 'import', 'jsx-a11y'],
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
     'no-unused-vars': 'off',

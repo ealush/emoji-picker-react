@@ -32,6 +32,7 @@ export function EmojiCategory({
         [ClassNames.hiddenOnSearch]: hiddenOnSearch
       })}
       data-name={category}
+      aria-label={categoryName}
     >
       <div className="epr-emoji-category-label">{categoryName}</div>
       <div className="epr-emoji-category-content">{children}</div>
