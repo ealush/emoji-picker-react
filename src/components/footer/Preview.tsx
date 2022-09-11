@@ -11,7 +11,7 @@ import {
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
-import { ClickableEmoji } from '../emoji/Emoji';
+import { ViewOnlyEmoji } from '../emoji/Emoji';
 import './Preview.css';
 
 export function Preview() {
@@ -48,21 +48,17 @@ export function Preview() {
       <>
         <div>
           {show ? (
-            <ClickableEmoji
+            <ViewOnlyEmoji
               unified={previewEmoji?.unified as string}
               emoji={asEmoji(emoji)}
-              showVariations={false}
               emojiStyle={emojiStyle}
-              hidden={false}
               size={45}
             />
           ) : defaultEmoji ? (
-            <ClickableEmoji
+            <ViewOnlyEmoji
               unified={emojiUnified(defaultEmoji)}
               emoji={defaultEmoji}
-              showVariations={false}
               emojiStyle={emojiStyle}
-              hidden={false}
               size={45}
             />
           ) : null}
