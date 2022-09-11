@@ -11,7 +11,7 @@ import {
   useSearchTermState,
   useUpdateSuggested
 } from '../context/PickerContext';
-import { Emoji } from '../emoji/Emoji';
+import { ClickableEmoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
 
@@ -46,7 +46,7 @@ export function Suggested({ categoryConfig }: Props) {
         }
 
         return (
-          <Emoji
+          <ClickableEmoji
             showVariations={false}
             unified={suggestedItem.unified}
             emojiStyle={emojiStyle}

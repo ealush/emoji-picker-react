@@ -20,7 +20,7 @@ import {
   useSetAnchoredEmojiRef
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
-import { Emoji } from '../emoji/Emoji';
+import { ClickableEmoji } from '../emoji/Emoji';
 import './EmojiVariationPicker.css';
 
 enum Direction {
@@ -63,7 +63,7 @@ export function EmojiVariationPicker() {
             .concat(emojiVariations(safeEmoji))
             .slice(0, 6)
             .map(unified => (
-              <Emoji
+              <ClickableEmoji
                 key={unified}
                 emoji={safeEmoji}
                 unified={unified}

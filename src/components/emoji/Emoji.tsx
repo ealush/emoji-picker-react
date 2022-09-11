@@ -14,18 +14,23 @@ import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
 
-type Props = Readonly<{
-  hidden?: boolean;
+type ClickableEmojiProps = Readonly<
+  BaseProps & {
+    hidden?: boolean;
+    showVariations?: boolean;
+    emojiRef?: EmojiRef;
+  }
+>;
+
+type BaseProps = {
   emojiStyle: EmojiStyle;
   emoji: DataEmoji;
   unified: string;
-  showVariations?: boolean;
   size?: number;
-  emojiRef?: EmojiRef;
   lazyLoad?: boolean;
-}>;
+};
 
-export function Emoji({
+export function ClickableEmoji({
   emoji,
   unified,
   hidden,
@@ -34,18 +39,8 @@ export function Emoji({
   size,
   emojiRef,
   lazyLoad
-}: Props) {
+}: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
-
-  const style = {} as React.CSSProperties;
-  if (size) {
-    style.width = style.height = style.fontSize = `${size}px`;
-  }
-
-  const base = {
-    style,
-    unified
-  };
 
   return (
     <button
@@ -58,17 +53,43 @@ export function Emoji({
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
     >
+      <ViewOnlyEmoji
+        unified={unified}
+        emoji={emoji}
+        size={size}
+        emojiStyle={emojiStyle}
+        lazyLoad={lazyLoad}
+      />
+    </button>
+  );
+}
+
+export function ViewOnlyEmoji({
+  emoji,
+  unified,
+  emojiStyle,
+  size,
+  lazyLoad
+}: BaseProps) {
+  const style = {} as React.CSSProperties;
+  if (size) {
+    style.width = style.height = style.fontSize = `${size}px`;
+  }
+
+  return (
+    <>
       {emojiStyle === EmojiStyle.NATIVE ? (
-        <NativeEmoji {...base} />
+        <NativeEmoji unified={unified} style={style} />
       ) : (
         <EmojiImg
-          {...base}
+          unified={unified}
+          style={style}
           emoji={emoji}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
         />
       )}
-    </button>
+    </>
   );
 }
 

@@ -17,7 +17,7 @@ import {
   useActiveSkinToneState,
   useIsPastInitialLoad
 } from '../context/PickerContext';
-import { Emoji } from '../emoji/Emoji';
+import { ClickableEmoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
@@ -81,7 +81,7 @@ function RenderCategory({
     }
 
     return (
-      <Emoji
+      <ClickableEmoji
         key={unified}
         emoji={emoji}
         unified={unified}
