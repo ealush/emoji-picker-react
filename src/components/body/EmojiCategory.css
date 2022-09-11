@@ -1,16 +1,11 @@
 .EmojiPickerReact li.epr-emoji-category > .epr-emoji-category-content {
   position: relative;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
   padding: var(--epr-category-padding);
-}
 
-.EmojiPickerReact li.epr-emoji-category > .epr-emoji-category-content:after {
-  content: '';
-  display: inline-block;
-  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--epr-emoji-fullsize));
+  grid-gap: 0;
+  justify-content: space-between;
 }
 
 .EmojiPickerReact li.epr-emoji-category:not(:has(.epr-visible)) {
