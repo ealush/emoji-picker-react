@@ -22,6 +22,10 @@ export function useEmojiPreviewEvents(
     }
     const bodyRef = BodyRef.current;
 
+    bodyRef?.addEventListener('keydown', onEscape, {
+      passive: true
+    });
+
     bodyRef?.addEventListener('mouseover', onMouseOver, {
       passive: true
     });
@@ -51,14 +55,28 @@ export function useEmojiPreviewEvents(
         originalUnified
       });
     }
-    function onLeave() {
+    function onLeave(e?: FocusEvent | MouseEvent) {
+      if (e) {
+        const button = buttonFromTarget(e.target as HTMLElement);
+
+        if (button) {
+          return;
+        }
+      }
+
       setPreviewEmoji(null);
+    }
+    function onEscape(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setPreviewEmoji(null);
+      }
     }
     return () => {
       bodyRef?.removeEventListener('mouseover', onMouseOver);
       bodyRef?.removeEventListener('mouseout', onLeave);
       bodyRef?.removeEventListener('focus', onEnter, true);
       bodyRef?.removeEventListener('blur', onLeave, true);
+      bodyRef?.removeEventListener('keydown', onEscape);
     };
   }, [BodyRef, allow, setPreviewEmoji]);
 

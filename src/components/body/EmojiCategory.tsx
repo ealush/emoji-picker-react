@@ -34,7 +34,7 @@ export function EmojiCategory({
       data-name={category}
     >
       <div className="epr-emoji-category-label">{categoryName}</div>
-      {children}
+      <div className="epr-emoji-category-content">{children}</div>
     </li>
   );
 }
