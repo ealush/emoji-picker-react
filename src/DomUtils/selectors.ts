@@ -6,7 +6,6 @@ import {
 
 import { asSelectors, ClassNames } from './classNames';
 import { firstVisibleElementInContainer } from './elementPositionInRow';
-import { lastElementChild } from './lastElementChild';
 
 export type NullableElement = HTMLElement | null;
 
@@ -136,8 +135,8 @@ export function allVisibleEmojis(parent: NullableElement) {
 export function lastVisibleEmoji(element: NullableElement): NullableElement {
   if (!element) return null;
 
-  const last = lastElementChild(element);
-
+  const allEmojis = allVisibleEmojis(element);
+  const [last] = allEmojis.slice(-1);
   if (!last) {
     return null;
   }
