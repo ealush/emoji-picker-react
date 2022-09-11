@@ -368,6 +368,11 @@ function useOnType() {
 
   return function onType(event: KeyboardEvent) {
     const { key } = event;
+
+    if (hasModifier(event)) {
+      return;
+    }
+
     if (key.match(/(^[a-zA-Z0-9]$){1}/)) {
       event.preventDefault();
       closeAllOpenToggles();
@@ -375,4 +380,10 @@ function useOnType() {
       appendSearch(key);
     }
   };
+}
+
+function hasModifier(event: KeyboardEvent): boolean {
+  const { metaKey, ctrlKey, altKey } = event;
+
+  return metaKey || ctrlKey || altKey;
 }
