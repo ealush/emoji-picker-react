@@ -26,7 +26,7 @@ import {
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
-import { useClearSearch } from './useFilter';
+import { useAppendSearch, useClearSearch } from './useFilter';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
@@ -149,6 +149,7 @@ function useSkinTonePickerKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const goDownFromSearchInput = useGoDownFromSearchInput();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
+  const onType = useOnType();
 
   const onKeyDown = useMemo(
     () =>
@@ -177,9 +178,12 @@ function useSkinTonePickerKeyboardEvents() {
             }
             goDownFromSearchInput();
             break;
+          default:
+            onType(event);
+            break;
         }
       },
-    [isOpen, focusSearchInput, setIsOpen, goDownFromSearchInput]
+    [isOpen, focusSearchInput, setIsOpen, goDownFromSearchInput, onType]
   );
 
   useEffect(() => {
@@ -201,6 +205,7 @@ function useCategoryNavigationKeyboardEvents() {
   const focusSearchInput = useFocusSearchInput();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const BodyRef = useBodyRef();
+  const onType = useOnType();
 
   const onKeyDown = useMemo(
     () =>
@@ -224,9 +229,12 @@ function useCategoryNavigationKeyboardEvents() {
             event.preventDefault();
             focusFirstVisibleEmoji(BodyRef.current);
             break;
+          default:
+            onType(event);
+            break;
         }
       },
-    [BodyRef, focusSearchInput]
+    [BodyRef, focusSearchInput, onType]
   );
 
   useEffect(() => {
@@ -247,6 +255,8 @@ function useCategoryNavigationKeyboardEvents() {
 function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
   const goUpFromBody = useGoUpFromBody();
+
+  const onType = useOnType();
 
   const onKeyDown = useMemo(
     () =>
@@ -272,9 +282,12 @@ function useBodyKeyboardEvents() {
             event.preventDefault();
             focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
             break;
+          default:
+            onType(event);
+            break;
         }
       },
-    [goUpFromBody]
+    [goUpFromBody, onType]
   );
 
   useEffect(() => {
@@ -346,4 +359,20 @@ function focusPrevSkinTone() {
   }
 
   focusPrevElementSibling(currentSkinTone);
+}
+
+function useOnType() {
+  const appendSearch = useAppendSearch();
+  const focusSearchInput = useFocusSearchInput();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
+
+  return function onType(event: KeyboardEvent) {
+    const { key } = event;
+    if (key.match(/(^[a-zA-Z0-9]$){1}/)) {
+      event.preventDefault();
+      closeAllOpenToggles();
+      focusSearchInput();
+      appendSearch(key);
+    }
+  };
 }

@@ -18,7 +18,6 @@ import {
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 
-
 function useSetFilterRef() {
   const filterRef = useFilterRef();
 
@@ -42,6 +41,20 @@ export function useClearSearch() {
       SearchInputRef.current.value = '';
     }
     setSearchTerm('');
+  };
+}
+
+export function useAppendSearch() {
+  const SearchInputRef = useSearchInputRef();
+  const [, setSearchTerm] = useSearchTermState();
+
+  return function appendSearch(str: string) {
+    if (SearchInputRef.current) {
+      SearchInputRef.current.value = SearchInputRef.current.value + str;
+      setSearchTerm(SearchInputRef.current.value);
+    }
+
+    setSearchTerm(str);
   };
 }
 
