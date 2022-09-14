@@ -26,9 +26,7 @@ export function useEmojiPreviewEvents(
       passive: true
     });
 
-    bodyRef?.addEventListener('mouseover', onMouseOver, {
-      passive: true
-    });
+    bodyRef?.addEventListener('mouseover', onMouseOver, true);
 
     bodyRef?.addEventListener('focus', onEnter, true);
 
@@ -43,6 +41,7 @@ export function useEmojiPreviewEvents(
       if (!button) {
         return onLeave();
       }
+
       const unified = unifiedFromEmojiElement(button);
       const originalUnified = originalUnifiedFromEmojiElement(button);
 

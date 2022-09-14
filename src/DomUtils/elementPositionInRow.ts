@@ -57,7 +57,7 @@ export function hasNextRow(
   const parentTop = parent.getBoundingClientRect().top;
   const parentHeight = parent.getBoundingClientRect().height;
 
-  return elementTop - parentTop + elementHeight < parentHeight;
+  return Math.round(elementTop - parentTop + elementHeight) < parentHeight;
 }
 
 function getRowElements(
