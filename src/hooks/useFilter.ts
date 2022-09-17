@@ -122,16 +122,20 @@ function useApplyFilterToDom() {
   const filterRef = useFilterRef();
 
   return function applyFilterToDom(searchTerm: string): void {
-    PickerMainRef.current?.classList.toggle(
-      ClassNames.searchActive,
-      !!searchTerm
-    );
-    iterateEmojiRef((element, unified) => {
-      if (isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)) {
-        hideElementOnSearch(element);
-        return;
-      }
-      showElementOnSearch(element);
+    requestAnimationFrame(() => {
+      PickerMainRef.current?.classList.toggle(
+        ClassNames.searchActive,
+        !!searchTerm
+      );
+      iterateEmojiRef((element, unified) => {
+        if (
+          isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)
+        ) {
+          hideElementOnSearch(element);
+          return;
+        }
+        showElementOnSearch(element);
+      });
     });
   };
 }
