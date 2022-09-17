@@ -17,7 +17,8 @@ import {
 import {
   useAnchoredEmojiRef,
   useBodyRef,
-  useSetAnchoredEmojiRef
+  useSetAnchoredEmojiRef,
+  useVariationPickerRef
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -29,7 +30,7 @@ enum Direction {
 }
 
 export function EmojiVariationPicker() {
-  const VariationPickerRef = React.useRef<HTMLDivElement>(null);
+  const VariationPickerRef = useVariationPickerRef();
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
   const { getTop, getMenuDirection } = useVariationPickerTop(

@@ -13,6 +13,7 @@ export function ElementRefContextProvider({
   const SearchInputRef = React.useRef<HTMLInputElement>(null);
   const SkinTonePickerRef = React.useRef<HTMLDivElement>(null);
   const CategoryNavigationRef = React.useRef<HTMLDivElement>(null);
+  const VariationPickerRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <ElementRefContext.Provider
@@ -22,7 +23,8 @@ export function ElementRefContextProvider({
         CategoryNavigationRef,
         PickerMainRef,
         SearchInputRef,
-        SkinTonePickerRef
+        SkinTonePickerRef,
+        VariationPickerRef
       }}
     >
       {children}
@@ -41,6 +43,7 @@ type ElementRefs = {
   SearchInputRef: ElementRef<HTMLInputElement>;
   BodyRef: ElementRef<HTMLDivElement>;
   CategoryNavigationRef: ElementRef<HTMLDivElement>;
+  VariationPickerRef: ElementRef<HTMLDivElement>;
 };
 
 const ElementRefContext = React.createContext<ElementRefs>({
@@ -49,7 +52,8 @@ const ElementRefContext = React.createContext<ElementRefs>({
   CategoryNavigationRef: React.createRef(),
   PickerMainRef: React.createRef(),
   SearchInputRef: React.createRef(),
-  SkinTonePickerRef: React.createRef()
+  SkinTonePickerRef: React.createRef(),
+  VariationPickerRef: React.createRef()
 });
 
 function useElementRef() {
@@ -85,4 +89,8 @@ export function useSkinTonePickerRef() {
 
 export function useCategoryNavigationRef() {
   return useElementRef()['CategoryNavigationRef'];
+}
+
+export function useVariationPickerRef() {
+  return useElementRef()['VariationPickerRef'];
 }

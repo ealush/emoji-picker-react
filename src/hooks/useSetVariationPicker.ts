@@ -1,10 +1,15 @@
+import { focusFirstVisibleEmoji } from '../DomUtils/keyboardNavigation';
 import { emojiFromElement, NullableElement } from '../DomUtils/selectors';
-import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
+import {
+  useSetAnchoredEmojiRef,
+  useVariationPickerRef
+} from '../components/context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../components/context/PickerContext';
 
 export default function useSetVariationPicker() {
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
+  const VariationPickerRef = useVariationPickerRef();
 
   return function setVariationPicker(element: NullableElement) {
     const [emoji] = emojiFromElement(element);
@@ -15,5 +20,9 @@ export default function useSetVariationPicker() {
 
     setAnchoredEmojiRef(element);
     setEmojiVariationPicker(emoji);
+
+    requestAnimationFrame(() => {
+      focusFirstVisibleEmoji(VariationPickerRef.current);
+    });
   };
 }
