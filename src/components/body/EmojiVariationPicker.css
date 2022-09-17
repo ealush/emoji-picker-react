@@ -18,12 +18,20 @@
   height: var(--epr-emoji-variation-picker-height);
   z-index: var(--epr-skin-variation-picker-z-index);
   background: var(--epr-emoji-variation-picker-bg-color);
+  transform: scale(0.9);
+  transition: transform 0.1s ease-out, opacity 0.2s ease-out;
+}
+
+.EmojiPickerReact .epr-emoji-variation-picker.pointing-up {
+  transform-origin: center 0%;
+  transform: scale(0.9);
 }
 
 .EmojiPickerReact .epr-emoji-variation-picker.visible {
   opacity: 1;
   visibility: visible;
   pointer-events: all;
+  transform: scale(1);
 }
 .EmojiPickerReact
   .epr-emoji-variation-picker
@@ -59,7 +67,7 @@
   transform: translateX(-7px);
 }
 
-.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer.pointing-up {
+.EmojiPickerReact .epr-emoji-variation-picker.pointing-up .epr-emoji-pointer {
   top: 0;
   transform: rotate(180deg) translateY(100%) translateX(7px);
 }

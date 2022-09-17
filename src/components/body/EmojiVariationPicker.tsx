@@ -55,7 +55,8 @@ export function EmojiVariationPicker() {
     <div
       ref={VariationPickerRef}
       className={clsx('epr-emoji-variation-picker', {
-        visible
+        visible,
+        'pointing-up': getMenuDirection() === Direction.Down
       })}
       style={{ top }}
     >
@@ -73,12 +74,7 @@ export function EmojiVariationPicker() {
               />
             ))
         : null}
-      <div
-        className={clsx('epr-emoji-pointer', {
-          'pointing-up': getMenuDirection() === Direction.Down
-        })}
-        style={pointerStyle}
-      />
+      <div className="epr-emoji-pointer" style={pointerStyle} />
     </div>
   );
 }
