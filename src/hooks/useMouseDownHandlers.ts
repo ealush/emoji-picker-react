@@ -6,7 +6,6 @@ import {
   isEmojiElement,
   NullableElement
 } from '../DomUtils/selectors';
-import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
 import {
   useActiveSkinToneState,
   useDisallowClickRef,
@@ -31,13 +30,14 @@ import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { preloadEmoji } from './preloadEmoji';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
+import useSetVariationPicker from './useSetVariationPicker';
 
 export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<NullableElement>
 ) {
   const mouseDownTimerRef = useRef<undefined | number>();
   const preloading = useRef(false);
-  const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
+  const setVariationPicker = useSetVariationPicker();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const closeAllOpenToggles = useCloseAllOpenToggles();
@@ -101,14 +101,14 @@ export function useMouseDownHandlers(
         disallowClickRef.current = true;
         mouseDownTimerRef.current = undefined;
         closeAllOpenToggles();
-        setAnchoredEmojiRef(event.target as HTMLElement);
+        setVariationPicker(event.target as HTMLElement);
         setEmojiVariationPicker(emoji);
       }, 500);
     },
     [
       disallowClickRef,
       closeAllOpenToggles,
-      setAnchoredEmojiRef,
+      setVariationPicker,
       emojiStyle,
       setEmojiVariationPicker
     ]

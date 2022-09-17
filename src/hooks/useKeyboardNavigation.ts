@@ -33,6 +33,7 @@ import {
   useFocusSkinTonePicker
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
+import useSetVariationPicker from './useSetVariationPicker';
 
 enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
@@ -40,7 +41,8 @@ enum KeyboardEvents {
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
   Escape = 'Escape',
-  Enter = 'Enter'
+  Enter = 'Enter',
+  Space = ' '
 }
 
 export function useKeyboardNavigation() {
@@ -255,6 +257,7 @@ function useCategoryNavigationKeyboardEvents() {
 function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
   const goUpFromBody = useGoUpFromBody();
+  const setVariationPicker = useSetVariationPicker();
 
   const onType = useOnType();
 
@@ -282,12 +285,16 @@ function useBodyKeyboardEvents() {
             event.preventDefault();
             focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
             break;
+          case KeyboardEvents.Space:
+            event.preventDefault();
+            setVariationPicker(event.target as HTMLElement);
+            break;
           default:
             onType(event);
             break;
         }
       },
-    [goUpFromBody, onType]
+    [goUpFromBody, onType, setVariationPicker]
   );
 
   useEffect(() => {
