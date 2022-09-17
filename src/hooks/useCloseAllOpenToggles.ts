@@ -26,3 +26,12 @@ export function useCloseAllOpenToggles() {
 
   return closeAllOpenToggles;
 }
+
+export function useHasOpenToggles() {
+  const [variationPicker] = useEmojiVariationPickerState();
+  const [skinToneFanOpen] = useSkinToneFanOpenState();
+
+  return function hasOpenToggles() {
+    return !!variationPicker || skinToneFanOpen;
+  };
+}

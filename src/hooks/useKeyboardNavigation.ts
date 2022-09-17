@@ -25,7 +25,10 @@ import {
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 
-import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
+import {
+  useCloseAllOpenToggles,
+  useHasOpenToggles
+} from './useCloseAllOpenToggles';
 import { useAppendSearch, useClearSearch } from './useFilter';
 import {
   useFocusCategoryNavigation,
@@ -59,6 +62,7 @@ function usePickerMainKeyboardEvents() {
   const scrollTo = useScrollTo();
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
+  const hasOpenToggles = useHasOpenToggles();
 
   const closeAllOpenToggles = useCloseAllOpenToggles();
 
@@ -69,13 +73,24 @@ function usePickerMainKeyboardEvents() {
 
         if (key === KeyboardEvents.Escape) {
           event.preventDefault();
+
+          if (hasOpenToggles()) {
+            closeAllOpenToggles();
+            return;
+          }
+
           clearSearch();
-          closeAllOpenToggles();
           scrollTo(0);
           focusSearchInput();
         }
       },
-    [scrollTo, clearSearch, closeAllOpenToggles, focusSearchInput]
+    [
+      scrollTo,
+      clearSearch,
+      closeAllOpenToggles,
+      focusSearchInput,
+      hasOpenToggles
+    ]
   );
 
   useEffect(() => {
