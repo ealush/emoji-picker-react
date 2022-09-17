@@ -4,13 +4,26 @@ import { emojiUnified } from '../dataUtils/emojiSelectors';
 
 import { useIsEmojiFiltered } from './useFilter';
 
-export function useIsEmojiHidden(): (emoji: DataEmoji) => boolean {
+export function useIsEmojiHidden(): (emoji: DataEmoji) => IsHiddenReturn {
   const [emojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
   const isEmojiFiltered = useIsEmojiFiltered();
 
-  return (emoji: DataEmoji): boolean => {
+  return (emoji: DataEmoji): IsHiddenReturn => {
     const unified = emojiUnified(emoji);
 
-    return emojisThatFailedToLoad.has(unified) || isEmojiFiltered(unified);
+    const failedToLoad = emojisThatFailedToLoad.has(unified);
+    const filteredOut = isEmojiFiltered(unified);
+
+    return {
+      failedToLoad,
+      filteredOut,
+      hidden: failedToLoad || filteredOut
+    };
   };
 }
+
+type IsHiddenReturn = {
+  failedToLoad: boolean;
+  filteredOut: boolean;
+  hidden: boolean;
+};

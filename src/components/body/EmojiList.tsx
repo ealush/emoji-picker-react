@@ -73,7 +73,7 @@ function RenderCategory({
 
   const emojis = emojisToPush.map(emoji => {
     const unified = emojiUnified(emoji, activeSkinTone);
-    const hidden = isEmojiHidden(emoji);
+    const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
     const emojiRef = getEmojiRef(emojiUnified(emoji));
 
     if (hidden) {
@@ -85,7 +85,8 @@ function RenderCategory({
         key={unified}
         emoji={emoji}
         unified={unified}
-        hidden={hidden}
+        hidden={failedToLoad}
+        hiddenOnSearch={filteredOut}
         emojiStyle={emojiStyle}
         emojiRef={emojiRef}
         lazyLoad={lazyLoadEmojis}

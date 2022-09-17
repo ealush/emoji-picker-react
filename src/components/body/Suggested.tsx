@@ -7,10 +7,7 @@ import {
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getsuggested } from '../../dataUtils/suggested';
-import {
-  useSearchTermState,
-  useUpdateSuggested
-} from '../context/PickerContext';
+import { useUpdateSuggested } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
@@ -21,7 +18,6 @@ type Props = Readonly<{
 
 export function Suggested({ categoryConfig }: Props) {
   const [suggestedUpdated] = useUpdateSuggested();
-  const [searchTerm] = useSearchTermState();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const suggested = React.useMemo(
     () => getsuggested(suggestedEmojisModeConfig) ?? [],
@@ -30,13 +26,11 @@ export function Suggested({ categoryConfig }: Props) {
   );
   const emojiStyle = useEmojiStyleConfig();
 
-  const hidden = !!(searchTerm || suggested.length === 0);
-
   return (
     <EmojiCategory
       categoryConfig={categoryConfig}
       hiddenOnSearch
-      hidden={hidden}
+      hidden={suggested.length === 0}
     >
       {suggested.map(suggestedItem => {
         const emoji = emojiByUnified(suggestedItem.original);
@@ -52,7 +46,6 @@ export function Suggested({ categoryConfig }: Props) {
             emojiStyle={emojiStyle}
             emoji={emoji}
             key={suggestedItem.unified}
-            hidden={hidden}
           />
         );
       })}

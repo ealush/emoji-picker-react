@@ -8,7 +8,9 @@ import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useClearSearch, useFilter } from '../../hooks/useFilter';
 import Relative from '../Layout/Relative';
 import { useSearchInputRef } from '../context/ElementRefContext';
+
 import './Search.css';
+import clsx from 'clsx';
 
 export function Search() {
   const closeAllOpenToggles = useCloseAllOpenToggles();
@@ -16,7 +18,7 @@ export function Search() {
   const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { onChange, searchTerm } = useFilter();
+  const { onChange } = useFilter();
 
   return (
     <Relative className="epr-search-container">
@@ -36,9 +38,10 @@ export function Search() {
         ref={SearchInputRef}
       />
       <div className="epr-icn-search" />
-      {searchTerm ? (
-        <button className="epr-btn-clear-search" onClick={clearSearch} />
-      ) : null}
+      <button
+        className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
+        onClick={clearSearch}
+      />
     </Relative>
   );
 }

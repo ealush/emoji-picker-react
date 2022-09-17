@@ -1,9 +1,9 @@
 import { ClassNames } from '../DomUtils/classNames';
 import {
-  hideElement,
-  hideEmoji,
+  hideElementOnSearch,
+  hideEmojiOnSearch,
   iterateEmojiRef,
-  showElement
+  showElementOnSearch
 } from '../DomUtils/emojiElementRef';
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
@@ -108,10 +108,10 @@ export function useFilter() {
 
     iterateEmojiRef((element, unified) => {
       if (isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)) {
-        hideElement(element);
+        hideElementOnSearch(element);
         return;
       }
-      showElement(element);
+      showElementOnSearch(element);
     });
 
     requestAnimationFrame(() => {
@@ -134,7 +134,7 @@ function filterEmojiObjectByKeyword(
     if (hasMatch(emoji, keyword)) {
       filtered[unified] = emoji;
     } else {
-      hideEmoji(unified);
+      hideEmojiOnSearch(unified);
     }
   }
 

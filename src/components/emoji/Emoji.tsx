@@ -19,6 +19,7 @@ type ClickableEmojiProps = Readonly<
     hidden?: boolean;
     showVariations?: boolean;
     emojiRef?: EmojiRef;
+    hiddenOnSearch?: boolean;
   }
 >;
 
@@ -34,6 +35,7 @@ export function ClickableEmoji({
   emoji,
   unified,
   hidden,
+  hiddenOnSearch,
   emojiStyle,
   showVariations = true,
   size,
@@ -46,6 +48,7 @@ export function ClickableEmoji({
     <button
       className={clsx(ClassNames.emoji, {
         [ClassNames.hidden]: hidden,
+        [ClassNames.hiddenOnSearch]: hiddenOnSearch,
         [ClassNames.visible]: !hidden,
         'epr-emoji-has-variations': hasVariations && showVariations
       })}

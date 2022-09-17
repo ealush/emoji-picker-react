@@ -22,22 +22,22 @@ export function iterateEmojiRef(
   }
 }
 
-export function hideEmoji(unified: string): void {
-  hideElement(getEmojiRef(unified).current);
+export function hideEmojiOnSearch(unified: string): void {
+  hideElementOnSearch(getEmojiRef(unified).current);
 }
 
-export function showEmoji(unified: string): void {
-  showElement(getEmojiRef(unified).current);
+export function showEmojiOnSearch(unified: string): void {
+  showElementOnSearch(getEmojiRef(unified).current);
 }
 
-export function hideElement(element: NullableElement): void {
+export function hideElementOnSearch(element: HTMLElement | null): void {
   if (!element) return;
-  element.classList.add(ClassNames.hidden);
+  element.classList.add(ClassNames.hiddenOnSearch);
   element.classList.remove(ClassNames.visible);
 }
 
-export function showElement(element: NullableElement): void {
+export function showElementOnSearch(element: HTMLElement | null): void {
   if (!element) return;
-  element.classList.remove(ClassNames.hidden);
+  element.classList.remove(ClassNames.hiddenOnSearch);
   element.classList.add(ClassNames.visible);
 }
