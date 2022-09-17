@@ -66,10 +66,19 @@ export function elementHeight(element: NullableElement): number {
 }
 
 export function emojiTrueOffsetTop(element: NullableElement): number {
-  const button = buttonFromTarget(element);
-  const category = closestCategory(button);
+  if (!element) {
+    return 0;
+  }
 
-  return elementOffsetTop(button) + elementOffsetTop(category);
+  const button = buttonFromTarget(element);
+  const categoryWithoutLabel = closestCategoryContent(button);
+  const category = closestCategory(categoryWithoutLabel);
+
+  // compensate for the label height
+  const labelHeight =
+    (category?.clientHeight ?? 0) - (categoryWithoutLabel?.clientHeight ?? 0);
+
+  return elementOffsetTop(button) + elementOffsetTop(category) + labelHeight;
 }
 export function emojiTruOffsetLeft(element: NullableElement): number {
   const button = buttonFromTarget(element);
@@ -231,4 +240,13 @@ export function closestCategory(element: NullableElement) {
     return null;
   }
   return element.closest(asSelectors(ClassNames.category)) as HTMLElement;
+}
+
+function closestCategoryContent(element: NullableElement) {
+  if (!element) {
+    return null;
+  }
+  return element.closest(
+    asSelectors(ClassNames.categoryContent)
+  ) as HTMLElement;
 }

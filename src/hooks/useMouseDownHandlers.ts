@@ -32,11 +32,10 @@ import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 import { preloadEmoji } from './preloadEmoji';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 
-let mouseDownTimer: undefined | number;
-
 export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<NullableElement>
 ) {
+  const mouseDownTimerRef = useRef<undefined | number>();
   const preloading = useRef(false);
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const disallowClickRef = useDisallowClickRef();
@@ -79,8 +78,8 @@ export function useMouseDownHandlers(
 
   const onMouseDown = React.useCallback(
     function onMouseDown(event: MouseEvent) {
-      if (mouseDownTimer) {
-        clearTimeout(mouseDownTimer);
+      if (mouseDownTimerRef.current) {
+        clearTimeout(mouseDownTimerRef.current);
       }
 
       const [emoji] = emojiFromEvent(event);
@@ -98,9 +97,9 @@ export function useMouseDownHandlers(
         }
       }, 50);
 
-      mouseDownTimer = window?.setTimeout(() => {
+      mouseDownTimerRef.current = window?.setTimeout(() => {
         disallowClickRef.current = true;
-        mouseDownTimer = undefined;
+        mouseDownTimerRef.current = undefined;
         closeAllOpenToggles();
         setAnchoredEmojiRef(event.target as HTMLElement);
         setEmojiVariationPicker(emoji);
@@ -118,9 +117,9 @@ export function useMouseDownHandlers(
     function onMouseUp() {
       preloading.current = false;
 
-      if (mouseDownTimer) {
-        clearTimeout(mouseDownTimer);
-        mouseDownTimer = undefined;
+      if (mouseDownTimerRef.current) {
+        clearTimeout(mouseDownTimerRef.current);
+        mouseDownTimerRef.current = undefined;
       } else if (disallowClickRef.current) {
         // The problem we're trying to overcome here
         // is that the emoji has both mouseup and click events

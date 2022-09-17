@@ -34,8 +34,8 @@ export function EmojiCategory({
       data-name={category}
       aria-label={categoryName}
     >
-      <div className="epr-emoji-category-label">{categoryName}</div>
-      <div className="epr-emoji-category-content">{children}</div>
+      <div className={ClassNames.label}>{categoryName}</div>
+      <div className={ClassNames.categoryContent}>{children}</div>
     </li>
   );
 }
