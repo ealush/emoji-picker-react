@@ -33,28 +33,29 @@ function useSetFilterRef() {
 }
 
 export function useClearSearch() {
+  const applySearch = useApplySearch();
   const SearchInputRef = useSearchInputRef();
-  const [, setSearchTerm] = useSearchTermState();
 
   return function clearSearch() {
     if (SearchInputRef.current) {
       SearchInputRef.current.value = '';
     }
-    setSearchTerm('');
+
+    applySearch('');
   };
 }
 
 export function useAppendSearch() {
   const SearchInputRef = useSearchInputRef();
-  const [, setSearchTerm] = useSearchTermState();
+  const applySearch = useApplySearch();
 
   return function appendSearch(str: string) {
     if (SearchInputRef.current) {
       SearchInputRef.current.value = SearchInputRef.current.value + str;
-      setSearchTerm(SearchInputRef.current.value);
+      applySearch(SearchInputRef.current.value);
+    } else {
+      applySearch(str);
     }
-
-    setSearchTerm(str);
   };
 }
 
@@ -62,9 +63,9 @@ export function useFilter() {
   const SearchInputRef = useSearchInputRef();
   const filterRef = useFilterRef();
   const setFilterRef = useSetFilterRef();
+  const applySearch = useApplySearch();
 
-  const [searchTerm, setSearchTerm] = useSearchTermState();
-  const PickerMainRef = usePickerMainRef();
+  const [searchTerm] = useSearchTermState();
 
   return {
     onChange,
@@ -76,7 +77,7 @@ export function useFilter() {
     const filter = filterRef.current;
 
     if (filter?.[nextValue] || nextValue.length <= 1) {
-      return applyFilterToDom(nextValue);
+      return applySearch(nextValue);
     }
 
     const longestMatch = findLongestMatch(nextValue, filter);
@@ -84,7 +85,7 @@ export function useFilter() {
     if (!longestMatch) {
       // Can we even get here?
       // If so, we need to search among all emojis
-      return applyFilterToDom(nextValue);
+      return applySearch(nextValue);
     }
 
     setFilterRef(current =>
@@ -92,20 +93,39 @@ export function useFilter() {
         [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
       })
     );
-    applyFilterToDom(nextValue);
+    applySearch(nextValue);
   }
+}
 
+function useApplySearch() {
+  const [, setSearchTerm] = useSearchTermState();
+  const PickerMainRef = usePickerMainRef();
+  const applyFilterToDom = useApplyFilterToDom();
+
+  return function applySearch(searchTerm: string) {
+    applyFilterToDom(searchTerm);
+    requestAnimationFrame(() => {
+      setSearchTerm(searchTerm).then(() => {
+        scrollTo(PickerMainRef.current, 0);
+      });
+    });
+  };
+}
+
+function useApplyFilterToDom() {
   // This function is the farthest from being "React" as it can be
   // It performs DOM manipulation and is not a pure function
   // But it is the most performant way to do it, at least 5 times faster than
   // react re-rendering. The reason I trust it to work correctly is because we
   // eventually do update the state, which keeps the DOM in sync - after the fact
-  function applyFilterToDom(searchTerm: string): void {
+  const PickerMainRef = usePickerMainRef();
+  const filterRef = useFilterRef();
+
+  return function applyFilterToDom(searchTerm: string): void {
     PickerMainRef.current?.classList.toggle(
       ClassNames.searchActive,
       !!searchTerm
     );
-
     iterateEmojiRef((element, unified) => {
       if (isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)) {
         hideElementOnSearch(element);
@@ -113,13 +133,7 @@ export function useFilter() {
       }
       showElementOnSearch(element);
     });
-
-    requestAnimationFrame(() => {
-      setSearchTerm(searchTerm).then(() => {
-        scrollTo(PickerMainRef.current, 0);
-      });
-    });
-  }
+  };
 }
 
 function filterEmojiObjectByKeyword(

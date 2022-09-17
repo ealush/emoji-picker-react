@@ -1,4 +1,6 @@
+import clsx from 'clsx';
 import * as React from 'react';
+import { useState } from 'react';
 
 import {
   useAutoFocusSearchConfig,
@@ -10,9 +12,9 @@ import Relative from '../Layout/Relative';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
 import './Search.css';
-import clsx from 'clsx';
 
 export function Search() {
+  const [inc, setInc] = useState(0);
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const clearSearch = useClearSearch();
@@ -20,8 +22,12 @@ export function Search() {
   const autoFocus = useAutoFocusSearchConfig();
   const { onChange } = useFilter();
 
+  const input = SearchInputRef?.current;
+  const value = input?.value;
+
   return (
     <Relative className="epr-search-container">
+      <CssSearch value={value} />
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
@@ -31,6 +37,7 @@ export function Search() {
         type="text"
         placeholder={placeholder}
         onChange={event => {
+          setInc(inc + 1);
           setTimeout(() => {
             onChange(event.target.value);
           });
@@ -44,4 +51,14 @@ export function Search() {
       />
     </Relative>
   );
+}
+
+function CssSearch({ value }: { value: undefined | string }) {
+  return value ? (
+    <style>{`
+        .EmojiPickerReact button.epr-emoji:not([aria-label*="${value}"]) {
+          display: none;
+        }
+  `}</style>
+  ) : null;
 }
