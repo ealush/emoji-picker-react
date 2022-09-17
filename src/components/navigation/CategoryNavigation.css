@@ -26,18 +26,16 @@
   border-radius: 50%;
 }
 
-.EmojiPickerReact.epr-search-active .epr-category-nav > button.epr-cat-btn,
-.EmojiPickerReact.epr-search-active
-  .epr-category-nav
-  > button.epr-cat-btn:hover,
-.EmojiPickerReact.epr-search-active
-  .epr-category-nav
-  > button.epr-cat-btn.epr-active {
+aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
+  .epr-category-nav,
+.EmojiPickerReact.epr-search-active .epr-category-nav {
   opacity: 0.3;
   cursor: default;
   pointer-events: none;
 }
-
+aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
+  .epr-category-nav
+  > button.epr-cat-btn:hover,
 .EmojiPickerReact:not(.epr-search-active)
   .epr-category-nav
   > button.epr-cat-btn:hover,
@@ -56,6 +54,7 @@
   background-position-y: calc(var(--epr-category-navigation-button-size) * 2);
 }
 
+aside.EmojiPickerReact.epr-main:has(input:placeholder-shown) .epr-category-nav,
 .EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
   .epr-category-nav
   > button.epr-cat-btn:hover,

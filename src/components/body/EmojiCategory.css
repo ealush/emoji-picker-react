@@ -27,9 +27,3 @@
   z-index: var(--epr-category-label-z-index);
   height: var(--epr-category-label-height);
 }
-
-.EmojiPickerReact.epr-search-active
-  li.epr-emoji-category
-  > .epr-emoji-category-label {
-  position: relative;
-}
