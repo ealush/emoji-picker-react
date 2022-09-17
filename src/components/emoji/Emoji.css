@@ -31,11 +31,11 @@
   border-bottom: 4px solid var(--epr-emoji-variation-indicator-color-hover);
 }
 
-.EmojiPickerReact button.epr-emoji > .epr-emoji-img {
+.EmojiPickerReact .epr-emoji-img {
   font-size: 0;
 }
 
-.EmojiPickerReact button.epr-emoji > .epr-emoji-native {
+.EmojiPickerReact .epr-emoji-native {
   font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
     Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
   line-height: 100%;
