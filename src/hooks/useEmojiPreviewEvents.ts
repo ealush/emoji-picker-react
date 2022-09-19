@@ -56,10 +56,10 @@ export function useEmojiPreviewEvents(
     }
     function onLeave(e?: FocusEvent | MouseEvent) {
       if (e) {
-        const button = buttonFromTarget(e.target as HTMLElement);
+        const relatedTarget = e.relatedTarget as HTMLElement;
 
-        if (button) {
-          return;
+        if (!buttonFromTarget(relatedTarget)) {
+          return setPreviewEmoji(null);
         }
       }
 
