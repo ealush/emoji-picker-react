@@ -41,7 +41,7 @@ export function rowNumber(
   const elementTop = element.getBoundingClientRect().top;
   const parentTop = parent.getBoundingClientRect().top;
 
-  return Math.floor((elementTop - parentTop) / elementHeight) - 1;
+  return Math.round((elementTop - parentTop) / elementHeight) - 1;
 }
 
 export function hasNextRow(
