@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
 import {
   buttonFromTarget,
   elementHeight,
@@ -30,6 +31,7 @@ enum Direction {
 }
 
 export function EmojiVariationPicker() {
+  const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
@@ -39,7 +41,14 @@ export function EmojiVariationPicker() {
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const getPointerStyle = usePointerStyle(VariationPickerRef);
 
-  const visible = emoji && emojiHasVariations(emoji);
+  const button = buttonFromTarget(AnchoredEmojiRef.current);
+
+  const visible =
+    emoji &&
+    button &&
+    emojiHasVariations(emoji) &&
+    button.classList.contains(ClassNames.emojiHasVariatios);
+
   let top, pointerStyle;
 
   if (!visible) {

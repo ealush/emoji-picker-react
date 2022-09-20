@@ -50,7 +50,7 @@ export function ClickableEmoji({
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch,
         [ClassNames.visible]: !hidden,
-        'epr-emoji-has-variations': hasVariations && showVariations
+        [ClassNames.emojiHasVariatios]: hasVariations && showVariations
       })}
       data-unified={unified}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
