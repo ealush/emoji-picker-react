@@ -18,6 +18,7 @@ export function PickerContextProvider({ children }: Props) {
   // Initialize the filter with the inititial dictionary
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
+  const disallowMouseRef = React.useRef<boolean>(false);
 
   const suggestedUpdateState = useDebouncedState(Date.now(), 200);
   const searchTerm = useDebouncedState('', 100);
@@ -42,7 +43,8 @@ export function PickerContextProvider({ children }: Props) {
         isPastInitialLoad,
         searchTerm,
         skinToneFanOpenState,
-        suggestedUpdateState
+        suggestedUpdateState,
+        disallowMouseRef
       }}
     >
       {children}
@@ -63,10 +65,12 @@ const PickerContext = React.createContext<{
   skinToneFanOpenState: ReactState<boolean>;
   filterRef: React.MutableRefObject<FilterState>;
   disallowClickRef: React.MutableRefObject<boolean>;
+  disallowMouseRef: React.MutableRefObject<boolean>;
 }>({
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   disallowClickRef: { current: false },
+  disallowMouseRef: { current: false },
   emojiVariationPickerState: [null, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
   filterRef: { current: {} },
@@ -88,6 +92,11 @@ export function useFilterRef() {
 export function useDisallowClickRef() {
   const { disallowClickRef } = React.useContext(PickerContext);
   return disallowClickRef;
+}
+
+export function useDisallowMouseRef() {
+  const { disallowMouseRef } = React.useContext(PickerContext);
+  return disallowMouseRef;
 }
 
 export function useSearchTermState() {

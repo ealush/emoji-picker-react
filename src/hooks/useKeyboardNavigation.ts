@@ -29,6 +29,7 @@ import {
   useCloseAllOpenToggles,
   useHasOpenToggles
 } from './useCloseAllOpenToggles';
+import { useDisallowMouseMove } from './useDisallowMouseMove';
 import { useAppendSearch, useClearSearch } from './useFilter';
 import {
   useFocusCategoryNavigation,
@@ -63,6 +64,7 @@ function usePickerMainKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
   const hasOpenToggles = useHasOpenToggles();
+  const disallowMouseMove = useDisallowMouseMove();
 
   const closeAllOpenToggles = useCloseAllOpenToggles();
 
@@ -71,17 +73,24 @@ function usePickerMainKeyboardEvents() {
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
-        if (key === KeyboardEvents.Escape) {
-          event.preventDefault();
-
-          if (hasOpenToggles()) {
-            closeAllOpenToggles();
-            return;
-          }
-
-          clearSearch();
-          scrollTo(0);
-          focusSearchInput();
+        switch (key) {
+          case KeyboardEvents.ArrowDown:
+          case KeyboardEvents.ArrowUp:
+          case KeyboardEvents.ArrowLeft:
+          case KeyboardEvents.ArrowRight:
+            disallowMouseMove();
+            break;
+          // eslint-disable-next-line no-fallthrough
+          case KeyboardEvents.Escape:
+            event.preventDefault();
+            if (hasOpenToggles()) {
+              closeAllOpenToggles();
+              return;
+            }
+            clearSearch();
+            scrollTo(0);
+            focusSearchInput();
+            break;
         }
       },
     [
@@ -89,7 +98,8 @@ function usePickerMainKeyboardEvents() {
       clearSearch,
       closeAllOpenToggles,
       focusSearchInput,
-      hasOpenToggles
+      hasOpenToggles,
+      disallowMouseMove
     ]
   );
 

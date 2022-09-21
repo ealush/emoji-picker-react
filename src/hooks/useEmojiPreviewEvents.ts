@@ -10,11 +10,18 @@ import {
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
 
+import {
+  useAllowMouseMove,
+  useIsMouseDisallowed
+} from './useDisallowMouseMove';
+
 export function useEmojiPreviewEvents(
   allow: boolean,
   setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
 ) {
   const BodyRef = useBodyRef();
+  const isMouseDisallowed = useIsMouseDisallowed();
+  const allowMouseMove = useAllowMouseMove();
 
   useEffect(() => {
     if (!allow) {
@@ -34,6 +41,7 @@ export function useEmojiPreviewEvents(
       passive: true
     });
     bodyRef?.addEventListener('blur', onLeave, true);
+
 
     function onEnter(e: FocusEvent) {
       const button = buttonFromTarget(e.target as HTMLElement);
@@ -70,6 +78,20 @@ export function useEmojiPreviewEvents(
         setPreviewEmoji(null);
       }
     }
+
+    function onMouseOver(e: MouseEvent) {
+      if (isMouseDisallowed()) {
+        return;
+      }
+
+      const button = buttonFromTarget(e.target as HTMLElement);
+
+      if (button) {
+        focusElement(button);
+      }
+    }
+
+
     return () => {
       bodyRef?.removeEventListener('mouseover', onMouseOver);
       bodyRef?.removeEventListener('mouseout', onLeave);
@@ -77,13 +99,5 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('blur', onLeave, true);
       bodyRef?.removeEventListener('keydown', onEscape);
     };
-  }, [BodyRef, allow, setPreviewEmoji]);
-
-  function onMouseOver(e: MouseEvent) {
-    const button = buttonFromTarget(e.target as HTMLElement);
-
-    if (button) {
-      focusElement(button);
-    }
-  }
+  }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
 }
