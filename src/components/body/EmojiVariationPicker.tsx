@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { focusElement } from '../../DomUtils/focusElement';
 import {
   buttonFromTarget,
   elementHeight,
@@ -51,7 +52,8 @@ export function EmojiVariationPicker() {
 
   let top, pointerStyle;
 
-  if (!visible) {
+  if (!visible && AnchoredEmojiRef.current) {
+    focusElement(AnchoredEmojiRef.current);
     setAnchoredEmojiRef(null);
   } else {
     top = getTop();
