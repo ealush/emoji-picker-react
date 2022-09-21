@@ -27,10 +27,19 @@
   z-index: var(--epr-emoji-variations-indictator-z-index);
 }
 
+.EmojiPickerReact button.epr-emoji .epr-emoji-img {
+  max-width: var(--epr-emoji-fullsize);
+  max-height: var(--epr-emoji-fullsize);
+  padding: var(--epr-emoji-padding);
+}
+
+.EmojiPickerReact button.epr-emoji .epr-emoji-native {
+  padding: var(--epr-emoji-padding);
+}
+
 .EmojiPickerReact button.epr-emoji > * {
   align-self: center;
   justify-self: center;
-  padding: var(--epr-emoji-padding);
   display: block;
 }
 
