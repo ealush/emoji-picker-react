@@ -1,13 +1,15 @@
 .EmojiPickerReact button.epr-emoji {
   position: relative;
-  padding: var(--epr-emoji-padding);
-  border-radius: 8px;
   width: var(--epr-emoji-fullsize);
   height: var(--epr-emoji-fullsize);
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
+  max-width: var(--epr-emoji-fullsize);
+  max-height: var(--epr-emoji-fullsize);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:after {
@@ -15,8 +17,8 @@
   display: block;
   width: 0;
   height: 0;
-  right: -2px;
-  bottom: 0px;
+  right: 0px;
+  bottom: 1px;
   position: absolute;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
@@ -26,10 +28,10 @@
 }
 
 .EmojiPickerReact button.epr-emoji > * {
-  height: var(--epr-emoji-size);
-  width: var(--epr-emoji-size);
   align-self: center;
   justify-self: center;
+  padding: var(--epr-emoji-padding);
+  display: block;
 }
 
 .EmojiPickerReact button.epr-emoji.epr-emoji-has-variations:hover:after {
@@ -41,16 +43,23 @@
 }
 
 .EmojiPickerReact .epr-emoji-native {
-  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', Times,
-    Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif, LastResort;
+  font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI',
+    'Apple Color Emoji', 'Twemoji Mozilla', 'Noto Color Emoji', 'Android Emoji',
+    Times, Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif,
+    LastResort;
+  position: relative;
   line-height: 100%;
   font-size: var(--epr-emoji-size);
+  text-align: center;
+  align-self: center;
+  justify-self: center;
+  letter-spacing: 0;
 }
 
-.EmojiPickerReact button.epr-emoji:hover {
+.EmojiPickerReact button.epr-emoji:hover > * {
   background-color: var(--epr-emoji-hover-color);
 }
 
-.EmojiPickerReact button.epr-emoji:focus {
+.EmojiPickerReact button.epr-emoji:focus > * {
   background-color: var(--epr-focus-bg-color);
 }
