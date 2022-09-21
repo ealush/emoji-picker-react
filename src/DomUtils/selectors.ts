@@ -242,7 +242,7 @@ export function closestCategory(element: NullableElement) {
   return element.closest(asSelectors(ClassNames.category)) as HTMLElement;
 }
 
-function closestCategoryContent(element: NullableElement) {
+export function closestCategoryContent(element: NullableElement) {
   if (!element) {
     return null;
   }

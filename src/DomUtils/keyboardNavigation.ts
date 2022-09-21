@@ -17,7 +17,8 @@ import {
   nextVisibleEmoji,
   NullableElement,
   prevCategory,
-  prevVisibleEmoji
+  prevVisibleEmoji,
+  closestCategoryContent
 } from './selectors';
 
 export function focusFirstVisibleEmoji(parent: NullableElement) {
@@ -95,10 +96,11 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
     return null;
   }
 
-  const category = closestCategory(element);
-  const indexInRow = elementIndexInRow(category, element);
-  const row = rowNumber(category, element);
-  const countInRow = elementCountInRow(category, element);
+  const categoryContent = closestCategoryContent(element);
+  const category = closestCategory(categoryContent);
+  const indexInRow = elementIndexInRow(categoryContent, element);
+  const row = rowNumber(categoryContent, element);
+  const countInRow = elementCountInRow(categoryContent, element);
 
   if (row === 0) {
     const prevVisibleCategory = prevCategory(category);
@@ -108,7 +110,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
     }
 
     return getElementInRow(
-      allVisibleEmojis(prevVisibleCategory),
+      allVisibleEmojis(categoryContent),
       -1, // last row
       countInRow,
       indexInRow
@@ -128,12 +130,12 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
     return null;
   }
 
-  const category = closestCategory(element);
-  const indexInRow = elementIndexInRow(category, element);
-  const row = rowNumber(category, element);
-  const countInRow = elementCountInRow(category, element);
-
-  if (!hasNextRow(category, element)) {
+  const categoryContent = closestCategoryContent(element);
+  const category = closestCategory(categoryContent);
+  const indexInRow = elementIndexInRow(categoryContent, element);
+  const row = rowNumber(categoryContent, element);
+  const countInRow = elementCountInRow(categoryContent, element);
+  if (!hasNextRow(categoryContent, element)) {
     const nextVisibleCategory = nextCategory(category);
 
     if (!nextVisibleCategory) {
@@ -149,7 +151,7 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
   }
 
   const itemInNextRow = getElementInNextRow(
-    allVisibleEmojis(category),
+    allVisibleEmojis(categoryContent),
     row,
     countInRow,
     indexInRow

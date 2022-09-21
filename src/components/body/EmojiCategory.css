@@ -1,7 +1,6 @@
 .EmojiPickerReact li.epr-emoji-category > .epr-emoji-category-content {
   position: relative;
-  padding: var(--epr-category-padding);
-
+  margin: var(--epr-category-padding);
   display: grid;
   grid-template-columns: repeat(auto-fill, var(--epr-emoji-fullsize));
   grid-gap: 0;

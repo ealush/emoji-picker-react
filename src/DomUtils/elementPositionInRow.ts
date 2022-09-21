@@ -10,7 +10,6 @@ export function elementCountInRow(
 
   const parentWidth = parent.getBoundingClientRect().width;
   const elementWidth = element.getBoundingClientRect().width;
-
   return Math.floor(parentWidth / elementWidth);
 }
 
@@ -40,8 +39,7 @@ export function rowNumber(
   const elementHeight = element.getBoundingClientRect().height;
   const elementTop = element.getBoundingClientRect().top;
   const parentTop = parent.getBoundingClientRect().top;
-
-  return Math.round((elementTop - parentTop) / elementHeight) - 1;
+  return Math.round((elementTop - parentTop) / elementHeight);
 }
 
 export function hasNextRow(
