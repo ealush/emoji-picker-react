@@ -24,7 +24,10 @@ const Search = ({ disableAutoFocus }) => {
         value={searchString}
       />
       {!!searchString.length && (
-        <span className="search-container__remove-icon" onClick={useFilter()}>
+        <span
+          className="search-container__emoji-remove-icon"
+          onClick={useFilter()}
+        >
           <RemoveTypedIcon />
         </span>
       )}
