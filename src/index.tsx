@@ -4,6 +4,8 @@ import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
 
+export { ViewOnlyEmoji as Emoji } from './components/emoji/Emoji';
+
 export {
   EmojiStyle,
   SkinTones,

@@ -4,7 +4,9 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import { asEmoji } from '../../dataUtils/asEmoji';
 import {
+  emojiByUnified,
   emojiHasVariations,
   emojiName,
   emojiUrlByUnified
@@ -20,12 +22,13 @@ type ClickableEmojiProps = Readonly<
     showVariations?: boolean;
     emojiRef?: EmojiRef;
     hiddenOnSearch?: boolean;
+    emoji: DataEmoji;
   }
 >;
 
 type BaseProps = {
+  emoji?: DataEmoji;
   emojiStyle: EmojiStyle;
-  emoji: DataEmoji;
   unified: string;
   size?: number;
   lazyLoad?: boolean;
@@ -80,6 +83,8 @@ export function ViewOnlyEmoji({
     style.width = style.height = style.fontSize = `${size}px`;
   }
 
+  const emojiToRender = emoji ? emoji : emojiByUnified(unified);
+
   return (
     <>
       {emojiStyle === EmojiStyle.NATIVE ? (
@@ -88,7 +93,7 @@ export function ViewOnlyEmoji({
         <EmojiImg
           unified={unified}
           style={style}
-          emoji={emoji}
+          emoji={asEmoji(emojiToRender)}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
         />
@@ -105,7 +110,11 @@ function NativeEmoji({
   style: React.CSSProperties;
 }) {
   return (
-    <span className="epr-emoji-native" data-unified={unified} style={style}>
+    <span
+      className={clsx(ClassNames.external, 'epr-emoji-native')}
+      data-unified={unified}
+      style={style}
+    >
       {parseNativeEmoji(unified)}
     </span>
   );
@@ -130,7 +139,7 @@ function EmojiImg({
     <img
       src={emojiUrlByUnified(emojiStyle, unified)}
       alt={emojiName(emoji)}
-      className="epr-emoji-img"
+      className={clsx(ClassNames.external, 'epr-emoji-img')}
       loading={lazyLoad ? 'lazy' : 'eager'}
       onError={onError}
       style={style}

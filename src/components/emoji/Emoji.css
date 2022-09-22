@@ -47,11 +47,11 @@
   border-bottom: 4px solid var(--epr-emoji-variation-indicator-color-hover);
 }
 
-.EmojiPickerReact .epr-emoji-img {
+.__EmojiPicker__.epr-emoji-img {
   font-size: 0;
 }
 
-.EmojiPickerReact .epr-emoji-native {
+.__EmojiPicker__.epr-emoji-native {
   font-family: 'Segoe UI Emoji', 'Segoe UI Symbol', 'Segoe UI',
     'Apple Color Emoji', 'Twemoji Mozilla', 'Noto Color Emoji', 'Android Emoji',
     Times, Symbola, Aegyptus, Code2000, Code2001, Code2002, Musica, serif,

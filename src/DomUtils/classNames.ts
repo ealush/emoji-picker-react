@@ -8,7 +8,8 @@ export enum ClassNames {
   category = 'epr-emoji-category',
   label = 'epr-emoji-category-label',
   categoryContent = 'epr-emoji-category-content',
-  emojiHasVariatios = 'epr-emoji-has-variations'
+  emojiHasVariatios = 'epr-emoji-has-variations',
+  external = '__EmojiPicker__'
 }
 
 export function asSelectors(...classNames: ClassNames[]): string {
