@@ -27,7 +27,23 @@
 }
 
 aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
-  .epr-category-nav,
+  .epr-category-nav {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+
+.EmojiPickerReact.epr-search-active .epr-category-nav {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
+aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
+  .epr-category-nav {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
 .EmojiPickerReact.epr-search-active .epr-category-nav {
   opacity: 0.3;
   cursor: default;
@@ -35,7 +51,10 @@ aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
 }
 aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   .epr-category-nav
-  > button.epr-cat-btn:hover,
+  > button.epr-cat-btn:hover {
+  opacity: 1;
+  background-position-y: var(--epr-category-navigation-button-size);
+}
 .EmojiPickerReact:not(.epr-search-active)
   .epr-category-nav
   > button.epr-cat-btn:hover,
@@ -54,7 +73,9 @@ aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   background-position-y: calc(var(--epr-category-navigation-button-size) * 2);
 }
 
-aside.EmojiPickerReact.epr-main:has(input:placeholder-shown) .epr-category-nav,
+aside.EmojiPickerReact.epr-main:has(input:placeholder-shown) .epr-category-nav {
+  background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
+}
 .EmojiPickerReact.epr-dark-theme:not(.epr-search-active)
   .epr-category-nav
   > button.epr-cat-btn:hover,
