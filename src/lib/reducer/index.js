@@ -12,6 +12,7 @@ export const actionTypes = {
   EMOJI_NOT_LOADED_SET: 'EMOJI_NOT_LOADED_SET',
   FILTER_SET: 'FILTER_SET',
   UPDATE_RECENTLY_USED: 'UPDATE_RECENTLY_USED',
+  UPDATE_SEARCH_STRING: 'UPDATE_SEARCH_STRING',
 };
 
 const reducer = (state, { type, ...action }) => {
@@ -69,10 +70,15 @@ const reducer = (state, { type, ...action }) => {
         ...state,
         ...action,
       };
-	case actionTypes.UPDATE_RECENTLY_USED:
+    case actionTypes.UPDATE_RECENTLY_USED:
       return {
         ...state,
-		recentlyUsed: getRecentlyUsed(),
+        recentlyUsed: getRecentlyUsed(),
+      };
+    case actionTypes.UPDATE_SEARCH_STRING:
+      return {
+        ...state,
+        searchString: action.value,
       };
     default:
       return state;

@@ -24,3 +24,12 @@
   height: 16px;
   background-image: url(../CategoriesNav/svg/search_grey.svg);
 }
+
+.search-container__remove-icon {
+  position: absolute;
+  top: 12px;
+  right: 27px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
