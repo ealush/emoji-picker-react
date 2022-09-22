@@ -12,10 +12,7 @@ import {
   useEmojiVariationPickerState,
   useUpdateSuggested
 } from '../components/context/PickerContext';
-import {
-  useEmojiStyleConfig,
-  useOnEmojiClickConfig
-} from '../config/useConfig';
+import { useOnEmojiClickConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   activeVariationFromUnified,
@@ -28,7 +25,6 @@ import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setsuggested } from '../dataUtils/suggested';
 import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
-import { preloadEmoji } from './preloadEmoji';
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
 
@@ -36,14 +32,12 @@ export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<NullableElement>
 ) {
   const mouseDownTimerRef = useRef<undefined | number>();
-  const preloading = useRef(false);
   const setVariationPicker = useSetVariationPicker();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const [activeSkinTone] = useActiveSkinToneState();
   const onEmojiClick = useOnEmojiClickConfig();
-  const emojiStyle = useEmojiStyleConfig();
   const [, updateSuggested] = useUpdateSuggested();
 
   const onClick = React.useCallback(
@@ -88,15 +82,6 @@ export function useMouseDownHandlers(
         return;
       }
 
-      preloading.current = true;
-
-      window?.setTimeout(() => {
-        if (preloading.current) {
-          preloadEmoji(emoji, emojiStyle);
-          preloading.current = false;
-        }
-      }, 50);
-
       mouseDownTimerRef.current = window?.setTimeout(() => {
         disallowClickRef.current = true;
         mouseDownTimerRef.current = undefined;
@@ -109,14 +94,11 @@ export function useMouseDownHandlers(
       disallowClickRef,
       closeAllOpenToggles,
       setVariationPicker,
-      emojiStyle,
       setEmojiVariationPicker
     ]
   );
   const onMouseUp = React.useCallback(
     function onMouseUp() {
-      preloading.current = false;
-
       if (mouseDownTimerRef.current) {
         clearTimeout(mouseDownTimerRef.current);
         mouseDownTimerRef.current = undefined;

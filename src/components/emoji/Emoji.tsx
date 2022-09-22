@@ -10,6 +10,7 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { preloadEmoji } from '../../hooks/preloadEmoji';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
@@ -44,6 +45,12 @@ export function ClickableEmoji({
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
+  const onFocus = hasVariations
+    ? () => {
+        preloadEmoji(emoji, emojiStyle);
+      }
+    : undefined;
+
   return (
     <button
       className={clsx(ClassNames.emoji, {
@@ -56,6 +63,7 @@ export function ClickableEmoji({
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
       aria-label={emojiName(emoji)}
+      onFocus={onFocus}
     >
       <ViewOnlyEmoji
         unified={unified}
