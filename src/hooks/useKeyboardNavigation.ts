@@ -283,11 +283,14 @@ function useBodyKeyboardEvents() {
   const BodyRef = useBodyRef();
   const goUpFromBody = useGoUpFromBody();
   const setVariationPicker = useSetVariationPicker();
+  const hasOpenToggles = useHasOpenToggles();
+  const closeAllOpenToggles = useCloseAllOpenToggles();
 
   const onType = useOnType();
 
   const onKeyDown = useMemo(
     () =>
+      // eslint-disable-next-line complexity
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
@@ -304,10 +307,18 @@ function useBodyKeyboardEvents() {
             break;
           case KeyboardEvents.ArrowDown:
             event.preventDefault();
+            if (hasOpenToggles()) {
+              closeAllOpenToggles();
+              break;
+            }
             focusVisibleEmojiOneRowDown(activeElement);
             break;
           case KeyboardEvents.ArrowUp:
             event.preventDefault();
+            if (hasOpenToggles()) {
+              closeAllOpenToggles();
+              break;
+            }
             focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
             break;
           case KeyboardEvents.Space:
@@ -319,7 +330,13 @@ function useBodyKeyboardEvents() {
             break;
         }
       },
-    [goUpFromBody, onType, setVariationPicker]
+    [
+      goUpFromBody,
+      onType,
+      setVariationPicker,
+      hasOpenToggles,
+      closeAllOpenToggles
+    ]
   );
 
   useEffect(() => {
