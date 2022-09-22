@@ -9,8 +9,6 @@ import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
 
-import { usePickerMainRef } from './ElementRefContext';
-
 export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
 
@@ -36,14 +34,14 @@ export function PickerContextProvider({ children }: Props) {
         activeCategoryState,
         activeSkinTone,
         disallowClickRef,
+        disallowMouseRef,
         emojiVariationPickerState,
         emojisThatFailedToLoadState,
         filterRef,
         isPastInitialLoad,
         searchTerm,
         skinToneFanOpenState,
-        suggestedUpdateState,
-        disallowMouseRef
+        suggestedUpdateState
       }}
     >
       {children}
