@@ -5,6 +5,7 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
+import { useOnFocus } from '../../hooks/useOnFocus';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import { PickerContextProvider } from '../context/PickerContext';
@@ -32,6 +33,7 @@ function PickerRootElement({ children }: RootProps) {
   const PickerMainRef = usePickerMainRef();
 
   useKeyboardNavigation();
+  useOnFocus();
 
   return (
     <aside
