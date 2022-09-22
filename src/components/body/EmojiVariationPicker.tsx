@@ -108,7 +108,7 @@ function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
       }
 
       // half of the button
-      style.left = offsetLeft + button?.clientWidth / 2 - 12;
+      style.left = offsetLeft + button?.clientWidth / 2;
     }
 
     return style;
