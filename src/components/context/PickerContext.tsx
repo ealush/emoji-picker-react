@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { scrollCategoryIntoView } from '../../DomUtils/scrollCategoryIntoView';
 import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
@@ -102,27 +101,6 @@ export function useDisallowMouseRef() {
 export function useSearchTermState() {
   const { searchTerm } = React.useContext(PickerContext);
   return searchTerm;
-}
-
-export function useActiveCategoryState(): [
-  ActiveCategoryState,
-  (nextActive: string) => void,
-  (nextActive: string) => void
-] {
-  const { activeCategoryState } = React.useContext(PickerContext);
-  const PickerMainRef = usePickerMainRef();
-
-  const [activeCategory, setActiveCategory] = activeCategoryState;
-  return [activeCategory, setCategory, setActiveCategoryAndScroll];
-
-  function setCategory(category: string) {
-    setActiveCategory(category);
-  }
-
-  function setActiveCategoryAndScroll(category: string) {
-    setCategory(category);
-    scrollCategoryIntoView(PickerMainRef.current, category);
-  }
 }
 
 export function useActiveSkinToneState(): [

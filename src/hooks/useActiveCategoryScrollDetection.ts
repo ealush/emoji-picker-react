@@ -2,18 +2,19 @@ import { useEffect } from 'react';
 
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
 import { asSelectors, ClassNames } from '../DomUtils/classNames';
-import { ElementRef } from '../components/context/ElementRefContext';
-import { useActiveCategoryState } from '../components/context/PickerContext';
+import { useBodyRef } from '../components/context/ElementRefContext';
 
-export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
-  const [, setActiveCategory] = useActiveCategoryState();
+export function useActiveCategoryScrollDetection(
+  setActiveCategory: (category: string) => void
+) {
+  const BodyRef = useBodyRef();
 
   useEffect(() => {
     const visibleCategories = new Map();
+    const bodyRef = BodyRef.current;
     const observer = new IntersectionObserver(
       entries => {
-        const refCurrent = bodyRef.current;
-        if (!refCurrent) {
+        if (!bodyRef) {
           return;
         }
 
@@ -40,10 +41,8 @@ export function useActiveCategoryScrollDetection(bodyRef: ElementRef) {
         threshold: [0, 1]
       }
     );
-    bodyRef.current
-      ?.querySelectorAll(asSelectors(ClassNames.category))
-      .forEach(el => {
-        observer.observe(el);
-      });
-  }, [bodyRef, setActiveCategory]);
+    bodyRef?.querySelectorAll(asSelectors(ClassNames.category)).forEach(el => {
+      observer.observe(el);
+    });
+  }, [BodyRef, setActiveCategory]);
 }

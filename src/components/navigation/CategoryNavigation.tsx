@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { useState } from 'react';
 import './CategoryNavigation.css';
 
 import { ClassNames } from '../../DomUtils/classNames';
@@ -8,17 +9,18 @@ import {
   categoryNameFromCategoryConfig
 } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
+import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
+import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
-import { useActiveCategoryState } from '../context/PickerContext';
 
 export function CategoryNavigation() {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const scrollCategoryIntoView = useScrollCategoryIntoView();
+  useActiveCategoryScrollDetection(setActiveCategory);
+
   const categoriesConfig = useCategoriesConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
-  const [
-    activeCategory,
-    ,
-    setActiveCategoryAndScroll
-  ] = useActiveCategoryState();
+
   return (
     <div className="epr-category-nav" ref={CategoryNavigationRef}>
       {categoriesConfig.map(categoryConfig => {
@@ -29,7 +31,10 @@ export function CategoryNavigation() {
               [ClassNames.active]: category === activeCategory
             })}
             key={category}
-            onClick={() => setActiveCategoryAndScroll(category)}
+            onClick={() => {
+              setActiveCategory(category);
+              scrollCategoryIntoView(category);
+            }}
             aria-label={categoryNameFromCategoryConfig(categoryConfig)}
           />
         );

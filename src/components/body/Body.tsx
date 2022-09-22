@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../../hooks/useOnScroll';
@@ -13,7 +12,6 @@ import './Body.css';
 
 export function Body() {
   const BodyRef = useBodyRef();
-  useActiveCategoryScrollDetection(BodyRef);
   useOnScroll(BodyRef);
   useMouseDownHandlers(BodyRef);
   useOnMouseMove();
