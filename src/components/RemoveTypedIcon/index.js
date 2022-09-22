@@ -3,7 +3,7 @@ import './remove-typed-icon.css';
 
 const RemoveTypedIcon = () => (
   <svg
-    className="remove-typed-icon"
+    className="emoji-remove-typed-icon"
     width="16"
     height="16"
     viewBox="0 0 16 16"
