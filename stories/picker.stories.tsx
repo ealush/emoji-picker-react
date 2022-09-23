@@ -109,7 +109,7 @@ export const CustomCategoryConfig = (args: Props) => (
 );
 
 export const StandaloneEmojiImage = () => {
-  return <Emoji unified="1f60a" size={35} />;
+  return <Emoji unified="1f9d1-1f3ff-200d-1f4bc" size={35} />;
 };
 export const StandaloneEmojiNative = () => {
   return <Emoji unified="1f60a" emojiStyle={EmojiStyle.NATIVE} size={35} />;

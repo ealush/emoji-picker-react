@@ -1,4 +1,4 @@
-import { Categories } from "../config/categoryConfig";
+import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import emojis from '../data/emojis';
 import skinToneVariations, {
@@ -84,7 +84,13 @@ export function emojiByUnified(unified?: string): DataEmoji | undefined {
   if (!unified) {
     return;
   }
-  return allEmojisByUnified[unified];
+
+  if (allEmojisByUnified[unified]) {
+    return allEmojisByUnified[unified];
+  }
+
+  const withoutSkinTone = unifiedWithoutSkinTone(unified);
+  return allEmojisByUnified[withoutSkinTone];
 }
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
