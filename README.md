@@ -37,6 +37,7 @@ function App() {
 - Skin tone change
 - Different emoji sets (Google, Apple, Facebook, Twitter)
 - Native Emoji support
+- Emoji Component To Render Emojis in your app
 
 # Props
 
@@ -168,6 +169,32 @@ The list of possible variables is quite extensive, but the main ones you may wan
 - `--epr-hover-bg-color` Hovered emoji background color.
 - `--epr-bg-color`: The background color of the picker. When changing it, you should also change `--epr-category-label-bg-color` as they are usually the same color.
 - `--epr-text-color`: The text color in the picker.
+
+# Rendering Output Emojis in Your App
+
+The picker exports an `Emoji` component. The emoji component is the same used within the picker, so it will render the same way as the emojis in the picker. You can choose to render emojis either as native, or as images.
+
+## Props
+
+| Name         | Type         | Default            | Description                                                                                 |
+| ------------ | ------------ | ------------------ | ------------------------------------------------------------------------------------------- |
+| `unified`    | string       | ""                 | The unified code of the emoji.                                                              |
+| `size`       | number       | 32                 | The size of the emoji.                                                                      |
+| `emojiStyle` | `EmojiStyle` | `EmojiStyle.APPLE` | The emoji style to use. Can be either `apple`, `google`, `facebook`, `twitter` or `native`. |
+| `lazyLoad`   | boolean      | `false`            | Whether to lazy load the emoji. image                                                       |
+
+```js
+import { Emoji, EmojiStyle } from 'emoji-picker-react';
+
+export function MyApp() {
+  return (
+    <p>
+      My Favorite emoji is:
+      <Emoji unified="1f423" size="25" />
+    </p>
+  );
+}
+```
 
 # Troubleshooting
 
