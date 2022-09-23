@@ -55,6 +55,8 @@ The following props are accepted by them picker:
 | searchPlaceholder   | string   | `Search`   | Controls the placeholder of the search input.                                                                     |
 | suggestedEmojisMode | string   | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                  |
 | skinTonesDisabled   | boolean  | `false`    | Controls whether the skin tones are disabled or not.                                                              |
+| `width`             | number   | `350`      | Controls the width of the picker.                                                                                 |
+| `height`            | number   | `450`      | Controls the height of the picker.                                                                                |
 
 ## Full details
 
@@ -155,14 +157,22 @@ import { SkinTones } from 'emoji-picker-react';
 
 # Customization
 
+## Custom Picker Width and Height
+
+To customize the dimensions of the picker, use the `height` and `width` props:
+
+```jsx
+<EmojiPicker height={500} width={400} />
+```
+
+## CSS Variables
+
 The picker can be customized via css variables. The root selector for the picker is `.EmojiPickerReact`, when overriding, make sure to provide a more specific selector.
 
 In dark mode, the specific selector is `.EmojiPickerReact.epr-dark-theme`.
 
 The list of possible variables is quite extensive, but the main ones you may want to override are:
 
-- `--epr-picker-width`: The width of the picker.
-- `--epr-picker-height`: The height of the picker.
 - `--epr-emoji-size`: The size of the emojis.
 - `--epr-emoji-gap`: The space between emojis.
 

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { useThemeConfig } from '../../config/useConfig';
+import { usePickerSizeConfig, useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
@@ -31,9 +31,15 @@ function PickerRootElement({ children }: RootProps) {
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
+  const { height, width } = usePickerSizeConfig();
 
   useKeyboardNavigation();
   useOnFocus();
+
+  const style = {
+    height: `${height}px`,
+    width: `${width}px`
+  };
 
   return (
     <aside
@@ -42,6 +48,7 @@ function PickerRootElement({ children }: RootProps) {
         'epr-dark-theme': theme === Theme.DARK
       })}
       ref={PickerMainRef}
+      style={style}
     >
       {children}
     </aside>

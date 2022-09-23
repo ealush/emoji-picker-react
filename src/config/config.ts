@@ -49,6 +49,8 @@ export function basePickerConfig(): PickerConfigInternal {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       event: MouseEvent
     ) {},
+    height: 450,
+    width: 350,
     previewConfig: {
       ...basePreviewConfig
     },
@@ -71,6 +73,8 @@ export type PickerConfigInternal = {
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
   previewConfig: PreviewConfig;
+  height: number;
+  width: number;
 };
 
 export type PreviewConfig = {

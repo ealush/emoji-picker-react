@@ -42,6 +42,14 @@ export const Dark = (args: Props) => (
 export const AutoTheme = (args: Props) => (
   <TemplateDark {...args} theme={Theme.AUTO} />
 );
+export const CustomSize = (args: Props) => (
+  <TemplateDark
+    {...args}
+    width={300}
+    height={300}
+    previewConfig={{ showPreview: false }}
+  />
+);
 export const EmojiImageApple = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.APPLE} />
 );

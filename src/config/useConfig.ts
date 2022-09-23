@@ -73,3 +73,8 @@ export function useLazyLoadEmojisConfig(): boolean {
   const { lazyLoadEmojis } = usePickerConfig();
   return lazyLoadEmojis;
 }
+
+export function usePickerSizeConfig(): { height: number; width: number } {
+  const { height, width } = usePickerConfig();
+  return { height, width };
+}
