@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { getEmojiRef } from '../../DomUtils/emojiElementRef';
 import {
   Categories,
   CategoryConfig,
@@ -74,7 +73,6 @@ function RenderCategory({
   const emojis = emojisToPush.map(emoji => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
-    const emojiRef = getEmojiRef(emojiUnified(emoji));
 
     if (hidden) {
       hiddenCounter++;
@@ -88,7 +86,6 @@ function RenderCategory({
         hidden={failedToLoad}
         hiddenOnSearch={filteredOut}
         emojiStyle={emojiStyle}
-        emojiRef={emojiRef}
         lazyLoad={lazyLoadEmojis}
       />
     );

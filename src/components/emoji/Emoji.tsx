@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { EmojiRef } from '../../DomUtils/emojiElementRef';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
@@ -21,7 +20,6 @@ type ClickableEmojiProps = Readonly<
   BaseProps & {
     hidden?: boolean;
     showVariations?: boolean;
-    emojiRef?: EmojiRef;
     hiddenOnSearch?: boolean;
     emoji: DataEmoji;
   }
@@ -43,7 +41,6 @@ export function ClickableEmoji({
   emojiStyle,
   showVariations = true,
   size,
-  emojiRef,
   lazyLoad
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
@@ -58,7 +55,6 @@ export function ClickableEmoji({
       })}
       data-unified={unified}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
-      ref={emojiRef}
       aria-label={emojiName(emoji)}
       data-full-name={emojiNames(emoji)}
     >

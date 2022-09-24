@@ -1,4 +1,3 @@
-import { hideEmojiOnSearch } from '../DomUtils/emojiElementRef';
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
@@ -115,8 +114,6 @@ function filterEmojiObjectByKeyword(
 
     if (hasMatch(emoji, keyword)) {
       filtered[unified] = emoji;
-    } else {
-      hideEmojiOnSearch(unified);
     }
   }
 
