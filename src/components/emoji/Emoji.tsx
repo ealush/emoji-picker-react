@@ -9,6 +9,7 @@ import {
   emojiByUnified,
   emojiHasVariations,
   emojiName,
+  emojiNames,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
@@ -52,13 +53,14 @@ export function ClickableEmoji({
       className={clsx(ClassNames.emoji, {
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch,
-        [ClassNames.visible]: !hidden,
+        [ClassNames.visible]: !hidden && !hiddenOnSearch,
         [ClassNames.emojiHasVariatios]: hasVariations && showVariations
       })}
       data-unified={unified}
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       ref={emojiRef}
       aria-label={emojiName(emoji)}
+      data-full-name={emojiNames(emoji)}
     >
       <ViewOnlyEmoji
         unified={unified}

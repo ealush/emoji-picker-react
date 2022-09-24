@@ -1,10 +1,4 @@
-import { ClassNames } from '../DomUtils/classNames';
-import {
-  hideElementOnSearch,
-  hideEmojiOnSearch,
-  iterateEmojiRef,
-  showElementOnSearch
-} from '../DomUtils/emojiElementRef';
+import { hideEmojiOnSearch } from '../DomUtils/emojiElementRef';
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
@@ -100,41 +94,11 @@ export function useFilter() {
 function useApplySearch() {
   const [, setSearchTerm] = useSearchTermState();
   const PickerMainRef = usePickerMainRef();
-  const applyFilterToDom = useApplyFilterToDom();
 
   return function applySearch(searchTerm: string) {
-    applyFilterToDom(searchTerm);
     requestAnimationFrame(() => {
       setSearchTerm(searchTerm).then(() => {
         scrollTo(PickerMainRef.current, 0);
-      });
-    });
-  };
-}
-
-function useApplyFilterToDom() {
-  // This function is the farthest from being "React" as it can be
-  // It performs DOM manipulation and is not a pure function
-  // But it is the most performant way to do it, at least 5 times faster than
-  // react re-rendering. The reason I trust it to work correctly is because we
-  // eventually do update the state, which keeps the DOM in sync - after the fact
-  const PickerMainRef = usePickerMainRef();
-  const filterRef = useFilterRef();
-
-  return function applyFilterToDom(searchTerm: string): void {
-    requestAnimationFrame(() => {
-      PickerMainRef.current?.classList.toggle(
-        ClassNames.searchActive,
-        !!searchTerm
-      );
-      iterateEmojiRef((element, unified) => {
-        if (
-          isEmojiFilteredBySearchTerm(unified, filterRef.current, searchTerm)
-        ) {
-          hideElementOnSearch(element);
-          return;
-        }
-        showElementOnSearch(element);
       });
     });
   };

@@ -56,7 +56,7 @@ export function Search() {
 function CssSearch({ value }: { value: undefined | string }) {
   return value ? (
     <style>{`
-        .EmojiPickerReact button.epr-emoji:not([aria-label*="${value}"]) {
+        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${value}"]) {
           display: none;
         }
   `}</style>

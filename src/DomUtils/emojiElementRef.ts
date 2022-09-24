@@ -10,18 +10,6 @@ export function getEmojiRef(unified: string): EmojiRef {
   return emojiRef[unified];
 }
 
-export function iterateEmojiRef(
-  callback: (ref: HTMLElement, unified: string) => void
-): void {
-  for (const unified in emojiRef) {
-    if (!emojiRef[unified] || emojiRef[unified].current === null) {
-      continue;
-    }
-
-    callback(emojiRef[unified].current as HTMLElement, unified);
-  }
-}
-
 export function hideEmojiOnSearch(unified: string): void {
   hideElementOnSearch(getEmojiRef(unified).current);
 }
