@@ -110,7 +110,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
     }
 
     return getElementInRow(
-      allVisibleEmojis(categoryContent),
+      allVisibleEmojis(prevVisibleCategory),
       -1, // last row
       countInRow,
       indexInRow
@@ -118,7 +118,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
   }
 
   return getElementInPrevRow(
-    allVisibleEmojis(category),
+    allVisibleEmojis(categoryContent),
     row,
     countInRow,
     indexInRow

@@ -64,7 +64,7 @@ function getRowElements(
   elementsInRow: number
 ): HTMLElement[] {
   if (row === -1) {
-    const lastRow = Math.floor(elements.length / elementsInRow);
+    const lastRow = Math.floor((elements.length - 1) / elementsInRow);
     const firstElementIndex = lastRow * elementsInRow;
     const lastElementIndex = elements.length - 1;
     return elements.slice(firstElementIndex, lastElementIndex + 1);
