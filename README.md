@@ -1,8 +1,8 @@
-# Emoji Picker React (v4)
+# Emoji Picker React (v4) | [Live Demo](https://codesandbox.io/s/emoji-picker-react-4-z2gkzp)
+
+![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
 An emoji picker component for React applications.
-
-[Try it live](https://codesandbox.io/s/floral-rgb-z2gkzp?file=/src/App.tsx)
 
 ## What to know before using
 
