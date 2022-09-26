@@ -1,11 +1,18 @@
 {
-  "version": "4.0.2",
+  "version": "4.0.3",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
     "src"
+  ],
+  "description": "Emoji Picker component for React Applications on the web",
+  "keywords": [
+    "emoji-picker",
+    "react-emoji-picker",
+    "emoji",
+    "emojis"
   ],
   "engines": {
     "node": ">=10"
