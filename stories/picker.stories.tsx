@@ -149,20 +149,22 @@ function TemplateDark(args) {
 function Template(args) {
   const [shown, setShown] = useState(true);
   return (
-    <div
-      style={{
-        display: 'inline-block',
-        padding: '15px'
-      }}
-    >
-      <button onClick={() => setShown(!shown)}>Toggle</button>
-      <br />
-      {shown ? (
-        <EmojiPicker
-          {...args}
-          onEmojiClick={(...args) => console.log(...args)}
-        />
-      ) : null}
-    </div>
+    <React.StrictMode>
+      <div
+        style={{
+          display: 'inline-block',
+          padding: '15px'
+        }}
+      >
+        <button onClick={() => setShown(!shown)}>Toggle</button>
+        <br />
+        {shown ? (
+          <EmojiPicker
+            {...args}
+            onEmojiClick={(...args) => console.log(...args)}
+          />
+        ) : null}
+      </div>
+    </React.StrictMode>
   );
 }
