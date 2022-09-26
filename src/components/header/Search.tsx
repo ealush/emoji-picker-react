@@ -39,7 +39,7 @@ export function Search() {
         onChange={event => {
           setInc(inc + 1);
           setTimeout(() => {
-            onChange(event.target.value);
+            onChange(event?.target?.value ?? value);
           });
         }}
         ref={SearchInputRef}
