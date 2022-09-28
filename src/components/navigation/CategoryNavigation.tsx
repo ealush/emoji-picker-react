@@ -27,6 +27,7 @@ export function CategoryNavigation() {
         const category = categoryFromCategoryConfig(categoryConfig);
         return (
           <button
+            type="button"
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
               [ClassNames.active]: category === activeCategory
             })}

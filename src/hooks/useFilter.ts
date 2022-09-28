@@ -96,7 +96,7 @@ function useApplySearch() {
 
   return function applySearch(searchTerm: string) {
     requestAnimationFrame(() => {
-      setSearchTerm(searchTerm).then(() => {
+      setSearchTerm(searchTerm.toLowerCase()).then(() => {
         scrollTo(PickerMainRef.current, 0);
       });
     });
@@ -128,7 +128,8 @@ export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return unified =>
+    isEmojiFilteredBySearchTerm(unified, filter, searchTerm.toLowerCase());
 }
 
 function isEmojiFilteredBySearchTerm(

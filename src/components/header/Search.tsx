@@ -48,6 +48,7 @@ export function Search() {
       <button
         className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
         onClick={clearSearch}
+        type="button"
       />
     </Relative>
   );
@@ -56,7 +57,7 @@ export function Search() {
 function CssSearch({ value }: { value: undefined | string }) {
   return value ? (
     <style>{`
-        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${value}"]) {
+        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${value.toLowerCase()}"]) {
           display: none;
         }
   `}</style>
