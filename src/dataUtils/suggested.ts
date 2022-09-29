@@ -14,10 +14,10 @@ type SuggestedItem = {
 type Suggested = SuggestedItem[];
 
 export function getsuggested(mode?: SuggestionMode): Suggested {
-  if (!window?.localStorage) {
-    return [];
-  }
   try {
+    if (!window?.localStorage) {
+      return [];
+    }
     const recent = JSON.parse(
       window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]'
     ) as Suggested;
