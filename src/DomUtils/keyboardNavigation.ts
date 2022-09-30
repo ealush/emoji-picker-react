@@ -23,7 +23,9 @@ import {
 } from './selectors';
 
 export function focusFirstVisibleEmoji(parent: NullableElement) {
-  focusElement(firstVisibleEmoji(parent));
+  const emoji = firstVisibleEmoji(parent);
+  focusElement(emoji);
+  scrollEmojiAboveLabel(emoji);
 }
 
 export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
@@ -49,6 +51,7 @@ export function focusNextVisibleEmoji(element: NullableElement) {
   }
 
   focusElement(next);
+  scrollEmojiAboveLabel(next);
 }
 
 export function focusPrevVisibleEmoji(element: NullableElement) {
@@ -63,6 +66,7 @@ export function focusPrevVisibleEmoji(element: NullableElement) {
   }
 
   focusElement(prev);
+  scrollEmojiAboveLabel(prev);
 }
 
 export function focusVisibleEmojiOneRowUp(
