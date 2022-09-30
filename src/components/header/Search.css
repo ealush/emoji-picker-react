@@ -19,7 +19,7 @@
 .EmojiPickerReact .epr-search-container button.epr-btn-clear-search {
   background-image: svg-load(./svg/times.svg);
   height: 20px;
-  width: 20px;
+  width: 25px;
   background-color: transparent;
   background-repeat: no-repeat;
   position: absolute;
@@ -28,7 +28,8 @@
   transform: translateY(-50%);
   background-size: 20px;
 }
-.EmojiPickerReact .epr-search-container button.epr-btn-clear-search:hover {
+.EmojiPickerReact .epr-search-container button.epr-btn-clear-search:hover,
+.EmojiPickerReact .epr-search-container button.epr-btn-clear-search:focus {
   background-position-y: -20px;
 }
 

@@ -44,10 +44,10 @@ export function useAppendSearch() {
 
   return function appendSearch(str: string) {
     if (SearchInputRef.current) {
-      SearchInputRef.current.value = SearchInputRef.current.value + str;
-      applySearch(SearchInputRef.current.value);
+      SearchInputRef.current.value = `${SearchInputRef.current.value}${str}`;
+      applySearch(SearchInputRef.current.value?.toLowerCase());
     } else {
-      applySearch(str);
+      applySearch(str?.toLowerCase());
     }
   };
 }
@@ -66,8 +66,10 @@ export function useFilter() {
     SearchInputRef
   };
 
-  function onChange(nextValue: string) {
+  function onChange(inputValue: string) {
     const filter = filterRef.current;
+
+    const nextValue = inputValue.toLowerCase();
 
     if (filter?.[nextValue] || nextValue.length <= 1) {
       return applySearch(nextValue);
@@ -96,9 +98,11 @@ function useApplySearch() {
 
   return function applySearch(searchTerm: string) {
     requestAnimationFrame(() => {
-      setSearchTerm(searchTerm.toLowerCase()).then(() => {
-        scrollTo(PickerMainRef.current, 0);
-      });
+      setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
+        () => {
+          scrollTo(PickerMainRef.current, 0);
+        }
+      );
     });
   };
 }
@@ -128,8 +132,7 @@ export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return unified =>
-    isEmojiFilteredBySearchTerm(unified, filter, searchTerm.toLowerCase());
+  return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
 }
 
 function isEmojiFilteredBySearchTerm(
