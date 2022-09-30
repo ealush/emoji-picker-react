@@ -10,6 +10,7 @@ import {
 } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
+import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 
@@ -17,6 +18,7 @@ export function CategoryNavigation() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const scrollCategoryIntoView = useScrollCategoryIntoView();
   useActiveCategoryScrollDetection(setActiveCategory);
+  const isSearchMode = useIsSearchMode();
 
   const categoriesConfig = useCategoriesConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
@@ -27,6 +29,7 @@ export function CategoryNavigation() {
         const category = categoryFromCategoryConfig(categoryConfig);
         return (
           <button
+            tabIndex={isSearchMode ? -1 : 0}
             type="button"
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
               [ClassNames.active]: category === activeCategory
