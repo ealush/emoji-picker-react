@@ -151,9 +151,13 @@
     box-shadow: none;
     padding: 10px;
     box-sizing: border-box;
-    border: none;
+    border: 1px solid #efefef;
     border-radius: 3px;
     transition: border .1s;
+}
+
+.emoji-picker-react input.emoji-search:focus {
+    border: 1px solid #D6D6D6;
 }
 
 aside.emoji-picker-react {
