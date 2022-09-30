@@ -73,13 +73,8 @@ function usePickerMainKeyboardEvents() {
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
+        disallowMouseMove();
         switch (key) {
-          case KeyboardEvents.ArrowDown:
-          case KeyboardEvents.ArrowUp:
-          case KeyboardEvents.ArrowLeft:
-          case KeyboardEvents.ArrowRight:
-            disallowMouseMove();
-            break;
           // eslint-disable-next-line no-fallthrough
           case KeyboardEvents.Escape:
             event.preventDefault();
