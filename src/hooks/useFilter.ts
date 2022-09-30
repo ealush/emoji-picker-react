@@ -11,6 +11,8 @@ import {
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 
+import { useFocusSearchInput } from './useFocus';
+
 function useSetFilterRef() {
   const filterRef = useFilterRef();
 
@@ -28,6 +30,7 @@ function useSetFilterRef() {
 export function useClearSearch() {
   const applySearch = useApplySearch();
   const SearchInputRef = useSearchInputRef();
+  const focusSearchInput = useFocusSearchInput();
 
   return function clearSearch() {
     if (SearchInputRef.current) {
@@ -35,6 +38,7 @@ export function useClearSearch() {
     }
 
     applySearch('');
+    focusSearchInput();
   };
 }
 

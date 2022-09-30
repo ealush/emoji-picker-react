@@ -9,10 +9,10 @@ import {
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useClearSearch, useFilter } from '../../hooks/useFilter';
 import Relative from '../Layout/Relative';
+import { Button } from '../atoms/Button';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
 import './Search.css';
-import { Button } from '../atoms/Button';
 
 export function Search() {
   const [inc, setInc] = useState(0);
