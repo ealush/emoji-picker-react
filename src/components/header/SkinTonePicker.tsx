@@ -10,6 +10,7 @@ import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
 import { SkinTones } from '../../types/exposedTypes';
 import Relative from '../Layout/Relative';
+import { Button } from '../atoms/Button';
 import { useSkinTonePickerRef } from '../context/ElementRefContext';
 import {
   useActiveSkinToneState,
@@ -39,7 +40,7 @@ export function SkinTonePicker() {
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
           return (
-            <button
+            <Button
               type="button"
               style={{
                 transform: clsx(
@@ -65,7 +66,7 @@ export function SkinTonePicker() {
               aria-label={`Skin tone ${
                 skinTonesNamed[skinToneVariation as SkinTones]
               }`}
-            ></button>
+            ></Button>
           );
         })}
       </div>

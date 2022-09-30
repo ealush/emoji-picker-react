@@ -12,6 +12,7 @@ import Relative from '../Layout/Relative';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
 import './Search.css';
+import { Button } from '../atoms/Button';
 
 export function Search() {
   const [inc, setInc] = useState(0);
@@ -45,7 +46,7 @@ export function Search() {
         ref={SearchInputRef}
       />
       <div className="epr-icn-search" />
-      <button
+      <Button
         className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
         onClick={clearSearch}
         type="button"

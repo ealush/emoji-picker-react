@@ -13,6 +13,7 @@ import {
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { EmojiStyle } from '../../types/exposedTypes';
+import { Button } from '../atoms/Button';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 import './Emoji.css';
 
@@ -46,7 +47,7 @@ export function ClickableEmoji({
   const hasVariations = emojiHasVariations(emoji);
 
   return (
-    <button
+    <Button
       className={clsx(ClassNames.emoji, {
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch,
@@ -57,7 +58,6 @@ export function ClickableEmoji({
       // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
       aria-label={emojiName(emoji)}
       data-full-name={emojiNames(emoji)}
-      type="button"
     >
       <ViewOnlyEmoji
         unified={unified}
@@ -66,7 +66,7 @@ export function ClickableEmoji({
         emojiStyle={emojiStyle}
         lazyLoad={lazyLoad}
       />
-    </button>
+    </Button>
   );
 }
 

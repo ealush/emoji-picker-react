@@ -12,6 +12,7 @@ import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
+import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 
 export function CategoryNavigation() {
@@ -28,9 +29,8 @@ export function CategoryNavigation() {
       {categoriesConfig.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
         return (
-          <button
+          <Button
             tabIndex={isSearchMode ? -1 : 0}
-            type="button"
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
               [ClassNames.active]: category === activeCategory
             })}

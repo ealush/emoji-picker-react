@@ -135,7 +135,7 @@ aside.EmojiPickerReact.epr-main:has(input:placeholder-shown)
   font-family: sans-serif;
 }
 
-.EmojiPickerReact button {
+.EmojiPickerReact button.epr-btn {
   cursor: pointer;
   border: 0;
   background: none;
