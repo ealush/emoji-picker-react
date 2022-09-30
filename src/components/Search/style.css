@@ -7,7 +7,7 @@
   box-shadow: none;
   padding: 10px 10px 10px 25px;
   box-sizing: border-box;
-  border: 1px solid #efefef;
+  border: none;
   border-radius: 8px;
   transition: border 0.1s;
   font-family: HeroNewRegular, sans-serif;
