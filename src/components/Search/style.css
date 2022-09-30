@@ -24,3 +24,12 @@
   height: 16px;
   background-image: url(../CategoriesNav/svg/search_grey.svg);
 }
+
+.search-container__emoji-remove-icon {
+  position: absolute;
+  top: 11px;
+  right: 23px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}

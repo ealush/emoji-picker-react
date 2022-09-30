@@ -22,6 +22,16 @@ const useFilter = () => {
     const prevKey = filter[filter.length - 1];
     let nextFilter;
 
+    if (!value) {
+      document.getElementById('emoji-searchID').focus();
+      value = '';
+    }
+
+    dispatch({
+      type: actionTypes.UPDATE_SEARCH_STRING,
+      value,
+    });
+
     value = value.trim().toLowerCase();
 
     if (prevKey && prevKey.value === value) {
