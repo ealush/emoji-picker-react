@@ -22,6 +22,14 @@ export function buttonFromTarget(
   return emojiElement?.closest(EmojiButtonSelector) ?? null;
 }
 
+export function isEmojiButton(element: NullableElement): boolean {
+  if (!element) {
+    return false;
+  }
+
+  return element.matches(EmojiButtonSelector);
+}
+
 export function emojiFromElement(
   element: NullableElement
 ): [DataEmoji, string] | [] {
@@ -71,15 +79,63 @@ export function emojiTrueOffsetTop(element: NullableElement): number {
   }
 
   const button = buttonFromTarget(element);
-  const categoryWithoutLabel = closestCategoryContent(button);
-  const category = closestCategory(categoryWithoutLabel);
+  const category = closestCategory(button);
 
   // compensate for the label height
-  const labelHeight =
-    (category?.clientHeight ?? 0) - (categoryWithoutLabel?.clientHeight ?? 0);
+  const labelHeight = categoryLabelHeight(category);
 
   return elementOffsetTop(button) + elementOffsetTop(category) + labelHeight;
 }
+
+export function categoryLabelHeight(category: NullableElement): number {
+  if (!category) {
+    return 0;
+  }
+
+  const categoryWithoutLabel = category.querySelector(
+    asSelectors(ClassNames.categoryContent)
+  );
+
+  return (
+    (category?.clientHeight ?? 0) - (categoryWithoutLabel?.clientHeight ?? 0)
+  );
+}
+
+export function isEmojiBehindLabel(emoji: NullableElement): boolean {
+  if (!emoji) {
+    return false;
+  }
+
+  return (
+    emojiDistanceFromScrollTop(emoji) <
+    categoryLabelHeight(closestCategory(emoji))
+  );
+}
+
+export function queryScrollBody(root: NullableElement): NullableElement {
+  return root
+    ? root.matches(asSelectors(ClassNames.scrollBody))
+      ? root
+      : root.querySelector(ClassNames.scrollBody)
+    : null;
+}
+
+export function emojiDistanceFromScrollTop(emoji: NullableElement): number {
+  if (!emoji) {
+    return 0;
+  }
+
+  return emojiTrueOffsetTop(emoji) - (closestScrollBody(emoji)?.scrollTop ?? 0);
+}
+
+export function closestScrollBody(element: NullableElement): NullableElement {
+  if (!element) {
+    return null;
+  }
+
+  return element.closest(asSelectors(ClassNames.scrollBody)) ?? null;
+}
+
 export function emojiTruOffsetLeft(element: NullableElement): number {
   const button = buttonFromTarget(element);
   const category = closestCategory(button);

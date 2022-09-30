@@ -40,6 +40,7 @@ export function basePickerConfig(): PickerConfigInternal {
     categories: baseCategoriesConfig(),
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
+    height: 450,
     lazyLoadEmojis: false,
     onEmojiClick: function defaultOnClickHandler(
       // @ts-ignore
@@ -49,15 +50,14 @@ export function basePickerConfig(): PickerConfigInternal {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       event: MouseEvent
     ) {},
-    height: 450,
-    width: 350,
     previewConfig: {
       ...basePreviewConfig
     },
     searchPlaceHolder: 'Search',
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
-    theme: Theme.LIGHT
+    theme: Theme.LIGHT,
+    width: 350
   };
 }
 

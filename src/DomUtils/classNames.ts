@@ -9,6 +9,7 @@ export enum ClassNames {
   label = 'epr-emoji-category-label',
   categoryContent = 'epr-emoji-category-content',
   emojiHasVariatios = 'epr-emoji-has-variations',
+  scrollBody = 'epr-body',
   external = '__EmojiPicker__'
 }
 

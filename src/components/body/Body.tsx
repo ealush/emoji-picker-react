@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../../hooks/useOnScroll';
@@ -17,7 +18,7 @@ export function Body() {
   useOnMouseMove();
 
   return (
-    <div className="epr-body" ref={BodyRef}>
+    <div className={ClassNames.scrollBody} ref={BodyRef}>
       <EmojiVariationPicker />
       <EmojiList />
     </div>

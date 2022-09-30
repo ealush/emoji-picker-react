@@ -8,6 +8,7 @@ import {
   rowNumber
 } from './elementPositionInRow';
 import { focusElement } from './focusElement';
+import { scrollEmojiAboveLabel } from './scrollTo';
 import {
   allVisibleEmojis,
   closestCategory,
@@ -79,6 +80,7 @@ export function focusVisibleEmojiOneRowUp(
   }
 
   focusElement(prev);
+  scrollEmojiAboveLabel(prev);
 }
 
 export function focusVisibleEmojiOneRowDown(element: NullableElement) {

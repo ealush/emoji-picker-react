@@ -2,17 +2,37 @@ import { useCallback } from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
 
-import { NullableElement } from './selectors';
+import {
+  categoryLabelHeight,
+  closestCategory,
+  closestScrollBody,
+  emojiDistanceFromScrollTop,
+  isEmojiBehindLabel,
+  NullableElement,
+  queryScrollBody
+} from './selectors';
 
 export function scrollTo(root: NullableElement, top: number = 0) {
-  const $eprBody = root ? root.querySelector('.epr-body') : null;
+  const $eprBody = queryScrollBody(root);
 
-  if (!root || !$eprBody) {
+  if (!$eprBody) {
     return;
   }
 
   requestAnimationFrame(() => {
     $eprBody.scrollTop = top + 1;
+  });
+}
+
+export function scrollBy(root: NullableElement, by: number): void {
+  const $eprBody = queryScrollBody(root);
+
+  if (!$eprBody) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    $eprBody.scrollTop = $eprBody.scrollTop + by;
   });
 }
 
@@ -29,4 +49,14 @@ export function useScrollTo() {
     },
     [BodyRef]
   );
+}
+
+export function scrollEmojiAboveLabel(emoji: NullableElement) {
+  if (!isEmojiBehindLabel(emoji)) {
+    return;
+  }
+
+  const scrollBody = closestScrollBody(emoji);
+  const by = emojiDistanceFromScrollTop(emoji);
+  scrollBy(scrollBody, -(categoryLabelHeight(closestCategory(emoji)) - by));
 }
