@@ -41,7 +41,6 @@ export function SkinTonePicker() {
           const active = skinToneVariation === activeSkinTone;
           return (
             <Button
-              type="button"
               style={{
                 transform: clsx(
                   `translateX(-${i * (isOpen ? 28 : 0)}px)`,
