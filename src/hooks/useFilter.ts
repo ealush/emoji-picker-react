@@ -49,9 +49,9 @@ export function useAppendSearch() {
   return function appendSearch(str: string) {
     if (SearchInputRef.current) {
       SearchInputRef.current.value = `${SearchInputRef.current.value}${str}`;
-      applySearch(SearchInputRef.current.value?.toLowerCase());
+      applySearch(getNormalizedSearchTerm(SearchInputRef.current.value));
     } else {
-      applySearch(str?.toLowerCase());
+      applySearch(getNormalizedSearchTerm(str));
     }
   };
 }
@@ -174,4 +174,12 @@ function findLongestMatch(
   }
 
   return null;
+}
+
+export function getNormalizedSearchTerm(str: string): string {
+  if (!str || typeof str !== 'string') {
+    return '';
+  }
+
+  return str.trim().toLowerCase();
 }

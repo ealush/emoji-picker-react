@@ -7,7 +7,11 @@ import {
   useSearchPlaceHolderConfig
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useClearSearch, useFilter } from '../../hooks/useFilter';
+import {
+  getNormalizedSearchTerm,
+  useClearSearch,
+  useFilter
+} from '../../hooks/useFilter';
 import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
 import { useSearchInputRef } from '../context/ElementRefContext';
@@ -59,7 +63,9 @@ export function Search() {
 function CssSearch({ value }: { value: undefined | string }) {
   return value ? (
     <style>{`
-        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${value.toLowerCase()}"]) {
+        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${getNormalizedSearchTerm(
+          value
+        )}"]) {
           display: none;
         }
   `}</style>
