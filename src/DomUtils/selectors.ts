@@ -1,7 +1,7 @@
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   emojiByUnified,
-  unifiedWithoutSkinTone
+  unifiedWithoutSkinTone,
 } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
@@ -13,7 +13,7 @@ export const EmojiButtonSelector = `button${asSelectors(ClassNames.emoji)}`;
 export const VisibleEmojiSelector = [
   EmojiButtonSelector,
   asSelectors(ClassNames.visible),
-  `:not(${asSelectors(ClassNames.hidden)})`
+  `:not(${asSelectors(ClassNames.hidden)})`,
 ].join('');
 
 export function buttonFromTarget(
@@ -116,7 +116,7 @@ export function queryScrollBody(root: NullableElement): NullableElement {
   return root
     ? root.matches(asSelectors(ClassNames.scrollBody))
       ? root
-      : root.querySelector(ClassNames.scrollBody)
+      : root.querySelector(asSelectors(ClassNames.scrollBody))
     : null;
 }
 
