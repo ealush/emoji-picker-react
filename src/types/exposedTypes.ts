@@ -9,7 +9,7 @@ export type EmojiClickData = {
 
 export enum SuggestionMode {
   RECENT = 'recent',
-  FREQUENT = 'frequent'
+  FREQUENT = 'frequent',
 }
 
 export enum EmojiStyle {
@@ -17,13 +17,13 @@ export enum EmojiStyle {
   APPLE = 'apple',
   TWITTER = 'twitter',
   GOOGLE = 'google',
-  FACEBOOK = 'facebook'
+  FACEBOOK = 'facebook',
 }
 
 export enum Theme {
   DARK = 'dark',
   LIGHT = 'light',
-  AUTO = 'auto'
+  AUTO = 'auto',
 }
 
 export enum SkinTones {
@@ -32,7 +32,7 @@ export enum SkinTones {
   MEDIUM_LIGHT = '1f3fc',
   MEDIUM = '1f3fd',
   MEDIUM_DARK = '1f3fe',
-  DARK = '1f3ff'
+  DARK = '1f3ff',
 }
 
 export enum Categories {
@@ -44,5 +44,5 @@ export enum Categories {
   ACTIVITIES = 'activities',
   OBJECTS = 'objects',
   SYMBOLS = 'symbols',
-  FLAGS = 'flags'
+  FLAGS = 'flags',
 }

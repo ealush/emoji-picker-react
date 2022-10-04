@@ -2,7 +2,7 @@ import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import emojis from '../data/emojis';
 import skinToneVariations, {
-  skinTonesMapped
+  skinTonesMapped,
 } from '../data/skinToneVariations';
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
@@ -11,11 +11,16 @@ import { DataEmoji, DataEmojis } from './DataTypes';
 enum EmojiProperties {
   name = 'n',
   unified = 'u',
-  variations = 'v'
+  variations = 'v',
+  added_in = 'a',
 }
 
 export function emojiNames(emoji: DataEmoji): string[] {
   return emoji[EmojiProperties.name] ?? [];
+}
+
+export function addedIn(emoji: DataEmoji): number {
+  return parseFloat(emoji[EmojiProperties.added_in]);
 }
 
 export function emojiName(emoji: DataEmoji): string {
@@ -76,7 +81,7 @@ export function emojiVariationUnified(
   skinTone?: string
 ): string | undefined {
   return skinTone
-    ? emojiVariations(emoji).find(variation => variation.includes(skinTone))
+    ? emojiVariations(emoji).find((variation) => variation.includes(skinTone))
     : emojiUnified(emoji);
 }
 

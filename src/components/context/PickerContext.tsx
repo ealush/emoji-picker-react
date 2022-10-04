@@ -5,17 +5,22 @@ import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
+import { useDisallowedEmojis } from '../../hooks/useDisAllowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
 
 export function PickerContextProvider({ children }: Props) {
+  const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
 
   // Initialize the filter with the inititial dictionary
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
+  const disallowedEmojisRef = React.useRef<Record<string, boolean>>(
+    disallowedEmojis
+  );
 
   const suggestedUpdateState = useDebouncedState(Date.now(), 200);
   const searchTerm = useDebouncedState('', 100);
@@ -41,7 +46,8 @@ export function PickerContextProvider({ children }: Props) {
         isPastInitialLoad,
         searchTerm,
         skinToneFanOpenState,
-        suggestedUpdateState
+        suggestedUpdateState,
+        disallowedEmojisRef,
       }}
     >
       {children}
@@ -63,18 +69,20 @@ const PickerContext = React.createContext<{
   filterRef: React.MutableRefObject<FilterState>;
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
+  disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
 }>({
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
   disallowClickRef: { current: false },
   disallowMouseRef: { current: false },
+  disallowedEmojisRef: { current: {} },
   emojiVariationPickerState: [null, () => {}],
   emojisThatFailedToLoadState: [new Set(), () => {}],
   filterRef: { current: {} },
   isPastInitialLoad: true,
   searchTerm: ['', () => new Promise<string>(() => undefined)],
   skinToneFanOpenState: [false, () => {}],
-  suggestedUpdateState: [Date.now(), () => {}]
+  suggestedUpdateState: [Date.now(), () => {}],
 });
 
 type Props = Readonly<{
@@ -129,6 +137,11 @@ export function useSkinToneFanOpenState() {
   return skinToneFanOpenState;
 }
 
+export function useDisallowedEmojisRef() {
+  const { disallowedEmojisRef } = React.useContext(PickerContext);
+  return disallowedEmojisRef;
+}
+
 export function useUpdateSuggested(): [number, () => void] {
   const { suggestedUpdateState } = React.useContext(PickerContext);
 
@@ -137,7 +150,7 @@ export function useUpdateSuggested(): [number, () => void] {
     suggestedUpdated,
     function updateSuggested() {
       setsuggestedUpdate(Date.now());
-    }
+    },
   ];
 }
 

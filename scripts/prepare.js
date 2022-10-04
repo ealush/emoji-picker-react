@@ -1,12 +1,13 @@
+const pretty = require('emoji-datasource/emoji_pretty');
 const { writeJSONSync } = require('fs-extra');
 const _ = require('lodash');
-const pretty = require('emoji-datasource/emoji_pretty');
 
 const keys = {
   EMOJI_PROPERTY_NAME: 'n',
   EMOJI_PROPERTY_UNIFIED: 'u',
   EMOJI_PROPERTY_SKIN_VARIATIONS: 'v',
   EMOJI_PROPERTY_GROUP: 'g',
+  EMOJI_PROPERTY_ADDED_IN: 'a',
   GROUP_NAME_PEOPLE: 'smileys_people',
   GROUP_NAME_NATURE: 'animals_nature',
   GROUP_NAME_FOOD: 'food_drink',
@@ -15,7 +16,7 @@ const keys = {
   GROUP_NAME_OBJECTS: 'objects',
   GROUP_NAME_SYMBOLS: 'symbols',
   GROUP_NAME_FLAGS: 'flags',
-  GROUP_NAME_SUGGESTED: 'suggested'
+  GROUP_NAME_SUGGESTED: 'suggested',
 };
 
 const groupConversion = {
@@ -30,7 +31,7 @@ const groupConversion = {
   symbols: keys.GROUP_NAME_SYMBOLS,
   flags: keys.GROUP_NAME_FLAGS,
   component: null,
-  skin_tones: null
+  skin_tones: null,
 };
 
 const emojis = _.sortBy(
@@ -38,16 +39,17 @@ const emojis = _.sortBy(
   'sort_order'
 );
 
-const cleanEmoji = emoji => {
+const cleanEmoji = (emoji) => {
   emoji.short_names = emoji.short_names || [];
   emoji[keys.EMOJI_PROPERTY_NAME] = [
     ...new Set(
       [emoji.name, ...emoji.short_names, emoji.short_name]
         .filter(Boolean)
-        .map(n => n.replace(/_/g, ' '))
-    )
+        .map((n) => n.replace(/_/g, ' '))
+    ),
   ].sort((a, b) => a.length - b.length);
   emoji[keys.EMOJI_PROPERTY_UNIFIED] = emoji.unified;
+  emoji[keys.EMOJI_PROPERTY_ADDED_IN] = emoji.added_in;
 
   if (emoji.skin_variations) {
     emoji[keys.EMOJI_PROPERTY_SKIN_VARIATIONS] = Object.values(
@@ -58,7 +60,9 @@ const cleanEmoji = emoji => {
   return _.pick(emoji, [
     keys.EMOJI_PROPERTY_NAME,
     keys.EMOJI_PROPERTY_UNIFIED,
-    keys.EMOJI_PROPERTY_SKIN_VARIATIONS
+    keys.EMOJI_PROPERTY_SKIN_VARIATIONS,
+    keys.EMOJI_PROPERTY_SKIN_VARIATIONS,
+    keys.EMOJI_PROPERTY_ADDED_IN,
   ]);
 };
 
@@ -69,7 +73,7 @@ const { groupedEmojis } = emojis.reduce(
 
     if (!groupConversion[category]) {
       return {
-        groupedEmojis
+        groupedEmojis,
       };
     }
 
