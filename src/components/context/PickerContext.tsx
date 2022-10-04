@@ -5,7 +5,7 @@ import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
-import { useDisallowedEmojis } from '../../hooks/useDisAllowedEmojis';
+import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';

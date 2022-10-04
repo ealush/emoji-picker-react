@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useRef, useMemo } from 'react';
 
 import { useAddedInConfig } from '../config/useConfig';
