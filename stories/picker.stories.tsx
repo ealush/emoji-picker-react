@@ -83,9 +83,26 @@ export const RecentlyUsed = (args: Props) => (
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
-export const AddedIn = (args: Props) => (
+export const AddedIn_0_6 = (args: Props) => (
   <Template {...args} addedIn="0.6" emojiStyle={EmojiStyle.NATIVE} />
 );
+
+export const AddedIn_1_0 = (args: Props) => (
+  <Template {...args} addedIn="1.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const AddedIn_2_0 = (args: Props) => (
+  <Template {...args} addedIn="2.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const AddedIn_3_0 = (args: Props) => (
+  <Template {...args} addedIn="3.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const AddedIn_4_0 = (args: Props) => (
+  <Template {...args} addedIn="4.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const AddedIn_5_0 = (args: Props) => (
+  <Template {...args} addedIn="5.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+
 export const CustomPreviewConfig = (args: Props) => (
   <Template
     {...args}
