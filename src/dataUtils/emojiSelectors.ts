@@ -1,5 +1,6 @@
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
+import ConfigSingleton from '../config/configSingleton';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
@@ -60,7 +61,8 @@ export function emojiUrlByUnified(
   emojiStyle: EmojiStyle,
   unified: string
 ): string {
-  return `${cdnUrl(emojiStyle)}${unified}.png`;
+  const emojiFormat = ConfigSingleton.emojiFormat();
+  return `${cdnUrl(emojiStyle)}${unified}.${emojiFormat}`;
 }
 
 export function emojiVariations(emoji: DataEmoji): string[] {
