@@ -1,4 +1,4 @@
-# Emoji Picker React (v4) | [Live Demo](https://codesandbox.io/s/emoji-picker-react-4-z2gkzp)
+\*\*\*\*# Emoji Picker React (v4) | [Live Demo](https://codesandbox.io/s/emoji-picker-react-4-z2gkzp)
 
 ![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
@@ -56,6 +56,7 @@ The following props are accepted by them picker:
 | suggestedEmojisMode | string   | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                  |
 | skinTonesDisabled   | boolean  | `false`    | Controls whether the skin tones are disabled or not.                                                              |
 | `width`             | number   | `350`      | Controls the width of the picker.                                                                                 |
+| emojiVersion        | `string` | -          | Allows displaying emojis up to a certain version for compatibility.                                               |
 | `height`            | number   | `450`      | Controls the height of the picker.                                                                                |
 
 ## Full details
@@ -139,12 +140,12 @@ import { SkinTones } from 'emoji-picker-react';
   [
     {
       category: 'suggested',
-      name: 'Recently Used'
+      name: 'Recently Used',
     },
     {
       category: 'smileys_people',
-      name: 'Faces...'
-    }
+      name: 'Faces...',
+    },
   ];
   ```
 
@@ -154,6 +155,14 @@ import { SkinTones } from 'emoji-picker-react';
   ```ts
   import { SuggestionMode } from 'emoji-picker-react';
   ```
+
+- `emojiVersion`: `string` - Allows displaying emojis up to a certain version for compatibility. The passed version will be parsed as a float and each emoji will be tested against it. Common values are:
+  - `"0.6"`
+  - `"1.0"`
+  - `"2.0"`
+  - `"3.0"`
+  - `"4.0"`
+  - `"5.0"`
 
 # Customization
 
