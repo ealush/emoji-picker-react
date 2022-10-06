@@ -11,6 +11,7 @@ import {
   baseCategoriesConfig,
   mergeCategoriesConfig
 } from './categoryConfig';
+import ConfigSingleton from './configSingleton';
 
 export function mergeConfig(
   userConfig: PickerConfig = {}
@@ -27,6 +28,9 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  ConfigSingleton.setCDNHost(config.cdnHost);
+  ConfigSingleton.setEmojiFormat(config.emojiFormat);
+
   return {
     ...config,
     categories,
@@ -38,7 +42,9 @@ export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
     categories: baseCategoriesConfig(),
+    cdnHost:'https://cdn.jsdelivr.net',
     defaultSkinTone: SkinTones.NEUTRAL,
+    emojiFormat:'png',
     emojiStyle: EmojiStyle.APPLE,
     height: 450,
     lazyLoadEmojis: false,
@@ -75,6 +81,8 @@ export type PickerConfigInternal = {
   previewConfig: PreviewConfig;
   height: number;
   width: number;
+  cdnHost:string;
+  emojiFormat:string;
 };
 
 export type PreviewConfig = {
