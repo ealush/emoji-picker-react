@@ -10,9 +10,11 @@ export enum ClassNames {
   categoryContent = 'epr-emoji-category-content',
   emojiHasVariatios = 'epr-emoji-has-variations',
   scrollBody = 'epr-body',
-  external = '__EmojiPicker__'
+  emojiList = 'epr-emoji-list',
+  external = '__EmojiPicker__',
+  emojiPicker = 'EmojiPickerReact',
 }
 
 export function asSelectors(...classNames: ClassNames[]): string {
-  return classNames.map(c => `.${c}`).join('');
+  return classNames.map((c) => `.${c}`).join('');
 }

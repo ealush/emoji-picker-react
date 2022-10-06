@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
 import {
   Categories,
   CategoryConfig,
@@ -28,7 +29,7 @@ export function EmojiList() {
   const categories = useCategoriesConfig();
 
   return (
-    <ul className="epr-emoji-list">
+    <ul className={ClassNames.emojiList}>
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
