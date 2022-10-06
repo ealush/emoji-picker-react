@@ -6,7 +6,7 @@ import EmojiPicker, {
   EmojiStyle,
   Props,
   SkinTones,
-  Theme
+  Theme,
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 import { SuggestionMode } from '../src/types/exposedTypes';
@@ -17,13 +17,13 @@ const meta: Meta = {
   argTypes: {
     children: {
       control: {
-        type: 'text'
-      }
-    }
+        type: 'text',
+      },
+    },
   },
   parameters: {
-    controls: { expanded: true }
-  }
+    controls: { expanded: true },
+  },
 };
 
 export default meta;
@@ -83,12 +83,32 @@ export const RecentlyUsed = (args: Props) => (
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
+export const EmojiVersion_0_6 = (args: Props) => (
+  <Template {...args} emojiVersion="0.6" emojiStyle={EmojiStyle.NATIVE} />
+);
+
+export const EmojiVersion_1_0 = (args: Props) => (
+  <Template {...args} emojiVersion="1.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const EmojiVersion_2_0 = (args: Props) => (
+  <Template {...args} emojiVersion="2.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const EmojiVersion_3_0 = (args: Props) => (
+  <Template {...args} emojiVersion="3.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const EmojiVersion_4_0 = (args: Props) => (
+  <Template {...args} emojiVersion="4.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+export const EmojiVersion_5_0 = (args: Props) => (
+  <Template {...args} emojiVersion="5.0" emojiStyle={EmojiStyle.NATIVE} />
+);
+
 export const CustomPreviewConfig = (args: Props) => (
   <Template
     {...args}
     previewConfig={{
       defaultEmoji: '1fae5',
-      defaultCaption: 'What have we here?'
+      defaultCaption: 'What have we here?',
     }}
   />
 );
@@ -98,20 +118,20 @@ export const CustomCategoryConfig = (args: Props) => (
     categories={[
       {
         name: 'Fun and Games',
-        category: Categories.ACTIVITIES
+        category: Categories.ACTIVITIES,
       },
       {
         name: 'Smileys & Emotion',
-        category: Categories.SMILEYS_PEOPLE
+        category: Categories.SMILEYS_PEOPLE,
       },
       {
         name: 'Flags',
-        category: Categories.FLAGS
+        category: Categories.FLAGS,
       },
       {
         name: 'Yum Yum',
-        category: Categories.FOOD_DRINK
-      }
+        category: Categories.FOOD_DRINK,
+      },
     ]}
   />
 );
@@ -132,7 +152,7 @@ function TemplateDark(args) {
         padding: '15px',
         backgroundColor: '#292D3E',
         height: '100vh',
-        width: '100vw'
+        width: '100vw',
       }}
     >
       <button onClick={() => setShown(!shown)}>Toggle</button>
@@ -153,7 +173,7 @@ function Template(args) {
       <div
         style={{
           display: 'inline-block',
-          padding: '15px'
+          padding: '15px',
         }}
       >
         <button onClick={() => setShown(!shown)}>Toggle</button>

@@ -5,7 +5,7 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme
+  Theme,
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
@@ -77,4 +77,9 @@ export function useLazyLoadEmojisConfig(): boolean {
 export function usePickerSizeConfig(): { height: number; width: number } {
   const { height, width } = usePickerConfig();
   return { height, width };
+}
+
+export function useEmojiVersionConfig(): string | null {
+  const { emojiVersion } = usePickerConfig();
+  return emojiVersion;
 }

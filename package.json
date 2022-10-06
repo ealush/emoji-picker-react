@@ -1,5 +1,5 @@
 {
-  "version": "4.0.8",
+  "version": "4.1.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -92,12 +92,12 @@
     "tiny-invariant": "^1.2.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "clsx": "^1.2.1",
+    "typescript": "^4.7.4",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.8",
     "eslint-plugin-react-hooks": "^4.6.0"
+  },
+  "dependencies": {
+    "clsx": "^1.2.1"
   }
 }
