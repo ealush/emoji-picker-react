@@ -79,7 +79,7 @@ export function usePickerSizeConfig(): { height: number; width: number } {
   return { height, width };
 }
 
-export function useAddedInConfig(): string | null {
-  const { addedIn } = usePickerConfig();
-  return addedIn;
+export function useEmojiVersionConfig(): string | null {
+  const { emojiVersion } = usePickerConfig();
+  return emojiVersion;
 }

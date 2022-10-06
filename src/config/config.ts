@@ -36,11 +36,11 @@ export function mergeConfig(
 
 export function basePickerConfig(): PickerConfigInternal {
   return {
-    addedIn: null,
     autoFocusSearch: true,
     categories: baseCategoriesConfig(),
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
+    emojiVersion: null,
     height: 450,
     lazyLoadEmojis: false,
     onEmojiClick: function defaultOnClickHandler(
@@ -63,7 +63,7 @@ export function basePickerConfig(): PickerConfigInternal {
 }
 
 export type PickerConfigInternal = {
-  addedIn: string | null;
+  emojiVersion: string | null;
   searchPlaceHolder: string;
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
