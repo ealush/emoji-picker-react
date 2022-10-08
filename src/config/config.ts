@@ -3,13 +3,13 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme
+  Theme,
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
   baseCategoriesConfig,
-  mergeCategoriesConfig
+  mergeCategoriesConfig,
 } from './categoryConfig';
 import ConfigSingleton from './configSingleton';
 
@@ -25,7 +25,7 @@ export function mergeConfig(
   const config = Object.assign(base, userConfig);
 
   const categories = mergeCategoriesConfig(userConfig.categories, {
-    suggestionMode: config.suggestedEmojisMode
+    suggestionMode: config.suggestedEmojisMode,
   });
 
   ConfigSingleton.setCDNHost(config.cdnHost);
@@ -34,7 +34,7 @@ export function mergeConfig(
   return {
     ...config,
     categories,
-    previewConfig
+    previewConfig,
   };
 }
 
@@ -46,6 +46,7 @@ export function basePickerConfig(): PickerConfigInternal {
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiFormat:'png',
     emojiStyle: EmojiStyle.APPLE,
+    emojiVersion: null,
     height: 450,
     lazyLoadEmojis: false,
     onEmojiClick: function defaultOnClickHandler(
@@ -57,17 +58,18 @@ export function basePickerConfig(): PickerConfigInternal {
       event: MouseEvent
     ) {},
     previewConfig: {
-      ...basePreviewConfig
+      ...basePreviewConfig,
     },
     searchPlaceHolder: 'Search',
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
-    width: 350
+    width: 350,
   };
 }
 
 export type PickerConfigInternal = {
+  emojiVersion: string | null;
   searchPlaceHolder: string;
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
@@ -94,7 +96,7 @@ export type PreviewConfig = {
 const basePreviewConfig: PreviewConfig = {
   defaultEmoji: '1f60a',
   defaultCaption: "What's your mood?",
-  showPreview: true
+  showPreview: true,
 };
 
 type ConfigExternal = {

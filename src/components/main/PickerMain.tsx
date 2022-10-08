@@ -38,14 +38,14 @@ function PickerRootElement({ children }: RootProps) {
 
   const style = {
     height: `${height}px`,
-    width: `${width}px`
+    width: `${width}px`,
   };
 
   return (
     <aside
-      className={clsx('EmojiPickerReact', 'epr-main', {
+      className={clsx(ClassNames.emojiPicker, 'epr-main', {
         [ClassNames.searchActive]: searchModeActive,
-        'epr-dark-theme': theme === Theme.DARK
+        'epr-dark-theme': theme === Theme.DARK,
       })}
       ref={PickerMainRef}
       style={style}

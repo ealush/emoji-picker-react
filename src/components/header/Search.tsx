@@ -2,15 +2,16 @@ import clsx from 'clsx';
 import * as React from 'react';
 import { useState } from 'react';
 
+import { asSelectors, ClassNames } from '../../DomUtils/classNames';
 import {
   useAutoFocusSearchConfig,
-  useSearchPlaceHolderConfig
+  useSearchPlaceHolderConfig,
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import {
   getNormalizedSearchTerm,
   useClearSearch,
-  useFilter
+  useFilter,
 } from '../../hooks/useFilter';
 import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
@@ -41,7 +42,7 @@ export function Search() {
         className="epr-search"
         type="text"
         placeholder={placeholder}
-        onChange={event => {
+        onChange={(event) => {
           setInc(inc + 1);
           setTimeout(() => {
             onChange(event?.target?.value ?? value);
@@ -60,14 +61,32 @@ export function Search() {
   );
 }
 
+const CSS_SEARCH_SELECTOR = `${asSelectors(
+  ClassNames.emojiPicker
+)} ${asSelectors(ClassNames.emojiList)}`;
+
 function CssSearch({ value }: { value: undefined | string }) {
-  return value ? (
+  if (!value) {
+    return null;
+  }
+
+  const searchQuery = `button[data-full-name*="${getNormalizedSearchTerm(
+    value
+  )}"]`;
+
+  return (
     <style>{`
-        .EmojiPickerReact button.epr-emoji:not([data-full-name*="${getNormalizedSearchTerm(
-          value
-        )}"]) {
-          display: none;
-        }
+        ${CSS_SEARCH_SELECTOR} ${asSelectors(
+      ClassNames.category
+    )}:not(:has(${searchQuery})) {
+        display: none;
+      }
+
+        ${CSS_SEARCH_SELECTOR} button${asSelectors(
+      ClassNames.emoji
+    )}:not(${searchQuery}) {
+        display: none;
+      }
   `}</style>
-  ) : null;
+  );
 }

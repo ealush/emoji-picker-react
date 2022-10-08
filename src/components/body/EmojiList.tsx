@@ -1,20 +1,22 @@
 import * as React from 'react';
 
+import { ClassNames } from '../../DomUtils/classNames';
 import {
   Categories,
   CategoryConfig,
-  categoryFromCategoryConfig
+  categoryFromCategoryConfig,
 } from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useEmojiStyleConfig,
-  useLazyLoadEmojisConfig
+  useLazyLoadEmojisConfig,
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useActiveSkinToneState,
-  useIsPastInitialLoad
+  useDisallowedEmojisRef,
+  useIsPastInitialLoad,
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
@@ -27,7 +29,7 @@ export function EmojiList() {
   const categories = useCategoriesConfig();
 
   return (
-    <ul className="epr-emoji-list">
+    <ul className={ClassNames.emojiList}>
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
@@ -51,7 +53,7 @@ export function EmojiList() {
 function RenderCategory({
   index,
   category,
-  categoryConfig
+  categoryConfig,
 }: {
   index: number;
   category: Categories;
@@ -62,6 +64,7 @@ function RenderCategory({
   const emojiStyle = useEmojiStyleConfig();
   const isPastInitialLoad = useIsPastInitialLoad();
   const [activeSkinTone] = useActiveSkinToneState();
+  const disallowedEmojisRef = useDisallowedEmojisRef();
 
   // Small trick to defer the rendering of all emoji categories until the first category is visible
   // This way the user gets to actually see something and not wait for the whole picker to render.
@@ -70,12 +73,18 @@ function RenderCategory({
 
   let hiddenCounter = 0;
 
-  const emojis = emojisToPush.map(emoji => {
+  const emojis = emojisToPush.map((emoji) => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
 
-    if (hidden) {
+    const isDisallowed = !!disallowedEmojisRef.current[unified];
+
+    if (hidden || isDisallowed) {
       hiddenCounter++;
+    }
+
+    if (isDisallowed) {
+      return null;
     }
 
     return (
