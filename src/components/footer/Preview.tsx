@@ -1,12 +1,16 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { useEmojiStyleConfig, usePreviewConfig } from '../../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
+  usePreviewConfig,
+} from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
   emojiName,
-  emojiUnified
+  emojiUnified,
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
@@ -19,6 +23,7 @@ export function Preview() {
   const [previewEmoji, setPreviewEmoji] = useState<PreviewEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
+  const getEmojiUrl = useGetEmojiUrlConfig();
 
   useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
@@ -53,6 +58,7 @@ export function Preview() {
               emoji={asEmoji(emoji)}
               emojiStyle={emojiStyle}
               size={45}
+              getEmojiUrl={getEmojiUrl}
             />
           ) : defaultEmoji ? (
             <ViewOnlyEmoji
@@ -60,6 +66,7 @@ export function Preview() {
               emoji={defaultEmoji}
               emojiStyle={emojiStyle}
               size={45}
+              getEmojiUrl={getEmojiUrl}
             />
           ) : null}
         </div>

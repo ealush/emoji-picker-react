@@ -1,6 +1,5 @@
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
-import ConfigSingleton from '../config/configSingleton';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped,
@@ -39,14 +38,6 @@ export function unifiedWithoutSkinTone(unified: string): string {
   return unified;
 }
 
-export function emojiUrl(
-  emojiStyle: EmojiStyle,
-  emoji: DataEmoji,
-  skinTone?: string
-): string {
-  return emojiUrlByUnified(emojiStyle, emojiUnified(emoji, skinTone));
-}
-
 export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   const unified = emoji[EmojiProperties.unified];
 
@@ -62,12 +53,12 @@ export function emojisByCategory(category: Categories): DataEmojis {
   return emojis?.[category] ?? [];
 }
 
+// WARNING: DO NOT USE DIRECTLY
 export function emojiUrlByUnified(
-  emojiStyle: EmojiStyle,
-  unified: string
+  unified: string,
+  emojiStyle: EmojiStyle
 ): string {
-  const emojiFormat = ConfigSingleton.emojiFormat();
-  return `${cdnUrl(emojiStyle)}${unified}.${emojiFormat}`;
+  return `${cdnUrl(emojiStyle)}${unified}.png`;
 }
 
 export function emojiVariations(emoji: DataEmoji): string[] {

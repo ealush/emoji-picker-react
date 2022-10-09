@@ -83,3 +83,11 @@ export function useEmojiVersionConfig(): string | null {
   const { emojiVersion } = usePickerConfig();
   return emojiVersion;
 }
+
+export function useGetEmojiUrlConfig(): (
+  unified: string,
+  style: EmojiStyle
+) => string {
+  const { getEmojiUrl } = usePickerConfig();
+  return getEmojiUrl;
+}

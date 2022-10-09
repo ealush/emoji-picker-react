@@ -3,7 +3,8 @@ import * as React from 'react';
 import { CategoryConfig } from '../../config/categoryConfig';
 import {
   useEmojiStyleConfig,
-  useSuggestedEmojisModeConfig
+  useGetEmojiUrlConfig,
+  useSuggestedEmojisModeConfig,
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getsuggested } from '../../dataUtils/suggested';
@@ -19,6 +20,7 @@ type Props = Readonly<{
 export function Suggested({ categoryConfig }: Props) {
   const [suggestedUpdated] = useUpdateSuggested();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
+  const getEmojiUrl = useGetEmojiUrlConfig();
   const suggested = React.useMemo(
     () => getsuggested(suggestedEmojisModeConfig) ?? [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -32,7 +34,7 @@ export function Suggested({ categoryConfig }: Props) {
       hiddenOnSearch
       hidden={suggested.length === 0}
     >
-      {suggested.map(suggestedItem => {
+      {suggested.map((suggestedItem) => {
         const emoji = emojiByUnified(suggestedItem.original);
 
         if (!emoji) {
@@ -46,6 +48,7 @@ export function Suggested({ categoryConfig }: Props) {
             emojiStyle={emojiStyle}
             emoji={emoji}
             key={suggestedItem.unified}
+            getEmojiUrl={getEmojiUrl}
           />
         );
       })}

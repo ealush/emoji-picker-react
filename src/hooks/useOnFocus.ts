@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { buttonFromTarget, emojiFromElement } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { useEmojiStyleConfig } from '../config/useConfig';
+import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
 import { emojiHasVariations } from '../dataUtils/emojiSelectors';
 import { EmojiStyle } from '../types/exposedTypes';
 
@@ -11,6 +11,7 @@ import { preloadEmoji } from './preloadEmoji';
 export function useOnFocus() {
   const BodyRef = useBodyRef();
   const emojiStyle = useEmojiStyleConfig();
+  const getEmojiUrl = useGetEmojiUrlConfig();
 
   useEffect(() => {
     if (emojiStyle === EmojiStyle.NATIVE) {
@@ -39,8 +40,8 @@ export function useOnFocus() {
       }
 
       if (emojiHasVariations(emoji)) {
-        preloadEmoji(emoji, emojiStyle);
+        preloadEmoji(getEmojiUrl, emoji, emojiStyle);
       }
     }
-  }, [BodyRef, emojiStyle]);
+  }, [BodyRef, emojiStyle, getEmojiUrl]);
 }
