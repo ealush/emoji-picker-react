@@ -9,6 +9,7 @@ import {
 import {
   useCategoriesConfig,
   useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
   useLazyLoadEmojisConfig,
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
@@ -65,6 +66,7 @@ function RenderCategory({
   const isPastInitialLoad = useIsPastInitialLoad();
   const [activeSkinTone] = useActiveSkinToneState();
   const disallowedEmojisRef = useDisallowedEmojisRef();
+  const getEmojiUrl = useGetEmojiUrlConfig();
 
   // Small trick to defer the rendering of all emoji categories until the first category is visible
   // This way the user gets to actually see something and not wait for the whole picker to render.
@@ -96,6 +98,7 @@ function RenderCategory({
         hiddenOnSearch={filteredOut}
         emojiStyle={emojiStyle}
         lazyLoad={lazyLoadEmojis}
+        getEmojiUrl={getEmojiUrl}
       />
     );
   });

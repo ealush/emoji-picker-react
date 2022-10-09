@@ -1,12 +1,10 @@
+import { GetEmojiUrl } from '../components/emoji/Emoji';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import {
-  emojiUnified,
-  emojiUrlByUnified,
-  emojiVariations
-} from '../dataUtils/emojiSelectors';
+import { emojiUnified, emojiVariations } from '../dataUtils/emojiSelectors';
 import { EmojiStyle } from '../types/exposedTypes';
 
 export function preloadEmoji(
+  getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
   emojiStyle: EmojiStyle
 ): void {
@@ -24,8 +22,8 @@ export function preloadEmoji(
     return;
   }
 
-  emojiVariations(emoji).forEach(variation => {
-    const emojiUrl = emojiUrlByUnified(emojiStyle, variation);
+  emojiVariations(emoji).forEach((variation) => {
+    const emojiUrl = getEmojiUrl(variation, emojiStyle);
     preloadImage(emojiUrl);
   });
 

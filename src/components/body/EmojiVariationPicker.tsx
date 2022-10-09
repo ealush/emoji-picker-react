@@ -7,20 +7,23 @@ import {
   buttonFromTarget,
   elementHeight,
   emojiTrueOffsetTop,
-  emojiTruOffsetLeft
+  emojiTruOffsetLeft,
 } from '../../DomUtils/selectors';
-import { useEmojiStyleConfig } from '../../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
+} from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiHasVariations,
   emojiUnified,
-  emojiVariations
+  emojiVariations,
 } from '../../dataUtils/emojiSelectors';
 import {
   useAnchoredEmojiRef,
   useBodyRef,
   useSetAnchoredEmojiRef,
-  useVariationPickerRef
+  useVariationPickerRef,
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -28,7 +31,7 @@ import './EmojiVariationPicker.css';
 
 enum Direction {
   Up,
-  Down
+  Down,
 }
 
 export function EmojiVariationPicker() {
@@ -41,6 +44,7 @@ export function EmojiVariationPicker() {
   );
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const getPointerStyle = usePointerStyle(VariationPickerRef);
+  const getEmojiUrl = useGetEmojiUrlConfig();
 
   const button = buttonFromTarget(AnchoredEmojiRef.current);
 
@@ -67,7 +71,7 @@ export function EmojiVariationPicker() {
       ref={VariationPickerRef}
       className={clsx('epr-emoji-variation-picker', {
         visible,
-        'pointing-up': getMenuDirection() === Direction.Down
+        'pointing-up': getMenuDirection() === Direction.Down,
       })}
       style={{ top }}
     >
@@ -75,13 +79,14 @@ export function EmojiVariationPicker() {
         ? [emojiUnified(safeEmoji)]
             .concat(emojiVariations(safeEmoji))
             .slice(0, 6)
-            .map(unified => (
+            .map((unified) => (
               <ClickableEmoji
                 key={unified}
                 emoji={safeEmoji}
                 unified={unified}
                 emojiStyle={emojiStyle}
                 showVariations={false}
+                getEmojiUrl={getEmojiUrl}
               />
             ))
         : null}
@@ -124,7 +129,7 @@ function useVariationPickerTop(
 
   return {
     getMenuDirection,
-    getTop
+    getTop,
   };
 
   function getMenuDirection() {

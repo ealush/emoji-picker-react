@@ -1,3 +1,5 @@
+import { GetEmojiUrl } from '../components/emoji/Emoji';
+import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
   EmojiStyle,
@@ -41,6 +43,7 @@ export function basePickerConfig(): PickerConfigInternal {
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
     emojiVersion: null,
+    getEmojiUrl: emojiUrlByUnified,
     height: 450,
     lazyLoadEmojis: false,
     onEmojiClick: function defaultOnClickHandler(
@@ -77,6 +80,7 @@ export type PickerConfigInternal = {
   previewConfig: PreviewConfig;
   height: number;
   width: number;
+  getEmojiUrl: GetEmojiUrl;
 };
 
 export type PreviewConfig = {
