@@ -43,22 +43,22 @@ function App() {
 
 The following props are accepted by them picker:
 
-| Prop                | Type       | Default    | Description                                                                                                       |
-| ------------------- | ---------- | ---------- | ----------------------------------------------------------------------------------------------------------------- |
-| onEmojiClick        | function   |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter. |
-| autoFocusSearch     | boolean    | `true`     | Controls the auto focus of the search input.                                                                      |
-| Theme               | string     | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                 |
-| emojiStyle          | string     | `apple`    | Controls the emoji style. Possible values are `google`, `apple`, `facebook`, `twitter` and `native`.              |
-| defaultSkinTone     | string     | `neutral`  | Controls the default skin tone.                                                                                   |
-| lazyLoadEmojis      | boolean    | `false`    | Controls whether the emojis are loaded lazily or not.                                                             |
-| previewConfig       | object     | `{}`       | Controls the preview of the emoji. See below for more information.                                                |
-| searchPlaceholder   | string     | `Search`   | Controls the placeholder of the search input.                                                                     |
-| suggestedEmojisMode | string     | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                  |
-| skinTonesDisabled   | boolean    | `false`    | Controls whether the skin tones are disabled or not.                                                              |
-| `width`             | number     | `350`      | Controls the width of the picker.                                                                                 |
-| emojiVersion        | `string`   | -          | Allows displaying emojis up to a certain version for compatibility.                                               |
-| `height`            | number     | `450`      | Controls the height of the picker.                                                                                |
-| getEmojiUrl         | `Function` | -          | Allows to customize the emoji url and provide your own image host.                                                |
+| Prop                | Type              | Default    | Description                                                                                                                                |
+| ------------------- | ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| onEmojiClick        | function          |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter.                          |
+| autoFocusSearch     | boolean           | `true`     | Controls the auto focus of the search input.                                                                                               |
+| Theme               | string            | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                                          |
+| emojiStyle          | string            | `apple`    | Controls the emoji style. Possible values are `google`, `apple`, `facebook`, `twitter` and `native`.                                       |
+| defaultSkinTone     | string            | `neutral`  | Controls the default skin tone.                                                                                                            |
+| lazyLoadEmojis      | boolean           | `false`    | Controls whether the emojis are loaded lazily or not.                                                                                      |
+| previewConfig       | object            | `{}`       | Controls the preview of the emoji. See below for more information.                                                                         |
+| searchPlaceholder   | string            | `Search`   | Controls the placeholder of the search input.                                                                                              |
+| suggestedEmojisMode | string            | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                                           |
+| skinTonesDisabled   | boolean           | `false`    | Controls whether the skin tones are disabled or not.                                                                                       |
+| `width`             | `number`/`string` | `350`      | Controls the width of the picker. You can provide a number that will be treated as pixel size, or your any accepted css width as string.   |
+| emojiVersion        | `string`          | -          | Allows displaying emojis up to a certain version for compatibility.                                                                        |
+| `height`            | `number`/`string` | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string. |
+| getEmojiUrl         | `Function`        | -          | Allows to customize the emoji url and provide your own image host.                                                                         |
 
 ## Full details
 
@@ -141,12 +141,12 @@ import { SkinTones } from 'emoji-picker-react';
   [
     {
       category: 'suggested',
-      name: 'Recently Used',
+      name: 'Recently Used'
     },
     {
       category: 'smileys_people',
-      name: 'Faces...',
-    },
+      name: 'Faces...'
+    }
   ];
   ```
 
@@ -171,10 +171,14 @@ import { SkinTones } from 'emoji-picker-react';
 
 ## Custom Picker Width and Height
 
-To customize the dimensions of the picker, use the `height` and `width` props:
+To customize the dimensions of the picker, use the `height` and `width` props. You can pass in a number that will be treated as pixel size, or your any accepted css width/height as string.
 
 ```jsx
 <EmojiPicker height={500} width={400} />
+```
+
+```jsx
+<EmojiPicker height="100%" width="15em" />
 ```
 
 ## CSS Variables

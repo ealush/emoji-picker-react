@@ -37,15 +37,15 @@ function PickerRootElement({ children }: RootProps) {
   useOnFocus();
 
   const style = {
-    height: `${height}px`,
-    width: `${width}px`,
+    height,
+    width
   };
 
   return (
     <aside
       className={clsx(ClassNames.emojiPicker, 'epr-main', {
         [ClassNames.searchActive]: searchModeActive,
-        'epr-dark-theme': theme === Theme.DARK,
+        'epr-dark-theme': theme === Theme.DARK
       })}
       ref={PickerMainRef}
       style={style}

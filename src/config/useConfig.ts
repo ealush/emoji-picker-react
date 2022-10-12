@@ -5,11 +5,11 @@ import {
   EmojiStyle,
   SkinTones,
   SuggestionMode,
-  Theme,
+  Theme
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
-import { PreviewConfig } from './config';
+import { PickerDimensions, PreviewConfig } from './config';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();
@@ -74,9 +74,12 @@ export function useLazyLoadEmojisConfig(): boolean {
   return lazyLoadEmojis;
 }
 
-export function usePickerSizeConfig(): { height: number; width: number } {
+export function usePickerSizeConfig(): {
+  height: PickerDimensions;
+  width: PickerDimensions;
+} {
   const { height, width } = usePickerConfig();
-  return { height, width };
+  return { height: getDimension(height), width: getDimension(width) };
 }
 
 export function useEmojiVersionConfig(): string | null {
@@ -90,4 +93,10 @@ export function useGetEmojiUrlConfig(): (
 ) => string {
   const { getEmojiUrl } = usePickerConfig();
   return getEmojiUrl;
+}
+
+function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
+  return typeof dimensionConfig === 'number'
+    ? `${dimensionConfig}px`
+    : dimensionConfig;
 }
