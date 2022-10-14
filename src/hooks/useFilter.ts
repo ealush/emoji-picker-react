@@ -1,15 +1,16 @@
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
-  useSearchInputRef,
+  useSearchInputRef
 } from '../components/context/ElementRefContext';
 import {
   FilterState,
   useFilterRef,
-  useSearchTermState,
+  useSearchTermState
 } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
+import isFunction from '../predicates/isFunction';
 
 import { useFocusSearchInput } from './useFocus';
 
@@ -19,7 +20,7 @@ function useSetFilterRef() {
   return function setFilter(
     setter: FilterState | ((current: FilterState) => FilterState)
   ): void {
-    if (typeof setter === 'function') {
+    if (isFunction(setter)) {
       return setFilter(setter(filterRef.current));
     }
 
@@ -67,7 +68,7 @@ export function useFilter() {
   return {
     onChange,
     searchTerm,
-    SearchInputRef,
+    SearchInputRef
   };
 
   function onChange(inputValue: string) {
@@ -87,9 +88,9 @@ export function useFilter() {
       return applySearch(nextValue);
     }
 
-    setFilterRef((current) =>
+    setFilterRef(current =>
       Object.assign(current, {
-        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue),
+        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
       })
     );
     applySearch(nextValue);
@@ -129,14 +130,14 @@ function filterEmojiObjectByKeyword(
 }
 
 function hasMatch(emoji: DataEmoji, keyword: string): boolean {
-  return emojiNames(emoji).some((name) => name.includes(keyword));
+  return emojiNames(emoji).some(name => name.includes(keyword));
 }
 
 export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return (unified) => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
 }
 
 function isEmojiFilteredBySearchTerm(
@@ -167,7 +168,7 @@ function findLongestMatch(
 
   const longestMatchingKey = Object.keys(dict)
     .sort((a, b) => b.length - a.length)
-    .find((key) => keyword.includes(key));
+    .find(key => keyword.includes(key));
 
   if (longestMatchingKey) {
     return dict[longestMatchingKey];
