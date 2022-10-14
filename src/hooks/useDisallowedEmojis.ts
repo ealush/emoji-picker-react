@@ -1,28 +1,41 @@
 import { useRef, useMemo } from 'react';
 
-import { useEmojiVersionConfig } from '../config/useConfig';
+import { useEmojiVersionConfig, useShowEmojiConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { addedIn, allEmojis, emojiUnified } from '../dataUtils/emojiSelectors';
+import isFunction from '../predicates/isFunction';
 
 export function useDisallowedEmojis() {
   const DisallowedEmojisRef = useRef<Record<string, boolean>>({});
   const emojiVersionConfig = useEmojiVersionConfig();
+  const shouldShowEmoji = useShowEmojiConfig();
 
   return useMemo(() => {
     const emojiVersion = parseFloat(`${emojiVersionConfig}`);
 
-    if (!emojiVersionConfig || Number.isNaN(emojiVersion)) {
+    if (
+      (!emojiVersionConfig || Number.isNaN(emojiVersion)) &&
+      !shouldShowEmoji
+    ) {
       return DisallowedEmojisRef.current;
     }
 
     return allEmojis.reduce((disallowedEmojis, emoji) => {
+      if (isFunction(shouldShowEmoji) && !shouldShowEmoji(emoji)) {
+        disallowEmoji();
+      }
+
       if (addedInNewerVersion(emoji, emojiVersion)) {
-        disallowedEmojis[emojiUnified(emoji)] = true;
+        disallowEmoji();
       }
 
       return disallowedEmojis;
+
+      function disallowEmoji() {
+        disallowedEmojis[emojiUnified(emoji)] = true;
+      }
     }, DisallowedEmojisRef.current);
-  }, [emojiVersionConfig]);
+  }, [emojiVersionConfig, shouldShowEmoji]);
 }
 
 function addedInNewerVersion(

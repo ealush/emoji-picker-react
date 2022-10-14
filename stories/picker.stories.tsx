@@ -9,6 +9,7 @@ import EmojiPicker, {
   Theme
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
+import { DataEmoji } from '../src/dataUtils/DataTypes';
 import { SuggestionMode } from '../src/types/exposedTypes';
 
 const meta: Meta = {
@@ -76,6 +77,13 @@ export const CustomSearchPlaceholder = (args: Props) => (
 );
 export const SkinTonesDisabled = (args: Props) => (
   <Template {...args} skinTonesDisabled />
+);
+
+export const ShowEmoji = (args: Props) => (
+  <Template
+    {...args}
+    showEmoji={(emoji: DataEmoji) => emoji.n.join('').includes('clown')}
+  />
 );
 export const AlternativeDefaultSkinTone = (args: Props) => (
   <Template {...args} defaultSkinTone={SkinTones.MEDIUM} />

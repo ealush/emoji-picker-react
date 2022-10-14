@@ -1,5 +1,6 @@
 import { isSystemDarkTheme } from '../DomUtils/isDarkTheme';
 import { usePickerConfig } from '../components/context/PickerConfigContext';
+import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   EmojiClickData,
   EmojiStyle,
@@ -93,6 +94,13 @@ export function useGetEmojiUrlConfig(): (
 ) => string {
   const { getEmojiUrl } = usePickerConfig();
   return getEmojiUrl;
+}
+
+export function useShowEmojiConfig():
+  | undefined
+  | ((emoji: DataEmoji) => boolean) {
+  const { showEmoji } = usePickerConfig();
+  return showEmoji;
 }
 
 function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {

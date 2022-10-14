@@ -1,4 +1,5 @@
 import { GetEmojiUrl } from '../components/emoji/Emoji';
+import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
@@ -58,6 +59,7 @@ export function basePickerConfig(): PickerConfigInternal {
       ...basePreviewConfig
     },
     searchPlaceHolder: 'Search',
+    showEmoji: undefined,
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
@@ -81,6 +83,7 @@ export type PickerConfigInternal = {
   height: PickerDimensions;
   width: PickerDimensions;
   getEmojiUrl: GetEmojiUrl;
+  showEmoji: undefined | ((emoji: DataEmoji) => boolean);
 };
 
 export type PreviewConfig = {
