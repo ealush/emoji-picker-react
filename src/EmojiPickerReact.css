@@ -7,6 +7,7 @@
   --epr-picker-border-color: #e7e7e7;
   --epr-bg-color: #fff;
   --epr-category-icon-active-color: #6aa8de;
+  --epr-skin-tone-picker-menu-color: #56565610;
 
   --epr-horizontal-padding: 10px;
 
@@ -67,6 +68,7 @@
   --epr-emoji-variations-indictator-z-index: 1;
   --epr-category-label-z-index: 2;
   --epr-skin-variation-picker-z-index: 5;
+  --epr-preview-z-index: 6;
 }
 
 .EmojiPickerReact.epr-dark-theme {

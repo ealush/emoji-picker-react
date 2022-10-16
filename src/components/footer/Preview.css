@@ -5,6 +5,7 @@
   border-top: 1px solid var(--epr-preview-border-color);
   height: var(--epr-preview-height);
   position: relative;
+  z-index: var(--epr-preview-z-index);
 }
 
 .EmojiPickerReact .epr-preview .epr-preview-emoji-label {

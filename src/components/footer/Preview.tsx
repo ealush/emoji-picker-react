@@ -18,7 +18,7 @@ import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ViewOnlyEmoji } from '../emoji/Emoji';
 import './Preview.css';
-import { SkinTonePicker } from '../header/SkinTonePicker';
+import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
@@ -31,7 +31,7 @@ export function Preview() {
     <Flex className="epr-preview">
       <PreviewBody />
       <Space />
-      <SkinTonePicker expands={false} />
+      <SkinTonePickerMenu />
     </Flex>
   );
 }
