@@ -4,13 +4,13 @@ import { useState } from 'react';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  usePreviewConfig,
+  usePreviewConfig
 } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
   emojiName,
-  emojiUnified,
+  emojiUnified
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
@@ -20,6 +20,20 @@ import './Preview.css';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
+
+  if (!previewConfig.showPreview) {
+    return null;
+  }
+
+  return (
+    <Flex className="epr-preview">
+      <PreviewBody />
+    </Flex>
+  );
+}
+
+export function PreviewBody() {
+  const previewConfig = usePreviewConfig();
   const [previewEmoji, setPreviewEmoji] = useState<PreviewEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
@@ -27,19 +41,11 @@ export function Preview() {
 
   useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
-  if (!previewConfig.showPreview) {
-    return null;
-  }
-
   const emoji = emojiByUnified(previewEmoji?.originalUnified);
 
   const show = emoji != null && previewEmoji != null;
 
-  return (
-    <Flex className="epr-preview">
-      <PreviewContent />
-    </Flex>
-  );
+  return <PreviewContent />;
 
   function PreviewContent() {
     const defaultEmoji = asEmoji(
