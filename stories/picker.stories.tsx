@@ -42,6 +42,10 @@ export const Dark = (args: Props) => (
 export const AutoTheme = (args: Props) => (
   <TemplateDark {...args} theme={Theme.AUTO} />
 );
+
+export const SearchDisabled = (args: Props) => (
+  <Template {...args} searchDisabled />
+);
 export const CustomSizeDimensionsNumbers = (args: Props) => (
   <TemplateDark
     {...args}

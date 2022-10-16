@@ -57,6 +57,7 @@ export function basePickerConfig(): PickerConfigInternal {
     previewConfig: {
       ...basePreviewConfig
     },
+    searchDisabled: false,
     searchPlaceHolder: 'Search',
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
@@ -81,6 +82,7 @@ export type PickerConfigInternal = {
   height: PickerDimensions;
   width: PickerDimensions;
   getEmojiUrl: GetEmojiUrl;
+  searchDisabled: boolean;
 };
 
 export type PreviewConfig = {

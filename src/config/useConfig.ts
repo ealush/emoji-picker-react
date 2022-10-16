@@ -87,6 +87,11 @@ export function useEmojiVersionConfig(): string | null {
   return emojiVersion;
 }
 
+export function useSearchDisabledConfig(): boolean {
+  const { searchDisabled } = usePickerConfig();
+  return searchDisabled;
+}
+
 export function useGetEmojiUrlConfig(): (
   unified: string,
   style: EmojiStyle

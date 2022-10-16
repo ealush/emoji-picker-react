@@ -5,19 +5,37 @@ import { useState } from 'react';
 import { asSelectors, ClassNames } from '../../DomUtils/classNames';
 import {
   useAutoFocusSearchConfig,
-  useSearchPlaceHolderConfig,
+  useSearchDisabledConfig,
+  useSearchPlaceHolderConfig
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import {
   getNormalizedSearchTerm,
   useClearSearch,
-  useFilter,
+  useFilter
 } from '../../hooks/useFilter';
+import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
 import './Search.css';
+import { SkinTonePicker } from './SkinTonePicker';
+
+export function SearchContainer() {
+  const searchDisabled = useSearchDisabledConfig();
+
+  if (searchDisabled) {
+    return null;
+  }
+
+  return (
+    <Flex className="epr-header-overlay">
+      <Search />
+      <SkinTonePicker />
+    </Flex>
+  );
+}
 
 export function Search() {
   const [inc, setInc] = useState(0);
@@ -42,7 +60,7 @@ export function Search() {
         className="epr-search"
         type="text"
         placeholder={placeholder}
-        onChange={(event) => {
+        onChange={event => {
           setInc(inc + 1);
           setTimeout(() => {
             onChange(event?.target?.value ?? value);
