@@ -18,7 +18,13 @@ import {
 } from '../context/PickerContext';
 import './SkinTonePicker.css';
 
-export function SkinTonePicker() {
+const FULL_SIZE = 28;
+
+type Props = Readonly<{
+  expands?: boolean;
+}>;
+
+export function SkinTonePicker({ expands = true }: Props = {}) {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
@@ -30,11 +36,15 @@ export function SkinTonePicker() {
     return null;
   }
 
+  const flexBasis =
+    isOpen && expands
+      ? `${FULL_SIZE * skinToneVariations.length}px`
+      : FULL_SIZE + 'px';
+
   return (
     <Relative
-      className={clsx('epr-skin-tones', {
-        open: isOpen
-      })}
+      className={clsx('epr-skin-tones', { [ClassNames.open]: isOpen })}
+      style={{ flexBasis }}
     >
       <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
@@ -43,7 +53,7 @@ export function SkinTonePicker() {
             <Button
               style={{
                 transform: clsx(
-                  `translateX(-${i * (isOpen ? 28 : 0)}px)`,
+                  `translateX(-${i * (isOpen ? FULL_SIZE : 0)}px)`,
                   isOpen && active && 'scale(1.3)'
                 )
               }}

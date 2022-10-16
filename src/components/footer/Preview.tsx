@@ -14,9 +14,11 @@ import {
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import Flex from '../Layout/Flex';
+import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ViewOnlyEmoji } from '../emoji/Emoji';
 import './Preview.css';
+import { SkinTonePicker } from '../header/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
@@ -28,6 +30,8 @@ export function Preview() {
   return (
     <Flex className="epr-preview">
       <PreviewBody />
+      <Space />
+      <SkinTonePicker expands={false} />
     </Flex>
   );
 }
