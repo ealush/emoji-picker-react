@@ -9,6 +9,7 @@ import EmojiPicker, {
   Theme
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
+import { SkinTonePickerLocation } from '../src/config/config';
 import { SuggestionMode } from '../src/types/exposedTypes';
 
 const meta: Meta = {
@@ -45,6 +46,14 @@ export const AutoTheme = (args: Props) => (
 
 export const SearchDisabled = (args: Props) => (
   <Template {...args} searchDisabled />
+);
+
+export const SkinTonePickerInPreview = (args: Props) => (
+  <Template
+    {...args}
+    emojiStyle={EmojiStyle.NATIVE}
+    skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+  />
 );
 export const CustomSizeDimensionsNumbers = (args: Props) => (
   <TemplateDark

@@ -9,7 +9,11 @@ import {
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
-import { PickerDimensions, PreviewConfig } from './config';
+import {
+  PickerDimensions,
+  PreviewConfig,
+  SkinTonePickerLocation
+} from './config';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder } = usePickerConfig();
@@ -90,6 +94,11 @@ export function useEmojiVersionConfig(): string | null {
 export function useSearchDisabledConfig(): boolean {
   const { searchDisabled } = usePickerConfig();
   return searchDisabled;
+}
+
+export function useSkinTonePickerLocationConfig(): SkinTonePickerLocation {
+  const { skinTonePickerLocation } = usePickerConfig();
+  return skinTonePickerLocation;
 }
 
 export function useGetEmojiUrlConfig(): (

@@ -29,10 +29,15 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  const skinTonePickerLocation = config.searchDisabled
+    ? SkinTonePickerLocation.PREVIEW
+    : config.skinTonePickerLocation;
+
   return {
     ...config,
     categories,
-    previewConfig
+    previewConfig,
+    skinTonePickerLocation
   };
 }
 
@@ -59,6 +64,7 @@ export function basePickerConfig(): PickerConfigInternal {
     },
     searchDisabled: false,
     searchPlaceHolder: 'Search',
+    skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
@@ -83,6 +89,7 @@ export type PickerConfigInternal = {
   width: PickerDimensions;
   getEmojiUrl: GetEmojiUrl;
   searchDisabled: boolean;
+  skinTonePickerLocation: SkinTonePickerLocation;
 };
 
 export type PreviewConfig = {
@@ -104,3 +111,8 @@ type ConfigExternal = {
 export type PickerConfig = Partial<ConfigExternal>;
 
 export type PickerDimensions = string | number;
+
+export enum SkinTonePickerLocation {
+  SEARCH = 'SEARCH',
+  PREVIEW = 'PREVIEW'
+}
