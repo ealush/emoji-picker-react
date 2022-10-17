@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import { asSelectors, ClassNames } from '../../DomUtils/classNames';
-import { SkinTonePickerLocation } from '../../config/config';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -15,7 +14,7 @@ import {
   useClearSearch,
   useFilter
 } from '../../hooks/useFilter';
-import { useShouldShowSkinTonePicker } from '../../hooks/useShouldShowSkinTonePicker';
+import { useIsSkinToneInSearch } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
 import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
@@ -26,7 +25,8 @@ import { SkinTonePicker } from './SkinTonePicker';
 
 export function SearchContainer() {
   const searchDisabled = useSearchDisabledConfig();
-  const shouldShowSkinTonePicker = useShouldShowSkinTonePicker();
+
+  const isSkinToneInSearch = useIsSkinToneInSearch();
 
   if (searchDisabled) {
     return null;
@@ -36,9 +36,7 @@ export function SearchContainer() {
     <Flex className="epr-header-overlay">
       <Search />
 
-      {shouldShowSkinTonePicker(SkinTonePickerLocation.SEARCH) ? (
-        <SkinTonePicker />
-      ) : null}
+      {isSkinToneInSearch ? <SkinTonePicker /> : null}
     </Flex>
   );
 }

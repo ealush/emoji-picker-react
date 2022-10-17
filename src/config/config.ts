@@ -3,6 +3,7 @@ import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
   EmojiStyle,
+  SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
   Theme
@@ -111,8 +112,3 @@ type ConfigExternal = {
 export type PickerConfig = Partial<ConfigExternal>;
 
 export type PickerDimensions = string | number;
-
-export enum SkinTonePickerLocation {
-  SEARCH = 'SEARCH',
-  PREVIEW = 'PREVIEW'
-}

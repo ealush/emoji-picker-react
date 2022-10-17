@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { SkinTonePickerLocation } from '../../config/config';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
@@ -14,7 +13,7 @@ import {
   emojiUnified
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
-import { useShouldShowSkinTonePicker } from '../../hooks/useShouldShowSkinTonePicker';
+import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
@@ -24,7 +23,7 @@ import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
-  const shouldShowSkinTonePicker = useShouldShowSkinTonePicker();
+  const isSkinToneInPreview = useIsSkinToneInPreview();
 
   if (!previewConfig.showPreview) {
     return null;
@@ -34,9 +33,7 @@ export function Preview() {
     <Flex className="epr-preview">
       <PreviewBody />
       <Space />
-      {shouldShowSkinTonePicker(SkinTonePickerLocation.PREVIEW) ? (
-        <SkinTonePickerMenu />
-      ) : null}
+      {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}
     </Flex>
   );
 }
