@@ -38,6 +38,10 @@ import {
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
 import useSetVariationPicker from './useSetVariationPicker';
+import {
+  useIsSkinToneInPreview,
+  useIsSkinToneInSearch
+} from './useShouldShowSkinTonePicker';
 
 enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
@@ -120,6 +124,7 @@ function useSearchInputKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
   const goDownFromSearchInput = useGoDownFromSearchInput();
+  const isSkinToneInSearch = useIsSkinToneInSearch();
 
   const onKeyDown = useMemo(
     () =>
@@ -128,6 +133,9 @@ function useSearchInputKeyboardEvents() {
 
         switch (key) {
           case KeyboardEvents.ArrowRight:
+            if (!isSkinToneInSearch) {
+              return;
+            }
             event.preventDefault();
             setSkinToneFanOpenState(true);
             focusSkinTonePicker();
@@ -171,41 +179,76 @@ function useSkinTonePickerKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const goDownFromSearchInput = useGoDownFromSearchInput();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
+  const isSkinToneInPreview = useIsSkinToneInPreview();
+  const isSkinToneInSearch = useIsSkinToneInSearch();
   const onType = useOnType();
 
   const onKeyDown = useMemo(
     () =>
+      // eslint-disable-next-line complexity
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
-        switch (key) {
-          case KeyboardEvents.ArrowLeft:
-            event.preventDefault();
-            if (!isOpen) {
-              return focusSearchInput();
-            }
-            focusNextSkinTone(focusSearchInput);
-            break;
-          case KeyboardEvents.ArrowRight:
-            event.preventDefault();
-            if (!isOpen) {
-              return focusSearchInput();
-            }
-            focusPrevSkinTone();
-            break;
-          case KeyboardEvents.ArrowDown:
-            event.preventDefault();
-            if (isOpen) {
-              setIsOpen(false);
-            }
-            goDownFromSearchInput();
-            break;
-          default:
-            onType(event);
-            break;
+        if (isSkinToneInSearch) {
+          switch (key) {
+            case KeyboardEvents.ArrowLeft:
+              event.preventDefault();
+              if (!isOpen) {
+                return focusSearchInput();
+              }
+              focusNextSkinTone(focusSearchInput);
+              break;
+            case KeyboardEvents.ArrowRight:
+              event.preventDefault();
+              if (!isOpen) {
+                return focusSearchInput();
+              }
+              focusPrevSkinTone();
+              break;
+            case KeyboardEvents.ArrowDown:
+              event.preventDefault();
+              if (isOpen) {
+                setIsOpen(false);
+              }
+              goDownFromSearchInput();
+              break;
+            default:
+              onType(event);
+              break;
+          }
+        }
+
+        if (isSkinToneInPreview) {
+          switch (key) {
+            case KeyboardEvents.ArrowUp:
+              event.preventDefault();
+              if (!isOpen) {
+                return focusSearchInput();
+              }
+              focusNextSkinTone(focusSearchInput);
+              break;
+            case KeyboardEvents.ArrowDown:
+              event.preventDefault();
+              if (!isOpen) {
+                return focusSearchInput();
+              }
+              focusPrevSkinTone();
+              break;
+            default:
+              onType(event);
+              break;
+          }
         }
       },
-    [isOpen, focusSearchInput, setIsOpen, goDownFromSearchInput, onType]
+    [
+      isOpen,
+      focusSearchInput,
+      setIsOpen,
+      goDownFromSearchInput,
+      onType,
+      isSkinToneInPreview,
+      isSkinToneInSearch
+    ]
   );
 
   useEffect(() => {
