@@ -4,21 +4,41 @@ import { useState } from 'react';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  usePreviewConfig,
+  usePreviewConfig
 } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
   emojiName,
-  emojiUnified,
+  emojiUnified
 } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
+import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
+import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ViewOnlyEmoji } from '../emoji/Emoji';
 import './Preview.css';
+import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 
 export function Preview() {
+  const previewConfig = usePreviewConfig();
+  const isSkinToneInPreview = useIsSkinToneInPreview();
+
+  if (!previewConfig.showPreview) {
+    return null;
+  }
+
+  return (
+    <Flex className="epr-preview">
+      <PreviewBody />
+      <Space />
+      {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}
+    </Flex>
+  );
+}
+
+export function PreviewBody() {
   const previewConfig = usePreviewConfig();
   const [previewEmoji, setPreviewEmoji] = useState<PreviewEmoji>(null);
   const emojiStyle = useEmojiStyleConfig();
@@ -27,19 +47,11 @@ export function Preview() {
 
   useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
-  if (!previewConfig.showPreview) {
-    return null;
-  }
-
   const emoji = emojiByUnified(previewEmoji?.originalUnified);
 
   const show = emoji != null && previewEmoji != null;
 
-  return (
-    <Flex className="epr-preview">
-      <PreviewContent />
-    </Flex>
-  );
+  return <PreviewContent />;
 
   function PreviewContent() {
     const defaultEmoji = asEmoji(

@@ -3,6 +3,7 @@ import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
   EmojiStyle,
+  SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
   Theme
@@ -85,6 +86,16 @@ export function usePickerSizeConfig(): {
 export function useEmojiVersionConfig(): string | null {
   const { emojiVersion } = usePickerConfig();
   return emojiVersion;
+}
+
+export function useSearchDisabledConfig(): boolean {
+  const { searchDisabled } = usePickerConfig();
+  return searchDisabled;
+}
+
+export function useSkinTonePickerLocationConfig(): SkinTonePickerLocation {
+  const { skinTonePickerLocation } = usePickerConfig();
+  return skinTonePickerLocation;
 }
 
 export function useGetEmojiUrlConfig(): (

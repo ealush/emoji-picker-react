@@ -9,6 +9,7 @@ import skinToneVariations, {
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
 import { SkinTones } from '../../types/exposedTypes';
+import Absolute from '../Layout/Absolute';
 import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
 import { useSkinTonePickerRef } from '../context/ElementRefContext';
@@ -18,7 +19,25 @@ import {
 } from '../context/PickerContext';
 import './SkinTonePicker.css';
 
-export function SkinTonePicker() {
+const ITEM_SIZE = 28;
+
+type Props = {
+  direction?: SkinTonePickerDirection;
+};
+
+export function SkinTonePickerMenu() {
+  return (
+    <Relative style={{ height: ITEM_SIZE }}>
+      <Absolute style={{ bottom: 0, right: 0 }}>
+        <SkinTonePicker direction={SkinTonePickerDirection.VERTICAL} />
+      </Absolute>
+    </Relative>
+  );
+}
+
+export function SkinTonePicker({
+  direction = SkinTonePickerDirection.HORIZONTAL
+}: Props) {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
@@ -30,11 +49,22 @@ export function SkinTonePicker() {
     return null;
   }
 
+  const fullWidth = `${ITEM_SIZE * skinToneVariations.length}px`;
+
+  const expandedSize = isOpen ? fullWidth : ITEM_SIZE + 'px';
+
+  const vertical = direction === SkinTonePickerDirection.VERTICAL;
+
   return (
     <Relative
-      className={clsx('epr-skin-tones', {
-        open: isOpen
+      className={clsx('epr-skin-tones', direction, {
+        [ClassNames.open]: isOpen
       })}
+      style={
+        vertical
+          ? { flexBasis: expandedSize, height: expandedSize }
+          : { flexBasis: expandedSize }
+      }
     >
       <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
@@ -43,7 +73,9 @@ export function SkinTonePicker() {
             <Button
               style={{
                 transform: clsx(
-                  `translateX(-${i * (isOpen ? 28 : 0)}px)`,
+                  vertical
+                    ? `translateY(-${i * (isOpen ? ITEM_SIZE : 0)}px)`
+                    : `translateX(-${i * (isOpen ? ITEM_SIZE : 0)}px)`,
                   isOpen && active && 'scale(1.3)'
                 )
               }}
@@ -71,4 +103,9 @@ export function SkinTonePicker() {
       </div>
     </Relative>
   );
+}
+
+export enum SkinTonePickerDirection {
+  VERTICAL = ClassNames.vertical,
+  HORIZONTAL = ClassNames.horizontal
 }

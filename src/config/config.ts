@@ -3,6 +3,7 @@ import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
   EmojiStyle,
+  SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
   Theme
@@ -29,10 +30,15 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  const skinTonePickerLocation = config.searchDisabled
+    ? SkinTonePickerLocation.PREVIEW
+    : config.skinTonePickerLocation;
+
   return {
     ...config,
     categories,
-    previewConfig
+    previewConfig,
+    skinTonePickerLocation
   };
 }
 
@@ -57,7 +63,9 @@ export function basePickerConfig(): PickerConfigInternal {
     previewConfig: {
       ...basePreviewConfig
     },
+    searchDisabled: false,
     searchPlaceHolder: 'Search',
+    skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
@@ -81,6 +89,8 @@ export type PickerConfigInternal = {
   height: PickerDimensions;
   width: PickerDimensions;
   getEmojiUrl: GetEmojiUrl;
+  searchDisabled: boolean;
+  skinTonePickerLocation: SkinTonePickerLocation;
 };
 
 export type PreviewConfig = {
