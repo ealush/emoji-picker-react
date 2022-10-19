@@ -113,7 +113,12 @@ export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
 export const EmojiVersion_0_6 = (args: Props) => (
-  <Template {...args} emojiVersion="0.6" emojiStyle={EmojiStyle.NATIVE} />
+  <Template
+    {...args}
+    defaultSkinTone={SkinTones.MEDIUM}
+    emojiVersion="0.6"
+    emojiStyle={EmojiStyle.NATIVE}
+  />
 );
 
 export const EmojiVersion_1_0 = (args: Props) => (

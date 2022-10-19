@@ -4,20 +4,20 @@ import { ClassNames } from '../../DomUtils/classNames';
 import {
   Categories,
   CategoryConfig,
-  categoryFromCategoryConfig,
+  categoryFromCategoryConfig
 } from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  useLazyLoadEmojisConfig,
+  useLazyLoadEmojisConfig
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
+import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useActiveSkinToneState,
-  useDisallowedEmojisRef,
-  useIsPastInitialLoad,
+  useIsPastInitialLoad
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
@@ -54,7 +54,7 @@ export function EmojiList() {
 function RenderCategory({
   index,
   category,
-  categoryConfig,
+  categoryConfig
 }: {
   index: number;
   category: Categories;
@@ -65,7 +65,7 @@ function RenderCategory({
   const emojiStyle = useEmojiStyleConfig();
   const isPastInitialLoad = useIsPastInitialLoad();
   const [activeSkinTone] = useActiveSkinToneState();
-  const disallowedEmojisRef = useDisallowedEmojisRef();
+  const isEmojiDisallowed = useIsEmojiDisallowed();
   const getEmojiUrl = useGetEmojiUrlConfig();
 
   // Small trick to defer the rendering of all emoji categories until the first category is visible
@@ -75,11 +75,11 @@ function RenderCategory({
 
   let hiddenCounter = 0;
 
-  const emojis = emojisToPush.map((emoji) => {
+  const emojis = emojisToPush.map(emoji => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
 
-    const isDisallowed = !!disallowedEmojisRef.current[unified];
+    const isDisallowed = isEmojiDisallowed(emoji);
 
     if (hidden || isDisallowed) {
       hiddenCounter++;

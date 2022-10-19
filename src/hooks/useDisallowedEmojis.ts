@@ -2,7 +2,12 @@ import { useRef, useMemo } from 'react';
 
 import { useEmojiVersionConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { addedIn, allEmojis, emojiUnified } from '../dataUtils/emojiSelectors';
+import {
+  addedIn,
+  allEmojis,
+  emojiUnified,
+  unifiedWithoutSkinTone
+} from '../dataUtils/emojiSelectors';
 
 export function useDisallowedEmojis() {
   const DisallowedEmojisRef = useRef<Record<string, boolean>>({});
@@ -23,6 +28,16 @@ export function useDisallowedEmojis() {
       return disallowedEmojis;
     }, DisallowedEmojisRef.current);
   }, [emojiVersionConfig]);
+}
+
+export function useIsEmojiDisallowed() {
+  const disallowedEmojis = useDisallowedEmojis();
+
+  return function isEmojiDisallowed(emoji: DataEmoji) {
+    const unified = unifiedWithoutSkinTone(emojiUnified(emoji));
+
+    return Boolean(disallowedEmojis[unified]);
+  };
 }
 
 function addedInNewerVersion(
