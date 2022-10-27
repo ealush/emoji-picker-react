@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
 
+import { asSelectors, ClassNames } from './classNames';
 import {
   categoryLabelHeight,
   closestCategory,
@@ -52,7 +53,11 @@ export function useScrollTo() {
 }
 
 export function scrollEmojiAboveLabel(emoji: NullableElement) {
-  if (!isEmojiBehindLabel(emoji)) {
+  if (!emoji || !isEmojiBehindLabel(emoji)) {
+    return;
+  }
+
+  if (emoji.closest(asSelectors(ClassNames.variationPicker))) {
     return;
   }
 

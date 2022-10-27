@@ -154,7 +154,8 @@ function useSearchInputKeyboardEvents() {
       focusSkinTonePicker,
       goDownFromSearchInput,
       setSkinToneFanOpenState,
-      BodyRef
+      BodyRef,
+      isSkinToneInSearch
     ]
   );
 

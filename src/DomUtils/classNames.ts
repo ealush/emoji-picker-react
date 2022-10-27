@@ -15,7 +15,8 @@ export enum ClassNames {
   emojiPicker = 'EmojiPickerReact',
   open = 'epr-open',
   vertical = 'epr-vertical',
-  horizontal = 'epr-horizontal'
+  horizontal = 'epr-horizontal',
+  variationPicker = 'epr-emoji-variation-picker'
 }
 
 export function asSelectors(...classNames: ClassNames[]): string {

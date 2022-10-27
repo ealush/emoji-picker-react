@@ -1,29 +1,31 @@
 import clsx from 'clsx';
 import * as React from 'react';
+import { useEffect } from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { focusElement } from '../../DomUtils/focusElement';
+import { focusFirstVisibleEmoji } from '../../DomUtils/keyboardNavigation';
 import {
   buttonFromTarget,
   elementHeight,
   emojiTrueOffsetTop,
-  emojiTruOffsetLeft,
+  emojiTruOffsetLeft
 } from '../../DomUtils/selectors';
 import {
   useEmojiStyleConfig,
-  useGetEmojiUrlConfig,
+  useGetEmojiUrlConfig
 } from '../../config/useConfig';
 import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiHasVariations,
   emojiUnified,
-  emojiVariations,
+  emojiVariations
 } from '../../dataUtils/emojiSelectors';
 import {
   useAnchoredEmojiRef,
   useBodyRef,
   useSetAnchoredEmojiRef,
-  useVariationPickerRef,
+  useVariationPickerRef
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -31,7 +33,7 @@ import './EmojiVariationPicker.css';
 
 enum Direction {
   Up,
-  Down,
+  Down
 }
 
 export function EmojiVariationPicker() {
@@ -39,6 +41,7 @@ export function EmojiVariationPicker() {
   const VariationPickerRef = useVariationPickerRef();
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
+
   const { getTop, getMenuDirection } = useVariationPickerTop(
     VariationPickerRef
   );
@@ -54,10 +57,18 @@ export function EmojiVariationPicker() {
     emojiHasVariations(emoji) &&
     button.classList.contains(ClassNames.emojiHasVariatios);
 
+  useEffect(() => {
+    if (!visible) {
+      focusElement(AnchoredEmojiRef.current);
+      return;
+    }
+
+    focusFirstVisibleEmoji(VariationPickerRef.current);
+  }, [VariationPickerRef, visible, AnchoredEmojiRef]);
+
   let top, pointerStyle;
 
   if (!visible && AnchoredEmojiRef.current) {
-    focusElement(AnchoredEmojiRef.current);
     setAnchoredEmojiRef(null);
   } else {
     top = getTop();
@@ -69,9 +80,9 @@ export function EmojiVariationPicker() {
   return (
     <div
       ref={VariationPickerRef}
-      className={clsx('epr-emoji-variation-picker', {
+      className={clsx(ClassNames.variationPicker, {
         visible,
-        'pointing-up': getMenuDirection() === Direction.Down,
+        'pointing-up': getMenuDirection() === Direction.Down
       })}
       style={{ top }}
     >
@@ -79,7 +90,7 @@ export function EmojiVariationPicker() {
         ? [emojiUnified(safeEmoji)]
             .concat(emojiVariations(safeEmoji))
             .slice(0, 6)
-            .map((unified) => (
+            .map(unified => (
               <ClickableEmoji
                 key={unified}
                 emoji={safeEmoji}
@@ -129,7 +140,7 @@ function useVariationPickerTop(
 
   return {
     getMenuDirection,
-    getTop,
+    getTop
   };
 
   function getMenuDirection() {
