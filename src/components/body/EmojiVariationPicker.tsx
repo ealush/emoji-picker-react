@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useEffect } from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { focusElement } from '../../DomUtils/focusElement';
 import { focusFirstVisibleEmoji } from '../../DomUtils/keyboardNavigation';
 import {
   buttonFromTarget,
@@ -59,7 +58,6 @@ export function EmojiVariationPicker() {
 
   useEffect(() => {
     if (!visible) {
-      focusElement(AnchoredEmojiRef.current);
       return;
     }
 

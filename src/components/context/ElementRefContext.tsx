@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { focusElement } from '../../DomUtils/focusElement';
 import { NullableElement } from '../../DomUtils/selectors';
 
 export function ElementRefContextProvider({
@@ -71,6 +72,10 @@ export function useAnchoredEmojiRef() {
 export function useSetAnchoredEmojiRef(): (target: NullableElement) => void {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   return (target: NullableElement) => {
+    if (target === null && AnchoredEmojiRef.current !== null) {
+      focusElement(AnchoredEmojiRef.current);
+    }
+
     AnchoredEmojiRef.current = target;
   };
 }
