@@ -176,6 +176,14 @@ export const StandaloneEmojiImage = () => {
 export const StandaloneEmojiNative = () => {
   return <Emoji unified="1f60a" emojiStyle={EmojiStyle.NATIVE} size={35} />;
 };
+export const CustomUnifiedEmojiImage = () => {
+  const [unified, setUnified] = useState("1f9d1-1f3ff-200d-1f4bc");
+
+  return <>
+    <Emoji unified={unified} size={35} />
+    <input onChange={(e) => setUnified(e.target.value)} value={unified} />
+  </>
+}
 
 function TemplateDark(args) {
   const [shown, setShown] = useState(true);
