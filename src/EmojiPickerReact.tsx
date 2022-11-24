@@ -6,20 +6,27 @@ import { PickerConfigProvider } from './components/context/PickerConfigContext';
 import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
+import { useMounted } from './hooks/useMounted';
 import { PickerConfig } from './config/config';
+
 import './EmojiPickerReact.css';
 
-export interface Props extends PickerConfig {}
+export interface Props extends PickerConfig {
+}
 
 export default function EmojiPicker(props: Props) {
+  const mounted = useMounted();
+
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
-        <PickerMain>
-          <Header />
-          <Body />
-          <Preview />
-        </PickerMain>
+        {mounted ?
+          <PickerMain>
+            <Header />
+            <Body />
+            <Preview />
+          </PickerMain>
+          : null}
       </PickerConfigProvider>
     </ElementRefContextProvider>
   );
