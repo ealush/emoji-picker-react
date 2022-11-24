@@ -239,21 +239,6 @@ export function MyApp() {
 
 emoji-picker-react has a top-level error boundary, trying to catch rendering errors. It won't catch server side related errors, or event handlers errors. If an error is caught, the picker will not render, and a console error will be logged.
 
-## Next.js
-
-To avoid errors such as "document is not defined" on the server side, you should make sure the library is only imported on the client side. Here is how to do that:
-
-```javascript
-import dynamic from 'next/dynamic';
-
-const Picker = dynamic(
-  () => {
-    return import('emoji-picker-react');
-  },
-  { ssr: false }
-);
-```
-
 ## Vite
 
 For reference, if you only need to shim global, you can add
