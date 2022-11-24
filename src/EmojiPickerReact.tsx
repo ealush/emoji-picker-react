@@ -11,8 +11,7 @@ import { PickerConfig } from './config/config';
 
 import './EmojiPickerReact.css';
 
-export interface Props extends PickerConfig {
-}
+export interface Props extends PickerConfig {}
 
 export default function EmojiPicker(props: Props) {
   const mounted = useMounted();
