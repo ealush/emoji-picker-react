@@ -14,7 +14,6 @@ import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig
 } from '../../config/useConfig';
-import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiHasVariations,
   emojiUnified,
@@ -73,7 +72,9 @@ export function EmojiVariationPicker() {
     pointerStyle = getPointerStyle();
   }
 
-  const safeEmoji = asEmoji(emoji);
+  if(!emoji) {
+    return null
+  }
 
   return (
     <div
@@ -85,13 +86,13 @@ export function EmojiVariationPicker() {
       style={{ top }}
     >
       {visible
-        ? [emojiUnified(safeEmoji)]
-            .concat(emojiVariations(safeEmoji))
+        ? [emojiUnified(emoji)]
+            .concat(emojiVariations(emoji))
             .slice(0, 6)
             .map(unified => (
               <ClickableEmoji
                 key={unified}
-                emoji={safeEmoji}
+                emoji={emoji}
                 unified={unified}
                 emojiStyle={emojiStyle}
                 showVariations={false}

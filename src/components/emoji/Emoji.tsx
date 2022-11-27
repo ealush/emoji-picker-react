@@ -3,7 +3,6 @@ import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
   emojiHasVariations,
@@ -87,6 +86,9 @@ export function ViewOnlyEmoji({
   }
 
   const emojiToRender = emoji ? emoji : emojiByUnified(unified);
+  if(!emojiToRender) {
+    return null
+  }
 
   return (
     <>
@@ -96,7 +98,7 @@ export function ViewOnlyEmoji({
         <EmojiImg
           unified={unified}
           style={style}
-          emoji={asEmoji(emojiToRender)}
+          emoji={emojiToRender}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
           getEmojiUrl={getEmojiUrl}

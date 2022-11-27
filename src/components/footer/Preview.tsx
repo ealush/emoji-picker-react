@@ -6,7 +6,6 @@ import {
   useGetEmojiUrlConfig,
   usePreviewConfig
 } from '../../config/useConfig';
-import { asEmoji } from '../../dataUtils/asEmoji';
 import {
   emojiByUnified,
   emojiName,
@@ -54,9 +53,10 @@ export function PreviewBody() {
   return <PreviewContent />;
 
   function PreviewContent() {
-    const defaultEmoji = asEmoji(
-      variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji)
-    );
+    const defaultEmoji = variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji)
+    if (!defaultEmoji) {
+      return null
+    }
     const defaultText = variationPickerEmoji
       ? emojiName(variationPickerEmoji)
       : previewConfig.defaultCaption;
@@ -67,7 +67,7 @@ export function PreviewBody() {
           {show ? (
             <ViewOnlyEmoji
               unified={previewEmoji?.unified as string}
-              emoji={asEmoji(emoji)}
+              emoji={emoji}
               emojiStyle={emojiStyle}
               size={45}
               getEmojiUrl={getEmojiUrl}
@@ -84,7 +84,7 @@ export function PreviewBody() {
         </div>
         {show ? (
           <div className="epr-preview-emoji-label">
-            {emojiName(asEmoji(emoji))}
+            {emojiName(emoji)}
           </div>
         ) : (
           <div className="epr-preview-emoji-label">{defaultText}</div>
