@@ -263,3 +263,11 @@ For reference, if you only need to shim global, you can add
   window.global = window;
 </script>
 ```
+
+# Other stuff I build
+
+If you enjoy using emoji-picker-react, you may be interested in some of my other open source projects:
+
+- [Vest](https://github.com/ealush/vest) - The best form validation framwork to date.
+- [Context](https://github.com/ealush/vest/tree/latest/packages/context) - Context propagation library for JS Apps.
+- [n4s](https://github.com/ealush/vest/tree/latest/packages/n4s) - enforce: fluent assertion library.
