@@ -1,5 +1,5 @@
 const pretty = require('emoji-datasource/emoji_pretty');
-const { writeJSONSync } = require('fs-extra');
+const { writeFileSync } = require('fs');
 const _ = require('lodash');
 
 const keys = {
@@ -85,4 +85,4 @@ const { groupedEmojis } = emojis.reduce(
   { groupedEmojis: {} }
 );
 
-writeJSONSync('./src/data/emojis.json', groupedEmojis, 'utf8');
+writeFileSync('./src/data/emojis.ts', `export default ${JSON.stringify(groupedEmojis)}`, 'utf8');
