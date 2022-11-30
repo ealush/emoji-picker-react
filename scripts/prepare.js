@@ -85,4 +85,4 @@ const { groupedEmojis } = emojis.reduce(
   { groupedEmojis: {} }
 );
 
-writeFileSync('./src/data/emojis.ts', `export default ${JSON.stringify(groupedEmojis)}`, 'utf8');
+writeFileSync('./src/data/emojis.ts', `export default ${JSON.stringify(groupedEmojis, null, 2)}`, 'utf8');
