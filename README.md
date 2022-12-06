@@ -28,6 +28,15 @@ function App() {
 }
 ```
 
+## Shout Outs!
+
+
+| Component Design 🎨 |
+|:-:|
+| <a href="https://pavelbolo.com" target="_blank">![317751726_1277528579755086_5320360926126813336_n copy](https://user-images.githubusercontent.com/11255103/205937426-a570b4a1-7243-4d3e-a7e5-ea04b61d940a.png)</a> | 
+| <a href="https://pavelbolo.com" target="_blank">Pavel Bolo</a> | 
+
+
 ## Features
 
 - Custom click handler
