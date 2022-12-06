@@ -9,11 +9,9 @@ export default function useSetVariationPicker() {
   return function setVariationPicker(element: NullableElement) {
     const [emoji] = emojiFromElement(element);
 
-    if (!emoji) {
-      return;
+    if (emoji) {
+      setAnchoredEmojiRef(element);
+      setEmojiVariationPicker(emoji);
     }
-
-    setAnchoredEmojiRef(element);
-    setEmojiVariationPicker(emoji);
   };
 }

@@ -72,10 +72,6 @@ export function EmojiVariationPicker() {
     pointerStyle = getPointerStyle();
   }
 
-  if(!emoji) {
-    return null
-  }
-
   return (
     <div
       ref={VariationPickerRef}
@@ -85,7 +81,7 @@ export function EmojiVariationPicker() {
       })}
       style={{ top }}
     >
-      {visible
+      {visible && emoji
         ? [emojiUnified(emoji)]
             .concat(emojiVariations(emoji))
             .slice(0, 6)

@@ -40,14 +40,14 @@ export function PickerContextProvider({ children }: Props) {
         activeSkinTone,
         disallowClickRef,
         disallowMouseRef,
+        disallowedEmojisRef,
         emojiVariationPickerState,
         emojisThatFailedToLoadState,
         filterRef,
         isPastInitialLoad,
         searchTerm,
         skinToneFanOpenState,
-        suggestedUpdateState,
-        disallowedEmojisRef,
+        suggestedUpdateState
       }}
     >
       {children}
@@ -82,7 +82,7 @@ const PickerContext = React.createContext<{
   isPastInitialLoad: true,
   searchTerm: ['', () => new Promise<string>(() => undefined)],
   skinToneFanOpenState: [false, () => {}],
-  suggestedUpdateState: [Date.now(), () => {}],
+  suggestedUpdateState: [Date.now(), () => {}]
 });
 
 type Props = Readonly<{
@@ -150,7 +150,7 @@ export function useUpdateSuggested(): [number, () => void] {
     suggestedUpdated,
     function updateSuggested() {
       setsuggestedUpdate(Date.now());
-    },
+    }
   ];
 }
 
