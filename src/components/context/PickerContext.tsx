@@ -61,7 +61,7 @@ const PickerContext = React.createContext<{
   searchTerm: [string, (term: string) => Promise<string>];
   suggestedUpdateState: [number, (term: number) => void];
   activeCategoryState: ReactState<ActiveCategoryState>;
-  activeSkinTone: ReactState<SkinTones>;
+  activeSkinTone: [SkinTones, (skinTone: SkinTones) => void];
   emojisThatFailedToLoadState: ReactState<Set<string>>;
   isPastInitialLoad: boolean;
   emojiVariationPickerState: ReactState<DataEmoji | null>;
@@ -71,18 +71,18 @@ const PickerContext = React.createContext<{
   disallowMouseRef: React.MutableRefObject<boolean>;
   disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
 }>({
-  activeCategoryState: [null, () => {}],
-  activeSkinTone: [SkinTones.NEUTRAL, () => {}],
+  activeCategoryState: [null, () => { }],
+  activeSkinTone: [getSkinTone(), (skinTone) => setSkinTone(skinTone)],
   disallowClickRef: { current: false },
   disallowMouseRef: { current: false },
   disallowedEmojisRef: { current: {} },
-  emojiVariationPickerState: [null, () => {}],
-  emojisThatFailedToLoadState: [new Set(), () => {}],
+  emojiVariationPickerState: [null, () => { }],
+  emojisThatFailedToLoadState: [new Set(), () => { }],
   filterRef: { current: {} },
   isPastInitialLoad: true,
   searchTerm: ['', () => new Promise<string>(() => undefined)],
-  skinToneFanOpenState: [false, () => {}],
-  suggestedUpdateState: [Date.now(), () => {}]
+  skinToneFanOpenState: [false, () => { }],
+  suggestedUpdateState: [Date.now(), () => { }]
 });
 
 type Props = Readonly<{
