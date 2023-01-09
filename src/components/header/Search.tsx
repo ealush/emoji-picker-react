@@ -75,6 +75,7 @@ export function Search() {
       <div className="epr-icn-search" />
       <Button
         className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
+        aria-label={'Clear search'}
         onClick={clearSearch}
       >
         <div className="epr-icn-clear-search" />
