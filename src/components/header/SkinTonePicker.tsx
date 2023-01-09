@@ -8,6 +8,7 @@ import skinToneVariations, {
 } from '../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
+import { KeyboardEvents } from '../../hooks/useKeyboardNavigation';
 import { SkinTones } from '../../types/exposedTypes';
 import Absolute from '../Layout/Absolute';
 import Relative from '../Layout/Relative';
@@ -65,8 +66,18 @@ export function SkinTonePicker({
           ? { flexBasis: expandedSize, height: expandedSize }
           : { flexBasis: expandedSize }
       }
+      tabIndex={0}
+      onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
+        const { key } = event;
+        if (key === KeyboardEvents.Enter) {
+          if (!isOpen) {
+            setIsOpen(true)
+          }
+          closeAllOpenToggles();
+        }
+      }}
     >
-      <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
+      <div className="epr-skin-tone-select" ref={SkinTonePickerRef} >
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
           return (
@@ -88,15 +99,27 @@ export function SkinTonePicker({
                 }
                 closeAllOpenToggles();
               }}
+              // when tabbed onto the SkinTonePicker, allow Enter to open and close the fan of colors
+              onKeyDown={(event) => {
+                const { key } = event;
+                if (key === KeyboardEvents.Enter) {
+                  if (isOpen) {
+                    setActiveSkinTone(skinToneVariation);
+                    focusSearchInput();
+                  } else {
+                    setIsOpen(true);
+                  }
+                  closeAllOpenToggles();
+                }
+              }}
+              tabIndex={isOpen ? 0 : -1}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
                 [ClassNames.active]: active
               })}
-              tabIndex={isOpen ? 0 : -1}
               aria-pressed={active}
-              aria-label={`Skin tone ${
-                skinTonesNamed[skinToneVariation as SkinTones]
-              }`}
+              aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]
+                }`}
             ></Button>
           );
         })}
