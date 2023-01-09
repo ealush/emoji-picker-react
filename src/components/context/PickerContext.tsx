@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDefaultSkinToneConfig } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
+import { getSkinTone, setSkinTone } from '../../dataUtils/skinTone';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
