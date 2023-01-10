@@ -43,7 +43,7 @@ import {
   useIsSkinToneInSearch
 } from './useShouldShowSkinTonePicker';
 
-enum KeyboardEvents {
+export enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
   ArrowUp = 'ArrowUp',
   ArrowLeft = 'ArrowLeft',
