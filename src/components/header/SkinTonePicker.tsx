@@ -6,6 +6,7 @@ import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 import skinToneVariations, {
   skinTonesNamed
 } from '../../data/skinToneVariations';
+import { setSkinTone } from '../../dataUtils/skinTone';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
 import { SkinTones } from '../../types/exposedTypes';
@@ -82,6 +83,7 @@ export function SkinTonePicker({
               onClick={() => {
                 if (isOpen) {
                   setActiveSkinTone(skinToneVariation);
+                  setSkinTone(skinToneVariation)
                   focusSearchInput();
                 } else {
                   setIsOpen(true);
@@ -94,9 +96,8 @@ export function SkinTonePicker({
               })}
               tabIndex={isOpen ? 0 : -1}
               aria-pressed={active}
-              aria-label={`Skin tone ${
-                skinTonesNamed[skinToneVariation as SkinTones]
-              }`}
+              aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]
+                }`}
             ></Button>
           );
         })}

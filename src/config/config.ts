@@ -1,5 +1,6 @@
 import { GetEmojiUrl } from '../components/emoji/Emoji';
 import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
+import { getSkinTone } from '../dataUtils/skinTone';
 import {
   EmojiClickData,
   EmojiStyle,
@@ -30,6 +31,8 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  const activeSkinTone = getSkinTone()
+
   const skinTonePickerLocation = config.searchDisabled
     ? SkinTonePickerLocation.PREVIEW
     : config.skinTonePickerLocation;
@@ -37,6 +40,7 @@ export function mergeConfig(
   return {
     ...config,
     categories,
+    defaultSkinTone: activeSkinTone,
     previewConfig,
     skinTonePickerLocation
   };
