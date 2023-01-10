@@ -107,6 +107,7 @@ export function SkinTonePicker({
                 if (key === KeyboardEvents.Enter) {
                   if (isOpen) {
                     setActiveSkinTone(skinToneVariation);
+                    setSkinTone(skinToneVariation)
                     focusSearchInput();
                   } else {
                     setIsOpen(true);
