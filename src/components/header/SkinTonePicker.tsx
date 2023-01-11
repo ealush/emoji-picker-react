@@ -4,8 +4,9 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 import skinToneVariations, {
-  skinTonesNamed
+  skinTonesNamed,
 } from '../../data/skinToneVariations';
+import { setSkinTone } from '../../dataUtils/skinTone';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
 import { SkinTones } from '../../types/exposedTypes';
@@ -82,6 +83,7 @@ export function SkinTonePicker({
               onClick={() => {
                 if (isOpen) {
                   setActiveSkinTone(skinToneVariation);
+                  setSkinTone(skinToneVariation)
                   focusSearchInput();
                 } else {
                   setIsOpen(true);
