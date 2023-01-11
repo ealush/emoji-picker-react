@@ -9,6 +9,7 @@ import skinToneVariations, {
 import { setSkinTone } from '../../dataUtils/skinTone';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../hooks/useFocus';
+import { KeyboardEvents } from '../../hooks/useKeyboardNavigation';
 import { SkinTones } from '../../types/exposedTypes';
 import Absolute from '../Layout/Absolute';
 import Relative from '../Layout/Relative';
@@ -16,7 +17,7 @@ import { Button } from '../atoms/Button';
 import { useSkinTonePickerRef } from '../context/ElementRefContext';
 import {
   useActiveSkinToneState,
-  useSkinToneFanOpenState
+  useSkinToneFanOpenState,
 } from '../context/PickerContext';
 import './SkinTonePicker.css';
 
@@ -24,6 +25,7 @@ const ITEM_SIZE = 28;
 
 type Props = {
   direction?: SkinTonePickerDirection;
+  fanOutDirection?: SkinTonePickerFanOutDirection;
 };
 
 export function SkinTonePickerMenu() {
@@ -37,7 +39,8 @@ export function SkinTonePickerMenu() {
 }
 
 export function SkinTonePicker({
-  direction = SkinTonePickerDirection.HORIZONTAL
+  direction = SkinTonePickerDirection.HORIZONTAL,
+  fanOutDirection = SkinTonePickerFanOutDirection.LEFT,
 }: Props) {
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
@@ -56,16 +59,52 @@ export function SkinTonePicker({
 
   const vertical = direction === SkinTonePickerDirection.VERTICAL;
 
+  const getHorizontalTranslation = ({
+    ix,
+    fanOutDirection,
+    isOpen,
+  }: {
+    ix: number;
+    fanOutDirection: SkinTonePickerFanOutDirection;
+    isOpen: boolean;
+  }): string => {
+    // By fanning out to the left, the focus remains on the last (right-most) tone in the array,
+    // so tabbing takes a user out of the SkinTonePicker. In order to tab through the tones, a user
+    // must first tab backwards.
+    //
+    // Fanning out to the right keeps the focus on the first (left-most) tone in the array so a user
+    // can tab from left to right.
+    if (fanOutDirection === SkinTonePickerFanOutDirection.LEFT) {
+      return `translateX(-${ix * (isOpen ? ITEM_SIZE : 0)}px)`;
+    }
+    return `translateX(${ix * (isOpen ? ITEM_SIZE : 0) -
+      (isOpen ? (skinToneVariations.length - 1) * ITEM_SIZE : 0)
+      }px)`;
+  };
+
+  const buttonStyle = { backgroundColor: "transparent", border: "none" }
+
   return (
     <Relative
       className={clsx('epr-skin-tones', direction, {
-        [ClassNames.open]: isOpen
+        [ClassNames.open]: isOpen,
       })}
       style={
         vertical
-          ? { flexBasis: expandedSize, height: expandedSize }
-          : { flexBasis: expandedSize }
+          ? { flexBasis: expandedSize, height: expandedSize, ...buttonStyle }
+          : { flexBasis: expandedSize, ...buttonStyle }
       }
+      button={true}
+      tabIndex={0}
+      onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
+        const { key } = event;
+        if (key === KeyboardEvents.Enter) {
+          if (!isOpen) {
+            setIsOpen(true)
+          }
+          closeAllOpenToggles();
+        }
+      }}
     >
       <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
@@ -76,9 +115,13 @@ export function SkinTonePicker({
                 transform: clsx(
                   vertical
                     ? `translateY(-${i * (isOpen ? ITEM_SIZE : 0)}px)`
-                    : `translateX(-${i * (isOpen ? ITEM_SIZE : 0)}px)`,
+                    : getHorizontalTranslation({
+                      ix: i,
+                      fanOutDirection,
+                      isOpen,
+                    }),
                   isOpen && active && 'scale(1.3)'
-                )
+                ),
               }}
               onClick={() => {
                 if (isOpen) {
@@ -90,15 +133,28 @@ export function SkinTonePicker({
                 }
                 closeAllOpenToggles();
               }}
+              // When tabbed onto the SkinTonePicker, allow Enter to open and close the fan of tones
+              onKeyDown={(event) => {
+                const { key } = event;
+                if (key === KeyboardEvents.Enter) {
+                  if (isOpen) {
+                    setActiveSkinTone(skinToneVariation);
+                    setSkinTone(skinToneVariation)
+                    focusSearchInput();
+                  } else {
+                    setIsOpen(true);
+                  }
+                  closeAllOpenToggles();
+                }
+              }}
+              tabIndex={isOpen ? 0 : -1}
               key={skinToneVariation}
               className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
-                [ClassNames.active]: active
+                [ClassNames.active]: active,
               })}
-              tabIndex={isOpen ? 0 : -1}
               aria-pressed={active}
-              aria-label={`Skin tone ${
-                skinTonesNamed[skinToneVariation as SkinTones]
-              }`}
+              aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]
+                }`}
             ></Button>
           );
         })}
@@ -109,5 +165,9 @@ export function SkinTonePicker({
 
 export enum SkinTonePickerDirection {
   VERTICAL = ClassNames.vertical,
-  HORIZONTAL = ClassNames.horizontal
+  HORIZONTAL = ClassNames.horizontal,
+}
+export enum SkinTonePickerFanOutDirection {
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
 }
