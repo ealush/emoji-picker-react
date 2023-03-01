@@ -146,6 +146,12 @@ function EmojiImg({
   return (
     <img
       src={getEmojiUrl(unified, emojiStyle)}
+      ref={(elem) => {
+        if (elem) {
+          elem.style.setProperty('--epr-sheet-x', emoji.x.toString());
+          elem.style.setProperty('--epr-sheet-y', emoji.y.toString());
+        }
+      }}
       alt={emojiName(emoji)}
       className={clsx(ClassNames.external, 'epr-emoji-img')}
       loading={lazyLoad ? 'lazy' : 'eager'}

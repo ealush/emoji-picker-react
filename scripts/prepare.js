@@ -8,6 +8,8 @@ const keys = {
   EMOJI_PROPERTY_SKIN_VARIATIONS: 'v',
   EMOJI_PROPERTY_GROUP: 'g',
   EMOJI_PROPERTY_ADDED_IN: 'a',
+  EMOJI_PROPERTY_X: 'x',
+  EMOJI_PROPERTY_Y: 'y',
   GROUP_NAME_PEOPLE: 'smileys_people',
   GROUP_NAME_NATURE: 'animals_nature',
   GROUP_NAME_FOOD: 'food_drink',
@@ -50,6 +52,8 @@ const cleanEmoji = (emoji) => {
   ].sort((a, b) => a.length - b.length);
   emoji[keys.EMOJI_PROPERTY_UNIFIED] = emoji.unified;
   emoji[keys.EMOJI_PROPERTY_ADDED_IN] = emoji.added_in;
+  emoji[keys.EMOJI_PROPERTY_X] = emoji.sheet_x;
+  emoji[keys.EMOJI_PROPERTY_Y] = emoji.sheet_y;
 
   if (emoji.skin_variations) {
     emoji[keys.EMOJI_PROPERTY_SKIN_VARIATIONS] = Object.values(
@@ -63,6 +67,8 @@ const cleanEmoji = (emoji) => {
     keys.EMOJI_PROPERTY_SKIN_VARIATIONS,
     keys.EMOJI_PROPERTY_SKIN_VARIATIONS,
     keys.EMOJI_PROPERTY_ADDED_IN,
+    keys.EMOJI_PROPERTY_X,
+    keys.EMOJI_PROPERTY_Y,
   ]);
 };
 
