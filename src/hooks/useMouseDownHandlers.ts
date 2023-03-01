@@ -23,6 +23,8 @@ import {
   emojiHasVariations,
   emojiNames,
   emojiUnified,
+  sheetX,
+  sheetY,
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setsuggested } from '../dataUtils/suggested';
@@ -168,6 +170,8 @@ function emojiClickOutput(
       return getEmojiUrl(unified, emojiStyle);
     },
     names: emojiNames(emoji),
+    sheetX: sheetX(emoji),
+    sheetY: sheetY(emoji),
     unified,
     unifiedWithoutSkinTone: emojiUnified(emoji),
   };
