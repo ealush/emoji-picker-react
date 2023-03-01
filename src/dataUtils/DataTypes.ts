@@ -5,6 +5,8 @@ export type DataEmoji = {
   u: string;
   v?: string[];
   a: string;
+  x: number;
+  y: number;
 };
 export type DataEmojis = DataEmoji[];
 

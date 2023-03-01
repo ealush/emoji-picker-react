@@ -2,6 +2,8 @@ export type EmojiClickData = {
   activeSkinTone: SkinTones;
   unified: string;
   unifiedWithoutSkinTone: string;
+  sheetX: number;
+  sheetY: number;
   emoji: string;
   names: string[];
   getImageUrl: (emojiStyle: EmojiStyle) => string;

@@ -12,7 +12,9 @@ enum EmojiProperties {
   name = 'n',
   unified = 'u',
   variations = 'v',
-  added_in = 'a'
+  added_in = 'a',
+  sheet_x = 'x',
+  sheet_y = 'y',
 }
 
 export function emojiNames(emoji: DataEmoji): string[] {
@@ -21,6 +23,14 @@ export function emojiNames(emoji: DataEmoji): string[] {
 
 export function addedIn(emoji: DataEmoji): number {
   return parseFloat(emoji[EmojiProperties.added_in]);
+}
+
+export function sheetX(emoji: DataEmoji): number {
+  return emoji[EmojiProperties.sheet_x];
+}
+
+export function sheetY(emoji: DataEmoji): number {
+  return emoji[EmojiProperties.sheet_y];
 }
 
 export function emojiName(emoji?: DataEmoji): string {
