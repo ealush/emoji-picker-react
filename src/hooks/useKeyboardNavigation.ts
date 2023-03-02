@@ -50,7 +50,8 @@ export enum KeyboardEvents {
   ArrowRight = 'ArrowRight',
   Escape = 'Escape',
   Enter = 'Enter',
-  Space = ' '
+  Space = ' ',
+  Tab = "Tab"
 }
 
 export function useKeyboardNavigation() {
@@ -132,6 +133,7 @@ function useSearchInputKeyboardEvents() {
         const { key } = event;
 
         switch (key) {
+          case KeyboardEvents.Tab:
           case KeyboardEvents.ArrowRight:
             if (!isSkinToneInSearch) {
               return;
