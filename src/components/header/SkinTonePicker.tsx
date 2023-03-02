@@ -94,17 +94,6 @@ export function SkinTonePicker({
           ? { flexBasis: expandedSize, height: expandedSize, ...buttonStyle }
           : { flexBasis: expandedSize, ...buttonStyle }
       }
-      button={true}
-      tabIndex={0}
-      onKeyDown={(event: React.KeyboardEvent<HTMLButtonElement>) => {
-        const { key } = event;
-        if (key === KeyboardEvents.Enter) {
-          if (!isOpen) {
-            setIsOpen(true)
-          }
-          closeAllOpenToggles();
-        }
-      }}
     >
       <div className="epr-skin-tone-select" ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
