@@ -59,29 +59,6 @@ export function SkinTonePicker({
 
   const vertical = direction === SkinTonePickerDirection.VERTICAL;
 
-  const getHorizontalTranslation = ({
-    ix,
-    fanOutDirection,
-    isOpen,
-  }: {
-    ix: number;
-    fanOutDirection: SkinTonePickerFanOutDirection;
-    isOpen: boolean;
-  }): string => {
-    // By fanning out to the left, the focus remains on the last (right-most) tone in the array,
-    // so tabbing takes a user out of the SkinTonePicker. In order to tab through the tones, a user
-    // must first tab backwards.
-    //
-    // Fanning out to the right keeps the focus on the first (left-most) tone in the array so a user
-    // can tab from left to right.
-    if (fanOutDirection === SkinTonePickerFanOutDirection.LEFT) {
-      return `translateX(-${ix * (isOpen ? ITEM_SIZE : 0)}px)`;
-    }
-    return `translateX(${ix * (isOpen ? ITEM_SIZE : 0) -
-      (isOpen ? (skinToneVariations.length - 1) * ITEM_SIZE : 0)
-      }px)`;
-  };
-
   const buttonStyle = { backgroundColor: "transparent", border: "none" }
 
   return (
@@ -150,6 +127,29 @@ export function SkinTonePicker({
       </div>
     </Relative>
   );
+
+  function getHorizontalTranslation({
+    ix,
+    fanOutDirection,
+    isOpen,
+  }: {
+    ix: number;
+    fanOutDirection: SkinTonePickerFanOutDirection;
+    isOpen: boolean;
+  }): string {
+    // By fanning out to the left, the focus remains on the last (right-most) tone in the array,
+    // so tabbing takes a user out of the SkinTonePicker. In order to tab through the tones, a user
+    // must first tab backwards.
+    //
+    // Fanning out to the right keeps the focus on the first (left-most) tone in the array so a user
+    // can tab from left to right.
+    if (fanOutDirection === SkinTonePickerFanOutDirection.LEFT) {
+      return `translateX(-${ix * (isOpen ? ITEM_SIZE : 0)}px)`;
+    }
+    return `translateX(${ix * (isOpen ? ITEM_SIZE : 0) -
+      (isOpen ? (skinToneVariations.length - 1) * ITEM_SIZE : 0)
+      }px)`;
+  }
 }
 
 export enum SkinTonePickerDirection {
