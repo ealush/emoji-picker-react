@@ -18,7 +18,6 @@ export function getSkinTone(): SkinTones {
 export function setSkinTone(skinTone: SkinTones) {
   try {
     window?.localStorage.setItem(SKINTONE_LS_KEY, JSON.stringify(skinTone));
-    // Prevents the change from being seen immediately.
   } catch {
     // ignore
   }

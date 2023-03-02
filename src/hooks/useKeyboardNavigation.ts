@@ -12,7 +12,7 @@ import {
   focusNextVisibleEmoji,
   focusPrevVisibleEmoji,
   focusVisibleEmojiOneRowDown,
-  focusVisibleEmojiOneRowUp
+  focusVisibleEmojiOneRowUp,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';
