@@ -23,7 +23,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "node ./scripts/prepare.js && tsdx build",
+    "build": "node ./scripts/prepare.js && tsdx build && node ./scripts/copyData.js",
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint ./src --ext .ts,.tsx",
     "prepare": "tsdx build",
