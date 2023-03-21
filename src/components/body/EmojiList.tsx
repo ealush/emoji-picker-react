@@ -10,7 +10,8 @@ import {
   useCategoriesConfig,
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  useLazyLoadEmojisConfig
+  useLazyLoadEmojisConfig,
+  useSkinTonesDisabledConfig
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
@@ -67,6 +68,7 @@ function RenderCategory({
   const [activeSkinTone] = useActiveSkinToneState();
   const isEmojiDisallowed = useIsEmojiDisallowed();
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const showVariations = !useSkinTonesDisabledConfig();
 
   // Small trick to defer the rendering of all emoji categories until the first category is visible
   // This way the user gets to actually see something and not wait for the whole picker to render.
@@ -91,6 +93,7 @@ function RenderCategory({
 
     return (
       <ClickableEmoji
+        showVariations={showVariations}
         key={unified}
         emoji={emoji}
         unified={unified}
