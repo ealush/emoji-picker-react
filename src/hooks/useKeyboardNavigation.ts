@@ -42,6 +42,7 @@ import {
   useIsSkinToneInPreview,
   useIsSkinToneInSearch
 } from './useShouldShowSkinTonePicker';
+import { useSearchDisabledConfig } from '../config/useConfig';
 
 enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
@@ -452,12 +453,13 @@ function focusPrevSkinTone() {
 function useOnType() {
   const appendSearch = useAppendSearch();
   const focusSearchInput = useFocusSearchInput();
+  const searchDisabled = useSearchDisabledConfig();
   const closeAllOpenToggles = useCloseAllOpenToggles();
 
   return function onType(event: KeyboardEvent) {
     const { key } = event;
 
-    if (hasModifier(event)) {
+    if (hasModifier(event) || searchDisabled) {
       return;
     }
 
