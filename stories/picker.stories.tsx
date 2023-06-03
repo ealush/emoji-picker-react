@@ -1,5 +1,5 @@
-import { Meta, Story } from '@storybook/react';
-import React, { useState, useSyncExternalStore } from 'react';
+import { Meta } from '@storybook/react';
+import React, { useState } from 'react';
 
 import EmojiPicker, {
   Emoji,
@@ -9,7 +9,6 @@ import EmojiPicker, {
   Theme
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
-import { useSkinTonePickerLocationConfig } from '../src/config/useConfig';
 import {
   SkinTonePickerLocation,
   SuggestionMode
@@ -31,10 +30,6 @@ const meta: Meta = {
 };
 
 export default meta;
-
-function onClick(...args) {
-  console.log(...args);
-}
 
 export const Native = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
@@ -184,6 +179,11 @@ export const CustomUnifiedEmojiImage = () => {
     <input onChange={(e) => setUnified(e.target.value)} value={unified} />
   </>
 }
+
+// TODO what should we allow to hide ?
+export const HideEmojisByUnicode = (args: Props) => (
+  <Template hideUnicodeCharacters={[ '1f4a3' /*💣*/ ,'1f595' /*🖕*/ ]} {...args} emojiStyle={EmojiStyle.NATIVE}  />
+);
 
 function TemplateDark(args) {
   const [shown, setShown] = useState(true);

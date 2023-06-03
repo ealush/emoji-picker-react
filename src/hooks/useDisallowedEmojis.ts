@@ -1,6 +1,6 @@
 import { useRef, useMemo } from 'react';
 
-import { useEmojiVersionConfig } from '../config/useConfig';
+import { useEmojiVersionConfig, useHideUnicodeCharacters } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   addedIn,
@@ -36,9 +36,15 @@ export function useIsEmojiDisallowed() {
   return function isEmojiDisallowed(emoji: DataEmoji) {
     const unified = unifiedWithoutSkinTone(emojiUnified(emoji));
 
-    return Boolean(disallowedEmojis[unified]);
+    return Boolean(disallowedEmojis[unified] || hideEmojiJustForFun(unified));
   };
 }
+
+  // TODO this is just a POC, we need to hide emoji's base on different properties
+  function hideEmojiJustForFun(emojiUnified: string) {
+    const hideUnicodeCharacters = useHideUnicodeCharacters();
+    return hideUnicodeCharacters.includes(emojiUnified);
+  }
 
 function addedInNewerVersion(
   emoji: DataEmoji,

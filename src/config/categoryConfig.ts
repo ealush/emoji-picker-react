@@ -3,7 +3,7 @@ import { Categories, SuggestionMode } from '../types/exposedTypes';
 export { Categories };
 
 const categoriesOrdered: Categories[] = [
-  Categories.SUGGESTED,
+  // Categories.SUGGESTED, TODO dont show on suggested
   Categories.SMILEYS_PEOPLE,
   Categories.ANIMALS_NATURE,
   Categories.FOOD_DRINK,
