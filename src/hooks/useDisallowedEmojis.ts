@@ -48,4 +48,4 @@ function addedInNewerVersion(
 ): boolean {
   return addedIn(emoji) > supportedLevel;
 }
- 
+
