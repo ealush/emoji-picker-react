@@ -1,6 +1,6 @@
-import { useHideUnicodeCharacters } from "../config/useConfig";
+import { useUnicodeToHide } from "../config/useConfig";
 
 export function useIsUnicodeHidden() {
-    const hideUnicodeCharacters = useHideUnicodeCharacters();
-    return (emojiUnified: string) => hideUnicodeCharacters.includes(emojiUnified);
+    const unicodeToHide = useUnicodeToHide();
+    return (emojiUnified: string) => unicodeToHide.includes(emojiUnified);
   }

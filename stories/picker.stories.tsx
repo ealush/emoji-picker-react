@@ -180,9 +180,8 @@ export const CustomUnifiedEmojiImage = () => {
   </>
 }
 
-// TODO what should we allow to hide ?
 export const HideEmojisByUnicode = (args: Props) => (
-  <Template hideUnicodeCharacters={[ '1f4a3' /*💣*/ ,'1f595' /*🖕*/ ]} {...args} emojiStyle={EmojiStyle.NATIVE}  />
+  <Template unicodeToHide={[ '1f4a3' /*💣*/]} {...args} emojiStyle={EmojiStyle.NATIVE}  />
 );
 
 function TemplateDark(args) {

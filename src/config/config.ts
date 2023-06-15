@@ -70,7 +70,7 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     width: 350,
-    hideUnicodeCharacters: [],
+    unicodeToHide: [],
   };
 }
 
@@ -92,7 +92,7 @@ export type PickerConfigInternal = {
   getEmojiUrl: GetEmojiUrl;
   searchDisabled: boolean;
   skinTonePickerLocation: SkinTonePickerLocation;
-  hideUnicodeCharacters: string[] // TODO Can we have this as a const list ?
+  unicodeToHide: string[];
 };
 
 export type PreviewConfig = {

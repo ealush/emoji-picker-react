@@ -98,9 +98,9 @@ export function useSkinTonePickerLocationConfig(): SkinTonePickerLocation {
   return skinTonePickerLocation;
 }
 
-export function useHideUnicodeCharacters(): string[] {
-  const { hideUnicodeCharacters } = usePickerConfig();
-  return hideUnicodeCharacters;
+export function useUnicodeToHide(): string[] {
+  const { unicodeToHide } = usePickerConfig();
+  return unicodeToHide;
 }
 
 export function useGetEmojiUrlConfig(): (
