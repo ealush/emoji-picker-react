@@ -2,5 +2,5 @@ import { useUnicodeToHide } from "../config/useConfig";
 
 export function useIsUnicodeHidden() {
     const unicodeToHide = useUnicodeToHide();
-    return (emojiUnified: string) => unicodeToHide.includes(emojiUnified);
+    return (emojiUnified: string) => unicodeToHide.has(emojiUnified);
   }

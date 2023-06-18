@@ -181,7 +181,7 @@ export const CustomUnifiedEmojiImage = () => {
 }
 
 export const HideEmojisByUnicode = (args: Props) => (
-  <Template unicodeToHide={[ '1f4a3' /*💣*/]} {...args} emojiStyle={EmojiStyle.NATIVE}  />
+  <Template {...args} emojiStyle={EmojiStyle.NATIVE}  />
 );
 
 function TemplateDark(args) {
