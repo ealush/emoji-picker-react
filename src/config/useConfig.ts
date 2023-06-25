@@ -98,6 +98,11 @@ export function useSkinTonePickerLocationConfig(): SkinTonePickerLocation {
   return skinTonePickerLocation;
 }
 
+export function useUnicodeToHide() {
+  const { unicodeToHide } = usePickerConfig();
+  return unicodeToHide;
+}
+
 export function useGetEmojiUrlConfig(): (
   unified: string,
   style: EmojiStyle

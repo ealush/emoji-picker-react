@@ -69,7 +69,8 @@ export function basePickerConfig(): PickerConfigInternal {
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
-    width: 350
+    width: 350,
+    unicodeToHide: new Set<string>(),
   };
 }
 
@@ -91,6 +92,7 @@ export type PickerConfigInternal = {
   getEmojiUrl: GetEmojiUrl;
   searchDisabled: boolean;
   skinTonePickerLocation: SkinTonePickerLocation;
+  unicodeToHide: Set<string>;
 };
 
 export type PreviewConfig = {
@@ -107,7 +109,7 @@ const basePreviewConfig: PreviewConfig = {
 
 type ConfigExternal = {
   previewConfig: Partial<PreviewConfig>;
-} & Omit<PickerConfigInternal, 'previewConfig'>;
+} & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
 
 export type PickerConfig = Partial<ConfigExternal>;
 
