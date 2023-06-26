@@ -113,11 +113,11 @@ export function isEmojiBehindLabel(emoji: NullableElement): boolean {
 }
 
 export function queryScrollBody(root: NullableElement): NullableElement {
-  return root
-    ? root.matches(asSelectors(ClassNames.scrollBody))
-      ? root
-      : root.querySelector(asSelectors(ClassNames.scrollBody))
-    : null;
+  if (!root) return null;
+
+  return root.matches(asSelectors(ClassNames.scrollBody))
+    ? root
+    : root.querySelector(asSelectors(ClassNames.scrollBody));
 }
 
 export function emojiDistanceFromScrollTop(emoji: NullableElement): number {
