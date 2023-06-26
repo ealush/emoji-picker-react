@@ -25,7 +25,7 @@ import {
   emojiUnified,
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
-import { setsuggested } from '../dataUtils/suggested';
+import { setSuggested } from '../dataUtils/suggested';
 import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
@@ -62,7 +62,7 @@ export function useMouseDownHandlers(
         activeVariationFromUnified(unified) || activeSkinTone;
 
       updateSuggested();
-      setsuggested(emoji, skinToneToUse);
+      setSuggested(emoji, skinToneToUse);
       onEmojiClick(emojiClickOutput(emoji, skinToneToUse, getEmojiUrl), event);
     },
     [

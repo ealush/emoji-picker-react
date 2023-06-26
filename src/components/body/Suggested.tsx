@@ -7,7 +7,7 @@ import {
   useSuggestedEmojisModeConfig,
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
-import { getsuggested } from '../../dataUtils/suggested';
+import { getSuggested } from '../../dataUtils/suggested';
 import { useUpdateSuggested } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
@@ -22,7 +22,7 @@ export function Suggested({ categoryConfig }: Props) {
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const suggested = React.useMemo(
-    () => getsuggested(suggestedEmojisModeConfig) ?? [],
+    () => getSuggested(suggestedEmojisModeConfig) ?? [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [suggestedUpdated, suggestedEmojisModeConfig]
   );
