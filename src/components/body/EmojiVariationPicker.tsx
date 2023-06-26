@@ -53,7 +53,7 @@ export function EmojiVariationPicker() {
     emoji &&
     button &&
     emojiHasVariations(emoji) &&
-    button.classList.contains(ClassNames.emojiHasVariatios);
+    button.classList.contains(ClassNames.emojiHasVariations);
 
   useEffect(() => {
     if (!visible) {
