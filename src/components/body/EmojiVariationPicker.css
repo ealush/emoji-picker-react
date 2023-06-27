@@ -1,10 +1,8 @@
 .EmojiPickerReact .epr-emoji-variation-picker {
   position: absolute;
-  top: 0;
   right: 15px;
   left: 15px;
   padding: 5px;
-  height: 0;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   display: flex;
@@ -21,12 +19,10 @@
   transform: scale(0.9);
   transition: transform 0.1s ease-out, opacity 0.2s ease-out;
 }
-
 .EmojiPickerReact .epr-emoji-variation-picker.pointing-up {
   transform-origin: center 0%;
   transform: scale(0.9);
 }
-
 .EmojiPickerReact .epr-emoji-variation-picker.visible {
   opacity: 1;
   visibility: visible;
@@ -40,33 +36,23 @@
   button.epr-emoji:hover {
   background: none;
 }
-
 .EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
   content: '';
   position: absolute;
-  top: -10px;
   width: 25px;
   height: 15px;
-}
-
-.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
-  background-image: svg-load(./svg/triangle.svg);
+  background-image: svg-load('./svg/triangle.svg');
   background-repeat: no-repeat;
   background-position: 0 0;
   background-size: 50px 15px;
+  top: 100%;
+  transform: translateX(-18px);
 }
-
 .EmojiPickerReact.epr-dark-theme
   .epr-emoji-variation-picker
   .epr-emoji-pointer {
   background-position: -25px 0;
 }
-
-.EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
-  top: 100%;
-  transform: translateX(-18px);
-}
-
 .EmojiPickerReact .epr-emoji-variation-picker.pointing-up .epr-emoji-pointer {
   top: 0;
   transform: rotate(180deg) translateY(100%) translateX(18px);
