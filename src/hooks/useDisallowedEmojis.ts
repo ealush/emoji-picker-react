@@ -8,6 +8,7 @@ import {
   emojiUnified,
   unifiedWithoutSkinTone
 } from '../dataUtils/emojiSelectors';
+
 import { useIsUnicodeHidden } from './useHideEmojisByUniocode';
 
 export function useDisallowedEmojis() {
@@ -48,4 +49,3 @@ function addedInNewerVersion(
 ): boolean {
   return addedIn(emoji) > supportedLevel;
 }
-

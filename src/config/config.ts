@@ -15,6 +15,8 @@ import {
   mergeCategoriesConfig
 } from './categoryConfig';
 
+const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
+
 export function mergeConfig(
   userConfig: PickerConfig = {}
 ): PickerConfigInternal {
@@ -69,8 +71,8 @@ export function basePickerConfig(): PickerConfigInternal {
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
-    width: 350,
-    unicodeToHide: new Set<string>(),
+    unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
+    width: 350
   };
 }
 
