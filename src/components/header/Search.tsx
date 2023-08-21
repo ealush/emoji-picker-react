@@ -6,7 +6,8 @@ import { asSelectors, ClassNames } from '../../DomUtils/classNames';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
-  useSearchPlaceHolderConfig
+  useSearchPlaceHolderConfig,
+  useSearchQuery
 } from '../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
 import {
@@ -48,6 +49,7 @@ export function Search() {
   const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
+  const searchQuery = useSearchQuery();
   const { onChange } = useFilter();
 
   const input = SearchInputRef?.current;
@@ -64,6 +66,7 @@ export function Search() {
         className="epr-search"
         type="text"
         placeholder={placeholder}
+        defaultValue={searchQuery}
         onChange={event => {
           setInc(inc + 1);
           setTimeout(() => {

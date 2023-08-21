@@ -1,7 +1,9 @@
+import { RefObject } from 'react';
 import { GetEmojiUrl } from '../components/emoji/Emoji';
 import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
+  EmojiPickerApi,
   EmojiStyle,
   SkinTonePickerLocation,
   SkinTones,
@@ -67,6 +69,7 @@ export function basePickerConfig(): PickerConfigInternal {
     },
     searchDisabled: false,
     searchPlaceHolder: 'Search',
+    search: '',
     skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
@@ -95,6 +98,9 @@ export type PickerConfigInternal = {
   searchDisabled: boolean;
   skinTonePickerLocation: SkinTonePickerLocation;
   unicodeToHide: Set<string>;
+  search: string;
+  api?: RefObject<EmojiPickerApi>;
+  onReturnFocus?: () => void;
 };
 
 export type PreviewConfig = {

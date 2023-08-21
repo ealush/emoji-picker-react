@@ -13,7 +13,8 @@ export {
   Categories,
   EmojiClickData,
   SuggestionMode,
-  SkinTonePickerLocation
+  SkinTonePickerLocation,
+  EmojiPickerApi
 } from './types/exposedTypes';
 
 export interface Props extends PickerConfig {}

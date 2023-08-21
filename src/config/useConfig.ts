@@ -111,6 +111,21 @@ export function useGetEmojiUrlConfig(): (
   return getEmojiUrl;
 }
 
+export function useSearchQuery() {
+  const { search } = usePickerConfig();
+  return search;
+}
+
+export function useApi() {
+  const { api } = usePickerConfig();
+  return api;
+}
+
+export function useOnReturnFocus() {
+  const { onReturnFocus } = usePickerConfig();
+  return onReturnFocus;
+}
+
 function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
   return typeof dimensionConfig === 'number'
     ? `${dimensionConfig}px`

@@ -51,3 +51,8 @@ export enum SkinTonePickerLocation {
   SEARCH = 'SEARCH',
   PREVIEW = 'PREVIEW'
 }
+
+export type EmojiPickerApi = {
+  takeFocus: () => void
+  activate: () => void
+}
