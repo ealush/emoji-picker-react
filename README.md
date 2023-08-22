@@ -50,7 +50,7 @@ function App() {
 
 # Props
 
-The following props are accepted by them picker:
+The following props are accepted by the picker:
 
 | Prop                   | Type              | Default    | Description                                                                                                                                |
 | ---------------------- | ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -70,6 +70,9 @@ The following props are accepted by them picker:
 | emojiVersion           | `string`          | -          | Allows displaying emojis up to a certain version for compatibility.                                                                        |
 | `height`               | `number`/`string` | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string. |
 | getEmojiUrl            | `Function`        | -          | Allows to customize the emoji url and provide your own image host.                                                                         |
+| search                 | string            | -          | Programmatically set the emoji search query.                                                                                               |
+| onReturnFocus          | function          | -          | When `searchDisabled` is set, this function will be called when focus would have been returned to the search input by keyboard navigation. |
+| api                    | `RefObject<EmojiPickerApi>`| - | Pass in a ref that gives you access to an imperative API.  See below.                                                                      |
 
 ## Full details
 
@@ -186,6 +189,24 @@ import { SkinTones } from 'emoji-picker-react';
 
 * `getEmojiUrl`: `(unified: string, emojiStyle: EmojiStyle) => string` - Allows to customize the emoji url and provide your own image host. The function receives the emoji unified and the emoji style as parameters. The function should return the url of the emoji image.
 
+- `search`: `string` - Sets the current search query used to filter the emoji list.  This works regardless of whether `searchDisabled` is set.
+
+- `onReturnFocus`: `() => void` - If `searchDisabled` is set, this function will be called when user keyboard navigation would have returned focus to the search input field.  Use this if building a custom search UI.
+
+- `api`: `RefObject<EmojiPickerApi>` - Provides you access to an imperative API that your component can use.  These methods are available:
+  - `takeFocus()` - sets focus to the first interactive element in the picker UI.  Similar to pressing <kbd>↓</kbd> when focus is in the picker's search input.
+  - `activate()` - selects the first visible emoji.  Similar to pressing <kbd>Enter</kbd> when focus is in the search input.
+  
+  For example:
+  ```tsx
+  function MyComponent() {
+    const picker = useRef<EmojiPickerApi>(null)
+    return <div>
+      <button onClick={() => picker.current?.takeFocus()}>Set focus to picker</button>
+      <EmojiPicker api={picker} />
+    </div>;
+  }
+  ```
 # Customization
 
 ## Custom Picker Width and Height
