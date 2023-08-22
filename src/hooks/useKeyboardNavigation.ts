@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useImperativeHandle, useMemo } from 'react';
 
 import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
 import {
@@ -42,7 +42,7 @@ import {
   useIsSkinToneInPreview,
   useIsSkinToneInSearch
 } from './useShouldShowSkinTonePicker';
-import { useSearchDisabledConfig } from '../config/useConfig';
+import { useApi, useOnReturnFocus, useSearchDisabledConfig } from '../config/useConfig';
 
 enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
@@ -70,8 +70,18 @@ function usePickerMainKeyboardEvents() {
   const focusSearchInput = useFocusSearchInput();
   const hasOpenToggles = useHasOpenToggles();
   const disallowMouseMove = useDisallowMouseMove();
+  const onReturnFocus = useOnReturnFocus();
+  const goDownFromSearchInput = useGoDownFromSearchInput();
+  const BodyRef = useBodyRef();
 
   const closeAllOpenToggles = useCloseAllOpenToggles();
+
+  useImperativeHandle(useApi(), () => {
+    return {
+      takeFocus: goDownFromSearchInput,
+      activate: () => focusAndClickFirstVisibleEmoji(BodyRef.current)
+    }
+  }, [goDownFromSearchInput]);
 
   const onKeyDown = useMemo(
     () =>
@@ -87,8 +97,10 @@ function usePickerMainKeyboardEvents() {
               closeAllOpenToggles();
               return;
             }
-            clearSearch();
-            scrollTo(0);
+            if (!onReturnFocus) {
+              clearSearch();
+              scrollTo(0);
+            }
             focusSearchInput();
             break;
         }

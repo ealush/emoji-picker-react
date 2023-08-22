@@ -6,13 +6,17 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
+import { useOnReturnFocus, useSearchDisabledConfig } from '../config/useConfig';
 
 export function useFocusSearchInput() {
   const SearchInputRef = useSearchInputRef();
+  const searchDisabled = useSearchDisabledConfig();
+  const onReturnFocus = useOnReturnFocus();
 
   return useCallback(() => {
-    focusElement(SearchInputRef.current);
-  }, [SearchInputRef]);
+    if (searchDisabled && onReturnFocus) onReturnFocus();
+    else focusElement(SearchInputRef.current);
+  }, [SearchInputRef, searchDisabled, onReturnFocus]);
 }
 
 export function useFocusSkinTonePicker() {

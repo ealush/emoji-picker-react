@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { usePickerSizeConfig, useThemeConfig } from '../../config/useConfig';
+import { usePickerSizeConfig, useSearchQuery, useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
@@ -10,6 +10,7 @@ import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import { PickerContextProvider } from '../context/PickerContext';
 import './PickerMain.css';
+import { useFilter } from '../../hooks/useFilter';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -33,6 +34,12 @@ function PickerRootElement({ children }: RootProps) {
   const PickerMainRef = usePickerMainRef();
   const { height, width } = usePickerSizeConfig();
 
+  const filter = useFilter();
+  const searchQuery = useSearchQuery();
+  React.useEffect(() => {
+    filter.onChange(searchQuery)
+  }, [searchQuery]);
+  
   useKeyboardNavigation();
   useOnFocus();
 
