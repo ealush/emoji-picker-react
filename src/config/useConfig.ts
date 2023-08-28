@@ -10,11 +10,20 @@ import {
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
-import { PickerDimensions, PreviewConfig } from './config';
+import {
+  DEFAULT_SEARCH_PLACEHOLDER,
+  PickerDimensions,
+  PreviewConfig,
+} from './config';
 
 export function useSearchPlaceHolderConfig(): string {
-  const { searchPlaceHolder } = usePickerConfig();
-  return searchPlaceHolder;
+  const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
+  return searchPlaceHolder !== DEFAULT_SEARCH_PLACEHOLDER ||
+    searchPlaceholder !== DEFAULT_SEARCH_PLACEHOLDER
+    ? searchPlaceHolder !== DEFAULT_SEARCH_PLACEHOLDER
+      ? searchPlaceHolder
+      : searchPlaceholder
+    : DEFAULT_SEARCH_PLACEHOLDER;
 }
 
 export function useDefaultSkinToneConfig(): SkinTones {
