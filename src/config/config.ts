@@ -17,6 +17,8 @@ import {
 
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
+export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
+
 export function mergeConfig(
   userConfig: PickerConfig = {}
 ): PickerConfigInternal {
@@ -66,7 +68,8 @@ export function basePickerConfig(): PickerConfigInternal {
       ...basePreviewConfig
     },
     searchDisabled: false,
-    searchPlaceHolder: 'Search',
+    searchPlaceHolder: DEFAULT_SEARCH_PLACEHOLDER,
+    searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
     skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
     suggestedEmojisMode: SuggestionMode.FREQUENT,
@@ -79,6 +82,7 @@ export function basePickerConfig(): PickerConfigInternal {
 export type PickerConfigInternal = {
   emojiVersion: string | null;
   searchPlaceHolder: string;
+  searchPlaceholder: string;
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
