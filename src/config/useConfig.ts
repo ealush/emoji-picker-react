@@ -18,12 +18,11 @@ import {
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
-  return searchPlaceHolder !== DEFAULT_SEARCH_PLACEHOLDER ||
-    searchPlaceholder !== DEFAULT_SEARCH_PLACEHOLDER
-    ? searchPlaceHolder !== DEFAULT_SEARCH_PLACEHOLDER
-      ? searchPlaceHolder
-      : searchPlaceholder
-    : DEFAULT_SEARCH_PLACEHOLDER;
+  return (
+    [searchPlaceHolder, searchPlaceholder].find(
+      (p) => p !== DEFAULT_SEARCH_PLACEHOLDER
+    ) ?? DEFAULT_SEARCH_PLACEHOLDER
+  );
 }
 
 export function useDefaultSkinToneConfig(): SkinTones {
