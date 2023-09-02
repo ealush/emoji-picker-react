@@ -12,7 +12,7 @@ import {
   focusNextVisibleEmoji,
   focusPrevVisibleEmoji,
   focusVisibleEmojiOneRowDown,
-  focusVisibleEmojiOneRowUp
+  focusVisibleEmojiOneRowUp,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';
@@ -44,14 +44,15 @@ import {
 } from './useShouldShowSkinTonePicker';
 import { useSearchDisabledConfig } from '../config/useConfig';
 
-enum KeyboardEvents {
+export enum KeyboardEvents {
   ArrowDown = 'ArrowDown',
   ArrowUp = 'ArrowUp',
   ArrowLeft = 'ArrowLeft',
   ArrowRight = 'ArrowRight',
   Escape = 'Escape',
   Enter = 'Enter',
-  Space = ' '
+  Space = ' ',
+  Tab = "Tab"
 }
 
 export function useKeyboardNavigation() {
@@ -133,6 +134,7 @@ function useSearchInputKeyboardEvents() {
         const { key } = event;
 
         switch (key) {
+          case KeyboardEvents.Tab:
           case KeyboardEvents.ArrowRight:
             if (!isSkinToneInSearch) {
               return;
