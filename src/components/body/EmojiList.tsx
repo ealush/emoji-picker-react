@@ -23,7 +23,7 @@ import {
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
-import { Custom } from './Custom';
+import { CustomCategory } from './CustomCategory';
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
@@ -42,7 +42,9 @@ export function EmojiList() {
         }
 
         if (isCustomCategory(categoryConfig)) {
-          return <Custom key={category} categoryConfig={categoryConfig} />;
+          return (
+            <CustomCategory key={category} categoryConfig={categoryConfig} />
+          );
         }
 
         return (

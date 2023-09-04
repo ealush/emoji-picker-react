@@ -1,7 +1,5 @@
 import { Categories, SuggestionMode } from '../types/exposedTypes';
 
-import { CustomEmoji } from './customEmojiConfig';
-
 export { Categories };
 
 const categoriesOrdered: Categories[] = [
@@ -24,22 +22,17 @@ export const SuggestedRecent: CategoryConfig = {
 
 export type CustomCategoryConfig = {
   category: Categories.CUSTOM;
-  emojis: CustomEmoji[];
   name: string;
 };
 
-const configByCategory: Record<
-  Categories,
-  CategoryConfig | CustomCategoryConfig
-> = {
+const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {
     category: Categories.SUGGESTED,
     name: 'Frequently Used'
   },
   [Categories.CUSTOM]: {
     category: Categories.CUSTOM,
-    name: 'Custom',
-    emojis: []
+    name: 'Custom'
   },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,
@@ -94,16 +87,14 @@ export function categoryNameFromCategoryConfig(category: CategoryConfig) {
   return category.name;
 }
 
-export type CategoriesConfig = (CategoryConfig | CustomCategoryConfig)[];
+export type CategoriesConfig = CategoryConfig[];
 
 export type CategoryConfig = {
   category: Categories;
   name: string;
 };
 
-export type UserCategoryConfig = Array<
-  Categories | CategoryConfig | CustomCategoryConfig
->;
+export type UserCategoryConfig = Array<Categories | CategoryConfig>;
 
 export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],

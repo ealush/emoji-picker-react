@@ -1,8 +1,9 @@
 import * as React from 'react';
 
 import { CustomCategoryConfig } from '../../config/categoryConfig';
+import { useCustomEmojisConfig } from '../../config/useConfig';
 import { emojiName, emojiNames } from '../../dataUtils/emojiSelectors';
-import { useShouldHideCustomCategory } from '../../hooks/useShouldHideCustomCategory';
+import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
 import { ClickableEmojiButton } from '../emoji/ClickableEmojiButton';
 
 import { EmojiCategory } from './EmojiCategory';
@@ -11,10 +12,9 @@ type Props = Readonly<{
   categoryConfig: CustomCategoryConfig;
 }>;
 
-export function Custom({ categoryConfig }: Props) {
-  const { emojis } = categoryConfig;
-
-  const hidden = useShouldHideCustomCategory();
+export function CustomCategory({ categoryConfig }: Props) {
+  const hidden = useShouldHideCustomEmojis();
+  const customEmojis = useCustomEmojisConfig();
 
   return (
     <EmojiCategory
@@ -22,7 +22,7 @@ export function Custom({ categoryConfig }: Props) {
       hiddenOnSearch
       hidden={hidden}
     >
-      {emojis.map(customEmoji => {
+      {customEmojis.map(customEmoji => {
         if (!customEmoji) {
           return null;
         }

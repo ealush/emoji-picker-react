@@ -12,7 +12,7 @@ import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
-import { useShouldHideCustomCategory } from '../../hooks/useShouldHideCustomCategory';
+import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
@@ -25,7 +25,7 @@ export function CategoryNavigation() {
 
   const categoriesConfig = useCategoriesConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
-  const hideCustomCategory = useShouldHideCustomCategory();
+  const hideCustomCategory = useShouldHideCustomEmojis();
 
   return (
     <div className="epr-category-nav" ref={CategoryNavigationRef}>

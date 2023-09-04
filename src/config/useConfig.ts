@@ -13,14 +13,15 @@ import { CategoriesConfig } from './categoryConfig';
 import {
   DEFAULT_SEARCH_PLACEHOLDER,
   PickerDimensions,
-  PreviewConfig,
+  PreviewConfig
 } from './config';
+import { CustomEmoji } from './customEmojiConfig';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
   return (
     [searchPlaceHolder, searchPlaceholder].find(
-      (p) => p !== DEFAULT_SEARCH_PLACEHOLDER
+      p => p !== DEFAULT_SEARCH_PLACEHOLDER
     ) ?? DEFAULT_SEARCH_PLACEHOLDER
   );
 }
@@ -48,6 +49,11 @@ export function useAutoFocusSearchConfig(): boolean {
 export function useCategoriesConfig(): CategoriesConfig {
   const { categories } = usePickerConfig();
   return categories;
+}
+
+export function useCustomEmojisConfig(): CustomEmoji[] {
+  const { customEmojis } = usePickerConfig();
+  return customEmojis;
 }
 
 export function useOnEmojiClickConfig(): (
