@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { CustomCategoryConfig } from '../../config/categoryConfig';
 import { useCustomEmojisConfig } from '../../config/useConfig';
-import { emojiName, emojiNames } from '../../dataUtils/emojiSelectors';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { ClickableEmojiButton } from '../emoji/ClickableEmojiButton';
@@ -29,12 +28,13 @@ export function CustomCategory({ categoryConfig }: Props) {
           return null;
         }
 
-        const name = emojiName(customEmoji);
+        const names = customEmoji.names;
+        const name = names[0];
 
         return (
           <ClickableEmojiButton
             key={name}
-            emojiNames={emojiNames(customEmoji)}
+            emojiNames={names}
             hidden={false}
             hiddenOnSearch={false}
             showVariations={false}

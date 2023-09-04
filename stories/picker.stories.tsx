@@ -47,11 +47,11 @@ export const CustomEmojis = (args: Props) => (
     {...args}
     customEmojis={[
       {
-        name: 'Film',
+        names: ['Film'],
         imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/film.svg'
       },
       {
-        name: 'Bar Chart',
+        names: ['Bar Chart'],
         imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/bar-chart.svg'
       }
     ]}

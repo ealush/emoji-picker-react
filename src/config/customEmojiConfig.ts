@@ -1,6 +1,6 @@
 import { EmojiProperties } from '../dataUtils/DataTypes';
 
 export type CustomEmoji = {
-  [EmojiProperties.name]: string[];
+  names: string[];
   [EmojiProperties.imgUrl]: string;
 };

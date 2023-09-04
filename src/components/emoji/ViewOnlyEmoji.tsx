@@ -34,19 +34,15 @@ export function ViewOnlyEmoji({
     return null;
   }
 
-  const name = emojiName(emojiToRender);
-
   if (isCustomEmoji(emojiToRender)) {
     return (
       <EmojiImg
         style={style}
-        emojiName={name}
+        emojiName={unified}
         emojiStyle={emojiStyle}
         lazyLoad={lazyLoad}
         imgUrl={emojiToRender.imgUrl}
-        onError={() => {
-          setEmojisThatFailedToLoad(prev => new Set(prev).add(name));
-        }}
+        onError={onError}
       />
     );
   }
@@ -58,15 +54,17 @@ export function ViewOnlyEmoji({
       ) : (
         <EmojiImg
           style={style}
-          emojiName={name}
+          emojiName={emojiName(emojiToRender)}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
           imgUrl={getEmojiUrl(unified, emojiStyle)}
-          onError={() => {
-            setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
-          }}
+          onError={onError}
         />
       )}
     </>
   );
+
+  function onError() {
+    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
+  }
 }
