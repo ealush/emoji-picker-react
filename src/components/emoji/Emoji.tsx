@@ -8,13 +8,14 @@ import {
   emojiHasVariations,
   emojiName,
   emojiNames,
-  emojiUrlByUnified,
+  emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { EmojiStyle } from '../../types/exposedTypes';
-import { Button } from '../atoms/Button';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
+
 import './Emoji.css';
+import { ClickableEmojiButton } from './ClickableEmojiButton';
 
 type ClickableEmojiProps = Readonly<
   BaseProps & {
@@ -43,22 +44,18 @@ export function ClickableEmoji({
   showVariations = true,
   size,
   lazyLoad,
-  getEmojiUrl,
+  getEmojiUrl
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
   return (
-    <Button
-      className={clsx(ClassNames.emoji, {
-        [ClassNames.hidden]: hidden,
-        [ClassNames.hiddenOnSearch]: hiddenOnSearch,
-        [ClassNames.visible]: !hidden && !hiddenOnSearch,
-        [ClassNames.emojiHasVariations]: hasVariations && showVariations,
-      })}
-      data-unified={unified}
-      // @ts-ignore - let's ignore the fact this is not a real react ref, ok?
-      aria-label={emojiName(emoji)}
-      data-full-name={emojiNames(emoji)}
+    <ClickableEmojiButton
+      hasVariations={hasVariations}
+      showVariations={showVariations}
+      hidden={hidden}
+      hiddenOnSearch={hiddenOnSearch}
+      emojiNames={emojiNames(emoji)}
+      unified={unified}
     >
       <ViewOnlyEmoji
         unified={unified}
@@ -68,7 +65,7 @@ export function ClickableEmoji({
         lazyLoad={lazyLoad}
         getEmojiUrl={getEmojiUrl}
       />
-    </Button>
+    </ClickableEmojiButton>
   );
 }
 
@@ -78,7 +75,7 @@ export function ViewOnlyEmoji({
   emojiStyle,
   size,
   lazyLoad,
-  getEmojiUrl = emojiUrlByUnified,
+  getEmojiUrl = emojiUrlByUnified
 }: BaseProps) {
   const style = {} as React.CSSProperties;
   if (size) {
@@ -86,8 +83,8 @@ export function ViewOnlyEmoji({
   }
 
   const emojiToRender = emoji ? emoji : emojiByUnified(unified);
-  if(!emojiToRender) {
-    return null
+  if (!emojiToRender) {
+    return null;
   }
 
   return (
@@ -110,7 +107,7 @@ export function ViewOnlyEmoji({
 
 function NativeEmoji({
   unified,
-  style,
+  style
 }: {
   unified: string;
   style: React.CSSProperties;
@@ -132,7 +129,7 @@ function EmojiImg({
   emojiStyle,
   style,
   lazyLoad = false,
-  getEmojiUrl,
+  getEmojiUrl
 }: {
   emoji: DataEmoji;
   unified: string;
@@ -155,7 +152,7 @@ function EmojiImg({
   );
 
   function onError() {
-    setEmojisThatFailedToLoad((prev) => new Set(prev).add(unified));
+    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
   }
 }
 

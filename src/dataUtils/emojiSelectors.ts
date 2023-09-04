@@ -6,11 +6,9 @@ import skinToneVariations, {
 } from '../data/skinToneVariations';
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
-import { DataEmoji, DataEmojis, EmojiProperties } from './DataTypes';
+import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
 
-
-
-export function emojiNames(emoji: DataEmoji): string[] {
+export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
 }
 
@@ -18,7 +16,7 @@ export function addedIn(emoji: DataEmoji): number {
   return parseFloat(emoji[EmojiProperties.added_in]);
 }
 
-export function emojiName(emoji?: DataEmoji): string {
+export function emojiName(emoji?: WithName): string {
   if (!emoji) {
     return '';
   }

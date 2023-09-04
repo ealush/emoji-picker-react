@@ -8,12 +8,17 @@ export enum EmojiProperties {
   imgUrl = 'imgUrl'
 }
 
-export type DataEmoji = {
-  [EmojiProperties.name]: string[];
+export interface DataEmoji extends WithName {
   [EmojiProperties.unified]: string;
   [EmojiProperties.variations]?: string[];
   [EmojiProperties.added_in]: string;
-};
+  [EmojiProperties.imgUrl]?: string;
+}
+
 export type DataEmojis = DataEmoji[];
 
 export type DataGroups = keyof typeof emojis;
+
+export type WithName = {
+  [EmojiProperties.name]: string[];
+};
