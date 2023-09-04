@@ -1,4 +1,4 @@
-import { GetEmojiUrl } from '../components/emoji/Emoji';
+import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,

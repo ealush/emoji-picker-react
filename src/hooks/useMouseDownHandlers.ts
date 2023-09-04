@@ -12,7 +12,6 @@ import {
   useEmojiVariationPickerState,
   useUpdateSuggested,
 } from '../components/context/PickerContext';
-import { GetEmojiUrl } from '../components/emoji/Emoji';
 import {
   useGetEmojiUrlConfig,
   useOnEmojiClickConfig,
@@ -30,6 +29,7 @@ import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
+import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 
 export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<NullableElement>

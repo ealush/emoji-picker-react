@@ -4,7 +4,9 @@ import { CustomCategoryConfig } from '../../config/categoryConfig';
 import { useCustomEmojisConfig } from '../../config/useConfig';
 import { emojiName, emojiNames } from '../../dataUtils/emojiSelectors';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
+import { EmojiStyle } from '../../types/exposedTypes';
 import { ClickableEmojiButton } from '../emoji/ClickableEmojiButton';
+import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 
 import { EmojiCategory } from './EmojiCategory';
 
@@ -38,7 +40,11 @@ export function CustomCategory({ categoryConfig }: Props) {
             showVariations={false}
             hasVariations={false}
           >
-            nothing
+            <ViewOnlyEmoji
+              emoji={customEmoji}
+              emojiStyle={EmojiStyle.NATIVE}
+              unified={name}
+            />
           </ClickableEmojiButton>
         );
       })}

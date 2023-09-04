@@ -16,9 +16,9 @@ import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker'
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
-import { ViewOnlyEmoji } from '../emoji/Emoji';
 import './Preview.css';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker';
+import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();

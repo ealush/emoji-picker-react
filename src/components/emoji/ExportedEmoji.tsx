@@ -2,14 +2,15 @@ import * as React from 'react';
 
 import { EmojiStyle } from '../../types/exposedTypes';
 
-import { GetEmojiUrl, ViewOnlyEmoji } from './Emoji';
+import { GetEmojiUrl } from './BaseEmojiProps';
+import { ViewOnlyEmoji } from './ViewOnlyEmoji';
 
 export function ExportedEmoji({
   unified,
   size = 32,
   emojiStyle = EmojiStyle.APPLE,
   lazyLoad = false,
-  getEmojiUrl,
+  getEmojiUrl
 }: {
   unified: string;
   emojiStyle?: EmojiStyle;
