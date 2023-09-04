@@ -6,6 +6,7 @@ export { Categories };
 
 const categoriesOrdered: Categories[] = [
   Categories.SUGGESTED,
+  Categories.CUSTOM,
   Categories.SMILEYS_PEOPLE,
   Categories.ANIMALS_NATURE,
   Categories.FOOD_DRINK,
