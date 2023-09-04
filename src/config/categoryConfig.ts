@@ -28,7 +28,10 @@ export type CustomCategoryConfig = {
   name: string;
 };
 
-const configByCategory: Record<Categories, CategoryConfig | CustomCategory> = {
+const configByCategory: Record<
+  Categories,
+  CategoryConfig | CustomCategoryConfig
+> = {
   [Categories.SUGGESTED]: {
     category: Categories.SUGGESTED,
     name: 'Frequently Used'
@@ -98,7 +101,9 @@ export type CategoryConfig = {
   name: string;
 };
 
-export type UserCategoryConfig = Array<Categories | CategoryConfig>;
+export type UserCategoryConfig = Array<
+  Categories | CategoryConfig | CustomCategoryConfig
+>;
 
 export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],
