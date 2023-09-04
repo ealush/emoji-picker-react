@@ -1,21 +1,18 @@
-import clsx from 'clsx';
 import * as React from 'react';
 
-import { ClassNames } from '../../DomUtils/classNames';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import {
   emojiByUnified,
   emojiHasVariations,
-  emojiName,
   emojiNames,
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
-import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { EmojiStyle } from '../../types/exposedTypes';
-import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 
 import './Emoji.css';
 import { ClickableEmojiButton } from './ClickableEmojiButton';
+import { EmojiImg } from './EmojiImg';
+import { NativeEmoji } from './NativeEmoji';
 
 type ClickableEmojiProps = Readonly<
   BaseProps & {
@@ -98,62 +95,11 @@ export function ViewOnlyEmoji({
           emoji={emojiToRender}
           emojiStyle={emojiStyle}
           lazyLoad={lazyLoad}
-          getEmojiUrl={getEmojiUrl}
+          imgUrl={getEmojiUrl(unified, emojiStyle)}
         />
       )}
     </>
   );
-}
-
-function NativeEmoji({
-  unified,
-  style
-}: {
-  unified: string;
-  style: React.CSSProperties;
-}) {
-  return (
-    <span
-      className={clsx(ClassNames.external, 'epr-emoji-native')}
-      data-unified={unified}
-      style={style}
-    >
-      {parseNativeEmoji(unified)}
-    </span>
-  );
-}
-
-function EmojiImg({
-  emoji,
-  unified,
-  emojiStyle,
-  style,
-  lazyLoad = false,
-  getEmojiUrl
-}: {
-  emoji: DataEmoji;
-  unified: string;
-  emojiStyle: EmojiStyle;
-  style: React.CSSProperties;
-  lazyLoad?: boolean;
-  getEmojiUrl: GetEmojiUrl;
-}) {
-  const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
-
-  return (
-    <img
-      src={getEmojiUrl(unified, emojiStyle)}
-      alt={emojiName(emoji)}
-      className={clsx(ClassNames.external, 'epr-emoji-img')}
-      loading={lazyLoad ? 'lazy' : 'eager'}
-      onError={onError}
-      style={style}
-    />
-  );
-
-  function onError() {
-    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
-  }
 }
 
 export type GetEmojiUrl = (unified: string, style: EmojiStyle) => string;
