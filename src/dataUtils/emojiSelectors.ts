@@ -4,16 +4,11 @@ import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
 } from '../data/skinToneVariations';
-import { EmojiStyle, SkinTones } from '../types/exposedTypes';  
+import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
-import { DataEmoji, DataEmojis } from './DataTypes';
+import { DataEmoji, DataEmojis, EmojiProperties } from './DataTypes';
 
-enum EmojiProperties {
-  name = 'n',
-  unified = 'u',
-  variations = 'v',
-  added_in = 'a'
-}
+
 
 export function emojiNames(emoji: DataEmoji): string[] {
   return emoji[EmojiProperties.name] ?? [];
