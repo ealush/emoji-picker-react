@@ -22,7 +22,7 @@ export const SuggestedRecent: CategoryConfig = {
   category: Categories.SUGGESTED
 };
 
-export type CustomCategory = {
+export type CustomCategoryConfig = {
   category: Categories.CUSTOM;
   emojis: CustomEmoji[];
   name: string;
@@ -91,7 +91,7 @@ export function categoryNameFromCategoryConfig(category: CategoryConfig) {
   return category.name;
 }
 
-export type CategoriesConfig = CategoryConfig[];
+export type CategoriesConfig = (CategoryConfig | CustomCategoryConfig)[];
 
 export type CategoryConfig = {
   category: Categories;

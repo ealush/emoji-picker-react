@@ -16,12 +16,14 @@ import {
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
+import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import {
   useActiveSkinToneState,
   useIsPastInitialLoad
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
+import { Custom } from './Custom';
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
@@ -37,6 +39,10 @@ export function EmojiList() {
 
         if (category === Categories.SUGGESTED) {
           return <Suggested key={category} categoryConfig={categoryConfig} />;
+        }
+
+        if (isCustomCategory(categoryConfig)) {
+          return <Custom key={category} categoryConfig={categoryConfig} />;
         }
 
         return (

@@ -37,7 +37,7 @@ export enum SkinTones {
 
 export enum Categories {
   SUGGESTED = 'suggested',
-  CUSTOM = 'CUSTOM',
+  CUSTOM = 'custom',
   SMILEYS_PEOPLE = 'smileys_people',
   ANIMALS_NATURE = 'animals_nature',
   FOOD_DRINK = 'food_drink',

@@ -1,13 +1,13 @@
 import * as React from 'react';
 
-import { CustomCategory } from '../../config/categoryConfig';
-// import { emojiName } from '../../dataUtils/emojiSelectors';
-// import { ClickableEmoji } from '../emoji/Emoji';
+import { CustomCategoryConfig } from '../../config/categoryConfig';
+import { emojiName, emojiNames } from '../../dataUtils/emojiSelectors';
+import { ClickableEmojiButton } from '../emoji/ClickableEmojiButton';
 
 import { EmojiCategory } from './EmojiCategory';
 
 type Props = Readonly<{
-  categoryConfig: CustomCategory;
+  categoryConfig: CustomCategoryConfig;
 }>;
 
 export function Custom({ categoryConfig }: Props) {
@@ -24,13 +24,20 @@ export function Custom({ categoryConfig }: Props) {
           return null;
         }
 
-        return null;
-        // <ClickableEmoji
-        //   showVariations={false}
-        //   // emoji={customEmoji}
-        //   key={emojiName(customEmoji)}
-        //   getEmojiUrl={() => customEmoji.imgUrl}
-        // />
+        const name = emojiName(customEmoji);
+
+        return (
+          <ClickableEmojiButton
+            key={name}
+            emojiNames={emojiNames(customEmoji)}
+            hidden={false}
+            hiddenOnSearch={false}
+            showVariations={false}
+            hasVariations={false}
+          >
+            nothing
+          </ClickableEmojiButton>
+        );
       })}
     </EmojiCategory>
   );

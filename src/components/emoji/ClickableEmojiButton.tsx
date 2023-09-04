@@ -12,7 +12,7 @@ type ClickableEmojiButtonProps = Readonly<{
   emojiNames: string[];
   children: React.ReactNode;
   hasVariations: boolean;
-  unified: string;
+  unified?: string;
 }>;
 
 export function ClickableEmojiButton({
