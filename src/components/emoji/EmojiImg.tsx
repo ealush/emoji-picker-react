@@ -2,39 +2,30 @@ import clsx from 'clsx';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiName } from '../../dataUtils/emojiSelectors';
 import { EmojiStyle } from '../../types/exposedTypes';
-import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 
 export function EmojiImg({
-  emoji,
-  unified,
+  emojiName,
   style,
   lazyLoad = false,
-  imgUrl
+  imgUrl,
+  onError
 }: {
-  emoji: DataEmoji;
-  unified: string;
+  emojiName: string;
   emojiStyle: EmojiStyle;
   style: React.CSSProperties;
   lazyLoad?: boolean;
   imgUrl: string;
+  onError: () => void;
 }) {
-  const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
-
   return (
     <img
       src={imgUrl}
-      alt={emojiName(emoji)}
+      alt={emojiName}
       className={clsx(ClassNames.external, 'epr-emoji-img')}
       loading={lazyLoad ? 'lazy' : 'eager'}
       onError={onError}
       style={style}
     />
   );
-
-  function onError() {
-    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
-  }
 }

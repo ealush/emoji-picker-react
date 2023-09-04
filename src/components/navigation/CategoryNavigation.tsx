@@ -12,6 +12,8 @@ import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
+import { useShouldHideCustomCategory } from '../../hooks/useShouldHideCustomCategory';
+import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 
@@ -23,11 +25,17 @@ export function CategoryNavigation() {
 
   const categoriesConfig = useCategoriesConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
+  const hideCustomCategory = useShouldHideCustomCategory();
 
   return (
     <div className="epr-category-nav" ref={CategoryNavigationRef}>
       {categoriesConfig.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
+
+        if (isCustomCategory(categoryConfig) && hideCustomCategory) {
+          return null;
+        }
+
         return (
           <Button
             tabIndex={isSearchMode ? -1 : 0}
