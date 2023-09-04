@@ -17,8 +17,9 @@ const ConfigContext = React.createContext<PickerConfigInternal>(
 );
 
 export function PickerConfigProvider({ children, ...config }: Props) {
+  const [mergedConfig] = React.useState(() => mergeConfig(config));
   return (
-    <ConfigContext.Provider value={mergeConfig(config)}>
+    <ConfigContext.Provider value={mergedConfig}>
       {children}
     </ConfigContext.Provider>
   );

@@ -42,7 +42,6 @@ export function useEmojiPreviewEvents(
     });
     bodyRef?.addEventListener('blur', onLeave, true);
 
-
     function onEnter(e: FocusEvent) {
       const button = buttonFromTarget(e.target as HTMLElement);
 
@@ -90,7 +89,6 @@ export function useEmojiPreviewEvents(
         focusElement(button);
       }
     }
-
 
     return () => {
       bodyRef?.removeEventListener('mouseover', onMouseOver);

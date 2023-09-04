@@ -1,5 +1,6 @@
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
+import { CustomEmoji } from '../config/customEmojiConfig';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
@@ -7,6 +8,7 @@ import skinToneVariations, {
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
+import { indexEmoji } from './alphaNumericEmojiIndex';
 
 export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
@@ -89,6 +91,30 @@ export function emojiByUnified(unified?: string): DataEmoji | undefined {
 }
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
+
+export function addCustomEmojis(customEmojis: CustomEmoji[]): void {
+  customEmojis.forEach(emoji => {
+    const emojiData = customToRegularEmoji(emoji);
+
+    if (allEmojisByUnified[emojiData[EmojiProperties.unified]]) {
+      return;
+    }
+
+    allEmojis.push(emojiData);
+    allEmojisByUnified[emojiData[EmojiProperties.unified]] = emojiData;
+    emojis[Categories.CUSTOM].push(emojiData as never);
+    indexEmoji(emojiData);
+  });
+}
+
+function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
+  return {
+    [EmojiProperties.name]: emoji.names.map(name => name.toLowerCase()),
+    [EmojiProperties.unified]: emoji.id.toLowerCase(),
+    [EmojiProperties.added_in]: '0',
+    [EmojiProperties.imgUrl]: emoji.imgUrl
+  };
+}
 
 const allEmojisByUnified: {
   [unified: string]: DataEmoji;

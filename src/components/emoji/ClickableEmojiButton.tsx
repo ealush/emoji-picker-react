@@ -34,7 +34,7 @@ export function ClickableEmojiButton({
       })}
       data-unified={unified}
       aria-label={emojiNames[0]}
-      data-full-name={emojiNames.join(',').toLowerCase()}
+      data-full-name={emojiNames}
     >
       {children}
     </Button>

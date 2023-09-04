@@ -48,11 +48,13 @@ export const CustomEmojis = (args: Props) => (
     customEmojis={[
       {
         names: ['Film'],
-        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/film.svg'
+        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/film.svg',
+        id: 'film'
       },
       {
         names: ['Bar Chart'],
-        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/bar-chart.svg'
+        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/bar-chart.svg',
+        id: 'bar_chart'
       }
     ]}
   />

@@ -16,12 +16,14 @@ const keys = {
   GROUP_NAME_OBJECTS: 'objects',
   GROUP_NAME_SYMBOLS: 'symbols',
   GROUP_NAME_FLAGS: 'flags',
-  GROUP_NAME_SUGGESTED: 'suggested'
+  GROUP_NAME_SUGGESTED: 'suggested',
+  GROUP_NAME_CUSTOM: 'custom'
 };
 
 const groupConversion = {
   [keys.GROUP_NAME_PEOPLE]: keys.GROUP_NAME_PEOPLE,
   smileys_emotion: keys.GROUP_NAME_PEOPLE,
+  custom: keys.GROUP_NAME_CUSTOM,
   people_body: keys.GROUP_NAME_PEOPLE,
   animals_nature: keys.GROUP_NAME_NATURE,
   food_drink: keys.GROUP_NAME_FOOD,
@@ -82,7 +84,7 @@ const { groupedEmojis } = emojis.reduce(
     groupedEmojis[category].push(cleanEmoji(emoji));
     return { groupedEmojis };
   },
-  { groupedEmojis: {} }
+  { groupedEmojis: { [keys.GROUP_NAME_CUSTOM]: [] } }
 );
 
 writeJSONSync('./src/data/emojis.json', groupedEmojis, 'utf8');

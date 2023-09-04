@@ -30,6 +30,8 @@
 .EmojiPickerReact button.epr-emoji .epr-emoji-img {
   max-width: var(--epr-emoji-fullsize);
   max-height: var(--epr-emoji-fullsize);
+  min-width: var(--epr-emoji-fullsize);
+  min-height: var(--epr-emoji-fullsize);
   padding: var(--epr-emoji-padding);
 }
 

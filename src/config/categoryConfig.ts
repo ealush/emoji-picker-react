@@ -32,7 +32,7 @@ const configByCategory: Record<Categories, CategoryConfig> = {
   },
   [Categories.CUSTOM]: {
     category: Categories.CUSTOM,
-    name: 'Custom'
+    name: 'Custom Emojis'
   },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,
