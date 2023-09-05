@@ -8,12 +8,6 @@ module.exports = {
       options: {
         postcssLoaderOptions: {
           implementation: require('postcss')
-          // plugins: [
-          //   require('postcss-inline-svg'),
-          //   require('postcss-svgo'),
-          //   require('autoprefixer'),
-          //   require('cssnano')
-          // ]
         }
       }
     }
