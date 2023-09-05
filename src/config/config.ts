@@ -1,5 +1,8 @@
-import { GetEmojiUrl } from '../components/emoji/Emoji';
-import { emojiUrlByUnified } from '../dataUtils/emojiSelectors';
+import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
+import {
+  addCustomEmojis,
+  emojiUrlByUnified
+} from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
   EmojiStyle,
@@ -14,6 +17,7 @@ import {
   baseCategoriesConfig,
   mergeCategoriesConfig
 } from './categoryConfig';
+import { CustomEmoji } from './customEmojiConfig';
 
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
@@ -34,6 +38,8 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  addCustomEmojis(config.customEmojis ?? []);
+
   const skinTonePickerLocation = config.searchDisabled
     ? SkinTonePickerLocation.PREVIEW
     : config.skinTonePickerLocation;
@@ -50,6 +56,7 @@ export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
     categories: baseCategoriesConfig(),
+    customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
     emojiVersion: null,
@@ -99,6 +106,7 @@ export type PickerConfigInternal = {
   searchDisabled: boolean;
   skinTonePickerLocation: SkinTonePickerLocation;
   unicodeToHide: Set<string>;
+  customEmojis: CustomEmoji[];
 };
 
 export type PreviewConfig = {

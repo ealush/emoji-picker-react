@@ -87,6 +87,9 @@ aside.EmojiPickerReact.epr-main:has(input:placeholder-shown) .epr-category-nav {
 .EmojiPickerReact button.epr-cat-btn.epr-icn-suggested {
   background-position-x: calc(var(--epr-category-navigation-button-size) * -8);
 }
+.EmojiPickerReact button.epr-cat-btn.epr-icn-custom {
+  background-position-x: calc(var(--epr-category-navigation-button-size) * -9);
+}
 .EmojiPickerReact button.epr-cat-btn.epr-icn-activities {
   background-position-x: calc(var(--epr-category-navigation-button-size) * -4);
 }

@@ -4,6 +4,7 @@ export { Categories };
 
 const categoriesOrdered: Categories[] = [
   Categories.SUGGESTED,
+  Categories.CUSTOM,
   Categories.SMILEYS_PEOPLE,
   Categories.ANIMALS_NATURE,
   Categories.FOOD_DRINK,
@@ -19,10 +20,19 @@ export const SuggestedRecent: CategoryConfig = {
   category: Categories.SUGGESTED
 };
 
+export type CustomCategoryConfig = {
+  category: Categories.CUSTOM;
+  name: string;
+};
+
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {
     category: Categories.SUGGESTED,
     name: 'Frequently Used'
+  },
+  [Categories.CUSTOM]: {
+    category: Categories.CUSTOM,
+    name: 'Custom Emojis'
   },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,

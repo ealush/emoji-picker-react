@@ -1,16 +1,12 @@
 const postcss = require('rollup-plugin-postcss');
 
+const postCssConfig = require('./postcss.config');
+
 module.exports = {
   rollup(config, options) {
     config.plugins.push(
       postcss({
-        plugins: [
-          require('postcss-inline-svg'),
-          require('postcss-svgo'),
-          require('autoprefixer'),
-          require('cssnano')
-        ],
-        inject: true,
+        ...postCssConfig,
         extract: !!options.writeMeta
       })
     );

@@ -42,6 +42,24 @@ export const AutoTheme = (args: Props) => (
   <TemplateDark {...args} theme={Theme.AUTO} />
 );
 
+export const CustomEmojis = (args: Props) => (
+  <Template
+    {...args}
+    customEmojis={[
+      {
+        names: ['Film'],
+        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/film.svg',
+        id: 'film'
+      },
+      {
+        names: ['Bar Chart'],
+        imgUrl: 'https://cdn.jsdelivr.net/npm/eva-icons/fill/svg/bar-chart.svg',
+        id: 'bar_chart'
+      }
+    ]}
+  />
+);
+
 export const SearchDisabled = (args: Props) => (
   <Template {...args} searchDisabled />
 );

@@ -1,21 +1,16 @@
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
+import { CustomEmoji } from '../config/customEmojiConfig';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
 } from '../data/skinToneVariations';
-import { EmojiStyle, SkinTones } from '../types/exposedTypes';  
+import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
-import { DataEmoji, DataEmojis } from './DataTypes';
+import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
+import { indexEmoji } from './alphaNumericEmojiIndex';
 
-enum EmojiProperties {
-  name = 'n',
-  unified = 'u',
-  variations = 'v',
-  added_in = 'a'
-}
-
-export function emojiNames(emoji: DataEmoji): string[] {
+export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
 }
 
@@ -23,7 +18,7 @@ export function addedIn(emoji: DataEmoji): number {
   return parseFloat(emoji[EmojiProperties.added_in]);
 }
 
-export function emojiName(emoji?: DataEmoji): string {
+export function emojiName(emoji?: WithName): string {
   if (!emoji) {
     return '';
   }
@@ -96,6 +91,30 @@ export function emojiByUnified(unified?: string): DataEmoji | undefined {
 }
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
+
+export function addCustomEmojis(customEmojis: CustomEmoji[]): void {
+  customEmojis.forEach(emoji => {
+    const emojiData = customToRegularEmoji(emoji);
+
+    if (allEmojisByUnified[emojiData[EmojiProperties.unified]]) {
+      return;
+    }
+
+    allEmojis.push(emojiData);
+    allEmojisByUnified[emojiData[EmojiProperties.unified]] = emojiData;
+    emojis[Categories.CUSTOM].push(emojiData as never);
+    indexEmoji(emojiData);
+  });
+}
+
+function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
+  return {
+    [EmojiProperties.name]: emoji.names.map(name => name.toLowerCase()),
+    [EmojiProperties.unified]: emoji.id.toLowerCase(),
+    [EmojiProperties.added_in]: '0',
+    [EmojiProperties.imgUrl]: emoji.imgUrl
+  };
+}
 
 const allEmojisByUnified: {
   [unified: string]: DataEmoji;
