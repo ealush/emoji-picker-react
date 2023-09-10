@@ -10,15 +10,17 @@ export function ExportedEmoji({
   size = 32,
   emojiStyle = EmojiStyle.APPLE,
   lazyLoad = false,
-  getEmojiUrl
+  getEmojiUrl,
+  emojiUrl
 }: {
   unified: string;
   emojiStyle?: EmojiStyle;
   size?: number;
   lazyLoad?: boolean;
   getEmojiUrl?: GetEmojiUrl;
+  emojiUrl?: string;
 }) {
-  if (!unified) {
+  if (!unified && !emojiUrl && !getEmojiUrl) {
     return null;
   }
 
@@ -28,7 +30,7 @@ export function ExportedEmoji({
       size={size}
       emojiStyle={emojiStyle}
       lazyLoad={lazyLoad}
-      getEmojiUrl={getEmojiUrl}
+      getEmojiUrl={emojiUrl ? () => emojiUrl : getEmojiUrl}
     />
   );
 }

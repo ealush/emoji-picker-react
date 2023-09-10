@@ -10,6 +10,7 @@ import EmojiPicker, {
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 import {
+  EmojiClickData,
   SkinTonePickerLocation,
   SuggestionMode
 } from '../src/types/exposedTypes';
@@ -43,77 +44,7 @@ export const AutoTheme = (args: Props) => (
 );
 
 export const CustomEmojis = (args: Props) => (
-  <Template
-    {...args}
-    customEmojis={[
-      {
-        names: ['Alice', 'alice in wonderland'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/alice.png',
-        id: 'alice'
-      },
-      {
-        names: ['Dog'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/dog.png',
-        id: 'dog'
-      },
-      {
-        names: ['Hat'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/hat.png',
-        id: 'hat'
-      },
-      {
-        names: ['Kid'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/kid.png',
-        id: 'kid'
-      },
-      {
-        names: ['Mic'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/mic.png',
-        id: 'mic'
-      },
-      {
-        names: ['Moab', 'desert'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/moab.png',
-        id: 'moab'
-      },
-      {
-        names: ['Potter', 'harry', 'harry potter'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/potter.png',
-        id: 'potter'
-      },
-      {
-        names: ['Shroom', 'mushroom'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/shroom.png',
-        id: 'shroom'
-      },
-      {
-        names: ['Smily'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/smily.png',
-        id: 'smily'
-      },
-      {
-        names: ['Tabby', 'cat'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/tabby.png',
-        id: 'tabby'
-      },
-      {
-        names: ['Vest'],
-        imgUrl:
-          'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png',
-        id: 'vest'
-      }
-    ]}
-  />
+  <Template {...args} {...customEmojis} />
 );
 
 export const SearchDisabled = (args: Props) => (
@@ -243,7 +174,24 @@ export const StandaloneEmojiImage = () => {
   return <Emoji unified="1f9d1-1f3ff-200d-1f4bc" size={35} />;
 };
 export const StandaloneEmojiNative = () => {
-  return <Emoji unified="1f60a" emojiStyle={EmojiStyle.NATIVE} size={35} />;
+  const [currentEmoji, setCurrentEmoji] = useState<EmojiClickData | null>(null);
+  return (
+    <div>
+      <Emoji
+        unified={currentEmoji?.unified ?? '1f60a'}
+        emojiUrl={currentEmoji?.imageUrl}
+        emojiStyle={EmojiStyle.NATIVE}
+        size={60}
+      />
+      <EmojiPicker
+        customEmojis={customEmojis}
+        onEmojiClick={clickedEmoji => {
+          console.log(clickedEmoji);
+          setCurrentEmoji(clickedEmoji);
+        }}
+      />
+    </div>
+  );
 };
 export const CustomUnifiedEmojiImage = () => {
   const [unified, setUnified] = useState('1f9d1-1f3ff-200d-1f4bc');
@@ -309,3 +257,72 @@ function Template(args) {
     </React.StrictMode>
   );
 }
+
+const customEmojis = [
+  {
+    names: ['Alice', 'alice in wonderland'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/alice.png',
+    id: 'alice'
+  },
+  {
+    names: ['Dog'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/dog.png',
+    id: 'dog'
+  },
+  {
+    names: ['Hat'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/hat.png',
+    id: 'hat'
+  },
+  {
+    names: ['Kid'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/kid.png',
+    id: 'kid'
+  },
+  {
+    names: ['Mic'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/mic.png',
+    id: 'mic'
+  },
+  {
+    names: ['Moab', 'desert'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/moab.png',
+    id: 'moab'
+  },
+  {
+    names: ['Potter', 'harry', 'harry potter'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/potter.png',
+    id: 'potter'
+  },
+  {
+    names: ['Shroom', 'mushroom'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/shroom.png',
+    id: 'shroom'
+  },
+  {
+    names: ['Smily'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/smily.png',
+    id: 'smily'
+  },
+  {
+    names: ['Tabby', 'cat'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/tabby.png',
+    id: 'tabby'
+  },
+  {
+    names: ['Vest'],
+    imgUrl:
+      'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png',
+    id: 'vest'
+  }
+];

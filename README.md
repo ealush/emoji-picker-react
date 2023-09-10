@@ -79,9 +79,11 @@ The following props are accepted by them picker:
     activeSkinTone: SkinTones;
     unified: string;
     unifiedWithoutSkinTone: string;
-    emoji: string;
+    emoji: string; // the emoji character, for example: '😀'. Emoji ID in custom emojis
+    isCustom: boolean; // whether the emoji is a custom emoji or not
     names: string[];
-    getImageUrl: (emojiStyle: EmojiStyle) => string;
+    imageUrl: string; // the url of the emoji image with the current emoji style applied
+    getImageUrl: (emojiStyle: EmojiStyle) => string; // a function that receives an emoji style and returns the url of the emoji image with the provided style applied
   }
   ```
 
@@ -316,7 +318,8 @@ The picker exports an `Emoji` component. The emoji component is the same used wi
 | `size`        | number       | 32                 | The size of the emoji.                                                                      |
 | `emojiStyle`  | `EmojiStyle` | `EmojiStyle.APPLE` | The emoji style to use. Can be either `apple`, `google`, `facebook`, `twitter` or `native`. |
 | `lazyLoad`    | boolean      | `false`            | Whether to lazy load the emoji. image                                                       |
-| `getEmojiUrl` | Function     | -                  | Allows to customize the emoji url and provide your own image host.                          |
+| `emojiUrl`    | string       | -                  | The url of the emoji image to render. Useful for custom emojis.                             |
+| `getEmojiUrl` | Function     | -                  | Allows to customize the emoji url and provide your own image host for dynamic resolution.   |
 
 ```js
 import { Emoji, EmojiStyle } from 'emoji-picker-react';

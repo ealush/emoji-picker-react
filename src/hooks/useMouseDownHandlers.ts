@@ -4,32 +4,34 @@ import { useEffect, useRef } from 'react';
 import {
   emojiFromElement,
   isEmojiElement,
-  NullableElement,
+  NullableElement
 } from '../DomUtils/selectors';
 import {
   useActiveSkinToneState,
   useDisallowClickRef,
   useEmojiVariationPickerState,
-  useUpdateSuggested,
+  useUpdateSuggested
 } from '../components/context/PickerContext';
+import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
+  useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  useOnEmojiClickConfig,
+  useOnEmojiClickConfig
 } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   activeVariationFromUnified,
   emojiHasVariations,
   emojiNames,
-  emojiUnified,
+  emojiUnified
 } from '../dataUtils/emojiSelectors';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
-import { EmojiClickData, EmojiStyle, SkinTones } from '../types/exposedTypes';
+import { isCustomEmoji } from '../typeRefinements/typeRefinements';
+import { EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
-import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 
 export function useMouseDownHandlers(
   BodyRef: React.MutableRefObject<NullableElement>
@@ -43,6 +45,7 @@ export function useMouseDownHandlers(
   const onEmojiClick = useOnEmojiClickConfig();
   const [, updateSuggested] = useUpdateSuggested();
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const activeEmojiStyle = useEmojiStyleConfig();
 
   const onClick = React.useCallback(
     function onClick(event: MouseEvent) {
@@ -63,7 +66,10 @@ export function useMouseDownHandlers(
 
       updateSuggested();
       setSuggested(emoji, skinToneToUse);
-      onEmojiClick(emojiClickOutput(emoji, skinToneToUse, getEmojiUrl), event);
+      onEmojiClick(
+        emojiClickOutput(emoji, skinToneToUse, activeEmojiStyle, getEmojiUrl),
+        event
+      );
     },
     [
       activeSkinTone,
@@ -72,6 +78,7 @@ export function useMouseDownHandlers(
       onEmojiClick,
       updateSuggested,
       getEmojiUrl,
+      activeEmojiStyle
     ]
   );
 
@@ -99,7 +106,7 @@ export function useMouseDownHandlers(
       disallowClickRef,
       closeAllOpenToggles,
       setVariationPicker,
-      setEmojiVariationPicker,
+      setEmojiVariationPicker
     ]
   );
   const onMouseUp = React.useCallback(
@@ -128,14 +135,14 @@ export function useMouseDownHandlers(
     }
     const bodyRef = BodyRef.current;
     bodyRef.addEventListener('click', onClick, {
-      passive: true,
+      passive: true
     });
 
     bodyRef.addEventListener('mousedown', onMouseDown, {
-      passive: true,
+      passive: true
     });
     bodyRef.addEventListener('mouseup', onMouseUp, {
-      passive: true,
+      passive: true
     });
 
     return () => {
@@ -158,17 +165,38 @@ function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
 function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
+  activeEmojiStyle: EmojiStyle,
   getEmojiUrl: GetEmojiUrl
 ): EmojiClickData {
+  const names = emojiNames(emoji);
+
+  if (isCustomEmoji(emoji)) {
+    const unified = emojiUnified(emoji);
+    return {
+      activeSkinTone,
+      emoji: unified,
+      getImageUrl() {
+        return emoji.imgUrl;
+      },
+      imageUrl: emoji.imgUrl,
+      isCustom: true,
+      names,
+      unified,
+      unifiedWithoutSkinTone: unified
+    };
+  }
   const unified = emojiUnified(emoji, activeSkinTone);
+
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(emojiStyle: EmojiStyle) {
+    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? EmojiStyle.APPLE) {
       return getEmojiUrl(unified, emojiStyle);
     },
-    names: emojiNames(emoji),
+    imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),
+    isCustom: false,
+    names,
     unified,
-    unifiedWithoutSkinTone: emojiUnified(emoji),
+    unifiedWithoutSkinTone: emojiUnified(emoji)
   };
 }

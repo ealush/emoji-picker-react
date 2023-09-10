@@ -39,7 +39,7 @@ export function ViewOnlyEmoji({
       <EmojiImg
         style={style}
         emojiName={unified}
-        emojiStyle={emojiStyle}
+        emojiStyle={EmojiStyle.NATIVE}
         lazyLoad={lazyLoad}
         imgUrl={emojiToRender.imgUrl}
         onError={onError}
