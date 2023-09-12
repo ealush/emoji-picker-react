@@ -165,7 +165,7 @@ function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
 function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
-  activeEmojiStyle: EmojiStyle,
+  activeEmojiStyle: `${EmojiStyle}`,
   getEmojiUrl: GetEmojiUrl
 ): EmojiClickData {
   const names = emojiNames(emoji);
@@ -190,7 +190,7 @@ function emojiClickOutput(
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? EmojiStyle.APPLE) {
+    getImageUrl(emojiStyle: `${EmojiStyle}` = activeEmojiStyle ?? EmojiStyle.APPLE) {
       return getEmojiUrl(unified, emojiStyle);
     },
     imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),

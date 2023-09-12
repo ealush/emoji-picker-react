@@ -6,7 +6,7 @@ import { EmojiStyle } from '../types/exposedTypes';
 export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
-  emojiStyle: EmojiStyle
+  emojiStyle: `${EmojiStyle}`
 ): void {
   if (!emoji) {
     return;

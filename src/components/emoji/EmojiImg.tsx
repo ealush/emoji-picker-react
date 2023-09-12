@@ -12,7 +12,7 @@ export function EmojiImg({
   onError
 }: {
   emojiName: string;
-  emojiStyle: EmojiStyle;
+  emojiStyle: `${EmojiStyle}`;
   style: React.CSSProperties;
   lazyLoad?: boolean;
   imgUrl: string;
