@@ -322,7 +322,7 @@ The picker exports an `Emoji` component. The emoji component is the same used wi
 | `getEmojiUrl` | Function     | -                  | Allows to customize the emoji url and provide your own image host for dynamic resolution.   |
 
 ```js
-import { Emoji, EmojiStyle } from 'emoji-picker-react';
+import { Emoji } from 'emoji-picker-react';
 
 export function MyApp() {
   return (
