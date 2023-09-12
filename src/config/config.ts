@@ -93,7 +93,7 @@ export type PickerConfigInternal = {
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
-  emojiStyle: EmojiStyle;
+  emojiStyle: `${EmojiStyle}`;
   categories: CategoriesConfig;
   onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
   theme: Theme;
