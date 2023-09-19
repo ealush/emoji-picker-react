@@ -235,6 +235,7 @@ function TemplateDark(args) {
 }
 function Template(args) {
   const [shown, setShown] = useState(true);
+  const [inputValue, setInputValue] = useState('');
   return (
     <React.StrictMode>
       <div
@@ -243,6 +244,11 @@ function Template(args) {
           padding: '15px'
         }}
       >
+        <input
+          type="text"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+        />
         <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
           Toggle
         </button>
@@ -250,7 +256,13 @@ function Template(args) {
         {shown ? (
           <EmojiPicker
             {...args}
-            onEmojiClick={(...args) => console.log(...args)}
+            onEmojiClick={(emoji, event) => {
+              setInputValue(
+                inputValue =>
+                  inputValue + (emoji.isCustom ? emoji.unified : emoji.emoji)
+              );
+              console.log(emoji, event);
+            }}
           />
         ) : null}
       </div>
