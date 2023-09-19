@@ -18,10 +18,30 @@ export {
 
 export interface Props extends PickerConfig {}
 
-export default function EmojiPicker(props: Props) {
+function EmojiPicker(props: Props) {
   return (
     <ErrorBoundary>
       <EmojiPickerReact {...props} />
     </ErrorBoundary>
   );
 }
+
+// eslint-disable-next-line complexity
+export default React.memo(EmojiPicker, (prev, next) => {
+  return (
+    prev.emojiVersion === next.emojiVersion &&
+    prev.searchPlaceHolder === next.searchPlaceHolder &&
+    prev.searchPlaceholder === next.searchPlaceholder &&
+    prev.defaultSkinTone === next.defaultSkinTone &&
+    prev.skinTonesDisabled === next.skinTonesDisabled &&
+    prev.autoFocusSearch === next.autoFocusSearch &&
+    prev.emojiStyle === next.emojiStyle &&
+    prev.theme === next.theme &&
+    prev.suggestedEmojisMode === next.suggestedEmojisMode &&
+    prev.lazyLoadEmojis === next.lazyLoadEmojis &&
+    prev.height === next.height &&
+    prev.width === next.width &&
+    prev.searchDisabled === next.searchDisabled &&
+    prev.skinTonePickerLocation === next.skinTonePickerLocation
+  );
+});
