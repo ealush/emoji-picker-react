@@ -334,6 +334,10 @@ export function MyApp() {
 }
 ```
 
+# How to Contribute?
+
+Check out the [contributing documentation](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md) to get information about contributing, reporting bugs, suggesting enhancements, and writing code changes to the project!
+
 # Troubleshooting
 
 ## Error Boundary
