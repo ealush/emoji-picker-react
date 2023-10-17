@@ -3,6 +3,10 @@ import * as React from 'react';
 import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
+import {
+  MutableConfigContext,
+  useDefineMutableConfig
+} from './config/mutableConfig';
 
 export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 
@@ -16,32 +20,18 @@ export {
   SkinTonePickerLocation
 } from './types/exposedTypes';
 
-export interface Props extends PickerConfig {}
+export interface PickerProps extends PickerConfig {}
 
-function EmojiPicker(props: Props) {
+export default function EmojiPicker(props: PickerProps) {
+  const MutableConfigRef = useDefineMutableConfig({
+    onEmojiClick: props.onEmojiClick
+  });
+
   return (
     <ErrorBoundary>
-      <EmojiPickerReact {...props} />
+      <MutableConfigContext.Provider value={MutableConfigRef}>
+        <EmojiPickerReact {...props} />
+      </MutableConfigContext.Provider>
     </ErrorBoundary>
   );
 }
-
-// eslint-disable-next-line complexity
-export default React.memo(EmojiPicker, (prev, next) => {
-  return (
-    prev.emojiVersion === next.emojiVersion &&
-    prev.searchPlaceHolder === next.searchPlaceHolder &&
-    prev.searchPlaceholder === next.searchPlaceholder &&
-    prev.defaultSkinTone === next.defaultSkinTone &&
-    prev.skinTonesDisabled === next.skinTonesDisabled &&
-    prev.autoFocusSearch === next.autoFocusSearch &&
-    prev.emojiStyle === next.emojiStyle &&
-    prev.theme === next.theme &&
-    prev.suggestedEmojisMode === next.suggestedEmojisMode &&
-    prev.lazyLoadEmojis === next.lazyLoadEmojis &&
-    prev.height === next.height &&
-    prev.width === next.width &&
-    prev.searchDisabled === next.searchDisabled &&
-    prev.skinTonePickerLocation === next.skinTonePickerLocation
-  );
-});

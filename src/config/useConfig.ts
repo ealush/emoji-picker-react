@@ -16,6 +16,7 @@ import {
   PreviewConfig
 } from './config';
 import { CustomEmoji } from './customEmojiConfig';
+import { useMutableConfig } from './mutableConfig';
 
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
@@ -60,8 +61,8 @@ export function useOnEmojiClickConfig(): (
   emoji: EmojiClickData,
   event: MouseEvent
 ) => void {
-  const { onEmojiClick } = usePickerConfig();
-  return onEmojiClick;
+  const { current } = useMutableConfig();
+  return current.onEmojiClick || (() => {});
 }
 
 export function usePreviewConfig(): PreviewConfig {

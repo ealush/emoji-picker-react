@@ -63,14 +63,6 @@ export function basePickerConfig(): PickerConfigInternal {
     getEmojiUrl: emojiUrlByUnified,
     height: 450,
     lazyLoadEmojis: false,
-    onEmojiClick: function defaultOnClickHandler(
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      emoji: EmojiClickData,
-      // @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      event: MouseEvent
-    ) {},
     previewConfig: {
       ...basePreviewConfig
     },
@@ -95,7 +87,6 @@ export type PickerConfigInternal = {
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
   categories: CategoriesConfig;
-  onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
   theme: Theme;
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
@@ -123,6 +114,7 @@ const basePreviewConfig: PreviewConfig = {
 
 type ConfigExternal = {
   previewConfig: Partial<PreviewConfig>;
+  onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
 } & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
 
 export type PickerConfig = Partial<ConfigExternal>;
