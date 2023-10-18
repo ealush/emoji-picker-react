@@ -4,10 +4,10 @@ import { EmojiStyle } from '../../types/exposedTypes';
 
 export type BaseEmojiProps = {
   emoji?: DataEmoji | CustomEmoji;
-  emojiStyle: EmojiStyle;
+  emojiStyle: `${EmojiStyle}`;
   unified: string;
   size?: number;
   lazyLoad?: boolean;
   getEmojiUrl?: GetEmojiUrl;
 };
-export type GetEmojiUrl = (unified: string, style: EmojiStyle) => string;
+export type GetEmojiUrl = (unified: string, style: `${EmojiStyle}`) => string;

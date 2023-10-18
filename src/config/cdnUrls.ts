@@ -9,7 +9,7 @@ const CDN_URL_TWITTER =
 const CDN_URL_GOOGLE =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/';
 
-export function cdnUrl(emojiStyle: EmojiStyle): string {
+export function cdnUrl(emojiStyle: `${EmojiStyle}`): string {
   switch (emojiStyle) {
     case EmojiStyle.TWITTER:
       return CDN_URL_TWITTER;

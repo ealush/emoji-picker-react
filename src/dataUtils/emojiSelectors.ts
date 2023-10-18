@@ -55,7 +55,7 @@ export function emojisByCategory(category: Categories): DataEmojis {
 // WARNING: DO NOT USE DIRECTLY
 export function emojiUrlByUnified(
   unified: string,
-  emojiStyle: EmojiStyle
+  emojiStyle: `${EmojiStyle}`
 ): string {
   return `${cdnUrl(emojiStyle)}${unified}.png`;
 }

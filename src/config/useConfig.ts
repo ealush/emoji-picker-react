@@ -37,7 +37,7 @@ export function useSkinTonesDisabledConfig(): boolean {
   return skinTonesDisabled;
 }
 
-export function useEmojiStyleConfig(): EmojiStyle {
+export function useEmojiStyleConfig(): `${EmojiStyle}` {
   const { emojiStyle } = usePickerConfig();
   return emojiStyle;
 }
@@ -120,7 +120,7 @@ export function useUnicodeToHide() {
 
 export function useGetEmojiUrlConfig(): (
   unified: string,
-  style: EmojiStyle
+  style: `${EmojiStyle}`
 ) => string {
   const { getEmojiUrl } = usePickerConfig();
   return getEmojiUrl;
