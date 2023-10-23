@@ -1,7 +1,6 @@
-import clsx from 'clsx';
 import * as React from 'react';
 
-import { ClassNames } from '../../DomUtils/classNames';
+import { ClassNames, clsx } from '../../DomUtils/classNames';
 import { usePickerSizeConfig, useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';

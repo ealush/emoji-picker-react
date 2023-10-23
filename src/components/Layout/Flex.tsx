@@ -1,6 +1,7 @@
-import clsx from 'clsx';
 import * as React from 'react';
+
 import './Flex.css';
+import { clsx } from '../../DomUtils/classNames';
 
 export enum FlexDirection {
   ROW = 'FlexRow',

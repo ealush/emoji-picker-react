@@ -1,7 +1,6 @@
-import clsx from 'clsx';
 import * as React from 'react';
 
-import { ClassNames } from '../../DomUtils/classNames';
+import { ClassNames, clsx } from '../../DomUtils/classNames';
 import {
   CategoryConfig,
   categoryFromCategoryConfig,

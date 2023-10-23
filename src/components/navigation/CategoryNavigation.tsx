@@ -1,9 +1,8 @@
-import clsx from 'clsx';
 import * as React from 'react';
 import { useState } from 'react';
 import './CategoryNavigation.css';
 
-import { ClassNames } from '../../DomUtils/classNames';
+import { ClassNames, clsx } from '../../DomUtils/classNames';
 import {
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig

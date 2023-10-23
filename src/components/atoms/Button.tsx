@@ -1,5 +1,6 @@
-import clsx from 'clsx';
 import * as React from 'react';
+
+import { clsx } from '../../DomUtils/classNames';
 
 interface Props
   extends React.DetailedHTMLProps<

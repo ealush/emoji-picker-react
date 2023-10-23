@@ -1,8 +1,7 @@
-import clsx from 'clsx';
 import * as React from 'react';
 import { useState } from 'react';
 
-import { asSelectors, ClassNames } from '../../DomUtils/classNames';
+import { asSelectors, ClassNames, clsx } from '../../DomUtils/classNames';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,

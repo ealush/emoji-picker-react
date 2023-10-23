@@ -1,7 +1,6 @@
-import clsx from 'clsx';
 import * as React from 'react';
 
-import { ClassNames } from '../../DomUtils/classNames';
+import { ClassNames, clsx } from '../../DomUtils/classNames';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 
 export function NativeEmoji({
