@@ -4,7 +4,8 @@ import Picker, {
   Theme,
 } from "emoji-picker-react";
 import { EmojiStyle, PickerProps } from "emoji-picker-react";
-import { useState } from "react";
+import React, { useState } from "react";
+import styles from "@/styles/PickerDemo.module.css";
 
 const DEFAULT_SKIN_TONES_DISABLED = false;
 const DEFAULT_SEARCH_DISABLED = false;
@@ -104,6 +105,21 @@ export default function PickerDemo() {
   }
 }
 
+function Label({
+  children,
+  text,
+}: {
+  children: React.ReactNode;
+  text: string;
+}) {
+  return (
+    <label className={styles.Label}>
+      {text}
+      {children}
+    </label>
+  );
+}
+
 function ChkSkinTonesDisabled({
   skinTonesDisabled,
   setSkinTonesDisabled,
@@ -112,14 +128,13 @@ function ChkSkinTonesDisabled({
   setSkinTonesDisabled: (skinTonesDisabled: boolean) => void;
 }) {
   return (
-    <label>
+    <Label text="Skin Tones Disabled">
       <input
         type="checkbox"
         checked={skinTonesDisabled}
         onChange={(e) => setSkinTonesDisabled(e.target.checked)}
       />
-      skinTonesDisabled
-    </label>
+    </Label>
   );
 }
 
@@ -131,14 +146,13 @@ function ChkSearchDisabled({
   setSearchDisabled: (searchDisabled: boolean) => void;
 }) {
   return (
-    <label>
+    <Label text="Search Disabled">
       <input
         type="checkbox"
         checked={searchDisabled}
         onChange={(e) => setSearchDisabled(e.target.checked)}
       />
-      searchDisabled
-    </label>
+    </Label>
   );
 }
 
@@ -150,14 +164,13 @@ function InputSearchPlaceholder({
   setSearchPlaceholder: (searchPlaceholder: string) => void;
 }) {
   return (
-    <label>
-      searchPlaceholder
+    <Label text="Search Placeholder">
       <input
         type="text"
         value={searchPlaceholder}
         onChange={(e) => setSearchPlaceholder(e.target.value)}
       />
-    </label>
+    </Label>
   );
 }
 
@@ -169,8 +182,7 @@ function SelectEmojiStyle({
   setEmojiStyle: (emojiStyle: EmojiStyle) => void;
 }) {
   return (
-    <label>
-      EmojiStyle
+    <Label text="Emoji Style">
       <select
         value={emojiStyle}
         onChange={(e) => setEmojiStyle(e.target.value as EmojiStyle)}
@@ -181,7 +193,7 @@ function SelectEmojiStyle({
         <option value={EmojiStyle.GOOGLE}>Google</option>
         <option value={EmojiStyle.FACEBOOK}>Facebook</option>
       </select>
-    </label>
+    </Label>
   );
 }
 
@@ -193,14 +205,13 @@ function SelectTheme({
   setTheme: (theme: Theme) => void;
 }) {
   return (
-    <label>
-      Theme
+    <Label text="Theme">
       <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="auto">Auto</option>
       </select>
-    </label>
+    </Label>
   );
 }
 
@@ -212,8 +223,7 @@ function SelectSuggestionMode({
   setSuggestionMode: (suggestionMode: SuggestionMode) => void;
 }) {
   return (
-    <label>
-      SuggestionMode
+    <Label text="Suggestion Mode">
       <select
         value={suggestionMode}
         onChange={(e) => setSuggestionMode(e.target.value as SuggestionMode)}
@@ -221,7 +231,7 @@ function SelectSuggestionMode({
         <option value={SuggestionMode.RECENT}>Recent</option>
         <option value={SuggestionMode.FREQUENT}>Frequent</option>
       </select>
-    </label>
+    </Label>
   );
 }
 
@@ -233,8 +243,7 @@ function NumberHeight({
   setHeight: (height: number) => void;
 }) {
   return (
-    <label>
-      height
+    <Label text="Height">
       <input
         type="number"
         min={100}
@@ -242,7 +251,7 @@ function NumberHeight({
         value={height}
         onChange={(e) => setHeight(+e.target.value)}
       />
-    </label>
+    </Label>
   );
 }
 
@@ -254,8 +263,7 @@ function NumberWidth({
   setWidth: (width: number) => void;
 }) {
   return (
-    <label>
-      width
+    <Label text="Width">
       <input
         type="number"
         min={100}
@@ -263,7 +271,7 @@ function NumberWidth({
         value={width}
         onChange={(e) => setWidth(+e.target.value)}
       />
-    </label>
+    </Label>
   );
 }
 
@@ -277,8 +285,7 @@ function SelectSkinTonePickerLocation({
   ) => void;
 }) {
   return (
-    <label>
-      skinTonePickerLocation
+    <Label text="Skin Tone Picker Location">
       <select
         value={skinTonePickerLocation}
         onChange={(e) =>
@@ -288,6 +295,6 @@ function SelectSkinTonePickerLocation({
         <option value={SkinTonePickerLocation.PREVIEW}>Preview</option>
         <option value={SkinTonePickerLocation.SEARCH}>Search</option>
       </select>
-    </label>
+    </Label>
   );
 }
