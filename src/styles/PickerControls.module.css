@@ -1,3 +1,51 @@
+.PickerControls {
+  padding: 1em;
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #e7e7e7;
+}
+
+.PickerControls,
+.Label {
+  color: #858585;
+}
+
+.PickerControls button,
+.Label button,
+.Label input,
+.Label select {
+  border: none;
+  border-radius: 5px;
+  box-sizing: border-box;
+  height: 25px;
+  background-color: #f6f6f6;
+  color: #858585;
+}
+
+.Label input {
+  padding: 0 5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .PickerControls {
+    background-color: #222;
+    border: 1px solid #151617;
+  }
+
+  .Label,
+  .PickerControls {
+    color: #c0c0c0;
+  }
+
+  .PickerControls button,
+  .Label button,
+  .Label input,
+  .Label select {
+    background-color: #333;
+    color: #c0c0c0;
+  }
+}
+
 .Label {
   font-size: 14px;
   font-weight: bold;
@@ -5,4 +53,16 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 0.5em;
+}
+
+.ButtonReset {
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  display: block;
+  width: 100%;
+  border: none;
 }

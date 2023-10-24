@@ -10,15 +10,17 @@ import {
 export function PickerControls({
   pickerProps,
   updateState,
+  reset,
 }: {
   pickerProps: PickerProps;
   updateState: <K extends keyof PickerProps>(
     key: K,
     value: PickerProps[K]
   ) => void;
+  reset: () => void;
 }) {
   return (
-    <div>
+    <div className={styles.PickerControls}>
       <ChkSkinTonesDisabled
         skinTonesDisabled={pickerProps.skinTonesDisabled}
         setSkinTonesDisabled={(skinTonesDisabled) =>
@@ -65,6 +67,9 @@ export function PickerControls({
           updateState("skinTonePickerLocation", skinTonePickerLocation)
         }
       />
+      <button onClick={reset} className={styles.ButtonReset}>
+        Reset
+      </button>
     </div>
   );
 }
