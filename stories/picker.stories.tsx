@@ -44,7 +44,7 @@ export const AutoTheme = (args: Props) => (
 );
 
 export const CustomEmojis = (args: Props) => (
-  <Template {...args} {...customEmojis} />
+  <Template {...args} customEmojis={  customEmojis} />
 );
 
 export const SearchDisabled = (args: Props) => (
@@ -184,7 +184,6 @@ export const StandaloneEmojiNative = () => {
         size={60}
       />
       <EmojiPicker
-        customEmojis={customEmojis}
         onEmojiClick={clickedEmoji => {
           console.log(clickedEmoji);
           setCurrentEmoji(clickedEmoji);
@@ -236,7 +235,6 @@ function TemplateDark(args) {
 function Template(args) {
   const [shown, setShown] = useState(true);
   const [inputValue, setInputValue] = useState('');
-
   return (
     <React.StrictMode>
       <div
