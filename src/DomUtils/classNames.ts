@@ -16,7 +16,9 @@ export enum ClassNames {
   open = 'epr-open',
   vertical = 'epr-vertical',
   horizontal = 'epr-horizontal',
-  variationPicker = 'epr-emoji-variation-picker'
+  variationPicker = 'epr-emoji-variation-picker',
+  darkTheme = 'epr-dark-theme',
+  autoTheme = 'epr-auto-theme'
 }
 
 export function asSelectors(...classNames: ClassNames[]): string {

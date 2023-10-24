@@ -1,4 +1,3 @@
-import { isSystemDarkTheme } from '../DomUtils/isDarkTheme';
 import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
@@ -72,10 +71,6 @@ export function usePreviewConfig(): PreviewConfig {
 
 export function useThemeConfig(): Theme {
   const { theme } = usePickerConfig();
-
-  if (theme === Theme.AUTO) {
-    return isSystemDarkTheme() ? Theme.DARK : Theme.LIGHT;
-  }
 
   return theme;
 }

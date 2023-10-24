@@ -71,21 +71,78 @@
   --epr-preview-z-index: 6;
 }
 
-.EmojiPickerReact.epr-dark-theme {
+.EmojiPickerReact {
+  /* Dark Theme Variables */
   --epr-dark: #000;
-  --epr-emoji-variation-picker-bg-color: var(--epr-dark);
-  --epr-highlight-color: #c0c0c0;
-  --epr-text-color: var(--epr-highlight-color);
-  --epr-hover-bg-color: #363636f6;
-  --epr-focus-bg-color: #474747;
-  --epr-search-input-bg-color: #333333;
-  --epr-category-label-bg-color: #222222e6;
-  --epr-picker-border-color: #151617;
-  --epr-bg-color: #222222;
-  --epr-search-input-bg-color-active: var(--epr-dark);
-  --epr-emoji-variation-indicator-color: #444;
-  --epr-category-icon-active-color: #3271b7;
-  --epr-skin-tone-picker-menu-color: #22222295;
+  --epr-dark-emoji-variation-picker-bg-color: var(--epr-dark);
+  --epr-dark-highlight-color: #c0c0c0;
+  --epr-dark-text-color: var(--epr-highlight-color);
+  --epr-dark-hover-bg-color: #363636f6;
+  --epr-dark-focus-bg-color: #474747;
+  --epr-dark-search-input-bg-color: #333333;
+  --epr-dark-category-label-bg-color: #222222e6;
+  --epr-dark-picker-border-color: #151617;
+  --epr-dark-bg-color: #222222;
+  --epr-dark-search-input-bg-color-active: var(--epr-dark);
+  --epr-dark-emoji-variation-indicator-color: #444;
+  --epr-dark-category-icon-active-color: #3271b7;
+  --epr-dark-skin-tone-picker-menu-color: #22222295;
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Keep in sync with the section below */
+  .EmojiPickerReact.epr-auto-theme {
+    --epr-dark: var(--epr-dark-dark);
+    --epr-emoji-variation-picker-bg-color: var(
+      --epr-dark-emoji-variation-picker-bg-color
+    );
+    --epr-highlight-color: var(--epr-dark-highlight-color);
+    --epr-text-color: var(--epr-dark-text-color);
+    --epr-hover-bg-color: var(--epr-dark-hover-bg-color);
+    --epr-focus-bg-color: var(--epr-dark-focus-bg-color);
+    --epr-search-input-bg-color: var(--epr-dark-search-input-bg-color);
+    --epr-category-label-bg-color: var(--epr-dark-category-label-bg-color);
+    --epr-picker-border-color: var(--epr-dark-picker-border-color);
+    --epr-bg-color: var(--epr-dark-bg-color);
+    --epr-search-input-bg-color-active: var(
+      --epr-dark-search-input-bg-color-active
+    );
+    --epr-emoji-variation-indicator-color: var(
+      --epr-dark-emoji-variation-indicator-color
+    );
+    --epr-category-icon-active-color: var(
+      --epr-dark-category-icon-active-color
+    );
+    --epr-skin-tone-picker-menu-color: var(
+      --epr-dark-skin-tone-picker-menu-color
+    );
+  }
+}
+
+.EmojiPickerReact.epr-dark-theme {
+  /* Keep in sync with the section above */
+  --epr-dark: var(--epr-dark-dark);
+  --epr-emoji-variation-picker-bg-color: var(
+    --epr-dark-emoji-variation-picker-bg-color
+  );
+  --epr-highlight-color: var(--epr-dark-highlight-color);
+  --epr-text-color: var(--epr-dark-text-color);
+  --epr-hover-bg-color: var(--epr-dark-hover-bg-color);
+  --epr-focus-bg-color: var(--epr-dark-focus-bg-color);
+  --epr-search-input-bg-color: var(--epr-dark-search-input-bg-color);
+  --epr-category-label-bg-color: var(--epr-dark-category-label-bg-color);
+  --epr-picker-border-color: var(--epr-dark-picker-border-color);
+  --epr-bg-color: var(--epr-dark-bg-color);
+  --epr-search-input-bg-color-active: var(
+    --epr-dark-search-input-bg-color-active
+  );
+  --epr-emoji-variation-indicator-color: var(
+    --epr-dark-emoji-variation-indicator-color
+  );
+  --epr-category-icon-active-color: var(--epr-dark-category-icon-active-color);
+  --epr-skin-tone-picker-menu-color: var(
+    --epr-dark-skin-tone-picker-menu-color
+  );
 }
 
 .EmojiPickerReact {

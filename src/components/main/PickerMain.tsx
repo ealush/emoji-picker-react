@@ -40,11 +40,14 @@ function PickerRootElement({ children }: RootProps) {
     width
   };
 
+  
+
   return (
     <aside
       className={clsx(ClassNames.emojiPicker, 'epr-main', {
         [ClassNames.searchActive]: searchModeActive,
-        'epr-dark-theme': theme === Theme.DARK
+        [ClassNames.darkTheme]: theme === Theme.DARK,
+        [ClassNames.autoTheme]: theme === Theme.AUTO
       })}
       ref={PickerMainRef}
       style={style}
