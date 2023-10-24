@@ -67,6 +67,10 @@
   letter-spacing: 0;
 }
 
+.EmojiPickerReact button.epr-emoji > * {
+  transition: background-color 0.2s;
+}
+
 .EmojiPickerReact button.epr-emoji:hover > * {
   background-color: var(--epr-emoji-hover-color);
 }
