@@ -44,7 +44,12 @@
   position: relative;
   margin: 0;
   padding: 1rem;
-  background-color: rgba(var(--callout-rgb), 0.5);
-  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  border: 1px solid rgb(var(--foreground-rgb), 0.3);
   border-radius: var(--border-radius);
+  background: rgb(var(--foreground-rgb), 0.05);
+  transition: background 0.2s ease;
+}
+
+.headerRow a:hover {
+  background: rgb(var(--foreground-rgb), 0.1);
 }
