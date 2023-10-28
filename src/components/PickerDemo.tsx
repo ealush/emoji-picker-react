@@ -1,3 +1,5 @@
+"use client";
+
 import Picker, {
   SkinTonePickerLocation,
   SuggestionMode,
