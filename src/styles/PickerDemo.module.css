@@ -4,3 +4,26 @@
   justify-content: space-between;
   gap: 1rem;
 }
+
+.pickerTextarea {
+  margin-top: 1em;
+  width: 100%;
+  height: 100%;
+  border: 1px solid #e7e7e7;
+  background-color: #fff;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 1rem;
+  border-radius: 5px;
+  color: #858585;
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pickerTextarea {
+    box-shadow: none;
+    background-color: #222;
+    border: 1px solid #151617;
+    color: #c0c0c0;
+  }
+}

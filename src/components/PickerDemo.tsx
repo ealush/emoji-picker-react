@@ -22,15 +22,31 @@ const DEFAULT_SKIN_TONE_PICKER_LOCATION = SkinTonePickerLocation.SEARCH;
 export default function PickerDemo() {
   const [pickerProps, setPickerProps] = useState<PickerProps>(defaultProps);
   const [now, setNow] = useState(Date.now());
+  const [textareaValue, setTextareaValue] = useState("");
 
   return (
-    <div className={styles.PickerDemo}>
-      <Picker key={now} autoFocusSearch={false} {...pickerProps} />
-      <PickerControls
-        pickerProps={pickerProps}
-        updateState={updateState}
-        reset={resetState}
-      />
+    <div>
+      <div className={styles.PickerDemo}>
+        <Picker
+          onEmojiClick={(emoji) => setTextareaValue((tv) => tv + emoji.emoji)}
+          key={now}
+          autoFocusSearch={false}
+          {...pickerProps}
+        />
+        <PickerControls
+          pickerProps={pickerProps}
+          updateState={updateState}
+          reset={resetState}
+        />
+      </div>
+      <div>
+        <textarea
+          value={textareaValue}
+          onChange={(e) => setTextareaValue(e.target.value)}
+          placeholder="Type anything..."
+          className={styles.pickerTextarea}
+        ></textarea>
+      </div>
     </div>
   );
 
