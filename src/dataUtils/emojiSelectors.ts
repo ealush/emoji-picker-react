@@ -123,6 +123,13 @@ const allEmojisByUnified: {
 setTimeout(() => {
   allEmojis.reduce((allEmojis, Emoji) => {
     allEmojis[emojiUnified(Emoji)] = Emoji;
+
+    if (emojiHasVariations(Emoji)) {
+      emojiVariations(Emoji).forEach(variation => {
+        allEmojis[variation] = Emoji;
+      });
+    }
+
     return allEmojis;
   }, allEmojisByUnified);
 });

@@ -17,8 +17,8 @@ import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import './Preview.css';
-import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
+import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
@@ -46,16 +46,19 @@ export function PreviewBody() {
 
   useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
-  const emoji = emojiByUnified(previewEmoji?.originalUnified);
+  const emoji = emojiByUnified(
+    previewEmoji?.unified ?? previewEmoji?.originalUnified
+  );
 
   const show = emoji != null && previewEmoji != null;
 
   return <PreviewContent />;
 
   function PreviewContent() {
-    const defaultEmoji = variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji)
+    const defaultEmoji =
+      variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji);
     if (!defaultEmoji) {
-      return null
+      return null;
     }
     const defaultText = variationPickerEmoji
       ? emojiName(variationPickerEmoji)
@@ -83,9 +86,7 @@ export function PreviewBody() {
           ) : null}
         </div>
         {show ? (
-          <div className="epr-preview-emoji-label">
-            {emojiName(emoji)}
-          </div>
+          <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
         ) : (
           <div className="epr-preview-emoji-label">{defaultText}</div>
         )}

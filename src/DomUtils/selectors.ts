@@ -1,7 +1,7 @@
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   emojiByUnified,
-  unifiedWithoutSkinTone,
+  unifiedWithoutSkinTone
 } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
@@ -13,7 +13,7 @@ export const EmojiButtonSelector = `button${asSelectors(ClassNames.emoji)}`;
 export const VisibleEmojiSelector = [
   EmojiButtonSelector,
   asSelectors(ClassNames.visible),
-  `:not(${asSelectors(ClassNames.hidden)})`,
+  `:not(${asSelectors(ClassNames.hidden)})`
 ].join('');
 
 export function buttonFromTarget(
@@ -40,7 +40,7 @@ export function emojiFromElement(
     return [];
   }
 
-  const emoji = emojiByUnified(originalUnified);
+  const emoji = emojiByUnified(unified ?? originalUnified);
 
   if (!emoji) {
     return [];
