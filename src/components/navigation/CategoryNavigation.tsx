@@ -27,9 +27,16 @@ export function CategoryNavigation() {
   const hideCustomCategory = useShouldHideCustomEmojis();
 
   return (
-    <div className="epr-category-nav" ref={CategoryNavigationRef}>
+      <div
+        className='epr-category-nav'
+        role='tablist'
+        aria-label='Category navigation'
+        id='epr-category-nav-id'
+        ref={CategoryNavigationRef}
+      >
       {categoriesConfig.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
+        const isActiveCategory = category === activeCategory;
 
         if (isCustomCategory(categoryConfig) && hideCustomCategory) {
           return null;
@@ -37,9 +44,9 @@ export function CategoryNavigation() {
 
         return (
           <Button
-            tabIndex={isSearchMode ? -1 : 0}
+            tabIndex={(isSearchMode || isActiveCategory) ? -1 : 0}
             className={clsx('epr-cat-btn', `epr-icn-${category}`, {
-              [ClassNames.active]: category === activeCategory
+              [ClassNames.active]: isActiveCategory
             })}
             key={category}
             onClick={() => {
@@ -47,6 +54,9 @@ export function CategoryNavigation() {
               scrollCategoryIntoView(category);
             }}
             aria-label={categoryNameFromCategoryConfig(categoryConfig)}
+            aria-selected={isActiveCategory}
+            role='tab'
+            aria-controls='epr-category-nav-id'
           />
         );
       })}
