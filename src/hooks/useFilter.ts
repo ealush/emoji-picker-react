@@ -63,11 +63,13 @@ export function useFilter() {
   const applySearch = useApplySearch();
 
   const [searchTerm] = useSearchTermState();
+  const searchResultsCount = getSearchResultsCount(filterRef.current, searchTerm);
 
   return {
     onChange,
     searchTerm,
     SearchInputRef,
+    searchResultsCount,
   };
 
   function onChange(inputValue: string) {
@@ -182,4 +184,10 @@ export function getNormalizedSearchTerm(str: string): string {
   }
 
   return str.trim().toLowerCase();
+}
+
+function getSearchResultsCount(filterState: FilterState, searchTerm: string): number {
+  if (!filterState?.[searchTerm]) return 0;
+
+  return Object.entries(filterState?.[searchTerm])?.length || 0;
 }

@@ -4,6 +4,16 @@
   min-width: 0;
 }
 
+.EmojiPickerReact .epr-search-container .epr-status-visually-hidden {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
 .EmojiPickerReact .epr-search-container input.epr-search {
   outline: none;
   transition: all 0.2s ease-in-out;
