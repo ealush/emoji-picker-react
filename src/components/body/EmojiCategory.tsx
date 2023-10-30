@@ -33,7 +33,7 @@ export function EmojiCategory({
       data-name={category}
       aria-label={categoryName}
     >
-      <div className={ClassNames.label}>{categoryName}</div>
+      <h2 className={ClassNames.label}>{categoryName}</h2>
       <div className={ClassNames.categoryContent}>{children}</div>
     </li>
   );
