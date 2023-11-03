@@ -12,6 +12,7 @@ import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
 
 import { useFocusSearchInput } from './useFocus';
+import { useSearchResultsConfig } from '../config/useConfig';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
@@ -63,13 +64,13 @@ export function useFilter() {
   const applySearch = useApplySearch();
 
   const [searchTerm] = useSearchTermState();
-  const searchResultsCount = getSearchResultsCount(filterRef.current, searchTerm);
+  const statusSearchResults = getStatusSearchResults(filterRef.current, searchTerm);
 
   return {
     onChange,
     searchTerm,
     SearchInputRef,
-    searchResultsCount,
+    statusSearchResults,
   };
 
   function onChange(inputValue: string) {
@@ -186,8 +187,9 @@ export function getNormalizedSearchTerm(str: string): string {
   return str.trim().toLowerCase();
 }
 
-function getSearchResultsCount(filterState: FilterState, searchTerm: string): number {
-  if (!filterState?.[searchTerm]) return 0;
+function getStatusSearchResults(filterState: FilterState, searchTerm: string): string {
+  if (!filterState?.[searchTerm]) return '';
 
-  return Object.entries(filterState?.[searchTerm])?.length || 0;
+  const searchResultsCount = Object.entries(filterState?.[searchTerm])?.length || 0;
+  return useSearchResultsConfig(searchResultsCount);
 }

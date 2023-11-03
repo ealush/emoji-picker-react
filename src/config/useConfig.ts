@@ -11,6 +11,9 @@ import {
 import { CategoriesConfig } from './categoryConfig';
 import {
   DEFAULT_SEARCH_PLACEHOLDER,
+  SEARCH_RESULTS_NO_RESULTS_FOUND,
+  SEARCH_RESULTS_ONE_RESULT_FOUND,
+  SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
   PickerDimensions,
   PreviewConfig
 } from './config';
@@ -125,4 +128,17 @@ function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
   return typeof dimensionConfig === 'number'
     ? `${dimensionConfig}px`
     : dimensionConfig;
+}
+
+export function useSearchResultsConfig(searchResultsCount: number): string {
+  const hasResults = searchResultsCount > 0;
+  const isPlural = searchResultsCount > 1;
+
+  if (hasResults) {
+    return isPlural ?
+      SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND.replace('%n', searchResultsCount.toString())
+        : SEARCH_RESULTS_ONE_RESULT_FOUND;
+  }
+
+  return SEARCH_RESULTS_NO_RESULTS_FOUND;
 }

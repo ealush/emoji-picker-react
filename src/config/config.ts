@@ -22,6 +22,9 @@ import { CustomEmoji } from './customEmojiConfig';
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
+export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
+export const SEARCH_RESULTS_ONE_RESULT_FOUND = '1 result found. Use up and down arrow keys to navigate.';
+export const SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND = '%n results found. Use up and down arrow keys to navigate.';
 
 export function mergeConfig(
   userConfig: PickerConfig = {}
