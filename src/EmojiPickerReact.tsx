@@ -26,6 +26,8 @@ function EmojiPicker(props: PickerProps) {
 
 // eslint-disable-next-line complexity
 export default React.memo(EmojiPicker, (prev, next) => {
+  const prevCustomEmojis = prev.customEmojis ?? [];
+  const nextCustomEmojis = next.customEmojis ?? [];
   return (
     prev.emojiVersion === next.emojiVersion &&
     prev.searchPlaceHolder === next.searchPlaceHolder &&
@@ -40,6 +42,7 @@ export default React.memo(EmojiPicker, (prev, next) => {
     prev.height === next.height &&
     prev.width === next.width &&
     prev.searchDisabled === next.searchDisabled &&
-    prev.skinTonePickerLocation === next.skinTonePickerLocation
+    prev.skinTonePickerLocation === next.skinTonePickerLocation &&
+    prevCustomEmojis.length === nextCustomEmojis.length
   );
 });

@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import EmojiPicker, {
   Emoji,
@@ -44,8 +44,20 @@ export const AutoTheme = (args: Props) => (
 );
 
 export const CustomEmojis = (args: Props) => (
-  <Template {...args} customEmojis={  customEmojis} />
+  <Template {...args} customEmojis={customEmojis} />
 );
+
+export const CustomEmojisDeffered = (args: Props) => {
+  const [custom, setCustomEmojis] = useState<any>(undefined);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCustomEmojis(customEmojis);
+    }, 2000);
+  }, []);
+
+  return <Template {...args} customEmojis={custom} />;
+};
 
 export const SearchDisabled = (args: Props) => (
   <Template {...args} searchDisabled />

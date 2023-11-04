@@ -17,12 +17,29 @@ const ConfigContext = React.createContext<PickerConfigInternal>(
 );
 
 export function PickerConfigProvider({ children, ...config }: Props) {
-  const [mergedConfig] = React.useState(() => mergeConfig(config));
+  const mergedConfig = useSetConfig(config);
+
   return (
     <ConfigContext.Provider value={mergedConfig}>
       {children}
     </ConfigContext.Provider>
   );
+}
+
+export function useSetConfig(config: PickerConfig) {
+  const [mergedConfig, setMergedConfig] = React.useState(() =>
+    mergeConfig(config)
+  );
+
+  React.useEffect(() => {
+    if (config.customEmojis?.length !== mergedConfig.customEmojis?.length) {
+      setMergedConfig(mergeConfig(config));
+    }
+    // not gonna...
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.customEmojis?.length]);
+
+  return mergedConfig;
 }
 
 export function usePickerConfig() {
