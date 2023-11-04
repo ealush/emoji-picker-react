@@ -6,6 +6,8 @@ import {
   SuggestionMode,
   Theme,
 } from "emoji-picker-react";
+import * as React from "react";
+import { customEmojis } from "./customEmojis";
 
 export function PickerControls({
   pickerProps,
@@ -67,6 +69,11 @@ export function PickerControls({
           updateState("skinTonePickerLocation", skinTonePickerLocation)
         }
       />
+      <ChkCustomEmojis
+        setCustomEmojis={(customEmojis) =>
+          updateState("customEmojis", customEmojis)
+        }
+      />
       <button onClick={reset} className={styles.ButtonReset}>
         Reset
       </button>
@@ -120,6 +127,34 @@ function ChkSearchDisabled({
         type="checkbox"
         checked={searchDisabled}
         onChange={(e) => setSearchDisabled(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkCustomEmojis({
+  setCustomEmojis,
+}: {
+  setCustomEmojis: (
+    toggleCustomEmojis: {
+      names: string[];
+      imgUrl: string;
+      id: string;
+    }[]
+  ) => void;
+}) {
+  const [toggleCustomEmojis, setToggleCustomEmojis] = React.useState(false);
+
+  React.useEffect(() => {
+    setCustomEmojis(toggleCustomEmojis ? customEmojis : []);
+  }, [toggleCustomEmojis]);
+
+  return (
+    <Label text="Custom Emojis">
+      <input
+        type="checkbox"
+        checked={toggleCustomEmojis}
+        onChange={(e) => setToggleCustomEmojis(e.target.checked)}
       />
     </Label>
   );
