@@ -1,6 +1,6 @@
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
-  addCustomEmojis,
+  setCustomEmojis,
   emojiUrlByUnified
 } from '../dataUtils/emojiSelectors';
 import {
@@ -45,7 +45,7 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
-  addCustomEmojis(config.customEmojis ?? []);
+  setCustomEmojis(config.customEmojis ?? []);
 
   const skinTonePickerLocation = config.searchDisabled
     ? SkinTonePickerLocation.PREVIEW

@@ -92,9 +92,13 @@ export function emojiByUnified(unified?: string): DataEmoji | undefined {
 
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
 
-export function addCustomEmojis(customEmojis: CustomEmoji[]): void {
+export function setCustomEmojis(customEmojis: CustomEmoji[]): void {
+  emojis[Categories.CUSTOM].length = 0;
+
   customEmojis.forEach(emoji => {
     const emojiData = customToRegularEmoji(emoji);
+
+    emojis[Categories.CUSTOM].push(emojiData as never);
 
     if (allEmojisByUnified[emojiData[EmojiProperties.unified]]) {
       return;
@@ -102,7 +106,6 @@ export function addCustomEmojis(customEmojis: CustomEmoji[]): void {
 
     allEmojis.push(emojiData);
     allEmojisByUnified[emojiData[EmojiProperties.unified]] = emojiData;
-    emojis[Categories.CUSTOM].push(emojiData as never);
     indexEmoji(emojiData);
   });
 }
