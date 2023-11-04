@@ -69,9 +69,7 @@
   --epr-category-label-z-index: 2;
   --epr-skin-variation-picker-z-index: 5;
   --epr-preview-z-index: 6;
-}
 
-.EmojiPickerReact {
   /* Dark Theme Variables */
   --epr-dark: #000;
   --epr-dark-emoji-variation-picker-bg-color: var(--epr-dark);
@@ -92,7 +90,6 @@
 @media (prefers-color-scheme: dark) {
   /* Keep in sync with the section below */
   .EmojiPickerReact.epr-auto-theme {
-    --epr-dark: var(--epr-dark-dark);
     --epr-emoji-variation-picker-bg-color: var(
       --epr-dark-emoji-variation-picker-bg-color
     );
@@ -121,7 +118,6 @@
 
 .EmojiPickerReact.epr-dark-theme {
   /* Keep in sync with the section above */
-  --epr-dark: var(--epr-dark-dark);
   --epr-emoji-variation-picker-bg-color: var(
     --epr-dark-emoji-variation-picker-bg-color
   );

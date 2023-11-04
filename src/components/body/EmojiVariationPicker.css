@@ -62,6 +62,14 @@
   background-position: -25px 0;
 }
 
+@media (prefers-color-scheme: dark) {
+  .EmojiPickerReact.epr-auto-theme
+    .epr-emoji-variation-picker
+    .epr-emoji-pointer {
+    background-position: -25px 0;
+  }
+}
+
 .EmojiPickerReact .epr-emoji-variation-picker .epr-emoji-pointer {
   top: 100%;
   transform: translateX(-18px);

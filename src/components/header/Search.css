@@ -68,18 +68,34 @@
   background: var(--epr-hover-bg-color);
 }
 
-.EmojiPickerReact..epr-dark-theme
+.EmojiPickerReact.epr-dark-theme
   .epr-search-container
   button.epr-btn-clear-search
   .epr-icn-clear-search {
   background-position-y: -40px;
 }
 
-.EmojiPickerReact..epr-dark-theme
+.EmojiPickerReact.epr-dark-theme
   .epr-search-container
   button.epr-btn-clear-search:hover
   .epr-icn-clear-search {
   background-position-y: -60px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .EmojiPickerReact.epr-auto-theme
+    .epr-search-container
+    button.epr-btn-clear-search
+    .epr-icn-clear-search {
+    background-position-y: -40px;
+  }
+
+  .EmojiPickerReact.epr-auto-theme
+    .epr-search-container
+    button.epr-btn-clear-search:hover
+    .epr-icn-clear-search {
+    background-position-y: -60px;
+  }
 }
 
 .EmojiPickerReact .epr-search-container .epr-icn-search {
@@ -98,6 +114,12 @@
 
 .EmojiPickerReact.epr-dark-theme .epr-search-container .epr-icn-search {
   background-position-y: -20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .EmojiPickerReact.epr-auto-theme .epr-search-container .epr-icn-search {
+    background-position-y: -20px;
+  }
 }
 
 .EmojiPickerReact .epr-search-container input.epr-search::placeholder {

@@ -84,6 +84,21 @@ aside.EmojiPickerReact.epr-main:has(input:placeholder-shown) .epr-category-nav {
   > button.epr-cat-btn.epr-active {
   background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
 }
+
+@media (prefers-color-scheme: dark) {
+  .EmojiPickerReact.epr-auto-theme .epr-category-nav > button.epr-cat-btn {
+    background-position-y: calc(var(--epr-category-navigation-button-size) * 2);
+  }
+  .EmojiPickerReact.epr-auto-theme:not(.epr-search-active)
+    .epr-category-nav
+    > button.epr-cat-btn:hover,
+  .EmojiPickerReact.epr-auto-theme:not(.epr-search-active)
+    .epr-category-nav
+    > button.epr-cat-btn.epr-active {
+    background-position-y: calc(var(--epr-category-navigation-button-size) * 3);
+  }
+}
+
 .EmojiPickerReact button.epr-cat-btn.epr-icn-suggested {
   background-position-x: calc(var(--epr-category-navigation-button-size) * -8);
 }
