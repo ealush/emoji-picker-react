@@ -18,6 +18,8 @@
   display: flex;
   align-items: center;
   font-weight: bold;
+  font-size: 16px;
+  margin: 0;
   text-transform: capitalize;
   backdrop-filter: blur(3px);
   padding: var(--epr-category-label-padding);

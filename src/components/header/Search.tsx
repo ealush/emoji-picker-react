@@ -47,7 +47,7 @@ export function Search() {
   const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { onChange } = useFilter();
+  const { statusSearchResults, searchTerm, onChange } = useFilter();
 
   const input = SearchInputRef?.current;
   const value = input?.value;
@@ -62,6 +62,7 @@ export function Search() {
         onFocus={closeAllOpenToggles}
         className="epr-search"
         type="text"
+        aria-controls='epr-search-id'
         placeholder={placeholder}
         onChange={event => {
           setInc(inc + 1);
@@ -71,6 +72,17 @@ export function Search() {
         }}
         ref={SearchInputRef}
       />
+      {searchTerm ? (
+        <div
+          role='status'
+          className={clsx('epr-status-search-results', 'epr-status-visually-hidden')}
+          aria-live='polite'
+          id='epr-search-id'
+          aria-atomic='true'
+        >
+          {statusSearchResults}
+        </div>
+      ) : null}
       <div className="epr-icn-search" />
       <Button
         className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
