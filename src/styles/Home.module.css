@@ -18,6 +18,15 @@
   font-family: var(--font-mono);
 }
 
+@media (max-width: 768px) {
+  .headerRow {
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 .footerRow {
   text-align: center;
   display: flex;

@@ -3,6 +3,13 @@
   flex-direction: row;
   justify-content: space-between;
   gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 767px) {
+  .PickerDemo {
+    flex-direction: column;
+  }
 }
 
 .pickerTextarea {
@@ -17,6 +24,7 @@
   border-radius: 5px;
   color: #858585;
   outline: none;
+  margin-bottom: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {

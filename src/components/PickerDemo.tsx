@@ -13,7 +13,7 @@ import styles from "@/styles/PickerDemo.module.css";
 const DEFAULT_SKIN_TONES_DISABLED = false;
 const DEFAULT_SEARCH_DISABLED = false;
 const DEFAULT_EMOJI_STYLE = EmojiStyle.NATIVE;
-const DEFAULT_THEME = Theme.LIGHT;
+const DEFAULT_THEME = Theme.AUTO;
 const DEFAULT_SUGGESTED_EMOJIS_MODE = SuggestionMode.RECENT;
 const DEFAULT_HEIGHT = 450;
 const DEFAULT_WIDTH = 350;
@@ -67,7 +67,7 @@ export default function PickerDemo() {
 const defaultProps = {
   skinTonesDisabled: DEFAULT_SKIN_TONES_DISABLED,
   searchDisabled: DEFAULT_SEARCH_DISABLED,
-  searchPlaceholder: "Search emojis",
+  searchPlaceholder: undefined,
   emojiStyle: DEFAULT_EMOJI_STYLE,
   theme: DEFAULT_THEME,
   suggestedEmojisMode: DEFAULT_SUGGESTED_EMOJIS_MODE,

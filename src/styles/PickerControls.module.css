@@ -3,6 +3,8 @@
   background-color: #fff;
   border-radius: 5px;
   border: 1px solid #e7e7e7;
+  display: flex;
+  flex-direction: column;
 }
 
 .PickerControls,
@@ -17,9 +19,13 @@
   border: none;
   border-radius: 5px;
   box-sizing: border-box;
-  height: 25px;
   background-color: #f6f6f6;
   color: #858585;
+}
+
+.Label input,
+.Label select {
+  height: 25px;
 }
 
 .Label input {
@@ -57,12 +63,22 @@
   margin-bottom: 0.5em;
 }
 
+.spacer {
+  flex-grow: 1;
+}
+
 .ButtonReset {
   border-radius: 5px;
   cursor: pointer;
-  font-size: 14px;
-  padding: 5px 10px;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 10px;
   display: block;
   width: 100%;
   border: none;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.ButtonReset:hover {
+  background-color: #e7e7e7;
 }

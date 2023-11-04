@@ -74,6 +74,7 @@ export function PickerControls({
           updateState("customEmojis", customEmojis)
         }
       />
+      <div className={styles.spacer} />
       <button onClick={reset} className={styles.ButtonReset}>
         Reset
       </button>
