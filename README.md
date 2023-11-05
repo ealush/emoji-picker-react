@@ -2,6 +2,15 @@
 
 ![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
+
+____
+
+_If you enjoy using emoji-picker-react<br/>
+You should also consider trying:<br/>
+<img src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png" height="16"/> [Vest validation framework](https://vestjs.dev).<br/>_
+
+____
+
 ## What to know before using
 
 - This package assumes it runs in the browser. I have taken many steps to prevent it from failing on the server, but still, it is recommended to only render the component on the client. See troubleshooting section for more information.
@@ -220,48 +229,6 @@ imgUrl: URL for the emoji image
       id: 'hat'
     },
     {
-      names: ['Kid'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/kid.png',
-      id: 'kid'
-    },
-    {
-      names: ['Mic'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/mic.png',
-      id: 'mic'
-    },
-    {
-      names: ['Moab', 'desert'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/moab.png',
-      id: 'moab'
-    },
-    {
-      names: ['Potter', 'harry', 'harry potter'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/potter.png',
-      id: 'potter'
-    },
-    {
-      names: ['Shroom', 'mushroom'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/shroom.png',
-      id: 'shroom'
-    },
-    {
-      names: ['Smily'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/smily.png',
-      id: 'smily'
-    },
-    {
-      names: ['Tabby', 'cat'],
-      imgUrl:
-        'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/tabby.png',
-      id: 'tabby'
-    },
-    {
       names: ['Vest'],
       imgUrl:
         'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png',
@@ -368,11 +335,3 @@ For reference, if you only need to shim global, you can add
   window.global = window;
 </script>
 ```
-
-# Other stuff I build
-
-If you enjoy using emoji-picker-react, you may be interested in some of my other open source projects:
-
-- [Vest](https://github.com/ealush/vest) - The best form validation framwork to date.
-- [Context](https://github.com/ealush/vest/tree/latest/packages/context) - Context propagation library for JS Apps.
-- [n4s](https://github.com/ealush/vest/tree/latest/packages/n4s) - enforce: fluent assertion library.
