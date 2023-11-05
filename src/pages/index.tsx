@@ -40,6 +40,11 @@ export default function Home() {
             Brought to you with ❤️ by{" "}
             <Link href="https://ealush.com">ealush</Link>.
           </p>
+          <p>
+            More of my work:
+            <br />
+            <Link href="https://vestjs.dev">Vest validations framework</Link>.
+          </p>
         </footer>
       </main>
       <Analytics />;
