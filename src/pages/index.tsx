@@ -4,6 +4,8 @@ import { Inter } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/react";
+
 const PickerDemo = dynamic(() => import("../components/PickerDemo"), {
   ssr: false,
 });
@@ -40,6 +42,7 @@ export default function Home() {
           </p>
         </footer>
       </main>
+      <Analytics />;
     </>
   );
 }
