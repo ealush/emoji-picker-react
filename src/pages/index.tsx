@@ -35,8 +35,9 @@ export default function Home() {
         <PickerDemo />
 
         <footer className={styles.footerRow}>
-          <p>The emoji picker for React.</p>
           <p>
+            The emoji picker for React.
+            <br />
             Brought to you with ❤️ by{" "}
             <Link href="https://ealush.com">ealush</Link>.
           </p>

@@ -45,6 +45,10 @@
   text-decoration: underline;
 }
 
+.footerRow p {
+  padding-bottom: 1rem;
+}
+
 .headerRow a {
   display: flex;
   justify-content: center;
