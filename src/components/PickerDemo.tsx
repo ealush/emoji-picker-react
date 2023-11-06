@@ -28,7 +28,11 @@ export default function PickerDemo() {
     <div>
       <div className={styles.PickerDemo}>
         <Picker
-          onEmojiClick={(emoji) => setTextareaValue((tv) => tv + emoji.emoji)}
+          onEmojiClick={(emoji) =>
+            setTextareaValue(
+              (tv) => tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji)
+            )
+          }
           key={now}
           autoFocusSearch={false}
           {...pickerProps}
