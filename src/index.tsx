@@ -20,7 +20,10 @@ export {
   SkinTonePickerLocation
 } from './types/exposedTypes';
 
-export interface PickerProps extends PickerConfig {}
+export interface PickerProps extends PickerConfig {
+  className?: string;
+  style?: React.CSSProperties;
+}
 
 export default function EmojiPicker(props: PickerProps) {
   const MutableConfigRef = useDefineMutableConfig({

@@ -11,22 +11,26 @@ import { PickerContextProvider } from '../context/PickerContext';
 import './PickerMain.css';
 
 type Props = Readonly<{
+  className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }>;
 
-export default function PickerMain({ children }: Props) {
+export default function PickerMain({ className, style, children }: Props) {
   return (
     <PickerContextProvider>
-      <PickerRootElement>{children}</PickerRootElement>
+      <PickerRootElement className={className} style={style}>{children}</PickerRootElement>
     </PickerContextProvider>
   );
 }
 
 type RootProps = Readonly<{
+  className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }>;
 
-function PickerRootElement({ children }: RootProps) {
+function PickerRootElement({ className, style, children }: RootProps) {
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
@@ -35,12 +39,6 @@ function PickerRootElement({ children }: RootProps) {
   useKeyboardNavigation();
   useOnFocus();
 
-  const style = {
-    height,
-    width
-  };
-
-  
 
   return (
     <aside
@@ -48,9 +46,13 @@ function PickerRootElement({ children }: RootProps) {
         [ClassNames.searchActive]: searchModeActive,
         [ClassNames.darkTheme]: theme === Theme.DARK,
         [ClassNames.autoTheme]: theme === Theme.AUTO
-      })}
+      }, className)}
       ref={PickerMainRef}
-      style={style}
+      style={{
+        height,
+        width,
+        ...style,
+      }}
     >
       {children}
     </aside>
