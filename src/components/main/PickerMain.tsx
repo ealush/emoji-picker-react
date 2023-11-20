@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ClassNames, clsx } from '../../DomUtils/classNames';
-import { usePickerSizeConfig, useThemeConfig } from '../../config/useConfig';
+import { useClassNameConfig, useStyleConfig, useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
@@ -11,15 +11,13 @@ import { PickerContextProvider } from '../context/PickerContext';
 import './PickerMain.css';
 
 type Props = Readonly<{
-  className?: string;
-  style?: React.CSSProperties;
   children: React.ReactNode;
 }>;
 
-export default function PickerMain({ className, style, children }: Props) {
+export default function PickerMain({ children }: Props) {
   return (
     <PickerContextProvider>
-      <PickerRootElement className={className} style={style}>{children}</PickerRootElement>
+      <PickerRootElement>{children}</PickerRootElement>
     </PickerContextProvider>
   );
 }
@@ -30,15 +28,15 @@ type RootProps = Readonly<{
   children: React.ReactNode;
 }>;
 
-function PickerRootElement({ className, style, children }: RootProps) {
+function PickerRootElement({ children }: RootProps) {
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
-  const { height, width } = usePickerSizeConfig();
+  const className = useClassNameConfig();
+  const style = useStyleConfig();
 
   useKeyboardNavigation();
   useOnFocus();
-
 
   return (
     <aside
@@ -48,11 +46,7 @@ function PickerRootElement({ className, style, children }: RootProps) {
         [ClassNames.autoTheme]: theme === Theme.AUTO
       }, className)}
       ref={PickerMainRef}
-      style={{
-        height,
-        width,
-        ...style,
-      }}
+      style={style}
     >
       {children}
     </aside>

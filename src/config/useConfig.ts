@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
@@ -88,12 +90,14 @@ export function useLazyLoadEmojisConfig(): boolean {
   return lazyLoadEmojis;
 }
 
-export function usePickerSizeConfig(): {
-  height: PickerDimensions;
-  width: PickerDimensions;
-} {
-  const { height, width } = usePickerConfig();
-  return { height: getDimension(height), width: getDimension(width) };
+export function useClassNameConfig(): string {
+  const { className } = usePickerConfig();
+  return className;
+}
+
+export function useStyleConfig(): React.CSSProperties {
+  const { height, width, style } = usePickerConfig();
+  return { height: getDimension(height), width: getDimension(width), ...style };
 }
 
 export function useEmojiVersionConfig(): string | null {

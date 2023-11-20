@@ -10,11 +10,11 @@ import PickerMain from './components/main/PickerMain';
 import './EmojiPickerReact.css';
 import { PickerProps } from './index';
 
-function EmojiPicker({ className, style, ...props }: PickerProps) {
+function EmojiPicker(props: PickerProps) {
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
-        <PickerMain className={className} style={style}>
+        <PickerMain>
           <Header />
           <Body />
           <Preview />
