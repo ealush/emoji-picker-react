@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ClassNames, clsx } from '../../DomUtils/classNames';
-import { usePickerSizeConfig, useThemeConfig } from '../../config/useConfig';
+import { useClassNameConfig, useStyleConfig, useThemeConfig } from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
@@ -23,6 +23,8 @@ export default function PickerMain({ children }: Props) {
 }
 
 type RootProps = Readonly<{
+  className?: string;
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }>;
 
@@ -30,17 +32,11 @@ function PickerRootElement({ children }: RootProps) {
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
-  const { height, width } = usePickerSizeConfig();
+  const className = useClassNameConfig();
+  const style = useStyleConfig();
 
   useKeyboardNavigation();
   useOnFocus();
-
-  const style = {
-    height,
-    width
-  };
-
-  
 
   return (
     <aside
@@ -48,7 +44,7 @@ function PickerRootElement({ children }: RootProps) {
         [ClassNames.searchActive]: searchModeActive,
         [ClassNames.darkTheme]: theme === Theme.DARK,
         [ClassNames.autoTheme]: theme === Theme.AUTO
-      })}
+      }, className)}
       ref={PickerMainRef}
       style={style}
     >

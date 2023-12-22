@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
   setCustomEmojis,
@@ -63,6 +65,7 @@ export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
     categories: baseCategoriesConfig(),
+    className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
     emojiStyle: EmojiStyle.APPLE,
@@ -78,6 +81,7 @@ export function basePickerConfig(): PickerConfigInternal {
     searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
     skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
+    style: {},
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
@@ -98,8 +102,10 @@ export type PickerConfigInternal = {
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
   previewConfig: PreviewConfig;
+  className: string;
   height: PickerDimensions;
   width: PickerDimensions;
+  style: React.CSSProperties;
   getEmojiUrl: GetEmojiUrl;
   searchDisabled: boolean;
   skinTonePickerLocation: SkinTonePickerLocation;

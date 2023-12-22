@@ -39,8 +39,10 @@ export default React.memo(EmojiPicker, (prev, next) => {
     prev.theme === next.theme &&
     prev.suggestedEmojisMode === next.suggestedEmojisMode &&
     prev.lazyLoadEmojis === next.lazyLoadEmojis &&
+    prev.className === next.className &&
     prev.height === next.height &&
     prev.width === next.width &&
+    prev.style === next.style &&
     prev.searchDisabled === next.searchDisabled &&
     prev.skinTonePickerLocation === next.skinTonePickerLocation &&
     prevCustomEmojis.length === nextCustomEmojis.length
