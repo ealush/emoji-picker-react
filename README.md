@@ -73,10 +73,10 @@ The following props are accepted by them picker:
 | searchDisabled         | boolean                                                | `false`    | Controls whether the search is disabled or not. When disabled, the skin tone picker will be shown in the preview component.                |
 | skinTonePickerLocation | string                                                 | `SEARCH`   | Controls the location of the skin tone picker. Possible values are `SEARCH` and `PREVIEW`.                                                 |
 | emojiVersion           | `string`                                               | -          | Allows displaying emojis up to a certain version for compatibility.                                                                        |
-| `className`            | `string`                                               | -          | Controls the className of the picker. |
+| `className`            | `string`                                               | -          | Adds a class name to the root element of the picker. |
 | `width`                | `number`/`string`                                      | `350`      | Controls the width of the picker. You can provide a number that will be treated as pixel size, or your any accepted css width as string.   |
 | `height`               | `number`/`string`                                      | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string. |
-| `style`                | `React.CSSProperties`                                  | `{}`       | Controls the style of the picker. |
+| `style`                | `React.CSSProperties`                                  | `{}`       | Adds inline style to the root element of the picker. |
 | getEmojiUrl            | `Function`                                             | -          | Allows to customize the emoji url and provide your own image host.                                                                         |
 | categories             | `Array`                                                | -          | Allows full config over ordering, naming and display of categories.                                                                        |
 | customEmojis           | `Array<{names: string[], imgUrl: string, id: string}>` | -          | Allows adding custom emojis to the picker.                                                                                                 |
