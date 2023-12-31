@@ -1,14 +1,32 @@
+import { cx } from 'css-local';
 import * as React from 'react';
 
 import { ClassNames, clsx } from '../../DomUtils/classNames';
-import { useClassNameConfig, useStyleConfig, useThemeConfig } from '../../config/useConfig';
+import { sheet } from '../../DomUtils/stylesheet';
+import {
+  useClassNameConfig,
+  useStyleConfig,
+  useThemeConfig
+} from '../../config/useConfig';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import { PickerContextProvider } from '../context/PickerContext';
-import './PickerMain.css';
+
+const styles = sheet.create({
+  main: {
+    '.': [ClassNames.emojiPicker, 'epr-main'],
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: 'var(--epr-picker-border-radius)',
+    borderColor: 'var(--epr-picker-border-color)'
+  }
+});
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -40,11 +58,15 @@ function PickerRootElement({ children }: RootProps) {
 
   return (
     <aside
-      className={clsx(ClassNames.emojiPicker, 'epr-main', {
-        [ClassNames.searchActive]: searchModeActive,
-        [ClassNames.darkTheme]: theme === Theme.DARK,
-        [ClassNames.autoTheme]: theme === Theme.AUTO
-      }, className)}
+      className={clsx(
+        cx(styles.main),
+        {
+          [ClassNames.searchActive]: searchModeActive,
+          [ClassNames.darkTheme]: theme === Theme.DARK,
+          [ClassNames.autoTheme]: theme === Theme.AUTO
+        },
+        className
+      )}
       ref={PickerMainRef}
       style={style}
     >
