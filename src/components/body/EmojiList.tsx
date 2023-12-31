@@ -1,6 +1,8 @@
+import { cx } from 'css-local';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { sheet } from '../../DomUtils/stylesheet';
 import {
   Categories,
   CategoryConfig,
@@ -25,14 +27,21 @@ import { ClickableEmoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
-import './EmojiList.css';
+const styles = sheet.create({
+  emojiList: {
+    '.': ClassNames.emojiList,
+    listStyle: 'none',
+    padding: 0,
+    margin: 0
+  }
+});
 
 export function EmojiList() {
   const categories = useCategoriesConfig();
   const renderdCategoriesCountRef = React.useRef(0);
 
   return (
-    <ul className={ClassNames.emojiList}>
+    <ul className={cx(styles.emojiList)}>
       {categories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
