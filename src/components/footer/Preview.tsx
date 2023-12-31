@@ -1,6 +1,8 @@
+import { cx } from 'css-local';
 import * as React from 'react';
 import { useState } from 'react';
 
+import { sheet } from '../../DomUtils/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
@@ -16,9 +18,27 @@ import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker'
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
-import './Preview.css';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker';
+
+const styles = sheet.create({
+  preview: {
+    '.': 'epr-preview',
+    padding: '0 var(--epr-horizontal-padding)',
+    alignItems: 'center',
+    borderTop: '1px solid var(--epr-preview-border-color)',
+    height: 'var(--epr-preview-height)',
+    position: 'relative',
+    zIndex: 'var(--epr-preview-z-index)'
+  },
+  emojiLabel: {
+    '.': 'epr-preview-emoji-label',
+    textTransform: 'capitalize',
+    color: 'var(--epr-preview-text-color)',
+    fontSize: 'var(--epr-preview-text-size)',
+    padding: 'var(--epr-preview-text-padding)'
+  }
+});
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
@@ -29,7 +49,7 @@ export function Preview() {
   }
 
   return (
-    <Flex className="epr-preview">
+    <Flex className={cx(styles.preview)}>
       <PreviewBody />
       <Space />
       {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}
@@ -86,9 +106,9 @@ export function PreviewBody() {
           ) : null}
         </div>
         {show ? (
-          <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
+          <div className={cx(styles.emojiLabel)}>{emojiName(emoji)}</div>
         ) : (
-          <div className="epr-preview-emoji-label">{defaultText}</div>
+          <div className={cx(styles.emojiLabel)}>{defaultText}</div>
         )}
       </>
     );
