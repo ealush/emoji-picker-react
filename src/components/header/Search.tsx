@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import { clsx } from '../../DomUtils/classNames';
+import { sheet } from '../../DomUtils/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -15,9 +16,89 @@ import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
+import magnifier from './svg/magnifier.svg';
+
 import './Search.css';
 import { CssSearch } from './CssSearch';
 import { SkinTonePicker } from './SkinTonePicker';
+
+import { cx } from 'css-local';
+
+const styles = sheet.create({
+  searchContainer: {
+    flex: 1,
+    display: 'block',
+    minWidth: 0
+  },
+  searchResultsVisuallyHidden: {
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: '1px',
+    overflow: 'hidden',
+    position: 'absolute',
+    whiteSpace: 'nowrap',
+    width: '1px'
+  },
+  searchInput: {
+    '::placeholder': {
+      color: 'var(--epr-search-input-placeholder-color)'
+    },
+    ':focus': {
+      backgroundColor: 'var(--epr-search-input-bg-color-active)',
+      border: '1px solid var(--epr-search-border-color)'
+    },
+    backgroundColor: 'var(--epr-search-input-bg-color)',
+    border: '1px solid var(--epr-search-input-bg-color)',
+    borderRadius: 'var(--epr-search-input-border-radius)',
+    color: 'var(--epr-search-input-text-color)',
+    height: 'var(--epr-search-input-height)',
+    outline: 'none',
+    padding: 'var(--epr-search-input-padding)',
+    transition: 'all 0.2s ease-in-out',
+    width: '100%'
+  },
+  icnSearch: {
+    content: '',
+    position: 'absolute',
+    top: '50%',
+    left: 'var(--epr-search-bar-inner-padding)',
+    transform: 'translateY(-50%)',
+    width: '20px',
+    height: '20px',
+    backgroundImage: `url(${magnifier})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: '0 0',
+    backgroundSize: '20px'
+  },
+  btnClearSearch: {
+    position: 'absolute',
+    right: 'var(--epr-search-bar-inner-padding)',
+    height: '30px',
+    width: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    padding: '0',
+    borderRadius: '50%',
+    ':hover': {
+      background: 'var(--epr-hover-bg-color)'
+    },
+    ':focus': {
+      background: 'var(--epr-hover-bg-color)'
+    }
+  },
+  icnClearSearch: {
+    '.': 'epr-icn-search',
+    backgroundImage: 'svg-load(./svg/times.svg)',
+    backgroundColor: 'transparent',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '20px',
+    height: '20px',
+    width: '20px'
+  }
+});
 
 export function SearchContainer() {
   const searchDisabled = useSearchDisabledConfig();
@@ -50,14 +131,14 @@ export function Search() {
   const value = input?.value;
 
   return (
-    <Relative className="epr-search-container">
+    <Relative className={cx(styles.searchContainer)}>
       <CssSearch value={value} />
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
         aria-label={'Type to search for an emoji'}
         onFocus={closeAllOpenToggles}
-        className="epr-search"
+        className={cx(styles.searchInput)}
         type="text"
         aria-controls="epr-search-id"
         placeholder={placeholder}
@@ -72,10 +153,7 @@ export function Search() {
       {searchTerm ? (
         <div
           role="status"
-          className={clsx(
-            'epr-status-search-results',
-            'epr-status-visually-hidden'
-          )}
+          className={cx(styles.searchResultsVisuallyHidden)}
           aria-live="polite"
           id="epr-search-id"
           aria-atomic="true"
@@ -83,12 +161,15 @@ export function Search() {
           {statusSearchResults}
         </div>
       ) : null}
-      <div className="epr-icn-search" />
+      <div className={cx(styles.icnSearch)} />
       <Button
-        className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
+        className={clsx(
+          cx(styles.btnClearSearch),
+          'epr-visible-on-search-only'
+        )}
         onClick={clearSearch}
       >
-        <div className="epr-icn-clear-search" />
+        <div className={cx(styles.icnClearSearch)} />
       </Button>
     </Relative>
   );

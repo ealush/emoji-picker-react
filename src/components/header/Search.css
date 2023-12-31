@@ -1,55 +1,24 @@
 .EmojiPickerReact .epr-search-container {
-  flex: 1;
-  display: block;
-  min-width: 0;
+
 }
 
 .EmojiPickerReact .epr-search-container .epr-status-visually-hidden {
-  clip: rect(0 0 0 0);
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
+
 }
 
 .EmojiPickerReact .epr-search-container input.epr-search {
-  outline: none;
-  transition: all 0.2s ease-in-out;
-  color: var(--epr-search-input-text-color);
-  border-radius: var(--epr-search-input-border-radius);
-  padding: var(--epr-search-input-padding);
-  height: var(--epr-search-input-height);
-  background-color: var(--epr-search-input-bg-color);
-  border: 1px solid var(--epr-search-input-bg-color);
-  width: 100%;
+
 }
 
 .EmojiPickerReact
   .epr-search-container
   button.epr-btn-clear-search
   .epr-icn-clear-search {
-  background-image: svg-load(./svg/times.svg);
-  background-color: transparent;
-  background-repeat: no-repeat;
-  background-size: 20px;
-  height: 20px;
-  width: 20px;
+
 }
 
 .EmojiPickerReact .epr-search-container button.epr-btn-clear-search {
-  position: absolute;
-  right: var(--epr-search-bar-inner-padding);
-  height: 30px;
-  width: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 0;
-  border-radius: 50%;
+
 }
 
 .EmojiPickerReact
@@ -60,73 +29,59 @@
   .epr-search-container
   button.epr-btn-clear-search:focus
   .epr-icn-clear-search {
-  background-position-y: -20px;
+  backgroundPositionY: '-20px',
 }
 
 .EmojiPickerReact .epr-search-container button.epr-btn-clear-search:hover,
 .EmojiPickerReact .epr-search-container button.epr-btn-clear-search:focus {
-  background: var(--epr-hover-bg-color);
 }
 
 .EmojiPickerReact.epr-dark-theme
   .epr-search-container
   button.epr-btn-clear-search
   .epr-icn-clear-search {
-  background-position-y: -40px;
+  /* backgroundPositionY: '-40px', */
 }
 
 .EmojiPickerReact.epr-dark-theme
   .epr-search-container
   button.epr-btn-clear-search:hover
   .epr-icn-clear-search {
-  background-position-y: -60px;
+  /* backgroundPositionY: '-60px', */
 }
 
-@media (prefers-color-scheme: dark) {
+/* mediaPrefersColorScheme: 'dark) ',
   .EmojiPickerReact.epr-auto-theme
     .epr-search-container
     button.epr-btn-clear-search
     .epr-icn-clear-search {
-    background-position-y: -40px;
-  }
+    backgroundPositionY: '-40px',
+  } */
 
-  .EmojiPickerReact.epr-auto-theme
+  /* .EmojiPickerReact.epr-auto-theme
     .epr-search-container
     button.epr-btn-clear-search:hover
     .epr-icn-clear-search {
-    background-position-y: -60px;
+    backgroundPositionY: '-60px',
   }
-}
+} */
 
 .EmojiPickerReact .epr-search-container .epr-icn-search {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: var(--epr-search-bar-inner-padding);
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  background-image: svg-load(./svg/magnifier.svg);
-  background-repeat: no-repeat;
-  background-position: 0 0;
-  background-size: 20px;
+
 }
 
-.EmojiPickerReact.epr-dark-theme .epr-search-container .epr-icn-search {
-  background-position-y: -20px;
+/* .EmojiPickerReact.epr-dark-theme .epr-search-container .epr-icn-search {
+  backgroundPositionY: '-20px',
 }
 
-@media (prefers-color-scheme: dark) {
+mediaPrefersColorScheme: 'dark) ',
   .EmojiPickerReact.epr-auto-theme .epr-search-container .epr-icn-search {
-    background-position-y: -20px;
+    backgroundPositionY: '-20px',
   }
+} */
+
+.EmojiPickerReact .epr-search-container input.epr-search {
+
 }
 
-.EmojiPickerReact .epr-search-container input.epr-search::placeholder {
-  color: var(--epr-search-input-placeholder-color);
-}
-
-.EmojiPickerReact .epr-search-container input.epr-search:focus {
-  background-color: var(--epr-search-input-bg-color-active);
-  border: 1px solid var(--epr-search-border-color);
-}
+/* .EmojiPickerReact .epr-search-container input.epr-search */
