@@ -148,6 +148,12 @@ Before you get started, make sure you have the following requirements in place:
 
 3. Add features or resolve issues by changing the code, save it, and test it by seeing your changes on Storybook.
 
+4. To run unit tests, in the repository root run the following command:
+
+   ```bash
+   npm test
+   ```
+
 #### Commit the Changes to Git
 
 1. When you resolved your issue, commit the changes you've made by running:
