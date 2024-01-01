@@ -60,6 +60,7 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.18.10",
+    "@rollup/plugin-url": "^8.0.2",
     "@size-limit/preset-small-lib": "^8.0.1",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-info": "^5.3.21",
@@ -67,6 +68,7 @@
     "@storybook/addon-postcss": "^2.0.0",
     "@storybook/addons": "^6.5.10",
     "@storybook/react": "^6.5.10",
+    "@svgr/rollup": "^8.1.0",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
@@ -96,5 +98,8 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "flairup": "^0.0.2-rc"
   }
 }

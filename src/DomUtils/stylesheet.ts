@@ -1,3 +1,3 @@
-import { createSheet } from 'css-local';
+import { createSheet } from 'flairup';
 
 export const sheet = createSheet('EmojiPickerReact');

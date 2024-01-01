@@ -1,4 +1,4 @@
-import { cx } from 'css-local';
+import { cx } from 'flairup';
 import * as React from 'react';
 
 import { clsx } from '../../DomUtils/classNames';
