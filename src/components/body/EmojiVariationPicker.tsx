@@ -1,7 +1,8 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 import { useEffect } from 'react';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import { focusFirstVisibleEmoji } from '../../DomUtils/keyboardNavigation';
 import {
   buttonFromTarget,
@@ -26,6 +27,7 @@ import {
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
+
 import './EmojiVariationPicker.css';
 
 enum Direction {
@@ -74,7 +76,7 @@ export function EmojiVariationPicker() {
   return (
     <div
       ref={VariationPickerRef}
-      className={clsx(ClassNames.variationPicker, {
+      className={cx(ClassNames.variationPicker, {
         visible,
         'pointing-up': getMenuDirection() === Direction.Down
       })}

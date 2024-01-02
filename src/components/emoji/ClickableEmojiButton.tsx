@@ -1,7 +1,9 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import { Button } from '../atoms/Button';
+
 import './Emoji.css';
 
 type ClickableEmojiButtonProps = Readonly<{
@@ -25,7 +27,7 @@ export function ClickableEmojiButton({
 }: ClickableEmojiButtonProps) {
   return (
     <Button
-      className={clsx(ClassNames.emoji, {
+      className={cx(ClassNames.emoji, {
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch,
         [ClassNames.visible]: !hidden && !hiddenOnSearch,

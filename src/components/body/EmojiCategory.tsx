@@ -1,11 +1,13 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import {
   CategoryConfig,
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
 } from '../../config/categoryConfig';
+
 import './EmojiCategory.css';
 
 type Props = Readonly<{
@@ -26,7 +28,7 @@ export function EmojiCategory({
 
   return (
     <li
-      className={clsx(ClassNames.category, {
+      className={cx(ClassNames.category, {
         [ClassNames.hidden]: hidden,
         [ClassNames.hiddenOnSearch]: hiddenOnSearch
       })}

@@ -1,5 +1,5 @@
 {
-  "version": "4.6.0",
+  "version": "4.6.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -96,5 +96,8 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "flairup": "0.0.6"
   }
 }

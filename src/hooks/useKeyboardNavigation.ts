@@ -24,6 +24,7 @@ import {
   useSkinTonePickerRef
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+import { useSearchDisabledConfig } from '../config/useConfig';
 
 import {
   useCloseAllOpenToggles,
@@ -42,7 +43,6 @@ import {
   useIsSkinToneInPreview,
   useIsSkinToneInSearch
 } from './useShouldShowSkinTonePicker';
-import { useSearchDisabledConfig } from '../config/useConfig';
 
 enum KeyboardEvents {
   ArrowDown = 'ArrowDown',

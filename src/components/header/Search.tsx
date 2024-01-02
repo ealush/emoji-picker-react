@@ -1,7 +1,7 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
-import { clsx } from '../../DomUtils/classNames';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -72,7 +72,7 @@ export function Search() {
       {searchTerm ? (
         <div
           role="status"
-          className={clsx(
+          className={cx(
             'epr-status-search-results',
             'epr-status-visually-hidden'
           )}
@@ -85,7 +85,7 @@ export function Search() {
       ) : null}
       <div className="epr-icn-search" />
       <Button
-        className={clsx('epr-btn-clear-search', 'epr-visible-on-search-only')}
+        className={cx('epr-btn-clear-search', 'epr-visible-on-search-only')}
         onClick={clearSearch}
         aria-label="Clear"
         title="Clear"

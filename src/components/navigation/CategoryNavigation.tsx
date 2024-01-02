@@ -1,8 +1,9 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 import './CategoryNavigation.css';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import {
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
@@ -27,13 +28,13 @@ export function CategoryNavigation() {
   const hideCustomCategory = useShouldHideCustomEmojis();
 
   return (
-      <div
-        className='epr-category-nav'
-        role='tablist'
-        aria-label='Category navigation'
-        id='epr-category-nav-id'
-        ref={CategoryNavigationRef}
-      >
+    <div
+      className="epr-category-nav"
+      role="tablist"
+      aria-label="Category navigation"
+      id="epr-category-nav-id"
+      ref={CategoryNavigationRef}
+    >
       {categoriesConfig.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
         const isActiveCategory = category === activeCategory;
@@ -44,8 +45,8 @@ export function CategoryNavigation() {
 
         return (
           <Button
-            tabIndex={(isSearchMode || isActiveCategory) ? -1 : 0}
-            className={clsx('epr-cat-btn', `epr-icn-${category}`, {
+            tabIndex={isSearchMode || isActiveCategory ? -1 : 0}
+            className={cx('epr-cat-btn', `epr-icn-${category}`, {
               [ClassNames.active]: isActiveCategory
             })}
             key={category}
@@ -55,8 +56,8 @@ export function CategoryNavigation() {
             }}
             aria-label={categoryNameFromCategoryConfig(categoryConfig)}
             aria-selected={isActiveCategory}
-            role='tab'
-            aria-controls='epr-category-nav-id'
+            role="tab"
+            aria-controls="epr-category-nav-id"
           />
         );
       })}

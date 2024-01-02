@@ -1,6 +1,8 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../../hooks/useOnScroll';
@@ -9,8 +11,6 @@ import { useBodyRef } from '../context/ElementRefContext';
 import { EmojiList } from './EmojiList';
 import { EmojiVariationPicker } from './EmojiVariationPicker';
 
-import './Body.css';
-
 export function Body() {
   const BodyRef = useBodyRef();
   useOnScroll(BodyRef);
@@ -18,9 +18,19 @@ export function Body() {
   useOnMouseMove();
 
   return (
-    <div className={ClassNames.scrollBody} ref={BodyRef}>
+    <div className={cx(styles.body)} ref={BodyRef}>
       <EmojiVariationPicker />
       <EmojiList />
     </div>
   );
 }
+
+const styles = stylesheet.create({
+  body: {
+    '.': ClassNames.scrollBody,
+    flex: 1,
+    overflowY: 'scroll',
+    overflowX: 'hidden',
+    position: 'relative'
+  }
+});

@@ -1,6 +1,7 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 
 export function NativeEmoji({
@@ -12,7 +13,7 @@ export function NativeEmoji({
 }) {
   return (
     <span
-      className={clsx(ClassNames.external, 'epr-emoji-native')}
+      className={cx(ClassNames.external, 'epr-emoji-native')}
       data-unified={unified}
       style={style}
     >

@@ -1,6 +1,5 @@
+import { cx } from 'flairup';
 import * as React from 'react';
-
-import { clsx } from '../../DomUtils/classNames';
 
 interface Props
   extends React.DetailedHTMLProps<
@@ -12,11 +11,7 @@ interface Props
 
 export function Button(props: Props) {
   return (
-    <button
-      type="button"
-      {...props}
-      className={clsx('epr-btn', props.className)}
-    >
+    <button type="button" {...props} className={cx('epr-btn', props.className)}>
       {props.children}
     </button>
   );

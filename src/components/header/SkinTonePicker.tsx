@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ClassNames, clsx } from '../../DomUtils/classNames';
+import { ClassNames } from '../../DomUtils/classNames';
 import { useSkinTonesDisabledConfig } from '../../config/useConfig';
 import skinToneVariations, {
   skinTonesNamed
@@ -16,7 +16,9 @@ import {
   useActiveSkinToneState,
   useSkinToneFanOpenState
 } from '../context/PickerContext';
+
 import './SkinTonePicker.css';
+import { cx } from 'flairup';
 
 const ITEM_SIZE = 28;
 
@@ -56,7 +58,7 @@ export function SkinTonePicker({
 
   return (
     <Relative
-      className={clsx('epr-skin-tones', direction, {
+      className={cx('epr-skin-tones', direction, {
         [ClassNames.open]: isOpen
       })}
       style={
@@ -71,7 +73,7 @@ export function SkinTonePicker({
           return (
             <Button
               style={{
-                transform: clsx(
+                transform: cx(
                   vertical
                     ? `translateY(-${i * (isOpen ? ITEM_SIZE : 0)}px)`
                     : `translateX(-${i * (isOpen ? ITEM_SIZE : 0)}px)`,
@@ -88,7 +90,7 @@ export function SkinTonePicker({
                 closeAllOpenToggles();
               }}
               key={skinToneVariation}
-              className={clsx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
+              className={cx(`epr-tone-${skinToneVariation}`, 'epr-tone', {
                 [ClassNames.active]: active
               })}
               tabIndex={isOpen ? 0 : -1}

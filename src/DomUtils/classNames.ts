@@ -24,27 +24,3 @@ export enum ClassNames {
 export function asSelectors(...classNames: ClassNames[]): string {
   return classNames.map(c => `.${c}`).join('');
 }
-
-export function clsx(...args: any[]): string {
-  const classes = args.reduce((classes, arg) => {
-    if (typeof arg === 'string') {
-      classes.push(arg);
-    }
-
-    if (Array.isArray(arg)) {
-      classes.push(clsx(...arg));
-    }
-
-    if (typeof arg === 'object') {
-      Object.entries(arg).forEach(([key, value]) => {
-        if (value) {
-          classes.push(key);
-        }
-      });
-    }
-
-    return classes;
-  }, []);
-
-  return classes.filter(Boolean).join(' ');
-}

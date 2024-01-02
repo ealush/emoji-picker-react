@@ -6855,6 +6855,11 @@ find-up@^5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
+flairup@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.6.tgz#b1eca525e52c64d1c5eee37d68361234d77d0daf"
+  integrity sha512-zJyvVjuZB9DIgL/aNHKZWZ+6e83iibAPeDLg47tj1yXHExLGtACM8IBF/OwHMDJqsDwYubcVT5u3atG6tqw6eA==
+
 flat-cache@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/flat-cache/-/flat-cache-2.0.1.tgz#5d296d6f04bda44a4630a301413bdbc2ec085ec0"
