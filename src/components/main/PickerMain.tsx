@@ -2,6 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useClassNameConfig,
   useStyleConfig,
@@ -13,8 +14,6 @@ import { useOnFocus } from '../../hooks/useOnFocus';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import { PickerContextProvider } from '../context/PickerContext';
-
-import './PickerMain.css';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -47,8 +46,7 @@ function PickerRootElement({ children }: RootProps) {
   return (
     <aside
       className={cx(
-        ClassNames.emojiPicker,
-        'epr-main',
+        styles.main,
         {
           [ClassNames.searchActive]: searchModeActive,
           [ClassNames.darkTheme]: theme === Theme.DARK,
@@ -63,3 +61,16 @@ function PickerRootElement({ children }: RootProps) {
     </aside>
   );
 }
+
+const styles = stylesheet.create({
+  main: {
+    '.': ['epr-main', ClassNames.emojiPicker],
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderRadius: 'var(--epr-picker-border-radius)',
+    borderColor: 'var(--epr-picker-border-color)'
+  }
+});

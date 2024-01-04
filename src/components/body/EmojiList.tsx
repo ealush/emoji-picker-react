@@ -1,6 +1,8 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   Categories,
   CategoryConfig,
@@ -25,14 +27,12 @@ import { ClickableEmoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
-import './EmojiList.css';
-
 export function EmojiList() {
   const categories = useCategoriesConfig();
   const renderdCategoriesCountRef = React.useRef(0);
 
   return (
-    <ul className={ClassNames.emojiList}>
+    <ul className={cx(styles.emojiList)}>
       {categories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
@@ -124,3 +124,12 @@ function RenderCategory({
     </EmojiCategory>
   );
 }
+
+const styles = stylesheet.create({
+  emojiList: {
+    '.': ClassNames.emojiList,
+    listStyle: 'none',
+    margin: 0,
+    padding: 0
+  }
+});
