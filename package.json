@@ -23,10 +23,11 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "node ./scripts/prepare.js && tsdx build && node ./scripts/copyData.js",
+    "build": "node ./scripts/prepare.js && yarn type-check && tsdx build --transpileOnly && node ./scripts/copyData.js",
+    "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint ./src --ext .ts,.tsx",
-    "prepare": "tsdx build",
+    "prepare": "yarn type-check && tsdx build --transpileOnly",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "storybook": "start-storybook -p 6006",
@@ -98,6 +99,6 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "flairup": "0.0.12"
+    "flairup": "0.0.15"
   }
 }
