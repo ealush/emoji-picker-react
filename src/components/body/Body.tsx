@@ -28,7 +28,7 @@ export function Body() {
 const styles = stylesheet.create({
   body: {
     '.': ClassNames.scrollBody,
-    flex: 1,
+    flex: '1',
     overflowY: 'scroll',
     overflowX: 'hidden',
     position: 'relative'

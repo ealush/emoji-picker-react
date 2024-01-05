@@ -129,7 +129,7 @@ const styles = stylesheet.create({
   emojiList: {
     '.': ClassNames.emojiList,
     listStyle: 'none',
-    margin: 0,
-    padding: 0
+    margin: '0',
+    padding: '0'
   }
 });
