@@ -2,6 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { commonStyles } from '../../Stylesheet/stylesheet';
 import { Button } from '../atoms/Button';
 
 import './Emoji.css';
@@ -27,12 +28,15 @@ export function ClickableEmojiButton({
 }: ClickableEmojiButtonProps) {
   return (
     <Button
-      className={cx(ClassNames.emoji, {
-        [ClassNames.hidden]: hidden,
-        [ClassNames.hiddenOnSearch]: hiddenOnSearch,
-        [ClassNames.visible]: !hidden && !hiddenOnSearch,
-        [ClassNames.emojiHasVariations]: hasVariations && showVariations
-      })}
+      className={cx(
+        ClassNames.emoji,
+        hidden && commonStyles.hidden,
+        hiddenOnSearch && commonStyles.hiddenOnSearch,
+        {
+          [ClassNames.visible]: !hidden && !hiddenOnSearch,
+          [ClassNames.emojiHasVariations]: hasVariations && showVariations
+        }
+      )}
       data-unified={unified}
       aria-label={emojiNames[0]}
       data-full-name={emojiNames}
