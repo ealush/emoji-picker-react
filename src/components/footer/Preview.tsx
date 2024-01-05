@@ -1,6 +1,8 @@
+import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
@@ -16,7 +18,6 @@ import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker'
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
-import './Preview.css';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker';
 
@@ -29,7 +30,7 @@ export function Preview() {
   }
 
   return (
-    <Flex className="epr-preview">
+    <Flex className={cx(styles.preview)}>
       <PreviewBody />
       <Space />
       {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}
@@ -86,9 +87,9 @@ export function PreviewBody() {
           ) : null}
         </div>
         {show ? (
-          <div className="epr-preview-emoji-label">{emojiName(emoji)}</div>
+          <div className={cx(styles.label)}>{emojiName(emoji)}</div>
         ) : (
-          <div className="epr-preview-emoji-label">{defaultText}</div>
+          <div className={cx(styles.label)}>{defaultText}</div>
         )}
       </>
     );
@@ -99,3 +100,20 @@ export type PreviewEmoji = null | {
   unified: string;
   originalUnified: string;
 };
+
+const styles = stylesheet.create({
+  preview: {
+    alignItems: 'center',
+    borderTop: '1px solid var(--epr-preview-border-color)',
+    height: 'var(--epr-preview-height)',
+    padding: '0 var(--epr-horizontal-padding)',
+    position: 'relative',
+    zIndex: 'var(--epr-preview-z-index)'
+  },
+  label: {
+    color: 'var(--epr-preview-text-color)',
+    fontSize: 'var(--epr-preview-text-size)',
+    padding: 'var(--epr-preview-text-padding)',
+    textTransform: 'capitalize'
+  }
+});
