@@ -2,6 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -29,13 +30,20 @@ export function SearchContainer() {
   }
 
   return (
-    <Flex className="epr-header-overlay">
+    <Flex className={cx(styles.overlay)}>
       <Search />
 
       {isSkinToneInSearch ? <SkinTonePicker /> : null}
     </Flex>
   );
 }
+
+const styles = stylesheet.create({
+  overlay: {
+    padding: 'var(--epr-header-padding)',
+    zIndex: 'var(--epr-header-overlay-z-index)'
+  }
+});
 
 export function Search() {
   const [inc, setInc] = useState(0);
