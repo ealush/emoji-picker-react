@@ -16,6 +16,7 @@ import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 
 export function CategoryNavigation() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export function CategoryNavigation() {
 
   return (
     <div
-      className="epr-category-nav"
+      className={cx(styles.nav)}
       role="tablist"
       aria-label="Category navigation"
       id="epr-category-nav-id"
@@ -46,7 +47,7 @@ export function CategoryNavigation() {
         return (
           <Button
             tabIndex={isSearchMode || isActiveCategory ? -1 : 0}
-            className={cx('epr-cat-btn', `epr-icn-${category}`, {
+            className={cx(styles.catBtn, `epr-icn-${category}`, {
               [ClassNames.active]: isActiveCategory
             })}
             key={category}
@@ -64,3 +65,35 @@ export function CategoryNavigation() {
     </div>
   );
 }
+
+const styles = stylesheet.create({
+  nav: {
+    '.': 'epr-category-nav',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    padding: 'var(--epr-header-padding)'
+  },
+  catBtn: {
+    '.': 'epr-cat-btn',
+    display: 'inline-block',
+    transition: 'opacity 0.2s ease-in-out',
+    position: 'relative',
+    height: 'var(--epr-category-navigation-button-size)',
+    width: 'var(--epr-category-navigation-button-size)',
+    // FIXME: Fix immediately after we replace epr-btn and move it to flairup
+    backgroundSize:
+      'calc(var(--epr-category-navigation-button-size) * 10) !important',
+    outline: 'none',
+    ':focus:before': {
+      content: '',
+      position: 'absolute',
+      top: '-2px',
+      left: '-2px',
+      right: '-2px',
+      bottom: '-2px',
+      border: '2px solid var(--epr-category-icon-active-color)',
+      borderRadius: '50%'
+    }
+  }
+});

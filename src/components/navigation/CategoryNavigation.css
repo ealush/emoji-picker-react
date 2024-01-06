@@ -1,31 +1,3 @@
-.EmojiPickerReact .epr-category-nav {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  padding: var(--epr-header-padding);
-}
-
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn {
-  display: inline-block;
-  transition: opacity 0.2s ease-in-out;
-  position: relative;
-  height: var(--epr-category-navigation-button-size);
-  width: var(--epr-category-navigation-button-size);
-  background-size: calc(var(--epr-category-navigation-button-size) * 10);
-  outline: none;
-}
-
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn:focus:before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px solid var(--epr-category-icon-active-color);
-  border-radius: 50%;
-}
-
 aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   .epr-category-nav {
   opacity: 0.3;
