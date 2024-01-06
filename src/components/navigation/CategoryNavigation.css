@@ -1,27 +1,4 @@
 aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
-  .epr-category-nav {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
-
-.EmojiPickerReact.epr-search-active .epr-category-nav {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
-aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
-  .epr-category-nav {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
-.EmojiPickerReact.epr-search-active .epr-category-nav {
-  opacity: 0.3;
-  cursor: default;
-  pointer-events: none;
-}
-aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   .epr-category-nav
   > button.epr-cat-btn:hover {
   opacity: 1;
