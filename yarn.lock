@@ -6855,10 +6855,10 @@ find-up@^5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
-flairup@0.0.15:
-  version "0.0.15"
-  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.15.tgz#75021bd21ae5780aad9fc24de90bab233e9899e6"
-  integrity sha512-1NWcJOmBF5MQyyVDj3KKT5nABmoZeIXGuYLhiFBZDNvemrsx2uc8ABM45mQX4MvGFWrWN0RVVjSMfTD3ZzQ3Lg==
+flairup@0.0.16:
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.16.tgz#2abcdf89591f2d4426c2ecc520b1e9d84b68ce15"
+  integrity sha512-F9FbsSUK30zeIJaihSWkRHzNgpiIcvms7qpXW15HFr6kRPzFK0ubuyJTzqyFbMCwsnjPZL4hhDCQmDZNRzJddg==
 
 flat-cache@^2.0.1:
   version "2.0.1"

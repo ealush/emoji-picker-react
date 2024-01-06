@@ -189,10 +189,12 @@ const styles = stylesheet.create({
   },
   autoThemeDark: {
     '.': ClassNames.autoTheme,
-    '@media (prefers-color-scheme: dark)': DarkTheme
+    '@media (prefers-color-scheme: dark)': {
+      '--': DarkTheme
+    }
   },
   darkTheme: {
     '.': ClassNames.darkTheme,
-    ...DarkTheme
+    '--': DarkTheme
   }
 });
