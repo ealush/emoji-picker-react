@@ -17,6 +17,7 @@ import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 import { stylesheet } from '../../Stylesheet/stylesheet';
+import IcnNav from './svg/CategoryNav.svg';
 
 export function CategoryNavigation() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -81,10 +82,10 @@ const styles = stylesheet.create({
     position: 'relative',
     height: 'var(--epr-category-navigation-button-size)',
     width: 'var(--epr-category-navigation-button-size)',
-    // FIXME: Fix immediately after we replace epr-btn and move it to flairup
-    backgroundSize:
-      'calc(var(--epr-category-navigation-button-size) * 10) !important',
+    backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
     outline: 'none',
+    backgroundImage: `url(${IcnNav})`,
+    backgroundPosition: '0 0',
     ':focus:before': {
       content: '',
       position: 'absolute',

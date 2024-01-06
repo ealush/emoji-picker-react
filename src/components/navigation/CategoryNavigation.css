@@ -36,10 +36,6 @@ aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   opacity: 1;
   background-position-y: var(--epr-category-navigation-button-size);
 }
-.EmojiPickerReact .epr-category-nav > button.epr-cat-btn {
-  background-image: svg-load(./svg/CategoryNav.svg);
-  background-position: 0 0;
-}
 
 .EmojiPickerReact.epr-dark-theme .epr-category-nav > button.epr-cat-btn {
   background-position-y: calc(var(--epr-category-navigation-button-size) * 2);

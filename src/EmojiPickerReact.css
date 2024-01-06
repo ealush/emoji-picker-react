@@ -28,10 +28,3 @@ aside.EmojiPickerReact.epr-main:has(input:placeholder-shown)
   box-sizing: border-box;
   font-family: sans-serif;
 }
-
-.EmojiPickerReact button.epr-btn {
-  cursor: pointer;
-  border: 0;
-  background: none;
-  outline: none;
-}
