@@ -101,6 +101,6 @@
     "@svgr/rollup": "^8.1.0"
   },
   "dependencies": {
-    "flairup": "0.0.16"
+    "flairup": "0.0.24"
   }
 }
