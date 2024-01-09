@@ -5,6 +5,7 @@ import styles from "@/styles/Home.module.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
+import pkg from "../../package.json";
 
 const PickerDemo = dynamic(() => import("../components/PickerDemo"), {
   ssr: false,
@@ -40,6 +41,9 @@ export default function Home() {
             <br />
             Brought to you with ❤️ by{" "}
             <Link href="https://ealush.com">ealush</Link>.
+          </p>
+          <p>
+            Picker Version: {pkg.dependencies["emoji-picker-react"].slice(1)}
           </p>
           <p>
             More of my work:
