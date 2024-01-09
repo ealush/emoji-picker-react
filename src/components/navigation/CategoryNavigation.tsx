@@ -4,6 +4,7 @@ import { useState } from 'react';
 import './CategoryNavigation.css';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
@@ -16,8 +17,6 @@ import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
-import { stylesheet } from '../../Stylesheet/stylesheet';
-import IcnNav from './svg/CategoryNav.svg';
 
 export function CategoryNavigation() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -98,7 +97,6 @@ const styles = stylesheet.create({
     width: 'var(--epr-category-navigation-button-size)',
     backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
     outline: 'none',
-    backgroundImage: `url(${IcnNav})`,
     backgroundPosition: '0 0',
     ':focus:before': {
       content: '',

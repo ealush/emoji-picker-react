@@ -1,3 +1,7 @@
+aside.EmojiPickerReact .epr-cat-btn {
+  background-image: svg-load(./svg/CategoryNav.svg);
+}
+
 aside.EmojiPickerReact.epr-main:has(input:not(:placeholder-shown))
   .epr-category-nav
   > button.epr-cat-btn:hover {
