@@ -3,7 +3,6 @@ import * as React from 'react';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiHasVariations, emojiNames } from '../../dataUtils/emojiSelectors';
 
-import './Emoji.css';
 import { BaseEmojiProps } from './BaseEmojiProps';
 import { ClickableEmojiButton } from './ClickableEmojiButton';
 import { ViewOnlyEmoji } from './ViewOnlyEmoji';
