@@ -38,13 +38,6 @@ export function SearchContainer() {
   );
 }
 
-const styles = stylesheet.create({
-  overlay: {
-    padding: 'var(--epr-header-padding)',
-    zIndex: 'var(--epr-header-overlay-z-index)'
-  }
-});
-
 export function Search() {
   const [inc, setInc] = useState(0);
   const closeAllOpenToggles = useCloseAllOpenToggles();
@@ -58,14 +51,14 @@ export function Search() {
   const value = input?.value;
 
   return (
-    <Relative className="epr-search-container">
+    <Relative className={cx(styles.searchContainer)}>
       <CssSearch value={value} />
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
         aria-label={'Type to search for an emoji'}
         onFocus={closeAllOpenToggles}
-        className="epr-search"
+        className={cx(styles.search)}
         type="text"
         aria-controls="epr-search-id"
         placeholder={placeholder}
@@ -80,10 +73,7 @@ export function Search() {
       {searchTerm ? (
         <div
           role="status"
-          className={cx(
-            'epr-status-search-results',
-            'epr-status-visually-hidden'
-          )}
+          className={cx('epr-status-search-results', styles.visuallyHidden)}
           aria-live="polite"
           id="epr-search-id"
           aria-atomic="true"
@@ -91,15 +81,138 @@ export function Search() {
           {statusSearchResults}
         </div>
       ) : null}
-      <div className="epr-icn-search" />
+      <div className={cx(styles.icnSearch)} />
       <Button
-        className={cx('epr-btn-clear-search', 'epr-visible-on-search-only')}
+        className={cx(styles.btnClearSearch, 'epr-visible-on-search-only')}
         onClick={clearSearch}
         aria-label="Clear"
         title="Clear"
       >
-        <div className="epr-icn-clear-search" />
+        <div className={cx(styles.icnClearnSearch)} />
       </Button>
     </Relative>
   );
 }
+
+const styles = stylesheet.create({
+  overlay: {
+    padding: 'var(--epr-header-padding)',
+    zIndex: 'var(--epr-header-overlay-z-index)'
+  },
+  searchContainer: {
+    '.': 'epr-search-container',
+    flex: '1',
+    display: 'block',
+    minWidth: '0'
+  },
+  visuallyHidden: {
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: '1px',
+    overflow: 'hidden',
+    position: 'absolute',
+    whiteSpace: 'nowrap',
+    width: '1px'
+  },
+  search: {
+    outline: 'none',
+    transition: 'all 0.2s ease-in-out',
+    color: 'var(--epr-search-input-text-color)',
+    borderRadius: 'var(--epr-search-input-border-radius)',
+    padding: 'var(--epr-search-input-padding)',
+    height: 'var(--epr-search-input-height)',
+    backgroundColor: 'var(--epr-search-input-bg-color)',
+    border: '1px solid var(--epr-search-input-bg-color)',
+    width: '100%',
+    ':focus': {
+      backgroundColor: 'var(--epr-search-input-bg-color-active)',
+      border: '1px solid var(--epr-search-border-color)'
+    },
+    '::placeholder': {
+      color: 'var(--epr-search-input-placeholder-color)'
+    }
+  },
+  icnSearch: {
+    '.': 'epr-icn-search',
+    content: '',
+    position: 'absolute',
+    top: '50%',
+    left: 'var(--epr-search-bar-inner-padding)',
+    transform: 'translateY(-50%)',
+    width: '20px',
+    height: '20px',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: '0 0',
+    backgroundSize: '20px'
+  },
+  btnClearSearch: {
+    '.': 'epr-btn-clear-search',
+    position: 'absolute',
+    right: 'var(--epr-search-bar-inner-padding)',
+    height: '30px',
+    width: '30px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    padding: '0',
+    borderRadius: '50%',
+    ':hover': {
+      background: 'var(--epr-hover-bg-color)'
+    },
+    ':focus': {
+      background: 'var(--epr-hover-bg-color)'
+    }
+  },
+  icnClearnSearch: {
+    '.': 'epr-icn-clear-search',
+    backgroundColor: 'transparent',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: '20px',
+    height: '20px',
+    width: '20px',
+    ':hover': {
+      backgroundPositionY: '-20px'
+    },
+    ':focus': {
+      backgroundPositionY: '-20px'
+    }
+  },
+  '.epr-dark-theme': {
+    icnSearch: {
+      backgroundPositionY: '-20px'
+    },
+    icnClearnSearch: {
+      backgroundPositionY: '-40px'
+    },
+    btnClearSearch: {
+      ':hover > .epr-icn-clear-search': {
+        backgroundPositionY: '-60px'
+      }
+    }
+  },
+  '.epr-auto-theme': {
+    icnSearch: {
+      // @ts-ignore
+      '@media (prefers-color-scheme: dark)': {
+        backgroundPositionY: '-20px'
+      }
+    },
+    icnClearnSearch: {
+      // @ts-ignore
+      '@media (prefers-color-scheme: dark)': {
+        backgroundPositionY: '-40px'
+      }
+    },
+    btnClearSearch: {
+      // @ts-ignore
+      '@media (prefers-color-scheme: dark)': {
+        // @ts-ignore
+        ':hover > .epr-icn-clear-search': {
+          backgroundPositionY: '-60px'
+        }
+      }
+    }
+  }
+});
