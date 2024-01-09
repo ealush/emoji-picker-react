@@ -10,6 +10,7 @@ import {
   emojiTrueOffsetTop,
   emojiTruOffsetLeft
 } from '../../DomUtils/selectors';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig
@@ -35,6 +36,7 @@ enum Direction {
   Down
 }
 
+// eslint-disable-next-line complexity
 export function EmojiVariationPicker() {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
@@ -50,11 +52,12 @@ export function EmojiVariationPicker() {
 
   const button = buttonFromTarget(AnchoredEmojiRef.current);
 
-  const visible =
+  const visible = Boolean(
     emoji &&
-    button &&
-    emojiHasVariations(emoji) &&
-    button.classList.contains(ClassNames.emojiHasVariations);
+      button &&
+      emojiHasVariations(emoji) &&
+      button.classList.contains(ClassNames.emojiHasVariations)
+  );
 
   useEffect(() => {
     if (!visible) {
@@ -76,10 +79,11 @@ export function EmojiVariationPicker() {
   return (
     <div
       ref={VariationPickerRef}
-      className={cx(ClassNames.variationPicker, {
-        visible,
-        'pointing-up': getMenuDirection() === Direction.Down
-      })}
+      className={cx(
+        styles.variationPicker,
+        getMenuDirection() === Direction.Down && styles.pointingUp,
+        visible && styles.visible
+      )}
       style={{ top }}
     >
       {visible && emoji
@@ -97,7 +101,7 @@ export function EmojiVariationPicker() {
               />
             ))
         : null}
-      <div className="epr-emoji-pointer" style={pointerStyle} />
+      <div className={cx(styles.pointer)} style={pointerStyle} />
     </div>
   );
 }
@@ -172,3 +176,70 @@ function useVariationPickerTop(
     return emojiOffsetTop - height;
   }
 }
+
+const styles = stylesheet.create({
+  variationPicker: {
+    '.': ClassNames.variationPicker,
+    position: 'absolute',
+    right: '15px',
+    left: '15px',
+    padding: '5px',
+    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
+    borderRadius: '3px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    opacity: '0',
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    top: '-100%',
+    border: '1px solid var(--epr-picker-border-color)',
+    height: 'var(--epr-emoji-variation-picker-height)',
+    zIndex: 'var(--epr-skin-variation-picker-z-index)',
+    background: 'var(--epr-emoji-variation-picker-bg-color)',
+    transform: 'scale(0.9)',
+    transition: 'transform 0.1s ease-out, opacity 0.2s ease-out'
+  },
+  pointingUp: {
+    '.': 'pointing-up',
+    transformOrigin: 'center 0%',
+    transform: 'scale(0.9)'
+  },
+  '.pointing-up': {
+    pointer: {
+      top: '0',
+      transform: 'rotate(180deg) translateY(100%) translateX(18px)'
+    }
+  },
+  visible: {
+    opacity: '1',
+    visibility: 'visible',
+    pointerEvents: 'all',
+    transform: 'scale(1)'
+  },
+  pointer: {
+    '.': 'epr-emoji-pointer',
+    content: '',
+    position: 'absolute',
+    width: '25px',
+    height: '15px',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: '0 0',
+    backgroundSize: '50px 15px',
+    top: '100%',
+    transform: 'translateX(-18px)'
+  },
+  '.epr-dark-theme': {
+    pointer: {
+      backgroundPosition: '-25px 0'
+    }
+  },
+  '.epr-auto-theme': {
+    pointer: {
+      // @ts-ignore
+      '@media (prefers-color-scheme: dark)': {
+        backgroundPosition: '-25px 0'
+      }
+    }
+  }
+});

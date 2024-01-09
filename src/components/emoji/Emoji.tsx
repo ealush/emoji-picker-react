@@ -14,6 +14,7 @@ type ClickableEmojiProps = Readonly<
     showVariations?: boolean;
     hiddenOnSearch?: boolean;
     emoji: DataEmoji;
+    className?: string;
   }
 >;
 
