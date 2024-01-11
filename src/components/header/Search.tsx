@@ -194,19 +194,16 @@ const styles = stylesheet.create({
   },
   '.epr-auto-theme': {
     icnSearch: {
-      // @ts-ignore
       '@media (prefers-color-scheme: dark)': {
         backgroundPositionY: '-20px'
       }
     },
     icnClearnSearch: {
-      // @ts-ignore
       '@media (prefers-color-scheme: dark)': {
         backgroundPositionY: '-40px'
       }
     },
     btnClearSearch: {
-      // @ts-ignore
       '@media (prefers-color-scheme: dark)': {
         // @ts-ignore
         ':hover > .epr-icn-clear-search': {
