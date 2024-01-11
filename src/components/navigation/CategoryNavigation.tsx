@@ -107,6 +107,46 @@ const styles = stylesheet.create({
       bottom: '-2px',
       border: '2px solid var(--epr-category-icon-active-color)',
       borderRadius: '50%'
+    },
+    // @ts-ignore
+    '&.epr-icn-suggested': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -8)'
+    },
+    '&.epr-icn-custom': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -9)'
+    },
+    '&.epr-icn-activities': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -4)'
+    },
+    '&.epr-icn-animals_nature': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -1)'
+    },
+    '&.epr-icn-flags': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -7)'
+    },
+    '&.epr-icn-food_drink': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -2)'
+    },
+    '&.epr-icn-objects': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -5)'
+    },
+    '&.epr-icn-smileys_people': {
+      backgroundPositionX: '0px'
+    },
+    '&.epr-icn-symbols': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -6)'
+    },
+    '&.epr-icn-travel_places': {
+      backgroundPositionX:
+        'calc(var(--epr-category-navigation-button-size) * -3)'
     }
   }
 });

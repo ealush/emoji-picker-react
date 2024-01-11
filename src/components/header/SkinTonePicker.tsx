@@ -1,4 +1,5 @@
 /* eslint-disable complexity */
+import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
@@ -18,9 +19,6 @@ import {
   useActiveSkinToneState,
   useSkinToneFanOpenState
 } from '../context/PickerContext';
-
-import './SkinTonePicker.css';
-import { cx } from 'flairup';
 
 const ITEM_SIZE = 28;
 
@@ -172,15 +170,6 @@ const styles = stylesheet.create({
       boxShadow: '0 0 0 0px var(--epr-active-skin-hover-color)'
     }
   },
-  tone: {
-    '.': 'epr-tone',
-    ':hover': {
-      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color)'
-    },
-    ':focus': {
-      boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'
-    }
-  },
   closedTone: {
     opacity: '0',
     zIndex: '0'
@@ -189,5 +178,33 @@ const styles = stylesheet.create({
     '.': 'epr-active',
     zIndex: '1',
     opacity: '1'
+  },
+  tone: {
+    '.': 'epr-tone',
+    ':hover': {
+      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color)'
+    },
+    ':focus': {
+      boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'
+    },
+    // @ts-ignore
+    '&.epr-tone-neutral': {
+      backgroundColor: '#ffd225'
+    },
+    '&.epr-tone-1f3fb': {
+      backgroundColor: '#ffdfbd'
+    },
+    '&.epr-tone-1f3fc': {
+      backgroundColor: '#e9c197'
+    },
+    '&.epr-tone-1f3fd': {
+      backgroundColor: '#c88e62'
+    },
+    '&.epr-tone-1f3fe': {
+      backgroundColor: '#a86637'
+    },
+    '&.epr-tone-1f3ff': {
+      backgroundColor: '#60463a'
+    }
   }
 });
