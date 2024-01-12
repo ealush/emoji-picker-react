@@ -4,7 +4,10 @@ import { useState } from 'react';
 import './CategoryNavigation.css';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import {
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
@@ -47,9 +50,14 @@ export function CategoryNavigation() {
         return (
           <Button
             tabIndex={isSearchMode || isActiveCategory ? -1 : 0}
-            className={cx(styles.catBtn, `epr-icn-${category}`, {
-              [ClassNames.active]: isActiveCategory
-            })}
+            className={cx(
+              styles.catBtn,
+              commonInteractionStyles.categoryBtn,
+              `epr-icn-${category}`,
+              {
+                [ClassNames.active]: isActiveCategory
+              }
+            )}
             key={category}
             onClick={() => {
               setActiveCategory(category);
@@ -147,6 +155,48 @@ const styles = stylesheet.create({
     '&.epr-icn-travel_places': {
       backgroundPositionX:
         'calc(var(--epr-category-navigation-button-size) * -3)'
+    }
+  },
+  '.epr-dark-theme': {
+    catBtn: {
+      backgroundPositionY:
+        'calc(var(--epr-category-navigation-button-size) * 2)'
+    }
+  },
+  '.epr-auto-theme': {
+    catBtn: {
+      '@media (prefers-color-scheme: dark)': {
+        backgroundPositionY:
+          'calc(var(--epr-category-navigation-button-size) * 2)'
+      }
+    }
+  },
+  '.epr-auto-theme:not(.epr-search-active)': {
+    catBtn: {
+      '@media (prefers-color-scheme: dark)': {
+        ':hover': {
+          backgroundPositionY:
+            'calc(var(--epr-category-navigation-button-size) * 3)'
+        },
+        // @ts-ignore
+        '&.epr-active': {
+          backgroundPositionY:
+            'calc(var(--epr-category-navigation-button-size) * 3)'
+        }
+      }
+    }
+  },
+  '.epr-dark-theme:not(.epr-search-active)': {
+    catBtn: {
+      ':hover': {
+        backgroundPositionY:
+          'calc(var(--epr-category-navigation-button-size) * 3)'
+      },
+      // @ts-ignore
+      '&.epr-active': {
+        backgroundPositionY:
+          'calc(var(--epr-category-navigation-button-size) * 3)'
+      }
     }
   }
 });

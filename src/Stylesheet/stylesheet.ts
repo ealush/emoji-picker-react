@@ -19,3 +19,27 @@ export const commonStyles = stylesheet.create({
     visibility: 'hidden'
   }
 });
+
+export const commonInteractionStyles = stylesheet.create({
+  '.epr-main:has(input:not(:placeholder-shown))': {
+    categoryBtn: {
+      ':hover': {
+        opacity: '1',
+        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+      }
+    }
+  },
+  '.EmojiPickerReact:not(.epr-search-active)': {
+    categoryBtn: {
+      ':hover': {
+        opacity: '1',
+        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+      },
+      // @ts-ignore
+      '&.epr-active': {
+        opacity: '1',
+        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+      }
+    }
+  }
+});
