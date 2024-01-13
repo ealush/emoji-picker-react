@@ -75,6 +75,7 @@ export function PreviewBody() {
               emojiStyle={emojiStyle}
               size={45}
               getEmojiUrl={getEmojiUrl}
+              className={cx(styles.emoji)}
             />
           ) : defaultEmoji ? (
             <ViewOnlyEmoji
@@ -83,6 +84,7 @@ export function PreviewBody() {
               emojiStyle={emojiStyle}
               size={45}
               getEmojiUrl={getEmojiUrl}
+              className={cx(styles.emoji)}
             />
           ) : null}
         </div>
@@ -115,5 +117,8 @@ const styles = stylesheet.create({
     fontSize: 'var(--epr-preview-text-size)',
     padding: 'var(--epr-preview-text-padding)',
     textTransform: 'capitalize'
+  },
+  emoji: {
+    padding: '0'
   }
 });

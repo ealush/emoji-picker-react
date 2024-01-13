@@ -2,7 +2,10 @@ import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -83,7 +86,10 @@ export function Search() {
       ) : null}
       <div className={cx(styles.icnSearch)} />
       <Button
-        className={cx(styles.btnClearSearch, 'epr-visible-on-search-only')}
+        className={cx(
+          styles.btnClearSearch,
+          commonInteractionStyles.visibleOnSearchOnly
+        )}
         onClick={clearSearch}
         aria-label="Clear"
         title="Clear"

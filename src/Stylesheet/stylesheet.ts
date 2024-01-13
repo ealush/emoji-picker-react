@@ -4,19 +4,17 @@ import { ClassNames } from '../DomUtils/classNames';
 
 export const stylesheet = createSheet('epr');
 
+const hidden = {
+  display: 'none',
+  opacity: '0',
+  pointerEvents: 'none',
+  visibility: 'hidden'
+};
+
 export const commonStyles = stylesheet.create({
   hidden: {
     '.': ClassNames.hidden,
-    display: 'none',
-    opacity: '0',
-    pointerEvents: 'none',
-    visibility: 'hidden'
-  },
-  hiddenOnSearch: {
-    display: 'none',
-    opacity: '0',
-    pointerEvents: 'none',
-    visibility: 'hidden'
+    ...hidden
   }
 });
 
@@ -27,7 +25,14 @@ export const commonInteractionStyles = stylesheet.create({
         opacity: '1',
         backgroundPositionY: 'var(--epr-category-navigation-button-size)'
       }
+    },
+    hiddenOnSearch: {
+      '.': ClassNames.hiddenOnSearch,
+      ...hidden
     }
+  },
+  '.epr-main:has(input(:placeholder-shown))': {
+    visibleOnSearchOnly: hidden
   },
   '.EmojiPickerReact:not(.epr-search-active)': {
     categoryBtn: {
@@ -40,6 +45,10 @@ export const commonInteractionStyles = stylesheet.create({
         opacity: '1',
         backgroundPositionY: 'var(--epr-category-navigation-button-size)'
       }
+    },
+    visibleOnSearchOnly: {
+      '.': 'epr-visible-on-search-only',
+      ...hidden
     }
   }
 });

@@ -9,5 +9,6 @@ export type BaseEmojiProps = {
   size?: number;
   lazyLoad?: boolean;
   getEmojiUrl?: GetEmojiUrl;
+  className?: string;
 };
 export type GetEmojiUrl = (unified: string, style: EmojiStyle) => string;

@@ -95,7 +95,12 @@ const styles = stylesheet.create({
     borderRadius: 'var(--epr-picker-border-radius)',
     borderColor: 'var(--epr-picker-border-color)',
     backgroundColor: 'var(--epr-bg-color)',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    // @ts-expect-error - need to work on this
+    '*': {
+      boxSizing: 'border-box',
+      fontFamily: 'sans-serif'
+    }
   },
   baseVariables: {
     '--': {

@@ -11,20 +11,22 @@ export function EmojiImg({
   style,
   lazyLoad = false,
   imgUrl,
-  onError
+  onError,
+  className
 }: {
   emojiName: string;
   emojiStyle: EmojiStyle;
   style: React.CSSProperties;
   lazyLoad?: boolean;
   imgUrl: string;
-  onError: () => void;
+    onError: () => void;
+  className?: string;
 }) {
   return (
     <img
       src={imgUrl}
       alt={emojiName}
-      className={cx(styles.emojiImag, emojiStyles.external, emojiStyles.common)}
+      className={cx(styles.emojiImag, emojiStyles.external, emojiStyles.common, className)}
       loading={lazyLoad ? 'lazy' : 'eager'}
       onError={onError}
       style={style}

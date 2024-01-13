@@ -8,17 +8,20 @@ import { emojiStyles } from './emojiStyles';
 
 export function NativeEmoji({
   unified,
-  style
+  style,
+  className
 }: {
   unified: string;
   style: React.CSSProperties;
+  className?: string;
 }) {
   return (
     <span
       className={cx(
         styles.nativeEmoji,
         emojiStyles.common,
-        emojiStyles.external
+        emojiStyles.external,
+        className
       )}
       data-unified={unified}
       style={style}

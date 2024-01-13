@@ -2,7 +2,11 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  commonStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import {
   CategoryConfig,
   categoryFromCategoryConfig,
@@ -30,7 +34,7 @@ export function EmojiCategory({
       className={cx(
         styles.category,
         hidden && commonStyles.hidden,
-        hiddenOnSearch && commonStyles.hiddenOnSearch
+        hiddenOnSearch && commonInteractionStyles.hiddenOnSearch
       )}
       data-name={category}
       aria-label={categoryName}

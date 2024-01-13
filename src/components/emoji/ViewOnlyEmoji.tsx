@@ -19,7 +19,8 @@ export function ViewOnlyEmoji({
   emojiStyle,
   size,
   lazyLoad,
-  getEmojiUrl = emojiUrlByUnified
+  getEmojiUrl = emojiUrlByUnified,
+  className
 }: BaseEmojiProps) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
 
@@ -43,6 +44,7 @@ export function ViewOnlyEmoji({
         lazyLoad={lazyLoad}
         imgUrl={emojiToRender.imgUrl}
         onError={onError}
+        className={className}
       />
     );
   }
@@ -50,7 +52,7 @@ export function ViewOnlyEmoji({
   return (
     <>
       {emojiStyle === EmojiStyle.NATIVE ? (
-        <NativeEmoji unified={unified} style={style} />
+        <NativeEmoji unified={unified} style={style} className={className} />
       ) : (
         <EmojiImg
           style={style}
@@ -59,6 +61,7 @@ export function ViewOnlyEmoji({
           lazyLoad={lazyLoad}
           imgUrl={getEmojiUrl(unified, emojiStyle)}
           onError={onError}
+          className={className}
         />
       )}
     </>

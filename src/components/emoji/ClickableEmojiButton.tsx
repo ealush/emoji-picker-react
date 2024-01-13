@@ -2,7 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
+import { commonInteractionStyles, commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
 import { Button } from '../atoms/Button';
 
 type ClickableEmojiButtonProps = Readonly<{
@@ -29,7 +29,7 @@ export function ClickableEmojiButton({
       className={cx(
         styles.emoji,
         hidden && commonStyles.hidden,
-        hiddenOnSearch && commonStyles.hiddenOnSearch,
+        hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
         {
           [ClassNames.visible]: !hidden && !hiddenOnSearch
         },

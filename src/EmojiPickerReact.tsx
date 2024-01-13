@@ -7,7 +7,6 @@ import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
 
-import './EmojiPickerReact.css';
 import { PickerProps } from './index';
 
 function EmojiPicker(props: PickerProps) {
