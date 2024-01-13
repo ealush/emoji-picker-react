@@ -140,7 +140,7 @@ const styles = stylesheet.create({
     backdropFilter: 'blur(5px)',
     background: 'var(--epr-skin-tone-picker-menu-color)',
     // @ts-ignore
-    '&.epr-active:after': {
+    '.epr-active:after': {
       content: '',
       position: 'absolute',
       top: '-2px',
