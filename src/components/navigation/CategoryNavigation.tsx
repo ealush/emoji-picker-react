@@ -161,6 +161,19 @@ const styles = stylesheet.create({
     catBtn: {
       backgroundPositionY:
         'calc(var(--epr-category-navigation-button-size) * 2)'
+    },
+    ':not(.epr-search-active)': {
+      // @ts-expect-error - need to fix this
+      catBtn: {
+        ':hover': {
+          backgroundPositionY:
+            'calc(var(--epr-category-navigation-button-size) * 3)'
+        },
+        '&.epr-active': {
+          backgroundPositionY:
+            'calc(var(--epr-category-navigation-button-size) * 3)'
+        }
+      }
     }
   },
   '.epr-auto-theme': {
@@ -169,33 +182,20 @@ const styles = stylesheet.create({
         backgroundPositionY:
           'calc(var(--epr-category-navigation-button-size) * 2)'
       }
-    }
-  },
-  '.epr-auto-theme:not(.epr-search-active)': {
-    catBtn: {
-      '@media (prefers-color-scheme: dark)': {
-        ':hover': {
-          backgroundPositionY:
-            'calc(var(--epr-category-navigation-button-size) * 3)'
-        },
-        // @ts-ignore
-        '&.epr-active': {
-          backgroundPositionY:
-            'calc(var(--epr-category-navigation-button-size) * 3)'
+    },
+    ':not(.epr-search-active)': {
+      catBtn: {
+        '@media (prefers-color-scheme: dark)': {
+          ':hover': {
+            backgroundPositionY:
+              'calc(var(--epr-category-navigation-button-size) * 3)'
+          },
+          // @ts-ignore
+          '&.epr-active': {
+            backgroundPositionY:
+              'calc(var(--epr-category-navigation-button-size) * 3)'
+          }
         }
-      }
-    }
-  },
-  '.epr-dark-theme:not(.epr-search-active)': {
-    catBtn: {
-      ':hover': {
-        backgroundPositionY:
-          'calc(var(--epr-category-navigation-button-size) * 3)'
-      },
-      // @ts-ignore
-      '&.epr-active': {
-        backgroundPositionY:
-          'calc(var(--epr-category-navigation-button-size) * 3)'
       }
     }
   }

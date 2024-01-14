@@ -19,21 +19,24 @@ export const commonStyles = stylesheet.create({
 });
 
 export const commonInteractionStyles = stylesheet.create({
-  '.epr-main:has(input:not(:placeholder-shown))': {
-    categoryBtn: {
-      ':hover': {
-        opacity: '1',
-        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+  '.epr-main': {
+    ':has(input:not(:placeholder-shown))': {
+      categoryBtn: {
+        ':hover': {
+          opacity: '1',
+          backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+        }
+      },
+      hiddenOnSearch: {
+        '.': ClassNames.hiddenOnSearch,
+        ...hidden
       }
     },
-    hiddenOnSearch: {
-      '.': ClassNames.hiddenOnSearch,
-      ...hidden
+    ':has(input(:placeholder-shown))': {
+      visibleOnSearchOnly: hidden
     }
   },
-  '.epr-main:has(input(:placeholder-shown))': {
-    visibleOnSearchOnly: hidden
-  },
+
   '.EmojiPickerReact:not(.epr-search-active)': {
     categoryBtn: {
       ':hover': {
