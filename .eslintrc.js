@@ -59,15 +59,7 @@ module.exports = {
     'no-var': 2,
     'no-warning-comments': 1,
     'object-shorthand': [2, 'always', { avoidQuotes: true }],
-    'prefer-const': 2,
-    'sort-keys': [
-      1,
-      'asc',
-      {
-        natural: true,
-        minKeys: 4
-      }
-    ]
+    'prefer-const': 2
   },
   settings: {
     'import/parsers': {
