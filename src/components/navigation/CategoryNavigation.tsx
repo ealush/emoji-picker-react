@@ -1,7 +1,6 @@
 import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
-import './CategoryNavigation.css';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import {
@@ -20,6 +19,8 @@ import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Button } from '../atoms/Button';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
+
+import SVGNavigation from './svg/CategoryNav.svg';
 
 export function CategoryNavigation() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -106,6 +107,7 @@ const styles = stylesheet.create({
     backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
     outline: 'none',
     backgroundPosition: '0 0',
+    backgroundImage: `url(${SVGNavigation})`,
     ':focus:before': {
       content: '',
       position: 'absolute',

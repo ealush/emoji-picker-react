@@ -19,9 +19,10 @@ import Relative from '../Layout/Relative';
 import { Button } from '../atoms/Button';
 import { useSearchInputRef } from '../context/ElementRefContext';
 
-import './Search.css';
 import { CssSearch } from './CssSearch';
 import { SkinTonePicker } from './SkinTonePicker';
+import SVGMagnifier from './svg/magnifier.svg';
+import SVGTimes from './svg/times.svg';
 
 export function SearchContainer() {
   const searchDisabled = useSearchDisabledConfig();
@@ -149,7 +150,8 @@ const styles = stylesheet.create({
     height: '20px',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: '0 0',
-    backgroundSize: '20px'
+    backgroundSize: '20px',
+    backgroundImage: `url(${SVGMagnifier})`
   },
   btnClearSearch: {
     '.': 'epr-btn-clear-search',
@@ -178,6 +180,7 @@ const styles = stylesheet.create({
     backgroundSize: '20px',
     height: '20px',
     width: '20px',
+    backgroundImage: `url(${SVGTimes})`,
     ':hover': {
       backgroundPositionY: '-20px'
     },

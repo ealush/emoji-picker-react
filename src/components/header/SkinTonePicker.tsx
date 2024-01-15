@@ -205,6 +205,6 @@ const styles = stylesheet.create({
     },
     '&.epr-tone-1f3ff': {
       backgroundColor: '#60463a'
-    }
+    },
   }
 });

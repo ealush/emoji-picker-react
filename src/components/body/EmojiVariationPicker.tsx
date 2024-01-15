@@ -29,7 +29,7 @@ import {
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
-import './EmojiVariationPicker.css';
+import SVGTriangle from './svg/triangle.svg';
 
 enum Direction {
   Up,
@@ -227,7 +227,8 @@ const styles = stylesheet.create({
     backgroundPosition: '0 0',
     backgroundSize: '50px 15px',
     top: '100%',
-    transform: 'translateX(-18px)'
+    transform: 'translateX(-18px)',
+    backgroundImage: `url(${SVGTriangle})`
   },
   '.epr-dark-theme': {
     pointer: {
