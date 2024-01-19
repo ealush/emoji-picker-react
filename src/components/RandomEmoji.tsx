@@ -1,5 +1,15 @@
+import { useState, useRef, useEffect } from "react";
+
 export default function RandomEmoji() {
-  return <div>{getRandomEmoji()}</div>;
+  const [currentEmoji, setCurrentEmoji] = useState(getRandomEmoji());
+
+  useEffect(() => {
+    setTimeout(() => {
+      setCurrentEmoji(getRandomEmoji());
+    }, 150) as unknown as number;
+  }, [currentEmoji]);
+
+  return <div suppressHydrationWarning>{currentEmoji}</div>;
 }
 
 function getRandomEmoji() {

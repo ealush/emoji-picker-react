@@ -6,13 +6,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Analytics } from "@vercel/analytics/react";
 import pkg from "../../package.json";
-
-const PickerDemo = dynamic(() => import("../components/PickerDemo"), {
-  ssr: false,
-});
-const RandomEmoji = dynamic(() => import("../components/RandomEmoji"), {
-  ssr: false,
-});
+import PickerDemo from "../components/PickerDemo";
+import RandomEmoji from "../components/RandomEmoji";
 
 const inter = Inter({ subsets: ["latin"] });
 
