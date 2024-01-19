@@ -1,6 +1,8 @@
 import { createSheet } from 'flairup';
+import * as React from 'react';
 
 import { ClassNames } from '../DomUtils/classNames';
+import { useIsMounted } from '../hooks/useIsMounted';
 
 export const stylesheet = createSheet('epr');
 
@@ -17,6 +19,16 @@ export const commonStyles = stylesheet.create({
     ...hidden
   }
 });
+
+export function PickerStyleTag() {
+  const isMounted = useIsMounted();
+
+  if (stylesheet.isApplied() && isMounted) {
+    return null;
+  }
+
+  return <style suppressHydrationWarning>{stylesheet.getStyle()}</style>;
+}
 
 export const commonInteractionStyles = stylesheet.create({
   '.epr-main': {
