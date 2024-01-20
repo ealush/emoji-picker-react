@@ -27,7 +27,12 @@ export function PickerStyleTag() {
     return null;
   }
 
-  return <style suppressHydrationWarning>{stylesheet.getStyle()}</style>;
+  return (
+    <style
+      suppressHydrationWarning
+      dangerouslySetInnerHTML={{ __html: stylesheet.getStyle() }}
+    />
+  );
 }
 
 export const commonInteractionStyles = stylesheet.create({
