@@ -4,20 +4,27 @@ import * as React from 'react';
 import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
+import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { Button } from '../atoms/Button';
+import { useReactionsRef } from '../context/ElementRefContext';
 import { useReactionsModeState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 export function Reactions() {
   const [reactionsOpen, setReactionsMode] = useReactionsModeState();
+  const ReactionsRef = useReactionsRef();
+  useMouseDownHandlers(ReactionsRef);
 
   if (!reactionsOpen) {
     return null;
   }
 
   return (
-    <ul className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}>
+    <ul
+      className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
+      ref={ReactionsRef}
+    >
       {DEFAULT_REACTIONS.map(reaction => (
         <li key={reaction}>
           <ClickableEmoji
