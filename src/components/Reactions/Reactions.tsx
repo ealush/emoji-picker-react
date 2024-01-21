@@ -29,7 +29,12 @@ export function Reactions() {
           />
         </li>
       ))}
-      <Button onClick={() => setReactionsMode(false)}>+</Button>
+      <Button
+        className={cx(styles.plusSign)}
+        onClick={() => setReactionsMode(false)}
+      >
+        +
+      </Button>
     </ul>
   );
 }
@@ -48,10 +53,27 @@ const styles = stylesheet.create({
   list: {
     listStyle: 'none',
     margin: '0',
-    padding: '0',
+    padding: '0 5px',
     display: 'flex',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%'
+  },
+  plusSign: {
+    fontSize: '20px',
+    padding: '18px',
+    color: 'var(--epr-text-color)',
+    borderRadius: '50%',
+    textAlign: 'center',
+    lineHeight: '100%',
+    width: '20px',
+    height: '20px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    ':hover': {
+      color: 'var(--epr-highlight-color)',
+      backgroundColor: 'var(--epr-hover-bg-color)'
+    }
   }
 });
