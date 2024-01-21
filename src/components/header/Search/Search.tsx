@@ -2,24 +2,21 @@ import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
-import {
-  commonInteractionStyles,
-  stylesheet
-} from '../../../Stylesheet/stylesheet';
+import { stylesheet } from '../../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
   useSearchPlaceHolderConfig
 } from '../../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
-import { useClearSearch, useFilter } from '../../../hooks/useFilter';
+import { useFilter } from '../../../hooks/useFilter';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
-import { Button } from '../../atoms/Button';
 import { useSearchInputRef } from '../../context/ElementRefContext';
 import { SkinTonePicker } from '../SkinTonePicker';
 
+import { BtnClearSearch } from './BtnClearSearch';
 import { CssSearch } from './CssSearch';
 import { IcnSearch } from './IcnSearch';
 import SVGTimes from './svg/times.svg';
@@ -46,7 +43,6 @@ export function Search() {
   const [inc, setInc] = useState(0);
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
-  const clearSearch = useClearSearch();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
   const { statusSearchResults, searchTerm, onChange } = useFilter();
@@ -86,17 +82,7 @@ export function Search() {
         </div>
       ) : null}
       <IcnSearch />
-      <Button
-        className={cx(
-          styles.btnClearSearch,
-          commonInteractionStyles.visibleOnSearchOnly
-        )}
-        onClick={clearSearch}
-        aria-label="Clear"
-        title="Clear"
-      >
-        <div className={cx(styles.icnClearnSearch)} />
-      </Button>
+      <BtnClearSearch />
     </Relative>
   );
 }
