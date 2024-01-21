@@ -103,7 +103,7 @@ const styles = stylesheet.create({
     borderColor: 'var(--epr-picker-border-color)',
     backgroundColor: 'var(--epr-bg-color)',
     overflow: 'hidden',
-    transition: 'all 0.4s ease-in-out',
+    transition: 'all 0.3s ease-in-out, background-color 0.1s ease-in-out',
     // @ts-expect-error - need to work on this
     '*': {
       boxSizing: 'border-box',

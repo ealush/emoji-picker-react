@@ -18,23 +18,13 @@ function EmojiPicker(props: PickerProps) {
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
         <PickerMain>
-          <ModeToggler />
+          <Reactions />
+          <Header />
+          <Body />
+          <Preview />
         </PickerMain>
       </PickerConfigProvider>
     </ElementRefContextProvider>
-  );
-}
-
-export function ModeToggler() {
-  const [reactionsOpen] = useReactionsModeState();
-
-  return (
-    <>
-      <Reactions />
-      <Header />
-      <Body />
-      <Preview />
-    </>
   );
 }
 
@@ -67,7 +57,7 @@ export default React.memo(EmojiPicker, (prev, next) => {
 const styles = stylesheet.create({
   mainContainer: {
     opacity: '1',
-    transition: 'all 0.2s ease-in-out'
+    transition: 'all 0.1s ease-in-out'
   },
   mainContainerHidden: {
     height: '0',

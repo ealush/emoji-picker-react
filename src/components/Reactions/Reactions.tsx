@@ -1,7 +1,7 @@
 import { cx } from 'flairup';
 import * as React from 'react';
 
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { EmojiStyle } from '../../types/exposedTypes';
@@ -17,7 +17,7 @@ export function Reactions() {
   }
 
   return (
-    <ul className={cx(styles.list)}>
+    <ul className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}>
       {DEFAULT_REACTIONS.map(reaction => (
         <li key={reaction}>
           <ClickableEmoji

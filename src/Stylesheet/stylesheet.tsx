@@ -10,7 +10,8 @@ const hidden = {
   display: 'none',
   opacity: '0',
   pointerEvents: 'none',
-  visibility: 'hidden'
+  visibility: 'hidden',
+  overflow: 'hidden',
 };
 
 export const commonStyles = stylesheet.create({
