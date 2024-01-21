@@ -5,23 +5,23 @@ import { useState } from 'react';
 import {
   commonInteractionStyles,
   stylesheet
-} from '../../Stylesheet/stylesheet';
+} from '../../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
   useSearchPlaceHolderConfig
-} from '../../config/useConfig';
-import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useClearSearch, useFilter } from '../../hooks/useFilter';
-import { useIsSkinToneInSearch } from '../../hooks/useShouldShowSkinTonePicker';
-import Flex from '../Layout/Flex';
-import Relative from '../Layout/Relative';
-import { Button } from '../atoms/Button';
-import { useSearchInputRef } from '../context/ElementRefContext';
+} from '../../../config/useConfig';
+import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
+import { useClearSearch, useFilter } from '../../../hooks/useFilter';
+import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
+import Flex from '../../Layout/Flex';
+import Relative from '../../Layout/Relative';
+import { Button } from '../../atoms/Button';
+import { useSearchInputRef } from '../../context/ElementRefContext';
+import { SkinTonePicker } from '../SkinTonePicker';
 
 import { CssSearch } from './CssSearch';
-import { SkinTonePicker } from './SkinTonePicker';
-import SVGMagnifier from './svg/magnifier.svg';
+import { IcnSearch } from './IcnSearch';
 import SVGTimes from './svg/times.svg';
 
 export function SearchContainer() {
@@ -85,7 +85,7 @@ export function Search() {
           {statusSearchResults}
         </div>
       ) : null}
-      <div className={cx(styles.icnSearch)} />
+      <IcnSearch />
       <Button
         className={cx(
           styles.btnClearSearch,
@@ -139,20 +139,7 @@ const styles = stylesheet.create({
       color: 'var(--epr-search-input-placeholder-color)'
     }
   },
-  icnSearch: {
-    '.': 'epr-icn-search',
-    content: '',
-    position: 'absolute',
-    top: '50%',
-    left: 'var(--epr-search-bar-inner-padding)',
-    transform: 'translateY(-50%)',
-    width: '20px',
-    height: '20px',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: '0 0',
-    backgroundSize: '20px',
-    backgroundImage: `url(${SVGMagnifier})`
-  },
+
   btnClearSearch: {
     '.': 'epr-btn-clear-search',
     position: 'absolute',
@@ -189,9 +176,6 @@ const styles = stylesheet.create({
     }
   },
   '.epr-dark-theme': {
-    icnSearch: {
-      backgroundPositionY: '-20px'
-    },
     icnClearnSearch: {
       backgroundPositionY: '-40px'
     },
@@ -202,11 +186,6 @@ const styles = stylesheet.create({
     }
   },
   '.epr-auto-theme': {
-    icnSearch: {
-      '@media (prefers-color-scheme: dark)': {
-        backgroundPositionY: '-20px'
-      }
-    },
     icnClearnSearch: {
       '@media (prefers-color-scheme: dark)': {
         backgroundPositionY: '-40px'

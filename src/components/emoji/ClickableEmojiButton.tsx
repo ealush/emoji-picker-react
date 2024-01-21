@@ -2,7 +2,11 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { commonInteractionStyles, commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  commonStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import { Button } from '../atoms/Button';
 
 type ClickableEmojiButtonProps = Readonly<{

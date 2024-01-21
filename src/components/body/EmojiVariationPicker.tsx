@@ -200,6 +200,12 @@ const styles = stylesheet.create({
     transform: 'scale(0.9)',
     transition: 'transform 0.1s ease-out, opacity 0.2s ease-out'
   },
+  visible: {
+    opacity: '1',
+    visibility: 'visible',
+    pointerEvents: 'all',
+    transform: 'scale(1)'
+  },
   pointingUp: {
     '.': 'pointing-up',
     transformOrigin: 'center 0%',
@@ -210,12 +216,6 @@ const styles = stylesheet.create({
       top: '0',
       transform: 'rotate(180deg) translateY(100%) translateX(18px)'
     }
-  },
-  visible: {
-    opacity: '1',
-    visibility: 'visible',
-    pointerEvents: 'all',
-    transform: 'scale(1)'
   },
   pointer: {
     '.': 'epr-emoji-pointer',
@@ -237,7 +237,6 @@ const styles = stylesheet.create({
   },
   '.epr-auto-theme': {
     pointer: {
-      // @ts-ignore
       '@media (prefers-color-scheme: dark)': {
         backgroundPosition: '-25px 0'
       }

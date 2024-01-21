@@ -88,11 +88,9 @@ export function PreviewBody() {
             />
           ) : null}
         </div>
-        {show ? (
-          <div className={cx(styles.label)}>{emojiName(emoji)}</div>
-        ) : (
-          <div className={cx(styles.label)}>{defaultText}</div>
-        )}
+        <div className={cx(styles.label)}>
+          {show ? emojiName(emoji) : defaultText}
+        </div>
       </>
     );
   }
