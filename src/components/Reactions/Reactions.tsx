@@ -5,9 +5,12 @@ import { stylesheet } from '../../Stylesheet/stylesheet';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { EmojiStyle } from '../../types/exposedTypes';
+import { Button } from '../atoms/Button';
+import { useReactionsModeState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 export function Reactions() {
+  const [, setReactionsMode] = useReactionsModeState();
   return (
     <ul className={cx(styles.list)}>
       {DEFAULT_REACTIONS.map(reaction => (
@@ -21,6 +24,7 @@ export function Reactions() {
           />
         </li>
       ))}
+      <Button onClick={() => setReactionsMode(false)}>+</Button>
     </ul>
   );
 }
@@ -42,7 +46,6 @@ const styles = stylesheet.create({
     padding: '0',
     display: 'flex',
     justifyContent: 'space-around',
-    alignItems: 'center',
-    height: '100%'
+    alignItems: 'center'
   }
 });

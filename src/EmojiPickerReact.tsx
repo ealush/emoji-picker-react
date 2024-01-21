@@ -4,6 +4,7 @@ import { Reactions } from './components/Reactions/Reactions';
 import { Body } from './components/body/Body';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
 import { PickerConfigProvider } from './components/context/PickerConfigContext';
+import { useReactionsModeState } from './components/context/PickerContext';
 import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
@@ -11,14 +12,16 @@ import PickerMain from './components/main/PickerMain';
 import { PickerProps } from './index';
 
 function EmojiPicker(props: PickerProps) {
+  const [reactionsOpen] = useReactionsModeState();
+
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
         <PickerMain>
-          <Reactions />
-          {/* <Header />
+          {reactionsOpen && <Reactions />}
+          <Header />
           <Body />
-          <Preview /> */}
+          <Preview />
         </PickerMain>
       </PickerConfigProvider>
     </ElementRefContextProvider>

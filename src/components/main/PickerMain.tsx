@@ -13,7 +13,10 @@ import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
-import { PickerContextProvider } from '../context/PickerContext';
+import {
+  PickerContextProvider,
+  useReactionsModeState
+} from '../context/PickerContext';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -35,6 +38,7 @@ type RootProps = Readonly<{
 }>;
 
 function PickerRootElement({ children }: RootProps) {
+  const [reactionsMode] = useReactionsModeState();
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
@@ -44,9 +48,7 @@ function PickerRootElement({ children }: RootProps) {
   useKeyboardNavigation();
   useOnFocus();
 
-  const reactions = true;
-
-  if (reactions === true) {
+  if (reactionsMode === true) {
     return (
       <aside
         className={cx(
@@ -77,8 +79,7 @@ function PickerRootElement({ children }: RootProps) {
         {
           [ClassNames.searchActive]: searchModeActive
         },
-        className,
-        styles.reactionsMenu
+        className
       )}
       ref={PickerMainRef}
       style={style}

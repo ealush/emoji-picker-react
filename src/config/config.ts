@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from 'react';
 
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
@@ -85,7 +85,8 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
-    width: 350
+    width: 350,
+    reactionsOpen: false
   };
 }
 
@@ -111,6 +112,7 @@ export type PickerConfigInternal = {
   skinTonePickerLocation: SkinTonePickerLocation;
   unicodeToHide: Set<string>;
   customEmojis: CustomEmoji[];
+  reactionsOpen: boolean;
 };
 
 export type PreviewConfig = {
