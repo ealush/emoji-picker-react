@@ -33,10 +33,8 @@ export function PickerContextProvider({ children }: Props) {
   const activeCategoryState = useState<ActiveCategoryState>(null);
   const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
-  const reactionsModeState = useState(false);
-  const [isPastInitialLoad, setIsPastInitialLoad] = useState(
-    reactionsDefaultOpen
-  );
+  const reactionsModeState = useState(reactionsDefaultOpen);
+  const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
 
   useMarkInitialLoad(setIsPastInitialLoad);
 

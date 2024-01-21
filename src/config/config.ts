@@ -86,7 +86,7 @@ export function basePickerConfig(): PickerConfigInternal {
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,
-    reactionsOpen: false
+    reactionsDefaultOpen: false
   };
 }
 
@@ -112,7 +112,7 @@ export type PickerConfigInternal = {
   skinTonePickerLocation: SkinTonePickerLocation;
   unicodeToHide: Set<string>;
   customEmojis: CustomEmoji[];
-  reactionsOpen: boolean;
+  reactionsDefaultOpen: boolean;
 };
 
 export type PreviewConfig = {

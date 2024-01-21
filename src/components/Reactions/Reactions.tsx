@@ -10,7 +10,12 @@ import { useReactionsModeState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 export function Reactions() {
-  const [, setReactionsMode] = useReactionsModeState();
+  const [reactionsOpen, setReactionsMode] = useReactionsModeState();
+
+  if (!reactionsOpen) {
+    return null;
+  }
+
   return (
     <ul className={cx(styles.list)}>
       {DEFAULT_REACTIONS.map(reaction => (
@@ -46,6 +51,7 @@ const styles = stylesheet.create({
     padding: '0',
     display: 'flex',
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '100%'
   }
 });

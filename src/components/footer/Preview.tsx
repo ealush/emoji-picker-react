@@ -2,7 +2,10 @@ import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
@@ -30,7 +33,9 @@ export function Preview() {
   }
 
   return (
-    <Flex className={cx(styles.preview)}>
+    <Flex
+      className={cx(styles.preview, commonInteractionStyles.hiddenOnReactions)}
+    >
       <PreviewBody />
       <Space />
       {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}

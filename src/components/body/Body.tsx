@@ -2,7 +2,10 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  commonInteractionStyles,
+  stylesheet
+} from '../../Stylesheet/stylesheet';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../../hooks/useOnScroll';
@@ -18,7 +21,10 @@ export function Body() {
   useOnMouseMove();
 
   return (
-    <div className={cx(styles.body)} ref={BodyRef}>
+    <div
+      className={cx(styles.body, commonInteractionStyles.hiddenOnReactions)}
+      ref={BodyRef}
+    >
       <EmojiVariationPicker />
       <EmojiList />
     </div>

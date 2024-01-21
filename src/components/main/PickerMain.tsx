@@ -48,27 +48,6 @@ function PickerRootElement({ children }: RootProps) {
   useKeyboardNavigation();
   useOnFocus();
 
-  if (reactionsMode === true) {
-    return (
-      <aside
-        className={cx(
-          styles.main,
-          styles.baseVariables,
-          theme === Theme.DARK && styles.darkTheme,
-          theme === Theme.AUTO && styles.autoThemeDark,
-          {
-            [ClassNames.searchActive]: searchModeActive
-          },
-          className,
-          styles.reactionsMenu
-        )}
-        ref={PickerMainRef}
-      >
-        {children}
-      </aside>
-    );
-  }
-
   return (
     <aside
       className={cx(
@@ -79,10 +58,11 @@ function PickerRootElement({ children }: RootProps) {
         {
           [ClassNames.searchActive]: searchModeActive
         },
+        reactionsMode && styles.reactionsMenu,
         className
       )}
       ref={PickerMainRef}
-      style={style}
+      style={reactionsMode ? undefined : style}
     >
       {children}
     </aside>
@@ -123,6 +103,7 @@ const styles = stylesheet.create({
     borderColor: 'var(--epr-picker-border-color)',
     backgroundColor: 'var(--epr-bg-color)',
     overflow: 'hidden',
+    transition: 'all 0.4s ease-in-out',
     // @ts-expect-error - need to work on this
     '*': {
       boxSizing: 'border-box',

@@ -101,8 +101,8 @@ export function useStyleConfig(): React.CSSProperties {
 }
 
 export function useReactionsOpenConfig(): boolean {
-  const { reactionsOpen } = usePickerConfig();
-  return reactionsOpen;
+  const { reactionsDefaultOpen } = usePickerConfig();
+  return reactionsDefaultOpen;
 }
 
 export function useEmojiVersionConfig(): string | null {

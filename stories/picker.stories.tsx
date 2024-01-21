@@ -124,6 +124,11 @@ export const RecentlyUsed = (args: Props) => (
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
+
+export const ReactionsMenu = (args: Props) => (
+  <Template {...args} reactionsDefaultOpen={true} />
+);
+
 export const EmojiVersion_0_6 = (args: Props) => (
   <Template
     {...args}
