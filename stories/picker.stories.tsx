@@ -221,19 +221,29 @@ export const HideEmojisByUnicode = (args: Props) => (
 
 function TemplateDark(args) {
   const [shown, setShown] = useState(true);
+  const [hasBg, setHasBg] = useState(false);
   return (
     <div
       style={{
         display: 'inline-block',
         padding: '15px',
         backgroundColor: '#292D3E',
-        height: '100vh',
-        width: '100vw'
+        width: '100vw',
+        ...(hasBg && {
+          backgroundImage:
+            'url(https://images.unsplash.com/photo-1705359461450-f9ac9d4567c7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+          backgroundSize: 'cover'
+        })
       }}
     >
       <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
         Toggle
       </button>
+      <input
+        type="checkbox"
+        checked={hasBg}
+        onChange={() => setHasBg(!hasBg)}
+      />
       <br />
       {shown ? (
         <EmojiPicker
@@ -247,12 +257,20 @@ function TemplateDark(args) {
 function Template(args) {
   const [shown, setShown] = useState(true);
   const [inputValue, setInputValue] = useState('');
+  const [hasBg, setHasBg] = useState(false);
+
   return (
     <React.StrictMode>
       <div
         style={{
           display: 'inline-block',
-          padding: '15px'
+          padding: '15px',
+          width: '100vw',
+          ...(hasBg && {
+            backgroundImage:
+              'url(https://images.unsplash.com/photo-1682687220067-dced9a881b56?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+            backgroundSize: 'cover'
+          })
         }}
       >
         <input
@@ -263,6 +281,11 @@ function Template(args) {
         <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
           Toggle
         </button>
+        <input
+          type="checkbox"
+          checked={hasBg}
+          onChange={() => setHasBg(!hasBg)}
+        />
         <br />
         {shown ? (
           <EmojiPicker
