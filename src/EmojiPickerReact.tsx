@@ -1,12 +1,9 @@
-import { cx } from 'flairup';
 import * as React from 'react';
 
-import { stylesheet } from './Stylesheet/stylesheet';
 import { Reactions } from './components/Reactions/Reactions';
 import { Body } from './components/body/Body';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
 import { PickerConfigProvider } from './components/context/PickerConfigContext';
-import { useReactionsModeState } from './components/context/PickerContext';
 import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
@@ -52,17 +49,4 @@ export default React.memo(EmojiPicker, (prev, next) => {
     prev.skinTonePickerLocation === next.skinTonePickerLocation &&
     prevCustomEmojis.length === nextCustomEmojis.length
   );
-});
-
-const styles = stylesheet.create({
-  mainContainer: {
-    opacity: '1',
-    transition: 'all 0.1s ease-in-out'
-  },
-  mainContainerHidden: {
-    height: '0',
-    opacity: '0',
-    overflow: 'hidden',
-    pointerEvents: 'none'
-  }
 });
