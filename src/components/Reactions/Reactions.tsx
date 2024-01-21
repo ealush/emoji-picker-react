@@ -16,6 +16,7 @@ export function Reactions() {
             emoji={emojiByUnified(reaction) as DataEmoji}
             emojiStyle={EmojiStyle.NATIVE}
             unified={reaction}
+            showVariations={false}
           />
         </li>
       ))}
