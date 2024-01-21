@@ -17,6 +17,7 @@ type ClickableEmojiButtonProps = Readonly<{
   children: React.ReactNode;
   hasVariations: boolean;
   unified?: string;
+  round?: boolean;
 }>;
 
 export function ClickableEmojiButton({
@@ -26,7 +27,8 @@ export function ClickableEmojiButton({
   hiddenOnSearch,
   showVariations = true,
   hasVariations,
-  children
+  children,
+  round = false
 }: ClickableEmojiButtonProps) {
   return (
     <Button
@@ -37,7 +39,8 @@ export function ClickableEmojiButton({
         {
           [ClassNames.visible]: !hidden && !hiddenOnSearch
         },
-        !!(hasVariations && showVariations) && styles.hasVariations
+        !!(hasVariations && showVariations) && styles.hasVariations,
+        round && styles.round
       )}
       data-unified={unified}
       aria-label={emojiNames[0]}
@@ -69,6 +72,9 @@ const styles = stylesheet.create({
     ':focus': {
       backgroundColor: 'var(--epr-focus-bg-color)'
     }
+  },
+  round: {
+    borderRadius: '50%'
   },
   hasVariations: {
     '.': ClassNames.emojiHasVariations,

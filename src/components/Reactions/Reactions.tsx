@@ -17,6 +17,7 @@ export function Reactions() {
             emojiStyle={EmojiStyle.NATIVE}
             unified={reaction}
             showVariations={false}
+            round={true}
           />
         </li>
       ))}

@@ -233,7 +233,7 @@ const styles = stylesheet.create({
   reactionsMenu: {
     '.': 'epr-reactions',
     height: '50px',
-    width: '300px',
+    maxWidth: '300px',
     padding: '0 8px',
     backgroundColor: 'var(--epr-reactions-bg-color)',
     backdropFilter: 'blur(10px)',
