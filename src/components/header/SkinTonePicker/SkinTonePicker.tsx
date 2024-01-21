@@ -2,23 +2,21 @@
 import { cx } from 'flairup';
 import * as React from 'react';
 
-import { ClassNames } from '../../DomUtils/classNames';
-import { stylesheet } from '../../Stylesheet/stylesheet';
-import { useSkinTonesDisabledConfig } from '../../config/useConfig';
-import skinToneVariations, {
-  skinTonesNamed
-} from '../../data/skinToneVariations';
-import { useCloseAllOpenToggles } from '../../hooks/useCloseAllOpenToggles';
-import { useFocusSearchInput } from '../../hooks/useFocus';
-import { SkinTones } from '../../types/exposedTypes';
-import Absolute from '../Layout/Absolute';
-import Relative from '../Layout/Relative';
-import { Button } from '../atoms/Button';
-import { useSkinTonePickerRef } from '../context/ElementRefContext';
+import { ClassNames } from '../../../DomUtils/classNames';
+import { stylesheet } from '../../../Stylesheet/stylesheet';
+import { useSkinTonesDisabledConfig } from '../../../config/useConfig';
+import skinToneVariations from '../../../data/skinToneVariations';
+import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
+import { useFocusSearchInput } from '../../../hooks/useFocus';
+import Absolute from '../../Layout/Absolute';
+import Relative from '../../Layout/Relative';
+import { useSkinTonePickerRef } from '../../context/ElementRefContext';
 import {
   useActiveSkinToneState,
   useSkinToneFanOpenState
-} from '../context/PickerContext';
+} from '../../context/PickerContext';
+
+import { BtnSkinToneVariation } from './BtnSkinToneVariation';
 
 const ITEM_SIZE = 28;
 
@@ -61,7 +59,8 @@ export function SkinTonePicker({
       className={cx(
         styles.skinTones,
         vertical && styles.vertical,
-        isOpen && styles.open
+        isOpen && styles.open,
+        vertical && isOpen && styles.verticalShadow
       )}
       style={
         vertical
@@ -72,8 +71,12 @@ export function SkinTonePicker({
       <div className={cx(styles.select)} ref={SkinTonePickerRef}>
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
+
           return (
-            <Button
+            <BtnSkinToneVariation
+              key={skinToneVariation}
+              skinToneVariation={skinToneVariation}
+              isOpen={isOpen}
               style={{
                 transform: cx(
                   vertical
@@ -82,6 +85,7 @@ export function SkinTonePicker({
                   isOpen && active && 'scale(1.3)'
                 )
               }}
+              isActive={active}
               onClick={() => {
                 if (isOpen) {
                   setActiveSkinTone(skinToneVariation);
@@ -91,19 +95,7 @@ export function SkinTonePicker({
                 }
                 closeAllOpenToggles();
               }}
-              key={skinToneVariation}
-              className={cx(
-                `epr-tone-${skinToneVariation}`,
-                styles.tone,
-                !isOpen && styles.closedTone,
-                active && styles.active
-              )}
-              tabIndex={isOpen ? 0 : -1}
-              aria-pressed={active}
-              aria-label={`Skin tone ${
-                skinTonesNamed[skinToneVariation as SkinTones]
-              }`}
-            ></Button>
+            />
           );
         })}
       </div>
@@ -129,11 +121,14 @@ const styles = stylesheet.create({
     padding: '10px 0'
   },
   vertical: {
-    padding: '5px',
+    padding: '9px',
     alignItems: 'flex-end',
     flexDirection: 'column',
     borderRadius: '6px',
     border: '1px solid var(--epr-bg-color)'
+  },
+  verticalShadow: {
+    boxShadow: '0px 0 7px var(--epr-picker-border-color)'
   },
   open: {
     // @ts-ignore
@@ -169,42 +164,5 @@ const styles = stylesheet.create({
       zIndex: '0',
       boxShadow: '0 0 0 0px var(--epr-active-skin-hover-color)'
     }
-  },
-  closedTone: {
-    opacity: '0',
-    zIndex: '0'
-  },
-  active: {
-    '.': 'epr-active',
-    zIndex: '1',
-    opacity: '1'
-  },
-  tone: {
-    '.': 'epr-tone',
-    ':hover': {
-      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color)'
-    },
-    ':focus': {
-      boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'
-    },
-    // @ts-ignore
-    '&.epr-tone-neutral': {
-      backgroundColor: '#ffd225'
-    },
-    '&.epr-tone-1f3fb': {
-      backgroundColor: '#ffdfbd'
-    },
-    '&.epr-tone-1f3fc': {
-      backgroundColor: '#e9c197'
-    },
-    '&.epr-tone-1f3fd': {
-      backgroundColor: '#c88e62'
-    },
-    '&.epr-tone-1f3fe': {
-      backgroundColor: '#a86637'
-    },
-    '&.epr-tone-1f3ff': {
-      backgroundColor: '#60463a'
-    },
   }
 });

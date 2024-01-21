@@ -14,7 +14,7 @@ import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicke
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
 import { useSearchInputRef } from '../../context/ElementRefContext';
-import { SkinTonePicker } from '../SkinTonePicker';
+import { SkinTonePicker } from '../SkinTonePicker/SkinTonePicker';
 
 import { BtnClearSearch } from './BtnClearSearch';
 import { CssSearch } from './CssSearch';

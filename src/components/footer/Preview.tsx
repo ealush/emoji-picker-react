@@ -19,7 +19,7 @@ import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
-import { SkinTonePickerMenu } from '../header/SkinTonePicker';
+import { SkinTonePickerMenu } from '../header/SkinTonePicker/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
