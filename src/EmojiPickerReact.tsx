@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Reactions } from './components/Reactions/Reactions';
 import { Body } from './components/body/Body';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
 import { PickerConfigProvider } from './components/context/PickerConfigContext';
@@ -14,9 +15,10 @@ function EmojiPicker(props: PickerProps) {
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
         <PickerMain>
-          <Header />
+          <Reactions />
+          {/* <Header />
           <Body />
-          <Preview />
+          <Preview /> */}
         </PickerMain>
       </PickerConfigProvider>
     </ElementRefContextProvider>

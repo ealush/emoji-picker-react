@@ -44,6 +44,29 @@ function PickerRootElement({ children }: RootProps) {
   useKeyboardNavigation();
   useOnFocus();
 
+  const reactions = true;
+
+  if (reactions === true) {
+    return (
+      <aside
+        className={cx(
+          styles.main,
+          styles.baseVariables,
+          theme === Theme.DARK && styles.darkTheme,
+          theme === Theme.AUTO && styles.autoThemeDark,
+          {
+            [ClassNames.searchActive]: searchModeActive
+          },
+          className,
+          styles.reactionsMenu
+        )}
+        ref={PickerMainRef}
+      >
+        {children}
+      </aside>
+    );
+  }
+
   return (
     <aside
       className={cx(
@@ -54,7 +77,8 @@ function PickerRootElement({ children }: RootProps) {
         {
           [ClassNames.searchActive]: searchModeActive
         },
-        className
+        className,
+        styles.reactionsMenu
       )}
       ref={PickerMainRef}
       style={style}
@@ -112,6 +136,7 @@ const styles = stylesheet.create({
       '--epr-search-input-bg-color': '#f6f6f6',
       '--epr-picker-border-color': '#e7e7e7',
       '--epr-bg-color': '#fff',
+      '--epr-reactions-bg-color': '#ffffff95',
       '--epr-category-icon-active-color': '#6aa8de',
       '--epr-skin-tone-picker-menu-color': '#ffffff95',
 
@@ -202,5 +227,15 @@ const styles = stylesheet.create({
   darkTheme: {
     '.': ClassNames.darkTheme,
     '--': DarkTheme
+  },
+  reactionsMenu: {
+    '.': 'epr-reactions',
+    height: '50px',
+    padding: '0 10px',
+    backgroundColor: 'var(--epr-reactions-bg-color)',
+    backdropFilter: 'blur(10px)',
+    '--': {
+      '--epr-picker-border-radius': '50px'
+    }
   }
 });
