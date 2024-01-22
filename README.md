@@ -2,6 +2,10 @@
 
 ![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
+![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
+
+![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
+
 ---
 
 _If you enjoy using emoji-picker-react<br/>
@@ -250,6 +254,8 @@ Here are some additional things to keep in mind about custom emojis:
 - The custom emojis will be added to the Custom category.
 - The location or name of the Custom category can be controlled via the categories prop.
 - The custom emojis will be indexed by their id property. This means that you can search for custom emojis by their id or names.
+
+![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
 
 # Customization
 
