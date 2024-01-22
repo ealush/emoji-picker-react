@@ -11,6 +11,8 @@ export function BtnPlus() {
   const [, setReactionsMode] = useReactionsModeState();
   return (
     <Button
+      aria-label="Show all Emojis"
+      title="Show all Emojis"
       tabIndex={0}
       className={cx(styles.plusSign)}
       onClick={() => setReactionsMode(false)}
