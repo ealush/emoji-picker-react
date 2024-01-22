@@ -129,6 +129,14 @@ export const ReactionsMenu = (args: Props) => (
   <Template {...args} reactionsDefaultOpen={true} />
 );
 
+export const ReactionsMenuDark = (args: Props) => (
+  <TemplateDark {...args} reactionsDefaultOpen={true} theme={Theme.DARK} />
+);
+
+export const ReactionsMenuAuto = (args: Props) => (
+  <Template {...args} reactionsDefaultOpen={true} theme={Theme.AUTO} />
+);
+
 export const EmojiVersion_0_6 = (args: Props) => (
   <Template
     {...args}
