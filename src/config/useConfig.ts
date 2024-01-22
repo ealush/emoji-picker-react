@@ -125,6 +125,11 @@ export function useUnicodeToHide() {
   return unicodeToHide;
 }
 
+export function useReactionsConfig(): string[] {
+  const { reactions } = usePickerConfig();
+  return reactions;
+}
+
 export function useGetEmojiUrlConfig(): (
   unified: string,
   style: EmojiStyle

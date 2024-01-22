@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
   setCustomEmojis,
@@ -86,7 +87,8 @@ export function basePickerConfig(): PickerConfigInternal {
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,
-    reactionsDefaultOpen: false
+    reactionsDefaultOpen: false,
+    reactions: DEFAULT_REACTIONS
   };
 }
 
@@ -113,6 +115,7 @@ export type PickerConfigInternal = {
   unicodeToHide: Set<string>;
   customEmojis: CustomEmoji[];
   reactionsDefaultOpen: boolean;
+  reactions: string[];
 };
 
 export type PreviewConfig = {

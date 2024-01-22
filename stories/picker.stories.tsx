@@ -129,6 +129,20 @@ export const ReactionsMenu = (args: Props) => (
   <Template {...args} reactionsDefaultOpen={true} />
 );
 
+export const CustomReactions = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    reactions={[
+      '1f4a9',
+      '1f4aa',
+      '1f4ab',
+      // angry
+      '1f620'
+    ]}
+  />
+);
+
 export const ReactionsMenuDark = (args: Props) => (
   <TemplateDark {...args} reactionsDefaultOpen={true} theme={Theme.DARK} />
 );

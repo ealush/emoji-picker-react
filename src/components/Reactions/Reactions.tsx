@@ -2,6 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
+import { useReactionsConfig } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
@@ -15,6 +16,7 @@ import { BtnPlus } from './BtnPlus';
 export function Reactions() {
   const [reactionsOpen] = useReactionsModeState();
   const ReactionsRef = useReactionsRef();
+  const reactions = useReactionsConfig();
   useMouseDownHandlers(ReactionsRef);
 
   if (!reactionsOpen) {
@@ -26,7 +28,7 @@ export function Reactions() {
       className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
       ref={ReactionsRef}
     >
-      {DEFAULT_REACTIONS.map(reaction => (
+      {reactions.map(reaction => (
         <li key={reaction}>
           <ClickableEmoji
             emoji={emojiByUnified(reaction) as DataEmoji}
@@ -43,16 +45,6 @@ export function Reactions() {
     </ul>
   );
 }
-
-const DEFAULT_REACTIONS = [
-  '1f44d', // 👍
-  '2764-fe0f', // ❤️
-  '1f603', // 😃
-  '1f622', // 😢
-  '1f64f', // 🙏
-  '1f44e', // 👎
-  '1f621' // 😡
-];
 
 const styles = stylesheet.create({
   list: {

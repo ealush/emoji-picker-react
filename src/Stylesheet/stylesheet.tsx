@@ -11,7 +11,7 @@ const hidden = {
   opacity: '0',
   pointerEvents: 'none',
   visibility: 'hidden',
-  overflow: 'hidden',
+  overflow: 'hidden'
 };
 
 export const commonStyles = stylesheet.create({
@@ -55,11 +55,12 @@ export const commonInteractionStyles = stylesheet.create({
     }
   },
   hiddenOnReactions: {
-    transition: 'all 0.2s ease-in-out'
+    transition: 'all 0.5s ease-in-out'
   },
   '.epr-reactions': {
     hiddenOnReactions: {
       height: '0px',
+      width: '0px',
       opacity: '0',
       pointerEvents: 'none',
       overflow: 'hidden'
