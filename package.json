@@ -12,7 +12,10 @@
     "emoji-picker",
     "react-emoji-picker",
     "emoji",
-    "emojis"
+    "emojis",
+    "reactions",
+    "reactions-picker",
+    "emoji-reactions"
   ],
   "engines": {
     "node": ">=10"
