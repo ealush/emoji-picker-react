@@ -48,6 +48,8 @@ function PickerRootElement({ children }: RootProps) {
   useKeyboardNavigation();
   useOnFocus();
 
+  const { width, height, ...styleProps } = style || {};
+
   return (
     <aside
       className={cx(
@@ -62,7 +64,10 @@ function PickerRootElement({ children }: RootProps) {
         className
       )}
       ref={PickerMainRef}
-      style={reactionsMode ? undefined : style}
+      style={{
+        ...styleProps,
+        ...(!reactionsMode && { height, width })
+      }}
     >
       {children}
     </aside>
