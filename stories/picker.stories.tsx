@@ -129,6 +129,19 @@ export const ReactionsMenu = (args: Props) => (
   <Template {...args} reactionsDefaultOpen={true} />
 );
 
+export const ReactionsMenuWithStyles = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    style={{
+      width: '300px',
+      position: 'absolute',
+      top: '150px',
+      boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)'
+    }}
+  />
+);
+
 export const CustomReactions = (args: Props) => (
   <Template
     {...args}
