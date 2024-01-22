@@ -10,7 +10,8 @@ const hidden = {
   display: 'none',
   opacity: '0',
   pointerEvents: 'none',
-  visibility: 'hidden'
+  visibility: 'hidden',
+  overflow: 'hidden'
 };
 
 export const commonStyles = stylesheet.create({
@@ -53,7 +54,18 @@ export const commonInteractionStyles = stylesheet.create({
       visibleOnSearchOnly: hidden
     }
   },
-
+  hiddenOnReactions: {
+    transition: 'all 0.5s ease-in-out'
+  },
+  '.epr-reactions': {
+    hiddenOnReactions: {
+      height: '0px',
+      width: '0px',
+      opacity: '0',
+      pointerEvents: 'none',
+      overflow: 'hidden'
+    }
+  },
   '.EmojiPickerReact:not(.epr-search-active)': {
     categoryBtn: {
       ':hover': {

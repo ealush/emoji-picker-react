@@ -124,6 +124,46 @@ export const RecentlyUsed = (args: Props) => (
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
+
+export const ReactionsMenu = (args: Props) => (
+  <Template {...args} reactionsDefaultOpen={true} />
+);
+
+export const ReactionsMenuWithStyles = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    style={{
+      width: '300px',
+      position: 'absolute',
+      top: '150px',
+      boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)'
+    }}
+  />
+);
+
+export const CustomReactions = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    reactions={[
+      '1f4a9',
+      '1f4aa',
+      '1f4ab',
+      // angry
+      '1f620'
+    ]}
+  />
+);
+
+export const ReactionsMenuDark = (args: Props) => (
+  <TemplateDark {...args} reactionsDefaultOpen={true} theme={Theme.DARK} />
+);
+
+export const ReactionsMenuAuto = (args: Props) => (
+  <Template {...args} reactionsDefaultOpen={true} theme={Theme.AUTO} />
+);
+
 export const EmojiVersion_0_6 = (args: Props) => (
   <Template
     {...args}
@@ -221,19 +261,29 @@ export const HideEmojisByUnicode = (args: Props) => (
 
 function TemplateDark(args) {
   const [shown, setShown] = useState(true);
+  const [hasBg, setHasBg] = useState(false);
   return (
     <div
       style={{
         display: 'inline-block',
         padding: '15px',
         backgroundColor: '#292D3E',
-        height: '100vh',
-        width: '100vw'
+        width: '100vw',
+        ...(hasBg && {
+          backgroundImage:
+            'url(https://images.unsplash.com/photo-1705359461450-f9ac9d4567c7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+          backgroundSize: 'cover'
+        })
       }}
     >
       <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
         Toggle
       </button>
+      <input
+        type="checkbox"
+        checked={hasBg}
+        onChange={() => setHasBg(!hasBg)}
+      />
       <br />
       {shown ? (
         <EmojiPicker
@@ -247,12 +297,21 @@ function TemplateDark(args) {
 function Template(args) {
   const [shown, setShown] = useState(true);
   const [inputValue, setInputValue] = useState('');
+  const [hasBg, setHasBg] = useState(false);
+
   return (
     <React.StrictMode>
       <div
         style={{
           display: 'inline-block',
-          padding: '15px'
+          padding: '15px',
+          width: '100vw',
+          height: '100vh',
+          ...(hasBg && {
+            backgroundImage:
+              'url(https://plus.unsplash.com/premium_photo-1675147924852-69f8060a9acc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+            backgroundSize: 'cover'
+          })
         }}
       >
         <input
@@ -263,6 +322,11 @@ function Template(args) {
         <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
           Toggle
         </button>
+        <input
+          type="checkbox"
+          checked={hasBg}
+          onChange={() => setHasBg(!hasBg)}
+        />
         <br />
         {shown ? (
           <EmojiPicker

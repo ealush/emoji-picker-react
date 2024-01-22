@@ -1,5 +1,5 @@
 {
-  "version": "4.6.15",
+  "version": "4.7.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -12,7 +12,10 @@
     "emoji-picker",
     "react-emoji-picker",
     "emoji",
-    "emojis"
+    "emojis",
+    "reactions",
+    "reactions-picker",
+    "emoji-reactions"
   ],
   "engines": {
     "node": ">=10"

@@ -1,7 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
 
-import { useDefaultSkinToneConfig } from '../../config/useConfig';
+import {
+  useDefaultSkinToneConfig,
+  useReactionsOpenConfig
+} from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
@@ -13,6 +16,7 @@ import { SkinTones } from '../../types/exposedTypes';
 export function PickerContextProvider({ children }: Props) {
   const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
+  const reactionsDefaultOpen = useReactionsOpenConfig();
 
   // Initialize the filter with the inititial dictionary
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
@@ -29,6 +33,7 @@ export function PickerContextProvider({ children }: Props) {
   const activeCategoryState = useState<ActiveCategoryState>(null);
   const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
+  const reactionsModeState = useState(reactionsDefaultOpen);
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
 
   useMarkInitialLoad(setIsPastInitialLoad);
@@ -47,7 +52,8 @@ export function PickerContextProvider({ children }: Props) {
         isPastInitialLoad,
         searchTerm,
         skinToneFanOpenState,
-        suggestedUpdateState
+        suggestedUpdateState,
+        reactionsModeState
       }}
     >
       {children}
@@ -70,6 +76,7 @@ const PickerContext = React.createContext<{
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
   disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
+  reactionsModeState: ReactState<boolean>;
 }>({
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
@@ -82,7 +89,8 @@ const PickerContext = React.createContext<{
   isPastInitialLoad: true,
   searchTerm: ['', () => new Promise<string>(() => undefined)],
   skinToneFanOpenState: [false, () => {}],
-  suggestedUpdateState: [Date.now(), () => {}]
+  suggestedUpdateState: [Date.now(), () => {}],
+  reactionsModeState: [false, () => {}]
 });
 
 type Props = Readonly<{
@@ -102,6 +110,11 @@ export function useDisallowClickRef() {
 export function useDisallowMouseRef() {
   const { disallowMouseRef } = React.useContext(PickerContext);
   return disallowMouseRef;
+}
+
+export function useReactionsModeState() {
+  const { reactionsModeState } = React.useContext(PickerContext);
+  return reactionsModeState;
 }
 
 export function useSearchTermState() {

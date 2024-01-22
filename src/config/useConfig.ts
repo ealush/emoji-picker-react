@@ -100,6 +100,11 @@ export function useStyleConfig(): React.CSSProperties {
   return { height: getDimension(height), width: getDimension(width), ...style };
 }
 
+export function useReactionsOpenConfig(): boolean {
+  const { reactionsDefaultOpen } = usePickerConfig();
+  return reactionsDefaultOpen;
+}
+
 export function useEmojiVersionConfig(): string | null {
   const { emojiVersion } = usePickerConfig();
   return emojiVersion;
@@ -118,6 +123,11 @@ export function useSkinTonePickerLocationConfig(): SkinTonePickerLocation {
 export function useUnicodeToHide() {
   const { unicodeToHide } = usePickerConfig();
   return unicodeToHide;
+}
+
+export function useReactionsConfig(): string[] {
+  const { reactions } = usePickerConfig();
+  return reactions;
 }
 
 export function useGetEmojiUrlConfig(): (
@@ -139,9 +149,12 @@ export function useSearchResultsConfig(searchResultsCount: number): string {
   const isPlural = searchResultsCount > 1;
 
   if (hasResults) {
-    return isPlural ?
-      SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND.replace('%n', searchResultsCount.toString())
-        : SEARCH_RESULTS_ONE_RESULT_FOUND;
+    return isPlural
+      ? SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND.replace(
+          '%n',
+          searchResultsCount.toString()
+        )
+      : SEARCH_RESULTS_ONE_RESULT_FOUND;
   }
 
   return SEARCH_RESULTS_NO_RESULTS_FOUND;

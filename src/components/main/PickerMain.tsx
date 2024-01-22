@@ -13,7 +13,10 @@ import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
 import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
-import { PickerContextProvider } from '../context/PickerContext';
+import {
+  PickerContextProvider,
+  useReactionsModeState
+} from '../context/PickerContext';
 
 type Props = Readonly<{
   children: React.ReactNode;
@@ -35,6 +38,7 @@ type RootProps = Readonly<{
 }>;
 
 function PickerRootElement({ children }: RootProps) {
+  const [reactionsMode] = useReactionsModeState();
   const theme = useThemeConfig();
   const searchModeActive = useIsSearchMode();
   const PickerMainRef = usePickerMainRef();
@@ -43,6 +47,8 @@ function PickerRootElement({ children }: RootProps) {
 
   useKeyboardNavigation();
   useOnFocus();
+
+  const { width, height, ...styleProps } = style || {};
 
   return (
     <aside
@@ -54,10 +60,14 @@ function PickerRootElement({ children }: RootProps) {
         {
           [ClassNames.searchActive]: searchModeActive
         },
+        reactionsMode && styles.reactionsMenu,
         className
       )}
       ref={PickerMainRef}
-      style={style}
+      style={{
+        ...styleProps,
+        ...(!reactionsMode && { height, width })
+      }}
     >
       {children}
     </aside>
@@ -75,6 +85,7 @@ const DarkTheme = {
   '--epr-category-label-bg-color': 'var(--epr-dark-category-label-bg-color)',
   '--epr-picker-border-color': 'var(--epr-dark-picker-border-color)',
   '--epr-bg-color': 'var(--epr-dark-bg-color)',
+  '--epr-reactions-bg-color': 'var(--epr-dark-reactions-bg-color)',
   '--epr-search-input-bg-color-active':
     'var(--epr-dark-search-input-bg-color-active)',
   '--epr-emoji-variation-indicator-color':
@@ -97,6 +108,7 @@ const styles = stylesheet.create({
     borderColor: 'var(--epr-picker-border-color)',
     backgroundColor: 'var(--epr-bg-color)',
     overflow: 'hidden',
+    transition: 'all 0.3s ease-in-out, background-color 0.1s ease-in-out',
     // @ts-expect-error - need to work on this
     '*': {
       boxSizing: 'border-box',
@@ -112,6 +124,7 @@ const styles = stylesheet.create({
       '--epr-search-input-bg-color': '#f6f6f6',
       '--epr-picker-border-color': '#e7e7e7',
       '--epr-bg-color': '#fff',
+      '--epr-reactions-bg-color': '#ffffff90',
       '--epr-category-icon-active-color': '#6aa8de',
       '--epr-skin-tone-picker-menu-color': '#ffffff95',
 
@@ -187,6 +200,7 @@ const styles = stylesheet.create({
       '--epr-dark-category-label-bg-color': '#222222e6',
       '--epr-dark-picker-border-color': '#151617',
       '--epr-dark-bg-color': '#222222',
+      '--epr-dark-reactions-bg-color': '#22222290',
       '--epr-dark-search-input-bg-color-active': 'var(--epr-dark)',
       '--epr-dark-emoji-variation-indicator-color': '#444',
       '--epr-dark-category-icon-active-color': '#3271b7',
@@ -202,5 +216,16 @@ const styles = stylesheet.create({
   darkTheme: {
     '.': ClassNames.darkTheme,
     '--': DarkTheme
+  },
+  reactionsMenu: {
+    '.': 'epr-reactions',
+    height: '50px',
+    display: 'inline-flex',
+    backgroundColor: 'var(--epr-reactions-bg-color)',
+    // @ts-expect-error - need to work on this
+    backdropFilter: 'blur(8px)',
+    '--': {
+      '--epr-picker-border-radius': '50px'
+    }
   }
 });
