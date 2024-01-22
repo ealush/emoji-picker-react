@@ -2,9 +2,9 @@
 
 ![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
-![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
+## Usage as a Reactions Picker
 
-![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
+![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
 ---
 
@@ -255,7 +255,21 @@ Here are some additional things to keep in mind about custom emojis:
 - The location or name of the Custom category can be controlled via the categories prop.
 - The custom emojis will be indexed by their id property. This means that you can search for custom emojis by their id or names.
 
+## Reactions Picker
+
+![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
+
 ![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
+
+The picker can be used as a reactions picker. To use it as a reactions picker, you should set the reactionsDefaultOpen prop to true. This will cause the picker to the reactions picker on the initial mount instead of the main picker component.
+
+To customize the reactions, you should pass an array of unified emoji ids to the reactions prop.
+
+The reactions picker uses the same event handlers, and the same css variables for customizations.
+
+```jsx
+<Picker reactionsDefaultOpen />
+```
 
 # Customization
 
