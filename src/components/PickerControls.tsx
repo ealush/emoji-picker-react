@@ -74,6 +74,12 @@ export function PickerControls({
           updateState("customEmojis", customEmojis)
         }
       />
+      <ChkReactions
+        reactionsDefaultOpen={pickerProps.reactionsDefaultOpen}
+        setReactionsDefaultOpen={(reactionsDefaultOpen) =>
+          updateState("reactionsDefaultOpen", reactionsDefaultOpen)
+        }
+      />
       <div className={styles.spacer} />
       <button onClick={reset} className={styles.ButtonReset}>
         Reset
@@ -300,6 +306,24 @@ function SelectSkinTonePickerLocation({
         <option value={SkinTonePickerLocation.PREVIEW}>Preview</option>
         <option value={SkinTonePickerLocation.SEARCH}>Search</option>
       </select>
+    </Label>
+  );
+}
+
+function ChkReactions({
+  reactionsDefaultOpen,
+  setReactionsDefaultOpen,
+}: {
+  reactionsDefaultOpen?: boolean;
+  setReactionsDefaultOpen: (reactionsDefaultOpen: boolean) => void;
+}) {
+  return (
+    <Label text="Reactions">
+      <input
+        type="checkbox"
+        checked={reactionsDefaultOpen}
+        onChange={(e) => setReactionsDefaultOpen(e.target.checked)}
+      />
     </Label>
   );
 }
