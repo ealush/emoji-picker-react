@@ -2,14 +2,13 @@
 
 ![Picker](https://user-images.githubusercontent.com/11255103/192167134-8205eb89-a71d-4463-8f3a-940e844917d5.gif)
 
-
-____
+---
 
 _If you enjoy using emoji-picker-react<br/>
 You should also consider trying:<br/>
 <img src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png" height="16"/> [Vest validation framework](https://vestjs.dev).<br/>_
 
-____
+---
 
 ## What to know before using
 
@@ -21,7 +20,7 @@ ____
 npm install emoji-picker-react
 ```
 
-## Usage:
+## Usage
 
 ```jsx
 import EmojiPicker from 'emoji-picker-react';
@@ -35,7 +34,7 @@ function App() {
 }
 ```
 
-## Shout Outs!
+## Shout Outs
 
 |                                                                                                 Component Design 🎨                                                                                                 |
 | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
@@ -53,6 +52,7 @@ function App() {
 - Different emoji sets (Google, Apple, Facebook, Twitter)
 - Native Emoji support
 - Emoji Component To Render Emojis in your app
+- Reactions Picker
 
 # Props
 
@@ -73,13 +73,15 @@ The following props are accepted by them picker:
 | searchDisabled         | boolean                                                | `false`    | Controls whether the search is disabled or not. When disabled, the skin tone picker will be shown in the preview component.                |
 | skinTonePickerLocation | string                                                 | `SEARCH`   | Controls the location of the skin tone picker. Possible values are `SEARCH` and `PREVIEW`.                                                 |
 | emojiVersion           | `string`                                               | -          | Allows displaying emojis up to a certain version for compatibility.                                                                        |
-| `className`            | `string`                                               | -          | Adds a class name to the root element of the picker. |
+| `className`            | `string`                                               | -          | Adds a class name to the root element of the picker.                                                                                       |
 | `width`                | `number`/`string`                                      | `350`      | Controls the width of the picker. You can provide a number that will be treated as pixel size, or your any accepted css width as string.   |
 | `height`               | `number`/`string`                                      | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string. |
-| `style`                | `React.CSSProperties`                                  | `{}`       | Adds inline style to the root element of the picker. |
+| `style`                | `React.CSSProperties`                                  | `{}`       | Adds inline style to the root element of the picker.                                                                                       |
 | getEmojiUrl            | `Function`                                             | -          | Allows to customize the emoji url and provide your own image host.                                                                         |
 | categories             | `Array`                                                | -          | Allows full config over ordering, naming and display of categories.                                                                        |
 | customEmojis           | `Array<{names: string[], imgUrl: string, id: string}>` | -          | Allows adding custom emojis to the picker.                                                                                                 |
+| reactionsDefaultOpen   | `boolean`                                              | `false`    | Controls whether the reactions picker is on the initial mount instead of the main picker component.                                        |
+| reactions              | string[]                                               | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                         |
 
 ## Full details
 
@@ -112,11 +114,13 @@ The following props are accepted by them picker:
   import { EmojiStyle } from 'emoji-picker-react';
   ```
 
-* `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
-*
-* `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
+- `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
 
-* `defaultSkinTone`: `SkinTones` - The default skin tone to use when an emoji is clicked. Defaults to `SkinTones.Neutral`. Possible skin tones are:
+\*
+
+- `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
+
+- `defaultSkinTone`: `SkinTones` - The default skin tone to use when an emoji is clicked. Defaults to `SkinTones.Neutral`. Possible skin tones are:
 
   - ✋ 'neutral'
   - ✋🏻 '1f3fb'
@@ -190,6 +194,7 @@ import { SkinTones } from 'emoji-picker-react';
   ```
 
 - `emojiVersion`: `string` - Allows displaying emojis up to a certain version for compatibility. The passed version will be parsed as a float and each emoji will be tested against it. Common values are:
+
   - `"0.6"`
   - `"1.0"`
   - `"2.0"`
@@ -197,7 +202,7 @@ import { SkinTones } from 'emoji-picker-react';
   - `"4.0"`
   - `"5.0"`
 
-* `getEmojiUrl`: `(unified: string, emojiStyle: EmojiStyle) => string` - Allows to customize the emoji url and provide your own image host. The function receives the emoji unified and the emoji style as parameters. The function should return the url of the emoji image.
+- `getEmojiUrl`: `(unified: string, emojiStyle: EmojiStyle) => string` - Allows to customize the emoji url and provide your own image host. The function receives the emoji unified and the emoji style as parameters. The function should return the url of the emoji image.
 
 ## Custom Emojis
 
@@ -207,7 +212,7 @@ id: Unique identifier for each of the custom emojis
 names: an array of string identifiers, will be used both for display, search and indexing.
 imgUrl: URL for the emoji image
 
-### Usage Example:
+### Usage Example
 
 ```jsx
 <Picker
