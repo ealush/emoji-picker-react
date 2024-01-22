@@ -113,7 +113,7 @@ The following props are accepted by them picker:
   ```
 
 * `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
-*
+
 * `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
 
 * `defaultSkinTone`: `SkinTones` - The default skin tone to use when an emoji is clicked. Defaults to `SkinTones.Neutral`. Possible skin tones are:
