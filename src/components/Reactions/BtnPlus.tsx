@@ -11,6 +11,7 @@ export function BtnPlus() {
   const [, setReactionsMode] = useReactionsModeState();
   return (
     <Button
+      tabIndex={0}
       className={cx(styles.plusSign)}
       onClick={() => setReactionsMode(false)}
     />
@@ -30,6 +31,7 @@ const styles = stylesheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    transition: 'background-color 0.1s ease-in-out',
     ':after': {
       content: '',
       minWidth: '20px',
@@ -46,6 +48,14 @@ const styles = stylesheet.create({
       // @ts-ignore
       ':after': {
         backgroundPositionY: '-20px'
+      }
+    },
+    ':focus': {
+      color: 'var(--epr-highlight-color)',
+      backgroundColor: 'var(--epr-hover-bg-color)',
+      // @ts-ignore
+      ':after': {
+        backgroundPositionY: '-40px'
       }
     }
   },
