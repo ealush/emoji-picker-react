@@ -6,13 +6,14 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { EmojiStyle } from '../../types/exposedTypes';
-import { Button } from '../atoms/Button';
 import { useReactionsRef } from '../context/ElementRefContext';
 import { useReactionsModeState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
+import { BtnPlus } from './BtnPlus';
+
 export function Reactions() {
-  const [reactionsOpen, setReactionsMode] = useReactionsModeState();
+  const [reactionsOpen] = useReactionsModeState();
   const ReactionsRef = useReactionsRef();
   useMouseDownHandlers(ReactionsRef);
 
@@ -36,12 +37,9 @@ export function Reactions() {
           />
         </li>
       ))}
-      <Button
-        className={cx(styles.plusSign)}
-        onClick={() => setReactionsMode(false)}
-      >
-        +
-      </Button>
+      <li>
+        <BtnPlus />
+      </li>
     </ul>
   );
 }
@@ -65,22 +63,5 @@ const styles = stylesheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%'
-  },
-  plusSign: {
-    fontSize: '20px',
-    padding: '18px',
-    color: 'var(--epr-text-color)',
-    borderRadius: '50%',
-    textAlign: 'center',
-    lineHeight: '100%',
-    width: '20px',
-    height: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ':hover': {
-      color: 'var(--epr-highlight-color)',
-      backgroundColor: 'var(--epr-hover-bg-color)'
-    }
   }
 });

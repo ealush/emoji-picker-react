@@ -271,9 +271,10 @@ function Template(args) {
           display: 'inline-block',
           padding: '15px',
           width: '100vw',
+          height: '100vh',
           ...(hasBg && {
             backgroundImage:
-              'url(https://images.unsplash.com/photo-1682687220067-dced9a881b56?q=80&w=1975&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
+              'url(https://plus.unsplash.com/premium_photo-1675147924852-69f8060a9acc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)',
             backgroundSize: 'cover'
           })
         }}

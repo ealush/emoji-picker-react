@@ -20,7 +20,8 @@ import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import {
   useActiveSkinToneState,
-  useIsPastInitialLoad
+  useIsPastInitialLoad,
+  useReactionsModeState
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 

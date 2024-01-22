@@ -217,7 +217,7 @@ const styles = stylesheet.create({
     height: '50px',
     display: 'inline-flex',
     backgroundColor: 'var(--epr-reactions-bg-color)',
-    backdropFilter: 'blur(10px)',
+    backdropFilter: 'blur(8px)',
     '--': {
       '--epr-picker-border-radius': '50px'
     }
