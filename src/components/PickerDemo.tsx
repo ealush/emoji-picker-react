@@ -26,7 +26,12 @@ export default function PickerDemo() {
 
   return (
     <div>
-      <div className={styles.PickerDemo}>
+      <div
+        className={styles.PickerDemo}
+        style={{
+          height: `${pickerProps.height}px`,
+        }}
+      >
         <Picker
           onEmojiClick={(emoji) =>
             setTextareaValue(
