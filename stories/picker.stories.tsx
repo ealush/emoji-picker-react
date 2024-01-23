@@ -126,7 +126,13 @@ export const LazyLoaded = (args: Props) => (
 );
 
 export const ReactionsMenu = (args: Props) => (
-  <Template {...args} reactionsDefaultOpen={true} />
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    onReactionClick={data => {
+      console.log('Clicked reaction!', data);
+    }}
+  />
 );
 
 export const ReactionsMenuWithStyles = (args: Props) => (

@@ -1,9 +1,10 @@
 import React from 'react';
 
-import { EmojiClickData } from '../types/exposedTypes';
+import { MouseDownEvent } from './config';
 
 export type MutableConfig = {
-  onEmojiClick?: (emoji: EmojiClickData, event: MouseEvent) => void;
+  onEmojiClick?: MouseDownEvent;
+  onReactionClick?: MouseDownEvent;
 };
 
 export const MutableConfigContext = React.createContext<
@@ -19,7 +20,8 @@ export function useDefineMutableConfig(
   config: MutableConfig
 ): React.MutableRefObject<MutableConfig> {
   const MutableConfigRef = React.useRef<MutableConfig>({
-    onEmojiClick: config.onEmojiClick || emptyFunc
+    onEmojiClick: config.onEmojiClick || emptyFunc,
+    onReactionClick: config.onReactionClick || config.onEmojiClick
   });
 
   React.useEffect(() => {

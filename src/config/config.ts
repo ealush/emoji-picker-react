@@ -132,9 +132,12 @@ const basePreviewConfig: PreviewConfig = {
 
 type ConfigExternal = {
   previewConfig: Partial<PreviewConfig>;
-  onEmojiClick: (emoji: EmojiClickData, event: MouseEvent) => void;
+  onEmojiClick: MouseDownEvent;
+  onReactionClick: MouseDownEvent;
 } & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
 
 export type PickerConfig = Partial<ConfigExternal>;
 
 export type PickerDimensions = string | number;
+
+export type MouseDownEvent = (emoji: EmojiClickData, event: MouseEvent) => void;

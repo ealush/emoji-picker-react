@@ -14,6 +14,7 @@ import {
 } from '../components/context/PickerContext';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
+  MOUSE_EVENT_SOURCE,
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
   useOnEmojiClickConfig
@@ -34,7 +35,8 @@ import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
 
 export function useMouseDownHandlers(
-  ContainerRef: React.MutableRefObject<NullableElement>
+  ContainerRef: React.MutableRefObject<NullableElement>,
+  mouseEventSource: MOUSE_EVENT_SOURCE
 ) {
   const mouseDownTimerRef = useRef<undefined | number>();
   const setVariationPicker = useSetVariationPicker();
@@ -42,7 +44,7 @@ export function useMouseDownHandlers(
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const [activeSkinTone] = useActiveSkinToneState();
-  const onEmojiClick = useOnEmojiClickConfig();
+  const onEmojiClick = useOnEmojiClickConfig(mouseEventSource);
   const [, updateSuggested] = useUpdateSuggested();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const activeEmojiStyle = useEmojiStyleConfig();

@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
 import {
+  MOUSE_EVENT_SOURCE,
   useEmojiStyleConfig,
   useReactionsConfig
 } from '../../config/useConfig';
@@ -19,7 +20,7 @@ export function Reactions() {
   const [reactionsOpen] = useReactionsModeState();
   const ReactionsRef = useReactionsRef();
   const reactions = useReactionsConfig();
-  useMouseDownHandlers(ReactionsRef);
+  useMouseDownHandlers(ReactionsRef, MOUSE_EVENT_SOURCE.REACTIONS);
   const emojiStyle = useEmojiStyleConfig();
 
   if (!reactionsOpen) {

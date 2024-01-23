@@ -6,6 +6,7 @@ import {
   commonInteractionStyles,
   stylesheet
 } from '../../Stylesheet/stylesheet';
+import { MOUSE_EVENT_SOURCE } from '../../config/useConfig';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../../hooks/useOnScroll';
@@ -17,7 +18,7 @@ import { EmojiVariationPicker } from './EmojiVariationPicker';
 export function Body() {
   const BodyRef = useBodyRef();
   useOnScroll(BodyRef);
-  useMouseDownHandlers(BodyRef);
+  useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
   useOnMouseMove();
 
   return (

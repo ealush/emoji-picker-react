@@ -22,6 +22,11 @@ import {
 import { CustomEmoji } from './customEmojiConfig';
 import { useMutableConfig } from './mutableConfig';
 
+export enum MOUSE_EVENT_SOURCE {
+  REACTIONS = 'reactions',
+  PICKER = 'picker'
+}
+
 export function useSearchPlaceHolderConfig(): string {
   const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
   return (
@@ -61,12 +66,17 @@ export function useCustomEmojisConfig(): CustomEmoji[] {
   return customEmojis;
 }
 
-export function useOnEmojiClickConfig(): (
-  emoji: EmojiClickData,
-  event: MouseEvent
-) => void {
+export function useOnEmojiClickConfig(
+  mouseEventSource: MOUSE_EVENT_SOURCE
+): (emoji: EmojiClickData, event: MouseEvent) => void {
   const { current } = useMutableConfig();
-  return current.onEmojiClick || (() => {});
+
+  const handler =
+    (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS
+      ? current.onReactionClick
+      : current.onEmojiClick) ?? current.onEmojiClick;
+
+  return handler || (() => {});
 }
 
 export function usePreviewConfig(): PreviewConfig {
