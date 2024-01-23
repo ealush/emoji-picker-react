@@ -34,7 +34,7 @@ import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
 
 export function useMouseDownHandlers(
-  BodyRef: React.MutableRefObject<NullableElement>
+  ContainerRef: React.MutableRefObject<NullableElement>
 ) {
   const mouseDownTimerRef = useRef<undefined | number>();
   const setVariationPicker = useSetVariationPicker();
@@ -130,27 +130,27 @@ export function useMouseDownHandlers(
   );
 
   useEffect(() => {
-    if (!BodyRef.current) {
+    if (!ContainerRef.current) {
       return;
     }
-    const bodyRef = BodyRef.current;
-    bodyRef.addEventListener('click', onClick, {
+    const confainerRef = ContainerRef.current;
+    confainerRef.addEventListener('click', onClick, {
       passive: true
     });
 
-    bodyRef.addEventListener('mousedown', onMouseDown, {
+    confainerRef.addEventListener('mousedown', onMouseDown, {
       passive: true
     });
-    bodyRef.addEventListener('mouseup', onMouseUp, {
+    confainerRef.addEventListener('mouseup', onMouseUp, {
       passive: true
     });
 
     return () => {
-      bodyRef?.removeEventListener('click', onClick);
-      bodyRef?.removeEventListener('mousedown', onMouseDown);
-      bodyRef?.removeEventListener('mouseup', onMouseUp);
+      confainerRef?.removeEventListener('click', onClick);
+      confainerRef?.removeEventListener('mousedown', onMouseDown);
+      confainerRef?.removeEventListener('mouseup', onMouseUp);
     };
-  }, [BodyRef, onClick, onMouseDown, onMouseUp]);
+  }, [ContainerRef, onClick, onMouseDown, onMouseUp]);
 }
 
 function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
