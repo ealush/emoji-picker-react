@@ -14,7 +14,7 @@ type ClickableEmojiProps = Readonly<
     hiddenOnSearch?: boolean;
     emoji: DataEmoji;
     className?: string;
-    round?: boolean;
+    noBackground?: boolean;
   }
 >;
 
@@ -29,7 +29,7 @@ export function ClickableEmoji({
   lazyLoad,
   getEmojiUrl,
   className,
-  round = false
+  noBackground = false
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -41,7 +41,7 @@ export function ClickableEmoji({
       hiddenOnSearch={hiddenOnSearch}
       emojiNames={emojiNames(emoji)}
       unified={unified}
-      round={round}
+      noBackground={noBackground}
     >
       <ViewOnlyEmoji
         unified={unified}

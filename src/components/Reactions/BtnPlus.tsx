@@ -49,7 +49,8 @@ const styles = stylesheet.create({
       backgroundColor: 'var(--epr-hover-bg-color)',
       // @ts-ignore
       ':after': {
-        backgroundPositionY: '-20px'
+        backgroundPositionY: '-20px',
+        transform: 'scale(1.2)'
       }
     },
     ':focus': {

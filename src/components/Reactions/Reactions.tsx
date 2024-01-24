@@ -40,7 +40,7 @@ export function Reactions() {
             unified={reaction}
             showVariations={false}
             className={cx(styles.emojiButton)}
-            round
+            noBackground
           />
         </li>
       ))}
