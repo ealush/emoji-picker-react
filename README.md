@@ -6,8 +6,7 @@
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
-![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
-
+![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
 ---
 
 _If you enjoy using emoji-picker-react<br/>
@@ -264,7 +263,7 @@ Here are some additional things to keep in mind about custom emojis:
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
-![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/38a9c652-ee2e-43d4-b0e6-33735f1bcbe7)
+![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
 
 The picker can be used as a reactions picker. To use it as a reactions picker, you should set the reactionsDefaultOpen prop to true. This will cause the picker to the reactions picker on the initial mount instead of the main picker component.
 
