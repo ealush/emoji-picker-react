@@ -39,6 +39,7 @@ export function Reactions() {
             emojiStyle={emojiStyle}
             unified={reaction}
             showVariations={false}
+            className={cx(styles.emojiButton)}
             round
           />
         </li>
@@ -59,5 +60,12 @@ const styles = stylesheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%'
+  },
+  emojiButton: {
+    ':hover': {
+      transform: 'scale(1.2)'
+    },
+
+    transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.5)'
   }
 });

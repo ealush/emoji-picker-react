@@ -28,6 +28,7 @@ export function ClickableEmoji({
   size,
   lazyLoad,
   getEmojiUrl,
+  className,
   round = false
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
@@ -49,6 +50,7 @@ export function ClickableEmoji({
         emojiStyle={emojiStyle}
         lazyLoad={lazyLoad}
         getEmojiUrl={getEmojiUrl}
+        className={className}
       />
     </ClickableEmojiButton>
   );

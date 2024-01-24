@@ -18,6 +18,7 @@ type ClickableEmojiButtonProps = Readonly<{
   hasVariations: boolean;
   unified?: string;
   round?: boolean;
+  className?: string;
 }>;
 
 export function ClickableEmojiButton({
@@ -28,6 +29,7 @@ export function ClickableEmojiButton({
   showVariations = true,
   hasVariations,
   children,
+  className,
   round = false
 }: ClickableEmojiButtonProps) {
   return (
@@ -40,7 +42,8 @@ export function ClickableEmojiButton({
           [ClassNames.visible]: !hidden && !hiddenOnSearch
         },
         !!(hasVariations && showVariations) && styles.hasVariations,
-        round && styles.round
+        round && styles.round,
+        className
       )}
       data-unified={unified}
       aria-label={emojiNames[0]}
