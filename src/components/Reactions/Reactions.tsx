@@ -65,7 +65,12 @@ const styles = stylesheet.create({
     ':hover': {
       transform: 'scale(1.2)'
     },
-
+    ':focus': {
+      transform: 'scale(1.2)'
+    },
+    ':active': {
+      transform: 'scale(1.1)'
+    },
     transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.5)'
   }
 });
