@@ -2,7 +2,7 @@ import { createSheet } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../DomUtils/classNames';
-import { useIsMounted } from '../hooks/useIsMounted';
+import { useIsEverMounted } from '../hooks/useIsEverMounted';
 
 export const stylesheet = createSheet('epr');
 
@@ -22,7 +22,7 @@ export const commonStyles = stylesheet.create({
 });
 
 export function PickerStyleTag() {
-  const isMounted = useIsMounted();
+  const isMounted = useIsEverMounted();
 
   if (stylesheet.isApplied() && isMounted) {
     return null;

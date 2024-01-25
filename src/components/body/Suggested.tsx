@@ -8,7 +8,7 @@ import {
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getSuggested } from '../../dataUtils/suggested';
-import { useIsMounted } from '../../hooks/useIsMounted';
+import { useIsEverMounted } from '../../hooks/useIsEverMounted';
 import { useUpdateSuggested } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
@@ -20,7 +20,7 @@ type Props = Readonly<{
 
 export function Suggested({ categoryConfig }: Props) {
   const [suggestedUpdated] = useUpdateSuggested();
-  const isMounted = useIsMounted();
+  const isMounted = useIsEverMounted();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const suggested = React.useMemo(
