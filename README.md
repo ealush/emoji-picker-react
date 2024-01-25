@@ -120,10 +120,6 @@ The following props are accepted by them picker:
   import { EmojiStyle } from 'emoji-picker-react';
   ```
 
-* `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
-
-* `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
-
 - `autoFocusSearch`: `boolean` - Whether to focus the search input on mount. Defaults to `true`.
 
 - `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
