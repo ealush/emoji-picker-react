@@ -15,9 +15,7 @@ function EmojiPicker(props: PickerProps) {
   return (
     <ElementRefContextProvider>
       <PickerConfigProvider {...props}>
-        <PickerMain>
-          <ContentControl />
-        </PickerMain>
+        <ContentControl />
       </PickerConfigProvider>
     </ElementRefContextProvider>
   );
@@ -31,10 +29,10 @@ function ContentControl() {
     if (!renderAll) {
       setRenderAll(true);
     }
-  }, []);
+  }, [renderAll]);
 
   return (
-    <>
+    <PickerMain>
       <Reactions />
       {renderAll ? (
         <>
@@ -43,7 +41,7 @@ function ContentControl() {
           <Preview />
         </>
       ) : null}
-    </>
+    </PickerMain>
   );
 }
 
