@@ -23,7 +23,7 @@ export function BtnPlus() {
 const styles = stylesheet.create({
   plusSign: {
     fontSize: '20px',
-    padding: '18px',
+    padding: '17px',
     color: 'var(--epr-text-color)',
     borderRadius: '50%',
     textAlign: 'center',
@@ -33,7 +33,7 @@ const styles = stylesheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    transition: 'background-color 0.1s ease-in-out',
+    transition: 'background-color 0.2s ease-in-out',
     ':after': {
       content: '',
       minWidth: '20px',
@@ -46,16 +46,15 @@ const styles = stylesheet.create({
     },
     ':hover': {
       color: 'var(--epr-highlight-color)',
-      backgroundColor: 'var(--epr-hover-bg-color)',
+      backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
       // @ts-ignore
       ':after': {
-        backgroundPositionY: '-20px',
-        transform: 'scale(1.2)'
+        backgroundPositionY: '-20px'
       }
     },
     ':focus': {
       color: 'var(--epr-highlight-color)',
-      backgroundColor: 'var(--epr-hover-bg-color)',
+      backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
       // @ts-ignore
       ':after': {
         backgroundPositionY: '-40px'

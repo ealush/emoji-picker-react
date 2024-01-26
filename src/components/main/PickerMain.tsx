@@ -77,6 +77,8 @@ function PickerRootElement({ children }: RootProps) {
 const DarkTheme = {
   '--epr-emoji-variation-picker-bg-color':
     'var(--epr-dark-emoji-variation-picker-bg-color)',
+  '--epr-hover-bg-color-reduced-opacity':
+    'var(--epr-dark-hover-bg-color-reduced-opacity)',
   '--epr-highlight-color': 'var(--epr-dark-highlight-color)',
   '--epr-text-color': 'var(--epr-dark-text-color)',
   '--epr-hover-bg-color': 'var(--epr-dark-hover-bg-color)',
@@ -119,6 +121,7 @@ const styles = stylesheet.create({
     '--': {
       '--epr-highlight-color': '#007aeb',
       '--epr-hover-bg-color': '#f1f8ff',
+      '--epr-hover-bg-color-reduced-opacity': '#f1f8ff80',
       '--epr-focus-bg-color': '#e0f0ff',
       '--epr-text-color': '#858585',
       '--epr-search-input-bg-color': '#f6f6f6',
@@ -195,6 +198,7 @@ const styles = stylesheet.create({
       '--epr-dark-highlight-color': '#c0c0c0',
       '--epr-dark-text-color': 'var(--epr-highlight-color)',
       '--epr-dark-hover-bg-color': '#363636f6',
+      '--epr-dark-hover-bg-color-reduced-opacity': '#36363680',
       '--epr-dark-focus-bg-color': '#474747',
       '--epr-dark-search-input-bg-color': '#333333',
       '--epr-dark-category-label-bg-color': '#222222e6',
