@@ -29,19 +29,28 @@ export default function PickerDemo() {
       <div
         className={styles.PickerDemo}
         style={{
-          height: `${pickerProps.height}px`,
+          minHeight: `${pickerProps.height}px`,
         }}
       >
-        <Picker
-          onEmojiClick={(emoji) =>
-            setTextareaValue(
-              (tv) => tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji)
-            )
-          }
-          key={now}
-          autoFocusSearch={false}
-          {...pickerProps}
-        />
+        <div
+          style={{
+            minWidth: `${pickerProps.width}px`,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <Picker
+            onEmojiClick={(emoji) =>
+              setTextareaValue(
+                (tv) =>
+                  tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji)
+              )
+            }
+            key={now}
+            autoFocusSearch={false}
+            {...pickerProps}
+          />
+        </div>
         <PickerControls
           pickerProps={pickerProps}
           updateState={updateState}
