@@ -33,12 +33,17 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 100%;
   margin: 0 auto;
   font-size: 0.85rem;
   width: 100%;
   z-index: 2;
   font-family: var(--font-mono);
+  max-width: fit-content;
+  padding: 0.5rem 1rem 0;
+  border-radius: var(--border-radius);
+  backdrop-filter: blur(3px);
+  background: rgb(var(--foreground-rgb), 0.05);
+  border: 1px solid rgb(var(--foreground-rgb), 0.3);
 }
 
 .footerRow a {
@@ -61,6 +66,7 @@
   border-radius: var(--border-radius);
   background: rgb(var(--foreground-rgb), 0.05);
   transition: background 0.2s ease;
+  backdrop-filter: blur(5px);
 }
 
 .headerRow a:hover {

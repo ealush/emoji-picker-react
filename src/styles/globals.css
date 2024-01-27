@@ -6,15 +6,15 @@
     "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
 
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-color: #ff3b3070;
+  --background-backdrop: rgba(255, 255, 255, 0.5);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-color: #4f2032;
+    --background-backdrop: rgba(1, 1, 1, 0.5);
 
     --callout-rgb: 20, 20, 20;
     --callout-border-rgb: 108, 108, 108;
@@ -35,12 +35,15 @@ body {
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--background-color);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--background-backdrop),
+    var(--background-backdrop) 25px,
+    transparent 1px,
+    transparent 50%
+  );
+  background-size: 70.71px 70.71px; /* 50px * sqrt(2) to account for the 45 degree rotation */
 }
 
 a {
