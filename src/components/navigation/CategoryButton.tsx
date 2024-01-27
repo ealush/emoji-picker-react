@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import {
   commonInteractionStyles,
+  darkMode,
   stylesheet
 } from '../../Stylesheet/stylesheet';
 import {
@@ -128,14 +129,11 @@ const styles = stylesheet.create({
         'calc(var(--epr-category-navigation-button-size) * -3)'
     }
   },
+  ...darkMode('catBtn', DarkPositionY),
   '.epr-dark-theme': {
-    catBtn: DarkPositionY,
     ...DarkInactivePosition
   },
   '.epr-auto-theme': {
-    catBtn: {
-      '@media (prefers-color-scheme: dark)': DarkPositionY
-    },
     ...DarkInactivePosition
   }
 });

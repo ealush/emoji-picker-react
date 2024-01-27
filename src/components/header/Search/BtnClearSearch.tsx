@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import {
   commonInteractionStyles,
+  darkMode,
   stylesheet
 } from '../../../Stylesheet/stylesheet';
 import { useClearSearch } from '../../../hooks/useFilter';
@@ -72,20 +73,8 @@ const styles = stylesheet.create({
       backgroundPositionY: '-20px'
     }
   },
-  '.epr-dark-theme': {
-    icnClearnSearch: {
-      backgroundPositionY: '-40px'
-    },
-    btnClearSearch: HoverDark
-  },
-  '.epr-auto-theme': {
-    icnClearnSearch: {
-      '@media (prefers-color-scheme: dark)': {
-        backgroundPositionY: '-40px'
-      }
-    },
-    btnClearSearch: {
-      '@media (prefers-color-scheme: dark)': HoverDark
-    }
-  }
+  ...darkMode('icnClearnSearch', {
+    backgroundPositionY: '-40px'
+  }),
+  ...darkMode('btnClearSearch', HoverDark)
 });

@@ -2,7 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
 
-import { stylesheet } from '../../../Stylesheet/stylesheet';
+import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -161,29 +161,12 @@ const styles = stylesheet.create({
       backgroundPositionY: '-20px'
     }
   },
-  '.epr-dark-theme': {
-    icnClearnSearch: {
-      backgroundPositionY: '-40px'
-    },
-    btnClearSearch: {
-      ':hover > .epr-icn-clear-search': {
-        backgroundPositionY: '-60px'
-      }
+  ...darkMode('icnClearnSearch', {
+    backgroundPositionY: '-40px'
+  }),
+  ...darkMode('btnClearSearch', {
+    ':hover > .epr-icn-clear-search': {
+      backgroundPositionY: '-60px'
     }
-  },
-  '.epr-auto-theme': {
-    icnClearnSearch: {
-      '@media (prefers-color-scheme: dark)': {
-        backgroundPositionY: '-40px'
-      }
-    },
-    btnClearSearch: {
-      '@media (prefers-color-scheme: dark)': {
-        // @ts-ignore
-        ':hover > .epr-icn-clear-search': {
-          backgroundPositionY: '-60px'
-        }
-      }
-    }
-  }
+  })
 });
