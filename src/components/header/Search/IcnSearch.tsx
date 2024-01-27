@@ -1,7 +1,7 @@
 import { cx } from 'flairup';
 import * as React from 'react';
 
-import { stylesheet } from '../../../Stylesheet/stylesheet';
+import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
 
 import SVGMagnifier from './svg/magnifier.svg';
 
@@ -24,16 +24,7 @@ const styles = stylesheet.create({
     backgroundSize: '20px',
     backgroundImage: `url(${SVGMagnifier})`
   },
-  '.epr-dark-theme': {
-    icnSearch: {
-      backgroundPositionY: '-20px'
-    }
-  },
-  '.epr-auto-theme': {
-    icnSearch: {
-      '@media (prefers-color-scheme: dark)': {
-        backgroundPositionY: '-20px'
-      }
-    }
-  }
+  ...darkMode('icnSearch', {
+    backgroundPositionY: '-20px'
+  })
 });

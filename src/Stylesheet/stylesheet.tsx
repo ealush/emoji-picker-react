@@ -1,4 +1,4 @@
-import { createSheet } from 'flairup';
+import { Styles, createSheet } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../DomUtils/classNames';
@@ -84,3 +84,16 @@ export const commonInteractionStyles = stylesheet.create({
     }
   }
 });
+
+export function darkMode(key: string, value: Styles) {
+  return {
+    '.epr-dark-theme': {
+      [key]: value
+    },
+    '.epr-auto-theme': {
+      [key]: {
+        '@media (prefers-color-scheme: dark)': value
+      }
+    }
+  };
+}

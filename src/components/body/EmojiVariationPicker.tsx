@@ -10,7 +10,7 @@ import {
   emojiTrueOffsetTop,
   emojiTruOffsetLeft
 } from '../../DomUtils/selectors';
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig
@@ -230,16 +230,7 @@ const styles = stylesheet.create({
     transform: 'translateX(-18px)',
     backgroundImage: `url(${SVGTriangle})`
   },
-  '.epr-dark-theme': {
-    pointer: {
-      backgroundPosition: '-25px 0'
-    }
-  },
-  '.epr-auto-theme': {
-    pointer: {
-      '@media (prefers-color-scheme: dark)': {
-        backgroundPosition: '-25px 0'
-      }
-    }
-  }
+  ...darkMode('pointer', {
+    backgroundPosition: '-25px 0'
+  })
 });

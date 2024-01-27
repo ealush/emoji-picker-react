@@ -1,7 +1,7 @@
 import { cx } from 'flairup';
 import * as React from 'react';
 
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import { Button } from '../atoms/Button';
 import { useReactionsModeState } from '../context/PickerContext';
 
@@ -61,18 +61,8 @@ const styles = stylesheet.create({
       }
     }
   },
-  '.epr-dark-theme': {
-    plusSign: {
-      ':after': { backgroundPositionY: '-40px' },
-      ':hover:after': { backgroundPositionY: '-60px' }
-    }
-  },
-  '.epr-auto-theme': {
-    plusSign: {
-      '@media (prefers-color-scheme: dark)': {
-        ':after': { backgroundPositionY: '-40px' },
-        ':hover:after': { backgroundPositionY: '-60px' }
-      }
-    }
-  }
+  ...darkMode('plusSign', {
+    ':after': { backgroundPositionY: '-40px' },
+    ':hover:after': { backgroundPositionY: '-60px' }
+  })
 });
