@@ -1,5 +1,5 @@
 {
-  "version": "4.7.10",
+  "version": "4.7.11",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -98,6 +98,6 @@
     "rollup-plugin-svg": "^2.0.0"
   },
   "dependencies": {
-    "flairup": "0.0.35"
+    "flairup": "0.0.37"
   }
 }

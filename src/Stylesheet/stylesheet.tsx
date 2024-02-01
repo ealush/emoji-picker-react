@@ -2,9 +2,8 @@ import { Styles, createSheet } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../DomUtils/classNames';
-import { useIsEverMounted } from '../hooks/useIsEverMounted';
 
-export const stylesheet = createSheet('epr');
+export const stylesheet = createSheet('epr', null);
 
 const hidden = {
   display: 'none',
@@ -21,20 +20,14 @@ export const commonStyles = stylesheet.create({
   }
 });
 
-export function PickerStyleTag() {
-  const isMounted = useIsEverMounted();
-
-  if (stylesheet.isApplied() && isMounted) {
-    return null;
-  }
-
+export const PickerStyleTag = React.memo(function PickerStyleTag() {
   return (
     <style
       suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: stylesheet.getStyle() }}
     />
   );
-}
+});
 
 export const commonInteractionStyles = stylesheet.create({
   '.epr-main': {
