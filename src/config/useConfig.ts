@@ -66,6 +66,11 @@ export function useCustomEmojisConfig(): CustomEmoji[] {
   return customEmojis;
 }
 
+export function useOpenConfig(): boolean {
+  const { open } = usePickerConfig();
+  return open;
+}
+
 export function useOnEmojiClickConfig(
   mouseEventSource: MOUSE_EVENT_SOURCE
 ): (emoji: EmojiClickData, event: MouseEvent) => void {

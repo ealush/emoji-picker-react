@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { PickerStyleTag } from './Stylesheet/stylesheet';
 import { Reactions } from './components/Reactions/Reactions';
 import { Body } from './components/body/Body';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
@@ -8,12 +9,15 @@ import { useReactionsModeState } from './components/context/PickerContext';
 import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
+import { compareConfig } from './config/compareConfig';
+import { useOpenConfig } from './config/useConfig';
 
 import { PickerProps } from './index';
 
 function EmojiPicker(props: PickerProps) {
   return (
     <ElementRefContextProvider>
+      <PickerStyleTag />
       <PickerConfigProvider {...props}>
         <ContentControl />
       </PickerConfigProvider>
@@ -24,12 +28,17 @@ function EmojiPicker(props: PickerProps) {
 function ContentControl() {
   const [reactionsDefaultOpen] = useReactionsModeState();
   const [renderAll, setRenderAll] = React.useState(!reactionsDefaultOpen);
+  const isOpen = useOpenConfig();
 
   React.useEffect(() => {
     if (!renderAll) {
       setRenderAll(true);
     }
   }, [renderAll]);
+
+  if (!isOpen) {
+    return null;
+  }
 
   return (
     <PickerMain>
@@ -46,27 +55,4 @@ function ContentControl() {
 }
 
 // eslint-disable-next-line complexity
-export default React.memo(EmojiPicker, (prev, next) => {
-  const prevCustomEmojis = prev.customEmojis ?? [];
-  const nextCustomEmojis = next.customEmojis ?? [];
-  return (
-    prev.emojiVersion === next.emojiVersion &&
-    prev.reactionsDefaultOpen === next.reactionsDefaultOpen &&
-    prev.searchPlaceHolder === next.searchPlaceHolder &&
-    prev.searchPlaceholder === next.searchPlaceholder &&
-    prev.defaultSkinTone === next.defaultSkinTone &&
-    prev.skinTonesDisabled === next.skinTonesDisabled &&
-    prev.autoFocusSearch === next.autoFocusSearch &&
-    prev.emojiStyle === next.emojiStyle &&
-    prev.theme === next.theme &&
-    prev.suggestedEmojisMode === next.suggestedEmojisMode &&
-    prev.lazyLoadEmojis === next.lazyLoadEmojis &&
-    prev.className === next.className &&
-    prev.height === next.height &&
-    prev.width === next.width &&
-    prev.style === next.style &&
-    prev.searchDisabled === next.searchDisabled &&
-    prev.skinTonePickerLocation === next.skinTonePickerLocation &&
-    prevCustomEmojis.length === nextCustomEmojis.length
-  );
-});
+export default React.memo(EmojiPicker, compareConfig);

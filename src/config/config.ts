@@ -88,7 +88,8 @@ export function basePickerConfig(): PickerConfigInternal {
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,
     reactionsDefaultOpen: false,
-    reactions: DEFAULT_REACTIONS
+    reactions: DEFAULT_REACTIONS,
+    open: true
   };
 }
 
@@ -116,6 +117,7 @@ export type PickerConfigInternal = {
   customEmojis: CustomEmoji[];
   reactionsDefaultOpen: boolean;
   reactions: string[];
+  open: boolean;
 };
 
 export type PreviewConfig = {

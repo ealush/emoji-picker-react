@@ -266,7 +266,7 @@ export const HideEmojisByUnicode = (args: Props) => (
 );
 
 function TemplateDark(args) {
-  const [shown, setShown] = useState(true);
+  const [open, setOpen] = useState(true);
   const [hasBg, setHasBg] = useState(false);
   return (
     <div
@@ -282,7 +282,7 @@ function TemplateDark(args) {
         })
       }}
     >
-      <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
+      <button onClick={() => setOpen(!open)} style={{ margin: '20px' }}>
         Toggle
       </button>
       <input
@@ -291,17 +291,16 @@ function TemplateDark(args) {
         onChange={() => setHasBg(!hasBg)}
       />
       <br />
-      {shown ? (
-        <EmojiPicker
-          {...args}
-          onEmojiClick={(...args) => console.log(...args)}
-        />
-      ) : null}
+      <EmojiPicker
+        {...args}
+        open={open}
+        onEmojiClick={(...args) => console.log(...args)}
+      />
     </div>
   );
 }
 function Template(args) {
-  const [shown, setShown] = useState(true);
+  const [open, setOpen] = useState(true);
   const [inputValue, setInputValue] = useState('');
   const [hasBg, setHasBg] = useState(false);
 
@@ -325,7 +324,7 @@ function Template(args) {
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
         />
-        <button onClick={() => setShown(!shown)} style={{ margin: '20px' }}>
+        <button onClick={() => setOpen(!open)} style={{ margin: '20px' }}>
           Toggle
         </button>
         <input
@@ -334,18 +333,17 @@ function Template(args) {
           onChange={() => setHasBg(!hasBg)}
         />
         <br />
-        {shown ? (
-          <EmojiPicker
-            {...args}
-            onEmojiClick={(emoji, event) => {
-              setInputValue(
-                // inputValue =>
-                inputValue + (emoji.isCustom ? emoji.unified : emoji.emoji)
-              );
-              console.log(emoji, event);
-            }}
-          />
-        ) : null}
+        <EmojiPicker
+          {...args}
+          open={open}
+          onEmojiClick={(emoji, event) => {
+            setInputValue(
+              // inputValue =>
+              inputValue + (emoji.isCustom ? emoji.unified : emoji.emoji)
+            );
+            console.log(emoji, event);
+          }}
+        />
       </div>
     </React.StrictMode>
   );

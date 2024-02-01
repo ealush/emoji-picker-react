@@ -6,8 +6,7 @@
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
-![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
----
+## ![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
 
 _If you enjoy using emoji-picker-react<br/>
 You should also consider trying:<br/>
@@ -65,6 +64,7 @@ The following props are accepted by them picker:
 
 | Prop                   | Type                                                   | Default    | Description                                                                                                                                                |
 | ---------------------- | ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| open                   | boolean                                                | `true`     | Controls whether the picker is open or not.                                                                                                                |
 | onEmojiClick           | function                                               |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter.                                          |
 | autoFocusSearch        | boolean                                                | `true`     | Controls the auto focus of the search input.                                                                                                               |
 | Theme                  | string                                                 | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                                                          |

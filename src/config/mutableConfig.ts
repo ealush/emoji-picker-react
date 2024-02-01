@@ -26,7 +26,9 @@ export function useDefineMutableConfig(
 
   React.useEffect(() => {
     MutableConfigRef.current.onEmojiClick = config.onEmojiClick || emptyFunc;
-  }, [config.onEmojiClick]);
+    MutableConfigRef.current.onReactionClick =
+      config.onReactionClick || config.onEmojiClick;
+  }, [config.onEmojiClick, config.onReactionClick]);
 
   return MutableConfigRef;
 }

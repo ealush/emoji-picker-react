@@ -2,7 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
-import { PickerStyleTag, stylesheet } from '../../Stylesheet/stylesheet';
+import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useClassNameConfig,
   useStyleConfig,
@@ -25,7 +25,6 @@ type Props = Readonly<{
 export default function PickerMain({ children }: Props) {
   return (
     <PickerContextProvider>
-      <PickerStyleTag />
       <PickerRootElement>{children}</PickerRootElement>
     </PickerContextProvider>
   );
