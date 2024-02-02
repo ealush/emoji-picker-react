@@ -46,7 +46,7 @@ export function ClickableEmojiButton({
         className
       )}
       data-unified={unified}
-      aria-label={emojiNames[0]}
+      aria-label={emojiNames[0].match('flag-') ? emojiNames[1] : emojiNames[0]}
       data-full-name={emojiNames}
     >
       {children}
