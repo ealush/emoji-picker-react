@@ -6798,10 +6798,10 @@ find-up@^5.0.0:
     locate-path "^6.0.0"
     path-exists "^4.0.0"
 
-flairup@0.0.37:
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.37.tgz#5a3c64a7a25d826d520a280def14fca672ffce66"
-  integrity sha512-GY7coNGpJQczEIfBsgByKhkclQZC2OosDyyGTfFfm2rXEzwq7MbWQgGo/GwM7TdU53Ow4rPznKPMC8Q3iympjQ==
+flairup@0.0.38:
+  version "0.0.38"
+  resolved "https://registry.yarnpkg.com/flairup/-/flairup-0.0.38.tgz#62216990a8317a1b07d1d816033624c5b2130f31"
+  integrity sha512-W9QA5TM7eYNlGoBYwfVn/o6v4yWBCxfq4+EJ5w774oFeyWvVWnYq6Dgt4CJltjG9y/lPwbOqz3jSSr8K66ToGg==
 
 flat-cache@^2.0.1:
   version "2.0.1"
