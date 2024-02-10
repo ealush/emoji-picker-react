@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
+import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
 import { focusElement } from '../DomUtils/focusElement';
 import {
   buttonFromTarget,
@@ -86,6 +87,16 @@ export function useEmojiPreviewEvents(
       const button = buttonFromTarget(e.target as HTMLElement);
 
       if (button) {
+        const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
+        const buttonHeight = button.getBoundingClientRect().height;
+        if (belowFoldByPx < buttonHeight / 2) {
+          return;
+        }
+        if (belowFoldByPx < buttonHeight) {
+          button.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          return;
+        }
+
         focusElement(button);
       }
     }
