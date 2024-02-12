@@ -1,3 +1,6 @@
+import { DEFAULT_LABEL_HEIGHT } from '../components/main/PickerMain';
+
+import { ClassNames, asSelectors } from './classNames';
 import { NullableElement } from './selectors';
 
 export function elementCountInRow(
@@ -149,9 +152,15 @@ export function firstVisibleElementInContainer(
   const parentTop = parent.getBoundingClientRect().top;
   const parentBottom = parent.getBoundingClientRect().bottom;
 
+  const parentTopWithLabel = parentTop + getLabelHight(parent);
+
   const visibleElements = elements.find(element => {
     const elementTop = element.getBoundingClientRect().top;
     const elementBottom = element.getBoundingClientRect().bottom;
+
+    if (elementTop < parentTopWithLabel) {
+      return false;
+    }
 
     return (
       (elementTop >= parentTop && elementTop <= parentBottom) ||
@@ -164,4 +173,12 @@ export function firstVisibleElementInContainer(
 
 export function hasNextElementSibling(element: HTMLElement) {
   return !!element.nextElementSibling;
+}
+
+function getLabelHight(parentNode: HTMLElement) {
+  return (
+    parentNode
+      .querySelector(asSelectors(ClassNames.label))
+      ?.getBoundingClientRect().height ?? DEFAULT_LABEL_HEIGHT /* default */
+  );
 }

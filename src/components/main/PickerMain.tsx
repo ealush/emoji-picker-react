@@ -22,6 +22,8 @@ type Props = Readonly<{
   children: React.ReactNode;
 }>;
 
+export const DEFAULT_LABEL_HEIGHT = 40;
+
 export default function PickerMain({ children }: Props) {
   return (
     <PickerContextProvider>
@@ -173,7 +175,7 @@ const styles = stylesheet.create({
       '--epr-category-label-bg-color': '#ffffffe6',
       '--epr-category-label-text-color': 'var(--epr-text-color)',
       '--epr-category-label-padding': '0 var(--epr-horizontal-padding)',
-      '--epr-category-label-height': '40px',
+      '--epr-category-label-height': `${DEFAULT_LABEL_HEIGHT}px`,
 
       /*  Emoji */
       '--epr-emoji-size': '30px',
