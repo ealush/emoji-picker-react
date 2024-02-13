@@ -166,6 +166,22 @@ export function originalUnifiedFromEmojiElement(
   return null;
 }
 
+export function allUnifiedFromEmojiElement(
+  emoji: NullableElement
+): { unified: string | null; originalUnified: string | null } {
+  if (!emoji) {
+    return {
+      unified: null,
+      originalUnified: null
+    };
+  }
+
+  return {
+    unified: unifiedFromEmojiElement(emoji),
+    originalUnified: originalUnifiedFromEmojiElement(emoji)
+  };
+}
+
 function elementDataSetKey(
   element: NullableElement,
   key: string

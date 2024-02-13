@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
 import { focusElement } from '../DomUtils/focusElement';
 import {
-  buttonFromTarget,
-  originalUnifiedFromEmojiElement,
-  unifiedFromEmojiElement
+  allUnifiedFromEmojiElement,
+  buttonFromTarget
 } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
@@ -50,8 +49,7 @@ export function useEmojiPreviewEvents(
         return onLeave();
       }
 
-      const unified = unifiedFromEmojiElement(button);
-      const originalUnified = originalUnifiedFromEmojiElement(button);
+      const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
 
       if (!unified || !originalUnified) {
         return onLeave();
@@ -90,6 +88,19 @@ export function useEmojiPreviewEvents(
         const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
         const buttonHeight = button.getBoundingClientRect().height;
         if (belowFoldByPx < buttonHeight / 2) {
+          const { unified, originalUnified } = allUnifiedFromEmojiElement(
+            button
+          );
+
+          if (!unified || !originalUnified) {
+            return;
+          }
+
+          setPreviewEmoji({
+            unified,
+            originalUnified
+          });
+
           return;
         }
         if (belowFoldByPx < buttonHeight) {
