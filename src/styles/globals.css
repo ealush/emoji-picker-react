@@ -33,6 +33,14 @@ body {
   overflow-x: hidden;
 }
 
+/* animate background position 100px and restart */
+
+@keyframes background {
+  to {
+    background-position-y: 100%;
+  }
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background-color: var(--background-color);
@@ -44,6 +52,8 @@ body {
     transparent 50%
   );
   background-size: 70.71px 70.71px; /* 50px * sqrt(2) to account for the 45 degree rotation */
+  background-position-y: 0;
+  animation: background 60s linear infinite;
 }
 
 a {
