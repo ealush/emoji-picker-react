@@ -88,20 +88,7 @@ export function useEmojiPreviewEvents(
         const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
         const buttonHeight = button.getBoundingClientRect().height;
         if (belowFoldByPx < buttonHeight / 2) {
-          const { unified, originalUnified } = allUnifiedFromEmojiElement(
-            button
-          );
-
-          if (!unified || !originalUnified) {
-            return;
-          }
-
-          setPreviewEmoji({
-            unified,
-            originalUnified
-          });
-
-          return;
+          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
         }
         if (belowFoldByPx < buttonHeight) {
           button.scrollIntoView({ behavior: 'smooth', block: 'end' });
@@ -120,4 +107,22 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('keydown', onEscape);
     };
   }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
+}
+
+function handlePartiallyVisibleElementFocus(
+  button: HTMLElement,
+  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
+) {
+  const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
+
+  if (!unified || !originalUnified) {
+    return;
+  }
+
+  (document.activeElement as HTMLElement)?.blur?.();
+
+  setPreviewEmoji({
+    unified,
+    originalUnified
+  });
 }
