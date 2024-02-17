@@ -87,12 +87,8 @@ export function useEmojiPreviewEvents(
       if (button) {
         const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
         const buttonHeight = button.getBoundingClientRect().height;
-        if (belowFoldByPx < buttonHeight / 2) {
-          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
-        }
         if (belowFoldByPx < buttonHeight) {
-          button.scrollIntoView({ behavior: 'smooth', block: 'end' });
-          return;
+          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
         }
 
         focusElement(button);
