@@ -88,6 +88,7 @@ The following props are accepted by them picker:
 | reactionsDefaultOpen   | `boolean`                                              | `false`    | Controls whether the reactions picker is on the initial mount instead of the main picker component.                                                        |
 | reactions              | string[]                                               | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                                         |
 | onReactionClick        | `Function`                                             | -          | Callback function that is called when a reaction is clicked. The function receives the emoji object as a parameter. If not passed, onEmojiClicked is used. |
+| allowExpandReactions   | `boolean`                                              | `true`     | Controls whether the reactions picker can be expanded to the main picker.                                                                                  |
 
 ## Full details
 

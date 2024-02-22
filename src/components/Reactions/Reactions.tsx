@@ -5,7 +5,8 @@ import { commonStyles, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   MOUSE_EVENT_SOURCE,
   useEmojiStyleConfig,
-  useReactionsConfig
+  useReactionsConfig,
+  useAllowExpandReactions
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -22,6 +23,7 @@ export function Reactions() {
   const reactions = useReactionsConfig();
   useMouseDownHandlers(ReactionsRef, MOUSE_EVENT_SOURCE.REACTIONS);
   const emojiStyle = useEmojiStyleConfig();
+  const allowExpandReactions = useAllowExpandReactions();
 
   if (!reactionsOpen) {
     return null;
@@ -44,9 +46,11 @@ export function Reactions() {
           />
         </li>
       ))}
-      <li>
-        <BtnPlus />
-      </li>
+      {allowExpandReactions ? (
+        <li>
+          <BtnPlus />
+        </li>
+      ) : null}
     </ul>
   );
 }

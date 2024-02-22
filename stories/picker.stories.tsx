@@ -135,6 +135,17 @@ export const ReactionsMenu = (args: Props) => (
   />
 );
 
+export const ReactionsMenuNoExpand = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    allowExpandReactions={false}
+    onReactionClick={data => {
+      console.log('Clicked reaction!', data);
+    }}
+  />
+);
+
 export const ReactionsMenuWithStyles = (args: Props) => (
   <Template
     {...args}

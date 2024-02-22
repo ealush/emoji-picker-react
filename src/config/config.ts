@@ -89,7 +89,8 @@ export function basePickerConfig(): PickerConfigInternal {
     width: 350,
     reactionsDefaultOpen: false,
     reactions: DEFAULT_REACTIONS,
-    open: true
+    open: true,
+    allowExpandReactions: true
   };
 }
 
@@ -118,6 +119,7 @@ export type PickerConfigInternal = {
   reactionsDefaultOpen: boolean;
   reactions: string[];
   open: boolean;
+  allowExpandReactions: boolean;
 };
 
 export type PreviewConfig = {

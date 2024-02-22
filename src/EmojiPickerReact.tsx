@@ -10,7 +10,7 @@ import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
 import { compareConfig } from './config/compareConfig';
-import { useOpenConfig } from './config/useConfig';
+import { useAllowExpandReactions, useOpenConfig } from './config/useConfig';
 
 import { PickerProps } from './index';
 
@@ -27,14 +27,20 @@ function EmojiPicker(props: PickerProps) {
 
 function ContentControl() {
   const [reactionsDefaultOpen] = useReactionsModeState();
+  const allowExpandReactions = useAllowExpandReactions();
+
   const [renderAll, setRenderAll] = React.useState(!reactionsDefaultOpen);
   const isOpen = useOpenConfig();
 
   React.useEffect(() => {
+    if (reactionsDefaultOpen && !allowExpandReactions) {
+      return;
+    }
+
     if (!renderAll) {
       setRenderAll(true);
     }
-  }, [renderAll]);
+  }, [renderAll, allowExpandReactions, reactionsDefaultOpen]);
 
   if (!isOpen) {
     return null;
@@ -43,14 +49,22 @@ function ContentControl() {
   return (
     <PickerMain>
       <Reactions />
-      {renderAll ? (
-        <>
-          <Header />
-          <Body />
-          <Preview />
-        </>
-      ) : null}
+      <ExpandedPickerContent renderAll={renderAll} />
     </PickerMain>
+  );
+}
+
+function ExpandedPickerContent({ renderAll }: { renderAll: boolean }) {
+  if (!renderAll) {
+    return null;
+  }
+
+  return (
+    <>
+      <Header />
+      <Body />
+      <Preview />
+    </>
   );
 }
 

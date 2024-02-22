@@ -57,7 +57,8 @@ export function useSetConfig(config: PickerConfig) {
     config.height,
     config.width,
     config.searchDisabled,
-    config.skinTonePickerLocation
+    config.skinTonePickerLocation,
+    config.allowExpandReactions
   ]);
 
   return mergedConfig;
