@@ -80,6 +80,12 @@ export function PickerControls({
           updateState("reactionsDefaultOpen", reactionsDefaultOpen)
         }
       />
+      <ChkAllowExpandReactions
+        allowExpandReactions={pickerProps.allowExpandReactions}
+        setAllowExpandReactions={(allowExpandReactions) =>
+          updateState("allowExpandReactions", allowExpandReactions)
+        }
+      />
       <div className={styles.spacer} />
       <button onClick={reset} className={styles.ButtonReset}>
         Reset
@@ -323,6 +329,24 @@ function ChkReactions({
         type="checkbox"
         checked={reactionsDefaultOpen}
         onChange={(e) => setReactionsDefaultOpen(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkAllowExpandReactions({
+  allowExpandReactions,
+  setAllowExpandReactions,
+}: {
+  allowExpandReactions?: boolean;
+  setAllowExpandReactions: (allowExpandReactions: boolean) => void;
+}) {
+  return (
+    <Label text="Allow Expand Reactions">
+      <input
+        type="checkbox"
+        checked={allowExpandReactions}
+        onChange={(e) => setAllowExpandReactions(e.target.checked)}
       />
     </Label>
   );

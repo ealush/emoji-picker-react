@@ -17,6 +17,7 @@ const DEFAULT_THEME = Theme.AUTO;
 const DEFAULT_SUGGESTED_EMOJIS_MODE = SuggestionMode.RECENT;
 const DEFAULT_HEIGHT = 450;
 const DEFAULT_WIDTH = 350;
+const DEFAULT_ALLOW_EXPAND_REACTIONS = true;
 const DEFAULT_SKIN_TONE_PICKER_LOCATION = SkinTonePickerLocation.SEARCH;
 
 export default function PickerDemo() {
@@ -92,4 +93,5 @@ const defaultProps = {
   height: DEFAULT_HEIGHT,
   width: DEFAULT_WIDTH,
   skinTonePickerLocation: DEFAULT_SKIN_TONE_PICKER_LOCATION,
+  allowExpandReactions: DEFAULT_ALLOW_EXPAND_REACTIONS,
 } as PickerProps;
