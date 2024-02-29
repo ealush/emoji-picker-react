@@ -89,6 +89,7 @@ The following props are accepted by them picker:
 | reactions              | string[]                                               | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                                         |
 | onReactionClick        | `Function`                                             | -          | Callback function that is called when a reaction is clicked. The function receives the emoji object as a parameter. If not passed, onEmojiClicked is used. |
 | allowExpandReactions   | `boolean`                                              | `true`     | Controls whether the reactions picker can be expanded to the main picker.                                                                                  |
+| onSkinToneChange       | `Function`                                             | -          | Callback function that is called when a skin tone is changed. The function receives new picked skin tone as a parameter.                                   |
 
 ## Full details
 
@@ -139,6 +140,8 @@ The skin tones typescript enum can be imported directly from the package:
 ```ts
 import { SkinTones } from 'emoji-picker-react';
 ```
+
+- `onSkinToneChange`: `(skinTone: SkinTones) => void` - Callback function when a skin tone is changed.
 
 - `searchDisabled`: `boolean` - Whether to disable the search input. Defaults to `false`. When disabled, the skin tone picker will be shown in the preview component.
 

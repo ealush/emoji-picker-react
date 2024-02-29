@@ -125,6 +125,15 @@ export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
 
+export const SkinToneChange = (args: Props) => (
+  <Template
+    {...args}
+    onSkinToneChange={skinTone => {
+      console.log('New skin tone set:', skinTone);
+    }}
+  />
+);
+
 export const ReactionsMenu = (args: Props) => (
   <Template
     {...args}

@@ -89,6 +89,13 @@ export function useOnEmojiClickConfig(
   return handler || (() => {});
 }
 
+export function useOnSkinToneChangeConfig(
+): (skinTone: SkinTones) => void {
+  const { current } = useMutableConfig();
+
+  return current.onSkinToneChange || (() => {});
+}
+
 export function usePreviewConfig(): PreviewConfig {
   const { previewConfig } = usePickerConfig();
   return previewConfig;
