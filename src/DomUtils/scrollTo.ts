@@ -21,7 +21,7 @@ export function scrollTo(root: NullableElement, top: number = 0) {
   }
 
   requestAnimationFrame(() => {
-    $eprBody.scrollTop = top + 1;
+    $eprBody.scrollTop = top;
   });
 }
 
