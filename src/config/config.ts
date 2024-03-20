@@ -138,6 +138,7 @@ type ConfigExternal = {
   previewConfig: Partial<PreviewConfig>;
   onEmojiClick: MouseDownEvent;
   onReactionClick: MouseDownEvent;
+  onSkinToneChange: OnSkinToneChange;
 } & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
 
 export type PickerConfig = Partial<ConfigExternal>;
@@ -145,3 +146,4 @@ export type PickerConfig = Partial<ConfigExternal>;
 export type PickerDimensions = string | number;
 
 export type MouseDownEvent = (emoji: EmojiClickData, event: MouseEvent) => void;
+export type OnSkinToneChange = (emoji: SkinTones) => void;
