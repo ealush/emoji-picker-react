@@ -264,7 +264,7 @@ export function firstVisibleEmoji(parent: NullableElement) {
 
   const allEmojis = allVisibleEmojis(parent);
 
-  return firstVisibleElementInContainer(parent, allEmojis);
+  return firstVisibleElementInContainer(parent, allEmojis, 0.1);
 }
 
 export function prevCategory(element: NullableElement): NullableElement {
