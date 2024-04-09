@@ -40,7 +40,6 @@ export function SearchContainer() {
 }
 
 export function Search() {
-  const [inc, setInc] = useState(0);
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const placeholder = useSearchPlaceHolderConfig();
@@ -52,7 +51,6 @@ export function Search() {
 
   return (
     <Relative className={cx(styles.searchContainer)}>
-      <CssSearch value={value} />
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
@@ -63,10 +61,7 @@ export function Search() {
         aria-controls="epr-search-id"
         placeholder={placeholder}
         onChange={event => {
-          setInc(inc + 1);
-          setTimeout(() => {
-            onChange(event?.target?.value ?? value);
-          });
+          onChange(event?.target?.value ?? value);
         }}
         ref={SearchInputRef}
       />
