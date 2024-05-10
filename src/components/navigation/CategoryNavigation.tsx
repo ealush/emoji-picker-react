@@ -43,7 +43,7 @@ export function CategoryNavigation() {
         const allowNavigation = !isSearchMode && !isActiveCategory;
 
         return (
-          <CategoryButton
+          (category.length > 1 ? <CategoryButton
             key={category}
             category={category}
             isActiveCategory={isActiveCategory}
@@ -53,7 +53,7 @@ export function CategoryNavigation() {
               setActiveCategory(category);
               scrollCategoryIntoView(category);
             }}
-          />
+          /> : null)
         );
       })}
     </div>
