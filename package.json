@@ -33,8 +33,8 @@
     "prepare": "yarn type-check && tsdx build --transpileOnly",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -65,11 +65,13 @@
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@size-limit/preset-small-lib": "^8.0.1",
-    "@storybook/addon-essentials": "^6.5.10",
+    "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "^6.5.10",
-    "@storybook/addons": "^6.5.10",
-    "@storybook/react": "^6.5.10",
+    "@storybook/addon-links": "^8.1.1",
+    "@storybook/addon-webpack5-compiler-swc": "1.0.2",
+    "@storybook/addons": "^7.6.17",
+    "@storybook/react": "^8.1.1",
+    "@storybook/react-webpack5": "8.1.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.36.2",
@@ -90,12 +92,15 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
+    "rollup-plugin-svg": "^2.0.0",
     "size-limit": "^8.0.1",
+    "storybook": "8.1.1",
     "tiny-invariant": "^1.2.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
-    "rollup-plugin-svg": "^2.0.0"
+    "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.24.1"
   },
   "dependencies": {
     "flairup": "0.0.38"
