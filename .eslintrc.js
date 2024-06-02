@@ -1,3 +1,5 @@
+const { version } = require('react');
+
 module.exports = {
   env: {
     browser: true,
@@ -67,6 +69,9 @@ module.exports = {
     },
     'import/resolver': {
       typescript: true
+    },
+    react: {
+      version: 'detect'
     }
   }
 };

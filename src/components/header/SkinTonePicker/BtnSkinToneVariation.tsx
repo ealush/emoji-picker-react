@@ -57,7 +57,6 @@ const styles = stylesheet.create({
     ':focus': {
       boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'
     },
-    // @ts-ignore
     '&.epr-tone-neutral': {
       backgroundColor: '#ffd225'
     },

@@ -1,5 +1,5 @@
 {
-  "version": "4.9.3",
+  "version": "4.9.4",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -64,6 +64,8 @@
   ],
   "devDependencies": {
     "@babel/core": "^7.18.10",
+    "@babel/preset-react": "^7.24.1",
+    "@babel/preset-typescript": "^7.24.1",
     "@size-limit/preset-small-lib": "^8.0.1",
     "@storybook/addon-essentials": "^8.1.1",
     "@storybook/addon-info": "^5.3.21",
@@ -98,11 +100,9 @@
     "tiny-invariant": "^1.2.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4",
-    "@babel/preset-react": "^7.24.1",
-    "@babel/preset-typescript": "^7.24.1"
+    "typescript": "^4.7.4"
   },
   "dependencies": {
-    "flairup": "0.0.38"
+    "flairup": "0.0.39"
   }
 }

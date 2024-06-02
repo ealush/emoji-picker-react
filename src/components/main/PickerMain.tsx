@@ -112,7 +112,6 @@ const styles = stylesheet.create({
     backgroundColor: 'var(--epr-bg-color)',
     overflow: 'hidden',
     transition: 'all 0.3s ease-in-out, background-color 0.1s ease-in-out',
-    // @ts-expect-error - need to work on this
     '*': {
       boxSizing: 'border-box',
       fontFamily: 'sans-serif'
@@ -227,7 +226,7 @@ const styles = stylesheet.create({
     height: '50px',
     display: 'inline-flex',
     backgroundColor: 'var(--epr-reactions-bg-color)',
-    // @ts-expect-error - need to work on this
+    // @ts-ignore - backdropFilter is not recognized.
     backdropFilter: 'blur(8px)',
     '--': {
       '--epr-picker-border-radius': '50px'

@@ -47,7 +47,6 @@ const styles = stylesheet.create({
     ':hover': {
       color: 'var(--epr-highlight-color)',
       backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
-      // @ts-ignore
       ':after': {
         backgroundPositionY: '-20px'
       }
@@ -55,7 +54,6 @@ const styles = stylesheet.create({
     ':focus': {
       color: 'var(--epr-highlight-color)',
       backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
-      // @ts-ignore
       ':after': {
         backgroundPositionY: '-40px'
       }

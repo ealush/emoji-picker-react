@@ -88,7 +88,6 @@ const styles = stylesheet.create({
       border: '2px solid var(--epr-category-icon-active-color)',
       borderRadius: '50%'
     },
-    // @ts-ignore
     '&.epr-icn-suggested': {
       backgroundPositionX:
         'calc(var(--epr-category-navigation-button-size) * -8)'

@@ -4,7 +4,10 @@ import * as React from 'react';
 
 import { ClassNames } from '../../../DomUtils/classNames';
 import { stylesheet } from '../../../Stylesheet/stylesheet';
-import {useOnSkinToneChangeConfig, useSkinTonesDisabledConfig} from '../../../config/useConfig';
+import {
+  useOnSkinToneChangeConfig,
+  useSkinTonesDisabledConfig
+} from '../../../config/useConfig';
 import skinToneVariations from '../../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../../hooks/useFocus';
@@ -133,10 +136,9 @@ const styles = stylesheet.create({
     boxShadow: '0px 0 7px var(--epr-picker-border-color)'
   },
   open: {
-    // @ts-ignore
+    // @ts-ignore - backdropFilter is not recognized.
     backdropFilter: 'blur(5px)',
     background: 'var(--epr-skin-tone-picker-menu-color)',
-    // @ts-ignore
     '.epr-active:after': {
       content: '',
       position: 'absolute',
@@ -153,7 +155,6 @@ const styles = stylesheet.create({
     position: 'relative',
     width: 'var(--epr-skin-tone-size)',
     height: 'var(--epr-skin-tone-size)',
-    // @ts-ignore
     '> button': {
       width: 'var(--epr-skin-tone-size)',
       display: 'block',

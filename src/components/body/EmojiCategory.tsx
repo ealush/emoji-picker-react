@@ -64,7 +64,7 @@ const styles = stylesheet.create({
   label: {
     '.': ClassNames.label,
     alignItems: 'center',
-    // @ts-expect-error - backdropFilter is a valid CSS property
+    // @ts-ignore - backdropFilter is not recognized.
     backdropFilter: 'blur(3px)',
     backgroundColor: 'var(--epr-category-label-bg-color)',
     color: 'var(--epr-category-label-text-color)',
