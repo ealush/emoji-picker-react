@@ -48,6 +48,10 @@ export function mergeConfig(
     suggestionMode: config.suggestedEmojisMode
   });
 
+  config.hiddenEmojis.forEach(emoji => {
+    config.unicodeToHide.add(emoji);
+  });
+
   setCustomEmojis(config.customEmojis ?? []);
 
   const skinTonePickerLocation = config.searchDisabled
@@ -90,7 +94,8 @@ export function basePickerConfig(): PickerConfigInternal {
     reactionsDefaultOpen: false,
     reactions: DEFAULT_REACTIONS,
     open: true,
-    allowExpandReactions: true
+    allowExpandReactions: true,
+    hiddenEmojis: []
   };
 }
 
@@ -120,6 +125,7 @@ export type PickerConfigInternal = {
   reactions: string[];
   open: boolean;
   allowExpandReactions: boolean;
+  hiddenEmojis: string[];
 };
 
 export type PreviewConfig = {

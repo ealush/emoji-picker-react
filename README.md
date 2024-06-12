@@ -85,6 +85,7 @@ The following props are accepted by them picker:
 | getEmojiUrl            | `Function`                                             | -          | Allows to customize the emoji url and provide your own image host.                                                                                         |
 | categories             | `Array`                                                | -          | Allows full config over ordering, naming and display of categories.                                                                                        |
 | customEmojis           | `Array<{names: string[], imgUrl: string, id: string}>` | -          | Allows adding custom emojis to the picker.                                                                                                                 |
+| hiddenEmojis           | `string[]`                                             | -          | Controls the emojis that are hidden from the picker.                                                                                                       |
 | reactionsDefaultOpen   | `boolean`                                              | `false`    | Controls whether the reactions picker is on the initial mount instead of the main picker component.                                                        |
 | reactions              | string[]                                               | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                                         |
 | onReactionClick        | `Function`                                             | -          | Callback function that is called when a reaction is clicked. The function receives the emoji object as a parameter. If not passed, onEmojiClicked is used. |
@@ -212,13 +213,23 @@ import { SkinTones } from 'emoji-picker-react';
 
 - `getEmojiUrl`: `(unified: string, emojiStyle: EmojiStyle) => string` - Allows to customize the emoji url and provide your own image host. The function receives the emoji unified and the emoji style as parameters. The function should return the url of the emoji image.
 
-## Custom Emojis
+## customEmojis - Custom Emojis
 
 The customEmojis prop allows you to add custom emojis to the picker. The custom emojis prop takes an array of custom emojis, each custom emoji has three keys:
 
-id: Unique identifier for each of the custom emojis
-names: an array of string identifiers, will be used both for display, search and indexing.
-imgUrl: URL for the emoji image
+- _id_: Unique identifier for each of the custom emojis
+- _names_: an array of string identifiers, will be used both for display, search and indexing.
+- _imgUrl_: URL for the emoji image
+
+## hiddenEmojis - Excluding certain emojis
+
+The hiddenEmojis prop allows you to hide emojis from the picker. The hidden emojis prop takes an array of emoji unicode names to hide.
+
+For example:
+
+```js
+['1f600', '1f601', '1f602']; // will remove: 😀, 😁, 😂
+```
 
 ### Usage Example
 

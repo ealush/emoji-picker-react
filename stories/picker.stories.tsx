@@ -63,6 +63,10 @@ export const SearchDisabled = (args: Props) => (
   <Template {...args} searchDisabled />
 );
 
+export const HiddenEmojis = (args: Props) => (
+  <Template {...args} hiddenEmojis={['1f604', '1f60d', '1f607']} />
+);
+
 export const SearchDisabledDark = (args: Props) => (
   <TemplateDark {...args} searchDisabled theme={Theme.DARK} />
 );
