@@ -63,10 +63,7 @@ export function Search() {
         aria-controls="epr-search-id"
         placeholder={placeholder}
         onChange={event => {
-          setInc(inc + 1);
-          setTimeout(() => {
-            onChange(event?.target?.value ?? value);
-          });
+          onChange(event?.target?.value ?? value);
         }}
         ref={SearchInputRef}
       />
