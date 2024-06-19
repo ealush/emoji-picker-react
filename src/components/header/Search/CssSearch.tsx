@@ -1,45 +1,32 @@
 import * as React from 'react';
 
-import { ClassNames, asSelectors } from '../../../DomUtils/classNames';
-import { getNormalizedSearchTerm } from '../../../hooks/useFilter';
-
-const SCOPE = `${asSelectors(ClassNames.emojiPicker)} ${asSelectors(
-  ClassNames.emojiList
-)}`;
-
-const EMOJI_BUTTON = ['button', asSelectors(ClassNames.emoji)].join('');
-const CATEGORY = asSelectors(ClassNames.category);
-
 export function CssSearch({ value }: { value: undefined | string }) {
   if (!value) {
     return null;
   }
 
-  const q = genQuery(value);
-
   return (
     <style>{`
-    ${SCOPE} ${EMOJI_BUTTON} {
+    .epr-emoji-list {
+      counter-reset: emojis 0;
+    }
+
+    .epr-emoji-list::after {
+      content: counter(emojis) ' emojis found';
+    }
+
+    .epr-emoji-list button.epr-emoji {
       display: none;
     }
 
-
-    ${SCOPE} ${q} {
+    .epr-emoji-list button.epr-emoji[aria-label*="${value}"] {
       display: flex;
+      counter-increment: emojis 1;
     }
 
-    ${SCOPE} ${CATEGORY}:not(:has(${q})) {
+    .epr-emoji-list .epr-emoji-category:not(:has(button.epr-emoji[aria-label*="${value}"])) {
       display: none;
     }
   `}</style>
   );
-}
-
-function genQuery(value: string): string {
-  return [
-    EMOJI_BUTTON,
-    '[data-full-name*="',
-    getNormalizedSearchTerm(value),
-    '"]'
-  ].join('');
 }
