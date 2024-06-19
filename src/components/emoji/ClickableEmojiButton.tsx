@@ -46,18 +46,11 @@ export function ClickableEmojiButton({
         className
       )}
       data-unified={unified}
-      aria-label={getAriaLabel(emojiNames)}
-      data-full-name={emojiNames}
+      aria-label={emojiNames.join(' ')}
     >
       {children}
     </Button>
   );
-}
-
-function getAriaLabel(emojiNames: string[]) {
-  return emojiNames[0].match('flag-')
-    ? emojiNames[1] ?? emojiNames[0]
-    : emojiNames[0];
 }
 
 const styles = stylesheet.create({

@@ -1,6 +1,5 @@
 import { cx } from 'flairup';
 import * as React from 'react';
-import { useState } from 'react';
 
 import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
 import {
@@ -40,15 +39,15 @@ export function SearchContainer() {
 }
 
 export function Search() {
-  const [inc, setInc] = useState(0);
+  const [value, setValue] = React.useState<string>();
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { statusSearchResults, searchTerm, onChange } = useFilter();
+  const { statusSearchResults, searchTerm } = useFilter();
 
-  const input = SearchInputRef?.current;
-  const value = input?.value;
+  // const input = SearchInputRef?.current;
+  // const value = input?.value;
 
   return (
     <Relative className={cx(styles.searchContainer)}>
@@ -63,7 +62,7 @@ export function Search() {
         aria-controls="epr-search-id"
         placeholder={placeholder}
         onChange={event => {
-          onChange(event?.target?.value ?? value);
+          setValue(event?.target?.value ?? value);
         }}
         ref={SearchInputRef}
       />
