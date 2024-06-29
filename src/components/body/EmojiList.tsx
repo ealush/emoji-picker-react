@@ -41,12 +41,13 @@ export function EmojiList() {
         }
 
         return (
-          <RenderCategory
-            key={category}
-            category={category}
-            categoryConfig={categoryConfig}
-            renderdCategoriesCountRef={renderdCategoriesCountRef}
-          />
+          <React.Suspense key={category}>
+            <RenderCategory
+              category={category}
+              categoryConfig={categoryConfig}
+              renderdCategoriesCountRef={renderdCategoriesCountRef}
+            />
+          </React.Suspense>
         );
       })}
     </ul>
