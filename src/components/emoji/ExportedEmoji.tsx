@@ -2,8 +2,17 @@ import * as React from 'react';
 
 import { EmojiStyle } from '../../types/exposedTypes';
 
-import { GetEmojiUrl } from './BaseEmojiProps';
+import { BaseEmojiProps } from './BaseEmojiProps';
 import { ViewOnlyEmoji } from './ViewOnlyEmoji';
+
+export type EmojiComponentType = {
+  unified: BaseEmojiProps['unified'];
+  emojiStyle?: BaseEmojiProps['emojiStyle'];
+  size?: BaseEmojiProps['size'];
+  lazyLoad?: BaseEmojiProps['lazyLoad'];
+  getEmojiUrl?: BaseEmojiProps['getEmojiUrl'];
+  emojiUrl?: string;
+}
 
 export function ExportedEmoji({
   unified,
@@ -12,14 +21,7 @@ export function ExportedEmoji({
   lazyLoad = false,
   getEmojiUrl,
   emojiUrl
-}: {
-  unified: string;
-  emojiStyle?: EmojiStyle;
-  size?: number;
-  lazyLoad?: boolean;
-  getEmojiUrl?: GetEmojiUrl;
-  emojiUrl?: string;
-}) {
+}: EmojiComponentType) {
   if (!unified && !emojiUrl && !getEmojiUrl) {
     return null;
   }
