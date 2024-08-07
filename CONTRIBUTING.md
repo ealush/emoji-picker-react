@@ -133,7 +133,7 @@ Before you get started, make sure you have the following requirements in place:
 3. Install all the necessary dependencies using:
 
    ```bash
-   npm install
+   yarn install
    ```
 
 #### Write & Test Changes to the Code
@@ -141,7 +141,7 @@ Before you get started, make sure you have the following requirements in place:
 1. In the repository root, run the following command:
 
    ```bash
-   npm run storybook
+   yarn run storybook
    ```
 
 2. If all the installation process is succeed, you should be able to see the Storybook webpage on [localhost:6006](http://localhost:6006/).
