@@ -15,7 +15,7 @@ export {
   SkinTones,
   Theme,
   Categories,
-  EmojiClickData,
+  type EmojiClickData,
   SuggestionMode,
   SkinTonePickerLocation
 } from './types/exposedTypes';
