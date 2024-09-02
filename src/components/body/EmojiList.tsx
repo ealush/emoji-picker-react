@@ -5,6 +5,7 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   Categories,
+  CategoriesConfig,
   CategoryConfig,
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
@@ -15,20 +16,20 @@ import {
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig,
 } from '../../config/useConfig';
+import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
 import Virtualise from '../Layout/Virtualise';
 import {
-  useActiveSkinToneState,
-  useIsPastInitialLoad
+  useActiveSkinToneState
 } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
-const getCategroriesHeight = (categoryConfig: CategoryConfig, width?: number) => {
+const getCategoriesHeight = (totalEmojis: number, width?: number) => {
   const mainContent = document.querySelector('.epr-main')
   if (!width || !mainContent) return 0;
 
@@ -39,11 +40,10 @@ const getCategroriesHeight = (categoryConfig: CategoryConfig, width?: number) =>
   const totalEmojiWidth = emojiSize.left + emojiPadding.left + emojiPadding.right;
   const totalEmojiHeight = emojiSize.top + emojiPadding.top + emojiPadding.bottom;
 
-  const totalEmojis = emojisByCategory(categoryConfig.category);
-  if (!totalEmojis.length) return 0;
+  if (!totalEmojis) return 0;
 
   const noOfEmojisInARow = Math.floor((width - categoryPadding.left - categoryPadding.right) / totalEmojiWidth);
-  const noOfRows = Math.ceil(totalEmojis.length / noOfEmojisInARow);
+  const noOfRows = Math.ceil(totalEmojis / noOfEmojisInARow);
   return (noOfRows * totalEmojiHeight) + categoryLabelHeight.left;
 };
 
@@ -110,22 +110,49 @@ function parsePadding(paddingString: string, fontSize: number = 16, rootFontSize
 
 export function EmojiList() {
   const categories = useCategoriesConfig();
+  const isEmojiHidden = useIsEmojiHidden();
+  const isEmojiDisallowed = useIsEmojiDisallowed();
   const bodyWidth = document.querySelector('.epr-body')?.clientWidth;
-  const itemHeights = useMemo(() => categories.map((category) => getCategroriesHeight(category,bodyWidth)), [bodyWidth, categories]);
+
+
+  const categoriesMap = useMemo(() => {
+    return categories.reduce((acc, category) => {
+      const totalEmojis: DataEmoji[] = emojisByCategory(category.category).reduce((emojiAcc, emoji) => {
+        const { failedToLoad, filteredOut } = isEmojiHidden(emoji);
+        const isDisallowed = isEmojiDisallowed(emoji);
+
+        if (!isDisallowed && !failedToLoad && !filteredOut) {
+          emojiAcc.push(emoji);
+        }
+
+        return emojiAcc;
+      }, [] as DataEmoji[]);
+
+      if (totalEmojis.length > 0) {
+        acc.push({
+          height: getCategoriesHeight(totalEmojis.length, bodyWidth),
+          emojis: totalEmojis,
+          category
+        });
+      }
+
+      return acc;
+    }, [] as {height: number; emojis: DataEmoji[]; category: CategoryConfig }[]);
+  }, [bodyWidth, categories, isEmojiDisallowed, isEmojiHidden]);
+
 
   if (!bodyWidth) return null;
 
   return (
-    <Virtualise className={cx(styles.emojiList)} itemHeights={itemHeights.filter(Boolean)}>
-      {categories.map((categoryConfig, index) => {
-        if (!itemHeights[index]) return null;
-        const category = categoryFromCategoryConfig(categoryConfig);
+    <Virtualise className={cx(styles.emojiList)} itemHeights={categoriesMap.map((category) => category.height)}>
+      {categoriesMap.map((categoryConfig) => {
+        const category = categoryFromCategoryConfig(categoryConfig.category);
 
         return category === Categories.SUGGESTED ? (
-          <Suggested key={category} categoryConfig={categoryConfig} />
+          <Suggested key={category} categoryConfig={categoryConfig.category} />
         ) : (
           <React.Suspense key={category}>
-            <RenderCategory category={category} categoryConfig={categoryConfig} />
+            <RenderCategory emojis={categoryConfig.emojis} categoryConfig={categoryConfig.category} />
           </React.Suspense>
         );
       }).filter(Boolean)}
@@ -134,67 +161,36 @@ export function EmojiList() {
 }
 
 function RenderCategory({
-  category,
   categoryConfig,
+  emojis,
 }: {
-  category: Categories;
   categoryConfig: CategoryConfig;
+  emojis: DataEmoji[]
 }) {
-  const isEmojiHidden = useIsEmojiHidden();
   const lazyLoadEmojis = useLazyLoadEmojisConfig();
   const emojiStyle = useEmojiStyleConfig();
-  const isPastInitialLoad = useIsPastInitialLoad();
   const [activeSkinTone] = useActiveSkinToneState();
-  const isEmojiDisallowed = useIsEmojiDisallowed();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const showVariations = !useSkinTonesDisabledConfig();
 
-  // Small trick to defer the rendering of all emoji categories until the first category is visible
-  // This way the user gets to actually see something and not wait for the whole picker to render.
-  const emojisToPush =
-    !isPastInitialLoad
-      ? []
-      : emojisByCategory(category);
-
-  let hiddenCounter = 0;
-
-  const emojis = emojisToPush.map(emoji => {
-    const unified = emojiUnified(emoji, activeSkinTone);
-    const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
-
-    const isDisallowed = isEmojiDisallowed(emoji);
-
-    if (hidden || isDisallowed) {
-      hiddenCounter++;
-    }
-
-    if (isDisallowed) {
-      return null;
-    }
-
-    return (
-      <ClickableEmoji
-        showVariations={showVariations}
-        key={unified}
-        emoji={emoji}
-        unified={unified}
-        hidden={failedToLoad}
-        hiddenOnSearch={filteredOut}
-        emojiStyle={emojiStyle}
-        lazyLoad={lazyLoadEmojis}
-        getEmojiUrl={getEmojiUrl}
-      />
-    );
-  });
-
   return (
-    <EmojiCategory
-      categoryConfig={categoryConfig}
-      // Indicates that there are no visible emojis
-      // Hence, the category should be hidden
-      hidden={hiddenCounter === emojis.length}
-    >
-      {emojis}
+    <EmojiCategory categoryConfig={categoryConfig}>
+      {emojis.map(emoji => {
+        const unified = emojiUnified(emoji, activeSkinTone);
+        return (
+          <ClickableEmoji
+            showVariations={showVariations}
+            key={unified}
+            emoji={emoji}
+            unified={unified}
+            hidden={false}
+            hiddenOnSearch={false}
+            emojiStyle={emojiStyle}
+            lazyLoad={lazyLoadEmojis}
+            getEmojiUrl={getEmojiUrl}
+          />
+        );
+      })}
     </EmojiCategory>
   );
 }

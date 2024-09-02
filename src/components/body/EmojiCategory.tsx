@@ -15,7 +15,7 @@ import {
 
 type Props = Readonly<{
   categoryConfig: CategoryConfig;
-  children?: React.ReactNode;
+  children?: React.ReactNode[];
   hidden?: boolean;
   hiddenOnSearch?: boolean;
 }>;
@@ -26,6 +26,9 @@ export function EmojiCategory({
   hidden,
   hiddenOnSearch
 }: Props) {
+
+  if(!children || !children.length) return null;
+
   const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
 
