@@ -108,6 +108,8 @@ function parsePadding(paddingString: string, fontSize: number = 16, rootFontSize
   return { top, right, bottom, left };
 }
 
+const DEFAULT_CATEGORIES_MAP: {height: number; emojis: DataEmoji[]; category: CategoryConfig }[] = [];
+
 export function EmojiList() {
   const categories = useCategoriesConfig();
   const isEmojiHidden = useIsEmojiHidden();
@@ -137,7 +139,7 @@ export function EmojiList() {
       }
 
       return acc;
-    }, [] as {height: number; emojis: DataEmoji[]; category: CategoryConfig }[]);
+    }, DEFAULT_CATEGORIES_MAP);
   }, [bodyWidth, categories, isEmojiDisallowed, isEmojiHidden]);
 
 
