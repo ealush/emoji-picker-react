@@ -6,7 +6,8 @@ import {
   MOUSE_EVENT_SOURCE,
   useEmojiStyleConfig,
   useReactionsConfig,
-  useAllowExpandReactions
+  useAllowExpandReactions,
+  useGetEmojiUrlConfig
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -24,6 +25,7 @@ export function Reactions() {
   useMouseDownHandlers(ReactionsRef, MOUSE_EVENT_SOURCE.REACTIONS);
   const emojiStyle = useEmojiStyleConfig();
   const allowExpandReactions = useAllowExpandReactions();
+  const getEmojiUrl = useGetEmojiUrlConfig();
 
   if (!reactionsOpen) {
     return null;
@@ -43,6 +45,7 @@ export function Reactions() {
             showVariations={false}
             className={cx(styles.emojiButton)}
             noBackground
+            getEmojiUrl={getEmojiUrl}
           />
         </li>
       ))}
