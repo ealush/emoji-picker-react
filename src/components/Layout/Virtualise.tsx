@@ -11,7 +11,6 @@ const Virtualise = React.memo(({ children, itemHeights, overscan = 0, className 
 }) => {
     const [containerMeasure, { height: containerHeight }] = useMeasure<HTMLDivElement>();
     const [scrollOffset, setScrollOffset] = useState(0);
-
     const totalHeight = useMemo(() => sum(itemHeights), [itemHeights]);
 
     const calculateVisibleItems = useCallback(() => {
@@ -33,10 +32,15 @@ const Virtualise = React.memo(({ children, itemHeights, overscan = 0, className 
         // Find the last item in the viewport
         for (let i = start; i < itemHeights.length; i++) {
             currentHeight += itemHeights[i];
-            if (currentHeight > scrollOffset + containerHeight) {
+            if (currentHeight > scrollOffset + containerHeight || i === itemHeights.length - 1) {
                 end = Math.min(i + overscan + 1, itemHeights.length);
                 break;
             }
+        }
+
+        // Adjust end to include the last element if we're near the bottom
+        if (scrollOffset + containerHeight >= totalHeight) {
+            end = itemHeights.length;
         }
 
         return itemHeights.slice(start, end).map((_, index) => {
@@ -49,7 +53,7 @@ const Virtualise = React.memo(({ children, itemHeights, overscan = 0, className 
                 element: children[itemIndex],
             };
         });
-    }, [scrollOffset, containerHeight, itemHeights, overscan, children]);
+    }, [scrollOffset, containerHeight, itemHeights, overscan, children, totalHeight]);
 
     const visibleItems = useMemo(() => calculateVisibleItems(), [calculateVisibleItems]);
 
