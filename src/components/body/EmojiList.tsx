@@ -5,7 +5,6 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   Categories,
-  CategoriesConfig,
   CategoryConfig,
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
