@@ -1,5 +1,5 @@
 import { cx } from 'flairup';
-import * as React from 'react';
+import React, { useMemo } from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
@@ -13,11 +13,12 @@ import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
   useLazyLoadEmojisConfig,
-  useSkinTonesDisabledConfig
+  useSkinTonesDisabledConfig,
 } from '../../config/useConfig';
 import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
+import Virtualise from '../Layout/Virtualise';
 import {
   useActiveSkinToneState,
   useIsPastInitialLoad
@@ -27,41 +28,50 @@ import { ClickableEmoji } from '../emoji/Emoji';
 import { EmojiCategory } from './EmojiCategory';
 import { Suggested } from './Suggested';
 
+const getCategroriesHeight = (categoryConfig: CategoryConfig) => {
+  const eprBody = document.querySelector('.epr-body');
+  if (!eprBody) return 0;
+
+  const totalEmojis = emojisByCategory(categoryConfig.category);
+  if (!totalEmojis.length) return 0;
+
+  const noOfEmojisInARow = Math.floor(eprBody.clientWidth / 40);
+  const noOfRows = Math.ceil(totalEmojis.length / noOfEmojisInARow);
+  return (noOfRows + 1) * 40;
+};
+
 export function EmojiList() {
   const categories = useCategoriesConfig();
-  const renderdCategoriesCountRef = React.useRef(0);
+  const itemHeights = useMemo(() => categories.map(getCategroriesHeight), [categories]);
+
+  const bodyWidth = document.querySelector('.epr-body')?.clientWidth;
+
+  if (!bodyWidth) return null;
 
   return (
-    <ul className={cx(styles.emojiList)}>
-      {categories.map(categoryConfig => {
+    <Virtualise className={cx(styles.emojiList)} itemHeights={itemHeights.filter(Boolean)}>
+      {categories.map((categoryConfig, index) => {
+        if (!itemHeights[index]) return null;
         const category = categoryFromCategoryConfig(categoryConfig);
 
-        if (category === Categories.SUGGESTED) {
-          return <Suggested key={category} categoryConfig={categoryConfig} />;
-        }
-
-        return (
+        return category === Categories.SUGGESTED ? (
+          <Suggested key={category} categoryConfig={categoryConfig} />
+        ) : (
           <React.Suspense key={category}>
-            <RenderCategory
-              category={category}
-              categoryConfig={categoryConfig}
-              renderdCategoriesCountRef={renderdCategoriesCountRef}
-            />
+            <RenderCategory category={category} categoryConfig={categoryConfig} />
           </React.Suspense>
         );
-      })}
-    </ul>
+      }).filter(Boolean)}
+    </Virtualise>
   );
 }
 
 function RenderCategory({
   category,
   categoryConfig,
-  renderdCategoriesCountRef
 }: {
   category: Categories;
   categoryConfig: CategoryConfig;
-  renderdCategoriesCountRef: React.MutableRefObject<number>;
 }) {
   const isEmojiHidden = useIsEmojiHidden();
   const lazyLoadEmojis = useLazyLoadEmojisConfig();
@@ -75,13 +85,9 @@ function RenderCategory({
   // Small trick to defer the rendering of all emoji categories until the first category is visible
   // This way the user gets to actually see something and not wait for the whole picker to render.
   const emojisToPush =
-    !isPastInitialLoad && renderdCategoriesCountRef.current > 0
+    !isPastInitialLoad
       ? []
       : emojisByCategory(category);
-
-  if (emojisToPush.length > 0) {
-    renderdCategoriesCountRef.current++;
-  }
 
   let hiddenCounter = 0;
 
