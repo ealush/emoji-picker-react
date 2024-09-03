@@ -117,7 +117,7 @@ function useApplySearch() {
   };
 }
 
-function filterEmojiObjectByKeyword(
+export function filterEmojiObjectByKeyword(
   emojis: FilterDict,
   keyword: string
 ): FilterDict {
@@ -145,7 +145,7 @@ export function useIsEmojiFiltered(): (unified: string) => boolean {
   return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
 }
 
-function isEmojiFilteredBySearchTerm(
+export function isEmojiFilteredBySearchTerm(
   unified: string,
   filter: FilterState,
   searchTerm: string
@@ -159,7 +159,7 @@ function isEmojiFilteredBySearchTerm(
 
 export type FilterDict = Record<string, DataEmoji>;
 
-function findLongestMatch(
+export function findLongestMatch(
   keyword: string,
   dict: Record<string, FilterDict> | null
 ): FilterDict | null {
