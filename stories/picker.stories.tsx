@@ -289,6 +289,24 @@ export const HideEmojisByUnicode = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
 
+export const SelectedEmojis = () => {
+  const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
+
+  return (
+    <EmojiPicker
+      selectedEmojis={selectedEmojis}
+      reactionsDefaultOpen
+      onEmojiClick={({ unified }) =>
+        setSelectedEmojis(
+          selectedEmojis.includes(unified)
+            ? selectedEmojis.filter((emoji) => emoji !== unified)
+            : [...selectedEmojis, unified],
+        )
+      }
+    />
+  );
+};
+
 function TemplateDark(args) {
   const [open, setOpen] = useState(true);
   const [hasBg, setHasBg] = useState(false);

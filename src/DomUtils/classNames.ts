@@ -4,6 +4,7 @@ export enum ClassNames {
   hidden = 'epr-hidden',
   visible = 'epr-visible',
   active = 'epr-active',
+  selected = 'epr-selected',
   emoji = 'epr-emoji',
   category = 'epr-emoji-category',
   label = 'epr-emoji-category-label',

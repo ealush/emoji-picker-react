@@ -13,7 +13,8 @@ import {
 import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
-  useGetEmojiUrlConfig
+  useGetEmojiUrlConfig,
+  useGetIsSelectedEmojis
 } from '../../config/useConfig';
 import {
   emojiHasVariations,
@@ -49,6 +50,7 @@ export function EmojiVariationPicker() {
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const getPointerStyle = usePointerStyle(VariationPickerRef);
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const getIsSelectedEmojis = useGetIsSelectedEmojis();
 
   const button = buttonFromTarget(AnchoredEmojiRef.current);
 
@@ -98,6 +100,7 @@ export function EmojiVariationPicker() {
                 emojiStyle={emojiStyle}
                 showVariations={false}
                 getEmojiUrl={getEmojiUrl}
+                selected={getIsSelectedEmojis(unified)}
               />
             ))
         : null}

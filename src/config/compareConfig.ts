@@ -23,6 +23,7 @@ export function compareConfig(prev: PickerConfig, next: PickerConfig) {
     prev.style === next.style &&
     prev.searchDisabled === next.searchDisabled &&
     prev.skinTonePickerLocation === next.skinTonePickerLocation &&
+    prev.selectedEmojis === next.selectedEmojis &&
     prevCustomEmojis.length === nextCustomEmojis.length
   );
 }
