@@ -12,6 +12,7 @@ import {
   useCategoriesConfig,
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
+  useGetIsSelectedEmojis,
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig
 } from '../../config/useConfig';
@@ -71,6 +72,7 @@ function RenderCategory({
   const isEmojiDisallowed = useIsEmojiDisallowed();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const showVariations = !useSkinTonesDisabledConfig();
+  const getIsSelectedEmojis = useGetIsSelectedEmojis();
 
   // Small trick to defer the rendering of all emoji categories until the first category is visible
   // This way the user gets to actually see something and not wait for the whole picker to render.
@@ -110,6 +112,7 @@ function RenderCategory({
         emojiStyle={emojiStyle}
         lazyLoad={lazyLoadEmojis}
         getEmojiUrl={getEmojiUrl}
+        selected={getIsSelectedEmojis(unified)}
       />
     );
   });

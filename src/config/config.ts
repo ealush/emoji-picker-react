@@ -95,7 +95,8 @@ export function basePickerConfig(): PickerConfigInternal {
     reactions: DEFAULT_REACTIONS,
     open: true,
     allowExpandReactions: true,
-    hiddenEmojis: []
+    hiddenEmojis: [],
+    selectedEmojis: []
   };
 }
 
@@ -126,6 +127,7 @@ export type PickerConfigInternal = {
   open: boolean;
   allowExpandReactions: boolean;
   hiddenEmojis: string[];
+  selectedEmojis: string[];
 };
 
 export type PreviewConfig = {

@@ -7,7 +7,8 @@ import {
   useEmojiStyleConfig,
   useReactionsConfig,
   useAllowExpandReactions,
-  useGetEmojiUrlConfig
+  useGetEmojiUrlConfig,
+  useGetIsSelectedEmojis,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -26,6 +27,7 @@ export function Reactions() {
   const emojiStyle = useEmojiStyleConfig();
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const getIsSelectedEmojis = useGetIsSelectedEmojis();
 
   if (!reactionsOpen) {
     return null;
@@ -46,6 +48,7 @@ export function Reactions() {
             className={cx(styles.emojiButton)}
             noBackground
             getEmojiUrl={getEmojiUrl}
+            selected={getIsSelectedEmojis(reaction)}
           />
         </li>
       ))}

@@ -13,11 +13,19 @@ const hidden = {
   overflow: 'hidden'
 };
 
+const selected = {
+  backgroundColor: 'var(--epr-emoji-select-color)'
+};
+
 export const commonStyles = stylesheet.create({
   hidden: {
     '.': ClassNames.hidden,
     ...hidden
-  }
+  },
+  selected: {
+    '.': ClassNames.selected,
+    ...selected
+  },
 });
 
 export const PickerStyleTag = React.memo(function PickerStyleTag() {
