@@ -7,6 +7,7 @@ import {
   MutableConfigContext,
   useDefineMutableConfig
 } from './config/mutableConfig';
+import { useEmojiSearch } from './hooks/useEmojiSearch';
 
 export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 
@@ -37,3 +38,5 @@ export default function EmojiPicker(props: PickerProps) {
     </ErrorBoundary>
   );
 }
+
+export { useEmojiSearch, EmojiPicker }

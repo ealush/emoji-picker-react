@@ -38,6 +38,23 @@ function App() {
 }
 ```
 
+### `useEmojiSearch`
+This will allow the user to search on top of the native emojis avaiable ( this will not return custom emojis )
+
+```jsx
+const SearchBox = () => {
+  const emojiSearch = useEmojiSearch({});
+  return  <div>
+            <h1>Search</h1>
+            <input onChange={event => {
+              const filteredEmojis = emojiSearch(event.target.value)
+              console.log(filteredEmojis);
+              }} 
+            />
+          </div>;
+}
+```
+
 ## Shout Outs
 
 |                                                                                                 Component Design 🎨                                                                                                 |

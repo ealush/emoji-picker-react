@@ -6,7 +6,8 @@ import EmojiPicker, {
   EmojiStyle,
   Props,
   SkinTones,
-  Theme
+  Theme,
+  useEmojiSearch
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 import {
@@ -441,3 +442,18 @@ const customEmojis = [
     id: 'vest'
   }
 ];
+
+const SearchBox = () => {
+  const emojiSearch = useEmojiSearch({});
+  return <div>
+            <h1>Search</h1>
+            <input onChange={event => {
+              const filteredEmojis = emojiSearch(event.target.value)
+              console.log(filteredEmojis);
+            }} />
+          </div>;
+}
+
+export const Search = () => (
+  <SearchBox />
+);
