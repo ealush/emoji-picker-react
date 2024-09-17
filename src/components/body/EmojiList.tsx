@@ -131,6 +131,16 @@ const styles = stylesheet.create({
     '.': ClassNames.emojiList,
     listStyle: 'none',
     margin: '0',
-    padding: '0'
+    padding: '0',
+    '&:before': {
+      padding: '1em',
+      fontSize: '.7em',
+      color: 'var(--epr-text-color)'
+    },
+    '&:after': {
+      padding: '1em',
+      fontSize: '.7em',
+      color: 'var(--epr-text-color)'
+    }
   }
 });

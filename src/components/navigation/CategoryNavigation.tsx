@@ -67,19 +67,5 @@ const styles = stylesheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 'var(--epr-header-padding)'
-  },
-  '.epr-search-active': {
-    nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none'
-    }
-  },
-  '.epr-main:has(input:not(:placeholder-shown))': {
-    nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none'
-    }
   }
 });
