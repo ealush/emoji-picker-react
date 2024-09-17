@@ -17,7 +17,6 @@ import { useSearchInputRef } from '../../context/ElementRefContext';
 import { SkinTonePicker } from '../SkinTonePicker/SkinTonePicker';
 
 import { BtnClearSearch } from './BtnClearSearch';
-import { CssSearch } from './CssSearch';
 import { IcnSearch } from './IcnSearch';
 import SVGTimes from './svg/times.svg';
 
@@ -40,19 +39,17 @@ export function SearchContainer() {
 }
 
 export function Search() {
-  const [inc, setInc] = useState(0);
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { statusSearchResults, searchTerm, onChange } = useFilter();
+  const { onChange } = useFilter();
 
   const input = SearchInputRef?.current;
   const value = input?.value;
 
   return (
     <Relative className={cx(styles.searchContainer)}>
-      <CssSearch value={value} />
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
@@ -63,24 +60,10 @@ export function Search() {
         aria-controls="epr-search-id"
         placeholder={placeholder}
         onChange={event => {
-          setInc(inc + 1);
-          setTimeout(() => {
-            onChange(event?.target?.value ?? value);
-          });
+          onChange(event?.target?.value ?? value);
         }}
         ref={SearchInputRef}
       />
-      {searchTerm ? (
-        <div
-          role="status"
-          className={cx('epr-status-search-results', styles.visuallyHidden)}
-          aria-live="polite"
-          id="epr-search-id"
-          aria-atomic="true"
-        >
-          {statusSearchResults}
-        </div>
-      ) : null}
       <IcnSearch />
       <BtnClearSearch />
     </Relative>
