@@ -1,3 +1,5 @@
+import type * as EmojiPickerReact from './public';
+
 export type EmojiClickData = {
   activeSkinTone: SkinTones;
   unified: string;
@@ -5,7 +7,7 @@ export type EmojiClickData = {
   emoji: string;
   names: string[];
   imageUrl: string;
-  getImageUrl: (emojiStyle?: EmojiStyle) => string;
+  getImageUrl: (emojiStyle?: EmojiPickerReact.EmojiStyle) => string;
   isCustom: boolean;
 };
 
@@ -15,6 +17,7 @@ export enum SuggestionMode {
   FREQUENT = 'frequent'
 }
 
+/** @deprecated consider use plain string values or use `EmojiPickerReact.EmojiStyle` as type */
 export enum EmojiStyle {
   NATIVE = 'native',
   APPLE = 'apple',
@@ -23,6 +26,7 @@ export enum EmojiStyle {
   FACEBOOK = 'facebook'
 }
 
+/** @deprecated consider use plain string values or use `EmojiPickerReact.Theme` as type */
 export enum Theme {
   DARK = 'dark',
   LIGHT = 'light',
@@ -38,6 +42,7 @@ export enum SkinTones {
   DARK = '1f3ff'
 }
 
+/** @deprecated consider use plain string values or use `EmojiPickerReact.Category` as type */
 export enum Categories {
   SUGGESTED = 'suggested',
   CUSTOM = 'custom',

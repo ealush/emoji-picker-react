@@ -1,7 +1,7 @@
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUnified, emojiVariations } from '../dataUtils/emojiSelectors';
-import { EmojiStyle } from '../types/exposedTypes';
+import { EmojiStyle } from '../types/public';
 
 export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
@@ -12,7 +12,7 @@ export function preloadEmoji(
     return;
   }
 
-  if (emojiStyle === EmojiStyle.NATIVE) {
+  if (emojiStyle === 'native') {
     return;
   }
 
@@ -22,7 +22,7 @@ export function preloadEmoji(
     return;
   }
 
-  emojiVariations(emoji).forEach((variation) => {
+  emojiVariations(emoji).forEach(variation => {
     const emojiUrl = getEmojiUrl(variation, emojiStyle);
     preloadImage(emojiUrl);
   });

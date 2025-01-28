@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
-  Categories,
+  Category,
   CategoryConfig,
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
@@ -36,7 +36,7 @@ export function EmojiList() {
       {categories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
-        if (category === Categories.SUGGESTED) {
+        if (category === 'suggested') {
           return <Suggested key={category} categoryConfig={categoryConfig} />;
         }
 
@@ -59,7 +59,7 @@ function RenderCategory({
   categoryConfig,
   renderdCategoriesCountRef
 }: {
-  category: Categories;
+  category: Category;
   categoryConfig: CategoryConfig;
   renderdCategoriesCountRef: React.MutableRefObject<number>;
 }) {

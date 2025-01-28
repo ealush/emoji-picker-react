@@ -1,78 +1,72 @@
-import { Categories } from '../types/exposedTypes';
 import { SuggestionMode } from '../types/public';
 
-export { Categories };
+const CATEGORIES = [
+  'suggested',
+  'custom',
+  'smileys_people',
+  'animals_nature',
+  'food_drink',
+  'travel_places',
+  'activities',
+  'objects',
+  'symbols',
+  'flags'
+] as const;
 
-const categoriesOrdered: Categories[] = [
-  Categories.SUGGESTED,
-  Categories.CUSTOM,
-  Categories.SMILEYS_PEOPLE,
-  Categories.ANIMALS_NATURE,
-  Categories.FOOD_DRINK,
-  Categories.TRAVEL_PLACES,
-  Categories.ACTIVITIES,
-  Categories.OBJECTS,
-  Categories.SYMBOLS,
-  Categories.FLAGS
-];
+export type Category = typeof CATEGORIES[number];
 
 export const SuggestedRecent: CategoryConfig = {
   name: 'Recently Used',
-  category: Categories.SUGGESTED
+  category: 'suggested'
 };
 
-export type CustomCategoryConfig = {
-  category: Categories.CUSTOM;
-  name: string;
-};
-
-const configByCategory: Record<Categories, CategoryConfig> = {
-  [Categories.SUGGESTED]: {
-    category: Categories.SUGGESTED,
+const configByCategory: Record<Category, CategoryConfig> = {
+  suggested: {
+    category: 'suggested',
     name: 'Frequently Used'
   },
-  [Categories.CUSTOM]: {
-    category: Categories.CUSTOM,
+  custom: {
+    category: 'custom',
     name: 'Custom Emojis'
   },
-  [Categories.SMILEYS_PEOPLE]: {
-    category: Categories.SMILEYS_PEOPLE,
+  smileys_people: {
+    category: 'smileys_people',
     name: 'Smileys & People'
   },
-  [Categories.ANIMALS_NATURE]: {
-    category: Categories.ANIMALS_NATURE,
+  animals_nature: {
+    category: 'animals_nature',
     name: 'Animals & Nature'
   },
-  [Categories.FOOD_DRINK]: {
-    category: Categories.FOOD_DRINK,
+  food_drink: {
+    category: 'food_drink',
     name: 'Food & Drink'
   },
-  [Categories.TRAVEL_PLACES]: {
-    category: Categories.TRAVEL_PLACES,
+  travel_places: {
+    category: 'travel_places',
     name: 'Travel & Places'
   },
-  [Categories.ACTIVITIES]: {
-    category: Categories.ACTIVITIES,
+  activities: {
+    category: 'activities',
     name: 'Activities'
   },
-  [Categories.OBJECTS]: {
-    category: Categories.OBJECTS,
+  objects: {
+    category: 'objects',
     name: 'Objects'
   },
-  [Categories.SYMBOLS]: {
-    category: Categories.SYMBOLS,
+  symbols: {
+    category: 'symbols',
     name: 'Symbols'
   },
-  [Categories.FLAGS]: {
-    category: Categories.FLAGS,
+  flags: {
+    category: 'flags',
     name: 'Flags'
   }
 };
 
 export function baseCategoriesConfig(
-  modifiers?: Record<Categories, CategoryConfig>
+  modifiers?: Record<Category, CategoryConfig>
 ): CategoriesConfig {
-  return categoriesOrdered.map(category => {
+  return CATEGORIES.map(category => {
     return {
       ...configByCategory[category],
       ...(modifiers && modifiers[category] && modifiers[category])
@@ -91,20 +85,20 @@ export function categoryNameFromCategoryConfig(category: CategoryConfig) {
 export type CategoriesConfig = CategoryConfig[];
 
 export type CategoryConfig = {
-  category: Categories;
+  category: Category;
   name: string;
 };
 
-export type UserCategoryConfig = Array<Categories | CategoryConfig>;
+export type UserCategoryConfig = Array<Category | CategoryConfig>;
 
 export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],
   modifiers: CategoryConfigModifiers = {}
 ): CategoriesConfig {
-  const extra = {} as Record<Categories, CategoryConfig>;
+  const extra = {} as Record<Category, CategoryConfig>;
 
   if (modifiers.suggestionMode === 'recent') {
-    extra[Categories.SUGGESTED] = SuggestedRecent;
+    extra['suggested'] = SuggestedRecent;
   }
 
   const base = baseCategoriesConfig(extra);
@@ -125,7 +119,7 @@ export function mergeCategoriesConfig(
 }
 
 function getBaseConfigByCategory(
-  category: Categories,
+  category: Category,
   modifier: CategoryConfig = {} as CategoryConfig
 ) {
   return Object.assign(configByCategory[category], modifier);

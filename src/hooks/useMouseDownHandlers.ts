@@ -29,7 +29,8 @@ import {
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
 import { isCustomEmoji } from '../typeRefinements/typeRefinements';
-import { EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
+import { EmojiClickData, SkinTones } from '../types/exposedTypes';
+import { EmojiStyle } from '../types/public';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
@@ -192,10 +193,10 @@ function emojiClickOutput(
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? EmojiStyle.APPLE) {
+    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? 'apple') {
       return getEmojiUrl(unified, emojiStyle);
     },
-    imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),
+    imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? 'apple'),
     isCustom: false,
     names,
     unified,

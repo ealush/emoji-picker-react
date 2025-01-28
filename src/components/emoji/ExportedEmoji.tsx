@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import { EmojiStyle } from '../../types/exposedTypes';
+
+import { EmojiStyle } from '../../types/public';
 
 import { GetEmojiUrl } from './BaseEmojiProps';
 import { ViewOnlyEmoji } from './ViewOnlyEmoji';
@@ -8,7 +9,7 @@ import { ViewOnlyEmoji } from './ViewOnlyEmoji';
 export function ExportedEmoji({
   unified,
   size = 32,
-  emojiStyle = EmojiStyle.APPLE,
+  emojiStyle = 'apple',
   lazyLoad = false,
   getEmojiUrl,
   emojiUrl

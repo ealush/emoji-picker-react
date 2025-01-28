@@ -8,11 +8,9 @@ import {
 } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
-  EmojiStyle,
-  SkinTones,
-  Theme
+  SkinTones
 } from '../types/exposedTypes';
-import type { SkinTonePickerLocation, SuggestionMode } from '../types/public';
+import type { EmojiStyle, SkinTonePickerLocation, SuggestionMode, Theme } from '../types/public';
 
 import {
   CategoriesConfig,
@@ -72,7 +70,7 @@ export function basePickerConfig(): PickerConfigInternal {
     className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
-    emojiStyle: EmojiStyle.APPLE,
+    emojiStyle: 'apple',
     emojiVersion: null,
     getEmojiUrl: emojiUrlByUnified,
     height: 450,
@@ -87,7 +85,7 @@ export function basePickerConfig(): PickerConfigInternal {
     skinTonesDisabled: false,
     style: {},
     suggestedEmojisMode: 'frequent',
-    theme: Theme.LIGHT,
+    theme: 'light',
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,
     reactionsDefaultOpen: false,
