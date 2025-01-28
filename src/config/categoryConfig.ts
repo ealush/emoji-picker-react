@@ -74,14 +74,6 @@ export function baseCategoriesConfig(
   });
 }
 
-export function categoryFromCategoryConfig(category: CategoryConfig) {
-  return category.category;
-}
-
-export function categoryNameFromCategoryConfig(category: CategoryConfig) {
-  return category.name;
-}
-
 export type CategoriesConfig = CategoryConfig[];
 
 export type CategoryConfig = {

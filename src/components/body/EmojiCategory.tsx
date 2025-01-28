@@ -7,11 +7,7 @@ import {
   commonStyles,
   stylesheet
 } from '../../Stylesheet/stylesheet';
-import {
-  CategoryConfig,
-  categoryFromCategoryConfig,
-  categoryNameFromCategoryConfig
-} from '../../config/categoryConfig';
+import { CategoryConfig } from '../../config/categoryConfig';
 
 type Props = Readonly<{
   categoryConfig: CategoryConfig;
@@ -26,9 +22,7 @@ export function EmojiCategory({
   hidden,
   hiddenOnSearch
 }: Props) {
-  const category = categoryFromCategoryConfig(categoryConfig);
-  const categoryName = categoryNameFromCategoryConfig(categoryConfig);
-
+  const { category, name } = categoryConfig;
   return (
     <li
       className={cx(
@@ -37,9 +31,9 @@ export function EmojiCategory({
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch
       )}
       data-name={category}
-      aria-label={categoryName}
+      aria-label={name}
     >
-      <h2 className={cx(styles.label)}>{categoryName}</h2>
+      <h2 className={cx(styles.label)}>{name}</h2>
       <div className={cx(styles.categoryContent)}>{children}</div>
     </li>
   );

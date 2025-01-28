@@ -5,8 +5,7 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   Category,
-  CategoryConfig,
-  categoryFromCategoryConfig
+  CategoryConfig
 } from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
@@ -34,7 +33,7 @@ export function EmojiList() {
   return (
     <ul className={cx(styles.emojiList)}>
       {categories.map(categoryConfig => {
-        const category = categoryFromCategoryConfig(categoryConfig);
+        const category = categoryConfig.category
 
         if (category === 'suggested') {
           return <Suggested key={category} categoryConfig={categoryConfig} />;

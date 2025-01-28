@@ -7,10 +7,7 @@ import {
   darkMode,
   stylesheet
 } from '../../Stylesheet/stylesheet';
-import {
-  CategoryConfig,
-  categoryNameFromCategoryConfig
-} from '../../config/categoryConfig';
+import { CategoryConfig } from '../../config/categoryConfig';
 import { Button } from '../atoms/Button';
 
 import SVGNavigation from './svg/CategoryNav.svg';
@@ -42,7 +39,7 @@ export function CategoryButton({
         }
       )}
       onClick={onClick}
-      aria-label={categoryNameFromCategoryConfig(categoryConfig)}
+      aria-label={categoryConfig.name}
       aria-selected={isActiveCategory}
       role="tab"
       aria-controls="epr-category-nav-id"

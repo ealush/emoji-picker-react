@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
@@ -32,7 +31,7 @@ export function CategoryNavigation() {
       ref={CategoryNavigationRef}
     >
       {categoriesConfig.map(categoryConfig => {
-        const category = categoryFromCategoryConfig(categoryConfig);
+        const category = categoryConfig.category
 
         const isSkippedCustom = hideCustomCategory && category === 'custom'
         if (isSkippedCustom) {
