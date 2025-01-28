@@ -1,4 +1,5 @@
-import { Categories, SuggestionMode } from '../types/exposedTypes';
+import { Categories } from '../types/exposedTypes';
+import { SuggestionMode } from '../types/public';
 
 export { Categories };
 
@@ -102,7 +103,7 @@ export function mergeCategoriesConfig(
 ): CategoriesConfig {
   const extra = {} as Record<Categories, CategoryConfig>;
 
-  if (modifiers.suggestionMode === SuggestionMode.RECENT) {
+  if (modifiers.suggestionMode === 'recent') {
     extra[Categories.SUGGESTED] = SuggestedRecent;
   }
 

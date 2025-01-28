@@ -10,10 +10,9 @@ import {
   EmojiClickData,
   EmojiStyle,
   SkinTones,
-  SuggestionMode,
   Theme
 } from '../types/exposedTypes';
-import type { SkinTonePickerLocation } from '../types/public';
+import type { SkinTonePickerLocation, SuggestionMode } from '../types/public';
 
 import {
   CategoriesConfig,
@@ -87,7 +86,7 @@ export function basePickerConfig(): PickerConfigInternal {
     skinTonePickerLocation: 'SEARCH',
     skinTonesDisabled: false,
     style: {},
-    suggestedEmojisMode: SuggestionMode.FREQUENT,
+    suggestedEmojisMode: 'frequent',
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,

@@ -5,10 +5,9 @@ import {
   EmojiClickData,
   EmojiStyle,
   SkinTones,
-  SuggestionMode,
   Theme
 } from '../types/exposedTypes';
-import { SkinTonePickerLocation } from '../types/public';
+import { SkinTonePickerLocation, SuggestionMode } from '../types/public';
 
 import { CategoriesConfig } from './categoryConfig';
 import {

@@ -9,6 +9,7 @@ export type EmojiClickData = {
   isCustom: boolean;
 };
 
+/** @deprecated consider use plain string values or use `EmojiPickerReact.SuggestionMode` as type */
 export enum SuggestionMode {
   RECENT = 'recent',
   FREQUENT = 'frequent'
@@ -50,6 +51,7 @@ export enum Categories {
   FLAGS = 'flags'
 }
 
+/** @deprecated consider use plain string values or use `EmojiPickerReact.SkinTonePickerLocation` as type */
 export enum SkinTonePickerLocation {
   SEARCH = 'SEARCH',
   PREVIEW = 'PREVIEW'
