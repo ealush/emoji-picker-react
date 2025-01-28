@@ -4,11 +4,11 @@ import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
   EmojiStyle,
-  SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
   Theme
 } from '../types/exposedTypes';
+import { SkinTonePickerLocation } from '../types/public';
 
 import { CategoriesConfig } from './categoryConfig';
 import {

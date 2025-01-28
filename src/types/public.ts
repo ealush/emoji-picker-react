@@ -1,0 +1,1 @@
+export type SkinTonePickerLocation = 'SEARCH' | 'PREVIEW';

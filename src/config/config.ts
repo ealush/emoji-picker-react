@@ -9,11 +9,11 @@ import {
 import {
   EmojiClickData,
   EmojiStyle,
-  SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
   Theme
 } from '../types/exposedTypes';
+import type { SkinTonePickerLocation } from '../types/public';
 
 import {
   CategoriesConfig,
@@ -55,7 +55,7 @@ export function mergeConfig(
   setCustomEmojis(config.customEmojis ?? []);
 
   const skinTonePickerLocation = config.searchDisabled
-    ? SkinTonePickerLocation.PREVIEW
+    ? 'PREVIEW'
     : config.skinTonePickerLocation;
 
   return {
@@ -84,7 +84,7 @@ export function basePickerConfig(): PickerConfigInternal {
     searchDisabled: false,
     searchPlaceHolder: DEFAULT_SEARCH_PLACEHOLDER,
     searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
-    skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
+    skinTonePickerLocation: 'SEARCH',
     skinTonesDisabled: false,
     style: {},
     suggestedEmojisMode: SuggestionMode.FREQUENT,
