@@ -32,7 +32,6 @@ export function BtnSkinToneVariation({
         !isOpen && styles.closedTone,
         isActive && styles.active
       )}
-      tabIndex={isOpen ? 0 : -1}
       aria-pressed={isActive}
       aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]}`}
     ></Button>
@@ -51,8 +50,19 @@ const styles = stylesheet.create({
   },
   tone: {
     '.': 'epr-tone',
+    width: 'var(--epr-skin-tone-size)',
+    display: 'block',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    height: 'var(--epr-skin-tone-size)',
+    position: 'absolute',
+    right: '0',
+    transition: 'transform 0.3s ease-in-out, opacity 0.35s ease-in-out',
+    zIndex: '0',
+    border: '1px solid var(--epr-skin-tone-outer-border-color)',
+    boxShadow: 'inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)',
     ':hover': {
-      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color)'
+      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color), inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)'
     },
     ':focus': {
       boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'

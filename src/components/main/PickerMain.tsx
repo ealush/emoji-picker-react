@@ -96,7 +96,9 @@ const DarkTheme = {
   '--epr-category-icon-active-color':
     'var(--epr-dark-category-icon-active-color)',
   '--epr-skin-tone-picker-menu-color':
-    'var(--epr-dark-skin-tone-picker-menu-color)'
+    'var(--epr-dark-skin-tone-picker-menu-color)',
+  '--epr-skin-tone-outer-border-color': 'var(--epr-dark-skin-tone-outer-border-color)',
+  '--epr-skin-tone-inner-border-color': 'var(--epr-dark-skin-tone-inner-border-color)'
 };
 
 const styles = stylesheet.create({
@@ -120,8 +122,8 @@ const styles = stylesheet.create({
   baseVariables: {
     '--': {
       '--epr-highlight-color': '#007aeb',
-      '--epr-hover-bg-color': '#f1f8ff',
-      '--epr-hover-bg-color-reduced-opacity': '#f1f8ff80',
+      '--epr-hover-bg-color': '#e5f0fa',
+      '--epr-hover-bg-color-reduced-opacity': '#e5f0fa80',
       '--epr-focus-bg-color': '#e0f0ff',
       '--epr-text-color': '#858585',
       '--epr-search-input-bg-color': '#f6f6f6',
@@ -130,6 +132,8 @@ const styles = stylesheet.create({
       '--epr-reactions-bg-color': '#ffffff90',
       '--epr-category-icon-active-color': '#6aa8de',
       '--epr-skin-tone-picker-menu-color': '#ffffff95',
+      '--epr-skin-tone-outer-border-color': '#555555',
+      '--epr-skin-tone-inner-border-color': 'var(--epr-bg-color)',
 
       '--epr-horizontal-padding': '10px',
 
@@ -208,7 +212,9 @@ const styles = stylesheet.create({
       '--epr-dark-search-input-bg-color-active': 'var(--epr-dark)',
       '--epr-dark-emoji-variation-indicator-color': '#444',
       '--epr-dark-category-icon-active-color': '#3271b7',
-      '--epr-dark-skin-tone-picker-menu-color': '#22222295'
+      '--epr-dark-skin-tone-picker-menu-color': '#22222295',
+      '--epr-dark-skin-tone-outer-border-color': 'var(--epr-dark-picker-border-color)',
+      '--epr-dark-skin-tone-inner-border-color': '#00000000',
     }
   },
   autoThemeDark: {

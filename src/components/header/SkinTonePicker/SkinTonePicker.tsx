@@ -139,14 +139,7 @@ const styles = stylesheet.create({
     // @ts-ignore - backdropFilter is not recognized.
     backdropFilter: 'blur(5px)',
     background: 'var(--epr-skin-tone-picker-menu-color)',
-    '.epr-active:after': {
-      content: '',
-      position: 'absolute',
-      top: '-2px',
-      left: '-2px',
-      right: '-2px',
-      bottom: '-2px',
-      borderRadius: '5px',
+    '.epr-active': {
       border: '1px solid var(--epr-active-skin-tone-indicator-border-color)'
     }
   },
@@ -154,18 +147,6 @@ const styles = stylesheet.create({
     '.': 'epr-skin-tone-select',
     position: 'relative',
     width: 'var(--epr-skin-tone-size)',
-    height: 'var(--epr-skin-tone-size)',
-    '> button': {
-      width: 'var(--epr-skin-tone-size)',
-      display: 'block',
-      cursor: 'pointer',
-      borderRadius: '4px',
-      height: 'var(--epr-skin-tone-size)',
-      position: 'absolute',
-      right: '0',
-      transition: 'transform 0.3s ease-in-out, opacity 0.35s ease-in-out',
-      zIndex: '0',
-      boxShadow: '0 0 0 0px var(--epr-active-skin-hover-color)'
-    }
+    height: 'var(--epr-skin-tone-size)'
   }
 });
