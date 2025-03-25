@@ -56,6 +56,11 @@
   background-position: 54% 50%;
 }
 
+.emoji-picker-react .emoji-categories button.icn-flags {
+  background-image: url(./svg/flags.svg);
+  background-position: 54% 50%;
+}
+
 .emoji-picker-react .emoji-categories {
   padding: 0 15px;
   display: flex;
