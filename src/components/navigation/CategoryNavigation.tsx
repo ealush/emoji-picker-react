@@ -1,6 +1,5 @@
 import { cx } from 'flairup';
 import * as React from 'react';
-import { useState } from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import { categoryFromCategoryConfig } from '../../config/categoryConfig';
@@ -11,11 +10,12 @@ import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
+import { useActiveCategoryState } from '../context/PickerContext';
 
 import { CategoryButton } from './CategoryButton';
 
 export function CategoryNavigation() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useActiveCategoryState();
   const scrollCategoryIntoView = useScrollCategoryIntoView();
   useActiveCategoryScrollDetection(setActiveCategory);
   const isSearchMode = useIsSearchMode();

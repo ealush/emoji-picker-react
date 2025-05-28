@@ -164,7 +164,7 @@ function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
   return emojiFromElement(target);
 }
 
-function emojiClickOutput(
+export function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
   activeEmojiStyle: EmojiStyle,

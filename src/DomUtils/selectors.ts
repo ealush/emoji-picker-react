@@ -1,3 +1,4 @@
+import { VIRTUALIZE_CLASS_NAMES } from '../components/Layout/Virtualise';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   emojiByUnified,
@@ -267,7 +268,37 @@ export function firstVisibleEmoji(parent: NullableElement) {
   return firstVisibleElementInContainer(parent, allEmojis, 0.1);
 }
 
+
+const getNameBasedPrevCategory = (element: HTMLElement): HTMLElement | null => {
+  const emojiList = document.querySelector<HTMLElement>(asSelectors(ClassNames.emojiList));
+  if (!emojiList) return null;
+
+  const currentName = element?.getAttribute('data-name');
+  const categories = Array.from(emojiList.children);
+  const currentIndex = categories.findIndex(
+    child => child.firstElementChild?.getAttribute('data-name') === currentName
+  );
+
+  const prevIndex = Math.max(currentIndex - 1, 0);
+  const prevName = categories[prevIndex]?.firstElementChild?.getAttribute('data-name');
+
+  return prevName
+    ? emojiList.querySelector(`[data-name="${prevName}"]`) as HTMLElement
+    : null;
+};
+
+
 export function prevCategory(element: NullableElement): NullableElement {
+  if (!element) {
+    return null;
+  }
+
+  const currentPrevCategory = getNameBasedPrevCategory(element);
+
+  if(currentPrevCategory){
+    return currentPrevCategory;
+  }
+
   const category = closestCategory(element);
 
   if (!category) {
@@ -287,7 +318,36 @@ export function prevCategory(element: NullableElement): NullableElement {
   return prev;
 }
 
+const getNameBasedNextCategory = (element: HTMLElement): HTMLElement | null => {
+  const emojiList = document.querySelector<HTMLElement>(asSelectors(ClassNames.emojiList));
+  if (!emojiList) return null;
+
+  const currentName = element?.getAttribute('data-name');
+  const categories = Array.from(emojiList.children);
+  const currentIndex = categories.findIndex(
+    child => child.firstElementChild?.getAttribute('data-name') === currentName
+  );
+
+  const nextIndex = Math.min(currentIndex + 1, categories.length - 1);
+  const nextName = categories[nextIndex]?.firstElementChild?.getAttribute('data-name');
+
+  return nextName
+    ? emojiList.querySelector(`[data-name="${nextName}"]`)
+    : null;
+};
+
+
 export function nextCategory(element: NullableElement): NullableElement {
+  if (!element) {
+    return null;
+  }
+
+  const currentNextCategory = getNameBasedNextCategory(element);
+
+  if(currentNextCategory){
+    return currentNextCategory;
+  }
+
   const category = closestCategory(element);
 
   if (!category) {

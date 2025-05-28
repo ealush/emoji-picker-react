@@ -1,28 +1,44 @@
-import { scrollTo } from '../DomUtils/scrollTo';
+import { useCallback } from 'react';
+
 import { NullableElement } from '../DomUtils/selectors';
 import {
-  useBodyRef,
-  usePickerMainRef
+  useBodyRef
 } from '../components/context/ElementRefContext';
+import { useCategoriesHeightRef } from '../components/context/PickerContext';
+import { useCategoriesConfig } from '../config/useConfig';
+import { Categories } from '../types/exposedTypes';
 
 export function useScrollCategoryIntoView() {
   const BodyRef = useBodyRef();
-  const PickerMainRef = usePickerMainRef();
+  const categoriesHeightRef = useCategoriesHeightRef()
+  const categories = useCategoriesConfig();
 
-  return function scrollCategoryIntoView(category: string): void {
-    if (!BodyRef.current) {
+  return useCallback((category: Categories) => {
+    if (!BodyRef.current || !categoriesHeightRef.current) {
       return;
     }
-    const $category = BodyRef.current?.querySelector(
-      `[data-name="${category}"]`
+    let foundCategory = false;
+
+    const scrollOffset = categories.reduce((acc, curr) => {
+      if(!categoriesHeightRef.current) return acc;
+      if (foundCategory || curr.category === category) {
+        foundCategory = true;
+        return acc;
+      }
+      return acc + (categoriesHeightRef.current[curr.category] || 0);
+    }, 0);
+
+    const $virtualiseContainer = BodyRef.current?.querySelector(
+      '.epr-virutalise-wrapper'
     ) as NullableElement;
 
-    if (!$category) {
-      return;
-    }
+    if(!$virtualiseContainer) return;
 
-    const offsetTop = $category.offsetTop || 0;
-
-    scrollTo(PickerMainRef.current, offsetTop);
-  };
+    requestAnimationFrame(() => {
+      $virtualiseContainer.scrollTo({
+        top: scrollOffset,
+        behavior: 'smooth'
+      })
+    });
+  },[BodyRef, categories, categoriesHeightRef]);
 }

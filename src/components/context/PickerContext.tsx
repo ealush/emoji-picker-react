@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 
+import { CategoryConfig } from '../../config/categoryConfig';
 import {
   useDefaultSkinToneConfig,
   useReactionsOpenConfig
@@ -11,7 +12,7 @@ import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
-import { SkinTones } from '../../types/exposedTypes';
+import { Categories, SkinTones } from '../../types/exposedTypes';
 
 export function PickerContextProvider({ children }: Props) {
   const disallowedEmojis = useDisallowedEmojis();
@@ -35,7 +36,7 @@ export function PickerContextProvider({ children }: Props) {
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const reactionsModeState = useState(reactionsDefaultOpen);
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
-
+  const categoriesHeightRef = React.useRef<Record<Categories, number> | undefined>();
   useMarkInitialLoad(setIsPastInitialLoad);
 
   return (
@@ -53,7 +54,8 @@ export function PickerContextProvider({ children }: Props) {
         searchTerm,
         skinToneFanOpenState,
         suggestedUpdateState,
-        reactionsModeState
+        reactionsModeState,
+        categoriesHeightRef
       }}
     >
       {children}
@@ -73,6 +75,7 @@ const PickerContext = React.createContext<{
   emojiVariationPickerState: ReactState<DataEmoji | null>;
   skinToneFanOpenState: ReactState<boolean>;
   filterRef: React.MutableRefObject<FilterState>;
+  categoriesHeightRef: React.MutableRefObject<Record<Categories, number> | undefined>;
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
   disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
@@ -90,7 +93,8 @@ const PickerContext = React.createContext<{
   searchTerm: ['', () => new Promise<string>(() => undefined)],
   skinToneFanOpenState: [false, () => {}],
   suggestedUpdateState: [Date.now(), () => {}],
-  reactionsModeState: [false, () => {}]
+  reactionsModeState: [false, () => {}],
+  categoriesHeightRef: { current: undefined },
 });
 
 type Props = Readonly<{
@@ -100,6 +104,24 @@ type Props = Readonly<{
 export function useFilterRef() {
   const { filterRef } = React.useContext(PickerContext);
   return filterRef;
+}
+
+export function useCategoriesHeightRef() {
+  const { categoriesHeightRef } = React.useContext(PickerContext);
+  return categoriesHeightRef;
+}
+
+export function useSetCategoriesHeightRef() {
+  const { categoriesHeightRef } = React.useContext(PickerContext);
+  return (heightsArray: {
+    height: number;
+    category: CategoryConfig;
+}[]) => {
+    categoriesHeightRef.current = heightsArray.reduce((acc, { height, category }) => {
+      acc[category.category] = height;
+      return acc;
+    }, {} as Record<Categories, number>);
+  };
 }
 
 export function useDisallowClickRef() {
@@ -165,6 +187,14 @@ export function useUpdateSuggested(): [number, () => void] {
       setsuggestedUpdate(Date.now());
     }
   ];
+}
+
+export function useActiveCategoryState(): [
+  string | null,
+  (category: string) => void
+] {
+  const { activeCategoryState } = React.useContext(PickerContext);
+  return activeCategoryState;
 }
 
 export type FilterState = Record<string, FilterDict>;
