@@ -22,7 +22,7 @@ export function cdnUrl(emojiStyle: EmojiStyle): string {
       return LOCAL_URL_FACEBOOK;
     case EmojiStyle.APPLE:
     default:
-      return LOCAL_URL_APPLE;
+      return LOCAL_URL_TWITTER;
   }
 }
 
