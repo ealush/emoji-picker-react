@@ -30,23 +30,23 @@ export const PickerStyleTag = React.memo(function PickerStyleTag() {
 });
 
 export const commonInteractionStyles = stylesheet.create({
-  '.epr-main': {
-    ':has(input:not(:placeholder-shown))': {
-      categoryBtn: {
-        ':hover': {
-          opacity: '1',
-          backgroundPositionY: 'var(--epr-category-navigation-button-size)'
-        }
-      },
-      hiddenOnSearch: {
-        '.': ClassNames.hiddenOnSearch,
-        ...hidden
-      }
-    },
-    ':has(input(:placeholder-shown))': {
-      visibleOnSearchOnly: hidden
-    }
-  },
+  // '.epr-main': {
+  //   ':has(input:not(:placeholder-shown))': {
+  //     categoryBtn: {
+  //       ':hover': {
+  //         opacity: '1',
+  //         backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+  //       }
+  //     },
+  //     hiddenOnSearch: {
+  //       '.': ClassNames.hiddenOnSearch,
+  //       ...hidden
+  //     }
+  //   },
+  //   ':has(input(:placeholder-shown))': {
+  //     visibleOnSearchOnly: hidden
+  //   }
+  // },
   hiddenOnReactions: {
     transition: 'all 0.5s ease-in-out'
   },

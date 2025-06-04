@@ -89,6 +89,10 @@ function RenderCategory({
     const unified = emojiUnified(emoji, activeSkinTone);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
 
+    if (filteredOut) {
+      return null;
+    }
+
     const isDisallowed = isEmojiDisallowed(emoji);
 
     if (hidden || isDisallowed) {
