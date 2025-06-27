@@ -43,7 +43,7 @@ export const commonInteractionStyles = stylesheet.create({
         ...hidden
       }
     },
-    ':has(input(:placeholder-shown))': {
+    ':has(input:placeholder-shown)': {
       visibleOnSearchOnly: hidden
     }
   },
