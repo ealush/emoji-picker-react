@@ -29,18 +29,23 @@ export function useEmojiPreviewEvents(
     }
     const bodyRef = BodyRef.current;
 
-    bodyRef?.addEventListener('keydown', onEscape, {
-      passive: true
-    });
+    const controller = new AbortController();
 
-    bodyRef?.addEventListener('mouseover', onMouseOver, true);
+    const passiveOptions = {
+      passive: true,
+      signal: controller.signal
+    };
 
-    bodyRef?.addEventListener('focus', onEnter, true);
+    const captureOptions = {
+      capture: true,
+      signal: controller.signal
+    };
 
-    bodyRef?.addEventListener('mouseout', onLeave, {
-      passive: true
-    });
-    bodyRef?.addEventListener('blur', onLeave, true);
+    bodyRef?.addEventListener('keydown', onEscape, passiveOptions);
+    bodyRef?.addEventListener('mouseover', onMouseOver, captureOptions);
+    bodyRef?.addEventListener('focus', onEnter, captureOptions);
+    bodyRef?.addEventListener('mouseout', onLeave, passiveOptions);
+    bodyRef?.addEventListener('blur', onLeave, passiveOptions);
 
     function onEnter(e: FocusEvent) {
       const button = buttonFromTarget(e.target as HTMLElement);
@@ -95,13 +100,7 @@ export function useEmojiPreviewEvents(
       }
     }
 
-    return () => {
-      bodyRef?.removeEventListener('mouseover', onMouseOver);
-      bodyRef?.removeEventListener('mouseout', onLeave);
-      bodyRef?.removeEventListener('focus', onEnter, true);
-      bodyRef?.removeEventListener('blur', onLeave, true);
-      bodyRef?.removeEventListener('keydown', onEscape);
-    };
+    return () => controller.abort();
   }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
 }
 

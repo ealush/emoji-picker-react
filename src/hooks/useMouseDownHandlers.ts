@@ -136,22 +136,18 @@ export function useMouseDownHandlers(
       return;
     }
     const confainerRef = ContainerRef.current;
-    confainerRef.addEventListener('click', onClick, {
-      passive: true
-    });
 
-    confainerRef.addEventListener('mousedown', onMouseDown, {
-      passive: true
-    });
-    confainerRef.addEventListener('mouseup', onMouseUp, {
-      passive: true
-    });
-
-    return () => {
-      confainerRef?.removeEventListener('click', onClick);
-      confainerRef?.removeEventListener('mousedown', onMouseDown);
-      confainerRef?.removeEventListener('mouseup', onMouseUp);
+    const controller = new AbortController();
+    const options = {
+      passive: true,
+      signal: controller.signal
     };
+
+    confainerRef.addEventListener('click', onClick, options);
+    confainerRef.addEventListener('mousedown', onMouseDown, options);
+    confainerRef.addEventListener('mouseup', onMouseUp, options);
+
+    return () => controller.abort();
   }, [ContainerRef, onClick, onMouseDown, onMouseUp]);
 }
 
