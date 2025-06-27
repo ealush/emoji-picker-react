@@ -36,7 +36,7 @@ const styles = stylesheet.create({
   body: {
     '.': ClassNames.scrollBody,
     flex: '1',
-    overflowY: 'scroll',
+    overflowY: 'hidden',
     overflowX: 'hidden',
     position: 'relative'
   }

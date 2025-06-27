@@ -141,8 +141,10 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
   const indexInRow = elementIndexInRow(categoryContent, element);
   const row = rowNumber(categoryContent, element);
   const countInRow = elementCountInRow(categoryContent, element);
+
   if (!hasNextRow(categoryContent, element)) {
     const nextVisibleCategory = nextCategory(category);
+
 
     if (!nextVisibleCategory) {
       return null;
