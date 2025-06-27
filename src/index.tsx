@@ -20,6 +20,7 @@ export {
   SkinTonePickerLocation
 } from './types/exposedTypes';
 
+export type * as EmojiPickerReact from './types/public';
 export interface PickerProps extends PickerConfig {}
 
 export default function EmojiPicker(props: PickerProps) {

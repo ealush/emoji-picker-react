@@ -4,7 +4,6 @@ import { buttonFromTarget, emojiFromElement } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
 import { emojiHasVariations } from '../dataUtils/emojiSelectors';
-import { EmojiStyle } from '../types/exposedTypes';
 
 import { preloadEmoji } from './preloadEmoji';
 
@@ -14,7 +13,7 @@ export function useOnFocus() {
   const getEmojiUrl = useGetEmojiUrlConfig();
 
   useEffect(() => {
-    if (emojiStyle === EmojiStyle.NATIVE) {
+    if (emojiStyle === 'native') {
       return;
     }
 

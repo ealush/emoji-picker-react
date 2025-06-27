@@ -1,4 +1,5 @@
-import { SkinTones, SuggestionMode } from '../types/exposedTypes';
+import { SkinTones } from '../types/exposedTypes';
+import { SuggestionMode } from '../types/public';
 
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiSelectors';
@@ -22,7 +23,7 @@ export function getSuggested(mode?: SuggestionMode): Suggested {
       window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]'
     ) as Suggested;
 
-    if (mode === SuggestionMode.FREQUENT) {
+    if (mode === 'frequent') {
       return recent.sort((a, b) => b.count - a.count);
     }
 
