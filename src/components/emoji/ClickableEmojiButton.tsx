@@ -11,6 +11,7 @@ import { Button } from '../atoms/Button';
 
 type ClickableEmojiButtonProps = Readonly<{
   hidden?: boolean;
+  selected?: boolean;
   showVariations?: boolean;
   hiddenOnSearch?: boolean;
   emojiNames: string[];
@@ -25,6 +26,7 @@ export function ClickableEmojiButton({
   emojiNames,
   unified,
   hidden,
+  selected,
   hiddenOnSearch,
   showVariations = true,
   hasVariations,
@@ -37,6 +39,7 @@ export function ClickableEmojiButton({
       className={cx(
         styles.emoji,
         hidden && commonStyles.hidden,
+        selected && commonStyles.selected,
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
         {
           [ClassNames.visible]: !hidden && !hiddenOnSearch
@@ -80,7 +83,13 @@ const styles = stylesheet.create({
     },
     ':focus': {
       backgroundColor: 'var(--epr-focus-bg-color)'
-    }
+    },
+    [`&.${ClassNames.selected}`]: {
+      backgroundColor: 'var(--epr-selected-bg-color)',
+      ':focus': {
+        backgroundColor: 'var(--epr-selected-bg-color)'
+      },
+    },
   },
   noBackground: {
     background: 'none',
@@ -91,7 +100,7 @@ const styles = stylesheet.create({
     ':focus': {
       backgroundColor: 'transparent',
       background: 'none'
-    }
+    },
   },
   hasVariations: {
     '.': ClassNames.emojiHasVariations,

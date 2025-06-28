@@ -186,3 +186,8 @@ export function useSearchResultsConfig(searchResultsCount: number): string {
 
   return SEARCH_RESULTS_NO_RESULTS_FOUND;
 }
+
+export function useGetIsSelectedEmojis(): (emoji: string) => boolean {
+  const { selectedEmojis } = usePickerConfig();
+  return (emoji) => selectedEmojis.includes(emoji);
+}

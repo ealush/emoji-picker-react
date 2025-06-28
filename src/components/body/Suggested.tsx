@@ -4,6 +4,7 @@ import { CategoryConfig } from '../../config/categoryConfig';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
+  useGetIsSelectedEmojis,
   useSuggestedEmojisModeConfig
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -29,6 +30,7 @@ export function Suggested({ categoryConfig }: Props) {
     [suggestedUpdated, suggestedEmojisModeConfig]
   );
   const emojiStyle = useEmojiStyleConfig();
+  const getIsSelectedEmojis = useGetIsSelectedEmojis();
 
   if (!isMounted) {
     return null;
@@ -55,6 +57,7 @@ export function Suggested({ categoryConfig }: Props) {
             emoji={emoji}
             key={suggestedItem.unified}
             getEmojiUrl={getEmojiUrl}
+            selected={getIsSelectedEmojis(suggestedItem.unified)}
           />
         );
       })}

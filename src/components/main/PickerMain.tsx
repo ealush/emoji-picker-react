@@ -125,6 +125,7 @@ const styles = stylesheet.create({
       '--epr-hover-bg-color': '#e5f0fa',
       '--epr-hover-bg-color-reduced-opacity': '#e5f0fa80',
       '--epr-focus-bg-color': '#e0f0ff',
+      '--epr-selected-bg-color': '#6aa8de',
       '--epr-text-color': '#858585',
       '--epr-search-input-bg-color': '#f6f6f6',
       '--epr-picker-border-color': '#e7e7e7',
