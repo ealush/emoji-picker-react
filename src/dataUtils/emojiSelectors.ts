@@ -1,11 +1,11 @@
-import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import { CustomEmoji } from '../config/customEmojiConfig';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
 } from '../data/skinToneVariations';
-import { EmojiStyle, SkinTones } from '../types/exposedTypes';
+import { SkinTones } from '../types/exposedTypes';
+import { Category, EmojiStyle } from '../types/public';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
 import { indexEmoji } from './alphaNumericEmojiIndex';
@@ -47,7 +47,7 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   return emojiVariationUnified(emoji, skinTone) ?? unified;
 }
 
-export function emojisByCategory(category: Categories): DataEmojis {
+export function emojisByCategory(category: Category): DataEmojis {
   // @ts-ignore
   return emojis?.[category] ?? [];
 }
@@ -93,12 +93,12 @@ export function emojiByUnified(unified?: string): DataEmoji | undefined {
 export const allEmojis: DataEmojis = Object.values(emojis).flat();
 
 export function setCustomEmojis(customEmojis: CustomEmoji[]): void {
-  emojis[Categories.CUSTOM].length = 0;
+  emojis.custom.length = 0;
 
   customEmojis.forEach(emoji => {
     const emojiData = customToRegularEmoji(emoji);
 
-    emojis[Categories.CUSTOM].push(emojiData as never);
+    emojis.custom.push(emojiData as never);
 
     if (allEmojisByUnified[emojiData[EmojiProperties.unified]]) {
       return;

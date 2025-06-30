@@ -1,6 +1,6 @@
 import { CustomEmoji } from '../../config/customEmojiConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { EmojiStyle } from '../../types/exposedTypes';
+import { EmojiStyle } from '../../types/public';
 
 export type BaseEmojiProps = {
   emoji?: DataEmoji | CustomEmoji;

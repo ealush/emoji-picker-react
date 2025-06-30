@@ -6,7 +6,6 @@ import {
   emojiUrlByUnified
 } from '../../dataUtils/emojiSelectors';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
-import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
@@ -40,7 +39,7 @@ export function ViewOnlyEmoji({
       <EmojiImg
         style={style}
         emojiName={unified}
-        emojiStyle={EmojiStyle.NATIVE}
+        emojiStyle={'native'}
         lazyLoad={lazyLoad}
         imgUrl={emojiToRender.imgUrl}
         onError={onError}
@@ -51,7 +50,7 @@ export function ViewOnlyEmoji({
 
   return (
     <>
-      {emojiStyle === EmojiStyle.NATIVE ? (
+      {emojiStyle === 'native' ? (
         <NativeEmoji unified={unified} style={style} className={className} />
       ) : (
         <EmojiImg

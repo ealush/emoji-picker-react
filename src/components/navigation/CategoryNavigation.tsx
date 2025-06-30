@@ -3,13 +3,11 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
-import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 
 import { CategoryButton } from './CategoryButton';
@@ -33,12 +31,15 @@ export function CategoryNavigation() {
       ref={CategoryNavigationRef}
     >
       {categoriesConfig.map(categoryConfig => {
-        const category = categoryFromCategoryConfig(categoryConfig);
-        const isActiveCategory = category === activeCategory;
+        const category = categoryConfig.category
 
-        if (isCustomCategory(categoryConfig) && hideCustomCategory) {
+        const isSkippedCustom = hideCustomCategory && category === 'custom'
+        if (isSkippedCustom) {
           return null;
         }
+
+        const isActiveCategory = category === activeCategory;
+
 
         const allowNavigation = !isSearchMode && !isActiveCategory;
 

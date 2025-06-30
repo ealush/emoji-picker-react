@@ -4,11 +4,11 @@ import React, { useEffect, useState } from 'react';
 import EmojiPicker, {
   Emoji,
   EmojiStyle,
-  Props,
+  PickerProps,
   SkinTones,
-  Theme
+  Theme,
+  Categories
 } from '../src';
-import { Categories } from '../src/config/categoryConfig';
 import {
   EmojiClickData,
   SkinTonePickerLocation,
@@ -32,22 +32,22 @@ const meta: Meta = {
 
 export default meta;
 
-export const Native = (args: Props) => (
+export const Native = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
-export const Default = (args: Props) => <Template {...args} />;
-export const Dark = (args: Props) => (
+export const Default = (args: PickerProps) => <Template {...args} />;
+export const Dark = (args: PickerProps) => (
   <TemplateDark {...args} theme={Theme.DARK} />
 );
-export const AutoTheme = (args: Props) => (
+export const AutoTheme = (args: PickerProps) => (
   <TemplateDark {...args} theme={Theme.AUTO} />
 );
 
-export const CustomEmojis = (args: Props) => (
+export const CustomEmojis = (args: PickerProps) => (
   <Template {...args} customEmojis={customEmojis} />
 );
 
-export const CustomEmojisDeffered = (args: Props) => {
+export const CustomEmojisDeffered = (args: PickerProps) => {
   const [custom, setCustomEmojis] = useState<any>(undefined);
 
   useEffect(() => {
@@ -59,26 +59,26 @@ export const CustomEmojisDeffered = (args: Props) => {
   return <Template {...args} customEmojis={custom} />;
 };
 
-export const SearchDisabled = (args: Props) => (
+export const SearchDisabled = (args: PickerProps) => (
   <Template {...args} searchDisabled />
 );
 
-export const HiddenEmojis = (args: Props) => (
+export const HiddenEmojis = (args: PickerProps) => (
   <Template {...args} hiddenEmojis={['1f604', '1f60d', '1f607']} />
 );
 
-export const SearchDisabledDark = (args: Props) => (
+export const SearchDisabledDark = (args: PickerProps) => (
   <TemplateDark {...args} searchDisabled theme={Theme.DARK} />
 );
 
-export const SkinTonePickerInPreview = (args: Props) => (
+export const SkinTonePickerInPreview = (args: PickerProps) => (
   <Template
     {...args}
     emojiStyle={EmojiStyle.NATIVE}
     skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
   />
 );
-export const CustomSizeDimensionsNumbers = (args: Props) => (
+export const CustomSizeDimensionsNumbers = (args: PickerProps) => (
   <TemplateDark
     {...args}
     width={300}
@@ -87,7 +87,7 @@ export const CustomSizeDimensionsNumbers = (args: Props) => (
   />
 );
 
-export const CustomSizeDimensionsString = (args: Props) => (
+export const CustomSizeDimensionsString = (args: PickerProps) => (
   <TemplateDark
     {...args}
     width="80vh"
@@ -95,41 +95,41 @@ export const CustomSizeDimensionsString = (args: Props) => (
     previewConfig={{ showPreview: false }}
   />
 );
-export const EmojiImageApple = (args: Props) => (
+export const EmojiImageApple = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.APPLE} />
 );
-export const EmojiImageFacebook = (args: Props) => (
+export const EmojiImageFacebook = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.FACEBOOK} />
 );
-export const EmojiImageGoogle = (args: Props) => (
+export const EmojiImageGoogle = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.GOOGLE} />
 );
-export const EmojiImageTwitter = (args: Props) => (
+export const EmojiImageTwitter = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.TWITTER} />
 );
-export const CustomSearchPlaceholder = (args: Props) => (
+export const CustomSearchPlaceholder = (args: PickerProps) => (
   <Template searchPlaceholder="👀 Find" />
 );
-export const SkinTonesDisabled = (args: Props) => (
+export const SkinTonesDisabled = (args: PickerProps) => (
   <Template {...args} skinTonesDisabled />
 );
-export const AlternativeDefaultSkinTone = (args: Props) => (
+export const AlternativeDefaultSkinTone = (args: PickerProps) => (
   <Template {...args} defaultSkinTone={SkinTones.MEDIUM} />
 );
-export const AutoFocusDisabled = (args: Props) => (
+export const AutoFocusDisabled = (args: PickerProps) => (
   <Template {...args} autoFocusSearch={false} />
 );
-export const HidePreview = (args: Props) => (
+export const HidePreview = (args: PickerProps) => (
   <Template {...args} previewConfig={{ showPreview: false }} />
 );
-export const RecentlyUsed = (args: Props) => (
+export const RecentlyUsed = (args: PickerProps) => (
   <Template {...args} suggestedEmojisMode={SuggestionMode.RECENT} />
 );
-export const LazyLoaded = (args: Props) => (
+export const LazyLoaded = (args: PickerProps) => (
   <Template {...args} lazyLoadEmojis={true} />
 );
 
-export const SkinToneChange = (args: Props) => (
+export const SkinToneChange = (args: PickerProps) => (
   <Template
     {...args}
     onSkinToneChange={skinTone => {
@@ -138,7 +138,7 @@ export const SkinToneChange = (args: Props) => (
   />
 );
 
-export const ReactionsMenu = (args: Props) => (
+export const ReactionsMenu = (args: PickerProps) => (
   <Template
     {...args}
     reactionsDefaultOpen={true}
@@ -148,7 +148,7 @@ export const ReactionsMenu = (args: Props) => (
   />
 );
 
-export const ReactionsMenuNoExpand = (args: Props) => (
+export const ReactionsMenuNoExpand = (args: PickerProps) => (
   <Template
     {...args}
     reactionsDefaultOpen={true}
@@ -159,7 +159,7 @@ export const ReactionsMenuNoExpand = (args: Props) => (
   />
 );
 
-export const ReactionsMenuWithStyles = (args: Props) => (
+export const ReactionsMenuWithStyles = (args: PickerProps) => (
   <Template
     {...args}
     reactionsDefaultOpen={true}
@@ -172,7 +172,7 @@ export const ReactionsMenuWithStyles = (args: Props) => (
   />
 );
 
-export const CustomReactions = (args: Props) => (
+export const CustomReactions = (args: PickerProps) => (
   <Template
     {...args}
     reactionsDefaultOpen={true}
@@ -186,15 +186,15 @@ export const CustomReactions = (args: Props) => (
   />
 );
 
-export const ReactionsMenuDark = (args: Props) => (
+export const ReactionsMenuDark = (args: PickerProps) => (
   <TemplateDark {...args} reactionsDefaultOpen={true} theme={Theme.DARK} />
 );
 
-export const ReactionsMenuAuto = (args: Props) => (
+export const ReactionsMenuAuto = (args: PickerProps) => (
   <Template {...args} reactionsDefaultOpen={true} theme={Theme.AUTO} />
 );
 
-export const EmojiVersion_0_6 = (args: Props) => (
+export const EmojiVersion_0_6 = (args: PickerProps) => (
   <Template
     {...args}
     defaultSkinTone={SkinTones.MEDIUM}
@@ -203,23 +203,23 @@ export const EmojiVersion_0_6 = (args: Props) => (
   />
 );
 
-export const EmojiVersion_1_0 = (args: Props) => (
+export const EmojiVersion_1_0 = (args: PickerProps) => (
   <Template {...args} emojiVersion="1.0" emojiStyle={EmojiStyle.NATIVE} />
 );
-export const EmojiVersion_2_0 = (args: Props) => (
+export const EmojiVersion_2_0 = (args: PickerProps) => (
   <Template {...args} emojiVersion="2.0" emojiStyle={EmojiStyle.NATIVE} />
 );
-export const EmojiVersion_3_0 = (args: Props) => (
+export const EmojiVersion_3_0 = (args: PickerProps) => (
   <Template {...args} emojiVersion="3.0" emojiStyle={EmojiStyle.NATIVE} />
 );
-export const EmojiVersion_4_0 = (args: Props) => (
+export const EmojiVersion_4_0 = (args: PickerProps) => (
   <Template {...args} emojiVersion="4.0" emojiStyle={EmojiStyle.NATIVE} />
 );
-export const EmojiVersion_5_0 = (args: Props) => (
+export const EmojiVersion_5_0 = (args: PickerProps) => (
   <Template {...args} emojiVersion="5.0" emojiStyle={EmojiStyle.NATIVE} />
 );
 
-export const CustomPreviewConfig = (args: Props) => (
+export const CustomPreviewConfig = (args: PickerProps) => (
   <Template
     {...args}
     previewConfig={{
@@ -228,7 +228,7 @@ export const CustomPreviewConfig = (args: Props) => (
     }}
   />
 );
-export const CustomCategoryConfig = (args: Props) => (
+export const CustomCategoryConfig = (args: PickerProps) => (
   <Template
     {...args}
     categories={[
@@ -285,7 +285,7 @@ export const CustomUnifiedEmojiImage = () => {
   );
 };
 
-export const HideEmojisByUnicode = (args: Props) => (
+export const HideEmojisByUnicode = (args: PickerProps) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
 

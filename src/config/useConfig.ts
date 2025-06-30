@@ -3,12 +3,9 @@ import * as React from 'react';
 import { usePickerConfig } from '../components/context/PickerConfigContext';
 import {
   EmojiClickData,
-  EmojiStyle,
-  SkinTonePickerLocation,
-  SkinTones,
-  SuggestionMode,
-  Theme
+  SkinTones
 } from '../types/exposedTypes';
+import { EmojiStyle, SkinTonePickerLocation, SuggestionMode, Theme } from '../types/public';
 
 import { CategoriesConfig } from './categoryConfig';
 import {

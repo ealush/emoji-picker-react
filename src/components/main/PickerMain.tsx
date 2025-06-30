@@ -11,7 +11,6 @@ import {
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../../hooks/useOnFocus';
-import { Theme } from '../../types/exposedTypes';
 import { usePickerMainRef } from '../context/ElementRefContext';
 import {
   PickerContextProvider,
@@ -56,8 +55,8 @@ function PickerRootElement({ children }: RootProps) {
       className={cx(
         styles.main,
         styles.baseVariables,
-        theme === Theme.DARK && styles.darkTheme,
-        theme === Theme.AUTO && styles.autoThemeDark,
+        theme === 'dark' && styles.darkTheme,
+        theme === 'auto' && styles.autoThemeDark,
         {
           [ClassNames.searchActive]: searchModeActive
         },

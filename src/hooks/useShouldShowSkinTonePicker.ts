@@ -1,5 +1,5 @@
 import { useSkinTonePickerLocationConfig } from '../config/useConfig';
-import { SkinTonePickerLocation } from '../types/exposedTypes';
+import { SkinTonePickerLocation } from '../types/public';
 
 export function useShouldShowSkinTonePicker() {
   const skinTonePickerLocationConfig = useSkinTonePickerLocationConfig();
@@ -12,11 +12,11 @@ export function useShouldShowSkinTonePicker() {
 export function useIsSkinToneInSearch() {
   const skinTonePickerLocationConfig = useSkinTonePickerLocationConfig();
 
-  return skinTonePickerLocationConfig === SkinTonePickerLocation.SEARCH;
+  return skinTonePickerLocationConfig === 'SEARCH';
 }
 
 export function useIsSkinToneInPreview() {
   const skinTonePickerLocationConfig = useSkinTonePickerLocationConfig();
 
-  return skinTonePickerLocationConfig === SkinTonePickerLocation.PREVIEW;
+  return skinTonePickerLocationConfig === 'PREVIEW';
 }
