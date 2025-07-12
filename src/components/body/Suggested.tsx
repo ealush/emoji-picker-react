@@ -8,6 +8,7 @@ import {
 } from '../../config/useConfig';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { getSuggested } from '../../dataUtils/suggested';
+import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useIsEverMounted } from '../../hooks/useIsEverMounted';
 import { useUpdateSuggested } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -29,6 +30,7 @@ export function Suggested({ categoryConfig }: Props) {
     [suggestedUpdated, suggestedEmojisModeConfig]
   );
   const emojiStyle = useEmojiStyleConfig();
+  const isEmojiDisallowed = useIsEmojiDisallowed();
 
   if (!isMounted) {
     return null;
@@ -44,6 +46,10 @@ export function Suggested({ categoryConfig }: Props) {
         const emoji = emojiByUnified(suggestedItem.original);
 
         if (!emoji) {
+          return null;
+        }
+
+        if (isEmojiDisallowed(emoji)) {
           return null;
         }
 
