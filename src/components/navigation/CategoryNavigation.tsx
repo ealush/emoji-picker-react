@@ -50,8 +50,10 @@ export function CategoryNavigation() {
             allowNavigation={allowNavigation}
             categoryConfig={categoryConfig}
             onClick={() => {
-              setActiveCategory(category);
               scrollCategoryIntoView(category);
+              setTimeout(() => {
+                setActiveCategory(category);
+              }, 10);
             }}
           />
         );
