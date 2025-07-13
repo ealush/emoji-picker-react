@@ -20,13 +20,17 @@ import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
-import { useEmojiVariationPickerState } from '../context/PickerContext';
+import {
+  useEmojiVariationPickerState,
+  useReactionsModeState
+} from '../context/PickerContext';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker/SkinTonePicker';
 
 export function Preview() {
   const previewConfig = usePreviewConfig();
   const isSkinToneInPreview = useIsSkinToneInPreview();
+  const [reactionsOpen] = useReactionsModeState();
 
   if (!previewConfig.showPreview) {
     return null;
@@ -34,7 +38,11 @@ export function Preview() {
 
   return (
     <Flex
-      className={cx(styles.preview, commonInteractionStyles.hiddenOnReactions)}
+      className={cx(
+        styles.preview,
+        commonInteractionStyles.hiddenOnReactions,
+        reactionsOpen && styles.hideOnReactions
+      )}
     >
       <PreviewBody />
       <Space />
@@ -123,5 +131,9 @@ const styles = stylesheet.create({
   },
   emoji: {
     padding: '0'
+  },
+  hideOnReactions: {
+    opacity: '0',
+    transition: 'opacity 0.5s ease-in-out'
   }
 });

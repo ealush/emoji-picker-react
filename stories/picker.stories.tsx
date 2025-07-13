@@ -289,6 +289,16 @@ export const HideEmojisByUnicode = (args: Props) => (
   <Template {...args} emojiStyle={EmojiStyle.NATIVE} />
 );
 
+export const CollapseToReactions = (args: Props) => (
+  <EmojiPicker
+    onEmojiClick={(emoji, event, { collapseToReactions }) => {
+      collapseToReactions();
+      console.log(emoji, event);
+    }}
+    emojiStyle={EmojiStyle.NATIVE}
+  />
+);
+
 function TemplateDark(args) {
   const [open, setOpen] = useState(true);
   const [hasBg, setHasBg] = useState(false);

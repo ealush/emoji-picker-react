@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { usePickerConfig } from '../components/context/PickerConfigContext';
+import { useReactionsModeState } from '../components/context/PickerContext';
 import {
   EmojiClickData,
   EmojiStyle,
@@ -80,17 +81,30 @@ export function useOnEmojiClickConfig(
   mouseEventSource: MOUSE_EVENT_SOURCE
 ): (emoji: EmojiClickData, event: MouseEvent) => void {
   const { current } = useMutableConfig();
+  const [, setReactionsOpen] = useReactionsModeState();
 
-  const handler =
-    (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS
-      ? current.onReactionClick
-      : current.onEmojiClick) ?? current.onEmojiClick;
+  const handler = current.onEmojiClick || (() => {});
+  const { onReactionClick } = current;
 
-  return handler || (() => {});
+  if (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS && onReactionClick) {
+    return (...args) =>
+      onReactionClick(...args, {
+        collapseToReactions: () => {
+          setReactionsOpen(o => o);
+        }
+      });
+  }
+
+  return (...args) => {
+    handler(...args, {
+      collapseToReactions: () => {
+        setReactionsOpen(true);
+      }
+    });
+  };
 }
 
-export function useOnSkinToneChangeConfig(
-): (skinTone: SkinTones) => void {
+export function useOnSkinToneChangeConfig(): (skinTone: SkinTones) => void {
   const { current } = useMutableConfig();
 
   return current.onSkinToneChange || (() => {});

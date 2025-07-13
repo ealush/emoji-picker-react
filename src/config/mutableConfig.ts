@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {MouseDownEvent, OnSkinToneChange} from './config';
+import { MouseDownEvent, OnSkinToneChange } from './config';
 
 export type MutableConfig = {
   onEmojiClick?: MouseDownEvent;
@@ -33,8 +33,9 @@ export function useDefineMutableConfig(
   }, [config.onEmojiClick, config.onReactionClick]);
 
   React.useEffect(() => {
-    MutableConfigRef.current.onSkinToneChange = config.onSkinToneChange || emptyFunc;
-  }, [config.onSkinToneChange])
+    MutableConfigRef.current.onSkinToneChange =
+      config.onSkinToneChange || emptyFunc;
+  }, [config.onSkinToneChange]);
 
   return MutableConfigRef;
 }

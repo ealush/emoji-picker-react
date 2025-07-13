@@ -151,5 +151,13 @@ export type PickerConfig = Partial<ConfigExternal>;
 
 export type PickerDimensions = string | number;
 
-export type MouseDownEvent = (emoji: EmojiClickData, event: MouseEvent) => void;
+export type MouseDownEvent = (
+  emoji: EmojiClickData,
+  event: MouseEvent,
+  api: OnEmojiClickApi
+) => void;
 export type OnSkinToneChange = (emoji: SkinTones) => void;
+
+type OnEmojiClickApi = {
+  collapseToReactions: () => void;
+};
