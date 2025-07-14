@@ -8,12 +8,9 @@ import {
 } from '../dataUtils/emojiSelectors';
 import {
   EmojiClickData,
-  EmojiStyle,
-  SkinTonePickerLocation,
-  SkinTones,
-  SuggestionMode,
-  Theme
+  SkinTones
 } from '../types/exposedTypes';
+import type { EmojiStyle, SkinTonePickerLocation, SuggestionMode, Theme } from '../types/public';
 
 import {
   CategoriesConfig,
@@ -55,7 +52,7 @@ export function mergeConfig(
   setCustomEmojis(config.customEmojis ?? []);
 
   const skinTonePickerLocation = config.searchDisabled
-    ? SkinTonePickerLocation.PREVIEW
+    ? 'PREVIEW'
     : config.skinTonePickerLocation;
 
   return {
@@ -73,7 +70,7 @@ export function basePickerConfig(): PickerConfigInternal {
     className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
-    emojiStyle: EmojiStyle.APPLE,
+    emojiStyle: 'apple',
     emojiVersion: null,
     getEmojiUrl: emojiUrlByUnified,
     height: 450,
@@ -84,11 +81,11 @@ export function basePickerConfig(): PickerConfigInternal {
     searchDisabled: false,
     searchPlaceHolder: DEFAULT_SEARCH_PLACEHOLDER,
     searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
-    skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
+    skinTonePickerLocation: 'SEARCH',
     skinTonesDisabled: false,
     style: {},
-    suggestedEmojisMode: SuggestionMode.FREQUENT,
-    theme: Theme.LIGHT,
+    suggestedEmojisMode: 'frequent',
+    theme: 'light',
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
     width: 350,
     reactionsDefaultOpen: false,

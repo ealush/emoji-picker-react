@@ -2,7 +2,7 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { EmojiStyle } from '../../types/exposedTypes';
+import { EmojiStyle } from '../../types/public';
 
 import { emojiStyles } from './emojiStyles';
 

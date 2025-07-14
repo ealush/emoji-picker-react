@@ -4,12 +4,9 @@ import { usePickerConfig } from '../components/context/PickerConfigContext';
 import { useReactionsModeState } from '../components/context/PickerContext';
 import {
   EmojiClickData,
-  EmojiStyle,
-  SkinTonePickerLocation,
-  SkinTones,
-  SuggestionMode,
-  Theme
+  SkinTones
 } from '../types/exposedTypes';
+import { EmojiStyle, SkinTonePickerLocation, SuggestionMode, Theme } from '../types/public';
 
 import { CategoriesConfig } from './categoryConfig';
 import {
