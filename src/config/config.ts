@@ -7,6 +7,7 @@ import {
   emojiUrlByUnified,
 } from '../dataUtils/emojiSelectors';
 import {
+  Categories,
   EmojiClickData,
   EmojiStyle,
   SkinTonePickerLocation,
@@ -107,7 +108,7 @@ export type PickerConfigInternal = {
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
-  categories: CategoriesConfig;
+  categories: CategoriesConfig | Categories[];
   theme: Theme;
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
