@@ -32,7 +32,7 @@ export default function Home() {
 
         <footer className={styles.footerRow}>
           <p>
-            The emoji picker for React.
+            The emoji picker for React on the Web.
             <br />
             Brought to you with ❤️ by{" "}
             <Link href="https://ealush.com">ealush</Link>.
