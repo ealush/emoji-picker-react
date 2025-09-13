@@ -11,7 +11,6 @@ import {
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
-import doesBrowserSupportCssHas from '../globals/doesBrowserSupportCssHas';
 
 import { useFocusSearchInput } from './useFocus';
 
@@ -78,34 +77,28 @@ export function useFilter() {
   };
 
   function onChange(inputValue: string) {
-    if (doesBrowserSupportCssHas) {
-      return;
+    const filter = filterRef.current;
+
+    const nextValue = inputValue.toLowerCase();
+
+    if (filter?.[nextValue] || nextValue.length <= 1) {
+      return applySearch(nextValue);
     }
 
-    setTimeout(() => {
-      const filter = filterRef.current;
+    const longestMatch = findLongestMatch(nextValue, filter);
 
-      const nextValue = inputValue.toLowerCase();
+    if (!longestMatch) {
+      // Can we even get here?
+      // If so, we need to search among all emojis
+      return applySearch(nextValue);
+    }
 
-      if (filter?.[nextValue] || nextValue.length <= 1) {
-        return applySearch(nextValue);
-      }
-
-      const longestMatch = findLongestMatch(nextValue, filter);
-
-      if (!longestMatch) {
-        // Can we even get here?
-        // If so, we need to search among all emojis
-        return applySearch(nextValue);
-      }
-
-      setFilterRef(current =>
-        Object.assign(current, {
-          [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
-        })
-      );
-      applySearch(nextValue);
-    });
+    setFilterRef(current =>
+      Object.assign(current, {
+        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
+      })
+    );
+    applySearch(nextValue);
   }
 }
 

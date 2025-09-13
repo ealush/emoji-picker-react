@@ -18,13 +18,15 @@ type Props = Readonly<{
   children?: React.ReactNode;
   hidden?: boolean;
   hiddenOnSearch?: boolean;
+  height?: number;
 }>;
 
 export function EmojiCategory({
   categoryConfig,
   children,
   hidden,
-  hiddenOnSearch
+  hiddenOnSearch,
+  height
 }: Props) {
   const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
@@ -40,7 +42,9 @@ export function EmojiCategory({
       aria-label={categoryName}
     >
       <h2 className={cx(styles.label)}>{categoryName}</h2>
-      <div className={cx(styles.categoryContent)}>{children}</div>
+      <div className={cx(styles.categoryContent)} style={{ height }}>
+        {children}
+      </div>
     </li>
   );
 }
@@ -48,9 +52,7 @@ export function EmojiCategory({
 const styles = stylesheet.create({
   category: {
     '.': ClassNames.category,
-    ':not(:has(.epr-visible))': {
-      display: 'none'
-    }
+    position: 'relative'
   },
   categoryContent: {
     '.': ClassNames.categoryContent,

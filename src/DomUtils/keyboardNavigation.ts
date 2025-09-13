@@ -1,12 +1,4 @@
-import {
-  elementCountInRow,
-  elementIndexInRow,
-  getElementInNextRow,
-  getElementInPrevRow,
-  getElementInRow,
-  hasNextRow,
-  rowNumber
-} from './elementPositionInRow';
+import { elementCountInRow } from './elementPositionInRow';
 import { focusElement } from './focusElement';
 import { scrollEmojiAboveLabel } from './scrollTo';
 import {
@@ -104,31 +96,47 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
 
   const categoryContent = closestCategoryContent(element);
   const category = closestCategory(categoryContent);
-  const indexInRow = elementIndexInRow(categoryContent, element);
-  const row = rowNumber(categoryContent, element);
   const countInRow = elementCountInRow(categoryContent, element);
 
-  if (row === 0) {
-    const prevVisibleCategory = prevCategory(category);
+  const emojisInCurrentCategory = allVisibleEmojis(category);
+  const currentEmojiIndex = emojisInCurrentCategory.indexOf(element);
+  const indexInRow = currentEmojiIndex % countInRow;
 
-    if (!prevVisibleCategory) {
-      return null;
-    }
-
-    return getElementInRow(
-      allVisibleEmojis(prevVisibleCategory),
-      -1, // last row
-      countInRow,
-      indexInRow
-    );
+  if (currentEmojiIndex === -1) {
+    return null;
   }
 
-  return getElementInPrevRow(
-    allVisibleEmojis(categoryContent),
-    row,
-    countInRow,
-    indexInRow
-  );
+  if (emojisInCurrentCategory[currentEmojiIndex - countInRow]) {
+    return emojisInCurrentCategory[currentEmojiIndex - countInRow];
+  }
+
+  const prevVisibleCategory = prevCategory(category);
+
+  if (!prevVisibleCategory) {
+    return null;
+  }
+
+  const allPrevEmojis = allVisibleEmojis(prevVisibleCategory);
+
+  // if there is an emoji in the same index of `indexInRow` in the previous category, return it
+  // for this we need to find the last emoji in the previous category that shares the same indexInRow
+  // this is by using the % operator to find the last emoji that matches
+
+  const lastIndexInRow = (allPrevEmojis.length % countInRow) - 1;
+
+  if (indexInRow > lastIndexInRow) {
+    return allPrevEmojis.at(-1);
+  }
+
+  // otherwise, return the last emoji that shares the same indexInRow
+
+  for (let i = allPrevEmojis.length - 1; i >= 0; i--) {
+    if (i % countInRow === indexInRow) {
+      return allPrevEmojis[i];
+    }
+  }
+
+  return allPrevEmojis.at(-1);
 }
 
 function visibleEmojiOneRowDown(element: HTMLElement) {
@@ -138,30 +146,36 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
 
   const categoryContent = closestCategoryContent(element);
   const category = closestCategory(categoryContent);
-  const indexInRow = elementIndexInRow(categoryContent, element);
-  const row = rowNumber(categoryContent, element);
   const countInRow = elementCountInRow(categoryContent, element);
-  if (!hasNextRow(categoryContent, element)) {
-    const nextVisibleCategory = nextCategory(category);
 
-    if (!nextVisibleCategory) {
-      return null;
-    }
+  const emojisInCurrentCategory = allVisibleEmojis(category);
+  const currentEmojiIndex = emojisInCurrentCategory.indexOf(element);
 
-    return getElementInRow(
-      allVisibleEmojis(nextVisibleCategory),
-      0,
-      countInRow,
-      indexInRow
-    );
+  if (currentEmojiIndex === -1) {
+    return null;
   }
 
-  const itemInNextRow = getElementInNextRow(
-    allVisibleEmojis(categoryContent),
-    row,
-    countInRow,
-    indexInRow
-  );
+  // the remainder until the end of the row
+  const remainder = countInRow - (currentEmojiIndex % countInRow) - 1;
+  const firstInNextRow = currentEmojiIndex + remainder + 1;
 
-  return itemInNextRow;
+  if (emojisInCurrentCategory[firstInNextRow]) {
+    // if we have a next row, search in the next row for the last available emoji
+    for (let p = currentEmojiIndex + countInRow; p % countInRow >= 0; p--) {
+      if (emojisInCurrentCategory[p]) {
+        return emojisInCurrentCategory[p];
+      }
+    }
+  }
+
+  const indexInRow = currentEmojiIndex % countInRow;
+
+  const nextVisibleCategory = nextCategory(category);
+  const emojisInNextCategory = allVisibleEmojis(nextVisibleCategory);
+
+  if (emojisInNextCategory[indexInRow]) {
+    return emojisInNextCategory[indexInRow];
+  }
+
+  return emojisInNextCategory.at(0) ?? null;
 }

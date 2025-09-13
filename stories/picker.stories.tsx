@@ -142,6 +142,7 @@ export const ReactionsMenu = (args: Props) => (
   <Template
     {...args}
     reactionsDefaultOpen={true}
+    emojiStyle={EmojiStyle.NATIVE}
     onReactionClick={data => {
       console.log('Clicked reaction!', data);
     }}
@@ -153,6 +154,7 @@ export const ReactionsMenuNoExpand = (args: Props) => (
     {...args}
     reactionsDefaultOpen={true}
     allowExpandReactions={false}
+    emojiStyle={EmojiStyle.NATIVE}
     onReactionClick={data => {
       console.log('Clicked reaction!', data);
     }}
@@ -187,11 +189,21 @@ export const CustomReactions = (args: Props) => (
 );
 
 export const ReactionsMenuDark = (args: Props) => (
-  <TemplateDark {...args} reactionsDefaultOpen={true} theme={Theme.DARK} />
+  <TemplateDark
+    {...args}
+    reactionsDefaultOpen={true}
+    emojiStyle={EmojiStyle.NATIVE}
+    theme={Theme.DARK}
+  />
 );
 
 export const ReactionsMenuAuto = (args: Props) => (
-  <Template {...args} reactionsDefaultOpen={true} theme={Theme.AUTO} />
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    emojiStyle={EmojiStyle.NATIVE}
+    theme={Theme.AUTO}
+  />
 );
 
 export const EmojiVersion_0_6 = (args: Props) => (

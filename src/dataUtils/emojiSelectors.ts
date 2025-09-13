@@ -1,6 +1,10 @@
+import React from 'react';
+
+import { useUpdateSuggested } from '../components/context/PickerContext';
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import { CustomEmoji } from '../config/customEmojiConfig';
+import { useSuggestedEmojisModeConfig } from '../config/useConfig';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped
@@ -9,6 +13,7 @@ import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
 import { indexEmoji } from './alphaNumericEmojiIndex';
+import { getSuggested } from './suggested';
 
 export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
@@ -47,9 +52,30 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   return emojiVariationUnified(emoji, skinTone) ?? unified;
 }
 
-export function emojisByCategory(category: Categories): DataEmojis {
-  // @ts-ignore
-  return emojis?.[category] ?? [];
+export function useGetEmojisByCategory(): (Category: Categories) => DataEmojis {
+  const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
+  const [suggestedUpdated] = useUpdateSuggested();
+
+  const suggested = React.useMemo(
+    () => {
+      const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
+
+      return suggested
+        .map(s => emojiByUnified(s.unified))
+        .filter(Boolean) as DataEmojis;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [suggestedUpdated, suggestedEmojisModeConfig]
+  );
+
+  return function getEmojisByCategory(category: Categories): DataEmojis {
+    if (category === Categories.SUGGESTED) {
+      return suggested;
+    }
+
+    // @ts-ignore
+    return emojis[category] ?? [];
+  };
 }
 
 // WARNING: DO NOT USE DIRECTLY

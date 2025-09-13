@@ -15,6 +15,7 @@ type ClickableEmojiProps = Readonly<
     emoji: DataEmoji;
     className?: string;
     noBackground?: boolean;
+    style?: React.CSSProperties;
   }
 >;
 
@@ -29,7 +30,8 @@ export function ClickableEmoji({
   lazyLoad,
   getEmojiUrl,
   className,
-  noBackground = false
+  noBackground = false,
+  style
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -42,6 +44,7 @@ export function ClickableEmoji({
       emojiNames={emojiNames(emoji)}
       unified={unified}
       noBackground={noBackground}
+      style={style}
     >
       <ViewOnlyEmoji
         unified={unified}

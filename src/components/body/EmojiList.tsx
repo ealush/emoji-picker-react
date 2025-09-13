@@ -2,50 +2,54 @@ import { cx } from 'flairup';
 import * as React from 'react';
 
 import { ClassNames } from '../../DomUtils/classNames';
+import { getLabelHeight } from '../../DomUtils/elementPositionInRow';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
-  Categories,
   CategoryConfig,
   categoryFromCategoryConfig
 } from '../../config/categoryConfig';
-import {
-  useCategoriesConfig,
-  useEmojiStyleConfig,
-  useGetEmojiUrlConfig,
-  useLazyLoadEmojisConfig,
-  useSkinTonesDisabledConfig
-} from '../../config/useConfig';
-import { emojisByCategory, emojiUnified } from '../../dataUtils/emojiSelectors';
-import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
-import { useIsEmojiHidden } from '../../hooks/useIsEmojiHidden';
-import {
-  useActiveSkinToneState,
-  useIsPastInitialLoad
-} from '../context/PickerContext';
-import { ClickableEmoji } from '../emoji/Emoji';
+import { useCategoriesConfig } from '../../config/useConfig';
+import { DataEmojis } from '../../dataUtils/DataTypes';
+import { useGetEmojisByCategory } from '../../dataUtils/emojiSelectors';
+import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
+import { useEmojiListRef } from '../context/ElementRefContext';
 
 import { EmojiCategory } from './EmojiCategory';
-import { Suggested } from './Suggested';
 
-export function EmojiList() {
+export function EmojiList({ scrollTop }: { scrollTop: number }) {
   const categories = useCategoriesConfig();
-  const renderdCategoriesCountRef = React.useRef(0);
+  const [categoryHeights, setCategoryHeights] = React.useState<{
+    [key: string]: number;
+  }>({});
+  const EmojiListRef = useEmojiListRef();
+  const getEmojisByCategory = useGetEmojisByCategory();
 
+  const labelHeight = getLabelHeight(EmojiListRef.current);
+
+  let topOffset = 0;
   return (
-    <ul className={cx(styles.emojiList)}>
+    <ul className={cx(styles.emojiList)} ref={EmojiListRef}>
       {categories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
-        if (category === Categories.SUGGESTED) {
-          return <Suggested key={category} categoryConfig={categoryConfig} />;
+        const currentOffset = topOffset;
+        const categoryHeight = categoryHeights[category];
+        if (categoryHeight) {
+          topOffset += categoryHeight + labelHeight;
         }
 
         return (
           <React.Suspense key={category}>
             <RenderCategory
-              category={category}
+              categoryEmojis={getEmojisByCategory(category)}
               categoryConfig={categoryConfig}
-              renderdCategoriesCountRef={renderdCategoriesCountRef}
+              topOffset={currentOffset}
+              onHeightReady={height => {
+                if (categoryHeights[category] !== height) {
+                  setCategoryHeights(prev => ({ ...prev, [category]: height }));
+                }
+              }}
+              scrollTop={scrollTop}
             />
           </React.Suspense>
         );
@@ -55,71 +59,32 @@ export function EmojiList() {
 }
 
 function RenderCategory({
-  category,
+  categoryEmojis,
   categoryConfig,
-  renderdCategoriesCountRef
+  topOffset,
+  onHeightReady,
+  scrollTop
 }: {
-  category: Categories;
+  categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
-  renderdCategoriesCountRef: React.MutableRefObject<number>;
+  topOffset: number;
+  onHeightReady: (height: number) => void;
+  scrollTop: number;
 }) {
-  const isEmojiHidden = useIsEmojiHidden();
-  const lazyLoadEmojis = useLazyLoadEmojisConfig();
-  const emojiStyle = useEmojiStyleConfig();
-  const isPastInitialLoad = useIsPastInitialLoad();
-  const [activeSkinTone] = useActiveSkinToneState();
-  const isEmojiDisallowed = useIsEmojiDisallowed();
-  const getEmojiUrl = useGetEmojiUrlConfig();
-  const showVariations = !useSkinTonesDisabledConfig();
-
-  // Small trick to defer the rendering of all emoji categories until the first category is visible
-  // This way the user gets to actually see something and not wait for the whole picker to render.
-  const emojisToPush =
-    !isPastInitialLoad && renderdCategoriesCountRef.current > 0
-      ? []
-      : emojisByCategory(category);
-
-  if (emojisToPush.length > 0) {
-    renderdCategoriesCountRef.current++;
-  }
-
-  let hiddenCounter = 0;
-
-  const emojis = emojisToPush.map(emoji => {
-    const unified = emojiUnified(emoji, activeSkinTone);
-    const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
-
-    const isDisallowed = isEmojiDisallowed(emoji);
-
-    if (hidden || isDisallowed) {
-      hiddenCounter++;
-    }
-
-    if (isDisallowed) {
-      return null;
-    }
-
-    return (
-      <ClickableEmoji
-        showVariations={showVariations}
-        key={unified}
-        emoji={emoji}
-        unified={unified}
-        hidden={failedToLoad}
-        hiddenOnSearch={filteredOut}
-        emojiStyle={emojiStyle}
-        lazyLoad={lazyLoadEmojis}
-        getEmojiUrl={getEmojiUrl}
-      />
-    );
+  const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
+    categoryEmojis,
+    topOffset,
+    onHeightReady,
+    scrollTop
   });
 
   return (
     <EmojiCategory
       categoryConfig={categoryConfig}
+      height={dimensions?.categoryHeight}
       // Indicates that there are no visible emojis
       // Hence, the category should be hidden
-      hidden={hiddenCounter === emojis.length}
+      hidden={!emojis.length && virtualizedCounter === 0}
     >
       {emojis}
     </EmojiCategory>

@@ -11,6 +11,7 @@ export function ElementRefContextProvider({
   const PickerMainRef = React.useRef<HTMLElement>(null);
   const AnchoredEmojiRef = React.useRef<HTMLElement>(null);
   const BodyRef = React.useRef<HTMLDivElement>(null);
+  const EmojiListRef = React.useRef<HTMLUListElement>(null);
   const SearchInputRef = React.useRef<HTMLInputElement>(null);
   const SkinTonePickerRef = React.useRef<HTMLDivElement>(null);
   const CategoryNavigationRef = React.useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ export function ElementRefContextProvider({
       value={{
         AnchoredEmojiRef,
         BodyRef,
+        EmojiListRef,
         CategoryNavigationRef,
         PickerMainRef,
         SearchInputRef,
@@ -42,6 +44,7 @@ export type ElementRef<
 type ElementRefs = {
   PickerMainRef: ElementRef;
   AnchoredEmojiRef: ElementRef;
+  EmojiListRef: ElementRef<HTMLUListElement>;
   SkinTonePickerRef: ElementRef<HTMLDivElement>;
   SearchInputRef: ElementRef<HTMLInputElement>;
   BodyRef: ElementRef<HTMLDivElement>;
@@ -54,6 +57,7 @@ const ElementRefContext = React.createContext<ElementRefs>({
   AnchoredEmojiRef: React.createRef(),
   BodyRef: React.createRef(),
   CategoryNavigationRef: React.createRef(),
+  EmojiListRef: React.createRef(),
   PickerMainRef: React.createRef(),
   SearchInputRef: React.createRef(),
   SkinTonePickerRef: React.createRef(),
@@ -63,6 +67,10 @@ const ElementRefContext = React.createContext<ElementRefs>({
 
 function useElementRef() {
   return React.useContext(ElementRefContext);
+}
+
+export function useEmojiListRef() {
+  return useElementRef()['EmojiListRef'];
 }
 
 export function usePickerMainRef() {

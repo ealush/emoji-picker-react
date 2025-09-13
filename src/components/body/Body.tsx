@@ -17,7 +17,7 @@ import { EmojiVariationPicker } from './EmojiVariationPicker';
 
 export function Body() {
   const BodyRef = useBodyRef();
-  useOnScroll(BodyRef);
+  const scrollTop = useOnScroll(BodyRef);
   useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
   useOnMouseMove();
 
@@ -27,7 +27,7 @@ export function Body() {
       ref={BodyRef}
     >
       <EmojiVariationPicker />
-      <EmojiList />
+      <EmojiList scrollTop={scrollTop} />
     </div>
   );
 }
