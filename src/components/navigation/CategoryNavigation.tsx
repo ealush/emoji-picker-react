@@ -76,12 +76,5 @@ const styles = stylesheet.create({
       cursor: 'default',
       pointerEvents: 'none'
     }
-  },
-  '.epr-main:has(input:not(:placeholder-shown))': {
-    nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none'
-    }
   }
 });

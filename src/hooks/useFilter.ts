@@ -11,7 +11,6 @@ import {
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiSelectors';
-import doesBrowserSupportCssHas from '../globals/doesBrowserSupportCssHas';
 
 import { useFocusSearchInput } from './useFocus';
 
@@ -78,10 +77,6 @@ export function useFilter() {
   };
 
   function onChange(inputValue: string) {
-    if (doesBrowserSupportCssHas) {
-      return;
-    }
-
     setTimeout(() => {
       const filter = filterRef.current;
 
