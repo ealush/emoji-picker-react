@@ -74,6 +74,7 @@
     "@storybook/addon-webpack5-compiler-swc": "1.0.2",
     "@storybook/addons": "^7.6.17",
     "@storybook/react": "^8.1.1",
+    "@storybook/react-vite": "8.1.1",
     "@storybook/react-webpack5": "8.1.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
@@ -101,7 +102,8 @@
     "tiny-invariant": "^1.2.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "vite": "^5.4.1"
   },
   "dependencies": {
     "flairup": "1.0.0"
