@@ -13,6 +13,7 @@ import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useGetEmojisByCategory } from '../../dataUtils/emojiSelectors';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
 import { useEmojiListRef } from '../context/ElementRefContext';
+import { useVisibleCategoriesState } from '../context/PickerContext';
 
 import { EmojiCategory } from './EmojiCategory';
 
@@ -71,11 +72,14 @@ function RenderCategory({
   onHeightReady: (height: number) => void;
   scrollTop: number;
 }) {
+  const [visibleCategroies] = useVisibleCategoriesState();
+
   const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
     categoryEmojis,
     topOffset,
     onHeightReady,
-    scrollTop
+    scrollTop,
+    isCategoryVisible: visibleCategroies.includes(categoryConfig.category)
   });
 
   return (

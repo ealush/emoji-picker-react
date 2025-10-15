@@ -5,7 +5,10 @@ import {
   useEmojiListRef,
   usePickerMainRef
 } from '../components/context/ElementRefContext';
-import { useReactionsModeState } from '../components/context/PickerContext';
+import {
+  useReactionsModeState,
+  useVisibleCategoriesState
+} from '../components/context/PickerContext';
 
 const EMOJI_SIZE_DEFAULT = 32;
 
@@ -22,6 +25,7 @@ export function useCategoryHeight(
   const [isReactionsMode] = useReactionsModeState();
   const PickerMainRef = usePickerMainRef();
   const emojiSizeRef = React.useRef<number | undefined>();
+  const [visibleCategories] = useVisibleCategoriesState();
   const [dimensions, setDimensions] = React.useState<{
     categoryHeight: number;
     emojisPerRow: number;
@@ -54,7 +58,12 @@ export function useCategoryHeight(
   // Recompute on data-count changes and when reactions mode toggles
   React.useEffect(() => {
     computeAndSetDimensions();
-  }, [emojiCount, isReactionsMode, computeAndSetDimensions]);
+  }, [
+    emojiCount,
+    isReactionsMode,
+    computeAndSetDimensions,
+    visibleCategories.length
+  ]);
 
   // Listen to transitionend on the picker root (where height transition occurs)
   React.useEffect(() => {

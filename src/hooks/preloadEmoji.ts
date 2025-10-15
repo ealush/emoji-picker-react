@@ -5,7 +5,7 @@ import { EmojiStyle } from '../types/exposedTypes';
 import { Dimensions } from '../virtualization/virtualizationHelpers';
 
 // eslint-disable-next-line max-params
-export function preloaEmojidIfNeeded(
+export function preloadEmojiIfNeeded(
   emoji: undefined | DataEmoji,
   emojiStyles: EmojiStyle,
   scrollTop: number,

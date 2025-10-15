@@ -17,7 +17,7 @@ import {
   shouldVirtualize
 } from '../virtualization/virtualizationHelpers';
 
-import { preloaEmojidIfNeeded } from './preloadEmoji';
+import { preloadEmojiIfNeeded } from './preloadEmoji';
 import { useCategoryHeight } from './useCategoryHeight';
 import { useIsEmojiDisallowed } from './useDisallowedEmojis';
 import { useIsEmojiHidden } from './useIsEmojiHidden';
@@ -26,12 +26,14 @@ export function useEmojiVirtualization({
   categoryEmojis,
   topOffset,
   onHeightReady,
-  scrollTop
+  scrollTop,
+  isCategoryVisible
 }: {
   categoryEmojis: DataEmojis;
   topOffset: number;
   onHeightReady: (height: number) => void;
   scrollTop: number;
+  isCategoryVisible: boolean;
 }) {
   const isEmojiHidden = useIsEmojiHidden();
   const lazyLoadEmojis = useLazyLoadEmojisConfig();
@@ -74,7 +76,7 @@ export function useEmojiVirtualization({
       })
     ) {
       virtualizedCounter++;
-      preloaEmojidIfNeeded(
+      preloadEmojiIfNeeded(
         emoji,
         emojiStyle,
         scrollTop,
@@ -86,6 +88,11 @@ export function useEmojiVirtualization({
       );
       return accumulator;
     }
+
+    if (!isCategoryVisible) {
+      return accumulator;
+    }
+
     accumulator.push(
       <ClickableEmoji
         showVariations={showVariations}
