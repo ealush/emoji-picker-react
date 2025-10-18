@@ -6,7 +6,7 @@ import { getLabelHeight } from '../../DomUtils/elementPositionInRow';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
   CategoryConfig,
-  categoryFromCategoryConfig
+  categoryFromCategoryConfig,
 } from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
@@ -30,7 +30,7 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   let topOffset = 0;
   return (
     <ul className={cx(styles.emojiList)} ref={EmojiListRef}>
-      {categories.map(categoryConfig => {
+      {categories.map((categoryConfig) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
         const currentOffset = topOffset;
@@ -45,9 +45,12 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
               categoryEmojis={getEmojisByCategory(category)}
               categoryConfig={categoryConfig}
               topOffset={currentOffset}
-              onHeightReady={height => {
+              onHeightReady={(height) => {
                 if (categoryHeights[category] !== height) {
-                  setCategoryHeights(prev => ({ ...prev, [category]: height }));
+                  setCategoryHeights((prev) => ({
+                    ...prev,
+                    [category]: height,
+                  }));
                 }
               }}
               scrollTop={scrollTop}
@@ -64,7 +67,7 @@ function RenderCategory({
   categoryConfig,
   topOffset,
   onHeightReady,
-  scrollTop
+  scrollTop,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
@@ -72,14 +75,14 @@ function RenderCategory({
   onHeightReady: (height: number) => void;
   scrollTop: number;
 }) {
-  const [visibleCategroies] = useVisibleCategoriesState();
+  const [visibleCategories] = useVisibleCategoriesState();
 
   const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
     categoryEmojis,
     topOffset,
     onHeightReady,
     scrollTop,
-    isCategoryVisible: visibleCategroies.includes(categoryConfig.category)
+    isCategoryVisible: visibleCategories.includes(categoryConfig.category),
   });
 
   return (
@@ -100,6 +103,6 @@ const styles = stylesheet.create({
     '.': ClassNames.emojiList,
     listStyle: 'none',
     margin: '0',
-    padding: '0'
-  }
+    padding: '0',
+  },
 });
