@@ -1,0 +1,103 @@
+name: Update gh-pages dependency and push
+
+on:
+  push:
+    branches: ["master", "main"]
+
+permissions:
+  contents: write
+
+jobs:
+  update-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch at workspace root
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: "."
+          clean: true
+          persist-credentials: true
+
+      - name: Read current package version
+        id: read_version
+        run: |
+          # Use node to print the version only, capture it safely into a shell var and write to GITHUB_OUTPUT
+          ver=$(node -e "process.stdout.write(require('./package.json').version)")
+          echo "PACKAGE_VERSION=$ver" >> $GITHUB_OUTPUT
+
+      - name: "Debug: show package version"
+        run: |
+          echo "Read package version: ${{ steps.read_version.outputs.PACKAGE_VERSION }}"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Clone repo into /tmp and prepare gh-pages
+        shell: bash
+        env:
+          REPO_URL: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/ghpages || true
+          git clone "$REPO_URL" /tmp/ghpages
+          cd /tmp/ghpages
+          git fetch --all
+          if git ls-remote --exit-code origin gh-pages; then
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf . || true
+            git commit --allow-empty -m "chore(gh-pages): create gh-pages branch" || true
+          fi
+
+      - name: Ensure helper script present and update package.json in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          mkdir -p .github/scripts
+          if [ ! -f .github/scripts/update-gh-pages-package.js ]; then
+            # Try to copy the script from origin/master (it may only exist on source branch)
+            if git show origin/master:.github/scripts/update-gh-pages-package.js >/dev/null 2>&1; then
+              git show origin/master:.github/scripts/update-gh-pages-package.js > .github/scripts/update-gh-pages-package.js
+              git add .github/scripts/update-gh-pages-package.js
+            fi
+          fi
+          if [ ! -f .github/scripts/update-gh-pages-package.js ]; then
+            echo "Helper script not available in clone; cannot update package.json" >&2
+            exit 1
+          fi
+          node .github/scripts/update-gh-pages-package.js "${{ steps.read_version.outputs.PACKAGE_VERSION }}"
+
+      - name: Configure git identity in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Install dependencies in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          npm ci --legacy-peer-deps || npm install --no-audit --no-fund
+
+      - name: Commit and push gh-pages changes from clone
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          git add package.json || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore(gh-pages): update emoji-picker-react to ${{ steps.read_version.outputs.PACKAGE_VERSION }}"
+            git push origin gh-pages
+          fi
