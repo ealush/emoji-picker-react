@@ -90,6 +90,7 @@ export function useEmojiVirtualization({
     }
 
     if (!isCategoryVisible) {
+      virtualizedCounter++;
       return accumulator;
     }
 
