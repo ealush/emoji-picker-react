@@ -108,11 +108,11 @@ const styles = stylesheet.create({
     padding: 'var(--epr-search-input-padding)',
     height: 'var(--epr-search-input-height)',
     backgroundColor: 'var(--epr-search-input-bg-color)',
-    border: '1px solid var(--epr-search-input-bg-color)',
+    border: '1px solid var(--epr-search-border-color)',
     width: '100%',
     ':focus': {
       backgroundColor: 'var(--epr-search-input-bg-color-active)',
-      border: '1px solid var(--epr-search-border-color)'
+      border: '1px solid var(--epr-search-border-color-active)'
     },
     '::placeholder': {
       color: 'var(--epr-search-input-placeholder-color)'
