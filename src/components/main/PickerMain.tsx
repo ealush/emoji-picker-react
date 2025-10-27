@@ -142,7 +142,6 @@ const styles = stylesheet.create({
       '--epr-picker-border-radius': '8px',
 
       /* Header */
-      '--epr-search-border-color': 'var(--epr-highlight-color)',
       '--epr-header-padding': '15px var(--epr-horizontal-padding)',
 
       /* Skin Tone Picker */
@@ -158,6 +157,8 @@ const styles = stylesheet.create({
       '--epr-search-input-text-color': 'var(--epr-text-color)',
       '--epr-search-input-placeholder-color': 'var(--epr-text-color)',
       '--epr-search-bar-inner-padding': 'var(--epr-horizontal-padding)',
+      '--epr-search-border-color': 'var(--epr-search-input-bg-color)',
+      '--epr-search-border-color-active': 'var(--epr-highlight-color)',
 
       /*  Category Navigation */
       '--epr-category-navigation-button-size': '30px',
