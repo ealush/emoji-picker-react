@@ -14,6 +14,21 @@ import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
 
+export function filterEmojisByKeywordWithLongestMatch(keyword: string) {
+  const normalizedFilter = keyword.trim().toLowerCase();
+
+  // Find the longest matching filter to use as a base
+  const longestMatch = findLongestMatchingFilter(normalizedFilter, alphaNumericEmojiIndex);
+
+  if (longestMatch) {
+    // Filter the emojis from the longest match
+    return filterEmojisByKeyword(longestMatch, normalizedFilter);
+  } else {
+    // Filter from the full emoji index
+    return filterEmojisByKeyword(alphaNumericEmojiIndex.current, normalizedFilter);
+  }
+}
+
 export function PickerContextProvider({ children }: Props) {
   const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
