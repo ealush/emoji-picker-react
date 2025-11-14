@@ -45,7 +45,6 @@ export function PickerContextProvider({ children }: Props) {
   const [, setSearchTerm] = searchTerm;
   React.useEffect(() => {
     const normalizedFilter = filterString.trim().toLowerCase();
-    console.log('normalizedFilter', normalizedFilter);
 
     // Build filter dictionary for the search term if it doesn't exist
     if (normalizedFilter && !filterRef.current[normalizedFilter]) {
@@ -59,11 +58,6 @@ export function PickerContextProvider({ children }: Props) {
         // Filter from the full emoji index
         filterRef.current[normalizedFilter] = filterEmojisByKeyword(alphaNumericEmojiIndex.current, normalizedFilter);
       }
-    } else {
-      console.log('nope', {
-        normalizedFilter,
-        filterRef: !!filterRef.current,
-      });
     }
 
     setSearchTerm(normalizedFilter);
@@ -215,7 +209,6 @@ function filterEmojisByKeyword(
   emojis: FilterDict,
   keyword: string
 ): FilterDict {
-  console.log('filterEmojisByKeyword', emojis, keyword);
   const filtered: FilterDict = {};
 
   for (const unified in emojis) {
@@ -231,7 +224,6 @@ function filterEmojisByKeyword(
 
 function emojiMatchesKeyword(emoji: DataEmoji, keyword: string): boolean {
   const names = emoji['n'] ?? []; // EmojiProperties.name is index 1
-  console.log(emoji, keyword);
   return names.some((name: string) => name.includes(keyword));
 }
 
