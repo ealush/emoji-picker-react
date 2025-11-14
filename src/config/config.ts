@@ -96,6 +96,8 @@ export function basePickerConfig(): PickerConfigInternal {
     open: true,
     allowExpandReactions: true,
     hiddenEmojis: [],
+    filterString: '',
+    showSearch: false,
   };
 }
 
@@ -126,6 +128,8 @@ export type PickerConfigInternal = {
   open: boolean;
   allowExpandReactions: boolean;
   hiddenEmojis: string[];
+  filterString: string;
+  showSearch: boolean;
 };
 
 export type PreviewConfig = {
@@ -135,8 +139,8 @@ export type PreviewConfig = {
 };
 
 const basePreviewConfig: PreviewConfig = {
-  defaultEmoji: '1f60a',
-  defaultCaption: "What's your mood?",
+  defaultEmoji: '1f44d', // '1f60a',
+  defaultCaption: "+1",
   showPreview: true,
 };
 

@@ -102,7 +102,7 @@ export function PreviewBody() {
           ) : null}
         </div>
         <div className={cx(styles.label)}>
-          {show ? emojiName(emoji) : defaultText}
+          :{show ? emojiName(emoji) : defaultText}:
         </div>
       </>
     );
@@ -125,9 +125,9 @@ const styles = stylesheet.create({
   },
   label: {
     color: 'var(--epr-preview-text-color)',
+    fontFamily: 'monospace',
     fontSize: 'var(--epr-preview-text-size)',
     padding: 'var(--epr-preview-text-padding)',
-    textTransform: 'capitalize'
   },
   emoji: {
     padding: '0'

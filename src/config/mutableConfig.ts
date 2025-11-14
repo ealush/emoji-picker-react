@@ -6,6 +6,7 @@ export type MutableConfig = {
   onEmojiClick?: MouseDownEvent;
   onReactionClick?: MouseDownEvent;
   onSkinToneChange?: OnSkinToneChange;
+  filterString?: string;
 };
 
 export const MutableConfigContext = React.createContext<
@@ -23,7 +24,8 @@ export function useDefineMutableConfig(
   const MutableConfigRef = React.useRef<MutableConfig>({
     onEmojiClick: config.onEmojiClick || emptyFunc,
     onReactionClick: config.onReactionClick || config.onEmojiClick,
-    onSkinToneChange: config.onSkinToneChange || emptyFunc
+    onSkinToneChange: config.onSkinToneChange || emptyFunc,
+    filterString: config.filterString || ''
   });
 
   React.useEffect(() => {
@@ -36,6 +38,10 @@ export function useDefineMutableConfig(
     MutableConfigRef.current.onSkinToneChange =
       config.onSkinToneChange || emptyFunc;
   }, [config.onSkinToneChange]);
+
+  React.useEffect(() => {
+    MutableConfigRef.current.filterString = config.filterString || '';
+  }, [config.filterString]);
 
   return MutableConfigRef;
 }

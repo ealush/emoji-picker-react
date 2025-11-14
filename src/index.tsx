@@ -26,6 +26,7 @@ export interface PickerProps extends PickerConfig {}
 
 export default function EmojiPicker(props: PickerProps) {
   const MutableConfigRef = useDefineMutableConfig({
+    filterString: props.filterString,
     onEmojiClick: props.onEmojiClick,
     onReactionClick: props.onReactionClick,
     onSkinToneChange: props.onSkinToneChange,

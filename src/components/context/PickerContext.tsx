@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import {
   useDefaultSkinToneConfig,
+  useFilterStringConfig,
   useReactionsOpenConfig
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
@@ -17,6 +18,7 @@ export function PickerContextProvider({ children }: Props) {
   const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
+  const filterString = useFilterStringConfig();
 
   // Initialize the filter with the inititial dictionary
   const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
@@ -38,6 +40,34 @@ export function PickerContextProvider({ children }: Props) {
   const visibleCategoriesState = useState<string[]>([]);
 
   useMarkInitialLoad(setIsPastInitialLoad);
+
+  // Sync filterString prop with internal searchTerm state
+  const [, setSearchTerm] = searchTerm;
+  React.useEffect(() => {
+    const normalizedFilter = filterString.trim().toLowerCase();
+    console.log('normalizedFilter', normalizedFilter);
+
+    // Build filter dictionary for the search term if it doesn't exist
+    if (normalizedFilter && !filterRef.current[normalizedFilter]) {
+      // Find the longest matching filter to use as a base
+      const longestMatch = findLongestMatchingFilter(normalizedFilter, filterRef.current);
+
+      if (longestMatch) {
+        // Filter the emojis from the longest match
+        filterRef.current[normalizedFilter] = filterEmojisByKeyword(longestMatch, normalizedFilter);
+      } else {
+        // Filter from the full emoji index
+        filterRef.current[normalizedFilter] = filterEmojisByKeyword(alphaNumericEmojiIndex, normalizedFilter);
+      }
+    } else {
+      console.log('nope', {
+        normalizedFilter,
+        filterRef: !!filterRef.current,
+      });
+    }
+
+    setSearchTerm(normalizedFilter);
+  }, [filterString, setSearchTerm]);
 
   return (
     <PickerContext.Provider
@@ -179,3 +209,47 @@ export function useUpdateSuggested(): [number, () => void] {
 export type FilterState = Record<string, FilterDict>;
 
 type ActiveCategoryState = null | string;
+
+// Helper functions for filtering emojis
+function filterEmojisByKeyword(
+  emojis: FilterDict,
+  keyword: string
+): FilterDict {
+  console.log('filterEmojisByKeyword', emojis, keyword);
+  const filtered: FilterDict = {};
+
+  for (const unified in emojis) {
+    const emoji = emojis[unified];
+
+    if (emojiMatchesKeyword(emoji, keyword)) {
+      filtered[unified] = emoji;
+    }
+  }
+
+  return filtered;
+}
+
+function emojiMatchesKeyword(emoji: DataEmoji, keyword: string): boolean {
+  const names = emoji['n'] ?? []; // EmojiProperties.name is index 1
+  console.log(emoji, keyword);
+  return names.some((name: string) => name.includes(keyword));
+}
+
+function findLongestMatchingFilter(
+  keyword: string,
+  filterDict: Record<string, FilterDict>
+): FilterDict | null {
+  if (filterDict[keyword]) {
+    return filterDict[keyword];
+  }
+
+  const longestMatchingKey = Object.keys(filterDict)
+    .sort((a, b) => b.length - a.length)
+    .find(key => keyword.includes(key));
+
+  if (longestMatchingKey) {
+    return filterDict[longestMatchingKey];
+  }
+
+  return null;
+}

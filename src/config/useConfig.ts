@@ -200,3 +200,13 @@ export function useSearchResultsConfig(searchResultsCount: number): string {
 
   return SEARCH_RESULTS_NO_RESULTS_FOUND;
 }
+
+export function useFilterStringConfig(): string {
+  const { filterString } = usePickerConfig();
+  return filterString;
+}
+
+export function useShowSearchConfig(): boolean {
+  const { showSearch } = usePickerConfig();
+  return showSearch;
+}

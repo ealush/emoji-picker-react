@@ -28,7 +28,7 @@ export function emojiName(emoji?: WithName): string {
     return '';
   }
 
-  return emojiNames(emoji)[0];
+  return emojiNames(emoji)[0].replace(/ /g, '-')
 }
 
 export function unifiedWithoutSkinTone(unified: string): string {
