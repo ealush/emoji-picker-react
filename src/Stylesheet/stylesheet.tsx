@@ -77,7 +77,7 @@ export const commonInteractionStyles = stylesheet.create({
   }
 });
 
-export function darkMode(key: string, value: Styles) {
+export function darkMode(key: string, value: Styles): Record<string, any> {
   return {
     '.epr-dark-theme': {
       [key]: value

@@ -1,0 +1,1 @@
+{"version":3,"file":"useShouldHideCustomEmojis.js","sourceRoot":"","sources":["useShouldHideCustomEmojis.ts"],"names":[],"mappings":";;;AAAA,iDAA4D;AAE5D,SAAgB,yBAAyB;IACvC,IAAM,oBAAoB,GAAG,iCAAqB,EAAE,CAAC;IAErD,IAAI,CAAC,oBAAoB,EAAE;QACzB,OAAO,KAAK,CAAC;KACd;IAED,OAAO,oBAAoB,CAAC,MAAM,KAAK,CAAC,CAAC;AAC3C,CAAC;AARD,8DAQC"}

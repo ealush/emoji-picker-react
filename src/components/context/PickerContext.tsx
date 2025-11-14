@@ -57,7 +57,7 @@ export function PickerContextProvider({ children }: Props) {
         filterRef.current[normalizedFilter] = filterEmojisByKeyword(longestMatch, normalizedFilter);
       } else {
         // Filter from the full emoji index
-        filterRef.current[normalizedFilter] = filterEmojisByKeyword(alphaNumericEmojiIndex, normalizedFilter);
+        filterRef.current[normalizedFilter] = filterEmojisByKeyword(alphaNumericEmojiIndex.current, normalizedFilter);
       }
     } else {
       console.log('nope', {
