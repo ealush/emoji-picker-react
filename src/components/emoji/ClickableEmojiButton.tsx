@@ -75,7 +75,7 @@ const styles = stylesheet.create({
     justifyContent: 'center',
     maxWidth: 'var(--epr-emoji-fullsize)',
     maxHeight: 'var(--epr-emoji-fullsize)',
-    borderRadius: '8px',
+    borderRadius: '4px',
     overflow: 'hidden',
     transition: 'background-color 0.2s',
     ':hover': {
