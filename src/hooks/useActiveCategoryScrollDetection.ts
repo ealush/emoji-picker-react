@@ -15,6 +15,7 @@ export function useActiveCategoryScrollDetection({
 
   useEffect(() => {
     const visibleCategories = new Map<string, number>();
+    const intersectingCategories = new Map<string, boolean>();
     const bodyRef = BodyRef.current;
     const observer = new IntersectionObserver(
       entries => {
@@ -30,15 +31,18 @@ export function useActiveCategoryScrollDetection({
           }
 
           visibleCategories.set(id, entry.intersectionRatio);
+          intersectingCategories.set(id, entry.isIntersecting);
         }
 
         const ratios = Array.from(visibleCategories);
-        setVisibleCategories(
-          ratios.filter(([_, ratio]) => ratio > 0).map(([id]) => id)
-        );
+        const visibleCats = ratios
+          .filter(([id, ratio]) => ratio > 0 || intersectingCategories.get(id))
+          .map(([id]) => id);
+
+        setVisibleCategories(visibleCats);
         const lastCategory = ratios[ratios.length - 1];
 
-        if (lastCategory[1] == 1) {
+        if (lastCategory?.[1] == 1) {
           return setActiveCategory(lastCategory[0]);
         }
 
@@ -50,11 +54,16 @@ export function useActiveCategoryScrollDetection({
         }
       },
       {
+        root: bodyRef,
         threshold: [0, 1]
       }
     );
     bodyRef?.querySelectorAll(asSelectors(ClassNames.category)).forEach(el => {
       observer.observe(el);
     });
+
+    return () => {
+      observer.disconnect();
+    };
   }, [BodyRef, setActiveCategory, setVisibleCategories]);
 }
