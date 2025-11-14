@@ -139,7 +139,7 @@ const styles = stylesheet.create({
 
       '--epr-horizontal-padding': '10px',
 
-      '--epr-picker-border-radius': '8px',
+      '--epr-picker-border-radius': '0px',
 
       /* Header */
       '--epr-header-padding': '15px var(--epr-horizontal-padding)',
@@ -152,7 +152,7 @@ const styles = stylesheet.create({
       /* Search */
       '--epr-search-input-bg-color-active': 'var(--epr-search-input-bg-color)',
       '--epr-search-input-padding': '0 30px',
-      '--epr-search-input-border-radius': '8px',
+      '--epr-search-input-border-radius': '0px',
       '--epr-search-input-height': '40px',
       '--epr-search-input-text-color': 'var(--epr-text-color)',
       '--epr-search-input-placeholder-color': 'var(--epr-text-color)',
