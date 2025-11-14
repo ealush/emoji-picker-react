@@ -41,15 +41,27 @@ const emojis = _.sortBy(
   'sort_order'
 );
 
+const transformName = name => {
+  return name.replace(/_/g, '-').replace(/\s/g, '-').replace('u.s.', 'us').replace('st.', 'st').toLowerCase()
+}
+
 const cleanEmoji = emoji => {
-  emoji.short_names = emoji.short_names || [];
+  emoji.short_names = emoji.short_names.map(transformName) || [];
   emoji[keys.EMOJI_PROPERTY_NAME] = [
     ...new Set(
       [emoji.name, ...emoji.short_names, emoji.short_name]
         .filter(Boolean)
-        .map(n => n.replace(/_/g, ' '))
+        .map(transformName)
     )
   ].sort((a, b) => a.length - b.length);
+
+  if (emoji.short_names[0] === 'flag-mm') {
+    emoji[keys.EMOJI_PROPERTY_NAME] = ['myanmar-flag', 'burma-flag'];
+  }
+  if (emoji.short_names[0] === 'flag-ps') {
+    emoji[keys.EMOJI_PROPERTY_NAME] = ['palestine-flag', 'palestinian-flag'];
+  }
+
   emoji[keys.EMOJI_PROPERTY_UNIFIED] = emoji.unified;
   emoji[keys.EMOJI_PROPERTY_ADDED_IN] = emoji.added_in;
 
