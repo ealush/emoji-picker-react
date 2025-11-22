@@ -1,4 +1,5 @@
-import { ReactNode, useEffect } from 'react';
+ 
+ import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
@@ -61,20 +62,22 @@ export function useEmojiVirtualization({
     }
   }, [dimensions, onHeightReady, emojisToPush.length]);
 
+  const isVirtualized = (style: { top: number; left: number } | undefined) =>
+    dimensions &&
+    BodyRef.current &&
+    shouldVirtualize({
+      scrollTop,
+      clientHeight: BodyRef.current?.clientHeight ?? 0,
+      topOffset,
+      style,
+      dimensions
+    });
+
   const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const style = getEmojiPositionStyle(dimensions, index);
-    if (
-      dimensions &&
-      BodyRef.current &&
-      shouldVirtualize({
-        scrollTop,
-        clientHeight: BodyRef.current?.clientHeight ?? 0,
-        topOffset,
-        style,
-        dimensions
-      })
-    ) {
+
+    if (isVirtualized(style)) {
       virtualizedCounter++;
       preloadEmojiIfNeeded(
         emoji,

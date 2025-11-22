@@ -3,18 +3,17 @@ import * as React from 'react';
 import { EmojiButtonSelector } from '../DomUtils/selectors';
 import {
   useEmojiListRef,
-  usePickerMainRef
+  usePickerMainRef,
 } from '../components/context/ElementRefContext';
 import {
   useReactionsModeState,
-  useVisibleCategoriesState
+  useVisibleCategoriesState,
+  useEmojiSizeState,
 } from '../components/context/PickerContext';
 
-const EMOJI_SIZE_DEFAULT = 32;
+const EMOJI_SIZE_DEFAULT = 40;
 
-export function useCategoryHeight(
-  emojiCount: number
-):
+export function useCategoryHeight(emojiCount: number):
   | {
       categoryHeight: number;
       emojisPerRow: number;
@@ -26,6 +25,7 @@ export function useCategoryHeight(
   const PickerMainRef = usePickerMainRef();
   const emojiSizeRef = React.useRef<number | undefined>();
   const [visibleCategories] = useVisibleCategoriesState();
+  const [emojiSizeFromContext] = useEmojiSizeState();
   const [dimensions, setDimensions] = React.useState<{
     categoryHeight: number;
     emojisPerRow: number;
@@ -38,12 +38,18 @@ export function useCategoryHeight(
     if (!listEl) return;
 
     const emojiElement = listEl.querySelector(
-      EmojiButtonSelector
+      EmojiButtonSelector,
     ) as HTMLElement | null;
 
     const measured = emojiElement?.clientHeight;
-    const emojiSize = measured ?? emojiSizeRef.current ?? EMOJI_SIZE_DEFAULT;
-    emojiSizeRef.current = emojiSize;
+    if (measured) {
+      emojiSizeRef.current = measured;
+    }
+    const emojiSize =
+      emojiSizeFromContext ||
+      measured ||
+      emojiSizeRef.current ||
+      EMOJI_SIZE_DEFAULT;
     const pickerWidth = listEl.clientWidth;
 
     if (pickerWidth === 0 || emojiSize === 0) return;
@@ -53,7 +59,7 @@ export function useCategoryHeight(
     const categoryHeight = rowCount * emojiSize;
 
     setDimensions({ categoryHeight, emojisPerRow, emojiSize });
-  }, [EmojiListRef, emojiCount]);
+  }, [EmojiListRef, emojiCount, emojiSizeFromContext]);
 
   // Recompute on data-count changes and when reactions mode toggles
   React.useEffect(() => {
@@ -62,7 +68,7 @@ export function useCategoryHeight(
     emojiCount,
     isReactionsMode,
     computeAndSetDimensions,
-    visibleCategories.length
+    visibleCategories.length,
   ]);
 
   // Listen to transitionend on the picker root (where height transition occurs)
@@ -90,7 +96,7 @@ export function useCategoryHeight(
     };
 
     rootEl.addEventListener('transitionend', handler, {
-      passive: true
+      passive: true,
     });
     return () => {
       rootEl.removeEventListener('transitionend', handler);

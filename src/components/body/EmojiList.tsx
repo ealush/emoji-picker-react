@@ -16,6 +16,7 @@ import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
 
 import { EmojiCategory } from './EmojiCategory';
+import { MeasureEmoji } from './MeasureEmoji';
 
 export function EmojiList({ scrollTop }: { scrollTop: number }) {
   const categories = useCategoriesConfig();
@@ -30,6 +31,7 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   let topOffset = 0;
   return (
     <ul className={cx(styles.emojiList)} ref={EmojiListRef}>
+      <MeasureEmoji />
       {categories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
 

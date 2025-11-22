@@ -36,6 +36,7 @@ export function PickerContextProvider({ children }: Props) {
   const reactionsModeState = useState(reactionsDefaultOpen);
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
   const visibleCategoriesState = useState<string[]>([]);
+  const emojiSizeState = useState<number | null>(null);
 
   useMarkInitialLoad(setIsPastInitialLoad);
 
@@ -55,7 +56,8 @@ export function PickerContextProvider({ children }: Props) {
         skinToneFanOpenState,
         suggestedUpdateState,
         reactionsModeState,
-        visibleCategoriesState
+        visibleCategoriesState,
+        emojiSizeState
       }}
     >
       {children}
@@ -80,6 +82,7 @@ const PickerContext = React.createContext<{
   disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
   reactionsModeState: ReactState<boolean>;
   visibleCategoriesState: ReactState<Array<string>>;
+  emojiSizeState: ReactState<number | null>;
 }>({
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
@@ -94,7 +97,8 @@ const PickerContext = React.createContext<{
   skinToneFanOpenState: [false, () => {}],
   suggestedUpdateState: [Date.now(), () => {}],
   reactionsModeState: [false, () => {}],
-  visibleCategoriesState: [[], () => []]
+  visibleCategoriesState: [[], () => []],
+  emojiSizeState: [null, () => {}]
 });
 
 type Props = Readonly<{
@@ -162,6 +166,11 @@ export function useDisallowedEmojisRef() {
 export function useVisibleCategoriesState() {
   const { visibleCategoriesState } = React.useContext(PickerContext);
   return visibleCategoriesState;
+}
+
+export function useEmojiSizeState() {
+  const { emojiSizeState } = React.useContext(PickerContext);
+  return emojiSizeState;
 }
 
 export function useUpdateSuggested(): [number, () => void] {

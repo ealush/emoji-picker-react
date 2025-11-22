@@ -52,6 +52,8 @@ export function EmojiCategory({
 const styles = stylesheet.create({
   category: {
     '.': ClassNames.category,
+    minHeight:
+      'calc(var(--epr-emoji-fullsize) + var(--epr-category-label-height))',
     position: 'relative'
   },
   categoryContent: {
