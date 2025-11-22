@@ -80,12 +80,44 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
 
+      - name: Install latest emoji-picker-react in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          npm install emoji-picker-react@${{ steps.read_version.outputs.PACKAGE_VERSION }} --no-audit --no-fund
+
       - name: Install dependencies in clone
         shell: bash
         run: |
           set -euo pipefail
           cd /tmp/ghpages
           npm ci --legacy-peer-deps || npm install --no-audit --no-fund
+
+      - name: Build static site in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          npm run build
+
+      - name: Export static site in clone
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          npm run export
+
+      - name: Copy static export to root
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd /tmp/ghpages
+          if [ -d out ]; then
+            find . -mindepth 1 -maxdepth 1 ! -name 'out' ! -name '.git' ! -name '.gitignore' -exec rm -rf {} +
+            cp -a out/. .
+            rm -rf out
+          fi
 
       - name: Commit and push gh-pages changes from clone
         shell: bash
@@ -94,10 +126,11 @@ jobs:
         run: |
           set -euo pipefail
           cd /tmp/ghpages
-          git add package.json || true
+          # Stage all changes (including built assets)
+          git add .
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore(gh-pages): update emoji-picker-react to ${{ steps.read_version.outputs.PACKAGE_VERSION }}"
+            git commit -m "chore(gh-pages): update all built assets for emoji-picker-react@${{ steps.read_version.outputs.PACKAGE_VERSION }}"
             git push origin gh-pages
           fi
