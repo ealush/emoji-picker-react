@@ -10,6 +10,7 @@ export function compareConfig(prev: PickerConfig, next: PickerConfig) {
     prev.reactionsDefaultOpen === next.reactionsDefaultOpen &&
     prev.searchPlaceHolder === next.searchPlaceHolder &&
     prev.searchPlaceholder === next.searchPlaceholder &&
+    prev.searchClearButtonLabel === next.searchClearButtonLabel &&
     prev.defaultSkinTone === next.defaultSkinTone &&
     prev.skinTonesDisabled === next.skinTonesDisabled &&
     prev.autoFocusSearch === next.autoFocusSearch &&
