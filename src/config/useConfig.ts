@@ -14,6 +14,7 @@ import {
 import { CategoriesConfig } from './categoryConfig';
 import {
   DEFAULT_SEARCH_PLACEHOLDER,
+  DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
   SEARCH_RESULTS_NO_RESULTS_FOUND,
   SEARCH_RESULTS_ONE_RESULT_FOUND,
   SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
@@ -35,6 +36,11 @@ export function useSearchPlaceHolderConfig(): string {
       p => p !== DEFAULT_SEARCH_PLACEHOLDER
     ) ?? DEFAULT_SEARCH_PLACEHOLDER
   );
+}
+
+export function useSearchClearButtonLabelConfig(): string {
+  const { searchClearButtonLabel } = usePickerConfig();
+  return searchClearButtonLabel ?? DEFAULT_SEARCH_CLEAR_BUTTON_LABEL;
 }
 
 export function useDefaultSkinToneConfig(): SkinTones {

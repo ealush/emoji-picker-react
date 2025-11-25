@@ -46,6 +46,7 @@ export function useSetConfig(config: PickerConfig) {
     config.reactionsDefaultOpen,
     config.searchPlaceHolder,
     config.searchPlaceholder,
+    config.searchClearButtonLabel,
     config.defaultSkinTone,
     config.skinTonesDisabled,
     config.autoFocusSearch,

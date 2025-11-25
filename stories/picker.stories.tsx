@@ -110,6 +110,9 @@ export const EmojiImageTwitter = (args: Props) => (
 export const CustomSearchPlaceholder = (args: Props) => (
   <Template searchPlaceholder="👀 Find" />
 );
+export const CustomSearchClearButtonLabel = (args: Props) => (
+  <Template {...args} searchClearButtonLabel="Reset search" />
+);
 export const SkinTonesDisabled = (args: Props) => (
   <Template {...args} skinTonesDisabled />
 );
