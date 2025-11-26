@@ -6,6 +6,7 @@ import {
   darkMode,
   stylesheet
 } from '../../../Stylesheet/stylesheet';
+import { useSearchClearButtonLabelConfig } from '../../../config/useConfig';
 import { useClearSearch } from '../../../hooks/useFilter';
 import { Button } from '../../atoms/Button';
 
@@ -13,6 +14,7 @@ import SVGTimes from './svg/times.svg';
 
 export function BtnClearSearch() {
   const clearSearch = useClearSearch();
+  const searchClearButtonLabel = useSearchClearButtonLabelConfig();
 
   return (
     <Button
@@ -21,8 +23,8 @@ export function BtnClearSearch() {
         commonInteractionStyles.visibleOnSearchOnly
       )}
       onClick={clearSearch}
-      aria-label="Clear"
-      title="Clear"
+      aria-label={searchClearButtonLabel}
+      title={searchClearButtonLabel}
     >
       <div className={cx(styles.icnClearnSearch)} />
     </Button>

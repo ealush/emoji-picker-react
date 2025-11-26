@@ -73,6 +73,7 @@ The following props are accepted by the picker:
 | lazyLoadEmojis         | boolean                                                | `false`    | Controls whether the emojis are loaded lazily or not.                                                                                                      |
 | previewConfig          | object                                                 | `{}`       | Controls the preview of the emoji. See below for more information.                                                                                         |
 | searchPlaceholder      | string                                                 | `Search`   | Controls the placeholder of the search input.                                                                                                              |
+| searchClearButtonLabel | string                                                 | 'Clear'    | Controls the `aria-label` and `title` of the Clear button of the search input.                                                                             |
 | suggestedEmojisMode    | string                                                 | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                                                           |
 | skinTonesDisabled      | boolean                                                | `false`    | Controls whether the skin tones are disabled or not.                                                                                                       |
 | searchDisabled         | boolean                                                | `false`    | Controls whether the search is disabled or not. When disabled, the skin tone picker will be shown in the preview component.                                |
@@ -165,6 +166,8 @@ import { SkinTones } from 'emoji-picker-react';
 ```
 
 - `searchPlaceholder`: `string` - The placeholder text for the search input. Defaults to `Search`.
+
+- `searchClearButtonLabel`: `string` - The `aria-label` and `title` text for the search input clear button. Defaults to `Clear`.
 
 - categories: Allows full config over ordering, naming and display of categories.
   To only sort/omit categories, you can simply pass an array of category names to display:

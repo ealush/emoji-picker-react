@@ -25,6 +25,7 @@ import { CustomEmoji } from './customEmojiConfig';
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
+export const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = 'Clear';
 export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
 export const SEARCH_RESULTS_SUFFIX =
   ' found. Use up and down arrow keys to navigate.';
@@ -84,6 +85,7 @@ export function basePickerConfig(): PickerConfigInternal {
     searchDisabled: false,
     searchPlaceHolder: DEFAULT_SEARCH_PLACEHOLDER,
     searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
+    searchClearButtonLabel: DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
     skinTonePickerLocation: SkinTonePickerLocation.SEARCH,
     skinTonesDisabled: false,
     style: {},
@@ -103,6 +105,7 @@ export type PickerConfigInternal = {
   emojiVersion: string | null;
   searchPlaceHolder: string;
   searchPlaceholder: string;
+  searchClearButtonLabel: string;
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
