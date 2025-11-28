@@ -15,10 +15,10 @@ export {
   SkinTones,
   Theme,
   Categories,
-  EmojiClickData,
   SuggestionMode,
   SkinTonePickerLocation
 } from './types/exposedTypes';
+export type { EmojiClickData } from './types/exposedTypes';
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 
