@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { Categories, SuggestionMode } from '../types/exposedTypes';
 
 export { Categories };
@@ -92,6 +94,7 @@ export type CategoriesConfig = CategoryConfig[];
 export type CategoryConfig = {
   category: Categories;
   name: string;
+  icon?: React.ReactNode;
 };
 
 export type UserCategoryConfig = Array<Categories | CategoryConfig>;

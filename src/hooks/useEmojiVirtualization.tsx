@@ -1,6 +1,5 @@
- 
- import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
+import { ReactNode, useEffect } from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { useActiveSkinToneState } from '../components/context/PickerContext';

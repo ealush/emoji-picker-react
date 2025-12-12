@@ -314,6 +314,59 @@ export const CollapseToReactions = (args: Props) => (
   />
 );
 
+
+export const CustomCategoryIconsMapProp = (args: Props) => (
+  <Template
+    {...args}
+    categoryIcons={{
+      [Categories.SUGGESTED]: (
+        <img
+          alt="Alice"
+          src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/alice.png"
+          style={{ width: '25px', height: '25px' }}
+        />
+      ),
+      [Categories.SMILEYS_PEOPLE]: (
+        <img
+          alt="Dog"
+          src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/dog.png"
+          style={{ width: '25px', height: '25px' }}
+        />
+      )
+    }}
+  />
+);
+
+export const CustomCategoryIconsInCategoriesConfig = (args: Props) => (
+  <Template
+    {...args}
+    categories={[
+      {
+        category: Categories.SUGGESTED,
+        name: 'Recently Used',
+        icon: (
+          <img
+            alt="Vest"
+            src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png"
+            style={{ width: '25px', height: '25px' }}
+          />
+        )
+      },
+      {
+        category: Categories.SMILEYS_PEOPLE,
+        name: 'Smileys & People',
+        icon: (
+          <img
+            alt="Hat"
+            src="https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/hat.png"
+            style={{ width: '25px', height: '25px' }}
+          />
+        )
+      }
+    ]}
+  />
+);
+
 function TemplateDark(args) {
   const [open, setOpen] = useState(true);
   const [hasBg, setHasBg] = useState(false);

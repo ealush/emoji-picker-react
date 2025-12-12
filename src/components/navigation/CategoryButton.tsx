@@ -21,6 +21,7 @@ type Props = {
   allowNavigation: boolean;
   onClick: () => void;
   categoryConfig: CategoryConfig;
+  icon?: React.ReactNode;
 };
 
 export function CategoryButton({
@@ -28,15 +29,17 @@ export function CategoryButton({
   category,
   allowNavigation,
   categoryConfig,
-  onClick
+  onClick,
+  icon
 }: Props) {
   return (
     <Button
       tabIndex={allowNavigation ? 0 : -1}
       className={cx(
-        styles.catBtn,
+        styles.commonBtn,
+        !icon && styles.catBtn,
         commonInteractionStyles.categoryBtn,
-        `epr-icn-${category}`,
+        !icon && `epr-icn-${category}`,
         {
           [ClassNames.active]: isActiveCategory
         }
@@ -46,7 +49,9 @@ export function CategoryButton({
       aria-selected={isActiveCategory}
       role="tab"
       aria-controls="epr-category-nav-id"
-    />
+    >
+      {icon}
+    </Button>
   );
 }
 
@@ -67,17 +72,16 @@ const DarkInactivePosition = {
 };
 
 const styles = stylesheet.create({
-  catBtn: {
+  commonBtn: {
     '.': 'epr-cat-btn',
-    display: 'inline-block',
+    display: 'inline-flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     transition: 'opacity 0.2s ease-in-out',
     position: 'relative',
     height: 'var(--epr-category-navigation-button-size)',
     width: 'var(--epr-category-navigation-button-size)',
-    backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
     outline: 'none',
-    backgroundPosition: '0 0',
-    backgroundImage: `url(${SVGNavigation})`,
     ':focus:before': {
       content: '',
       position: 'absolute',
@@ -87,7 +91,12 @@ const styles = stylesheet.create({
       bottom: '-2px',
       border: '2px solid var(--epr-category-icon-active-color)',
       borderRadius: '50%'
-    },
+    }
+  },
+  catBtn: {
+    backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
+    backgroundPosition: '0 0',
+    backgroundImage: `url(${SVGNavigation})`,
     '&.epr-icn-suggested': {
       backgroundPositionX:
         'calc(var(--epr-category-navigation-button-size) * -8)'
