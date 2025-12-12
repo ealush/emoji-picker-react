@@ -4,7 +4,10 @@ import { useState } from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import { categoryFromCategoryConfig } from '../../config/categoryConfig';
-import { useCategoriesConfig } from '../../config/useConfig';
+import {
+  useCategoriesConfig,
+  useCategoryIconsConfig
+} from '../../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
@@ -23,6 +26,7 @@ export function CategoryNavigation() {
   const isSearchMode = useIsSearchMode();
 
   const categoriesConfig = useCategoriesConfig();
+  const categoryIcons = useCategoryIconsConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
 
@@ -51,6 +55,9 @@ export function CategoryNavigation() {
             isActiveCategory={isActiveCategory}
             allowNavigation={allowNavigation}
             categoryConfig={categoryConfig}
+            icon={
+              categoryConfig.icon ?? categoryIcons?.[categoryConfig.category]
+            }
             onClick={() => {
               scrollCategoryIntoView(category);
               setTimeout(() => {

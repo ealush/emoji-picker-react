@@ -4,21 +4,22 @@ import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
   setCustomEmojis,
-  emojiUrlByUnified,
+  emojiUrlByUnified
 } from '../dataUtils/emojiSelectors';
 import {
+  Categories,
   EmojiClickData,
   EmojiStyle,
   SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
-  Theme,
+  Theme
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
   baseCategoriesConfig,
-  mergeCategoriesConfig,
+  mergeCategoriesConfig
 } from './categoryConfig';
 import { CustomEmoji } from './customEmojiConfig';
 
@@ -46,10 +47,10 @@ export function mergeConfig(
   const config = Object.assign(base, userConfig);
 
   const categories = mergeCategoriesConfig(userConfig.categories, {
-    suggestionMode: config.suggestedEmojisMode,
+    suggestionMode: config.suggestedEmojisMode
   });
 
-  config.hiddenEmojis.forEach((emoji) => {
+  config.hiddenEmojis.forEach(emoji => {
     config.unicodeToHide.add(emoji);
   });
 
@@ -59,11 +60,18 @@ export function mergeConfig(
     ? SkinTonePickerLocation.PREVIEW
     : config.skinTonePickerLocation;
 
+  const categoryIcons = Object.assign(
+    {},
+    base.categoryIcons,
+    userConfig.categoryIcons ?? {}
+  );
+
   return {
     ...config,
     categories,
     previewConfig,
     skinTonePickerLocation,
+    categoryIcons
   };
 }
 
@@ -80,7 +88,7 @@ export function basePickerConfig(): PickerConfigInternal {
     height: 450,
     lazyLoadEmojis: false,
     previewConfig: {
-      ...basePreviewConfig,
+      ...basePreviewConfig
     },
     searchDisabled: false,
     searchPlaceHolder: DEFAULT_SEARCH_PLACEHOLDER,
@@ -98,6 +106,7 @@ export function basePickerConfig(): PickerConfigInternal {
     open: true,
     allowExpandReactions: true,
     hiddenEmojis: [],
+    categoryIcons: {}
   };
 }
 
@@ -129,6 +138,7 @@ export type PickerConfigInternal = {
   open: boolean;
   allowExpandReactions: boolean;
   hiddenEmojis: string[];
+  categoryIcons: Partial<Record<Categories, React.ReactNode>>;
 };
 
 export type PreviewConfig = {
@@ -140,7 +150,7 @@ export type PreviewConfig = {
 const basePreviewConfig: PreviewConfig = {
   defaultEmoji: '1f60a',
   defaultCaption: "What's your mood?",
-  showPreview: true,
+  showPreview: true
 };
 
 type ConfigExternal = {
