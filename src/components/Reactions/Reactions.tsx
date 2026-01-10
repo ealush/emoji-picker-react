@@ -7,7 +7,7 @@ import {
   useEmojiStyleConfig,
   useReactionsConfig,
   useAllowExpandReactions,
-  useGetEmojiUrlConfig
+  useGetEmojiUrlConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -36,19 +36,27 @@ export function Reactions() {
       className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
       ref={ReactionsRef}
     >
-      {reactions.map(reaction => (
-        <li key={reaction}>
-          <ClickableEmoji
-            emoji={emojiByUnified(reaction) as DataEmoji}
-            emojiStyle={emojiStyle}
-            unified={reaction}
-            showVariations={false}
-            className={cx(styles.emojiButton)}
-            noBackground
-            getEmojiUrl={getEmojiUrl}
-          />
-        </li>
-      ))}
+      {reactions.map((reaction) => {
+        const emoji = emojiByUnified(reaction);
+
+        if (!emoji) {
+          return null;
+        }
+
+        return (
+          <li key={reaction}>
+            <ClickableEmoji
+              emoji={emoji as DataEmoji}
+              emojiStyle={emojiStyle}
+              unified={reaction}
+              showVariations={false}
+              className={cx(styles.emojiButton)}
+              noBackground
+              getEmojiUrl={getEmojiUrl}
+            />
+          </li>
+        );
+      })}
       {allowExpandReactions ? (
         <li>
           <BtnPlus />
@@ -66,18 +74,18 @@ const styles = stylesheet.create({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
   },
   emojiButton: {
     ':hover': {
-      transform: 'scale(1.2)'
+      transform: 'scale(1.2)',
     },
     ':focus': {
-      transform: 'scale(1.2)'
+      transform: 'scale(1.2)',
     },
     ':active': {
-      transform: 'scale(1.1)'
+      transform: 'scale(1.1)',
     },
-    transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.5)'
-  }
+    transition: 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.5)',
+  },
 });

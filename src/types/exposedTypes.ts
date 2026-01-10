@@ -9,6 +9,23 @@ export type EmojiClickData = {
   isCustom: boolean;
 };
 
+export type CategoryConfig = {
+  category: Categories;
+  name: string;
+};
+
+export type EmojiData = {
+  categories: Partial<Record<Categories, CategoryConfig>>;
+  emojis: Record<string, DataEmoji[]>;
+};
+
+export interface DataEmoji {
+  n: string[];
+  u: string;
+  v?: string[];
+  a: string;
+}
+
 export enum SuggestionMode {
   RECENT = 'recent',
   FREQUENT = 'frequent'

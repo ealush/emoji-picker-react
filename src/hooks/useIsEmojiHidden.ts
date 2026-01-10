@@ -1,6 +1,6 @@
 import { useEmojisThatFailedToLoadState } from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiUnified } from '../dataUtils/emojiSelectors';
+import { emojiUnified } from '../dataUtils/emojiUtils';
 
 import { useIsEmojiFiltered } from './useFilter';
 

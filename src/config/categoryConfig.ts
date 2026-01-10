@@ -1,4 +1,9 @@
-import { Categories, SuggestionMode } from '../types/exposedTypes';
+import {
+  Categories,
+  CategoryConfig,
+  EmojiData,
+  SuggestionMode,
+} from '../types/exposedTypes';
 
 export { Categories };
 
@@ -12,12 +17,12 @@ const categoriesOrdered: Categories[] = [
   Categories.ACTIVITIES,
   Categories.OBJECTS,
   Categories.SYMBOLS,
-  Categories.FLAGS
+  Categories.FLAGS,
 ];
 
 export const SuggestedRecent: CategoryConfig = {
   name: 'Recently Used',
-  category: Categories.SUGGESTED
+  category: Categories.SUGGESTED,
 };
 
 export type CustomCategoryConfig = {
@@ -28,53 +33,53 @@ export type CustomCategoryConfig = {
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {
     category: Categories.SUGGESTED,
-    name: 'Frequently Used'
+    name: 'Frequently Used',
   },
   [Categories.CUSTOM]: {
     category: Categories.CUSTOM,
-    name: 'Custom Emojis'
+    name: 'Custom Emojis',
   },
   [Categories.SMILEYS_PEOPLE]: {
     category: Categories.SMILEYS_PEOPLE,
-    name: 'Smileys & People'
+    name: 'Smileys & People',
   },
   [Categories.ANIMALS_NATURE]: {
     category: Categories.ANIMALS_NATURE,
-    name: 'Animals & Nature'
+    name: 'Animals & Nature',
   },
   [Categories.FOOD_DRINK]: {
     category: Categories.FOOD_DRINK,
-    name: 'Food & Drink'
+    name: 'Food & Drink',
   },
   [Categories.TRAVEL_PLACES]: {
     category: Categories.TRAVEL_PLACES,
-    name: 'Travel & Places'
+    name: 'Travel & Places',
   },
   [Categories.ACTIVITIES]: {
     category: Categories.ACTIVITIES,
-    name: 'Activities'
+    name: 'Activities',
   },
   [Categories.OBJECTS]: {
     category: Categories.OBJECTS,
-    name: 'Objects'
+    name: 'Objects',
   },
   [Categories.SYMBOLS]: {
     category: Categories.SYMBOLS,
-    name: 'Symbols'
+    name: 'Symbols',
   },
   [Categories.FLAGS]: {
     category: Categories.FLAGS,
-    name: 'Flags'
-  }
+    name: 'Flags',
+  },
 };
 
 export function baseCategoriesConfig(
-  modifiers?: Record<Categories, CategoryConfig>
+  modifiers?: Record<Categories, CategoryConfig>,
 ): CategoriesConfig {
-  return categoriesOrdered.map(category => {
+  return categoriesOrdered.map((category) => {
     return {
       ...configByCategory[category],
-      ...(modifiers && modifiers[category] && modifiers[category])
+      ...(modifiers && modifiers[category] && modifiers[category]),
     };
   });
 }
@@ -89,43 +94,55 @@ export function categoryNameFromCategoryConfig(category: CategoryConfig) {
 
 export type CategoriesConfig = CategoryConfig[];
 
-export type CategoryConfig = {
-  category: Categories;
-  name: string;
-};
-
 export type UserCategoryConfig = Array<Categories | CategoryConfig>;
 
 export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],
-  modifiers: CategoryConfigModifiers = {}
+  modifiers: CategoryConfigModifiers = {},
+  emojiData?: EmojiData,
 ): CategoriesConfig {
-  const extra = {} as Record<Categories, CategoryConfig>;
+  const extra = ((): Record<Categories, CategoryConfig> => {
+    // 1. Start with localized categories from emojiData
+    const fromData = emojiData?.categories
+      ? (Object.fromEntries(
+          Object.entries(emojiData.categories).filter(([, config]) => !!config),
+        ) as Record<Categories, CategoryConfig>)
+      : ({} as Record<Categories, CategoryConfig>);
 
-  if (modifiers.suggestionMode === SuggestionMode.RECENT) {
-    extra[Categories.SUGGESTED] = SuggestedRecent;
-  }
+    // 2. Handle "Recently Used" override for explicit 'recent' mode
+    if (modifiers.suggestionMode === SuggestionMode.RECENT) {
+      const recentConfig = (
+        emojiData?.categories as Record<string, CategoryConfig | undefined>
+      )?.['suggested_recent'];
+      fromData[Categories.SUGGESTED] = recentConfig
+        ? { category: Categories.SUGGESTED, name: recentConfig.name }
+        : SuggestedRecent;
+    }
+
+    return fromData;
+  })();
 
   const base = baseCategoriesConfig(extra);
+
   if (!userCategoriesConfig?.length) {
     return base;
   }
 
-  return userCategoriesConfig.map(category => {
+  return userCategoriesConfig.map((category) => {
     if (typeof category === 'string') {
       return getBaseConfigByCategory(category, extra[category]);
     }
 
     return {
       ...getBaseConfigByCategory(category.category, extra[category.category]),
-      ...category
+      ...category,
     };
   });
 }
 
 function getBaseConfigByCategory(
   category: Categories,
-  modifier: CategoryConfig = {} as CategoryConfig
+  modifier: CategoryConfig = {} as CategoryConfig,
 ) {
   return Object.assign(configByCategory[category], modifier);
 }

@@ -1,9 +1,6 @@
-import {
-  Categories,
-  CategoryConfig,
-  CustomCategoryConfig
-} from '../config/categoryConfig';
+import { Categories, CustomCategoryConfig } from '../config/categoryConfig';
 import { CustomEmoji } from '../config/customEmojiConfig';
+import { CategoryConfig } from '../types/exposedTypes';
 import { DataEmoji } from '../dataUtils/DataTypes';
 
 export function isCustomCategory(

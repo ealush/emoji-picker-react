@@ -11,11 +11,7 @@ import {
   useGetEmojiUrlConfig,
   usePreviewConfig
 } from '../../config/useConfig';
-import {
-  emojiByUnified,
-  emojiName,
-  emojiUnified
-} from '../../dataUtils/emojiSelectors';
+import { emojiName, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
@@ -24,6 +20,7 @@ import {
   useEmojiVariationPickerState,
   useReactionsModeState
 } from '../context/PickerContext';
+import { usePickerDataContext } from '../context/PickerDataContext';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker/SkinTonePicker';
 
@@ -57,11 +54,14 @@ export function PreviewBody() {
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const { emojiByUnified } = usePickerDataContext();
 
   useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
   const emoji = emojiByUnified(
-    previewEmoji?.unified ?? previewEmoji?.originalUnified
+    (previewEmoji?.unified ?? previewEmoji?.originalUnified) as
+      | string
+      | undefined
   );
 
   const show = emoji != null && previewEmoji != null;

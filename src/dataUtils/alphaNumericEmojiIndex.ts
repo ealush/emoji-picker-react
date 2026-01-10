@@ -1,14 +1,7 @@
 import { DataEmoji } from './DataTypes';
-import { allEmojis, emojiNames, emojiUnified } from './emojiSelectors';
+import { emojiNames, emojiUnified } from './emojiUtils';
 
 export const alphaNumericEmojiIndex: BaseIndex = {};
-
-setTimeout(() => {
-  allEmojis.reduce((searchIndex, emoji) => {
-    indexEmoji(emoji);
-    return searchIndex;
-  }, alphaNumericEmojiIndex as BaseIndex);
-});
 
 type BaseIndex = Record<string, Record<string, DataEmoji>>;
 

@@ -1,19 +1,20 @@
 import { useRef, useMemo } from 'react';
 
+import { usePickerDataContext } from '../components/context/PickerDataContext';
 import { useEmojiVersionConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   addedIn,
-  allEmojis,
   emojiUnified,
   unifiedWithoutSkinTone
-} from '../dataUtils/emojiSelectors';
+} from '../dataUtils/emojiUtils';
 
 import { useIsUnicodeHidden } from './useHideEmojisByUniocode';
 
 export function useDisallowedEmojis() {
   const DisallowedEmojisRef = useRef<Record<string, boolean>>({});
   const emojiVersionConfig = useEmojiVersionConfig();
+  const { allEmojis } = usePickerDataContext();
 
   return useMemo(() => {
     const emojiVersion = parseFloat(`${emojiVersionConfig}`);
@@ -29,7 +30,7 @@ export function useDisallowedEmojis() {
 
       return disallowedEmojis;
     }, DisallowedEmojisRef.current);
-  }, [emojiVersionConfig]);
+  }, [emojiVersionConfig, allEmojis]);
 }
 
 export function useIsEmojiDisallowed() {

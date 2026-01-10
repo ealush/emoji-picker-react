@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "module": "ESNext",
+    "target": "ES2019",
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "sourceMap": false,
+    "skipLibCheck": true
+  },
+  "include": ["src/data/**/*", "src/types/**/*"]
+}

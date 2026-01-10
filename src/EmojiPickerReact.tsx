@@ -6,6 +6,7 @@ import { Body } from './components/body/Body';
 import { ElementRefContextProvider } from './components/context/ElementRefContext';
 import { PickerConfigProvider } from './components/context/PickerConfigContext';
 import { useReactionsModeState } from './components/context/PickerContext';
+import { PickerDataProvider } from './components/context/PickerDataContext';
 import { Preview } from './components/footer/Preview';
 import { Header } from './components/header/Header';
 import PickerMain from './components/main/PickerMain';
@@ -19,7 +20,9 @@ function EmojiPicker(props: PickerProps) {
     <ElementRefContextProvider>
       <PickerStyleTag />
       <PickerConfigProvider {...props}>
-        <ContentControl />
+        <PickerDataProvider>
+          <ContentControl />
+        </PickerDataProvider>
       </PickerConfigProvider>
     </ElementRefContextProvider>
   );

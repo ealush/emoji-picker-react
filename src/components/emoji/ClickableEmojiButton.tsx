@@ -58,9 +58,7 @@ export function ClickableEmojiButton({
 }
 
 function getAriaLabel(emojiNames: string[]) {
-  return emojiNames[0].match('flag-')
-    ? emojiNames[1] ?? emojiNames[0]
-    : emojiNames[0];
+  return emojiNames[emojiNames.length - 1];
 }
 
 const styles = stylesheet.create({

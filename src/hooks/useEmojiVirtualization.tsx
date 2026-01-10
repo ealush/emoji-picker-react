@@ -1,5 +1,4 @@
- 
- import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
@@ -12,7 +11,7 @@ import {
   useSkinTonesDisabledConfig
 } from '../config/useConfig';
 import { DataEmojis } from '../dataUtils/DataTypes';
-import { emojiUnified } from '../dataUtils/emojiSelectors';
+import { emojiUnified } from '../dataUtils/emojiUtils';
 import {
   getEmojiPositionStyle,
   shouldVirtualize

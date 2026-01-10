@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ES2019",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "declaration": false,
+    "sourceMap": false,
+    "noEmit": false
+  },
+  "include": ["./prepare.ts"]
+}

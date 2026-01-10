@@ -1,6 +1,6 @@
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiUnified, emojiVariations } from '../dataUtils/emojiSelectors';
+import { emojiUnified, emojiVariations } from '../dataUtils/emojiUtils';
 import { EmojiStyle } from '../types/exposedTypes';
 import { Dimensions } from '../virtualization/virtualizationHelpers';
 
