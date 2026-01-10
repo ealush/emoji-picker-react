@@ -1,7 +1,49 @@
-const emojibaseData = require('emojibase-data/en/data.json');
-const emojibaseGroups = require('emojibase-data/en/groups.json');
-const { writeJSONSync, writeFileSync } = require('fs-extra');
-const _ = require('lodash');
+import emojibaseData from 'emojibase-data/en/data.json';
+import emojibaseGroups from 'emojibase-data/en/groups.json';
+import { writeJSONSync, writeFileSync } from 'fs-extra';
+
+type GroupEntry =
+  | string
+  | {
+      key?: string;
+      name?: string;
+      label?: string;
+      index?: number;
+      id?: number;
+      order?: number;
+    };
+
+type EmojiSkin = {
+  hexcode?: string;
+  hex?: string;
+  unicode?: string;
+  emoji?: string;
+};
+
+type EmojiRecord = {
+  annotation?: string;
+  label?: string;
+  shortcodes?: string[];
+  shortcode?: string;
+  tags?: string[];
+  hexcode?: string;
+  hex?: string;
+  unicode?: string;
+  emoji?: string;
+  version?: number | string;
+  skins?: EmojiSkin[];
+  group?: number | string;
+  groupKey?: string;
+  group_key?: string;
+  order?: number;
+};
+
+type CleanEmoji = {
+  n: string[];
+  u: string;
+  v?: string[];
+  a?: string;
+};
 
 const keys = {
   EMOJI_PROPERTY_NAME: 'n',
@@ -19,9 +61,9 @@ const keys = {
   GROUP_NAME_FLAGS: 'flags',
   GROUP_NAME_SUGGESTED: 'suggested',
   GROUP_NAME_CUSTOM: 'custom'
-};
+} as const;
 
-const groupConversion = {
+const groupConversion: Record<string, string | null> = {
   [keys.GROUP_NAME_PEOPLE]: keys.GROUP_NAME_PEOPLE,
   smileys_emotion: keys.GROUP_NAME_PEOPLE,
   smileys_and_emotion: keys.GROUP_NAME_PEOPLE,
@@ -39,25 +81,42 @@ const groupConversion = {
   skin_tones: null
 };
 
-const emojis = _.sortBy(emojibaseData, ['order', 'hexcode']);
+const emojis = [...(emojibaseData as EmojiRecord[])].sort((a, b) => {
+  const orderA = a.order ?? 0;
+  const orderB = b.order ?? 0;
+  if (orderA !== orderB) {
+    return orderA - orderB;
+  }
+  const hexA = a.hexcode || '';
+  const hexB = b.hexcode || '';
+  return hexA.localeCompare(hexB);
+});
 
-const groupEntries = Array.isArray(emojibaseGroups)
-  ? emojibaseGroups
-  : emojibaseGroups && Array.isArray(emojibaseGroups.groups)
-  ? emojibaseGroups.groups
+const groupEntries: GroupEntry[] = Array.isArray(emojibaseGroups)
+  ? (emojibaseGroups as GroupEntry[])
+  : emojibaseGroups && Array.isArray((emojibaseGroups as { groups?: GroupEntry[] }).groups)
+  ? ((emojibaseGroups as { groups: GroupEntry[] }).groups)
   : [];
 
-const groupMap = new Map(
-  groupEntries
-    .map((group, index) => {
-      const key = group.key || group.name || group.label || group;
-      const id = group.index ?? group.id ?? group.order ?? index;
-      return [id, key];
-    })
-    .filter(([id, key]) => id !== undefined && key !== undefined)
-);
+const groupPairs: Array<[number | string, string]> = [];
 
-const normalizeGroupName = value =>
+groupEntries.forEach((group, index) => {
+  if (typeof group === 'string') {
+    groupPairs.push([index, group]);
+    return;
+  }
+
+  const key = group.key || group.name || group.label;
+  const id = group.index ?? group.id ?? group.order ?? index;
+
+  if (key !== undefined && id !== undefined) {
+    groupPairs.push([id, key]);
+  }
+});
+
+const groupMap = new Map<number | string, string>(groupPairs);
+
+const normalizeGroupName = (value: string | number | null | undefined) =>
   String(value || '')
     .trim()
     .toLowerCase()
@@ -65,30 +124,30 @@ const normalizeGroupName = value =>
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
-const toUnified = value =>
+const toUnified = (value: string | number | null | undefined) =>
   String(value || '')
     .trim()
     .toLowerCase()
     .replace(/\s+/g, '-');
 
-const unicodeToUnified = emoji => {
+const unicodeToUnified = (emoji: string | undefined) => {
   if (!emoji) {
     return '';
   }
   const codepoints = Array.from(emoji).map(char =>
-    char.codePointAt(0).toString(16)
+    (char.codePointAt(0) || 0).toString(16)
   );
   return codepoints.join('-');
 };
 
-const resolveGroupName = emoji => {
+const resolveGroupName = (emoji: EmojiRecord) => {
   if (emoji.group !== undefined && groupMap.has(emoji.group)) {
     return groupMap.get(emoji.group);
   }
   return emoji.group || emoji.groupKey || emoji.group_key || '';
 };
 
-const cleanEmoji = emoji => {
+const cleanEmoji = (emoji: EmojiRecord): CleanEmoji => {
   const shortcodes = [
     ...(emoji.shortcodes || []),
     ...(emoji.shortcode ? [emoji.shortcode] : [])
@@ -129,7 +188,13 @@ const cleanEmoji = emoji => {
   };
 };
 
-const { groupedEmojis } = emojis.reduce(
+const initialGroupedEmojis: Record<string, CleanEmoji[]> = {
+  [keys.GROUP_NAME_CUSTOM]: []
+};
+
+const { groupedEmojis } = emojis.reduce<{
+  groupedEmojis: Record<string, CleanEmoji[]>;
+}>(
   ({ groupedEmojis }, emoji) => {
     const groupName = normalizeGroupName(resolveGroupName(emoji));
     const category = groupConversion[groupName] || groupName;
@@ -145,7 +210,7 @@ const { groupedEmojis } = emojis.reduce(
     groupedEmojis[category].push(cleanEmoji(emoji));
     return { groupedEmojis };
   },
-  { groupedEmojis: { [keys.GROUP_NAME_CUSTOM]: [] } }
+  { groupedEmojis: initialGroupedEmojis }
 );
 
 writeJSONSync('./src/data/emojis.json', groupedEmojis, 'utf8');
