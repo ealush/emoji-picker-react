@@ -7,10 +7,8 @@ import {
   darkMode,
   stylesheet
 } from '../../Stylesheet/stylesheet';
-import {
-  CategoryConfig,
-  categoryNameFromCategoryConfig
-} from '../../config/categoryConfig';
+import { categoryNameFromCategoryConfig } from '../../config/categoryConfig';
+import { CategoryConfig } from '../../types/exposedTypes';
 import { Button } from '../atoms/Button';
 
 import SVGNavigation from './svg/CategoryNav.svg';

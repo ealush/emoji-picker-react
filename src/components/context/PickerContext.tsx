@@ -6,20 +6,25 @@ import {
   useReactionsOpenConfig
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
+import { usePickerDataContext } from './PickerDataContext';
 
 export function PickerContextProvider({ children }: Props) {
   const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
+  const { searchIndex } = usePickerDataContext();
 
   // Initialize the filter with the inititial dictionary
-  const filterRef = React.useRef<FilterState>(alphaNumericEmojiIndex);
+  const filterRef = React.useRef<FilterState>(searchIndex);
+
+  React.useEffect(() => {
+    filterRef.current = searchIndex;
+  }, [searchIndex]);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
   const disallowedEmojisRef = React.useRef<Record<string, boolean>>(

@@ -10,7 +10,7 @@ import {
 } from '../components/context/PickerContext';
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiNames } from '../dataUtils/emojiSelectors';
+import { emojiNames } from '../dataUtils/emojiUtils';
 
 import { useFocusSearchInput } from './useFocus';
 

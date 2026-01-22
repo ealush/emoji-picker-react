@@ -8,10 +8,10 @@ import {
   stylesheet
 } from '../../Stylesheet/stylesheet';
 import {
-  CategoryConfig,
   categoryFromCategoryConfig,
   categoryNameFromCategoryConfig
 } from '../../config/categoryConfig';
+import { CategoryConfig } from '../../types/exposedTypes';
 
 type Props = Readonly<{
   categoryConfig: CategoryConfig;

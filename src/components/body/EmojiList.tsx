@@ -4,16 +4,14 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import { getLabelHeight } from '../../DomUtils/elementPositionInRow';
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import {
-  CategoryConfig,
-  categoryFromCategoryConfig
-} from '../../config/categoryConfig';
+import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import { CategoryConfig } from '../../types/exposedTypes';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
-import { useGetEmojisByCategory } from '../../dataUtils/emojiSelectors';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
 import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
+import { useGetEmojisByCategory } from '../context/PickerDataContext';
 
 import { EmojiCategory } from './EmojiCategory';
 import { MeasureEmoji } from './MeasureEmoji';

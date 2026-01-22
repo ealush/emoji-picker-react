@@ -1,13 +1,11 @@
 import * as React from 'react';
 
-import {
-  emojiByUnified,
-  emojiName,
-  emojiUrlByUnified
-} from '../../dataUtils/emojiSelectors';
+import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiUtils';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
+
+import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
 import { EmojiImg } from './EmojiImg';
@@ -23,6 +21,7 @@ export function ViewOnlyEmoji({
   className
 }: BaseEmojiProps) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
+  const { emojiByUnified } = usePickerDataContext();
 
   const style = {} as React.CSSProperties;
   if (size) {

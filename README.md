@@ -57,41 +57,101 @@ function App() {
 - Native Emoji support
 - Emoji Component To Render Emojis in your app
 - Reactions Picker
+- Internationalization / Language Support (via )
+
+## Internationalization / Localization
+
+The emoji picker supports multiple languages (originally via `emojibase-data`). Import the desired language file and pass it to the `EmojiPicker` component via the `emojiData` prop to translate category names and other UI elements.
+
+**Keywords**: translation, localization, internationalization, languages, i18n, l10n.
+
+### Supported Languages
+
+We support a wide range of languages. All data files are available in `dist/data` in the following formats:
+
+- **JS (ESM)**: `emojis-en.js` (Export default object)
+- **JSON**: `emojis-en.json`
+- **TypeScript**: `emojis-en.ts`
+
+**Available Files:**
+
+- `emojis-bn` (Bengali)
+- `emojis-da` (Danish)
+- `emojis-de` (German)
+- `emojis-en-gb` (English, Great Britain)
+- `emojis-en` (English)
+- `emojis-es-mx` (Spanish, Mexico)
+- `emojis-es` (Spanish)
+- `emojis-et` (Estonian)
+- `emojis-fi` (Finnish)
+- `emojis-fr` (French)
+- `emojis-hi` (Hindi)
+- `emojis-hu` (Hungarian)
+- `emojis-it` (Italian)
+- `emojis-ja` (Japanese)
+- `emojis-ko` (Korean)
+- `emojis-lt` (Lithuanian)
+- `emojis-ms` (Malay)
+- `emojis-nb` (Norwegian Bokmål)
+- `emojis-nl` (Dutch)
+- `emojis-pl` (Polish)
+- `emojis-pt` (Portuguese)
+- `emojis-ru` (Russian)
+- `emojis-sv` (Swedish)
+- `emojis-th` (Thai)
+- `emojis-uk` (Ukrainian)
+- `emojis-zh-hant` (Traditional Chinese)
+- `emojis-zh` (Simplified Chinese)
+
+### Usage
+
+1. Import the emoji data for your language (e.g., Spanish):
+
+```javascript
+import EmojiPicker from 'emoji-picker-react';
+// Import the data file for your language
+import es from 'emoji-picker-react/dist/data/emojis-es';
+
+function App() {
+  return <EmojiPicker emojiData={es} />;
+}
+```
 
 # Props
 
 The following props are accepted by the picker:
 
-| Prop                   | Type                                                   | Default    | Description                                                                                                                                                |
-| ---------------------- | ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| open                   | boolean                                                | `true`     | Controls whether the picker is open or not.                                                                                                                |
-| onEmojiClick           | function                                               |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter.                                          |
-| autoFocusSearch        | boolean                                                | `true`     | Controls the auto focus of the search input.                                                                                                               |
-| theme                  | string                                                 | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                                                          |
-| emojiStyle             | string                                                 | `apple`    | Controls the emoji style. Possible values are `google`, `apple`, `facebook`, `twitter` and `native`.                                                       |
-| defaultSkinTone        | string                                                 | `neutral`  | Controls the default skin tone.                                                                                                                            |
-| lazyLoadEmojis         | boolean                                                | `false`    | Controls whether the emojis are loaded lazily or not.                                                                                                      |
-| previewConfig          | object                                                 | `{}`       | Controls the preview of the emoji. See below for more information.                                                                                         |
-| searchPlaceholder      | string                                                 | `Search`   | Controls the placeholder of the search input.                                                                                                              |
-| searchClearButtonLabel | string                                                 | 'Clear'    | Controls the `aria-label` and `title` of the Clear button of the search input.                                                                             |
-| suggestedEmojisMode    | string                                                 | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                                                           |
-| skinTonesDisabled      | boolean                                                | `false`    | Controls whether the skin tones are disabled or not.                                                                                                       |
-| searchDisabled         | boolean                                                | `false`    | Controls whether the search is disabled or not. When disabled, the skin tone picker will be shown in the preview component.                                |
-| skinTonePickerLocation | string                                                 | `SEARCH`   | Controls the location of the skin tone picker. Possible values are `SEARCH` and `PREVIEW`.                                                                 |
-| emojiVersion           | string                                                 | -          | Allows displaying emojis up to a certain version for compatibility.                                                                                        |
-| className              | string                                                 | -          | Adds a class name to the root element of the picker.                                                                                                       |
-| width                  | number/string                                          | `350`      | Controls the width of the picker. You can provide a number that will be treated as pixel size, or your any accepted css width as string.                   |
-| height                 | number/string                                          | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string.                 |
-| style                  | React.CSSProperties                                    | `{}`       | Adds inline style to the root element of the picker.                                                                                                       |
-| getEmojiUrl            | Function                                               | -          | Allows to customize the emoji url and provide your own image host.                                                                                         |
-| categories             | Array                                                  | -          | Allows full config over ordering, naming and display of categories.                                                                                        |
-| customEmojis           | Array<{names: string[], imgUrl: string, id: string}>   | -          | Allows adding custom emojis to the picker.                                                                                                                 |
-| hiddenEmojis           | string[]                                               | -          | Controls the emojis that are hidden from the picker.                                                                                                       |
-| reactionsDefaultOpen   | boolean                                                | `false`    | Controls whether the reactions picker is on the initial mount instead of the main picker component.                                                        |
-| reactions              | string[]                                               | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                                         |
-| onReactionClick        | Function                                               | -          | Callback function that is called when a reaction is clicked. The function receives the emoji object as a parameter. If not passed, onEmojiClicked is used. |
-| allowExpandReactions   | boolean                                                | `true`     | Controls whether the reactions picker can be expanded to the main picker.                                                                                  |
-| onSkinToneChange       | Function                                               | -          | Callback function that is called when a skin tone is changed. The function receives new picked skin tone as a parameter.                                   |
+| Prop                   | Type                                                 | Default    | Description                                                                                                                                                |
+| ---------------------- | ---------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| open                   | boolean                                              | `true`     | Controls whether the picker is open or not.                                                                                                                |
+| onEmojiClick           | function                                             |            | Callback function that is called when an emoji is clicked. The function receives the emoji object as a parameter.                                          |
+| autoFocusSearch        | boolean                                              | `true`     | Controls the auto focus of the search input.                                                                                                               |
+| theme                  | string                                               | `light`    | Controls the theme of the picker. Possible values are `light`, `dark` and `auto`.                                                                          |
+| emojiStyle             | string                                               | `apple`    | Controls the emoji style. Possible values are `google`, `apple`, `facebook`, `twitter` and `native`.                                                       |
+| defaultSkinTone        | string                                               | `neutral`  | Controls the default skin tone.                                                                                                                            |
+| lazyLoadEmojis         | boolean                                              | `false`    | Controls whether the emojis are loaded lazily or not.                                                                                                      |
+| previewConfig          | object                                               | `{}`       | Controls the preview of the emoji. See below for more information.                                                                                         |
+| searchPlaceholder      | string                                               | `Search`   | Controls the placeholder of the search input.                                                                                                              |
+| searchClearButtonLabel | string                                               | 'Clear'    | Controls the `aria-label` and `title` of the Clear button of the search input.                                                                             |
+| suggestedEmojisMode    | string                                               | `frequent` | Controls the suggested emojis mode. Possible values are `frequent` and `recent`.                                                                           |
+| skinTonesDisabled      | boolean                                              | `false`    | Controls whether the skin tones are disabled or not.                                                                                                       |
+| searchDisabled         | boolean                                              | `false`    | Controls whether the search is disabled or not. When disabled, the skin tone picker will be shown in the preview component.                                |
+| skinTonePickerLocation | string                                               | `SEARCH`   | Controls the location of the skin tone picker. Possible values are `SEARCH` and `PREVIEW`.                                                                 |
+| emojiVersion           | string                                               | -          | Allows displaying emojis up to a certain version for compatibility.                                                                                        |
+| className              | string                                               | -          | Adds a class name to the root element of the picker.                                                                                                       |
+| width                  | number/string                                        | `350`      | Controls the width of the picker. You can provide a number that will be treated as pixel size, or your any accepted css width as string.                   |
+| height                 | number/string                                        | `450`      | Controls the height of the picker. You can provide a number that will be treated as pixel size, or your any accepted css height as string.                 |
+| style                  | React.CSSProperties                                  | `{}`       | Adds inline style to the root element of the picker.                                                                                                       |
+| getEmojiUrl            | Function                                             | -          | Allows to customize the emoji url and provide your own image host.                                                                                         |
+| categories             | Array                                                | -          | Allows full config over ordering, naming and display of categories.                                                                                        |
+| customEmojis           | Array<{names: string[], imgUrl: string, id: string}> | -          | Allows adding custom emojis to the picker.                                                                                                                 |
+| hiddenEmojis           | string[]                                             | -          | Controls the emojis that are hidden from the picker.                                                                                                       |
+| reactionsDefaultOpen   | boolean                                              | `false`    | Controls whether the reactions picker is on the initial mount instead of the main picker component.                                                        |
+| reactions              | string[]                                             | -          | Controls the reactions to display in the reactions picker. Takes unified emoji ids                                                                         |
+| onReactionClick        | Function                                             | -          | Callback function that is called when a reaction is clicked. The function receives the emoji object as a parameter. If not passed, onEmojiClicked is used. |
+| allowExpandReactions   | boolean                                              | `true`     | Controls whether the reactions picker can be expanded to the main picker.                                                                                  |
+| onSkinToneChange       | Function                                             | -          | Callback function that is called when a skin tone is changed. The function receives new picked skin tone as a parameter.                                   |
+| emojiData              | object                                               | -          | Allows passing a language-specific emoji data object imported from `emoji-picker-react/dist/data/emojis-<lang>`.                                           |
 
 ## Full details
 
@@ -129,7 +189,6 @@ The following props are accepted by the picker:
 - `lazyLoadEmojis`: `boolean` - Whether to lazy load the emojis. Defaults to `false`.
 
 - `defaultSkinTone`: `SkinTones` - The default skin tone to use when an emoji is clicked. Defaults to `SkinTones.Neutral`. Possible skin tones are:
-
   - ✋ 'neutral'
   - ✋🏻 '1f3fb'
   - ✋🏼 '1f3fc'
@@ -171,7 +230,6 @@ import { SkinTones } from 'emoji-picker-react';
 
 - categories: Allows full config over ordering, naming and display of categories.
   To only sort/omit categories, you can simply pass an array of category names to display:
-
   - 'suggested',
   - 'custom', - Hidden by default
   - 'smileys_people',
@@ -189,12 +247,12 @@ import { SkinTones } from 'emoji-picker-react';
   [
     {
       category: 'suggested',
-      name: 'Recently Used'
+      name: 'Recently Used',
     },
     {
       category: 'smileys_people',
-      name: 'Faces...'
-    }
+      name: 'Faces...',
+    },
   ];
   ```
 
@@ -206,7 +264,6 @@ import { SkinTones } from 'emoji-picker-react';
   ```
 
 - `emojiVersion`: `string` - Allows displaying emojis up to a certain version for compatibility. The passed version will be parsed as a float and each emoji will be tested against it. Common values are:
-
   - `"0.6"`
   - `"1.0"`
   - `"2.0"`
@@ -243,26 +300,26 @@ For example:
       names: ['Alice', 'alice in wonderland'],
       imgUrl:
         'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/alice.png',
-      id: 'alice'
+      id: 'alice',
     },
     {
       names: ['Dog'],
       imgUrl:
         'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/dog.png',
-      id: 'dog'
+      id: 'dog',
     },
     {
       names: ['Hat'],
       imgUrl:
         'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/hat.png',
-      id: 'hat'
+      id: 'hat',
     },
     {
       names: ['Vest'],
       imgUrl:
         'https://cdn.jsdelivr.net/gh/ealush/emoji-picker-react@custom_emojis_assets/vest.png',
-      id: 'vest'
-    }
+      id: 'vest',
+    },
   ]}
 />
 ```
@@ -367,7 +424,7 @@ const Picker = dynamic(
   () => {
     return import('emoji-picker-react');
   },
-  { ssr: false }
+  { ssr: false },
 );
 ```
 

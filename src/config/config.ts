@@ -2,12 +2,10 @@ import * as React from 'react';
 
 import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
-import {
-  setCustomEmojis,
-  emojiUrlByUnified,
-} from '../dataUtils/emojiSelectors';
+import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
 import {
   EmojiClickData,
+  EmojiData,
   EmojiStyle,
   SkinTonePickerLocation,
   SkinTones,
@@ -35,25 +33,41 @@ export const SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND =
   '%n results' + SEARCH_RESULTS_SUFFIX;
 
 export function mergeConfig(
-  userConfig: PickerConfig = {}
+  userConfig: PickerConfig = {},
 ): PickerConfigInternal {
   const base = basePickerConfig();
 
-  const previewConfig = Object.assign(
-    base.previewConfig,
-    userConfig.previewConfig ?? {}
-  );
+  // Get localized mood from emojiData, fallback to base default
+  // Get localized mood from emojiData, fallback to base default
+  const localizedMood = (
+    userConfig.emojiData?.categories as Record<
+      string,
+      { name: string } | undefined
+    >
+  )?.preview_mood?.name;
+
+  const previewConfig = {
+    ...base.previewConfig,
+    // Localized mood is default, but user can override
+    ...(localizedMood && !userConfig.previewConfig?.defaultCaption
+      ? { defaultCaption: localizedMood }
+      : {}),
+    ...(userConfig.previewConfig ?? {}),
+  };
+
   const config = Object.assign(base, userConfig);
 
-  const categories = mergeCategoriesConfig(userConfig.categories, {
-    suggestionMode: config.suggestedEmojisMode,
-  });
+  const categories = mergeCategoriesConfig(
+    userConfig.categories,
+    {
+      suggestionMode: config.suggestedEmojisMode,
+    },
+    userConfig.emojiData,
+  );
 
   config.hiddenEmojis.forEach((emoji) => {
     config.unicodeToHide.add(emoji);
   });
-
-  setCustomEmojis(config.customEmojis ?? []);
 
   const skinTonePickerLocation = config.searchDisabled
     ? SkinTonePickerLocation.PREVIEW
@@ -98,6 +112,7 @@ export function basePickerConfig(): PickerConfigInternal {
     open: true,
     allowExpandReactions: true,
     hiddenEmojis: [],
+    emojiData: undefined,
   };
 }
 
@@ -129,6 +144,7 @@ export type PickerConfigInternal = {
   open: boolean;
   allowExpandReactions: boolean;
   hiddenEmojis: string[];
+  emojiData?: EmojiData;
 };
 
 export type PreviewConfig = {
@@ -157,7 +173,7 @@ export type PickerDimensions = string | number;
 export type MouseDownEvent = (
   emoji: EmojiClickData,
   event: MouseEvent,
-  api?: OnEmojiClickApi
+  api?: OnEmojiClickApi,
 ) => void;
 export type OnSkinToneChange = (emoji: SkinTones) => void;
 

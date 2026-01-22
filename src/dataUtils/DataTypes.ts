@@ -1,4 +1,4 @@
-import emojis from '../data/emojis';
+import { Categories } from '../types/exposedTypes';
 
 export enum EmojiProperties {
   name = 'n',
@@ -17,7 +17,7 @@ export interface DataEmoji extends WithName {
 
 export type DataEmojis = DataEmoji[];
 
-export type DataGroups = keyof typeof emojis;
+export type DataGroups = Categories;
 
 export type WithName = {
   [EmojiProperties.name]: string[];

@@ -1,5 +1,5 @@
 {
-  "version": "4.16.1",
+  "version": "4.17.0",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -27,14 +27,17 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "node ./scripts/prepare.js && yarn type-check && tsdx build --transpileOnly && node ./scripts/copyData.js",
+    "build": "yarn build:data:src && yarn type-check && tsdx build --transpileOnly && yarn build:data:dist",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "tsdx test --passWithNoTests",
     "lint": "eslint ./src --ext .ts,.tsx",
-    "prepare": "yarn type-check && tsdx build --transpileOnly",
+    "prepare": "yarn build",
     "size": "size-limit",
     "analyze": "size-limit --why",
-    "storybook": "storybook dev -p 6006",
+    "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
+    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js",
+    "build:data": "yarn build:data:src && yarn build:data:dist",
+    "storybook": "yarn build:data && storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
   "peerDependencies": {
@@ -82,7 +85,8 @@
     "autoprefixer": "^10.4.8",
     "babel-loader": "^8.2.5",
     "cssnano": "^5.1.13",
-    "emoji-datasource": "^15.1.2",
+    "emoji-datasource": "^16.0.0",
+    "emojibase-data": "^15.3.0",
     "eslint-import-resolver-typescript": "^3.3.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
