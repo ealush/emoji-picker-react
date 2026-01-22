@@ -3,11 +3,69 @@ import {
   EmojiStyle,
   PickerProps,
   SkinTonePickerLocation,
+  SkinTones,
   SuggestionMode,
   Theme,
 } from "emoji-picker-react";
 import * as React from "react";
+import emojiDataBn from "emoji-picker-react/dist/data/emojis-bn.json";
+import emojiDataDa from "emoji-picker-react/dist/data/emojis-da.json";
+import emojiDataDe from "emoji-picker-react/dist/data/emojis-de.json";
+import emojiDataEn from "emoji-picker-react/dist/data/emojis-en.json";
+import emojiDataEnGb from "emoji-picker-react/dist/data/emojis-en-gb.json";
+import emojiDataEs from "emoji-picker-react/dist/data/emojis-es.json";
+import emojiDataEsMx from "emoji-picker-react/dist/data/emojis-es-mx.json";
+import emojiDataEt from "emoji-picker-react/dist/data/emojis-et.json";
+import emojiDataFi from "emoji-picker-react/dist/data/emojis-fi.json";
+import emojiDataFr from "emoji-picker-react/dist/data/emojis-fr.json";
+import emojiDataHi from "emoji-picker-react/dist/data/emojis-hi.json";
+import emojiDataHu from "emoji-picker-react/dist/data/emojis-hu.json";
+import emojiDataIt from "emoji-picker-react/dist/data/emojis-it.json";
+import emojiDataJa from "emoji-picker-react/dist/data/emojis-ja.json";
+import emojiDataKo from "emoji-picker-react/dist/data/emojis-ko.json";
+import emojiDataLt from "emoji-picker-react/dist/data/emojis-lt.json";
+import emojiDataMs from "emoji-picker-react/dist/data/emojis-ms.json";
+import emojiDataNb from "emoji-picker-react/dist/data/emojis-nb.json";
+import emojiDataNl from "emoji-picker-react/dist/data/emojis-nl.json";
+import emojiDataPl from "emoji-picker-react/dist/data/emojis-pl.json";
+import emojiDataPt from "emoji-picker-react/dist/data/emojis-pt.json";
+import emojiDataRu from "emoji-picker-react/dist/data/emojis-ru.json";
+import emojiDataSv from "emoji-picker-react/dist/data/emojis-sv.json";
+import emojiDataTh from "emoji-picker-react/dist/data/emojis-th.json";
+import emojiDataUk from "emoji-picker-react/dist/data/emojis-uk.json";
+import emojiDataZh from "emoji-picker-react/dist/data/emojis-zh.json";
+import emojiDataZhHant from "emoji-picker-react/dist/data/emojis-zh-hant.json";
 import { customEmojis } from "./customEmojis";
+
+const languages: Record<string, any> = {
+  bn: emojiDataBn,
+  da: emojiDataDa,
+  de: emojiDataDe,
+  en: emojiDataEn,
+  "en-gb": emojiDataEnGb,
+  es: emojiDataEs,
+  "es-mx": emojiDataEsMx,
+  et: emojiDataEt,
+  fi: emojiDataFi,
+  fr: emojiDataFr,
+  hi: emojiDataHi,
+  hu: emojiDataHu,
+  it: emojiDataIt,
+  ja: emojiDataJa,
+  ko: emojiDataKo,
+  lt: emojiDataLt,
+  ms: emojiDataMs,
+  nb: emojiDataNb,
+  nl: emojiDataNl,
+  pl: emojiDataPl,
+  pt: emojiDataPt,
+  ru: emojiDataRu,
+  sv: emojiDataSv,
+  th: emojiDataTh,
+  uk: emojiDataUk,
+  zh: emojiDataZh,
+  "zh-hant": emojiDataZhHant,
+};
 
 export function PickerControls({
   pickerProps,
@@ -17,7 +75,7 @@ export function PickerControls({
   pickerProps: PickerProps;
   updateState: <K extends keyof PickerProps>(
     key: K,
-    value: PickerProps[K]
+    value: PickerProps[K],
   ) => void;
   reset: () => void;
 }) {
@@ -78,6 +136,86 @@ export function PickerControls({
         reactionsDefaultOpen={pickerProps.reactionsDefaultOpen}
         setReactionsDefaultOpen={(reactionsDefaultOpen) =>
           updateState("reactionsDefaultOpen", reactionsDefaultOpen)
+        }
+      />
+      <ChkAutoFocusSearch
+        autoFocusSearch={pickerProps.autoFocusSearch}
+        setAutoFocusSearch={(autoFocusSearch) =>
+          updateState("autoFocusSearch", autoFocusSearch)
+        }
+      />
+      <ChkLazyLoadEmojis
+        lazyLoadEmojis={pickerProps.lazyLoadEmojis}
+        setLazyLoadEmojis={(lazyLoadEmojis) =>
+          updateState("lazyLoadEmojis", lazyLoadEmojis)
+        }
+      />
+      <ChkAllowExpandReactions
+        allowExpandReactions={pickerProps.allowExpandReactions}
+        setAllowExpandReactions={(allowExpandReactions) =>
+          updateState("allowExpandReactions", allowExpandReactions)
+        }
+      />
+      <ChkOpen
+        open={pickerProps.open}
+        setOpen={(open) => updateState("open", open)}
+      />
+      <InputSearchClearButtonLabel
+        searchClearButtonLabel={pickerProps.searchClearButtonLabel}
+        setSearchClearButtonLabel={(searchClearButtonLabel) =>
+          updateState("searchClearButtonLabel", searchClearButtonLabel)
+        }
+      />
+      <SelectDefaultSkinTone
+        defaultSkinTone={pickerProps.defaultSkinTone}
+        setDefaultSkinTone={(defaultSkinTone) =>
+          updateState("defaultSkinTone", defaultSkinTone)
+        }
+      />
+      <SelectEmojiVersion
+        emojiVersion={pickerProps.emojiVersion}
+        setEmojiVersion={(emojiVersion) =>
+          updateState("emojiVersion", emojiVersion)
+        }
+      />
+      <InputReactions
+        reactions={pickerProps.reactions}
+        setReactions={(reactions) => updateState("reactions", reactions)}
+      />
+      <InputHiddenEmojis
+        hiddenEmojis={pickerProps.hiddenEmojis}
+        setHiddenEmojis={(hiddenEmojis) =>
+          updateState("hiddenEmojis", hiddenEmojis)
+        }
+      />
+      <SelectLanguage
+        setEmojiData={(emojiData) => updateState("emojiData", emojiData)}
+      />
+      <ChkShowPreview
+        showPreview={pickerProps.previewConfig?.showPreview}
+        setShowPreview={(showPreview) =>
+          updateState("previewConfig", {
+            ...pickerProps.previewConfig,
+            showPreview,
+          })
+        }
+      />
+      <InputDefaultEmoji
+        defaultEmoji={pickerProps.previewConfig?.defaultEmoji}
+        setDefaultEmoji={(defaultEmoji) =>
+          updateState("previewConfig", {
+            ...pickerProps.previewConfig,
+            defaultEmoji,
+          })
+        }
+      />
+      <InputDefaultCaption
+        defaultCaption={pickerProps.previewConfig?.defaultCaption}
+        setDefaultCaption={(defaultCaption) =>
+          updateState("previewConfig", {
+            ...pickerProps.previewConfig,
+            defaultCaption,
+          })
         }
       />
       <div className={styles.spacer} />
@@ -147,7 +285,7 @@ function ChkCustomEmojis({
       names: string[];
       imgUrl: string;
       id: string;
-    }[]
+    }[],
   ) => void;
 }) {
   const [toggleCustomEmojis, setToggleCustomEmojis] = React.useState(false);
@@ -292,7 +430,7 @@ function SelectSkinTonePickerLocation({
 }: {
   skinTonePickerLocation?: SkinTonePickerLocation;
   setSkinTonePickerLocation: (
-    skinTonePickerLocation: SkinTonePickerLocation
+    skinTonePickerLocation: SkinTonePickerLocation,
   ) => void;
 }) {
   return (
@@ -318,11 +456,289 @@ function ChkReactions({
   setReactionsDefaultOpen: (reactionsDefaultOpen: boolean) => void;
 }) {
   return (
-    <Label text="Reactions">
+    <Label text="Reactions Default Open">
       <input
         type="checkbox"
         checked={reactionsDefaultOpen}
         onChange={(e) => setReactionsDefaultOpen(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkAutoFocusSearch({
+  autoFocusSearch,
+  setAutoFocusSearch,
+}: {
+  autoFocusSearch?: boolean;
+  setAutoFocusSearch: (autoFocusSearch: boolean) => void;
+}) {
+  return (
+    <Label text="Auto Focus Search">
+      <input
+        type="checkbox"
+        checked={autoFocusSearch}
+        onChange={(e) => setAutoFocusSearch(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkLazyLoadEmojis({
+  lazyLoadEmojis,
+  setLazyLoadEmojis,
+}: {
+  lazyLoadEmojis?: boolean;
+  setLazyLoadEmojis: (lazyLoadEmojis: boolean) => void;
+}) {
+  return (
+    <Label text="Lazy Load Emojis">
+      <input
+        type="checkbox"
+        checked={lazyLoadEmojis}
+        onChange={(e) => setLazyLoadEmojis(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkAllowExpandReactions({
+  allowExpandReactions,
+  setAllowExpandReactions,
+}: {
+  allowExpandReactions?: boolean;
+  setAllowExpandReactions: (allowExpandReactions: boolean) => void;
+}) {
+  return (
+    <Label text="Allow Expand Reactions">
+      <input
+        type="checkbox"
+        checked={allowExpandReactions}
+        onChange={(e) => setAllowExpandReactions(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function ChkOpen({
+  open,
+  setOpen,
+}: {
+  open?: boolean;
+  setOpen: (open: boolean) => void;
+}) {
+  return (
+    <Label text="Open">
+      <input
+        type="checkbox"
+        checked={open}
+        onChange={(e) => setOpen(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function InputSearchClearButtonLabel({
+  searchClearButtonLabel,
+  setSearchClearButtonLabel,
+}: {
+  searchClearButtonLabel?: string;
+  setSearchClearButtonLabel: (searchClearButtonLabel: string) => void;
+}) {
+  return (
+    <Label text="Search Clear Button Label">
+      <input
+        type="text"
+        value={searchClearButtonLabel}
+        onChange={(e) => setSearchClearButtonLabel(e.target.value)}
+      />
+    </Label>
+  );
+}
+
+function SelectDefaultSkinTone({
+  defaultSkinTone,
+  setDefaultSkinTone,
+}: {
+  defaultSkinTone?: SkinTones;
+  setDefaultSkinTone: (defaultSkinTone: SkinTones) => void;
+}) {
+  return (
+    <Label text="Default Skin Tone">
+      <select
+        value={defaultSkinTone}
+        onChange={(e) => setDefaultSkinTone(e.target.value as SkinTones)}
+      >
+        <option value={SkinTones.NEUTRAL}>Neutral</option>
+        <option value={SkinTones.LIGHT}>Light</option>
+        <option value={SkinTones.MEDIUM_LIGHT}>Medium Light</option>
+        <option value={SkinTones.MEDIUM}>Medium</option>
+        <option value={SkinTones.MEDIUM_DARK}>Medium Dark</option>
+        <option value={SkinTones.DARK}>Dark</option>
+      </select>
+    </Label>
+  );
+}
+
+function SelectEmojiVersion({
+  emojiVersion,
+  setEmojiVersion,
+}: {
+  emojiVersion?: string | null;
+  setEmojiVersion: (emojiVersion: string | null) => void;
+}) {
+  return (
+    <Label text="Emoji Version">
+      <select
+        value={emojiVersion || ""}
+        onChange={(e) => setEmojiVersion(e.target.value || null)}
+      >
+        <option value="">All</option>
+        <option value="0.6">0.6</option>
+        <option value="1.0">1.0</option>
+        <option value="2.0">2.0</option>
+        <option value="3.0">3.0</option>
+        <option value="4.0">4.0</option>
+        <option value="5.0">5.0</option>
+        <option value="11.0">11.0</option>
+        <option value="12.0">12.0</option>
+        <option value="12.1">12.1</option>
+        <option value="13.0">13.0</option>
+        <option value="13.1">13.1</option>
+        <option value="14.0">14.0</option>
+        <option value="15.0">15.0</option>
+      </select>
+    </Label>
+  );
+}
+
+function InputReactions({
+  reactions,
+  setReactions,
+}: {
+  reactions?: string[];
+  setReactions: (reactions: string[]) => void;
+}) {
+  const [value, setValue] = React.useState(reactions?.join(",") || "");
+
+  React.useEffect(() => {
+    setValue(reactions?.join(",") || "");
+  }, [reactions]);
+
+  return (
+    <Label text="Reactions (comma separated)">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          setReactions(e.target.value.split(","));
+        }}
+      />
+    </Label>
+  );
+}
+
+function InputHiddenEmojis({
+  hiddenEmojis,
+  setHiddenEmojis,
+}: {
+  hiddenEmojis?: string[];
+  setHiddenEmojis: (hiddenEmojis: string[]) => void;
+}) {
+  const [value, setValue] = React.useState(hiddenEmojis?.join(",") || "");
+
+  React.useEffect(() => {
+    setValue(hiddenEmojis?.join(",") || "");
+  }, [hiddenEmojis]);
+
+  return (
+    <Label text="Hidden Emojis (comma separated)">
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => {
+          setValue(e.target.value);
+          setHiddenEmojis(e.target.value.split(","));
+        }}
+      />
+    </Label>
+  );
+}
+
+function SelectLanguage({
+  setEmojiData,
+}: {
+  setEmojiData: (emojiData: any) => void;
+}) {
+  return (
+    <Label text="Language">
+      <select
+        onChange={(e) => {
+          const lang = e.target.value;
+          setEmojiData(languages[lang]);
+        }}
+      >
+        <option value="">Default (en)</option>
+        {Object.keys(languages).map((lang) => (
+          <option key={lang} value={lang}>
+            {lang}
+          </option>
+        ))}
+      </select>
+    </Label>
+  );
+}
+
+function ChkShowPreview({
+  showPreview,
+  setShowPreview,
+}: {
+  showPreview?: boolean;
+  setShowPreview: (showPreview: boolean) => void;
+}) {
+  return (
+    <Label text="Show Preview">
+      <input
+        type="checkbox"
+        checked={showPreview ?? true}
+        onChange={(e) => setShowPreview(e.target.checked)}
+      />
+    </Label>
+  );
+}
+
+function InputDefaultEmoji({
+  defaultEmoji,
+  setDefaultEmoji,
+}: {
+  defaultEmoji?: string;
+  setDefaultEmoji: (defaultEmoji: string) => void;
+}) {
+  return (
+    <Label text="Preview Default Emoji">
+      <input
+        type="text"
+        value={defaultEmoji}
+        onChange={(e) => setDefaultEmoji(e.target.value)}
+      />
+    </Label>
+  );
+}
+
+function InputDefaultCaption({
+  defaultCaption,
+  setDefaultCaption,
+}: {
+  defaultCaption?: string;
+  setDefaultCaption: (defaultCaption: string) => void;
+}) {
+  return (
+    <Label text="Preview Default Caption">
+      <input
+        type="text"
+        value={defaultCaption}
+        onChange={(e) => setDefaultCaption(e.target.value)}
       />
     </Label>
   );

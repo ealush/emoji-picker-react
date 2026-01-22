@@ -2,6 +2,7 @@
 
 import Picker, {
   SkinTonePickerLocation,
+  SkinTones,
   SuggestionMode,
   Theme,
 } from "emoji-picker-react";
@@ -18,6 +19,19 @@ const DEFAULT_SUGGESTED_EMOJIS_MODE = SuggestionMode.RECENT;
 const DEFAULT_HEIGHT = 450;
 const DEFAULT_WIDTH = 350;
 const DEFAULT_SKIN_TONE_PICKER_LOCATION = SkinTonePickerLocation.SEARCH;
+const DEFAULT_AUTO_FOCUS_SEARCH = false;
+const DEFAULT_LAZY_LOAD_EMOJIS = false;
+const DEFAULT_ALLOW_EXPAND_REACTIONS = true;
+const DEFAULT_OPEN = true;
+const DEFAULT_DEFAULT_SKIN_TONE = SkinTones.NEUTRAL;
+const DEFAULT_EMOJI_VERSION = null;
+const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = "Clear";
+const DEFAULT_PREVIEW_CONFIG = {
+  defaultEmoji: "1f60a",
+  defaultCaption: "What's your mood?",
+  showPreview: true,
+};
+const DEFAULT_HIDDEN_EMOJIS: string[] = [];
 
 export default function PickerDemo() {
   const [pickerProps, setPickerProps] = useState<PickerProps>(defaultProps);
@@ -29,7 +43,7 @@ export default function PickerDemo() {
       <div
         className={styles.PickerDemo}
         style={{
-          minHeight: `${pickerProps.height}px`,
+          height: `${pickerProps.height}px`,
         }}
       >
         <div
@@ -43,11 +57,10 @@ export default function PickerDemo() {
             onEmojiClick={(emoji) =>
               setTextareaValue(
                 (tv) =>
-                  tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji)
+                  tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji),
               )
             }
             key={now}
-            autoFocusSearch={false}
             {...pickerProps}
           />
         </div>
@@ -70,7 +83,7 @@ export default function PickerDemo() {
 
   function updateState<K extends keyof PickerProps>(
     key: K,
-    value: PickerProps[K]
+    value: PickerProps[K],
   ) {
     setNow(Date.now());
     setPickerProps({ ...pickerProps, [key]: value });
@@ -92,4 +105,14 @@ const defaultProps = {
   height: DEFAULT_HEIGHT,
   width: DEFAULT_WIDTH,
   skinTonePickerLocation: DEFAULT_SKIN_TONE_PICKER_LOCATION,
+  autoFocusSearch: DEFAULT_AUTO_FOCUS_SEARCH,
+  lazyLoadEmojis: DEFAULT_LAZY_LOAD_EMOJIS,
+  allowExpandReactions: DEFAULT_ALLOW_EXPAND_REACTIONS,
+  open: DEFAULT_OPEN,
+  defaultSkinTone: DEFAULT_DEFAULT_SKIN_TONE,
+  emojiVersion: DEFAULT_EMOJI_VERSION,
+  searchClearButtonLabel: DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
+  previewConfig: DEFAULT_PREVIEW_CONFIG,
+  reactionsDefaultOpen: false,
+  hiddenEmojis: DEFAULT_HIDDEN_EMOJIS,
 } as PickerProps;
