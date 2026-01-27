@@ -1,6 +1,6 @@
 # 🎨 CSS Variables
 
-You can customize specific parts of the picker by overriding these CSS variables. Target `.EmojiPickerReact` to apply them.
+You can customize specific parts of the picker by overriding these CSS variables. Target `.EmojiPickerReact` or `aside.EmojiPickerReact` to apply them.
 
 ```css
 .EmojiPickerReact {
