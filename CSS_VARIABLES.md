@@ -7,6 +7,12 @@ You can customize specific parts of the picker by overriding these CSS variables
   --epr-emoji-size: 32px;
 }
 ```
+or
+```css
+aside.EmojiPickerReact {
+  --epr-emoji-size: 32px;
+}
+```
 
 ## 🎛️ General Variables
 
