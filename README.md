@@ -119,7 +119,7 @@ The following is a complete list of all props accepted by `EmojiPicker`.
 
 ### CSS Variables
 
-Override default variables by targeting `.EmojiPickerReact`.
+Override default variables by targeting `.EmojiPickerReact` or `aside.EmojiPickerReact`.
 
 ### CSS Variables
 
