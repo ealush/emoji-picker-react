@@ -60,6 +60,7 @@ export function useSetConfig(config: PickerConfig) {
     config.skinTonePickerLocation,
     config.allowExpandReactions,
     config.filterString,
+    config.showSearch,
   ]);
 
   return mergedConfig;
