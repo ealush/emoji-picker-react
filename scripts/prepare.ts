@@ -26,7 +26,7 @@ import {
   readdirSync,
   readJsonSync,
   writeFileSync,
-  writeJSONSync
+  writeJSONSync,
   // @ts-ignore
 } from 'fs-extra';
 
@@ -39,11 +39,11 @@ import {
   OutputData,
   groupConversion,
   internalCategoryNames,
-  keys
+  keys,
 } from './constants';
 
 const emojiDataSourceUnifieds = new Set<string>(
-  emojiDataSource.map((emoji: any) => emoji.unified)
+  emojiDataSource.map((emoji: any) => emoji.unified),
 );
 
 // --- Helper Functions ---
@@ -76,8 +76,8 @@ function getGroupMap(): Map<number | string, string> {
     return new Map(
       Object.entries(emojibaseGroups.groups).map(([id, key]) => [
         parseInt(id, 10),
-        key as string
-      ])
+        key as string,
+      ]),
     );
   }
 
@@ -103,7 +103,7 @@ function getGroupMap(): Map<number | string, string> {
 const groupMap = getGroupMap();
 
 const normalizeGroupName = (
-  value: string | number | null | undefined
+  value: string | number | null | undefined,
 ): string =>
   String(value || '')
     .trim()
@@ -123,7 +123,7 @@ const unicodeToUnified = (emoji: string | undefined): string => {
     return '';
   }
   return Array.from(emoji)
-    .map(char => (char.codePointAt(0) || 0).toString(16))
+    .map((char) => (char.codePointAt(0) || 0).toString(16))
     .join('-');
 };
 
@@ -143,32 +143,38 @@ const getNames = (emoji: EmojiRecord): string[] => {
     emoji.annotation,
     ...(emoji.shortcodes || []),
     ...(emoji.shortcode ? [emoji.shortcode] : []),
-    ...(emoji.tags || [])
+    ...(emoji.tags || []),
   ]
     .filter(Boolean)
-    .map(name => String(name).replace(/[_-]/g, ' '));
+    .map((name) => String(name).replace(/[_-]/g, ' '));
 };
 
 const getSkins = (emoji: EmojiRecord): string[] => {
   return (emoji.skins || [])
-    .map(skin =>
+    .map((skin) =>
       toUnified(
-        skin.hexcode || skin.hex || skin.unicode || unicodeToUnified(skin.emoji)
-      )
+        skin.hexcode ||
+          skin.hex ||
+          skin.unicode ||
+          unicodeToUnified(skin.emoji),
+      ),
     )
     .filter(Boolean);
 };
 
 const cleanEmoji = (emoji: EmojiRecord): CleanEmoji => {
   const unified = toUnified(
-    emoji.hexcode || emoji.hex || emoji.unicode || unicodeToUnified(emoji.emoji)
+    emoji.hexcode ||
+      emoji.hex ||
+      emoji.unicode ||
+      unicodeToUnified(emoji.emoji),
   );
 
   const clean: CleanEmoji = {
     [keys.EMOJI_PROPERTY_NAME]: [...new Set(getNames(emoji))].sort(
-      (a, b) => a.length - b.length
+      (a, b) => a.length - b.length,
     ),
-    [keys.EMOJI_PROPERTY_UNIFIED]: unified
+    [keys.EMOJI_PROPERTY_UNIFIED]: unified,
   };
 
   const variations = getSkins(emoji);
@@ -196,9 +202,7 @@ function getAvailableLanguages(): string[] {
 
 // --- Logic Steps ---
 
-function readEmojiData(
-  lang: string
-): {
+function readEmojiData(lang: string): {
   emojisInfo: EmojiRecord[];
   messages: { groups: { key: string; message: string }[] } | null;
 } {
@@ -235,7 +239,7 @@ function sortEmojis(emojis: EmojiRecord[]): EmojiRecord[] {
 
 function groupEmojis(emojis: EmojiRecord[]): Record<string, CleanEmoji[]> {
   const initial: Record<string, CleanEmoji[]> = {
-    [keys.GROUP_NAME_CUSTOM]: []
+    [keys.GROUP_NAME_CUSTOM]: [],
   };
 
   return emojis.reduce((acc, emoji) => {
@@ -269,7 +273,7 @@ function groupEmojis(emojis: EmojiRecord[]): Record<string, CleanEmoji[]> {
 
 function buildLocalizedCategories(
   lang: string,
-  messages: { groups: { key: string; message: string }[] } | null
+  messages: { groups: { key: string; message: string }[] } | null,
 ): LocalizedCategories {
   // 1. Populate from emojibase messages.json
   const categories: LocalizedCategories =
@@ -278,7 +282,7 @@ function buildLocalizedCategories(
       if (internalCategory) {
         acc[internalCategory] = {
           category: internalCategory,
-          name: group.message
+          name: group.message,
         };
       }
       return acc;
@@ -292,22 +296,22 @@ function buildLocalizedCategories(
     Object.assign(categories, {
       [keys.GROUP_NAME_SUGGESTED]: {
         category: keys.GROUP_NAME_SUGGESTED,
-        name: internalNames.suggested
+        name: internalNames.suggested,
       },
       [keys.GROUP_NAME_CUSTOM]: {
         category: keys.GROUP_NAME_CUSTOM,
-        name: internalNames.custom
+        name: internalNames.custom,
       },
       // Special key for "Recently Used" distinct from "Frequently Used"
       suggested_recent: {
         category: keys.GROUP_NAME_SUGGESTED,
-        name: internalNames.recent
+        name: internalNames.recent,
       },
       // "What's your mood?" preview caption
       preview_mood: {
         category: 'preview_mood',
-        name: internalNames.mood
-      }
+        name: internalNames.mood,
+      },
     });
   }
 
@@ -330,7 +334,7 @@ export default data;`;
     writeFileSync(
       './src/data/emojis.ts',
       `export default ${JSON.stringify(data)}`,
-      'utf8'
+      'utf8',
     );
   }
 }
@@ -354,29 +358,43 @@ function processLanguage(lang: string) {
   const categories = buildLocalizedCategories(lang, messages);
 
   // Filter emojis that don't have images in emoji-datasource
-  const filteredEmojis = Object.keys(groupedEmojis).reduce((acc, category) => {
-    const emojis = groupedEmojis[category];
-    const protectedCategories = [
-      keys.GROUP_NAME_CUSTOM,
-      keys.GROUP_NAME_SUGGESTED
-    ];
+  const filteredEmojis = Object.keys(groupedEmojis).reduce(
+    (acc, category) => {
+      const emojis = groupedEmojis[category];
+      const protectedCategories = [
+        keys.GROUP_NAME_CUSTOM,
+        keys.GROUP_NAME_SUGGESTED,
+      ];
 
-    if (protectedCategories.includes(category as any)) {
-      acc[category] = emojis;
+      if (protectedCategories.includes(category as any)) {
+        acc[category] = emojis;
+        return acc;
+      }
+
+      acc[category] = emojis.filter((emoji) => {
+        const unified = emoji.u.toUpperCase();
+
+        if (emojiDataSourceUnifieds.has(unified)) {
+          return true;
+        }
+
+        const unifiedVar = `${unified}-FE0F`;
+        if (emojiDataSourceUnifieds.has(unifiedVar)) {
+          emoji.u = unifiedVar.toLowerCase();
+          return true;
+        }
+
+        return false;
+      });
       return acc;
-    }
-
-    acc[category] = emojis.filter(emoji => {
-      const unified = emoji.u.toUpperCase();
-      return emojiDataSourceUnifieds.has(unified);
-    });
-    return acc;
-  }, {} as Record<string, CleanEmoji[]>);
+    },
+    {} as Record<string, CleanEmoji[]>,
+  );
 
   // 5. Construct Final Output
   const outputData: OutputData = {
     categories,
-    emojis: filteredEmojis
+    emojis: filteredEmojis,
   };
 
   // 6. Write to Disk
