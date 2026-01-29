@@ -131,7 +131,14 @@ export function useGetEmojisByCategory() {
     const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
 
     return suggested
-      .map((s) => emojiByUnified(s.unified))
+      .map((s) => {
+        const emoji = emojiByUnified(s.unified);
+        if (!emoji) return undefined;
+        return {
+          ...emoji,
+          [Keys.unified]: s.unified,
+        };
+      })
       .filter(Boolean) as DataEmojis;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
