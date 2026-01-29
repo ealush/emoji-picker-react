@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Picker - Real Component Test</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin-bottom: 30px;
+      border-radius: 4px;
+      color: #1565c0;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .test-group {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .test-group h2 {
+      margin: 0 0 20px 0;
+      color: #333;
+      font-size: 18px;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 10px;
+    }
+    .picker-wrapper {
+      margin-bottom: 20px;
+      min-height: 500px;
+    }
+    .toggle-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+    .toggle-btn:hover {
+      background: #0056b3;
+    }
+    .status {
+      font-size: 13px;
+      color: #666;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .status.on {
+      background: #c8e6c9;
+      color: #2e7d32;
+    }
+    .status.off {
+      background: #ffcdd2;
+      color: #c62828;
+    }
+  </style>
+</head>
+<body>
+  <h1>Emoji Picker - Real Component Test (showSearch Prop)</h1>
+  <div class="info">
+    <strong>Testing:</strong> This page uses the actual EmojiPickerReact component from dist/. Click "Toggle Search" to test if the showSearch prop works correctly.
+  </div>
+
+  <div class="container">
+    <div class="test-group">
+      <h2>Picker 1: Search OFF</h2>
+      <button class="toggle-btn" id="btn1">Toggle Search</button>
+      <div class="picker-wrapper" id="picker1"></div>
+      <div class="status off" id="status1">🔴 Search bar is OFF</div>
+    </div>
+
+    <div class="test-group">
+      <h2>Picker 2: Search ON</h2>
+      <button class="toggle-btn" id="btn2">Toggle Search</button>
+      <div class="picker-wrapper" id="picker2"></div>
+      <div class="status on" id="status2">🟢 Search bar is ON</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/flairup@1.0.0/dist/index.js"></script>
+
+  <script>
+    let showSearch1 = false;
+    let showSearch2 = true;
+    let EmojiPicker = null;
+
+    // Load the component
+    fetch('./dist/emoji-picker-react.cjs.development.js')
+      .then(res => res.text())
+      .then(code => {
+        // Create a module context
+        const moduleContext = {
+          module: { exports: {} },
+          exports: {},
+          require: function(name) {
+            if (name === 'react') return window.React;
+            if (name === 'react-dom') return window.ReactDOM;
+            if (name === 'react-dom/client') return window.ReactDOM;
+            if (name === 'flairup') return window.flairup;
+            console.warn('Unknown module:', name);
+            return {};
+          },
+          React: window.React,
+          ReactDOM: window.ReactDOM
+        };
+
+        // Execute the code
+        const fn = new Function('module', 'exports', 'require', code);
+        fn(moduleContext.module, moduleContext.module.exports, moduleContext.require);
+
+        EmojiPicker = moduleContext.module.exports.default;
+
+        if (!EmojiPicker) {
+          throw new Error('Could not load EmojiPickerReact');
+        }
+
+        renderBoth();
+      })
+      .catch(err => {
+        console.error('Failed to load component:', err);
+        document.getElementById('picker1').innerHTML = '<p style="color: red;">Error: ' + err.message + '</p>';
+        document.getElementById('picker2').innerHTML = '<p style="color: red;">Error: ' + err.message + '</p>';
+      });
+
+    function renderPicker(pickerId, showSearch) {
+      if (!EmojiPicker) {
+        console.warn('Component not loaded yet');
+        return;
+      }
+
+      const container = document.getElementById(pickerId);
+      const root = ReactDOM.createRoot(container);
+
+      root.render(
+        React.createElement(EmojiPicker, {
+          onEmojiClick: (e) => console.log('Emoji clicked:', e),
+          showSearch: showSearch,
+          open: true
+        })
+      );
+
+      const statusId = pickerId === 'picker1' ? 'status1' : 'status2';
+      const status = document.getElementById(statusId);
+      status.textContent = showSearch ? '🟢 Search bar is ON' : '🔴 Search bar is OFF';
+      status.className = showSearch ? 'status on' : 'status off';
+    }
+
+    function renderBoth() {
+      renderPicker('picker1', showSearch1);
+      renderPicker('picker2', showSearch2);
+    }
+
+    document.getElementById('btn1').addEventListener('click', () => {
+      showSearch1 = !showSearch1;
+      renderPicker('picker1', showSearch1);
+    });
+
+    document.getElementById('btn2').addEventListener('click', () => {
+      showSearch2 = !showSearch2;
+      renderPicker('picker2', showSearch2);
+    });
+  </script>
+</body>
+</html>

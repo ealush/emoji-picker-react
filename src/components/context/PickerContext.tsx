@@ -8,6 +8,7 @@ import {
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { alphaNumericEmojiIndex } from '../../dataUtils/alphaNumericEmojiIndex';
+import { allEmojis, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
@@ -25,7 +26,7 @@ export function filterEmojisByKeywordWithLongestMatch(keyword: string) {
     return filterEmojisByKeyword(longestMatch, normalizedFilter);
   } else {
     // Filter from the full emoji index
-    return filterEmojisByKeyword(alphaNumericEmojiIndex.current, normalizedFilter);
+    return filterEmojisByKeyword(getFullEmojiIndex(), normalizedFilter);
   }
 }
 
@@ -71,7 +72,7 @@ export function PickerContextProvider({ children }: Props) {
         filterRef.current[normalizedFilter] = filterEmojisByKeyword(longestMatch, normalizedFilter);
       } else {
         // Filter from the full emoji index
-        filterRef.current[normalizedFilter] = filterEmojisByKeyword(alphaNumericEmojiIndex.current, normalizedFilter);
+        filterRef.current[normalizedFilter] = filterEmojisByKeyword(getFullEmojiIndex(), normalizedFilter);
       }
     }
 
@@ -218,6 +219,20 @@ export function useUpdateSuggested(): [number, () => void] {
 export type FilterState = Record<string, FilterDict>;
 
 type ActiveCategoryState = null | string;
+
+// Helper function to get a flat dictionary of all emojis indexed by unified code
+function getFullEmojiIndex(): FilterDict {
+  const fullIndex: FilterDict = {};
+
+  allEmojis.forEach(emoji => {
+    const unified = emojiUnified(emoji);
+    if (unified) {
+      fullIndex[unified] = emoji;
+    }
+  });
+
+  return fullIndex;
+}
 
 // Helper functions for filtering emojis
 function filterEmojisByKeyword(
