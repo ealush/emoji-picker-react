@@ -10,7 +10,7 @@ import {
 } from '../components/context/PickerContext';
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiNames } from '../dataUtils/emojiSelectors';
+import { allEmojis, emojiNames, emojiUnified } from '../dataUtils/emojiSelectors';
 
 import { useFocusSearchInput } from './useFocus';
 
@@ -87,15 +87,12 @@ export function useFilter() {
 
     const longestMatch = findLongestMatch(nextValue, filter);
 
-    if (!longestMatch) {
-      // Can we even get here?
-      // If so, we need to search among all emojis
-      return applySearch(nextValue);
-    }
+    // Always update the filter cache, even if we need to create the full emoji index
+    const baseEmojis = longestMatch || getAllEmojisAsDict();
 
     setFilterRef(current =>
       Object.assign(current, {
-        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
+        [nextValue]: filterEmojiObjectByKeyword(baseEmojis, nextValue)
       })
     );
     applySearch(nextValue);
@@ -200,4 +197,17 @@ function getStatusSearchResults(
     Object.entries(filterState?.[searchTerm])?.length || 0;
   // eslint-disable-next-line react-hooks/rules-of-hooks
   return useSearchResultsConfig(searchResultsCount);
+}
+
+function getAllEmojisAsDict(): FilterDict {
+  const emojiDict: FilterDict = {};
+
+  allEmojis.forEach(emoji => {
+    const unified = emojiUnified(emoji);
+    if (unified) {
+      emojiDict[unified] = emoji;
+    }
+  });
+
+  return emojiDict;
 }
