@@ -4,21 +4,19 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "react-app-polyfill": "^1.0.0",
-    "react-dom": "^19.2.0"
-  },
-  "alias": {
-    "react": "../node_modules/react",
-    "scheduler/tracing": "../node_modules/scheduler/tracing-profiling"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.8.4",
-    "parcel": "1.12.3",
-    "typescript": "^3.4.5"
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "typescript": "^4.9.0",
+    "vite": "^5.0.0"
   }
 }
