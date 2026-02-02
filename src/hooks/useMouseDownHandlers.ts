@@ -29,7 +29,7 @@ import {
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
 import { isCustomEmoji } from '../typeRefinements/typeRefinements';
-import { EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
+import { type EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';

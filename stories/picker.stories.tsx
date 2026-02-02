@@ -10,7 +10,7 @@ import EmojiPicker, {
 } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 import {
-  EmojiClickData,
+  type EmojiClickData,
   SkinTonePickerLocation,
   SuggestionMode
 } from '../src/types/exposedTypes';

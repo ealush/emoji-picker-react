@@ -7,7 +7,7 @@ import {
   emojiUrlByUnified,
 } from '../dataUtils/emojiSelectors';
 import {
-  EmojiClickData,
+  type EmojiClickData,
   EmojiStyle,
   SkinTonePickerLocation,
   SkinTones,

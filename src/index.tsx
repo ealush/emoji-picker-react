@@ -4,7 +4,7 @@ import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
 export { filterEmojisByKeywordWithLongestMatch } from './components/context/PickerContext';
-export { EmojiProperties, DataEmoji } from './dataUtils/DataTypes';
+export { EmojiProperties, type DataEmoji } from './dataUtils/DataTypes';
 import {
   MutableConfigContext,
   useDefineMutableConfig
@@ -17,7 +17,7 @@ export {
   SkinTones,
   Theme,
   Categories,
-  EmojiClickData,
+  type EmojiClickData,
   SuggestionMode,
   SkinTonePickerLocation
 } from './types/exposedTypes';

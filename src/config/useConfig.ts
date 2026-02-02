@@ -3,7 +3,7 @@ import * as React from 'react';
 import { usePickerConfig } from '../components/context/PickerConfigContext';
 import { useReactionsModeState } from '../components/context/PickerContext';
 import {
-  EmojiClickData,
+  type EmojiClickData,
   EmojiStyle,
   SkinTonePickerLocation,
   SkinTones,

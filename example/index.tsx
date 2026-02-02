@@ -9,7 +9,7 @@ const App = () => {
     <div>
       <h2>Emojis: {emojis}</h2>
       <input type="text" value={filterString} onChange={(e) => setFilterString(e.target.value)} />
-      <EmojiPicker filterString={filterString} onEmojiClick={(e) => setEmojis(emojis + e.emoji)}/>
+      <EmojiPicker filterString={filterString} onEmojiClick={(e) => setEmojis(emojis + e.emoji)} searchDisabled={false}/>
     </div>
   );
 };
