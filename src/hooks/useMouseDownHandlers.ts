@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useRef } from 'react';
 
 import {
-  emojiFromElement,
+  allUnifiedFromEmojiElement,
   isEmojiElement,
   NullableElement
 } from '../DomUtils/selectors';
@@ -12,6 +12,7 @@ import {
   useEmojiVariationPickerState,
   useUpdateSuggested
 } from '../components/context/PickerContext';
+import { usePickerDataContext } from '../components/context/PickerDataContext';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import {
   MOUSE_EVENT_SOURCE,
@@ -48,6 +49,7 @@ export function useMouseDownHandlers(
   const [, updateSuggested] = useUpdateSuggested();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const activeEmojiStyle = useEmojiStyleConfig();
+  const { emojiByUnified } = usePickerDataContext();
 
   const onClick = React.useCallback(
     function onClick(event: MouseEvent) {
@@ -57,7 +59,7 @@ export function useMouseDownHandlers(
 
       closeAllOpenToggles();
 
-      const [emoji, unified] = emojiFromEvent(event);
+      const [emoji, unified] = emojiFromEvent(event, emojiByUnified);
 
       if (!emoji || !unified) {
         return;
@@ -77,6 +79,7 @@ export function useMouseDownHandlers(
       activeSkinTone,
       closeAllOpenToggles,
       disallowClickRef,
+      emojiByUnified,
       onEmojiClick,
       updateSuggested,
       getEmojiUrl,
@@ -90,7 +93,7 @@ export function useMouseDownHandlers(
         clearTimeout(mouseDownTimerRef.current);
       }
 
-      const [emoji] = emojiFromEvent(event);
+      const [emoji] = emojiFromEvent(event, emojiByUnified);
 
       if (!emoji || !emojiHasVariations(emoji)) {
         return;
@@ -106,6 +109,7 @@ export function useMouseDownHandlers(
     },
     [
       disallowClickRef,
+      emojiByUnified,
       closeAllOpenToggles,
       setVariationPicker,
       setEmojiVariationPicker
@@ -155,13 +159,27 @@ export function useMouseDownHandlers(
   }, [ContainerRef, onClick, onMouseDown, onMouseUp]);
 }
 
-function emojiFromEvent(event: MouseEvent): [DataEmoji, string] | [] {
+function emojiFromEvent(
+  event: MouseEvent,
+  lookupEmojiByUnified: (unified?: string) => DataEmoji | undefined
+): [DataEmoji, string] | [] {
   const target = event?.target as HTMLElement;
   if (!isEmojiElement(target)) {
     return [];
   }
 
-  return emojiFromElement(target);
+  const { unified, originalUnified } = allUnifiedFromEmojiElement(target);
+  const resolvedUnified = unified ?? originalUnified;
+  if (!resolvedUnified) {
+    return [];
+  }
+
+  const emoji = lookupEmojiByUnified(resolvedUnified);
+  if (!emoji) {
+    return [];
+  }
+
+  return [emoji, unified ?? resolvedUnified];
 }
 
 function emojiClickOutput(
