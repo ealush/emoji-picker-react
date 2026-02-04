@@ -4,6 +4,7 @@ import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
 import {
+  Categories,
   EmojiClickData,
   EmojiData,
   EmojiStyle,
@@ -125,7 +126,7 @@ export type PickerConfigInternal = {
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyle;
-  categories: CategoriesConfig;
+  categories: CategoriesConfig | Categories[];
   theme: Theme;
   suggestedEmojisMode: SuggestionMode;
   lazyLoadEmojis: boolean;
