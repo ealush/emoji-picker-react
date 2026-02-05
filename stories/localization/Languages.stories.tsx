@@ -1,43 +1,43 @@
 import React from 'react';
 import { Meta } from '@storybook/react';
 
-import EmojiPicker from '../src';
-import bn from '../dist/data/emojis-bn';
-import da from '../dist/data/emojis-da';
-import de from '../dist/data/emojis-de';
-import en from '../dist/data/emojis-en';
-import enGB from '../dist/data/emojis-en-gb';
-import es from '../dist/data/emojis-es';
-import esMX from '../dist/data/emojis-es-mx';
-import et from '../dist/data/emojis-et';
-import fi from '../dist/data/emojis-fi';
-import fr from '../dist/data/emojis-fr';
-import hi from '../dist/data/emojis-hi';
-import hu from '../dist/data/emojis-hu';
-import it from '../dist/data/emojis-it';
-import ja from '../dist/data/emojis-ja';
-import ko from '../dist/data/emojis-ko';
-import lt from '../dist/data/emojis-lt';
-import ms from '../dist/data/emojis-ms';
-import nb from '../dist/data/emojis-nb';
-import nl from '../dist/data/emojis-nl';
-import pl from '../dist/data/emojis-pl';
-import pt from '../dist/data/emojis-pt';
-import ru from '../dist/data/emojis-ru';
-import sv from '../dist/data/emojis-sv';
-import th from '../dist/data/emojis-th';
-import uk from '../dist/data/emojis-uk';
-import zh from '../dist/data/emojis-zh';
-import zhHant from '../dist/data/emojis-zh-hant';
+import EmojiPicker from '../../src';
+import bn from '../../dist/data/emojis-bn';
+import da from '../../dist/data/emojis-da';
+import de from '../../dist/data/emojis-de';
+import en from '../../dist/data/emojis-en';
+import enGB from '../../dist/data/emojis-en-gb';
+import es from '../../dist/data/emojis-es';
+import esMX from '../../dist/data/emojis-es-mx';
+import et from '../../dist/data/emojis-et';
+import fi from '../../dist/data/emojis-fi';
+import fr from '../../dist/data/emojis-fr';
+import hi from '../../dist/data/emojis-hi';
+import hu from '../../dist/data/emojis-hu';
+import it from '../../dist/data/emojis-it';
+import ja from '../../dist/data/emojis-ja';
+import ko from '../../dist/data/emojis-ko';
+import lt from '../../dist/data/emojis-lt';
+import ms from '../../dist/data/emojis-ms';
+import nb from '../../dist/data/emojis-nb';
+import nl from '../../dist/data/emojis-nl';
+import pl from '../../dist/data/emojis-pl';
+import pt from '../../dist/data/emojis-pt';
+import ru from '../../dist/data/emojis-ru';
+import sv from '../../dist/data/emojis-sv';
+import th from '../../dist/data/emojis-th';
+import uk from '../../dist/data/emojis-uk';
+import zh from '../../dist/data/emojis-zh';
+import zhHant from '../../dist/data/emojis-zh-hant';
 
-const meta: Meta = {
-  title: 'Languages',
+const meta = {
+  title: 'Localization/Languages',
   component: EmojiPicker,
-  argTypes: {},
   parameters: {
-    controls: { expanded: true }
+    controls: { expanded: true },
+    visualTest: true
   }
-};
+} satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
 
