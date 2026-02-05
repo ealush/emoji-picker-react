@@ -1,0 +1,34 @@
+name: tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npm run build:data
+      - run: npx storybook dev -p 6006 --ci --quiet &
+      - run: npx wait-on http://localhost:6006
+      - run: npm run test:visual
