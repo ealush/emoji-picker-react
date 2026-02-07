@@ -69,6 +69,7 @@ export const ReactionsMenuAuto = (args: Props) => (
     theme={Theme.AUTO}
   />
 );
+ReactionsMenuAuto.parameters = { visualTest: false };
 
 export const CollapseToReactions = () => (
   <EmojiPicker

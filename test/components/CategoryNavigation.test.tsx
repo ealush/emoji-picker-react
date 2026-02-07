@@ -46,6 +46,7 @@ vi.mock('../../src/components/navigation/CategoryButton', () => ({
 
 import { useCategoriesConfig } from '../../src/config/useConfig';
 import { useVisibleCategoriesState } from '../../src/components/context/PickerContext';
+import { useCategoryNavigationRef } from '../../src/components/context/ElementRefContext';
 import { useScrollCategoryIntoView } from '../../src/hooks/useScrollCategoryIntoView';
 import useIsSearchMode from '../../src/hooks/useIsSearchMode';
 import { useShouldHideCustomEmojis } from '../../src/hooks/useShouldHideCustomEmojis';
@@ -56,6 +57,7 @@ describe('CategoryNavigation', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (useCategoryNavigationRef as any).mockReturnValue({ current: null });
     (useCategoriesConfig as any).mockReturnValue([
       { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
       { category: Categories.ANIMALS_NATURE, name: 'Animals & Nature' }

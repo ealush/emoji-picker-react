@@ -94,7 +94,7 @@ describe('useKeyboardNavigation', () => {
     expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function));
   });
 
-  it('focuses search input on Escape if toggles are close', () => {
+  it('focuses search input on Escape if toggles are closed', () => {
     const focusSearchInputMock = vi.fn();
     (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
 

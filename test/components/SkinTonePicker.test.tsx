@@ -31,6 +31,7 @@ vi.mock('../../src/hooks/useFocus', () => ({
 // Import mocks to configure return values
 import { useSkinTonesDisabledConfig, useOnSkinToneChangeConfig } from '../../src/config/useConfig';
 import { useSkinToneFanOpenState, useActiveSkinToneState } from '../../src/components/context/PickerContext';
+import { useSkinTonePickerRef } from '../../src/components/context/ElementRefContext';
 
 describe('SkinTonePicker', () => {
   const setSkinToneFanOpenStateMock = vi.fn();
@@ -39,6 +40,7 @@ describe('SkinTonePicker', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    (useSkinTonePickerRef as any).mockReturnValue({ current: null });
     (useSkinTonesDisabledConfig as any).mockReturnValue(false);
     (useSkinToneFanOpenState as any).mockReturnValue([false, setSkinToneFanOpenStateMock]);
     (useActiveSkinToneState as any).mockReturnValue([SkinTones.NEUTRAL, setActiveSkinToneMock]);
