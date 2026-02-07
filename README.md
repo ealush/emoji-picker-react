@@ -98,12 +98,13 @@ The following is a complete list of all props accepted by `EmojiPicker`.
 
 ### 🦄 Customization & Advanced
 
-| Prop            | Type                                             | Default                 | Description                                                     |
-| --------------- | ------------------------------------------------ | ----------------------- | --------------------------------------------------------------- |
-| `customEmojis`  | `CustomEmoji[]`                                  | `[]`                    | Array of custom image-based emojis to inject.                   |
-| `hiddenEmojis`  | `string[]`                                       | `[]`                    | Array of unified IDs (e.g., `'1f921'`) to hide from the picker. |
-| `previewConfig` | `PreviewConfig`                                  | `{ showPreview: true }` | configuration for the bottom preview bar.                       |
-| `getEmojiUrl`   | `(unified: string, style: EmojiStyle) => string` | -                       | Function to override the default CDN URL for emoji images.      |
+| Prop            | Type                                             | Default                 | Description                                                              |
+| --------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------ |
+| `customEmojis`  | `CustomEmoji[]`                                  | `[]`                    | Array of custom image-based emojis to inject.                            |
+| `hiddenEmojis`  | `string[]`                                       | `[]`                    | Array of unified IDs (e.g., `'1f921'`) to hide from the picker.          |
+| `previewConfig` | `PreviewConfig`                                  | `{ showPreview: true }` | Configuration for the bottom preview bar.                                |
+| `getEmojiUrl`   | `(unified: string, style: EmojiStyle) => string` | -                       | Function to override the default CDN URL for emoji images.               |
+| `categoryIcons` | `CategoryIcons`                                  | `{}`                    | Map `Categories` enum values to custom React nodes for navigation icons. |
 
 ### ❤️ Reactions Picker Mode
 
@@ -151,6 +152,50 @@ Control the footer preview area using `previewConfig`:
   showPreview: boolean; // Default: true
 }
 ```
+
+### Custom Category Icons
+
+You can customize the navigation icons using one of two methods.
+
+**Method 1: The `categoryIcons` prop**
+
+Map `Categories` enum values to valid React nodes:
+
+```tsx
+import EmojiPicker, { Categories } from 'emoji-picker-react';
+
+<EmojiPicker
+  categoryIcons={{
+    [Categories.SUGGESTED]: <img src="recent.png" alt="Recent" />,
+    [Categories.SMILEYS_PEOPLE]: <MyCustomFaceIcon />,
+  }}
+/>;
+```
+
+**Method 2: The `categories` configuration array**
+
+Define the icon directly within the category configuration object:
+
+```tsx
+import EmojiPicker, { Categories } from 'emoji-picker-react';
+
+<EmojiPicker
+  categories={[
+    {
+      category: Categories.SUGGESTED,
+      name: 'Recently Used',
+      icon: <img src="recent.png" alt="Recent" />,
+    },
+    {
+      category: Categories.SMILEYS_PEOPLE,
+      name: 'Smileys & People',
+      icon: <MyCustomFaceIcon />,
+    },
+  ]}
+/>;
+```
+
+> **Note:** If both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop.
 
 ---
 

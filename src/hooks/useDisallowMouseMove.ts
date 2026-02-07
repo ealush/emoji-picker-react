@@ -32,7 +32,7 @@ export function useOnMouseMove() {
   useEffect(() => {
     const bodyRef = BodyRef.current;
     bodyRef?.addEventListener('mousemove', onMouseMove, {
-      passive: true
+      passive: true,
     });
 
     function onMouseMove() {

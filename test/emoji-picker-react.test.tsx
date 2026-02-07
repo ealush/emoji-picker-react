@@ -3,43 +3,38 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import EmojiPicker, {
-  EmojiStyle,
-  Props,
-  SkinTones,
-  Theme
-} from '../src';
+import EmojiPicker, { EmojiStyle, Props, SkinTones, Theme } from '../src';
 import { Categories } from '../src/config/categoryConfig';
 import {
   EmojiData,
   SkinTonePickerLocation,
-  SuggestionMode
+  SuggestionMode,
 } from '../src/types/exposedTypes';
 
 vi.mock('../src/hooks/preloadEmoji', () => ({
   preloadEmojiIfNeeded: () => undefined,
   preloadEmoji: () => undefined,
-  preloadedEmojs: new Set()
+  preloadedEmojs: new Set(),
 }));
 
 const minimalEmojiData: EmojiData = {
   categories: {
     [Categories.SMILEYS_PEOPLE]: {
       category: Categories.SMILEYS_PEOPLE,
-      name: 'Smileys & People'
+      name: 'Smileys & People',
     },
     [Categories.ANIMALS_NATURE]: {
       category: Categories.ANIMALS_NATURE,
-      name: 'Animals & Nature'
+      name: 'Animals & Nature',
     },
     [Categories.SUGGESTED]: {
       category: Categories.SUGGESTED,
-      name: 'Frequently Used'
+      name: 'Frequently Used',
     },
     [Categories.CUSTOM]: {
       category: Categories.CUSTOM,
-      name: 'Custom Emojis'
-    }
+      name: 'Custom Emojis',
+    },
   },
   emojis: {
     [Categories.SUGGESTED]: [],
@@ -49,20 +44,20 @@ const minimalEmojiData: EmojiData = {
       {
         n: ['face', 'grinning face with big eyes'],
         u: '1f603',
-        a: '0.6'
+        a: '0.6',
       },
-      { n: ['face', 'smiling face with smiling eyes'], u: '1f60a', a: '0.6' }
+      { n: ['face', 'smiling face with smiling eyes'], u: '1f60a', a: '0.6' },
     ],
-    [Categories.ANIMALS_NATURE]: [{ n: ['cat'], u: '1f431', a: '0.6' }]
-  }
+    [Categories.ANIMALS_NATURE]: [{ n: ['cat'], u: '1f431', a: '0.6' }],
+  },
 };
 
 const minimalCustomEmojis = [
   {
     names: ['Panda'],
     imgUrl: 'https://example.com/panda.png',
-    id: 'panda'
-  }
+    id: 'panda',
+  },
 ];
 
 const renderPicker = (props: Partial<Props> = {}) => {
@@ -71,15 +66,16 @@ const renderPicker = (props: Partial<Props> = {}) => {
       emojiData={minimalEmojiData}
       categories={[Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE]}
       {...props}
-    />
+    />,
   );
 };
 
 const findVisibleEmojiButton = async (label: string) => {
   const buttons = await screen.findAllByLabelText(label);
   return (
-    buttons.find(button => !button.getAttribute('style')?.includes('opacity')) ??
-    buttons[0]
+    buttons.find(
+      (button) => !button.getAttribute('style')?.includes('opacity'),
+    ) ?? buttons[0]
   );
 };
 
@@ -88,13 +84,13 @@ describe('EmojiPicker', () => {
     renderPicker();
 
     expect(
-      screen.getByLabelText('Type to search for an emoji')
+      screen.getByLabelText('Type to search for an emoji'),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('tablist', { name: 'Category navigation' })
+      screen.getByRole('tablist', { name: 'Category navigation' }),
     ).toBeInTheDocument();
     expect(
-      await screen.findByRole('tab', { name: 'Smileys & People' })
+      await screen.findByRole('tab', { name: 'Smileys & People' }),
     ).toBeInTheDocument();
   });
 
@@ -127,13 +123,13 @@ describe('EmojiPicker', () => {
     renderPicker({
       reactionsDefaultOpen: true,
       allowExpandReactions: false,
-      onReactionClick
+      onReactionClick,
     });
 
     // Use accessible role query instead of brittle CSS selector
     const reactionsList = screen.getByRole('list', { name: /reactions/i });
     const reaction = await within(reactionsList).findByLabelText(
-      'grinning face with big eyes'
+      'grinning face with big eyes',
     );
     await userEvent.click(reaction);
 
@@ -157,7 +153,7 @@ describe('EmojiPicker', () => {
     renderPicker({ searchDisabled: true });
 
     expect(
-      screen.queryByLabelText('Type to search for an emoji')
+      screen.queryByLabelText('Type to search for an emoji'),
     ).not.toBeInTheDocument();
   });
 
@@ -170,35 +166,38 @@ describe('EmojiPicker', () => {
   it.each([
     {
       label: 'default configuration',
-      props: {}
+      props: {},
     },
     {
       label: 'dark theme with custom sizing',
-      props: { theme: Theme.DARK, width: 320, height: 420 }
+      props: { theme: Theme.DARK, width: 320, height: 420 },
     },
     {
       label: 'auto theme with preview hidden',
-      props: { theme: Theme.AUTO, previewConfig: { showPreview: false } }
+      props: { theme: Theme.AUTO, previewConfig: { showPreview: false } },
     },
     {
       label: 'search disabled',
-      props: { searchDisabled: true }
+      props: { searchDisabled: true },
     },
     {
       label: 'search in preview skin tone picker',
-      props: { skinTonePickerLocation: SkinTonePickerLocation.PREVIEW }
+      props: { skinTonePickerLocation: SkinTonePickerLocation.PREVIEW },
     },
     {
       label: 'skin tones disabled with native emoji',
-      props: { skinTonesDisabled: true, emojiStyle: EmojiStyle.NATIVE }
+      props: { skinTonesDisabled: true, emojiStyle: EmojiStyle.NATIVE },
     },
     {
       label: 'lazy loaded recent suggestions',
-      props: { lazyLoadEmojis: true, suggestedEmojisMode: SuggestionMode.RECENT }
+      props: {
+        lazyLoadEmojis: true,
+        suggestedEmojisMode: SuggestionMode.RECENT,
+      },
     },
     {
       label: 'auto focus off with custom emojis',
-      props: { autoFocusSearch: false, customEmojis: minimalCustomEmojis }
+      props: { autoFocusSearch: false, customEmojis: minimalCustomEmojis },
     },
     {
       label: 'custom categories and hidden preview',
@@ -206,19 +205,17 @@ describe('EmojiPicker', () => {
         categories: [
           {
             name: 'Smileys & People',
-            category: Categories.SMILEYS_PEOPLE
-          }
+            category: Categories.SMILEYS_PEOPLE,
+          },
         ],
-        previewConfig: { showPreview: false }
-      }
-    }
+        previewConfig: { showPreview: false },
+      },
+    },
   ])('supports interactions for $label', async ({ props }) => {
     const onEmojiClick = vi.fn();
     renderPicker({ onEmojiClick, ...props });
 
-    const searchInput = screen.queryByLabelText(
-      'Type to search for an emoji'
-    );
+    const searchInput = screen.queryByLabelText('Type to search for an emoji');
     if (searchInput) {
       await userEvent.type(searchInput, 'grinning');
       expect(searchInput).toHaveValue('grinning');

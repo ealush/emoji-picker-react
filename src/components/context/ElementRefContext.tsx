@@ -4,7 +4,7 @@ import { focusElement } from '../../DomUtils/focusElement';
 import { NullableElement } from '../../DomUtils/selectors';
 
 export function ElementRefContextProvider({
-  children
+  children,
 }: {
   children: React.ReactNode;
 }) {
@@ -29,7 +29,7 @@ export function ElementRefContextProvider({
         SearchInputRef,
         SkinTonePickerRef,
         VariationPickerRef,
-        ReactionsRef
+        ReactionsRef,
       }}
     >
       {children}
@@ -37,9 +37,8 @@ export function ElementRefContextProvider({
   );
 }
 
-export type ElementRef<
-  E extends HTMLElement = HTMLElement
-> = React.MutableRefObject<E | null>;
+export type ElementRef<E extends HTMLElement = HTMLElement> =
+  React.MutableRefObject<E | null>;
 
 type ElementRefs = {
   PickerMainRef: ElementRef;
@@ -62,7 +61,7 @@ const ElementRefContext = React.createContext<ElementRefs>({
   SearchInputRef: React.createRef(),
   SkinTonePickerRef: React.createRef(),
   VariationPickerRef: React.createRef(),
-  ReactionsRef: React.createRef()
+  ReactionsRef: React.createRef(),
 });
 
 function useElementRef() {

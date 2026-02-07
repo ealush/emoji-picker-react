@@ -51,7 +51,9 @@ test.describe('Advanced Interactions', () => {
     await page.keyboard.press('Enter');
 
     // Verify Animals & Nature header is visible (category was selected)
-    await expect(page.getByRole('heading', { name: 'Animals & Nature' })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'Animals & Nature' }),
+    ).toBeVisible();
   });
 
   /**
@@ -65,7 +67,9 @@ test.describe('Advanced Interactions', () => {
     const search = page.getByLabel('Type to search for an emoji');
 
     await search.fill('grinning');
-    await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
+    await expect(
+      page.getByLabel('grinning face', { exact: true }),
+    ).toBeVisible();
 
     await search.focus();
     await page.keyboard.press('Escape');
@@ -80,7 +84,7 @@ test.describe('Advanced Interactions', () => {
   test.describe('touch interaction', () => {
     test.use({
       viewport: { width: 375, height: 667 },
-      hasTouch: true
+      hasTouch: true,
     });
 
     /**

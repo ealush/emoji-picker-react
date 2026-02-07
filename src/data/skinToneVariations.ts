@@ -6,7 +6,7 @@ const skinToneVariations = [
   SkinTones.MEDIUM_LIGHT,
   SkinTones.MEDIUM,
   SkinTones.MEDIUM_DARK,
-  SkinTones.DARK
+  SkinTones.DARK,
 ];
 
 export const skinTonesNamed = Object.entries(SkinTones).reduce(
@@ -14,18 +14,16 @@ export const skinTonesNamed = Object.entries(SkinTones).reduce(
     acc[value] = key;
     return acc;
   },
-  {} as Record<string, string>
+  {} as Record<string, string>,
 );
 
-export const skinTonesMapped: Record<
-  string,
-  string
-> = skinToneVariations.reduce(
-  (mapped, skinTone) =>
-    Object.assign(mapped, {
-      [skinTone]: skinTone
-    }),
-  {}
-);
+export const skinTonesMapped: Record<string, string> =
+  skinToneVariations.reduce(
+    (mapped, skinTone) =>
+      Object.assign(mapped, {
+        [skinTone]: skinTone,
+      }),
+    {},
+  );
 
 export default skinToneVariations;

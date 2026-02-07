@@ -3,26 +3,26 @@ const { version } = require('react');
 module.exports = {
   env: {
     browser: true,
-    es6: true
+    es6: true,
   },
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:jsx-a11y/recommended'
+    'plugin:jsx-a11y/recommended',
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 2018,
-    sourceType: 'module'
+    sourceType: 'module',
   },
   plugins: ['react', '@typescript-eslint', 'import', 'jsx-a11y'],
   rules: {
@@ -39,10 +39,10 @@ module.exports = {
       'warn',
       {
         alphabetize: {
-          order: 'asc'
+          order: 'asc',
         },
-        'newlines-between': 'always'
-      }
+        'newlines-between': 'always',
+      },
     ],
     complexity: [2, { max: 8 }],
     'max-params': [1, { max: 4 }],
@@ -61,17 +61,17 @@ module.exports = {
     'no-var': 2,
     'no-warning-comments': 1,
     'object-shorthand': [2, 'always', { avoidQuotes: true }],
-    'prefer-const': 2
+    'prefer-const': 2,
   },
   settings: {
     'import/parsers': {
-      '@typescript-eslint/parser': ['.ts', '.tsx']
+      '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
-      typescript: true
+      typescript: true,
     },
     react: {
-      version: 'detect'
-    }
-  }
+      version: 'detect',
+    },
+  },
 };

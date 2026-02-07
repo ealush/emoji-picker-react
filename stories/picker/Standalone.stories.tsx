@@ -1,19 +1,15 @@
 import { Meta } from '@storybook/react';
 import React, { useState } from 'react';
 
-import EmojiPicker, {
-  Emoji,
-  EmojiClickData,
-  EmojiStyle
-} from '../../src';
+import EmojiPicker, { Emoji, EmojiClickData, EmojiStyle } from '../../src';
 
 const meta = {
   title: 'Picker/Standalone',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -34,7 +30,7 @@ export const StandaloneEmojiNative = () => {
       />
       <EmojiPicker
         emojiStyle={EmojiStyle.NATIVE}
-        onEmojiClick={clickedEmoji => {
+        onEmojiClick={(clickedEmoji) => {
           console.log(clickedEmoji);
           setCurrentEmoji(clickedEmoji);
         }}
@@ -49,7 +45,7 @@ export const CustomUnifiedEmojiImage = () => {
   return (
     <>
       <Emoji unified={unified} size={35} />
-      <input onChange={e => setUnified(e.target.value)} value={unified} />
+      <input onChange={(e) => setUnified(e.target.value)} value={unified} />
     </>
   );
 };

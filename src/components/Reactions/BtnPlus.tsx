@@ -42,25 +42,25 @@ const styles = stylesheet.create({
       backgroundColor: 'transparent',
       backgroundRepeat: 'no-repeat',
       backgroundSize: '20px',
-      backgroundPositionY: '0'
+      backgroundPositionY: '0',
     },
     ':hover': {
       color: 'var(--epr-highlight-color)',
       backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
       ':after': {
-        backgroundPositionY: '-20px'
-      }
+        backgroundPositionY: '-20px',
+      },
     },
     ':focus': {
       color: 'var(--epr-highlight-color)',
       backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
       ':after': {
-        backgroundPositionY: '-40px'
-      }
-    }
+        backgroundPositionY: '-40px',
+      },
+    },
   },
   ...darkMode('plusSign', {
     ':after': { backgroundPositionY: '-40px' },
-    ':hover:after': { backgroundPositionY: '-60px' }
-  })
+    ':hover:after': { backgroundPositionY: '-60px' },
+  }),
 });

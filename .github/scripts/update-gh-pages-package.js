@@ -18,7 +18,7 @@ function updatePackageJson() {
     p.dependencies['emoji-picker-react'] = version;
     fs.writeFileSync(pkgPath, JSON.stringify(p, null, 2) + '\n');
     console.log(
-      `Updated package.json dependency emoji-picker-react to ${version}`
+      `Updated package.json dependency emoji-picker-react to ${version}`,
     );
   } else {
     const p = {

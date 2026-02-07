@@ -1,19 +1,20 @@
 import * as React from 'react';
 
-import {
-  categoryFromCategoryConfig
-} from '../../config/categoryConfig';
+import { categoryFromCategoryConfig } from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  useLazyLoadEmojisConfig
+  useLazyLoadEmojisConfig,
 } from '../../config/useConfig';
 import {
   useGetEmojisByCategory,
-  emojiUnified
+  emojiUnified,
 } from '../../dataUtils/emojiSelectors';
-import { useActiveSkinToneState, useEmojiSizeState } from '../context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useEmojiSizeState,
+} from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 export function MeasureEmoji() {
@@ -38,11 +39,9 @@ export function MeasureEmoji() {
 
   const firstCategory = categories[0];
   const dummyEmoji = getEmojisByCategory(
-    categoryFromCategoryConfig(firstCategory)
+    categoryFromCategoryConfig(firstCategory),
   )[0];
-  const unified = dummyEmoji
-    ? emojiUnified(dummyEmoji, activeSkinTone)
-    : '';
+  const unified = dummyEmoji ? emojiUnified(dummyEmoji, activeSkinTone) : '';
 
   if (!dummyEmoji) {
     return null;
@@ -66,7 +65,7 @@ export function MeasureEmoji() {
           left: 0,
           zIndex: -1,
           height: 'var(--epr-emoji-fullsize)',
-          width: 'var(--epr-emoji-fullsize)'
+          width: 'var(--epr-emoji-fullsize)',
         }}
       />
     </div>

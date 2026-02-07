@@ -22,18 +22,35 @@ const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
  */
 async function waitForEmojisToLoad(page: Page) {
   // Wait for a visible emoji (excluding the hidden measurement dummy with opacity: 0)
-  await page.waitForFunction(() => {
-    const els = document.querySelectorAll('.epr-emoji-img, .epr-emoji-native');
-    return Array.from(els).some(el => window.getComputedStyle(el).opacity !== '0');
-  }, { timeout: 10000 }).catch(() => {});
+  await page
+    .waitForFunction(
+      () => {
+        const els = document.querySelectorAll(
+          '.epr-emoji-img, .epr-emoji-native',
+        );
+        return Array.from(els).some(
+          (el) => window.getComputedStyle(el).opacity !== '0',
+        );
+      },
+      { timeout: 10000 },
+    )
+    .catch(() => {});
 
   // For CDN images, ensure they're fully loaded
-  if (await page.locator('.epr-emoji-img').count() > 0) {
-    await page.waitForFunction(() => {
-      const images = document.querySelectorAll<HTMLImageElement>('.epr-emoji-img');
-      const checkCount = Math.min(5, images.length);
-      return Array.from(images).slice(0, checkCount).every(img => img.complete && img.naturalWidth > 0);
-    }, { timeout: 10000 }).catch(() => {});
+  if ((await page.locator('.epr-emoji-img').count()) > 0) {
+    await page
+      .waitForFunction(
+        () => {
+          const images =
+            document.querySelectorAll<HTMLImageElement>('.epr-emoji-img');
+          const checkCount = Math.min(5, images.length);
+          return Array.from(images)
+            .slice(0, checkCount)
+            .every((img) => img.complete && img.naturalWidth > 0);
+        },
+        { timeout: 10000 },
+      )
+      .catch(() => {});
   }
 
   // Allow transitions to complete
@@ -54,7 +71,7 @@ test('search highlights matching emoji results', async ({ page }) => {
   await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'search-grinning.png'
+    'search-grinning.png',
   );
 });
 
@@ -70,24 +87,24 @@ test('category navigation and scrolling work together', async ({ page }) => {
 
   await page.getByRole('tab', { name: 'Animals & Nature' }).click();
   await expect(
-    page.getByRole('heading', { name: 'Animals & Nature' })
+    page.getByRole('heading', { name: 'Animals & Nature' }),
   ).toBeVisible();
 
   const body = page.locator('.epr-body');
-  await body.evaluate(el => {
+  await body.evaluate((el) => {
     el.scrollTop = el.scrollHeight;
   });
   // Wait for scroll to settle by checking scroll position
   await body.evaluate(
     () =>
-      new Promise(resolve => {
+      new Promise((resolve) => {
         requestAnimationFrame(() => requestAnimationFrame(resolve));
-      })
+      }),
   );
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'scroll-to-bottom.png'
+    'scroll-to-bottom.png',
   );
 });
 
@@ -105,7 +122,7 @@ test('skin tone selection updates the picker', async ({ page }) => {
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'skin-tone-medium.png'
+    'skin-tone-medium.png',
   );
 });
 
@@ -118,7 +135,7 @@ test('skin tone selection updates the picker', async ({ page }) => {
  * - Uses the NoSuggested story to ensure consistent category order
  */
 test('keyboard navigation moves focus across controls and emojis', async ({
-  page
+  page,
 }) => {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto(storyUrl('picker-overview--no-suggested'));
@@ -132,20 +149,22 @@ test('keyboard navigation moves focus across controls and emojis', async ({
 
   await page.keyboard.press('ArrowRight');
   await expect(
-    page.getByRole('tab', { name: 'Animals & Nature' })
+    page.getByRole('tab', { name: 'Animals & Nature' }),
   ).toBeFocused();
 
   await page.keyboard.press('ArrowDown');
 
   // Wait for focus to move to emoji grid by checking for visible focused element
-  const focusedElement = page.locator('button:focus[aria-label="grinning face"]');
+  const focusedElement = page.locator(
+    'button:focus[aria-label="grinning face"]',
+  );
   await expect(focusedElement).toBeVisible();
 
   await page.keyboard.press('ArrowRight');
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'keyboard-navigation.png'
+    'keyboard-navigation.png',
   );
 });
 
@@ -158,11 +177,14 @@ test('keyboard navigation moves focus across controls and emojis', async ({
 test('reactions menu emits click and stays collapsed', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu-no-expand'));
 
-  await page.getByRole('list', { name: 'Reactions' }).getByLabel('grinning face with big eyes').click();
+  await page
+    .getByRole('list', { name: 'Reactions' })
+    .getByLabel('grinning face with big eyes')
+    .click();
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'reactions-menu-no-expand.png'
+    'reactions-menu-no-expand.png',
   );
 });
 
@@ -179,7 +201,7 @@ test('collapse to reactions switches picker view', async ({ page }) => {
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'collapse-to-reactions.png'
+    'collapse-to-reactions.png',
   );
 });
 
@@ -195,7 +217,7 @@ test('search disabled removes the search input', async ({ page }) => {
   await expect(page.getByLabel('Type to search for an emoji')).toHaveCount(0);
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'search-disabled.png'
+    'search-disabled.png',
   );
 });
 
@@ -208,12 +230,12 @@ test('search disabled removes the search input', async ({ page }) => {
 test('preview hidden removes preview content', async ({ page }) => {
   await page.goto(storyUrl('picker-behavior--hide-preview'));
 
-  await expect(
-    page.getByText('Pick an emoji', { exact: false })
-  ).toHaveCount(0);
+  await expect(page.getByText('Pick an emoji', { exact: false })).toHaveCount(
+    0,
+  );
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'preview-hidden.png'
+    'preview-hidden.png',
   );
 });
 
@@ -227,12 +249,10 @@ test('reactions expand shows the full picker UI', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu'));
 
   await page.getByLabel('Show all Emojis').click();
-  await expect(
-    page.getByLabel('Type to search for an emoji')
-  ).toBeVisible();
+  await expect(page.getByLabel('Type to search for an emoji')).toBeVisible();
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'reactions-expanded.png'
+    'reactions-expanded.png',
   );
 });
 
@@ -248,7 +268,7 @@ test('custom emojis render with accessible labels', async ({ page }) => {
   await expect(page.getByLabel('alice in wonderland')).toBeVisible();
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'custom-emojis.png'
+    'custom-emojis.png',
   );
 });
 
@@ -258,17 +278,19 @@ test('custom emojis render with accessible labels', async ({ page }) => {
  * - Navigates to the recently-used story and verifies "Recently Used" tab
  * - Captures a screenshot of the recently-used mode
  */
-test('suggested category reflects frequent vs recent modes', async ({ page }) => {
+test('suggested category reflects frequent vs recent modes', async ({
+  page,
+}) => {
   await page.goto(storyUrl('picker-overview--default'));
   await expect(
-    page.getByRole('tab', { name: 'Frequently Used' })
+    page.getByRole('tab', { name: 'Frequently Used' }),
   ).toBeVisible();
 
   await page.goto(storyUrl('picker-behavior--recently-used'));
   await expect(page.getByRole('tab', { name: 'Recently Used' })).toBeVisible();
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
-    'recently-used.png'
+    'recently-used.png',
   );
 });
 
@@ -283,11 +305,9 @@ test('a11y landmarks and labels exist for core controls', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
 
   await expect(
-    page.getByRole('tablist', { name: 'Category navigation' })
+    page.getByRole('tablist', { name: 'Category navigation' }),
   ).toBeVisible();
-  await expect(
-    page.getByLabel('Type to search for an emoji')
-  ).toBeVisible();
+  await expect(page.getByLabel('Type to search for an emoji')).toBeVisible();
   await expect(page.getByLabel('Skin tone NEUTRAL')).toBeVisible();
   await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
 });

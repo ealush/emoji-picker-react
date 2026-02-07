@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import {
   useDefaultSkinToneConfig,
-  useReactionsOpenConfig
+  useReactionsOpenConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
@@ -11,6 +11,7 @@ import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { SkinTones } from '../../types/exposedTypes';
+
 import { usePickerDataContext } from './PickerDataContext';
 
 export function PickerContextProvider({ children }: Props) {
@@ -27,9 +28,8 @@ export function PickerContextProvider({ children }: Props) {
   }, [searchIndex]);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
-  const disallowedEmojisRef = React.useRef<Record<string, boolean>>(
-    disallowedEmojis
-  );
+  const disallowedEmojisRef =
+    React.useRef<Record<string, boolean>>(disallowedEmojis);
 
   const suggestedUpdateState = useDebouncedState(Date.now(), 200);
   const searchTerm = useDebouncedState('', 100);
@@ -62,7 +62,7 @@ export function PickerContextProvider({ children }: Props) {
         suggestedUpdateState,
         reactionsModeState,
         visibleCategoriesState,
-        emojiSizeState
+        emojiSizeState,
       }}
     >
       {children}
@@ -103,7 +103,7 @@ const PickerContext = React.createContext<{
   suggestedUpdateState: [Date.now(), () => {}],
   reactionsModeState: [false, () => {}],
   visibleCategoriesState: [[], () => []],
-  emojiSizeState: [null, () => {}]
+  emojiSizeState: [null, () => {}],
 });
 
 type Props = Readonly<{
@@ -137,7 +137,7 @@ export function useSearchTermState() {
 
 export function useActiveSkinToneState(): [
   SkinTones,
-  (skinTone: SkinTones) => void
+  (skinTone: SkinTones) => void,
 ] {
   const { activeSkinTone } = React.useContext(PickerContext);
   return activeSkinTone;
@@ -186,7 +186,7 @@ export function useUpdateSuggested(): [number, () => void] {
     suggestedUpdated,
     function updateSuggested() {
       setsuggestedUpdate(Date.now());
-    }
+    },
   ];
 }
 

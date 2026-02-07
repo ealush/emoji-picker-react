@@ -37,7 +37,7 @@ type StoryIndexEntry = {
  */
 test('captures visual snapshots for tagged stories', async ({
   page,
-  request
+  request,
 }) => {
   const response = await request.get('/index.json');
   await expect(response).toBeOK();
@@ -47,7 +47,7 @@ test('captures visual snapshots for tagged stories', async ({
   };
   const entries = data.entries || data.stories || {};
   const stories = Object.values(entries).filter(
-    story => story.parameters?.visualTest
+    (story) => story.parameters?.visualTest,
   );
 
   for (const story of stories) {
@@ -55,7 +55,7 @@ test('captures visual snapshots for tagged stories', async ({
     await page.locator('#storybook-root').waitFor();
     await page.waitForTimeout(story.parameters?.visualTestDelay ?? 300);
     await expect(page.locator('#storybook-root')).toHaveScreenshot(
-      `${story.id}.png`
+      `${story.id}.png`,
     );
   }
 });

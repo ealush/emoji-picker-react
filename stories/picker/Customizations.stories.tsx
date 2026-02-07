@@ -10,8 +10,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -33,7 +33,7 @@ export const CustomEmojisDefered = (args: Props) => {
   return <Template {...args} customEmojis={custom} />;
 };
 CustomEmojisDefered.parameters = {
-  visualTestDelay: 2500
+  visualTestDelay: 2500,
 };
 
 export const CustomPreviewConfig = (args: Props) => (
@@ -41,7 +41,7 @@ export const CustomPreviewConfig = (args: Props) => (
     {...args}
     previewConfig={{
       defaultEmoji: '1fae5',
-      defaultCaption: 'What have we here?'
+      defaultCaption: 'What have we here?',
     }}
   />
 );
@@ -52,20 +52,20 @@ export const CustomCategoryConfig = (args: Props) => (
     categories={[
       {
         name: 'Fun and Games',
-        category: Categories.ACTIVITIES
+        category: Categories.ACTIVITIES,
       },
       {
         name: 'Smileys & Emotion',
-        category: Categories.SMILEYS_PEOPLE
+        category: Categories.SMILEYS_PEOPLE,
       },
       {
         name: 'Flags',
-        category: Categories.FLAGS
+        category: Categories.FLAGS,
       },
       {
         name: 'Yum Yum',
-        category: Categories.FOOD_DRINK
-      }
+        category: Categories.FOOD_DRINK,
+      },
     ]}
   />
 );

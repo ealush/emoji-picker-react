@@ -12,21 +12,26 @@ export function EmojiImg({
   lazyLoad = false,
   imgUrl,
   onError,
-  className
+  className,
 }: {
   emojiName: string;
   emojiStyle: EmojiStyle;
   style: React.CSSProperties;
   lazyLoad?: boolean;
   imgUrl: string;
-    onError: () => void;
+  onError: () => void;
   className?: string;
 }) {
   return (
     <img
       src={imgUrl}
       alt={emojiName}
-      className={cx(styles.emojiImag, emojiStyles.external, emojiStyles.common, className)}
+      className={cx(
+        styles.emojiImag,
+        emojiStyles.external,
+        emojiStyles.common,
+        className,
+      )}
       loading={lazyLoad ? 'lazy' : 'eager'}
       onError={onError}
       style={style}
@@ -41,6 +46,6 @@ const styles = stylesheet.create({
     maxHeight: 'var(--epr-emoji-fullsize)',
     minWidth: 'var(--epr-emoji-fullsize)',
     minHeight: 'var(--epr-emoji-fullsize)',
-    padding: 'var(--epr-emoji-padding)'
-  }
+    padding: 'var(--epr-emoji-padding)',
+  },
 });

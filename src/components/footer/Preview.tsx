@@ -4,12 +4,12 @@ import { useState } from 'react';
 
 import {
   commonInteractionStyles,
-  stylesheet
+  stylesheet,
 } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
-  usePreviewConfig
+  usePreviewConfig,
 } from '../../config/useConfig';
 import { emojiName, emojiUnified } from '../../dataUtils/emojiSelectors';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
@@ -18,7 +18,7 @@ import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import {
   useEmojiVariationPickerState,
-  useReactionsModeState
+  useReactionsModeState,
 } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
@@ -38,7 +38,7 @@ export function Preview() {
       className={cx(
         styles.preview,
         commonInteractionStyles.hiddenOnReactions,
-        reactionsOpen && styles.hideOnReactions
+        reactionsOpen && styles.hideOnReactions,
       )}
     >
       <PreviewBody />
@@ -61,7 +61,7 @@ export function PreviewBody() {
   const emoji = emojiByUnified(
     (previewEmoji?.unified ?? previewEmoji?.originalUnified) as
       | string
-      | undefined
+      | undefined,
   );
 
   const show = emoji != null && previewEmoji != null;
@@ -121,19 +121,19 @@ const styles = stylesheet.create({
     height: 'var(--epr-preview-height)',
     padding: '0 var(--epr-horizontal-padding)',
     position: 'relative',
-    zIndex: 'var(--epr-preview-z-index)'
+    zIndex: 'var(--epr-preview-z-index)',
   },
   label: {
     color: 'var(--epr-preview-text-color)',
     fontSize: 'var(--epr-preview-text-size)',
     padding: 'var(--epr-preview-text-padding)',
-    textTransform: 'capitalize'
+    textTransform: 'capitalize',
   },
   emoji: {
-    padding: '0'
+    padding: '0',
   },
   hideOnReactions: {
     opacity: '0',
-    transition: 'opacity 0.5s ease-in-out'
-  }
+    transition: 'opacity 0.5s ease-in-out',
+  },
 });

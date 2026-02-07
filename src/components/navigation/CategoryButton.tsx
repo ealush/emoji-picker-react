@@ -5,7 +5,7 @@ import { ClassNames } from '../../DomUtils/classNames';
 import {
   commonInteractionStyles,
   darkMode,
-  stylesheet
+  stylesheet,
 } from '../../Stylesheet/stylesheet';
 import { categoryNameFromCategoryConfig } from '../../config/categoryConfig';
 import { CategoryConfig } from '../../types/exposedTypes';
@@ -19,6 +19,7 @@ type Props = {
   allowNavigation: boolean;
   onClick: () => void;
   categoryConfig: CategoryConfig;
+  customIcon?: React.ReactNode;
 };
 
 export function CategoryButton({
@@ -26,42 +27,49 @@ export function CategoryButton({
   category,
   allowNavigation,
   categoryConfig,
-  onClick
+  onClick,
+  customIcon,
 }: Props) {
+  // Priority: categoryConfig.icon > customIcon prop (from categoryIcons)
+  const icon = categoryConfig.icon ?? customIcon;
+  const hasCustomIcon = icon != null;
+
   return (
     <Button
       tabIndex={allowNavigation ? 0 : -1}
       className={cx(
         styles.catBtn,
         commonInteractionStyles.categoryBtn,
-        `epr-icn-${category}`,
+        hasCustomIcon ? styles.customIcon : `epr-icn-${category}`,
         {
-          [ClassNames.active]: isActiveCategory
-        }
+          [ClassNames.active]: isActiveCategory,
+        },
       )}
       onClick={onClick}
       aria-label={categoryNameFromCategoryConfig(categoryConfig)}
       aria-selected={isActiveCategory}
       role="tab"
       aria-controls="epr-category-nav-id"
-    />
+    >
+      {hasCustomIcon ? icon : null}
+    </Button>
   );
 }
 
 const DarkActivePositionY = {
-  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 3)'
+  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 3)',
 };
 const DarkPositionY = {
-  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 2)'
+  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 2)',
 };
 
 const DarkInactivePosition = {
   ':not(.epr-search-active)': {
     catBtn: {
       ':hover': DarkActivePositionY,
-      '&.epr-active': DarkActivePositionY
-    }
-  }
+      '&.epr-active': DarkActivePositionY,
+    },
+  },
 };
 
 const styles = stylesheet.create({
@@ -84,53 +92,60 @@ const styles = stylesheet.create({
       right: '-2px',
       bottom: '-2px',
       border: '2px solid var(--epr-category-icon-active-color)',
-      borderRadius: '50%'
+      borderRadius: '50%',
     },
     '&.epr-icn-suggested': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -8)'
+        'calc(var(--epr-category-navigation-button-size) * -8)',
     },
     '&.epr-icn-custom': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -9)'
+        'calc(var(--epr-category-navigation-button-size) * -9)',
     },
     '&.epr-icn-activities': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -4)'
+        'calc(var(--epr-category-navigation-button-size) * -4)',
     },
     '&.epr-icn-animals_nature': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -1)'
+        'calc(var(--epr-category-navigation-button-size) * -1)',
     },
     '&.epr-icn-flags': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -7)'
+        'calc(var(--epr-category-navigation-button-size) * -7)',
     },
     '&.epr-icn-food_drink': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -2)'
+        'calc(var(--epr-category-navigation-button-size) * -2)',
     },
     '&.epr-icn-objects': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -5)'
+        'calc(var(--epr-category-navigation-button-size) * -5)',
     },
     '&.epr-icn-smileys_people': {
-      backgroundPositionX: '0px'
+      backgroundPositionX: '0px',
     },
     '&.epr-icn-symbols': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -6)'
+        'calc(var(--epr-category-navigation-button-size) * -6)',
     },
     '&.epr-icn-travel_places': {
       backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -3)'
-    }
+        'calc(var(--epr-category-navigation-button-size) * -3)',
+    },
+  },
+  customIcon: {
+    '.': 'epr-cat-btn-custom-icon',
+    backgroundImage: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ...darkMode('catBtn', DarkPositionY),
   '.epr-dark-theme': {
-    ...DarkInactivePosition
+    ...DarkInactivePosition,
   },
   '.epr-auto-theme': {
-    ...DarkInactivePosition
-  }
+    ...DarkInactivePosition,
+  },
 });

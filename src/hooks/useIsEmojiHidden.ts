@@ -17,7 +17,7 @@ export function useIsEmojiHidden(): (emoji: DataEmoji) => IsHiddenReturn {
     return {
       failedToLoad,
       filteredOut,
-      hidden: failedToLoad || filteredOut
+      hidden: failedToLoad || filteredOut,
     };
   };
 }

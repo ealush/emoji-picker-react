@@ -4,7 +4,7 @@ module.exports = {
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-essentials',
-    '@storybook/addon-webpack5-compiler-swc'
+    '@storybook/addon-webpack5-compiler-swc',
   ],
 
   // https://storybook.js.org/docs/react/configure/typescript#mainjs-configuration
@@ -12,10 +12,10 @@ module.exports = {
     // type-check stories during Storybook build
     check: true,
 
-    reactDocgen: 'react-docgen-typescript'
+    reactDocgen: 'react-docgen-typescript',
   },
 
-  webpackFinal: async config => {
+  webpackFinal: async (config) => {
     config.module.rules.push({
       test: /\.(ts|js|tsx)?$/,
       exclude: /node_modules\/(?!(flairup)\/).*/,
@@ -27,13 +27,13 @@ module.exports = {
               require('@babel/preset-typescript').default,
               [
                 require('@babel/preset-react').default,
-                { runtime: 'automatic' }
+                { runtime: 'automatic' },
               ],
-              require('@babel/preset-env').default
-            ]
-          }
-        }
-      ]
+              require('@babel/preset-env').default,
+            ],
+          },
+        },
+      ],
     });
 
     return config;
@@ -41,8 +41,8 @@ module.exports = {
 
   framework: {
     name: '@storybook/react-webpack5',
-    options: {}
+    options: {},
   },
 
-  docs: {}
+  docs: {},
 };

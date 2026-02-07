@@ -6,7 +6,7 @@ import { useBodyRef } from '../components/context/ElementRefContext';
 
 export function useActiveCategoryScrollDetection({
   setActiveCategory,
-  setVisibleCategories
+  setVisibleCategories,
 }: {
   setActiveCategory: (category: string) => void;
   setVisibleCategories: (categories: string[]) => void;
@@ -18,7 +18,7 @@ export function useActiveCategoryScrollDetection({
     const intersectingCategories = new Map<string, boolean>();
     const bodyRef = BodyRef.current;
     const observer = new IntersectionObserver(
-      entries => {
+      (entries) => {
         if (!bodyRef) {
           return;
         }
@@ -55,12 +55,14 @@ export function useActiveCategoryScrollDetection({
       },
       {
         root: bodyRef,
-        threshold: [0, 1]
-      }
+        threshold: [0, 1],
+      },
     );
-    bodyRef?.querySelectorAll(asSelectors(ClassNames.category)).forEach(el => {
-      observer.observe(el);
-    });
+    bodyRef
+      ?.querySelectorAll(asSelectors(ClassNames.category))
+      .forEach((el) => {
+        observer.observe(el);
+      });
 
     return () => {
       observer.disconnect();

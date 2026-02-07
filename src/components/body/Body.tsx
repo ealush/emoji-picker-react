@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ClassNames } from '../../DomUtils/classNames';
 import {
   commonInteractionStyles,
-  stylesheet
+  stylesheet,
 } from '../../Stylesheet/stylesheet';
 import { MOUSE_EVENT_SOURCE } from '../../config/useConfig';
 import { useOnMouseMove } from '../../hooks/useDisallowMouseMove';
@@ -38,6 +38,6 @@ const styles = stylesheet.create({
     flex: '1',
     overflowY: 'scroll',
     overflowX: 'hidden',
-    position: 'relative'
-  }
+    position: 'relative',
+  },
 });

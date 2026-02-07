@@ -19,7 +19,7 @@ export function getSuggested(mode?: SuggestionMode): Suggested {
       return [];
     }
     const recent = JSON.parse(
-      window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]'
+      window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]',
     ) as Suggested;
 
     if (mode === SuggestionMode.FREQUENT) {
@@ -43,12 +43,12 @@ export function setSuggested(emoji: DataEmoji, skinTone: SkinTones) {
   let nextList: SuggestedItem[];
 
   if (existing) {
-    nextList = [existing].concat(recent.filter(i => i !== existing));
+    nextList = [existing].concat(recent.filter((i) => i !== existing));
   } else {
     existing = {
       unified,
       original: originalUnified,
-      count: 0
+      count: 0,
     };
     nextList = [existing, ...recent];
   }

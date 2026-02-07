@@ -2,7 +2,7 @@ import { NullableElement } from './selectors';
 
 export function detectEmojyPartiallyBelowFold(
   button: HTMLButtonElement,
-  bodyRef: NullableElement
+  bodyRef: NullableElement,
 ): number {
   if (!button || !bodyRef) {
     return 0;

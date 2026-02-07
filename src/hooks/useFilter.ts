@@ -1,12 +1,12 @@
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
-  useSearchInputRef
+  useSearchInputRef,
 } from '../components/context/ElementRefContext';
 import {
   FilterState,
   useFilterRef,
-  useSearchTermState
+  useSearchTermState,
 } from '../components/context/PickerContext';
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
@@ -18,7 +18,7 @@ function useSetFilterRef() {
   const filterRef = useFilterRef();
 
   return function setFilter(
-    setter: FilterState | ((current: FilterState) => FilterState)
+    setter: FilterState | ((current: FilterState) => FilterState),
   ): void {
     if (typeof setter === 'function') {
       return setFilter(setter(filterRef.current));
@@ -66,14 +66,14 @@ export function useFilter() {
   const [searchTerm] = useSearchTermState();
   const statusSearchResults = getStatusSearchResults(
     filterRef.current,
-    searchTerm
+    searchTerm,
   );
 
   return {
     onChange,
     searchTerm,
     SearchInputRef,
-    statusSearchResults
+    statusSearchResults,
   };
 
   function onChange(inputValue: string) {
@@ -93,10 +93,10 @@ export function useFilter() {
       return applySearch(nextValue);
     }
 
-    setFilterRef(current =>
+    setFilterRef((current) =>
       Object.assign(current, {
-        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue)
-      })
+        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue),
+      }),
     );
     applySearch(nextValue);
   }
@@ -111,7 +111,7 @@ function useApplySearch() {
       setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
         () => {
           scrollTo(PickerMainRef.current, 0);
-        }
+        },
       );
     });
   };
@@ -119,7 +119,7 @@ function useApplySearch() {
 
 export function filterEmojiObjectByKeyword(
   emojis: FilterDict,
-  keyword: string
+  keyword: string,
 ): FilterDict {
   const filtered: FilterDict = {};
 
@@ -135,20 +135,20 @@ export function filterEmojiObjectByKeyword(
 }
 
 function hasMatch(emoji: DataEmoji, keyword: string): boolean {
-  return emojiNames(emoji).some(name => name.includes(keyword));
+  return emojiNames(emoji).some((name) => name.includes(keyword));
 }
 
 export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return unified => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return (unified) => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
 }
 
 export function isEmojiFilteredBySearchTerm(
   unified: string,
   filter: FilterState,
-  searchTerm: string
+  searchTerm: string,
 ): boolean {
   if (!filter || !searchTerm) {
     return false;
@@ -161,7 +161,7 @@ export type FilterDict = Record<string, DataEmoji>;
 
 export function findLongestMatch(
   keyword: string,
-  dict: Record<string, FilterDict> | null
+  dict: Record<string, FilterDict> | null,
 ): FilterDict | null {
   if (!dict) {
     return null;
@@ -173,7 +173,7 @@ export function findLongestMatch(
 
   const longestMatchingKey = Object.keys(dict)
     .sort((a, b) => b.length - a.length)
-    .find(key => keyword.includes(key));
+    .find((key) => keyword.includes(key));
 
   if (longestMatchingKey) {
     return dict[longestMatchingKey];
@@ -192,7 +192,7 @@ export function getNormalizedSearchTerm(str: string): string {
 
 function getStatusSearchResults(
   filterState: FilterState,
-  searchTerm: string
+  searchTerm: string,
 ): string {
   if (!filterState?.[searchTerm]) return '';
 

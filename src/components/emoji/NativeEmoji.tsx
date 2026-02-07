@@ -9,7 +9,7 @@ import { emojiStyles } from './emojiStyles';
 export function NativeEmoji({
   unified,
   style,
-  className
+  className,
 }: {
   unified: string;
   style: React.CSSProperties;
@@ -21,7 +21,7 @@ export function NativeEmoji({
         styles.nativeEmoji,
         emojiStyles.common,
         emojiStyles.external,
-        className
+        className,
       )}
       data-unified={unified}
       style={style}
@@ -43,6 +43,6 @@ const styles = stylesheet.create({
     alignSelf: 'center',
     justifySelf: 'center',
     letterSpacing: '0',
-    padding: 'var(--epr-emoji-padding)'
-  }
+    padding: 'var(--epr-emoji-padding)',
+  },
 });

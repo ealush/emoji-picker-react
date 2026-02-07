@@ -9,8 +9,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -43,7 +43,7 @@ export const ReactionsMenuWithStyles = (args: Props) => (
       width: '300px',
       position: 'absolute',
       top: '150px',
-      boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)'
+      boxShadow: '0 0 10px 0 rgba(0, 0, 0, 0.2)',
     }}
   />
 );

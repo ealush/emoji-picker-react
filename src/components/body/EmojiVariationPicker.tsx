@@ -8,23 +8,23 @@ import {
   buttonFromTarget,
   elementHeight,
   emojiTrueOffsetTop,
-  emojiTruOffsetLeft
+  emojiTruOffsetLeft,
 } from '../../DomUtils/selectors';
 import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
-  useGetEmojiUrlConfig
+  useGetEmojiUrlConfig,
 } from '../../config/useConfig';
 import {
   emojiHasVariations,
   emojiUnified,
-  emojiVariations
+  emojiVariations,
 } from '../../dataUtils/emojiSelectors';
 import {
   useAnchoredEmojiRef,
   useBodyRef,
   useSetAnchoredEmojiRef,
-  useVariationPickerRef
+  useVariationPickerRef,
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -33,7 +33,7 @@ import SVGTriangle from './svg/triangle.svg';
 
 enum Direction {
   Up,
-  Down
+  Down,
 }
 
 // eslint-disable-next-line complexity
@@ -43,9 +43,8 @@ export function EmojiVariationPicker() {
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
 
-  const { getTop, getMenuDirection } = useVariationPickerTop(
-    VariationPickerRef
-  );
+  const { getTop, getMenuDirection } =
+    useVariationPickerTop(VariationPickerRef);
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
   const getPointerStyle = usePointerStyle(VariationPickerRef);
   const getEmojiUrl = useGetEmojiUrlConfig();
@@ -54,9 +53,9 @@ export function EmojiVariationPicker() {
 
   const visible = Boolean(
     emoji &&
-      button &&
-      emojiHasVariations(emoji) &&
-      button.classList.contains(ClassNames.emojiHasVariations)
+    button &&
+    emojiHasVariations(emoji) &&
+    button.classList.contains(ClassNames.emojiHasVariations),
   );
 
   useEffect(() => {
@@ -82,7 +81,7 @@ export function EmojiVariationPicker() {
       className={cx(
         styles.variationPicker,
         getMenuDirection() === Direction.Down && styles.pointingUp,
-        visible && styles.visible
+        visible && styles.visible,
       )}
       style={{ top }}
     >
@@ -90,7 +89,7 @@ export function EmojiVariationPicker() {
         ? [emojiUnified(emoji)]
             .concat(emojiVariations(emoji))
             .slice(0, 6)
-            .map(unified => (
+            .map((unified) => (
               <ClickableEmoji
                 key={unified}
                 emoji={emoji}
@@ -132,7 +131,7 @@ function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
 }
 
 function useVariationPickerTop(
-  VariationPickerRef: React.RefObject<HTMLElement>
+  VariationPickerRef: React.RefObject<HTMLElement>,
 ) {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const BodyRef = useBodyRef();
@@ -140,7 +139,7 @@ function useVariationPickerTop(
 
   return {
     getMenuDirection,
-    getTop
+    getTop,
   };
 
   function getMenuDirection() {
@@ -198,24 +197,24 @@ const styles = stylesheet.create({
     zIndex: 'var(--epr-skin-variation-picker-z-index)',
     background: 'var(--epr-emoji-variation-picker-bg-color)',
     transform: 'scale(0.9)',
-    transition: 'transform 0.1s ease-out, opacity 0.2s ease-out'
+    transition: 'transform 0.1s ease-out, opacity 0.2s ease-out',
   },
   visible: {
     opacity: '1',
     visibility: 'visible',
     pointerEvents: 'all',
-    transform: 'scale(1)'
+    transform: 'scale(1)',
   },
   pointingUp: {
     '.': 'pointing-up',
     transformOrigin: 'center 0%',
-    transform: 'scale(0.9)'
+    transform: 'scale(0.9)',
   },
   '.pointing-up': {
     pointer: {
       top: '0',
-      transform: 'rotate(180deg) translateY(100%) translateX(18px)'
-    }
+      transform: 'rotate(180deg) translateY(100%) translateX(18px)',
+    },
   },
   pointer: {
     '.': 'epr-emoji-pointer',
@@ -228,9 +227,9 @@ const styles = stylesheet.create({
     backgroundSize: '50px 15px',
     top: '100%',
     transform: 'translateX(-18px)',
-    backgroundImage: `url(${SVGTriangle})`
+    backgroundImage: `url(${SVGTriangle})`,
   },
   ...darkMode('pointer', {
-    backgroundPosition: '-25px 0'
-  })
+    backgroundPosition: '-25px 0',
+  }),
 });

@@ -31,7 +31,7 @@ export function ClickableEmoji({
   getEmojiUrl,
   className,
   noBackground = false,
-  style
+  style,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 

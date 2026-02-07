@@ -15,7 +15,7 @@ export function useOnScroll(BodyRef: ElementRef) {
     }
 
     bodyRef.addEventListener('scroll', onScroll, {
-      passive: true
+      passive: true,
     });
 
     function onScroll() {

@@ -25,10 +25,10 @@ class MockIntersectionObserver implements IntersectionObserver {
           intersectionRect: target.getBoundingClientRect(),
           rootBounds: null,
           target,
-          time: Date.now()
-        }
+          time: Date.now(),
+        },
       ],
-      this
+      this,
     );
   }
 

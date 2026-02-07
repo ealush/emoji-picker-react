@@ -10,14 +10,14 @@ const hidden = {
   opacity: '0',
   pointerEvents: 'none',
   visibility: 'hidden',
-  overflow: 'hidden'
+  overflow: 'hidden',
 };
 
 export const commonStyles = stylesheet.create({
   hidden: {
     '.': ClassNames.hidden,
-    ...hidden
-  }
+    ...hidden,
+  },
 });
 
 export const PickerStyleTag = React.memo(function PickerStyleTag() {
@@ -35,20 +35,20 @@ export const commonInteractionStyles = stylesheet.create({
       categoryBtn: {
         ':hover': {
           opacity: '1',
-          backgroundPositionY: 'var(--epr-category-navigation-button-size)'
-        }
+          backgroundPositionY: 'var(--epr-category-navigation-button-size)',
+        },
       },
       hiddenOnSearch: {
         '.': ClassNames.hiddenOnSearch,
-        ...hidden
-      }
+        ...hidden,
+      },
     },
     ':has(input:placeholder-shown)': {
-      visibleOnSearchOnly: hidden
-    }
+      visibleOnSearchOnly: hidden,
+    },
   },
   hiddenOnReactions: {
-    transition: 'all 0.5s ease-in-out'
+    transition: 'all 0.5s ease-in-out',
   },
   '.epr-reactions': {
     hiddenOnReactions: {
@@ -56,36 +56,36 @@ export const commonInteractionStyles = stylesheet.create({
       width: '0px',
       opacity: '0',
       pointerEvents: 'none',
-      overflow: 'hidden'
-    }
+      overflow: 'hidden',
+    },
   },
   '.EmojiPickerReact:not(.epr-search-active)': {
     categoryBtn: {
       ':hover': {
         opacity: '1',
-        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
+        backgroundPositionY: 'var(--epr-category-navigation-button-size)',
       },
       '&.epr-active': {
         opacity: '1',
-        backgroundPositionY: 'var(--epr-category-navigation-button-size)'
-      }
+        backgroundPositionY: 'var(--epr-category-navigation-button-size)',
+      },
     },
     visibleOnSearchOnly: {
       '.': 'epr-visible-on-search-only',
-      ...hidden
-    }
-  }
+      ...hidden,
+    },
+  },
 });
 
 export function darkMode(key: string, value: Styles) {
   return {
     '.epr-dark-theme': {
-      [key]: value
+      [key]: value,
     },
     '.epr-auto-theme': {
       [key]: {
-        '@media (prefers-color-scheme: dark)': value
-      }
-    }
+        '@media (prefers-color-scheme: dark)': value,
+      },
+    },
   };
 }

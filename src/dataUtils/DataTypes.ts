@@ -5,7 +5,7 @@ export enum EmojiProperties {
   unified = 'u',
   variations = 'v',
   added_in = 'a',
-  imgUrl = 'imgUrl'
+  imgUrl = 'imgUrl',
 }
 
 export interface DataEmoji extends WithName {

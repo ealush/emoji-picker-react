@@ -1,12 +1,7 @@
 import { Meta } from '@storybook/react';
 import React from 'react';
 
-import EmojiPicker, {
-  Categories,
-  EmojiStyle,
-  Props,
-  Theme
-} from '../../src';
+import EmojiPicker, { Categories, EmojiStyle, Props, Theme } from '../../src';
 import { Template, TemplateDark } from '../utils/pickerStoryUtils';
 
 const meta = {
@@ -14,8 +9,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -42,7 +37,7 @@ export const NoSuggested = (args: Props) => (
       { category: Categories.ACTIVITIES, name: 'Activities' },
       { category: Categories.OBJECTS, name: 'Objects' },
       { category: Categories.SYMBOLS, name: 'Symbols' },
-      { category: Categories.FLAGS, name: 'Flags' }
+      { category: Categories.FLAGS, name: 'Flags' },
     ]}
   />
 );

@@ -1,7 +1,7 @@
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   emojiByUnified,
-  unifiedWithoutSkinTone
+  unifiedWithoutSkinTone,
 } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
@@ -13,11 +13,11 @@ export const EmojiButtonSelector = `button${asSelectors(ClassNames.emoji)}`;
 export const VisibleEmojiSelector = [
   EmojiButtonSelector,
   asSelectors(ClassNames.visible),
-  `:not(${asSelectors(ClassNames.hidden)})`
+  `:not(${asSelectors(ClassNames.hidden)})`,
 ].join('');
 
 export function buttonFromTarget(
-  emojiElement: NullableElement
+  emojiElement: NullableElement,
 ): HTMLButtonElement | null {
   return emojiElement?.closest(EmojiButtonSelector) ?? null;
 }
@@ -31,7 +31,7 @@ export function isEmojiButton(element: NullableElement): boolean {
 }
 
 export function emojiFromElement(
-  element: NullableElement
+  element: NullableElement,
 ): [DataEmoji, string] | [] {
   const originalUnified = originalUnifiedFromEmojiElement(element);
   const unified = unifiedFromEmojiElement(element);
@@ -52,18 +52,18 @@ export function emojiFromElement(
 export function isEmojiElement(element: NullableElement): boolean {
   return Boolean(
     element?.matches(EmojiButtonSelector) ||
-      element?.parentElement?.matches(EmojiButtonSelector)
+    element?.parentElement?.matches(EmojiButtonSelector),
   );
 }
 
 export function categoryLabelFromCategory(
-  category: NullableElement
+  category: NullableElement,
 ): NullableElement {
   return category?.querySelector(asSelectors(ClassNames.label)) ?? null;
 }
 
 export function closestCategoryLabel(
-  element: NullableElement
+  element: NullableElement,
 ): NullableElement {
   const category = closestCategory(element);
   return categoryLabelFromCategory(category);
@@ -93,7 +93,7 @@ export function categoryLabelHeight(category: NullableElement): number {
   }
 
   const categoryWithoutLabel = category.querySelector(
-    asSelectors(ClassNames.categoryContent)
+    asSelectors(ClassNames.categoryContent),
   );
 
   return (
@@ -156,7 +156,7 @@ export function unifiedFromEmojiElement(emoji: NullableElement): string | null {
 }
 
 export function originalUnifiedFromEmojiElement(
-  emoji: NullableElement
+  emoji: NullableElement,
 ): string | null {
   const unified = unifiedFromEmojiElement(emoji);
 
@@ -166,25 +166,26 @@ export function originalUnifiedFromEmojiElement(
   return null;
 }
 
-export function allUnifiedFromEmojiElement(
-  emoji: NullableElement
-): { unified: string | null; originalUnified: string | null } {
+export function allUnifiedFromEmojiElement(emoji: NullableElement): {
+  unified: string | null;
+  originalUnified: string | null;
+} {
   if (!emoji) {
     return {
       unified: null,
-      originalUnified: null
+      originalUnified: null,
     };
   }
 
   return {
     unified: unifiedFromEmojiElement(emoji),
-    originalUnified: originalUnifiedFromEmojiElement(emoji)
+    originalUnified: originalUnifiedFromEmojiElement(emoji),
   };
 }
 
 function elementDataSetKey(
   element: NullableElement,
-  key: string
+  key: string,
 ): string | null {
   return elementDataSet(element)[key] ?? null;
 }
@@ -209,7 +210,7 @@ export function allVisibleEmojis(parent: NullableElement) {
   }
 
   return Array.from(
-    parent.querySelectorAll(VisibleEmojiSelector)
+    parent.querySelectorAll(VisibleEmojiSelector),
   ) as HTMLElement[];
 }
 
@@ -319,6 +320,6 @@ export function closestCategoryContent(element: NullableElement) {
     return null;
   }
   return element.closest(
-    asSelectors(ClassNames.categoryContent)
+    asSelectors(ClassNames.categoryContent),
   ) as HTMLElement;
 }

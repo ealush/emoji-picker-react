@@ -3,13 +3,13 @@ import React from 'react';
 import { CustomEmoji } from '../../config/customEmojiConfig';
 import { useSuggestedEmojisModeConfig } from '../../config/useConfig';
 import defaultEmojiData from '../../data/emojis';
-
 import {
   DataEmoji,
   DataEmojis,
   EmojiProperties,
   EmojiProperties as Keys,
 } from '../../dataUtils/DataTypes';
+import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import {
   activeVariationFromUnified,
   unifiedWithoutSkinTone,
@@ -19,7 +19,6 @@ import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 
 import { usePickerConfig } from './PickerConfigContext';
 import { useUpdateSuggested } from './PickerContext';
-import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 
 export interface PickerDataContextValue {
   emojiData: EmojiData;
@@ -35,7 +34,7 @@ const PickerDataContext = React.createContext<PickerDataContextValue>({
   allEmojis: [],
   allEmojisByUnified: {},
   searchIndex: {},
-  emojiByUnified: emojiByUnified,
+  emojiByUnified,
   activeVariationFromUnified: () => null,
 });
 

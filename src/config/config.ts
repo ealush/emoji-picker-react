@@ -4,6 +4,7 @@ import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
 import {
+  CategoryIcons,
   EmojiClickData,
   EmojiData,
   EmojiStyle,
@@ -113,6 +114,7 @@ export function basePickerConfig(): PickerConfigInternal {
     allowExpandReactions: true,
     hiddenEmojis: [],
     emojiData: undefined,
+    categoryIcons: {},
   };
 }
 
@@ -145,6 +147,7 @@ export type PickerConfigInternal = {
   allowExpandReactions: boolean;
   hiddenEmojis: string[];
   emojiData?: EmojiData;
+  categoryIcons: CategoryIcons;
 };
 
 export type PreviewConfig = {
