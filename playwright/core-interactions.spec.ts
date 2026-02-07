@@ -11,10 +11,34 @@
  * @file core-interactions.spec.ts
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 
 /** Constructs a Storybook iframe URL for a given story ID */
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
+
+/**
+ * Waits for emoji images to fully load in the picker.
+ * Handles both CDN-loaded images and native emoji styles.
+ */
+async function waitForEmojisToLoad(page: Page) {
+  // Wait for a visible emoji (excluding the hidden measurement dummy with opacity: 0)
+  await page.waitForFunction(() => {
+    const els = document.querySelectorAll('.epr-emoji-img, .epr-emoji-native');
+    return Array.from(els).some(el => window.getComputedStyle(el).opacity !== '0');
+  }, { timeout: 10000 }).catch(() => {});
+
+  // For CDN images, ensure they're fully loaded
+  if (await page.locator('.epr-emoji-img').count() > 0) {
+    await page.waitForFunction(() => {
+      const images = document.querySelectorAll<HTMLImageElement>('.epr-emoji-img');
+      const checkCount = Math.min(5, images.length);
+      return Array.from(images).slice(0, checkCount).every(img => img.complete && img.naturalWidth > 0);
+    }, { timeout: 10000 }).catch(() => {});
+  }
+
+  // Allow transitions to complete
+  await page.waitForTimeout(500);
+}
 
 /**
  * Validates that the search input filters emojis correctly.
@@ -28,6 +52,7 @@ test('search highlights matching emoji results', async ({ page }) => {
 
   await search.fill('grinning');
   await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'search-grinning.png'
   );
@@ -60,6 +85,7 @@ test('category navigation and scrolling work together', async ({ page }) => {
       })
   );
 
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'scroll-to-bottom.png'
   );
@@ -77,6 +103,7 @@ test('skin tone selection updates the picker', async ({ page }) => {
   await page.getByLabel('Skin tone NEUTRAL').click();
   await page.getByLabel('Skin tone MEDIUM', { exact: true }).click();
 
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'skin-tone-medium.png'
   );
@@ -116,6 +143,7 @@ test('keyboard navigation moves focus across controls and emojis', async ({
 
   await page.keyboard.press('ArrowRight');
 
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'keyboard-navigation.png'
   );
@@ -132,6 +160,7 @@ test('reactions menu emits click and stays collapsed', async ({ page }) => {
 
   await page.getByLabel('grinning face with big eyes').click();
 
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'reactions-menu-no-expand.png'
   );
@@ -148,6 +177,7 @@ test('collapse to reactions switches picker view', async ({ page }) => {
 
   await page.getByLabel('grinning face', { exact: true }).click();
 
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'collapse-to-reactions.png'
   );
@@ -163,6 +193,7 @@ test('search disabled removes the search input', async ({ page }) => {
   await page.goto(storyUrl('picker-search-visibility--search-disabled'));
 
   await expect(page.getByLabel('Type to search for an emoji')).toHaveCount(0);
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'search-disabled.png'
   );
@@ -180,6 +211,7 @@ test('preview hidden removes preview content', async ({ page }) => {
   await expect(
     page.getByText('Pick an emoji', { exact: false })
   ).toHaveCount(0);
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'preview-hidden.png'
   );
@@ -198,6 +230,7 @@ test('reactions expand shows the full picker UI', async ({ page }) => {
   await expect(
     page.getByLabel('Type to search for an emoji')
   ).toBeVisible();
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'reactions-expanded.png'
   );
@@ -213,6 +246,7 @@ test('custom emojis render with accessible labels', async ({ page }) => {
   await page.goto(storyUrl('picker-customizations--custom-emojis'));
 
   await expect(page.getByLabel('alice in wonderland')).toBeVisible();
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'custom-emojis.png'
   );
@@ -232,6 +266,7 @@ test('suggested category reflects frequent vs recent modes', async ({ page }) =>
 
   await page.goto(storyUrl('picker-behavior--recently-used'));
   await expect(page.getByRole('tab', { name: 'Recently Used' })).toBeVisible();
+  await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'recently-used.png'
   );
