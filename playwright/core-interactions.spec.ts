@@ -52,7 +52,13 @@ test('category navigation and scrolling work together', async ({ page }) => {
   await body.evaluate(el => {
     el.scrollTop = el.scrollHeight;
   });
-  await page.waitForTimeout(200);
+  // Wait for scroll to settle by checking scroll position
+  await body.evaluate(
+    () =>
+      new Promise(resolve => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+      })
+  );
 
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'scroll-to-bottom.png'
@@ -103,9 +109,8 @@ test('keyboard navigation moves focus across controls and emojis', async ({
   ).toBeFocused();
 
   await page.keyboard.press('ArrowDown');
-  await page.waitForTimeout(100);
 
-  // Verify that one of the grinning face buttons is focused
+  // Wait for focus to move to emoji grid by checking for visible focused element
   const focusedElement = page.locator('button:focus[aria-label="grinning face"]');
   await expect(focusedElement).toBeVisible();
 

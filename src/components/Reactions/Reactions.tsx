@@ -35,6 +35,7 @@ export function Reactions() {
     <ul
       className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
       ref={ReactionsRef}
+      aria-label="Reactions"
     >
       {reactions.map((reaction) => {
         const emoji = emojiByUnified(reaction);

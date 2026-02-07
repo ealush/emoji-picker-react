@@ -130,10 +130,8 @@ describe('EmojiPicker', () => {
       onReactionClick
     });
 
-    const reactionsList = document.querySelector('.epr-reactions ul');
-    if (!reactionsList) {
-      throw new Error('Reactions list not found');
-    }
+    // Use accessible role query instead of brittle CSS selector
+    const reactionsList = screen.getByRole('list', { name: /reactions/i });
     const reaction = await within(reactionsList).findByLabelText(
       'grinning face with big eyes'
     );
