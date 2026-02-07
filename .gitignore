@@ -5,3 +5,4 @@ node_modules
 dist
 .next
 tsconfig.tsbuildinfo
+*.txt

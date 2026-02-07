@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-const storyUrl = (id: string) => `/?path=/story/${id}`;
+const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
 test('search highlights matching emoji results', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
   const search = page.getByLabel('Type to search for an emoji');
 
   await search.fill('grinning');
-  await expect(page.getByLabel('grinning face')).toBeVisible();
+  await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'search-grinning.png'
   );
@@ -36,7 +36,7 @@ test('skin tone selection updates the picker', async ({ page }) => {
   await page.goto(storyUrl('picker-skin-tones--skin-tone-change'));
 
   await page.getByLabel('Skin tone NEUTRAL').click();
-  await page.getByLabel('Skin tone MEDIUM').click();
+  await page.getByLabel('Skin tone MEDIUM', { exact: true }).click();
 
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'skin-tone-medium.png'
@@ -83,7 +83,7 @@ test('reactions menu emits click and stays collapsed', async ({ page }) => {
 test('collapse to reactions switches picker view', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--collapse-to-reactions'));
 
-  await page.getByLabel('grinning face').click();
+  await page.getByLabel('grinning face', { exact: true }).click();
 
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
     'collapse-to-reactions.png'
@@ -154,5 +154,5 @@ test('a11y landmarks and labels exist for core controls', async ({ page }) => {
     page.getByLabel('Type to search for an emoji')
   ).toBeVisible();
   await expect(page.getByLabel('Skin tone NEUTRAL')).toBeVisible();
-  await expect(page.getByLabel('grinning face')).toBeVisible();
+  await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
 });

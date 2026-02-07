@@ -1,0 +1,606 @@
+[2m[WebServer] [22m(node:15581) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+[2m[WebServer] [22m(Use `node --trace-deprecation ...` to show where the warning was created)
+[2m[WebServer] [22m<i> [webpack-dev-middleware] wait until bundle finished
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run VirtualModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run webpack-dev-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory CaseSensitivePathsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 5% setup context module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 5% setup context module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile ExternalsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile ExternalsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation HtmlWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation unplugin-csf
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ArrayPushCallbackChunkFormatPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation JsonpChunkLoadingPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation StartupChunkDependenciesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ImportScriptsChunkLoadingPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation FetchCompileWasmPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation FetchCompileAsyncWasmPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation WorkerPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation SplitChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation RuntimeChunkPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ResolverCachePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefinePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProvidePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DocGenPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ChunkPrefetchPreloadPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ModuleInfoHeaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SourceMapDevToolPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JavascriptModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JsonModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation AssetModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EntryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EntryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RuntimePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation InferAsyncModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DataUriPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation FileUriPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation CompatibilityPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation HarmonyModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation AMDPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireJsStuffPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation CommonJsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation LoaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation LoaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NodeStuffPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation APIPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ExportsInfoApiPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation WebpackIsIncludedPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ConstPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation UseStrictPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireIncludePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireEnsurePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireContextPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportMetaContextPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SystemPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportMetaPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation URLPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsFactoryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsPresetPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsPrinterPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JavascriptMetaInfoPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EnsureChunkConditionsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation MergeDuplicateChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SideEffectsFlagPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation FlagDependencyExportsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NamedModuleIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NamedChunkIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefinePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation TemplatedPathPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation WarnCaseSensitiveModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation IgnoreWarningsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building 0/1 entries 0/0 dependencies 0/0 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building import loader ./node_modules/babel-loader/lib/index.js
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building import loader ./node_modules/@storybook/preset-react-webpack/dist/loaders/react-docgen-loader.js
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building 0/2 entries 1/2 dependencies 0/1 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building import loader ./node_modules/swc-loader/src/index.js
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building 0/2 entries 35/61 dependencies 4/21 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 11% building import loader ./node_modules/@storybook/csf-plugin/dist/webpack-loader.js
+[2m[WebServer] [22m<s> [webpack.Progress] 11% building import loader ./node_modules/@storybook/builder-webpack5/dist/loaders/export-order-loader.js
+[2m[WebServer] [22m<s> [webpack.Progress] 11% building 0/2 entries 73/90 dependencies 9/39 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 37% building 1/2 entries 192/203 dependencies 27/95 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 37% building 1/2 entries 198/205 dependencies 28/96 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 37% building 1/2 entries 436/500 dependencies 109/181 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 65% building 2/2 entries 698/698 dependencies 225/225 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 65% building
+[2m[WebServer] [22m<s> [webpack.Progress] 69% building finish
+[2m[WebServer] [22m<s> [webpack.Progress] 69% building finish
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph ResolverCachePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph InferAsyncModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph FlagDependencyExportsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins DocGenPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins WarnCaseSensitiveModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization SideEffectsFlagPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing after dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing after dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 72% sealing chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 72% sealing chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing after chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing after chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing optimizing
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing optimizing
+[2m[WebServer] [22m<s> [webpack.Progress] 74% sealing module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 74% sealing module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing after module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing after module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization EnsureChunkConditionsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization MergeDuplicateChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization SplitChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 76% sealing after chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 76% sealing after chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization PersistentChildCompilerSingletonPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing after module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing after module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing after chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing after chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing before module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing before module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids NamedModuleIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 81% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 81% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 83% sealing before chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 83% sealing before chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids NamedChunkIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 85% sealing after chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 85% sealing after chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing module hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing module hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing code generation
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing code generation
+[2m[WebServer] [22m<s> [webpack.Progress] 88% sealing runtime requirements
+[2m[WebServer] [22m<s> [webpack.Progress] 88% sealing runtime requirements
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing after hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing after hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 90% sealing record hash
+[2m[WebServer] [22m<s> [webpack.Progress] 90% sealing record hash
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing module assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing module assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing chunk assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing chunk assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing PersistentChildCompilerSingletonPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing SourceMapDevToolPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing HtmlWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing after asset optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing after asset optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording
+[2m[WebServer] [22m<s> [webpack.Progress] 94% sealing after seal
+[2m[WebServer] [22m<s> [webpack.Progress] 94% sealing after seal
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit DevMiddleware
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit SizeLimitsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins CaseSensitivePathsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins webpack-dev-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins webpack-hot-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 99% 
+[2m[WebServer] [22m
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache store build dependencies
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache store build dependencies
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache begin idle
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache begin idle
+[2m[WebServer] [22m<s> [webpack.Progress] 100% 
+[2m[WebServer] [22m
+[2m[WebServer] [22m<s> [webpack.Progress] 0% 
+[2m[WebServer] [22m
+[2m[WebServer] [22m<s> [webpack.Progress] 1% cache end idle
+[2m[WebServer] [22m<s> [webpack.Progress] 1% cache end idle
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run VirtualModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run webpack-dev-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 3% setup watch run
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory CaseSensitivePathsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 4% setup normal module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 5% setup context module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 5% setup context module factory
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 6% setup before compile
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile ExternalsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile ExternalsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 7% setup compile
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation HtmlWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation unplugin-csf
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ArrayPushCallbackChunkFormatPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation JsonpChunkLoadingPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation StartupChunkDependenciesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ImportScriptsChunkLoadingPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation FetchCompileWasmPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation FetchCompileAsyncWasmPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation WorkerPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation SplitChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation RuntimeChunkPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation ResolverCachePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 8% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefinePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProvidePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DocGenPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ChunkPrefetchPreloadPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ModuleInfoHeaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SourceMapDevToolPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JavascriptModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JsonModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation AssetModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EntryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EntryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RuntimePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation InferAsyncModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DataUriPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation FileUriPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation CompatibilityPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation HarmonyModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation AMDPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireJsStuffPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation CommonJsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation LoaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation LoaderPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NodeStuffPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation APIPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ExportsInfoApiPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation WebpackIsIncludedPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ConstPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation UseStrictPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireIncludePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireEnsurePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RequireContextPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportMetaContextPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SystemPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ImportMetaPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation URLPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsFactoryPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsPresetPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefaultStatsPrinterPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation JavascriptMetaInfoPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation EnsureChunkConditionsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation MergeDuplicateChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation SideEffectsFlagPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation FlagDependencyExportsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NamedModuleIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation NamedChunkIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation DefinePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation TemplatedPathPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation WarnCaseSensitiveModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation IgnoreWarningsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation ProgressPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 9% setup compilation
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building
+[2m[WebServer] [22m<s> [webpack.Progress] 10% building 0/1 entries 0/0 dependencies 0/0 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 17% building 1/2 entries 28/51 dependencies 31/11 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 64% building 2/2 entries 421/421 dependencies 225/145 modules
+[2m[WebServer] [22m<s> [webpack.Progress] 65% building
+[2m[WebServer] [22m<s> [webpack.Progress] 69% building finish
+[2m[WebServer] [22m<s> [webpack.Progress] 69% building finish
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph ResolverCachePlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph InferAsyncModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph FlagDependencyExportsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing finish module graph
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins DocGenPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins WarnCaseSensitiveModulesPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 70% sealing plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization SideEffectsFlagPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing after dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 71% sealing after dependencies optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 72% sealing chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 72% sealing chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing after chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing after chunk graph
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing optimizing
+[2m[WebServer] [22m<s> [webpack.Progress] 73% sealing optimizing
+[2m[WebServer] [22m<s> [webpack.Progress] 74% sealing module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 74% sealing module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing after module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing after module optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization EnsureChunkConditionsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization MergeDuplicateChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization SplitChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization RemoveEmptyChunksPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 75% sealing chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 76% sealing after chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 76% sealing after chunk optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization PersistentChildCompilerSingletonPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing after module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 77% sealing after module and chunk tree optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing after chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 78% sealing after chunk modules optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 79% sealing module reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing before module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing before module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids NamedModuleIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 80% sealing module ids
+[2m[WebServer] [22m<s> [webpack.Progress] 81% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 81% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing module id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 82% sealing chunk reviving
+[2m[WebServer] [22m<s> [webpack.Progress] 83% sealing before chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 83% sealing before chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids NamedChunkIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk ids
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 84% sealing chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 85% sealing after chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 85% sealing after chunk id optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record modules
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks RecordIdsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 86% sealing record chunks
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing module hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing module hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing code generation
+[2m[WebServer] [22m<s> [webpack.Progress] 87% sealing code generation
+[2m[WebServer] [22m<s> [webpack.Progress] 88% sealing runtime requirements
+[2m[WebServer] [22m<s> [webpack.Progress] 88% sealing runtime requirements
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing after hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 89% sealing after hashing
+[2m[WebServer] [22m<s> [webpack.Progress] 90% sealing record hash
+[2m[WebServer] [22m<s> [webpack.Progress] 90% sealing record hash
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing module assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing module assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing chunk assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 91% sealing chunk assets processing
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing PersistentChildCompilerSingletonPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing SourceMapDevToolPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing HtmlWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 92% sealing asset processing
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing after asset optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing after asset optimization
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording HotModuleReplacementPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 93% sealing recording
+[2m[WebServer] [22m<s> [webpack.Progress] 94% sealing after seal
+[2m[WebServer] [22m<s> [webpack.Progress] 94% sealing after seal
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit DevMiddleware
+[2m[WebServer] [22m<s> [webpack.Progress] 95% emitting emit
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit SizeLimitsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 98% emitting after emit
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins CaseSensitivePathsPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins webpack-dev-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins webpack-hot-middleware
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins ForkTsCheckerWebpackPlugin
+[2m[WebServer] [22m<s> [webpack.Progress] 99% done plugins
+[2m[WebServer] [22m<s> [webpack.Progress] 99% 
+[2m[WebServer] [22m
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache store build dependencies
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache store build dependencies
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache begin idle
+[2m[WebServer] [22m<s> [webpack.Progress] 99% cache begin idle
+[2m[WebServer] [22m<s> [webpack.Progress] 100% 
+[2m[WebServer] [22m
+
+Running 12 tests using 1 worker
+
+  ✘   1 playwright/core-interactions.spec.ts:5:5 › search highlights matching emoji results (376ms)
+  ✓   2 playwright/core-interactions.spec.ts:16:5 › category navigation and scrolling work together (561ms)
+  ✘   3 playwright/core-interactions.spec.ts:35:5 › skin tone selection updates the picker (237ms)
+  ✘   4 playwright/core-interactions.spec.ts:46:5 › keyboard navigation moves focus across controls and emojis (5.2s)
+  ✓   5 playwright/core-interactions.spec.ts:73:5 › reactions menu emits click and stays collapsed (313ms)
+  ✘   6 playwright/core-interactions.spec.ts:83:5 › collapse to reactions switches picker view (172ms)
+  ✓   7 playwright/core-interactions.spec.ts:93:5 › search disabled removes the search input (249ms)
+  ✓   8 playwright/core-interactions.spec.ts:102:5 › preview hidden removes preview content (252ms)
+  ✓   9 playwright/core-interactions.spec.ts:113:5 › reactions expand shows the full picker UI (326ms)
+  ✓  10 playwright/core-interactions.spec.ts:125:5 › custom emojis render with accessible labels (293ms)
+  ✓  11 playwright/core-interactions.spec.ts:134:5 › suggested category reflects frequent vs recent modes (388ms)
+  ✘  12 playwright/core-interactions.spec.ts:147:5 › a11y landmarks and labels exist for core controls (196ms)
+
+
+  1) playwright/core-interactions.spec.ts:5:5 › search highlights matching emoji results ───────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByLabel('grinning face')
+    Expected: visible
+    Error: strict mode violation: getByLabel('grinning face') resolved to 4 elements:
+        1) <button type="button" data-unified="1f600" aria-label="grinning face" data-full-name="face,grin,grinning face" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face', exact: true })
+        2) <button type="button" data-unified="1f603" aria-label="grinning face with big eyes" data-full-name="face,open,mouth,smile,grinning face with big eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with big eyes' })
+        3) <button type="button" data-unified="1f604" aria-label="grinning face with smiling eyes" data-full-name="eye,face,open,mouth,smile,grinning face with smiling eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with smiling' })
+        4) <button type="button" data-unified="1f605" aria-label="grinning face with sweat" data-full-name="cold,face,open,smile,sweat,grinning face with sweat" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with sweat' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByLabel('grinning face')[22m
+
+
+       8 |
+       9 |   await search.fill('grinning');
+    > 10 |   await expect(page.getByLabel('grinning face')).toBeVisible();
+         |                                                  ^
+      11 |   await expect(page.locator('#storybook-root')).toHaveScreenshot(
+      12 |     'search-grinning.png'
+      13 |   );
+        at /Users/ealush/dev/emoji-picker-react/playwright/core-interactions.spec.ts:10:50
+
+    Error Context: test-results/core-interactions-search-highlights-matching-emoji-results/error-context.md
+
+  2) playwright/core-interactions.spec.ts:35:5 › skin tone selection updates the picker ────────────
+
+    Error: locator.click: Error: strict mode violation: getByLabel('Skin tone MEDIUM') resolved to 3 elements:
+        1) <button type="button" aria-pressed="false" aria-label="Skin tone MEDIUM_LIGHT" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-tone-1f3fc epr-tone epr_-2hq8qm epr_szp4ut epr_3vd53t epr_-6fvuqo epr_-l1995p epr_-adzx3s epr_jut0lu epr_-wgigul epr_oilu3y epr_d2djt epr_ktlibp epr_-j7gyxp"></button> aka getByRole('button', { name: 'Skin tone MEDIUM_LIGHT' })
+        2) <button type="button" aria-pressed="false" aria-label="Skin tone MEDIUM" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-tone-1f3fd epr-tone epr_-2hq8qm epr_szp4ut epr_3vd53t epr_-6fvuqo epr_-l1995p epr_-adzx3s epr_jut0lu epr_-wgigul epr_oilu3y epr_d2djt epr_ktlibp epr_-j7gyxp"></button> aka getByRole('button', { name: 'Skin tone MEDIUM', exact: true })
+        3) <button type="button" aria-pressed="false" aria-label="Skin tone MEDIUM_DARK" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-tone-1f3fe epr-tone epr_-2hq8qm epr_szp4ut epr_3vd53t epr_-6fvuqo epr_-l1995p epr_-adzx3s epr_jut0lu epr_-wgigul epr_oilu3y epr_d2djt epr_ktlibp epr_-j7gyxp"></button> aka getByRole('button', { name: 'Skin tone MEDIUM_DARK' })
+
+    Call log:
+    [2m  - waiting for getByLabel('Skin tone MEDIUM')[22m
+
+
+      37 |
+      38 |   await page.getByLabel('Skin tone NEUTRAL').click();
+    > 39 |   await page.getByLabel('Skin tone MEDIUM').click();
+         |                                             ^
+      40 |
+      41 |   await expect(page.locator('#storybook-root')).toHaveScreenshot(
+      42 |     'skin-tone-medium.png'
+        at /Users/ealush/dev/emoji-picker-react/playwright/core-interactions.spec.ts:39:45
+
+    Error Context: test-results/core-interactions-skin-tone-selection-updates-the-picker/error-context.md
+
+  3) playwright/core-interactions.spec.ts:46:5 › keyboard navigation moves focus across controls and emojis 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeFocused[2m([22m[2m)[22m failed
+
+    Locator:  getByRole('tab', { name: 'Smileys & People' })
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeFocused" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('tab', { name: 'Smileys & People' })[22m
+    [2m    9 × locator resolved to <button role="tab" type="button" tabindex="-1" aria-selected="true" aria-label="Smileys & People" aria-controls="epr-category-nav-id" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-cat-btn epr_iy6j2p epr_8dj1z2 epr_mw4zr1 epr_-uyst0v epr_-hjcjqm epr_-tbk56u epr_-orqfm8 epr_-315v0j epr_7z7mvg epr_-f1jbax epr_-6kfaby epr-icn-smileys_people epr-active"></button>[22m
+    [2m      - unexpected value "inactive"[22m
+
+
+      54 |
+      55 |   const firstTab = page.getByRole('tab', { name: 'Smileys & People' });
+    > 56 |   await expect(firstTab).toBeFocused();
+         |                          ^
+      57 |
+      58 |   await page.keyboard.press('ArrowRight');
+      59 |   await expect(
+        at /Users/ealush/dev/emoji-picker-react/playwright/core-interactions.spec.ts:56:26
+
+    Error Context: test-results/core-interactions-keyboard-75938--across-controls-and-emojis/error-context.md
+
+  4) playwright/core-interactions.spec.ts:83:5 › collapse to reactions switches picker view ────────
+
+    Error: locator.click: Error: strict mode violation: getByLabel('grinning face') resolved to 4 elements:
+        1) <button type="button" data-unified="1f600" aria-label="grinning face" data-full-name="face,grin,grinning face" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face', exact: true })
+        2) <button type="button" data-unified="1f603" aria-label="grinning face with big eyes" data-full-name="face,open,mouth,smile,grinning face with big eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with big eyes' })
+        3) <button type="button" data-unified="1f604" aria-label="grinning face with smiling eyes" data-full-name="eye,face,open,mouth,smile,grinning face with smiling eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with smiling' })
+        4) <button type="button" data-unified="1f605" aria-label="grinning face with sweat" data-full-name="cold,face,open,smile,sweat,grinning face with sweat" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with sweat' })
+
+    Call log:
+    [2m  - waiting for getByLabel('grinning face')[22m
+
+
+      84 |   await page.goto(storyUrl('picker-reactions--collapse-to-reactions'));
+      85 |
+    > 86 |   await page.getByLabel('grinning face').click();
+         |                                          ^
+      87 |
+      88 |   await expect(page.locator('#storybook-root')).toHaveScreenshot(
+      89 |     'collapse-to-reactions.png'
+        at /Users/ealush/dev/emoji-picker-react/playwright/core-interactions.spec.ts:86:42
+
+    Error Context: test-results/core-interactions-collapse-to-reactions-switches-picker-view/error-context.md
+
+  5) playwright/core-interactions.spec.ts:147:5 › a11y landmarks and labels exist for core controls 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByLabel('grinning face')
+    Expected: visible
+    Error: strict mode violation: getByLabel('grinning face') resolved to 4 elements:
+        1) <button type="button" data-unified="1f600" aria-label="grinning face" data-full-name="face,grin,grinning face" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face', exact: true })
+        2) <button type="button" data-unified="1f603" aria-label="grinning face with big eyes" data-full-name="face,open,mouth,smile,grinning face with big eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with big eyes' })
+        3) <button type="button" data-unified="1f604" aria-label="grinning face with smiling eyes" data-full-name="eye,face,open,mouth,smile,grinning face with smiling eyes" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with smiling' })
+        4) <button type="button" data-unified="1f605" aria-label="grinning face with sweat" data-full-name="cold,face,open,smile,sweat,grinning face with sweat" class="epr-btn epr_3vd53t epr_yh3q76 epr_l5ctms epr_-orqfm8 epr-emoji epr_mw4zr1 epr_-5bhgbt epr_-nv0gqw epr_-9q6tlx epr_q53mwh epr_vl50xg epr_7316au epr_-a3ewa5 epr_-tul3d0 epr_-6fvrrw epr_iddbfm epr_-ji2762 epr_jkst5z epr-visible">…</button> aka getByRole('button', { name: 'grinning face with sweat' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByLabel('grinning face')[22m
+
+
+      155 |   ).toBeVisible();
+      156 |   await expect(page.getByLabel('Skin tone NEUTRAL')).toBeVisible();
+    > 157 |   await expect(page.getByLabel('grinning face')).toBeVisible();
+          |                                                  ^
+      158 | });
+      159 |
+        at /Users/ealush/dev/emoji-picker-react/playwright/core-interactions.spec.ts:157:50
+
+    Error Context: test-results/core-interactions-a11y-lan-9a097-els-exist-for-core-controls/error-context.md
+
+  5 failed
+    playwright/core-interactions.spec.ts:5:5 › search highlights matching emoji results ────────────
+    playwright/core-interactions.spec.ts:35:5 › skin tone selection updates the picker ─────────────
+    playwright/core-interactions.spec.ts:46:5 › keyboard navigation moves focus across controls and emojis 
+    playwright/core-interactions.spec.ts:83:5 › collapse to reactions switches picker view ─────────
+    playwright/core-interactions.spec.ts:147:5 › a11y landmarks and labels exist for core controls ─
+  7 passed (29.1s)
