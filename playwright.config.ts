@@ -11,7 +11,8 @@ export default defineConfig({
   snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   expect: {
     toHaveScreenshot: {
-      maxDiffPixelRatio: 0.02
+      // Allow 5% pixel difference for cross-platform font rendering variations
+      maxDiffPixelRatio: 0.05
     }
   },
   use: {
