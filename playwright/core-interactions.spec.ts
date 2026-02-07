@@ -1,7 +1,27 @@
+/**
+ * Core Interactions E2E Tests
+ *
+ * This file tests the fundamental user interactions with the emoji picker,
+ * including search functionality, category navigation, skin tone selection,
+ * keyboard accessibility, and various picker configurations.
+ *
+ * Each test navigates to a specific Storybook story and validates both
+ * functionality and visual appearance through screenshot comparisons.
+ *
+ * @file core-interactions.spec.ts
+ */
+
 import { expect, test } from '@playwright/test';
 
+/** Constructs a Storybook iframe URL for a given story ID */
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
+/**
+ * Validates that the search input filters emojis correctly.
+ * - Types "grinning" in the search field
+ * - Verifies the "grinning face" emoji is visible in results
+ * - Captures a screenshot of the filtered state
+ */
 test('search highlights matching emoji results', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
   const search = page.getByLabel('Type to search for an emoji');
@@ -13,6 +33,13 @@ test('search highlights matching emoji results', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that clicking a category tab scrolls to that category.
+ * - Clicks the "Animals & Nature" category tab
+ * - Verifies the category heading becomes visible
+ * - Programmatically scrolls to the bottom of the picker body
+ * - Captures a screenshot of the scrolled state
+ */
 test('category navigation and scrolling work together', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
 
@@ -32,6 +59,12 @@ test('category navigation and scrolling work together', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that skin tone selection changes the emoji appearances.
+ * - Opens the skin tone picker by clicking the neutral skin tone button
+ * - Selects the MEDIUM skin tone
+ * - Captures a screenshot showing emojis with the selected tone
+ */
 test('skin tone selection updates the picker', async ({ page }) => {
   await page.goto(storyUrl('picker-skin-tones--skin-tone-change'));
 
@@ -43,6 +76,14 @@ test('skin tone selection updates the picker', async ({ page }) => {
   );
 });
 
+/**
+ * Validates keyboard-only navigation through the picker.
+ * - Uses ArrowDown from search to move focus to category tabs
+ * - Uses ArrowRight to navigate between category tabs
+ * - Uses ArrowDown to move focus into the emoji grid
+ * - Verifies focus lands on the "grinning face" emoji
+ * - Uses the NoSuggested story to ensure consistent category order
+ */
 test('keyboard navigation moves focus across controls and emojis', async ({
   page
 }) => {
@@ -75,6 +116,12 @@ test('keyboard navigation moves focus across controls and emojis', async ({
   );
 });
 
+/**
+ * Validates that the reactions menu emits click events without expanding.
+ * - Uses a story configured to prevent expansion
+ * - Clicks an emoji in the compact reactions menu
+ * - Verifies the picker remains in collapsed state
+ */
 test('reactions menu emits click and stays collapsed', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu-no-expand'));
 
@@ -85,6 +132,12 @@ test('reactions menu emits click and stays collapsed', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that clicking an emoji collapses the full picker to reactions view.
+ * - Uses a story with collapse-to-reactions behavior enabled
+ * - Clicks an emoji in the full picker
+ * - Captures a screenshot showing the collapsed reactions state
+ */
 test('collapse to reactions switches picker view', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--collapse-to-reactions'));
 
@@ -95,6 +148,12 @@ test('collapse to reactions switches picker view', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that the search input can be hidden via configuration.
+ * - Uses a story with search disabled
+ * - Verifies the search input element does not exist
+ * - Captures a screenshot of the picker without search
+ */
 test('search disabled removes the search input', async ({ page }) => {
   await page.goto(storyUrl('picker-search-visibility--search-disabled'));
 
@@ -104,6 +163,12 @@ test('search disabled removes the search input', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that the emoji preview section can be hidden.
+ * - Uses a story with preview hidden
+ * - Verifies the "Pick an emoji" preview text is not present
+ * - Captures a screenshot of the picker without preview
+ */
 test('preview hidden removes preview content', async ({ page }) => {
   await page.goto(storyUrl('picker-behavior--hide-preview'));
 
@@ -115,6 +180,12 @@ test('preview hidden removes preview content', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that the reactions menu can expand to show the full picker.
+ * - Clicks the "Show all Emojis" button in the reactions menu
+ * - Verifies the full picker UI (including search input) becomes visible
+ * - Captures a screenshot of the expanded picker state
+ */
 test('reactions expand shows the full picker UI', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu'));
 
@@ -127,6 +198,12 @@ test('reactions expand shows the full picker UI', async ({ page }) => {
   );
 });
 
+/**
+ * Validates that custom emojis are rendered with proper accessibility labels.
+ * - Uses a story with custom emojis configured
+ * - Verifies a custom emoji ("alice in wonderland") is visible with its label
+ * - Captures a screenshot of the custom emojis category
+ */
 test('custom emojis render with accessible labels', async ({ page }) => {
   await page.goto(storyUrl('picker-customizations--custom-emojis'));
 
@@ -136,6 +213,12 @@ test('custom emojis render with accessible labels', async ({ page }) => {
   );
 });
 
+/**
+ * Validates the difference between "Frequently Used" and "Recently Used" modes.
+ * - Navigates to the default story and verifies "Frequently Used" tab exists
+ * - Navigates to the recently-used story and verifies "Recently Used" tab
+ * - Captures a screenshot of the recently-used mode
+ */
 test('suggested category reflects frequent vs recent modes', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
   await expect(
@@ -149,6 +232,13 @@ test('suggested category reflects frequent vs recent modes', async ({ page }) =>
   );
 });
 
+/**
+ * Validates that proper ARIA landmarks and labels exist for accessibility.
+ * - Checks for the category navigation tablist with proper aria-label
+ * - Verifies the search input has an accessible label
+ * - Confirms the skin tone picker button has proper labeling
+ * - Ensures emoji buttons have accessible labels
+ */
 test('a11y landmarks and labels exist for core controls', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
 
