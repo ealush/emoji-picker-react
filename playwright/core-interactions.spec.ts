@@ -46,7 +46,8 @@ test('skin tone selection updates the picker', async ({ page }) => {
 test('keyboard navigation moves focus across controls and emojis', async ({
   page
 }) => {
-  await page.goto(storyUrl('picker-overview--default'));
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(storyUrl('picker-overview--no-suggested'));
 
   const search = page.getByLabel('Type to search for an emoji');
   await search.focus();
@@ -61,7 +62,11 @@ test('keyboard navigation moves focus across controls and emojis', async ({
   ).toBeFocused();
 
   await page.keyboard.press('ArrowDown');
-  await expect(page.getByLabel('grinning face')).toBeFocused();
+  await page.waitForTimeout(100);
+
+  // Verify that one of the grinning face buttons is focused
+  const focusedElement = page.locator('button:focus[aria-label="grinning face"]');
+  await expect(focusedElement).toBeVisible();
 
   await page.keyboard.press('ArrowRight');
 

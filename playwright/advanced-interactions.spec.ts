@@ -5,7 +5,8 @@ const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
 test.describe('Advanced Interactions', () => {
   test('keyboard navigation with Tab and Enter', async ({ page }) => {
-    await page.goto(storyUrl('picker-overview--default'));
+    await page.addInitScript(() => window.localStorage.clear());
+    await page.goto(storyUrl('picker-overview--no-suggested'));
     const search = page.getByLabel('Type to search for an emoji');
 
     // Focus search

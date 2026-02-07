@@ -30,6 +30,5 @@ export function focusFirstElementChild(element: NullableElement) {
   if (!element) return;
 
   const first = element.firstElementChild as HTMLElement;
-
   focusElement(first);
 }
