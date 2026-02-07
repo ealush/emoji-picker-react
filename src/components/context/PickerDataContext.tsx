@@ -19,6 +19,7 @@ import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 
 import { usePickerConfig } from './PickerConfigContext';
 import { useUpdateSuggested } from './PickerContext';
+import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 
 export interface PickerDataContextValue {
   emojiData: EmojiData;
@@ -34,7 +35,7 @@ const PickerDataContext = React.createContext<PickerDataContextValue>({
   allEmojis: [],
   allEmojisByUnified: {},
   searchIndex: {},
-  emojiByUnified: () => undefined,
+  emojiByUnified: emojiByUnified,
   activeVariationFromUnified: () => null,
 });
 
