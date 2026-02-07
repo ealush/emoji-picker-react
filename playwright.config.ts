@@ -7,6 +7,8 @@ export default defineConfig({
   testDir: 'playwright',
   timeout: 60000,
   retries: process.env.CI ? 2 : 0,
+  // Use platform-agnostic snapshot names (without -darwin/-linux suffix)
+  snapshotPathTemplate: '{testDir}/{testFileDir}/{testFileName}-snapshots/{arg}{ext}',
   expect: {
     toHaveScreenshot: {
       maxDiffPixelRatio: 0.02
