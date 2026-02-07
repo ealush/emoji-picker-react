@@ -5,3 +5,6 @@ node_modules
 dist
 .next
 tsconfig.tsbuildinfo
+test-output.txt
+test-results/
+*.txt
