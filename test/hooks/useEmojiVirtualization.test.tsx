@@ -29,8 +29,8 @@ vi.mock('../../src/config/useConfig', () => ({
 vi.mock('../../src/hooks/useCategoryHeight', () => ({
   useCategoryHeight: vi.fn(() => ({
     categoryHeight: 1000,
-    rowHeight: 40,
-    rowsCount: 100
+    emojisPerRow: 8,
+    emojiSize: 40
   }))
 }));
 
@@ -72,8 +72,8 @@ describe('useEmojiVirtualization', () => {
     // ... (other mocks) ...
     (useCategoryHeight as any).mockReturnValue({
       categoryHeight: 1000,
-      rowHeight: 40,
-      rowsCount: 100
+      emojisPerRow: 8,
+      emojiSize: 40
     });
     // ... (other mocks) ...
     

@@ -33,6 +33,7 @@ export const StandaloneEmojiNative = () => {
         size={60}
       />
       <EmojiPicker
+        emojiStyle={EmojiStyle.NATIVE}
         onEmojiClick={clickedEmoji => {
           console.log(clickedEmoji);
           setCurrentEmoji(clickedEmoji);

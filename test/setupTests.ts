@@ -36,7 +36,7 @@ class MockIntersectionObserver implements IntersectionObserver {
     return [];
   }
 
-  unobserve() {}
+  unobserve(_target: Element) {}
 }
 
 if (!('IntersectionObserver' in globalThis)) {

@@ -6,3 +6,4 @@ dist
 .next
 tsconfig.tsbuildinfo
 *.txt
+test-results/

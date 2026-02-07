@@ -22,9 +22,10 @@ export default defineConfig({
     actionTimeout: 15000,
     trace: 'on-first-retry',
   },
-  webServer: {
+  // Only start webServer if STORYBOOK_URL is not provided (e.g., in CI with external server)
+  webServer: process.env.STORYBOOK_URL ? undefined : {
     command: 'npm run storybook',
-    url: 'http://127.0.0.1:6006',
+    url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   }

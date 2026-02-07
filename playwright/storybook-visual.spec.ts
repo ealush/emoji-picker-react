@@ -39,9 +39,8 @@ test('captures visual snapshots for tagged stories', async ({
   page,
   request
 }) => {
-  const baseURL =
-    test.info().project.use.baseURL ?? 'http://localhost:6006';
-  const response = await request.get(`${baseURL}/index.json`);
+  const response = await request.get('/index.json');
+  await expect(response).toBeOK();
   const data = (await response.json()) as {
     stories?: Record<string, StoryIndexEntry>;
     entries?: Record<string, StoryIndexEntry>;
@@ -52,7 +51,7 @@ test('captures visual snapshots for tagged stories', async ({
   );
 
   for (const story of stories) {
-    await page.goto(`${baseURL}/iframe.html?id=${story.id}&viewMode=story`);
+    await page.goto(`/iframe.html?id=${story.id}&viewMode=story`);
     await page.locator('#storybook-root').waitFor();
     await page.waitForTimeout(story.parameters?.visualTestDelay ?? 300);
     await expect(page.locator('#storybook-root')).toHaveScreenshot(

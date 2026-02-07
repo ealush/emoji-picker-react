@@ -30,14 +30,14 @@ import uk from '../../dist/data/emojis-uk';
 import zh from '../../dist/data/emojis-zh';
 import zhHant from '../../dist/data/emojis-zh-hant';
 
-const meta = {
+const meta: Meta<typeof EmojiPicker> = {
   title: 'Localization/Languages',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
     visualTest: true
   }
-} satisfies Meta<typeof EmojiPicker>;
+};
 
 export default meta;
 

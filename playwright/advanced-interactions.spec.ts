@@ -113,7 +113,7 @@ test.describe('Advanced Interactions', () => {
     // Resize to very small
     await page.setViewportSize({ width: 250, height: 500 });
 
-    // Categories should still be visible/scrollable or distinc
+    // Categories should still be visible/scrollable or distinct
     await expect(categoryNav).toBeVisible();
   });
 });

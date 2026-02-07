@@ -20,7 +20,7 @@ export const CustomEmojis = (args: Props) => (
   <Template {...args} customEmojis={customEmojis} />
 );
 
-export const CustomEmojisDeffered = (args: Props) => {
+export const CustomEmojisDefered = (args: Props) => {
   const [custom, setCustomEmojis] = useState<any>(undefined);
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export const CustomEmojisDeffered = (args: Props) => {
 
   return <Template {...args} customEmojis={custom} />;
 };
-CustomEmojisDeffered.parameters = {
+CustomEmojisDefered.parameters = {
   visualTestDelay: 2500
 };
 
