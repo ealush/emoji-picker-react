@@ -6,7 +6,7 @@ const groups = [
   'activities',
   'objects',
   'symbols',
-  'flags'
+  'flags',
 ];
 
 export default groups;

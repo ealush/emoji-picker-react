@@ -3,11 +3,10 @@ import * as React from 'react';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
 
-interface Props
-  extends React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  > {
+interface Props extends React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+> {
   className?: string;
 }
 
@@ -29,6 +28,6 @@ const styles = stylesheet.create({
     cursor: 'pointer',
     border: '0',
     background: 'none',
-    outline: 'none'
-  }
+    outline: 'none',
+  },
 });

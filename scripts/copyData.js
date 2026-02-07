@@ -6,7 +6,7 @@ const { glob } = require('glob');
 
 const files = glob.sync('src/data/*.{json,ts}');
 
-files.forEach(file => {
+files.forEach((file) => {
   const fileName = file.split('/').pop();
   copyFileSync(file, join('./dist/data', fileName));
 });

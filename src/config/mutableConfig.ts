@@ -18,12 +18,12 @@ export function useMutableConfig(): React.MutableRefObject<MutableConfig> {
 }
 
 export function useDefineMutableConfig(
-  config: MutableConfig
+  config: MutableConfig,
 ): React.MutableRefObject<MutableConfig> {
   const MutableConfigRef = React.useRef<MutableConfig>({
     onEmojiClick: config.onEmojiClick || emptyFunc,
     onReactionClick: config.onReactionClick || config.onEmojiClick,
-    onSkinToneChange: config.onSkinToneChange || emptyFunc
+    onSkinToneChange: config.onSkinToneChange || emptyFunc,
   });
 
   React.useEffect(() => {

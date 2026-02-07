@@ -4,7 +4,7 @@ import { focusElement, focusFirstElementChild } from '../DomUtils/focusElement';
 import {
   useCategoryNavigationRef,
   useSearchInputRef,
-  useSkinTonePickerRef
+  useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
 
 export function useFocusSearchInput() {

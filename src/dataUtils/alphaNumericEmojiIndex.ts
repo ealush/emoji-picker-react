@@ -13,7 +13,7 @@ export function indexEmoji(emoji: DataEmoji): void {
     .replace(/[^a-zA-Z\d]/g, '')
     .split('');
 
-  joinedNameString.forEach(char => {
+  joinedNameString.forEach((char) => {
     alphaNumericEmojiIndex[char] = alphaNumericEmojiIndex[char] ?? {};
 
     alphaNumericEmojiIndex[char][emojiUnified(emoji)] = emoji;

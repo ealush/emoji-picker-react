@@ -5,24 +5,24 @@ import {
   FilterDict,
   filterEmojiObjectByKeyword,
   findLongestMatch,
-  isEmojiFilteredBySearchTerm
+  isEmojiFilteredBySearchTerm,
 } from '../../src/hooks/useFilter';
 
 const mockEmoji: DataEmoji = {
   n: ['grinning face', 'face', 'grin'],
   u: '1f600',
-  a: '1' // added skin tone support property
+  a: '1', // added skin tone support property
 };
 
 const mockEmoji2: DataEmoji = {
   n: ['cat', 'pet'],
   u: '1f431',
-  a: '1'
+  a: '1',
 };
 
 const mockFilterDict: FilterDict = {
   '1f600': mockEmoji,
-  '1f431': mockEmoji2
+  '1f431': mockEmoji2,
 };
 
 describe('useFilter', () => {
@@ -33,7 +33,7 @@ describe('useFilter', () => {
 
     it('returns exact match if exists', () => {
       const dict = {
-        foo: mockFilterDict
+        foo: mockFilterDict,
       };
       expect(findLongestMatch('foo', dict)).toBe(mockFilterDict);
     });
@@ -41,7 +41,7 @@ describe('useFilter', () => {
     it('returns longest matching key', () => {
       const dict = {
         f: { '1f600': mockEmoji },
-        fo: mockFilterDict
+        fo: mockFilterDict,
       };
       // 'foo' contains 'fo' and 'f', should return 'fo' match
       expect(findLongestMatch('foo', dict)).toBe(mockFilterDict);
@@ -49,7 +49,7 @@ describe('useFilter', () => {
 
     it('returns null if no match found', () => {
       const dict = {
-        bar: mockFilterDict
+        bar: mockFilterDict,
       };
       expect(findLongestMatch('foo', dict)).toBeNull();
     });
@@ -80,27 +80,27 @@ describe('useFilter', () => {
     it('returns false if filter or searchTerm is missing', () => {
       expect(isEmojiFilteredBySearchTerm('1f600', {}, '')).toBe(false);
       expect(isEmojiFilteredBySearchTerm('1f600', null as any, 'foo')).toBe(
-        false
+        false,
       );
     });
 
     it('returns true if emoji is NOT in the filter result for the search term', () => {
       const filterState = {
-        face: { '1f600': mockEmoji }
+        face: { '1f600': mockEmoji },
       };
       // '1f431' is not in the filtered results for 'face'
       expect(isEmojiFilteredBySearchTerm('1f431', filterState, 'face')).toBe(
-        true
+        true,
       );
     });
 
     it('returns false if emoji IS in the filter result for the search term', () => {
       const filterState = {
-        face: { '1f600': mockEmoji }
+        face: { '1f600': mockEmoji },
       };
       // '1f600' is in the filtered results for 'face'
       expect(isEmojiFilteredBySearchTerm('1f600', filterState, 'face')).toBe(
-        false
+        false,
       );
     });
   });

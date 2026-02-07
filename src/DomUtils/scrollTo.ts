@@ -10,7 +10,7 @@ import {
   emojiDistanceFromScrollTop,
   isEmojiBehindLabel,
   NullableElement,
-  queryScrollBody
+  queryScrollBody,
 } from './selectors';
 
 export function scrollTo(root: NullableElement, top: number = 0) {
@@ -48,7 +48,7 @@ export function useScrollTo() {
         }
       });
     },
-    [BodyRef]
+    [BodyRef],
   );
 }
 

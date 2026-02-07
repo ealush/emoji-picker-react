@@ -5,11 +5,11 @@ import { ClassNames } from '../../DomUtils/classNames';
 import {
   commonInteractionStyles,
   commonStyles,
-  stylesheet
+  stylesheet,
 } from '../../Stylesheet/stylesheet';
 import {
   categoryFromCategoryConfig,
-  categoryNameFromCategoryConfig
+  categoryNameFromCategoryConfig,
 } from '../../config/categoryConfig';
 import { CategoryConfig } from '../../types/exposedTypes';
 
@@ -26,7 +26,7 @@ export function EmojiCategory({
   children,
   hidden,
   hiddenOnSearch,
-  height
+  height,
 }: Props) {
   const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
@@ -36,7 +36,7 @@ export function EmojiCategory({
       className={cx(
         styles.category,
         hidden && commonStyles.hidden,
-        hiddenOnSearch && commonInteractionStyles.hiddenOnSearch
+        hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
       )}
       data-name={category}
       aria-label={categoryName}
@@ -54,7 +54,7 @@ const styles = stylesheet.create({
     '.': ClassNames.category,
     minHeight:
       'calc(var(--epr-emoji-fullsize) + var(--epr-category-label-height))',
-    position: 'relative'
+    position: 'relative',
   },
   categoryContent: {
     '.': ClassNames.categoryContent,
@@ -63,7 +63,7 @@ const styles = stylesheet.create({
     gridTemplateColumns: 'repeat(auto-fill, var(--epr-emoji-fullsize))',
     justifyContent: 'space-between',
     margin: 'var(--epr-category-padding)',
-    position: 'relative'
+    position: 'relative',
   },
   label: {
     '.': ClassNames.label,
@@ -82,6 +82,6 @@ const styles = stylesheet.create({
     textTransform: 'capitalize',
     top: '0',
     width: '100%',
-    zIndex: 'var(--epr-category-label-z-index)'
-  }
+    zIndex: 'var(--epr-category-label-z-index)',
+  },
 });

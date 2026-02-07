@@ -1,10 +1,10 @@
 import { Categories, CustomCategoryConfig } from '../config/categoryConfig';
 import { CustomEmoji } from '../config/customEmojiConfig';
-import { CategoryConfig } from '../types/exposedTypes';
 import { DataEmoji } from '../dataUtils/DataTypes';
+import { CategoryConfig } from '../types/exposedTypes';
 
 export function isCustomCategory(
-  category: CategoryConfig | CustomCategoryConfig
+  category: CategoryConfig | CustomCategoryConfig,
 ): category is CustomCategoryConfig {
   return category.category === Categories.CUSTOM;
 }

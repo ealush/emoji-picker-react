@@ -5,7 +5,7 @@ import { NullableElement } from './selectors';
 
 export function elementCountInRow(
   parent: NullableElement,
-  element: NullableElement
+  element: NullableElement,
 ): number {
   if (!parent || !element) {
     return 0;
@@ -19,7 +19,7 @@ export function elementCountInRow(
 export function firstVisibleElementInContainer(
   parent: NullableElement,
   elements: HTMLElement[],
-  maxVisibilityDiffThreshold = 0
+  maxVisibilityDiffThreshold = 0,
 ): NullableElement {
   if (!parent || !elements.length) {
     return null;
@@ -29,7 +29,7 @@ export function firstVisibleElementInContainer(
   const parentBottom = parent.getBoundingClientRect().bottom;
   const parentTopWithLabel = parentTop + getLabelHeight(parent);
 
-  const visibleElements = elements.find(element => {
+  const visibleElements = elements.find((element) => {
     const elementTop = element.getBoundingClientRect().top;
     const elementBottom = element.getBoundingClientRect().bottom;
     const maxVisibilityDiffPixels =

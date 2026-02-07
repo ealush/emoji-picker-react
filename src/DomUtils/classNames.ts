@@ -18,9 +18,9 @@ export enum ClassNames {
   horizontal = 'epr-horizontal',
   variationPicker = 'epr-emoji-variation-picker',
   darkTheme = 'epr-dark-theme',
-  autoTheme = 'epr-auto-theme'
+  autoTheme = 'epr-auto-theme',
 }
 
 export function asSelectors(...classNames: ClassNames[]): string {
-  return classNames.map(c => `.${c}`).join('');
+  return classNames.map((c) => `.${c}`).join('');
 }

@@ -2,7 +2,7 @@ import { scrollTo } from '../DomUtils/scrollTo';
 import { NullableElement } from '../DomUtils/selectors';
 import {
   useBodyRef,
-  usePickerMainRef
+  usePickerMainRef,
 } from '../components/context/ElementRefContext';
 
 export function useScrollCategoryIntoView() {
@@ -14,7 +14,7 @@ export function useScrollCategoryIntoView() {
       return;
     }
     const $category = BodyRef.current?.querySelector(
-      `[data-name="${category}"]`
+      `[data-name="${category}"]`,
     ) as NullableElement;
 
     if (!$category) {

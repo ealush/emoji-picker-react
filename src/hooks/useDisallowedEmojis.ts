@@ -6,7 +6,7 @@ import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   addedIn,
   emojiUnified,
-  unifiedWithoutSkinTone
+  unifiedWithoutSkinTone,
 } from '../dataUtils/emojiUtils';
 
 import { useIsUnicodeHidden } from './useHideEmojisByUniocode';
@@ -46,7 +46,7 @@ export function useIsEmojiDisallowed() {
 
 function addedInNewerVersion(
   emoji: DataEmoji,
-  supportedLevel: number
+  supportedLevel: number,
 ): boolean {
   return addedIn(emoji) > supportedLevel;
 }

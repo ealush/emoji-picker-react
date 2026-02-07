@@ -10,8 +10,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;

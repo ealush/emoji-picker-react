@@ -20,7 +20,7 @@ export function BtnSkinToneVariation({
   onClick,
   isActive,
   skinToneVariation,
-  style
+  style,
 }: Props) {
   return (
     <Button
@@ -30,7 +30,7 @@ export function BtnSkinToneVariation({
         `epr-tone-${skinToneVariation}`,
         styles.tone,
         !isOpen && styles.closedTone,
-        isActive && styles.active
+        isActive && styles.active,
       )}
       aria-pressed={isActive}
       aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]}`}
@@ -41,12 +41,12 @@ export function BtnSkinToneVariation({
 const styles = stylesheet.create({
   closedTone: {
     opacity: '0',
-    zIndex: '0'
+    zIndex: '0',
   },
   active: {
     '.': 'epr-active',
     zIndex: '1',
-    opacity: '1'
+    opacity: '1',
   },
   tone: {
     '.': 'epr-tone',
@@ -62,28 +62,29 @@ const styles = stylesheet.create({
     border: '1px solid var(--epr-skin-tone-outer-border-color)',
     boxShadow: 'inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)',
     ':hover': {
-      boxShadow: '0 0 0 3px var(--epr-active-skin-hover-color), inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)'
+      boxShadow:
+        '0 0 0 3px var(--epr-active-skin-hover-color), inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)',
     },
     ':focus': {
-      boxShadow: '0 0 0 3px var(--epr-focus-bg-color)'
+      boxShadow: '0 0 0 3px var(--epr-focus-bg-color)',
     },
     '&.epr-tone-neutral': {
-      backgroundColor: '#ffd225'
+      backgroundColor: '#ffd225',
     },
     '&.epr-tone-1f3fb': {
-      backgroundColor: '#ffdfbd'
+      backgroundColor: '#ffdfbd',
     },
     '&.epr-tone-1f3fc': {
-      backgroundColor: '#e9c197'
+      backgroundColor: '#e9c197',
     },
     '&.epr-tone-1f3fd': {
-      backgroundColor: '#c88e62'
+      backgroundColor: '#c88e62',
     },
     '&.epr-tone-1f3fe': {
-      backgroundColor: '#a86637'
+      backgroundColor: '#a86637',
     },
     '&.epr-tone-1f3ff': {
-      backgroundColor: '#60463a'
-    }
-  }
+      backgroundColor: '#60463a',
+    },
+  },
 });

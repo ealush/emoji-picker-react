@@ -4,7 +4,6 @@ import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiUtils';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
-
 import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
@@ -18,7 +17,7 @@ export function ViewOnlyEmoji({
   size,
   lazyLoad,
   getEmojiUrl = emojiUrlByUnified,
-  className
+  className,
 }: BaseEmojiProps) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
   const { emojiByUnified } = usePickerDataContext();
@@ -67,6 +66,6 @@ export function ViewOnlyEmoji({
   );
 
   function onError() {
-    setEmojisThatFailedToLoad(prev => new Set(prev).add(unified));
+    setEmojisThatFailedToLoad((prev) => new Set(prev).add(unified));
   }
 }

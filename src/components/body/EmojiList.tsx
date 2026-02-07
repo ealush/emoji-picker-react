@@ -5,10 +5,10 @@ import { ClassNames } from '../../DomUtils/classNames';
 import { getLabelHeight } from '../../DomUtils/elementPositionInRow';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import { categoryFromCategoryConfig } from '../../config/categoryConfig';
-import { CategoryConfig } from '../../types/exposedTypes';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
+import { CategoryConfig } from '../../types/exposedTypes';
 import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
 import { useGetEmojisByCategory } from '../context/PickerDataContext';
@@ -30,7 +30,7 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   return (
     <ul className={cx(styles.emojiList)} ref={EmojiListRef}>
       <MeasureEmoji />
-      {categories.map(categoryConfig => {
+      {categories.map((categoryConfig) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
         const currentOffset = topOffset;
@@ -45,11 +45,11 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
               categoryEmojis={getEmojisByCategory(category)}
               categoryConfig={categoryConfig}
               topOffset={currentOffset}
-              onHeightReady={height => {
+              onHeightReady={(height) => {
                 if (categoryHeights[category] !== height) {
-                  setCategoryHeights(prev => ({
+                  setCategoryHeights((prev) => ({
                     ...prev,
-                    [category]: height
+                    [category]: height,
                   }));
                 }
               }}
@@ -67,7 +67,7 @@ function RenderCategory({
   categoryConfig,
   topOffset,
   onHeightReady,
-  scrollTop
+  scrollTop,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
@@ -82,7 +82,7 @@ function RenderCategory({
     topOffset,
     onHeightReady,
     scrollTop,
-    isCategoryVisible: visibleCategories.includes(categoryConfig.category)
+    isCategoryVisible: visibleCategories.includes(categoryConfig.category),
   });
 
   return (
@@ -103,6 +103,6 @@ const styles = stylesheet.create({
     '.': ClassNames.emojiList,
     listStyle: 'none',
     margin: '0',
-    padding: '0'
-  }
+    padding: '0',
+  },
 });

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
 import {
   focusNextElementSibling,
-  focusPrevElementSibling
+  focusPrevElementSibling,
 } from '../DomUtils/focusElement';
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import {
@@ -12,7 +12,7 @@ import {
   focusNextVisibleEmoji,
   focusPrevVisibleEmoji,
   focusVisibleEmojiOneRowDown,
-  focusVisibleEmojiOneRowUp
+  focusVisibleEmojiOneRowUp,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';
@@ -21,27 +21,27 @@ import {
   useCategoryNavigationRef,
   usePickerMainRef,
   useSearchInputRef,
-  useSkinTonePickerRef
+  useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../components/context/PickerContext';
 import { useSearchDisabledConfig } from '../config/useConfig';
 
 import {
   useCloseAllOpenToggles,
-  useHasOpenToggles
+  useHasOpenToggles,
 } from './useCloseAllOpenToggles';
 import { useDisallowMouseMove } from './useDisallowMouseMove';
 import { useAppendSearch, useClearSearch } from './useFilter';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
-  useFocusSkinTonePicker
+  useFocusSkinTonePicker,
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
 import useSetVariationPicker from './useSetVariationPicker';
 import {
   useIsSkinToneInPreview,
-  useIsSkinToneInSearch
+  useIsSkinToneInSearch,
 } from './useShouldShowSkinTonePicker';
 
 enum KeyboardEvents {
@@ -51,7 +51,7 @@ enum KeyboardEvents {
   ArrowRight = 'ArrowRight',
   Escape = 'Escape',
   Enter = 'Enter',
-  Space = ' '
+  Space = ' ',
 }
 
 export function useKeyboardNavigation() {
@@ -99,8 +99,8 @@ function usePickerMainKeyboardEvents() {
       closeAllOpenToggles,
       focusSearchInput,
       hasOpenToggles,
-      disallowMouseMove
-    ]
+      disallowMouseMove,
+    ],
   );
 
   useEffect(() => {
@@ -156,8 +156,8 @@ function useSearchInputKeyboardEvents() {
       goDownFromSearchInput,
       setSkinToneFanOpenState,
       BodyRef,
-      isSkinToneInSearch
-    ]
+      isSkinToneInSearch,
+    ],
   );
 
   useEffect(() => {
@@ -249,8 +249,8 @@ function useSkinTonePickerKeyboardEvents() {
       goDownFromSearchInput,
       onType,
       isSkinToneInPreview,
-      isSkinToneInSearch
-    ]
+      isSkinToneInSearch,
+    ],
   );
 
   useEffect(() => {
@@ -301,7 +301,7 @@ function useCategoryNavigationKeyboardEvents() {
             break;
         }
       },
-    [BodyRef, focusSearchInput, onType]
+    [BodyRef, focusSearchInput, onType],
   );
 
   useEffect(() => {
@@ -375,8 +375,8 @@ function useBodyKeyboardEvents() {
       onType,
       setVariationPicker,
       hasOpenToggles,
-      closeAllOpenToggles
-    ]
+      closeAllOpenToggles,
+    ],
   );
 
   useEffect(() => {
@@ -406,7 +406,7 @@ function useGoDownFromSearchInput() {
       }
       return focusCategoryNavigation();
     },
-    [BodyRef, focusCategoryNavigation, isSearchMode]
+    [BodyRef, focusCategoryNavigation, isSearchMode],
   );
 }
 
@@ -422,7 +422,7 @@ function useGoUpFromBody() {
       }
       return focusCategoryNavigation();
     },
-    [focusSearchInput, isSearchMode, focusCategoryNavigation]
+    [focusSearchInput, isSearchMode, focusCategoryNavigation],
   );
 }
 

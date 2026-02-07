@@ -11,7 +11,7 @@ export function ExportedEmoji({
   emojiStyle = EmojiStyle.APPLE,
   lazyLoad = false,
   getEmojiUrl,
-  emojiUrl
+  emojiUrl,
 }: {
   unified: string;
   emojiStyle?: EmojiStyle;

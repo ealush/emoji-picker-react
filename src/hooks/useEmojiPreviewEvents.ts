@@ -5,19 +5,19 @@ import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyB
 import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
-  buttonFromTarget
+  buttonFromTarget,
 } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
 
 import {
   useAllowMouseMove,
-  useIsMouseDisallowed
+  useIsMouseDisallowed,
 } from './useDisallowMouseMove';
 
 export function useEmojiPreviewEvents(
   allow: boolean,
-  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
+  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
 ) {
   const BodyRef = useBodyRef();
   const isMouseDisallowed = useIsMouseDisallowed();
@@ -30,7 +30,7 @@ export function useEmojiPreviewEvents(
     const bodyRef = BodyRef.current;
 
     bodyRef?.addEventListener('keydown', onEscape, {
-      passive: true
+      passive: true,
     });
 
     bodyRef?.addEventListener('mouseover', onMouseOver, true);
@@ -38,7 +38,7 @@ export function useEmojiPreviewEvents(
     bodyRef?.addEventListener('focus', onEnter, true);
 
     bodyRef?.addEventListener('mouseout', onLeave, {
-      passive: true
+      passive: true,
     });
     bodyRef?.addEventListener('blur', onLeave, true);
 
@@ -57,7 +57,7 @@ export function useEmojiPreviewEvents(
 
       setPreviewEmoji({
         unified,
-        originalUnified
+        originalUnified,
       });
     }
     function onLeave(e?: FocusEvent | MouseEvent) {
@@ -107,7 +107,7 @@ export function useEmojiPreviewEvents(
 
 function handlePartiallyVisibleElementFocus(
   button: HTMLElement,
-  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>
+  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
 ) {
   const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
 
@@ -119,6 +119,6 @@ function handlePartiallyVisibleElementFocus(
 
   setPreviewEmoji({
     unified,
-    originalUnified
+    originalUnified,
   });
 }

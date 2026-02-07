@@ -5,7 +5,7 @@ import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
-  useSearchPlaceHolderConfig
+  useSearchPlaceHolderConfig,
 } from '../../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFilter } from '../../../hooks/useFilter';
@@ -58,7 +58,7 @@ export function Search() {
         type="text"
         aria-controls="epr-search-id"
         placeholder={placeholder}
-        onChange={event => {
+        onChange={(event) => {
           onChange(event?.target?.value ?? value);
         }}
         ref={SearchInputRef}
@@ -83,13 +83,13 @@ export function Search() {
 const styles = stylesheet.create({
   overlay: {
     padding: 'var(--epr-header-padding)',
-    zIndex: 'var(--epr-header-overlay-z-index)'
+    zIndex: 'var(--epr-header-overlay-z-index)',
   },
   searchContainer: {
     '.': 'epr-search-container',
     flex: '1',
     display: 'block',
-    minWidth: '0'
+    minWidth: '0',
   },
   visuallyHidden: {
     clip: 'rect(0 0 0 0)',
@@ -98,7 +98,7 @@ const styles = stylesheet.create({
     overflow: 'hidden',
     position: 'absolute',
     whiteSpace: 'nowrap',
-    width: '1px'
+    width: '1px',
   },
   search: {
     outline: 'none',
@@ -112,11 +112,11 @@ const styles = stylesheet.create({
     width: '100%',
     ':focus': {
       backgroundColor: 'var(--epr-search-input-bg-color-active)',
-      border: '1px solid var(--epr-search-border-color-active)'
+      border: '1px solid var(--epr-search-border-color-active)',
     },
     '::placeholder': {
-      color: 'var(--epr-search-input-placeholder-color)'
-    }
+      color: 'var(--epr-search-input-placeholder-color)',
+    },
   },
 
   btnClearSearch: {
@@ -133,11 +133,11 @@ const styles = stylesheet.create({
     padding: '0',
     borderRadius: '50%',
     ':hover': {
-      background: 'var(--epr-hover-bg-color)'
+      background: 'var(--epr-hover-bg-color)',
     },
     ':focus': {
-      background: 'var(--epr-hover-bg-color)'
-    }
+      background: 'var(--epr-hover-bg-color)',
+    },
   },
   icnClearnSearch: {
     '.': 'epr-icn-clear-search',
@@ -148,18 +148,18 @@ const styles = stylesheet.create({
     width: '20px',
     backgroundImage: `url(${SVGTimes})`,
     ':hover': {
-      backgroundPositionY: '-20px'
+      backgroundPositionY: '-20px',
     },
     ':focus': {
-      backgroundPositionY: '-20px'
-    }
+      backgroundPositionY: '-20px',
+    },
   },
   ...darkMode('icnClearnSearch', {
-    backgroundPositionY: '-40px'
+    backgroundPositionY: '-40px',
   }),
   ...darkMode('btnClearSearch', {
     ':hover > .epr-icn-clear-search': {
-      backgroundPositionY: '-60px'
-    }
-  })
+      backgroundPositionY: '-60px',
+    },
+  }),
 });

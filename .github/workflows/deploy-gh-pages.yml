@@ -2,7 +2,7 @@ name: Update gh-pages dependency and push
 
 on:
   push:
-    branches: ["master", "main"]
+    branches: ['master', 'main']
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          path: "."
+          path: '.'
           clean: true
           persist-credentials: true
 
@@ -26,7 +26,7 @@ jobs:
           ver=$(node -e "process.stdout.write(require('./package.json').version)")
           echo "PACKAGE_VERSION=$ver" >> $GITHUB_OUTPUT
 
-      - name: "Debug: show package version"
+      - name: 'Debug: show package version'
         run: |
           echo "Read package version: ${{ steps.read_version.outputs.PACKAGE_VERSION }}"
 
@@ -38,7 +38,7 @@ jobs:
       - name: Clone repo into /tmp and prepare gh-pages
         shell: bash
         env:
-          REPO_URL: "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          REPO_URL: 'https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git'
         run: |
           set -euo pipefail
           rm -rf /tmp/ghpages || true

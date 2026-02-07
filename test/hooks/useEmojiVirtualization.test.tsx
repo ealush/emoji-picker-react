@@ -7,52 +7,52 @@ import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import {
   getEmojiPositionStyle,
-  shouldVirtualize
+  shouldVirtualize,
 } from '../../src/virtualization/virtualizationHelpers';
 
 // Mock dependencies
 vi.mock('../../src/components/context/ElementRefContext', () => ({
-  useBodyRef: vi.fn(() => ({ current: { clientHeight: 300 } }))
+  useBodyRef: vi.fn(() => ({ current: { clientHeight: 300 } })),
 }));
 
 vi.mock('../../src/components/context/PickerContext', () => ({
-  useActiveSkinToneState: vi.fn(() => ['neutral'])
+  useActiveSkinToneState: vi.fn(() => ['neutral']),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
   useEmojiStyleConfig: vi.fn(() => 'native'),
   useGetEmojiUrlConfig: vi.fn(() => () => ''),
   useLazyLoadEmojisConfig: vi.fn(() => false),
-  useSkinTonesDisabledConfig: vi.fn(() => false)
+  useSkinTonesDisabledConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCategoryHeight', () => ({
   useCategoryHeight: vi.fn(() => ({
     categoryHeight: 1000,
     emojisPerRow: 8,
-    emojiSize: 40
-  }))
+    emojiSize: 40,
+  })),
 }));
 
 vi.mock('../../src/hooks/useDisallowedEmojis', () => ({
-  useIsEmojiDisallowed: vi.fn(() => () => false)
+  useIsEmojiDisallowed: vi.fn(() => () => false),
 }));
 
 vi.mock('../../src/hooks/useIsEmojiHidden', () => ({
   useIsEmojiHidden: vi.fn(() => () => ({
     failedToLoad: false,
     filteredOut: false,
-    hidden: false
-  }))
+    hidden: false,
+  })),
 }));
 
 vi.mock('../../src/hooks/preloadEmoji', () => ({
-  preloadEmojiIfNeeded: vi.fn()
+  preloadEmojiIfNeeded: vi.fn(),
 }));
 
 vi.mock('../../src/virtualization/virtualizationHelpers', () => ({
   getEmojiPositionStyle: vi.fn(() => ({ top: 0, left: 0 })),
-  shouldVirtualize: vi.fn(() => false)
+  shouldVirtualize: vi.fn(() => false),
 }));
 
 const mockEmojis: DataEmojis = [
@@ -67,19 +67,19 @@ describe('useEmojiVirtualization', () => {
 
     // Default mocks
     (useBodyRef as any).mockReturnValue({
-      current: { clientHeight: 300 }
+      current: { clientHeight: 300 },
     });
     // ... (other mocks) ...
     (useCategoryHeight as any).mockReturnValue({
       categoryHeight: 1000,
       emojisPerRow: 8,
-      emojiSize: 40
+      emojiSize: 40,
     });
     // ... (other mocks) ...
-    
+
     // Virtualization mocks
     (getEmojiPositionStyle as any).mockReturnValue({ top: 0, left: 0 });
-    (shouldVirtualize as any).mockReturnValue(false); 
+    (shouldVirtualize as any).mockReturnValue(false);
   });
 
   it('virtualizes emojis that are not in view', () => {
@@ -90,8 +90,8 @@ describe('useEmojiVirtualization', () => {
         topOffset: 0,
         onHeightReady: vi.fn(),
         scrollTop: 0,
-        isCategoryVisible: true
-      })
+        isCategoryVisible: true,
+      }),
     );
 
     expect(result.current.emojis.length).toBe(3);
@@ -107,10 +107,10 @@ describe('useEmojiVirtualization', () => {
         topOffset: 5000,
         onHeightReady: vi.fn(),
         scrollTop: 0,
-        isCategoryVisible: true
-      })
+        isCategoryVisible: true,
+      }),
     );
-    
+
     expect(result.current.virtualizedCounter).toBe(3); // All 3 virtualized
     expect(result.current.emojis.length).toBe(0);
   });

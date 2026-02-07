@@ -4,7 +4,7 @@ import * as React from 'react';
 import {
   commonInteractionStyles,
   darkMode,
-  stylesheet
+  stylesheet,
 } from '../../../Stylesheet/stylesheet';
 import { useSearchClearButtonLabelConfig } from '../../../config/useConfig';
 import { useClearSearch } from '../../../hooks/useFilter';
@@ -20,7 +20,7 @@ export function BtnClearSearch() {
     <Button
       className={cx(
         styles.btnClearSearch,
-        commonInteractionStyles.visibleOnSearchOnly
+        commonInteractionStyles.visibleOnSearchOnly,
       )}
       onClick={clearSearch}
       aria-label={searchClearButtonLabel}
@@ -34,9 +34,9 @@ export function BtnClearSearch() {
 const HoverDark = {
   ':hover': {
     '> .epr-icn-clear-search': {
-      backgroundPositionY: '-60px'
-    }
-  }
+      backgroundPositionY: '-60px',
+    },
+  },
 };
 
 const styles = stylesheet.create({
@@ -54,11 +54,11 @@ const styles = stylesheet.create({
     padding: '0',
     borderRadius: '50%',
     ':hover': {
-      background: 'var(--epr-hover-bg-color)'
+      background: 'var(--epr-hover-bg-color)',
     },
     ':focus': {
-      background: 'var(--epr-hover-bg-color)'
-    }
+      background: 'var(--epr-hover-bg-color)',
+    },
   },
   icnClearnSearch: {
     '.': 'epr-icn-clear-search',
@@ -69,14 +69,14 @@ const styles = stylesheet.create({
     width: '20px',
     backgroundImage: `url(${SVGTimes})`,
     ':hover': {
-      backgroundPositionY: '-20px'
+      backgroundPositionY: '-20px',
     },
     ':focus': {
-      backgroundPositionY: '-20px'
-    }
+      backgroundPositionY: '-20px',
+    },
   },
   ...darkMode('icnClearnSearch', {
-    backgroundPositionY: '-40px'
+    backgroundPositionY: '-40px',
   }),
-  ...darkMode('btnClearSearch', HoverDark)
+  ...darkMode('btnClearSearch', HoverDark),
 });

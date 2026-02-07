@@ -8,13 +8,13 @@ import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
   useLazyLoadEmojisConfig,
-  useSkinTonesDisabledConfig
+  useSkinTonesDisabledConfig,
 } from '../config/useConfig';
 import { DataEmojis } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiUtils';
 import {
   getEmojiPositionStyle,
-  shouldVirtualize
+  shouldVirtualize,
 } from '../virtualization/virtualizationHelpers';
 
 import { preloadEmojiIfNeeded } from './preloadEmoji';
@@ -27,7 +27,7 @@ export function useEmojiVirtualization({
   topOffset,
   onHeightReady,
   scrollTop,
-  isCategoryVisible
+  isCategoryVisible,
 }: {
   categoryEmojis: DataEmojis;
   topOffset: number;
@@ -46,7 +46,7 @@ export function useEmojiVirtualization({
 
   let virtualizedCounter = 0;
 
-  const emojisToPush = categoryEmojis.filter(emoji => {
+  const emojisToPush = categoryEmojis.filter((emoji) => {
     const isDisallowed = isEmojiDisallowed(emoji);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
 
@@ -69,7 +69,7 @@ export function useEmojiVirtualization({
       clientHeight: BodyRef.current?.clientHeight ?? 0,
       topOffset,
       style,
-      dimensions
+      dimensions,
     });
 
   const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
@@ -86,7 +86,7 @@ export function useEmojiVirtualization({
         topOffset,
         style,
         dimensions,
-        getEmojiUrl
+        getEmojiUrl,
       );
       return accumulator;
     }
@@ -107,9 +107,9 @@ export function useEmojiVirtualization({
         getEmojiUrl={getEmojiUrl}
         style={{
           ...style,
-          position: 'absolute'
+          position: 'absolute',
         }}
-      />
+      />,
     );
     return accumulator;
   }, [] as ReactNode[]);
@@ -117,6 +117,6 @@ export function useEmojiVirtualization({
   return {
     virtualizedCounter,
     emojis,
-    dimensions
+    dimensions,
   };
 }

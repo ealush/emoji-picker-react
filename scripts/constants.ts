@@ -17,7 +17,7 @@ export const keys = {
   GROUP_NAME_SYMBOLS: 'symbols',
   GROUP_NAME_FLAGS: 'flags',
   GROUP_NAME_SUGGESTED: 'suggested',
-  GROUP_NAME_CUSTOM: 'custom'
+  GROUP_NAME_CUSTOM: 'custom',
 } as const;
 
 // --- Types ---
@@ -103,7 +103,7 @@ export const groupConversion: Record<string, string | null> = {
   food_drink: keys.GROUP_NAME_FOOD,
   travel_places: keys.GROUP_NAME_TRAVEL,
   components: null,
-  skin_tones: null
+  skin_tones: null,
 };
 
 // --- Internal Categories ---
@@ -117,186 +117,186 @@ export const internalCategoryNames: Record<
     suggested: 'প্রায়শই ব্যবহৃত',
     recent: 'সম্প্রতি ব্যবহৃত',
     custom: 'কাস্টম ইমোজি',
-    mood: 'আপনার মেজাজ কেমন?'
+    mood: 'আপনার মেজাজ কেমন?',
   },
   // Danish
   da: {
     suggested: 'Hyppigt anvendte',
     recent: 'Senest anvendte',
     custom: 'Brugerdefinerede emojis',
-    mood: 'Hvad er dit humør?'
+    mood: 'Hvad er dit humør?',
   },
   // German
   de: {
     suggested: 'Häufig verwendet',
     recent: 'Zuletzt verwendet',
     custom: 'Benutzerdefinierte Emojis',
-    mood: 'Wie ist deine Stimmung?'
+    mood: 'Wie ist deine Stimmung?',
   },
   // English
   en: {
     suggested: 'Frequently Used',
     recent: 'Recently Used',
     custom: 'Custom Emojis',
-    mood: "What's your mood?"
+    mood: "What's your mood?",
   },
   'en-gb': {
     suggested: 'Frequently Used',
     recent: 'Recently Used',
     custom: 'Custom Emojis',
-    mood: "What's your mood?"
+    mood: "What's your mood?",
   },
   // Spanish
   es: {
     suggested: 'Frecuentemente usados',
     recent: 'Usados recientemente',
     custom: 'Emojis personalizados',
-    mood: '¿Cuál es tu estado de ánimo?'
+    mood: '¿Cuál es tu estado de ánimo?',
   },
   'es-mx': {
     suggested: 'Frecuentemente usados',
     recent: 'Usados recientemente',
     custom: 'Emojis personalizados',
-    mood: '¿Cuál es tu estado de ánimo?'
+    mood: '¿Cuál es tu estado de ánimo?',
   },
   // Estonian
   et: {
     suggested: 'Sageli kasutatud',
     recent: 'Hiljuti kasutatud',
     custom: 'Kohandatud emojid',
-    mood: 'Mis tuju sul on?'
+    mood: 'Mis tuju sul on?',
   },
   // Finnish
   fi: {
     suggested: 'Usein käytetyt',
     recent: 'Viimeksi käytetyt',
     custom: 'Omat emojit',
-    mood: 'Mikä on fiiliksesi?'
+    mood: 'Mikä on fiiliksesi?',
   },
   // French
   fr: {
     suggested: 'Fréquemment utilisés',
     recent: 'Récemment utilisés',
     custom: 'Émojis personnalisés',
-    mood: 'Quelle est votre humeur ?'
+    mood: 'Quelle est votre humeur ?',
   },
   // Hindi
   hi: {
     suggested: 'बार-बार उपयोग किया गया',
     recent: 'हाल ही में उपयोग किया गया',
     custom: 'कस्टम इमोजी',
-    mood: 'आपका मूड क्या है?'
+    mood: 'आपका मूड क्या है?',
   },
   // Hungarian
   hu: {
     suggested: 'Gyakran használt',
     recent: 'Legutóbb használt',
     custom: 'Egyéni emojik',
-    mood: 'Mi a hangulatod?'
+    mood: 'Mi a hangulatod?',
   },
   // Italian
   it: {
     suggested: 'Usati frequentemente',
     recent: 'Usati di recente',
     custom: 'Emoji personalizzate',
-    mood: 'Qual è il tuo umore?'
+    mood: 'Qual è il tuo umore?',
   },
   // Japanese
   ja: {
     suggested: 'よく使う',
     recent: '最近使用した',
     custom: 'カスタム絵文字',
-    mood: '気分はどう？'
+    mood: '気分はどう？',
   },
   // Korean
   ko: {
     suggested: '자주 사용하는',
     recent: '최근 사용한',
     custom: '맞춤 이모티콘',
-    mood: '기분이 어때?'
+    mood: '기분이 어때?',
   },
   // Lithuanian
   lt: {
     suggested: 'Dažnai naudojami',
     recent: 'Paskutinį kartą naudoti',
     custom: 'Pasirinktiniai emodžiai',
-    mood: 'Kokia tavo nuotaika?'
+    mood: 'Kokia tavo nuotaika?',
   },
   // Malay
   ms: {
     suggested: 'Kerap Digunakan',
     recent: 'Baru Digunakan',
     custom: 'Emoji Tersuai',
-    mood: 'Apakah perasaan anda?'
+    mood: 'Apakah perasaan anda?',
   },
   // Norwegian Bokmål
   nb: {
     suggested: 'Ofte brukt',
     recent: 'Nylig brukt',
     custom: 'Egendefinerte emojier',
-    mood: 'Hva er humøret ditt?'
+    mood: 'Hva er humøret ditt?',
   },
   // Dutch
   nl: {
     suggested: 'Vaak gebruikt',
     recent: 'Recentelijk gebruikt',
     custom: "Aangepaste emoji's",
-    mood: 'Wat is je stemming?'
+    mood: 'Wat is je stemming?',
   },
   // Polish
   pl: {
     suggested: 'Często używane',
     recent: 'Ostatnio używane',
     custom: 'Niestandardowe emotikony',
-    mood: 'Jaki masz nastrój?'
+    mood: 'Jaki masz nastrój?',
   },
   // Portuguese
   pt: {
     suggested: 'Mais usados',
     recent: 'Usados recentemente',
     custom: 'Emojis personalizados',
-    mood: 'Qual é o seu humor?'
+    mood: 'Qual é o seu humor?',
   },
   // Russian
   ru: {
     suggested: 'Часто используемые',
     recent: 'Недавно использованные',
     custom: 'Пользовательские эмодзи',
-    mood: 'Какое у вас настроение?'
+    mood: 'Какое у вас настроение?',
   },
   // Swedish
   sv: {
     suggested: 'Ofta använda',
     recent: 'Nyligen använda',
     custom: 'Anpassade emojier',
-    mood: 'Vad är ditt humör?'
+    mood: 'Vad är ditt humör?',
   },
   // Thai
   th: {
     suggested: 'ใช้บ่อย',
     recent: 'ใช้ล่าสุด',
     custom: 'อีโมจิที่กำหนดเอง',
-    mood: 'อารมณ์ของคุณเป็นอย่างไร?'
+    mood: 'อารมณ์ของคุณเป็นอย่างไร?',
   },
   // Ukrainian
   uk: {
     suggested: 'Часто використовувані',
     recent: 'Нещодавно використані',
     custom: 'Власні емодзі',
-    mood: 'Який у вас настрій?'
+    mood: 'Який у вас настрій?',
   },
   // Chinese (Simplified)
   zh: {
     suggested: '常用',
     recent: '最近使用',
     custom: '自定义表情',
-    mood: '你的心情如何？'
+    mood: '你的心情如何？',
   },
   // Chinese (Traditional)
   'zh-hant': {
     suggested: '常用',
     recent: '最近使用',
     custom: '自訂表情符號',
-    mood: '你的心情如何？'
-  }
+    mood: '你的心情如何？',
+  },
 };

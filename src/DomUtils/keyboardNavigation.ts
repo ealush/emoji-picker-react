@@ -11,7 +11,7 @@ import {
   NullableElement,
   prevCategory,
   prevVisibleEmoji,
-  closestCategoryContent
+  closestCategoryContent,
 } from './selectors';
 
 export function focusFirstVisibleEmoji(parent: NullableElement) {
@@ -63,7 +63,7 @@ export function focusPrevVisibleEmoji(element: NullableElement) {
 
 export function focusVisibleEmojiOneRowUp(
   element: NullableElement,
-  exitUp: () => void
+  exitUp: () => void,
 ) {
   if (!element) {
     return;

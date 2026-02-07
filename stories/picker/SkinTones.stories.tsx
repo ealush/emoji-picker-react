@@ -10,8 +10,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -35,7 +35,7 @@ export const AlternativeDefaultSkinTone = (args: Props) => (
 export const SkinToneChange = (args: Props) => (
   <Template
     {...args}
-    onSkinToneChange={skinTone => {
+    onSkinToneChange={(skinTone) => {
       console.log('New skin tone set:', skinTone);
     }}
   />

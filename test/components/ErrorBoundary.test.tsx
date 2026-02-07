@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -23,7 +22,7 @@ describe('ErrorBoundary', () => {
     const { container } = render(
       <ErrorBoundary>
         <div>Content</div>
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     expect(container.textContent).toBe('Content');
@@ -34,7 +33,7 @@ describe('ErrorBoundary', () => {
     const { container } = render(
       <ErrorBoundary>
         <ThrowError />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     );
 
     expect(container.textContent).toBe('');

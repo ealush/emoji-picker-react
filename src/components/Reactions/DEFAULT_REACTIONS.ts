@@ -5,5 +5,5 @@ export const DEFAULT_REACTIONS = [
   '1f622', // 😢
   '1f64f', // 🙏
   '1f44e', // 👎
-  '1f621' // 😡
+  '1f621', // 😡
 ];

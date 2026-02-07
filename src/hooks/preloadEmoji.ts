@@ -13,7 +13,7 @@ export function preloadEmojiIfNeeded(
   topOffset: number,
   style: { top: number } | undefined,
   dimensions: Dimensions,
-  getEmojiUrl: GetEmojiUrl
+  getEmojiUrl: GetEmojiUrl,
 ): void {
   if (!emoji) {
     return;
@@ -51,7 +51,7 @@ export function preloadEmojiIfNeeded(
 export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
-  emojiStyle: EmojiStyle
+  emojiStyle: EmojiStyle,
 ): void {
   if (!emoji) {
     return;
@@ -66,7 +66,7 @@ export function preloadEmoji(
 
   emojiVariations(emoji)
     .concat(unified)
-    .forEach(variation => {
+    .forEach((variation) => {
       const emojiUrl = getEmojiUrl(variation, emojiStyle);
       preloadImage(emojiUrl);
     });

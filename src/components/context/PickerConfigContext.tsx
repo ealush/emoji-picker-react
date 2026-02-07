@@ -5,7 +5,7 @@ import {
   basePickerConfig,
   mergeConfig,
   PickerConfig,
-  PickerConfigInternal
+  PickerConfigInternal,
 } from '../../config/config';
 
 type Props = PickerConfig &
@@ -13,9 +13,8 @@ type Props = PickerConfig &
     children: React.ReactNode;
   }>;
 
-const ConfigContext = React.createContext<PickerConfigInternal>(
-  basePickerConfig()
-);
+const ConfigContext =
+  React.createContext<PickerConfigInternal>(basePickerConfig());
 
 export function PickerConfigProvider({ children, ...config }: Props) {
   const mergedConfig = useSetConfig(config);
@@ -29,7 +28,7 @@ export function PickerConfigProvider({ children, ...config }: Props) {
 
 export function useSetConfig(config: PickerConfig) {
   const [mergedConfig, setMergedConfig] = React.useState(() =>
-    mergeConfig(config)
+    mergeConfig(config),
   );
 
   React.useEffect(() => {
@@ -60,7 +59,7 @@ export function useSetConfig(config: PickerConfig) {
     config.searchDisabled,
     config.skinTonePickerLocation,
     config.allowExpandReactions,
-    config.emojiData
+    config.emojiData,
   ]);
 
   return mergedConfig;

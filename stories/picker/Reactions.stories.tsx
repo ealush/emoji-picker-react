@@ -9,8 +9,8 @@ const meta = {
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true
-  }
+    visualTest: true,
+  },
 } satisfies Meta<typeof EmojiPicker>;
 
 export default meta;
@@ -20,7 +20,7 @@ export const ReactionsMenu = (args: Props) => (
     {...args}
     reactionsDefaultOpen={true}
     emojiStyle={EmojiStyle.NATIVE}
-    onReactionClick={data => {
+    onReactionClick={(data) => {
       console.log('Clicked reaction!', data);
     }}
   />
@@ -32,7 +32,7 @@ export const ReactionsMenuNoExpand = (args: Props) => (
     reactionsDefaultOpen={true}
     allowExpandReactions={false}
     emojiStyle={EmojiStyle.NATIVE}
-    onReactionClick={data => {
+    onReactionClick={(data) => {
       console.log('Clicked reaction!', data);
     }}
   />
@@ -47,7 +47,7 @@ export const CustomReactions = (args: Props) => (
       '1f4aa',
       '1f4ab',
       // angry
-      '1f620'
+      '1f620',
     ]}
   />
 );

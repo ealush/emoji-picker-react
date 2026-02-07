@@ -3,7 +3,7 @@ export function shouldVirtualize({
   clientHeight,
   topOffset,
   style,
-  dimensions
+  dimensions,
 }: {
   scrollTop: number;
   clientHeight: number;
@@ -29,7 +29,7 @@ export function getEmojiPositionStyle(dimensions: Dimensions, index: number) {
   return dimensions
     ? {
         top: Math.floor(index / dimensions.emojisPerRow) * dimensions.emojiSize,
-        left: (index % dimensions.emojisPerRow) * dimensions.emojiSize
+        left: (index % dimensions.emojisPerRow) * dimensions.emojiSize,
       }
     : undefined;
 }

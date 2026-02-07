@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import {
   useEmojiVariationPickerState,
-  useSkinToneFanOpenState
+  useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 
 export function useCloseAllOpenToggles() {
@@ -21,7 +21,7 @@ export function useCloseAllOpenToggles() {
     variationPicker,
     skinToneFanOpen,
     setVariationPicker,
-    setSkinToneFanOpen
+    setSkinToneFanOpen,
   ]);
 
   return closeAllOpenToggles;

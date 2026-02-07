@@ -5,7 +5,7 @@ import { stylesheet } from '../../Stylesheet/stylesheet';
 
 export enum FlexDirection {
   ROW = 'FlexRow',
-  COLUMN = 'FlexColumn'
+  COLUMN = 'FlexColumn',
 }
 
 type Props = Readonly<{
@@ -19,7 +19,7 @@ export default function Flex({
   children,
   className,
   style = {},
-  direction = FlexDirection.ROW
+  direction = FlexDirection.ROW,
 }: Props) {
   return (
     <div
@@ -33,12 +33,12 @@ export default function Flex({
 
 const styles = stylesheet.create({
   flex: {
-    display: 'flex'
+    display: 'flex',
   },
   [FlexDirection.ROW]: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   [FlexDirection.COLUMN]: {
-    flexDirection: 'column'
-  }
+    flexDirection: 'column',
+  },
 });
