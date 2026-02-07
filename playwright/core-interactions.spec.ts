@@ -158,7 +158,7 @@ test('keyboard navigation moves focus across controls and emojis', async ({
 test('reactions menu emits click and stays collapsed', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu-no-expand'));
 
-  await page.getByLabel('grinning face with big eyes').click();
+  await page.getByRole('list', { name: 'Reactions' }).getByLabel('grinning face with big eyes').click();
 
   await waitForEmojisToLoad(page);
   await expect(page.locator('#storybook-root')).toHaveScreenshot(
