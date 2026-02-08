@@ -1,6 +1,41 @@
 .pickerDemoWrapper {
   max-width: var(--max-width);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tabBar {
+  display: inline-flex;
+  gap: 0.5rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.tabButton {
+  border: none;
+  background: transparent;
+  color: var(--foreground-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabButton:hover {
+  color: var(--foreground);
+}
+
+.tabButtonActive {
+  background: var(--surface-hover);
+  color: var(--foreground);
+  box-shadow: inset 0 0 0 1px var(--border);
 }
 
 .pickerDemo {
@@ -8,6 +43,13 @@
   gap: 1.5rem;
   align-items: flex-start;
   justify-content: center;
+}
+
+.controlsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: stretch;
 }
 
 @media (max-width: 900px) {
