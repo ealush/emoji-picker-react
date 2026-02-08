@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
-import dynamic from "next/dynamic";
 import styles from "@/styles/Home.module.css";
 import { Analytics } from "@vercel/analytics/react";
 import Link from "next/link";
@@ -10,18 +9,8 @@ import { Footer } from "../components/Footer";
 import { Stats, useNpmVersion } from "../components/Stats";
 import { InstallSection } from "../components/InstallSection";
 import { FloatingEmojis } from "../components/FloatingEmojis";
-
-// Dynamic imports to prevent hydration errors (emoji picker uses window object)
-const PickerDemo = dynamic(() => import("../components/PickerDemo"), {
-  ssr: false,
-});
-const ReactionsSection = dynamic(
-  () =>
-    import("../components/ReactionsSection").then(
-      (mod) => mod.ReactionsSection,
-    ),
-  { ssr: false },
-);
+import PickerDemo from "../components/PickerDemo";
+import { ReactionsSection } from "../components/ReactionsSection";
 
 const inter = Inter({ subsets: ["latin"] });
 
