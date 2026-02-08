@@ -1,23 +1,38 @@
 :root {
-  --max-width: 1100px;
-  --border-radius: 12px;
-  --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-    "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-    "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+  --max-width: 1200px;
+  --border-radius: 8px;
+  --font-sans:
+    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, sans-serif;
+  --font-mono:
+    ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+    "Roboto Mono", monospace;
 
-  --foreground-rgb: 0, 0, 0;
-  --background-color: #ff3b3070;
-  --background-backdrop: rgba(255, 255, 255, 0.5);
+  /* Light theme colors */
+  --foreground: #1a1a2e;
+  --foreground-muted: #64748b;
+  --background: #fafafa;
+  --surface: #ffffff;
+  --surface-hover: #f8fafc;
+  --border: #e2e8f0;
+  --border-subtle: #f1f5f9;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-subtle: #eff6ff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-color: #4f2032;
-    --background-backdrop: rgba(1, 1, 1, 0.5);
-
-    --callout-rgb: 20, 20, 20;
-    --callout-border-rgb: 108, 108, 108;
+    --foreground: #f8fafc;
+    --foreground-muted: #94a3b8;
+    --background: #0f0f14;
+    --surface: #1a1a24;
+    --surface-hover: #252532;
+    --border: #2d2d3a;
+    --border-subtle: #1f1f2a;
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --accent-subtle: rgba(59, 130, 246, 0.1);
   }
 }
 
@@ -33,27 +48,13 @@ body {
   overflow-x: hidden;
 }
 
-/* animate background position 100px and restart */
-
-@keyframes background {
-  to {
-    background-position-y: 100%;
-  }
-}
-
 body {
-  color: rgb(var(--foreground-rgb));
-  background-color: var(--background-color);
-  background-image: repeating-linear-gradient(
-    -45deg,
-    var(--background-backdrop),
-    var(--background-backdrop) 25px,
-    transparent 1px,
-    transparent 50%
-  );
-  background-size: 70.71px 70.71px; /* 50px * sqrt(2) to account for the 45 degree rotation */
-  background-position-y: 0;
-  animation: background 60s linear infinite;
+  font-family: var(--font-sans);
+  color: var(--foreground);
+  background: var(--background);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a {
@@ -61,8 +62,7 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+::selection {
+  background: var(--accent);
+  color: white;
 }

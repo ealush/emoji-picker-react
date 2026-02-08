@@ -16,7 +16,7 @@ const DEFAULT_SEARCH_DISABLED = false;
 const DEFAULT_EMOJI_STYLE = EmojiStyle.NATIVE;
 const DEFAULT_THEME = Theme.AUTO;
 const DEFAULT_SUGGESTED_EMOJIS_MODE = SuggestionMode.RECENT;
-const DEFAULT_HEIGHT = 450;
+const DEFAULT_HEIGHT = 440;
 const DEFAULT_WIDTH = 350;
 const DEFAULT_SKIN_TONE_PICKER_LOCATION = SkinTonePickerLocation.SEARCH;
 const DEFAULT_AUTO_FOCUS_SEARCH = false;
@@ -39,44 +39,44 @@ export default function PickerDemo() {
   const [textareaValue, setTextareaValue] = useState("");
 
   return (
-    <div>
-      <div
-        className={styles.PickerDemo}
-        style={{
-          height: `${pickerProps.height}px`,
-        }}
-      >
-        <div
-          style={{
-            minWidth: `${pickerProps.width}px`,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <Picker
-            onEmojiClick={(emoji) =>
-              setTextareaValue(
-                (tv) =>
-                  tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji),
-              )
-            }
-            key={now}
-            {...pickerProps}
-          />
-        </div>
+    <div className={styles.pickerDemoWrapper}>
+      <div className={styles.pickerDemo}>
         <PickerControls
           pickerProps={pickerProps}
           updateState={updateState}
           reset={resetState}
         />
-      </div>
-      <div>
-        <textarea
-          value={textareaValue}
-          onChange={(e) => setTextareaValue(e.target.value)}
-          placeholder="Type anything..."
-          className={styles.pickerTextarea}
-        ></textarea>
+        <div className={styles.pickerColumn}>
+          <div className={styles.pickerWrapper}>
+            <Picker
+              onEmojiClick={(emoji) =>
+                setTextareaValue(
+                  (tv) =>
+                    tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji),
+                )
+              }
+              key={now}
+              {...pickerProps}
+            />
+          </div>
+          <div className={styles.outputSection}>
+            <div className={styles.outputHeader}>
+              <span className={styles.outputLabel}>Output</span>
+              <button
+                className={styles.copyOutputButton}
+                onClick={() => navigator.clipboard.writeText(textareaValue)}
+              >
+                Copy
+              </button>
+            </div>
+            <textarea
+              value={textareaValue}
+              onChange={(e) => setTextareaValue(e.target.value)}
+              placeholder="Click any emoji to add it here..."
+              className={styles.pickerTextarea}
+            ></textarea>
+          </div>
+        </div>
       </div>
     </div>
   );

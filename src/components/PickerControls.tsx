@@ -1,5 +1,6 @@
 import styles from "@/styles/PickerControls.module.css";
 import {
+  Categories,
   EmojiStyle,
   PickerProps,
   SkinTonePickerLocation,
@@ -80,149 +81,142 @@ export function PickerControls({
   reset: () => void;
 }) {
   return (
-    <div className={styles.PickerControls}>
-      <ChkSkinTonesDisabled
-        skinTonesDisabled={pickerProps.skinTonesDisabled}
-        setSkinTonesDisabled={(skinTonesDisabled) =>
-          updateState("skinTonesDisabled", skinTonesDisabled)
-        }
-      />
-      <ChkSearchDisabled
-        searchDisabled={pickerProps.searchDisabled}
-        setSearchDisabled={(searchDisabled) =>
-          updateState("searchDisabled", searchDisabled)
-        }
-      />
-      <InputSearchPlaceholder
-        searchPlaceholder={pickerProps.searchPlaceholder}
-        setSearchPlaceholder={(searchPlaceholder) =>
-          updateState("searchPlaceholder", searchPlaceholder)
-        }
-      />
-      <SelectEmojiStyle
-        emojiStyle={pickerProps.emojiStyle}
-        setEmojiStyle={(emojiStyle) => updateState("emojiStyle", emojiStyle)}
-      />
-      <SelectTheme
-        theme={pickerProps.theme}
-        setTheme={(theme) => updateState("theme", theme)}
-      />
-      <SelectSuggestionMode
-        suggestionMode={pickerProps.suggestedEmojisMode}
-        setSuggestionMode={(suggestionMode) =>
-          updateState("suggestedEmojisMode", suggestionMode)
-        }
-      />
-      <NumberHeight
-        height={pickerProps.height}
-        setHeight={(height) => updateState("height", height)}
-      />
-      <NumberWidth
-        width={pickerProps.width}
-        setWidth={(width) => updateState("width", width)}
-      />
-      <SelectSkinTonePickerLocation
-        skinTonePickerLocation={pickerProps.skinTonePickerLocation}
-        setSkinTonePickerLocation={(skinTonePickerLocation) =>
-          updateState("skinTonePickerLocation", skinTonePickerLocation)
-        }
-      />
-      <ChkCustomEmojis
-        setCustomEmojis={(customEmojis) =>
-          updateState("customEmojis", customEmojis)
-        }
-      />
-      <ChkReactions
-        reactionsDefaultOpen={pickerProps.reactionsDefaultOpen}
-        setReactionsDefaultOpen={(reactionsDefaultOpen) =>
-          updateState("reactionsDefaultOpen", reactionsDefaultOpen)
-        }
-      />
-      <ChkAutoFocusSearch
-        autoFocusSearch={pickerProps.autoFocusSearch}
-        setAutoFocusSearch={(autoFocusSearch) =>
-          updateState("autoFocusSearch", autoFocusSearch)
-        }
-      />
-      <ChkLazyLoadEmojis
-        lazyLoadEmojis={pickerProps.lazyLoadEmojis}
-        setLazyLoadEmojis={(lazyLoadEmojis) =>
-          updateState("lazyLoadEmojis", lazyLoadEmojis)
-        }
-      />
-      <ChkAllowExpandReactions
-        allowExpandReactions={pickerProps.allowExpandReactions}
-        setAllowExpandReactions={(allowExpandReactions) =>
-          updateState("allowExpandReactions", allowExpandReactions)
-        }
-      />
-      <ChkOpen
-        open={pickerProps.open}
-        setOpen={(open) => updateState("open", open)}
-      />
-      <InputSearchClearButtonLabel
-        searchClearButtonLabel={pickerProps.searchClearButtonLabel}
-        setSearchClearButtonLabel={(searchClearButtonLabel) =>
-          updateState("searchClearButtonLabel", searchClearButtonLabel)
-        }
-      />
-      <SelectDefaultSkinTone
-        defaultSkinTone={pickerProps.defaultSkinTone}
-        setDefaultSkinTone={(defaultSkinTone) =>
-          updateState("defaultSkinTone", defaultSkinTone)
-        }
-      />
-      <SelectEmojiVersion
-        emojiVersion={pickerProps.emojiVersion}
-        setEmojiVersion={(emojiVersion) =>
-          updateState("emojiVersion", emojiVersion)
-        }
-      />
-      <InputReactions
-        reactions={pickerProps.reactions}
-        setReactions={(reactions) => updateState("reactions", reactions)}
-      />
-      <InputHiddenEmojis
-        hiddenEmojis={pickerProps.hiddenEmojis}
-        setHiddenEmojis={(hiddenEmojis) =>
-          updateState("hiddenEmojis", hiddenEmojis)
-        }
-      />
-      <SelectLanguage
-        setEmojiData={(emojiData) => updateState("emojiData", emojiData)}
-      />
-      <ChkShowPreview
-        showPreview={pickerProps.previewConfig?.showPreview}
-        setShowPreview={(showPreview) =>
-          updateState("previewConfig", {
-            ...pickerProps.previewConfig,
-            showPreview,
-          })
-        }
-      />
-      <InputDefaultEmoji
-        defaultEmoji={pickerProps.previewConfig?.defaultEmoji}
-        setDefaultEmoji={(defaultEmoji) =>
-          updateState("previewConfig", {
-            ...pickerProps.previewConfig,
-            defaultEmoji,
-          })
-        }
-      />
-      <InputDefaultCaption
-        defaultCaption={pickerProps.previewConfig?.defaultCaption}
-        setDefaultCaption={(defaultCaption) =>
-          updateState("previewConfig", {
-            ...pickerProps.previewConfig,
-            defaultCaption,
-          })
-        }
-      />
-      <div className={styles.spacer} />
-      <button onClick={reset} className={styles.ButtonReset}>
-        Reset
-      </button>
+    <div className={styles.pickerControls}>
+      <div className={styles.controlsHeader}>
+        <span className={styles.controlsTitle}>
+          <SettingsIcon />
+          Configuration
+        </span>
+        <button onClick={reset} className={styles.resetButton}>
+          <ResetIcon />
+          Reset
+        </button>
+      </div>
+
+      <div className={styles.controlsContent}>
+        {/* Appearance */}
+        <div className={styles.sectionLabel}>Appearance</div>
+        <SelectEmojiStyle
+          emojiStyle={pickerProps.emojiStyle}
+          setEmojiStyle={(emojiStyle) => updateState("emojiStyle", emojiStyle)}
+        />
+        <SelectTheme
+          theme={pickerProps.theme}
+          setTheme={(theme) => updateState("theme", theme)}
+        />
+        <NumberHeight
+          height={pickerProps.height}
+          setHeight={(height) => updateState("height", height)}
+        />
+        <NumberWidth
+          width={pickerProps.width}
+          setWidth={(width) => updateState("width", width)}
+        />
+
+        {/* Features */}
+        <div className={styles.sectionLabel}>Features</div>
+        <ChkSkinTonesDisabled
+          skinTonesDisabled={pickerProps.skinTonesDisabled}
+          setSkinTonesDisabled={(skinTonesDisabled) =>
+            updateState("skinTonesDisabled", skinTonesDisabled)
+          }
+        />
+        <ChkSearchDisabled
+          searchDisabled={pickerProps.searchDisabled}
+          setSearchDisabled={(searchDisabled) =>
+            updateState("searchDisabled", searchDisabled)
+          }
+        />
+        <ChkAutoFocusSearch
+          autoFocusSearch={pickerProps.autoFocusSearch}
+          setAutoFocusSearch={(autoFocusSearch) =>
+            updateState("autoFocusSearch", autoFocusSearch)
+          }
+        />
+        <ChkLazyLoadEmojis
+          lazyLoadEmojis={pickerProps.lazyLoadEmojis}
+          setLazyLoadEmojis={(lazyLoadEmojis) =>
+            updateState("lazyLoadEmojis", lazyLoadEmojis)
+          }
+        />
+        <ChkShowPreview
+          showPreview={pickerProps.previewConfig?.showPreview}
+          setShowPreview={(showPreview) =>
+            updateState("previewConfig", {
+              ...pickerProps.previewConfig,
+              showPreview,
+            })
+          }
+        />
+        <ChkCustomEmojis
+          setCustomEmojis={(customEmojis) =>
+            updateState("customEmojis", customEmojis)
+          }
+        />
+
+        {/* Advanced */}
+        <div className={styles.sectionLabel}>Advanced</div>
+        <SelectLanguage
+          setEmojiData={(emojiData) => updateState("emojiData", emojiData)}
+        />
+        <ChkCategoryIcons
+          setCategoryIcons={(categoryIcons) =>
+            updateState("categoryIcons", categoryIcons)
+          }
+        />
+        <SelectSuggestionMode
+          suggestionMode={pickerProps.suggestedEmojisMode}
+          setSuggestionMode={(suggestionMode) =>
+            updateState("suggestedEmojisMode", suggestionMode)
+          }
+        />
+        <SelectSkinTonePickerLocation
+          skinTonePickerLocation={pickerProps.skinTonePickerLocation}
+          setSkinTonePickerLocation={(skinTonePickerLocation) =>
+            updateState("skinTonePickerLocation", skinTonePickerLocation)
+          }
+        />
+        <SelectDefaultSkinTone
+          defaultSkinTone={pickerProps.defaultSkinTone}
+          setDefaultSkinTone={(defaultSkinTone) =>
+            updateState("defaultSkinTone", defaultSkinTone)
+          }
+        />
+      </div>
     </div>
+  );
+}
+
+function SettingsIcon() {
+  return (
+    <svg
+      className={styles.controlsIcon}
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+    </svg>
+  );
+}
+
+function ResetIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
   );
 }
 
@@ -234,7 +228,7 @@ function Label({
   text: string;
 }) {
   return (
-    <label className={styles.Label}>
+    <label className={styles.label}>
       {text}
       {children}
     </label>
@@ -249,11 +243,11 @@ function ChkSkinTonesDisabled({
   setSkinTonesDisabled: (skinTonesDisabled: boolean) => void;
 }) {
   return (
-    <Label text="Skin Tones Disabled">
+    <Label text="Skin Tones">
       <input
         type="checkbox"
-        checked={skinTonesDisabled}
-        onChange={(e) => setSkinTonesDisabled(e.target.checked)}
+        checked={!skinTonesDisabled}
+        onChange={(e) => setSkinTonesDisabled(!e.target.checked)}
       />
     </Label>
   );
@@ -267,11 +261,11 @@ function ChkSearchDisabled({
   setSearchDisabled: (searchDisabled: boolean) => void;
 }) {
   return (
-    <Label text="Search Disabled">
+    <Label text="Search">
       <input
         type="checkbox"
-        checked={searchDisabled}
-        onChange={(e) => setSearchDisabled(e.target.checked)}
+        checked={!searchDisabled}
+        onChange={(e) => setSearchDisabled(!e.target.checked)}
       />
     </Label>
   );
@@ -305,19 +299,37 @@ function ChkCustomEmojis({
   );
 }
 
-function InputSearchPlaceholder({
-  searchPlaceholder,
-  setSearchPlaceholder,
+// Custom emoji-based category icons
+const customCategoryIcons = {
+  [Categories.SUGGESTED]: <span style={{ fontSize: "16px" }}>🕐</span>,
+  [Categories.SMILEYS_PEOPLE]: <span style={{ fontSize: "16px" }}>😊</span>,
+  [Categories.ANIMALS_NATURE]: <span style={{ fontSize: "16px" }}>🐻</span>,
+  [Categories.FOOD_DRINK]: <span style={{ fontSize: "16px" }}>🍔</span>,
+  [Categories.TRAVEL_PLACES]: <span style={{ fontSize: "16px" }}>✈️</span>,
+  [Categories.ACTIVITIES]: <span style={{ fontSize: "16px" }}>⚽</span>,
+  [Categories.OBJECTS]: <span style={{ fontSize: "16px" }}>💡</span>,
+  [Categories.SYMBOLS]: <span style={{ fontSize: "16px" }}>💕</span>,
+  [Categories.FLAGS]: <span style={{ fontSize: "16px" }}>🏳️</span>,
+};
+
+function ChkCategoryIcons({
+  setCategoryIcons,
 }: {
-  searchPlaceholder?: string;
-  setSearchPlaceholder: (searchPlaceholder: string) => void;
+  setCategoryIcons: (categoryIcons: Record<string, React.ReactNode>) => void;
 }) {
+  const [useCustomIcons, setUseCustomIcons] = React.useState(false);
+
+  React.useEffect(() => {
+    // Pass empty object instead of undefined to avoid library crash
+    setCategoryIcons(useCustomIcons ? customCategoryIcons : {});
+  }, [useCustomIcons]);
+
   return (
-    <Label text="Search Placeholder">
+    <Label text="Custom Category Icons">
       <input
-        type="text"
-        value={searchPlaceholder}
-        onChange={(e) => setSearchPlaceholder(e.target.value)}
+        type="checkbox"
+        checked={useCustomIcons}
+        onChange={(e) => setUseCustomIcons(e.target.checked)}
       />
     </Label>
   );
@@ -372,7 +384,7 @@ function SelectSuggestionMode({
   setSuggestionMode: (suggestionMode: SuggestionMode) => void;
 }) {
   return (
-    <Label text="Suggestion Mode">
+    <Label text="Suggestions">
       <select
         value={suggestionMode}
         onChange={(e) => setSuggestionMode(e.target.value as SuggestionMode)}
@@ -392,11 +404,11 @@ function NumberHeight({
   setHeight: (height: number) => void;
 }) {
   return (
-    <Label text="Height">
+    <Label text="Height (px)">
       <input
         type="number"
-        min={100}
-        max={500}
+        min={200}
+        max={600}
         value={height}
         onChange={(e) => setHeight(+e.target.value)}
       />
@@ -412,10 +424,10 @@ function NumberWidth({
   setWidth: (width: number) => void;
 }) {
   return (
-    <Label text="Width">
+    <Label text="Width (px)">
       <input
         type="number"
-        min={100}
+        min={200}
         max={500}
         value={width}
         onChange={(e) => setWidth(+e.target.value)}
@@ -434,7 +446,7 @@ function SelectSkinTonePickerLocation({
   ) => void;
 }) {
   return (
-    <Label text="Skin Tone Picker Location">
+    <Label text="Skin Tone Location">
       <select
         value={skinTonePickerLocation}
         onChange={(e) =>
@@ -456,7 +468,7 @@ function ChkReactions({
   setReactionsDefaultOpen: (reactionsDefaultOpen: boolean) => void;
 }) {
   return (
-    <Label text="Reactions Default Open">
+    <Label text="Reactions Mode">
       <input
         type="checkbox"
         checked={reactionsDefaultOpen}
@@ -502,60 +514,6 @@ function ChkLazyLoadEmojis({
   );
 }
 
-function ChkAllowExpandReactions({
-  allowExpandReactions,
-  setAllowExpandReactions,
-}: {
-  allowExpandReactions?: boolean;
-  setAllowExpandReactions: (allowExpandReactions: boolean) => void;
-}) {
-  return (
-    <Label text="Allow Expand Reactions">
-      <input
-        type="checkbox"
-        checked={allowExpandReactions}
-        onChange={(e) => setAllowExpandReactions(e.target.checked)}
-      />
-    </Label>
-  );
-}
-
-function ChkOpen({
-  open,
-  setOpen,
-}: {
-  open?: boolean;
-  setOpen: (open: boolean) => void;
-}) {
-  return (
-    <Label text="Open">
-      <input
-        type="checkbox"
-        checked={open}
-        onChange={(e) => setOpen(e.target.checked)}
-      />
-    </Label>
-  );
-}
-
-function InputSearchClearButtonLabel({
-  searchClearButtonLabel,
-  setSearchClearButtonLabel,
-}: {
-  searchClearButtonLabel?: string;
-  setSearchClearButtonLabel: (searchClearButtonLabel: string) => void;
-}) {
-  return (
-    <Label text="Search Clear Button Label">
-      <input
-        type="text"
-        value={searchClearButtonLabel}
-        onChange={(e) => setSearchClearButtonLabel(e.target.value)}
-      />
-    </Label>
-  );
-}
-
 function SelectDefaultSkinTone({
   defaultSkinTone,
   setDefaultSkinTone,
@@ -576,92 +534,6 @@ function SelectDefaultSkinTone({
         <option value={SkinTones.MEDIUM_DARK}>Medium Dark</option>
         <option value={SkinTones.DARK}>Dark</option>
       </select>
-    </Label>
-  );
-}
-
-function SelectEmojiVersion({
-  emojiVersion,
-  setEmojiVersion,
-}: {
-  emojiVersion?: string | null;
-  setEmojiVersion: (emojiVersion: string | null) => void;
-}) {
-  return (
-    <Label text="Emoji Version">
-      <select
-        value={emojiVersion || ""}
-        onChange={(e) => setEmojiVersion(e.target.value || null)}
-      >
-        <option value="">All</option>
-        <option value="0.6">0.6</option>
-        <option value="1.0">1.0</option>
-        <option value="2.0">2.0</option>
-        <option value="3.0">3.0</option>
-        <option value="4.0">4.0</option>
-        <option value="5.0">5.0</option>
-        <option value="11.0">11.0</option>
-        <option value="12.0">12.0</option>
-        <option value="12.1">12.1</option>
-        <option value="13.0">13.0</option>
-        <option value="13.1">13.1</option>
-        <option value="14.0">14.0</option>
-        <option value="15.0">15.0</option>
-      </select>
-    </Label>
-  );
-}
-
-function InputReactions({
-  reactions,
-  setReactions,
-}: {
-  reactions?: string[];
-  setReactions: (reactions: string[]) => void;
-}) {
-  const [value, setValue] = React.useState(reactions?.join(",") || "");
-
-  React.useEffect(() => {
-    setValue(reactions?.join(",") || "");
-  }, [reactions]);
-
-  return (
-    <Label text="Reactions (comma separated)">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          setReactions(e.target.value.split(","));
-        }}
-      />
-    </Label>
-  );
-}
-
-function InputHiddenEmojis({
-  hiddenEmojis,
-  setHiddenEmojis,
-}: {
-  hiddenEmojis?: string[];
-  setHiddenEmojis: (hiddenEmojis: string[]) => void;
-}) {
-  const [value, setValue] = React.useState(hiddenEmojis?.join(",") || "");
-
-  React.useEffect(() => {
-    setValue(hiddenEmojis?.join(",") || "");
-  }, [hiddenEmojis]);
-
-  return (
-    <Label text="Hidden Emojis (comma separated)">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          setHiddenEmojis(e.target.value.split(","));
-        }}
-      />
     </Label>
   );
 }
@@ -703,42 +575,6 @@ function ChkShowPreview({
         type="checkbox"
         checked={showPreview ?? true}
         onChange={(e) => setShowPreview(e.target.checked)}
-      />
-    </Label>
-  );
-}
-
-function InputDefaultEmoji({
-  defaultEmoji,
-  setDefaultEmoji,
-}: {
-  defaultEmoji?: string;
-  setDefaultEmoji: (defaultEmoji: string) => void;
-}) {
-  return (
-    <Label text="Preview Default Emoji">
-      <input
-        type="text"
-        value={defaultEmoji}
-        onChange={(e) => setDefaultEmoji(e.target.value)}
-      />
-    </Label>
-  );
-}
-
-function InputDefaultCaption({
-  defaultCaption,
-  setDefaultCaption,
-}: {
-  defaultCaption?: string;
-  setDefaultCaption: (defaultCaption: string) => void;
-}) {
-  return (
-    <Label text="Preview Default Caption">
-      <input
-        type="text"
-        value={defaultCaption}
-        onChange={(e) => setDefaultCaption(e.target.value)}
       />
     </Label>
   );

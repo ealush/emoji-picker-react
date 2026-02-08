@@ -1,0 +1,74 @@
+# Nightly workflow to update emoji-picker-react to latest version and redeploy
+name: Nightly Update
+
+on:
+  schedule:
+    # Run at 3:00 AM UTC every day
+    - cron: "0 3 * * *"
+  # Allow manual trigger
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "nightly-update"
+  cancel-in-progress: true
+
+jobs:
+  update-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Get current version
+        id: current-version
+        run: |
+          CURRENT=$(node -p "require('./package.json').dependencies['emoji-picker-react']" | tr -d '^')
+          echo "version=$CURRENT" >> $GITHUB_OUTPUT
+
+      - name: Check for updates
+        id: check-updates
+        run: |
+          LATEST=$(npm view emoji-picker-react version)
+          CURRENT="${{ steps.current-version.outputs.version }}"
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+          echo "Current version: $CURRENT"
+          echo "Latest version: $LATEST"
+          if [ "$LATEST" != "$CURRENT" ]; then
+            echo "needs_update=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update to latest version
+        if: steps.check-updates.outputs.needs_update == 'true'
+        run: |
+          npm install emoji-picker-react@latest --save-exact
+          echo "Updated to version ${{ steps.check-updates.outputs.latest }}"
+
+      - name: Commit and push changes
+        if: steps.check-updates.outputs.needs_update == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add package.json package-lock.json
+          git commit -m "chore: update emoji-picker-react to v${{ steps.check-updates.outputs.latest }}"
+          git push
+
+      - name: Trigger deploy workflow
+        if: steps.check-updates.outputs.needs_update == 'true'
+        run: |
+          echo "Changes pushed - deployment will be triggered by the push event"
