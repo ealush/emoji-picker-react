@@ -1,7 +1,7 @@
 "use client";
 
 import Picker, { Theme } from "emoji-picker-react";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styles from "@/styles/PickerCustomizer.module.css";
 
 const variableSections = [
@@ -235,8 +235,23 @@ const colorValueRegex = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 export function PickerCustomizer() {
   const [variableValues, setVariableValues] = useState<VariableStateMap>(
-    initialState,
+    () => ({ ...initialState }),
   );
+  const [pickerKey, setPickerKey] = useState(Date.now());
+
+  const resetVariables = () => {
+    const resetState = variableSections
+      .flatMap((section) => section.items)
+      .reduce<VariableStateMap>((acc, item) => {
+        acc[item.variable] = {
+          value: item.defaultValue,
+          enabled: false,
+        };
+        return acc;
+      }, {});
+    setVariableValues(resetState);
+    setPickerKey(Date.now());
+  };
 
   const enabledEntries = useMemo(() => {
     return Object.entries(variableValues)
@@ -245,10 +260,13 @@ export function PickerCustomizer() {
   }, [variableValues]);
 
   const pickerStyle = useMemo(() => {
-    return enabledEntries.reduce<Record<string, string>>((acc, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {});
+    return enabledEntries.reduce<Record<string, string>>(
+      (acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      },
+      {},
+    );
   }, [enabledEntries]);
 
   const cssSnippet = useMemo(() => {
@@ -266,8 +284,15 @@ export function PickerCustomizer() {
     return ["aside.EmojiPickerReact {", ...lines, "}", ""].join("\n");
   }, [enabledEntries]);
 
+  // Force picker re-render when variables change
+  useEffect(() => {
+    setPickerKey(Date.now());
+  }, [variableValues]);
+
   return (
     <div className={styles.customizer}>
+      {/* Inject CSS via style tag for live preview */}
+      <style>{cssOutputString}</style>
       <div className={styles.customizerHeader}>
         <div>
           <div className={styles.customizerTitle}>
@@ -277,6 +302,14 @@ export function PickerCustomizer() {
             Toggle the variables you want to override.
           </div>
         </div>
+        <button
+          type="button"
+          className={styles.resetButton}
+          onClick={resetVariables}
+        >
+          <ResetIcon />
+          Reset
+        </button>
       </div>
       <div className={styles.customizerBody}>
         <div className={styles.customizerLayout}>
@@ -322,8 +355,9 @@ export function PickerCustomizer() {
 
           <div className={styles.previewSection}>
             <div className={styles.previewHeader}>Live preview</div>
-            <div className={styles.previewWrapper} style={pickerStyle}>
+            <div className={styles.previewWrapper}>
               <Picker
+                key={pickerKey}
                 theme={Theme.AUTO}
                 height={360}
                 width={320}
@@ -354,12 +388,13 @@ export function PickerCustomizer() {
                   </span>
                   {cssSnippet.length === 0 ? (
                     <span className={styles.codeComment}>
-                      {"\n"}  {"/* Toggle variables to output CSS */"}
+                      {"\n"} {"/* Toggle variables to output CSS */"}
                     </span>
                   ) : (
                     cssSnippet.map(([variable, value]) => (
                       <span className={styles.codeLine} key={variable}>
-                        {"\n"}  <span className={styles.codeVariable}>{variable}</span>
+                        {"\n"}{" "}
+                        <span className={styles.codeVariable}>{variable}</span>
                         {": "}
                         <span className={styles.codeValue}>{value}</span>;
                       </span>
@@ -374,6 +409,22 @@ export function PickerCustomizer() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ResetIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M3 3v5h5" />
+    </svg>
   );
 }
 

@@ -16,6 +16,9 @@
 .customizerHeader {
   padding: 1.25rem 1.5rem 0.5rem;
   border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .customizerTitle {
@@ -29,6 +32,27 @@
   font-weight: 500;
   color: var(--foreground-muted);
   margin-top: 0.25rem;
+}
+
+.resetButton {
+  font-size: 0.6875rem;
+  color: var(--foreground-muted);
+  background: var(--background);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  padding: 0.375rem 0.625rem;
+  border-radius: 5px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.resetButton:hover {
+  color: var(--foreground);
+  border-color: var(--foreground-muted);
 }
 
 .customizerBody {
@@ -164,7 +188,9 @@
   background: var(--background);
   color: var(--foreground);
   font-size: 0.75rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .variableControls input[type="color"] {
