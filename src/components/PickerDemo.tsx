@@ -9,6 +9,7 @@ import Picker, {
 import { EmojiStyle, PickerProps } from "emoji-picker-react";
 import React, { useState } from "react";
 import { PickerControls } from "./PickerControls";
+import { PickerCustomizer } from "./PickerCustomizer";
 import styles from "@/styles/PickerDemo.module.css";
 
 const DEFAULT_SKIN_TONES_DISABLED = false;
@@ -37,47 +38,77 @@ export default function PickerDemo() {
   const [pickerProps, setPickerProps] = useState<PickerProps>(defaultProps);
   const [now, setNow] = useState(Date.now());
   const [textareaValue, setTextareaValue] = useState("");
+  const [activeTab, setActiveTab] = useState<"playground" | "customize">(
+    "playground",
+  );
 
   return (
     <div className={styles.pickerDemoWrapper}>
-      <div className={styles.pickerDemo}>
-        <PickerControls
-          pickerProps={pickerProps}
-          updateState={updateState}
-          reset={resetState}
-        />
-        <div className={styles.pickerColumn}>
-          <div className={styles.pickerWrapper}>
-            <Picker
-              onEmojiClick={(emoji) =>
-                setTextareaValue(
-                  (tv) =>
-                    tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji),
-                )
-              }
-              key={now}
-              {...pickerProps}
+      <div className={styles.tabBar}>
+        <button
+          className={`${styles.tabButton} ${
+            activeTab === "playground" ? styles.tabButtonActive : ""
+          }`}
+          type="button"
+          onClick={() => setActiveTab("playground")}
+        >
+          Playground
+        </button>
+        <button
+          className={`${styles.tabButton} ${
+            activeTab === "customize" ? styles.tabButtonActive : ""
+          }`}
+          type="button"
+          onClick={() => setActiveTab("customize")}
+        >
+          Customize
+        </button>
+      </div>
+
+      {activeTab === "playground" ? (
+        <div className={styles.pickerDemo}>
+          <div className={styles.controlsColumn}>
+            <PickerControls
+              pickerProps={pickerProps}
+              updateState={updateState}
+              reset={resetState}
             />
           </div>
-          <div className={styles.outputSection}>
-            <div className={styles.outputHeader}>
-              <span className={styles.outputLabel}>Output</span>
-              <button
-                className={styles.copyOutputButton}
-                onClick={() => navigator.clipboard.writeText(textareaValue)}
-              >
-                Copy
-              </button>
+          <div className={styles.pickerColumn}>
+            <div className={styles.pickerWrapper}>
+              <Picker
+                onEmojiClick={(emoji) =>
+                  setTextareaValue(
+                    (tv) =>
+                      tv + (emoji?.isCustom ? `:${emoji.emoji}:` : emoji.emoji),
+                  )
+                }
+                key={now}
+                {...pickerProps}
+              />
             </div>
-            <textarea
-              value={textareaValue}
-              onChange={(e) => setTextareaValue(e.target.value)}
-              placeholder="Click any emoji to add it here..."
-              className={styles.pickerTextarea}
-            ></textarea>
+            <div className={styles.outputSection}>
+              <div className={styles.outputHeader}>
+                <span className={styles.outputLabel}>Output</span>
+                <button
+                  className={styles.copyOutputButton}
+                  onClick={() => navigator.clipboard.writeText(textareaValue)}
+                >
+                  Copy
+                </button>
+              </div>
+              <textarea
+                value={textareaValue}
+                onChange={(e) => setTextareaValue(e.target.value)}
+                placeholder="Click any emoji to add it here..."
+                className={styles.pickerTextarea}
+              ></textarea>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <PickerCustomizer />
+      )}
     </div>
   );
 

@@ -1,0 +1,273 @@
+.customizer {
+  width: 100%;
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 900px) {
+  .customizer {
+    width: 100%;
+  }
+}
+
+.customizerHeader {
+  padding: 1.25rem 1.5rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.customizerTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.customizerSummaryHint {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--foreground-muted);
+  margin-top: 0.25rem;
+}
+
+.customizerBody {
+  padding: 1.25rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.customizerLayout {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .customizerLayout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.customizerForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--background);
+  overflow: hidden;
+}
+
+.sectionSummary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--surface);
+  position: relative;
+}
+
+.sectionSummary::-webkit-details-marker {
+  display: none;
+}
+
+.sectionSummary::after {
+  content: "▸";
+  color: var(--foreground-muted);
+  font-size: 0.8rem;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+}
+
+.section[open] .sectionSummary::after {
+  transform: rotate(90deg);
+}
+
+.sectionTitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+  margin: 0;
+}
+
+.sectionHint {
+  font-size: 0.65rem;
+  color: var(--foreground-muted);
+}
+
+.sectionGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem 0.9rem;
+}
+
+.variableRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.variableRow:last-child {
+  border-bottom: none;
+}
+
+.variableLabel {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--foreground);
+}
+
+.variableLabel input[type="checkbox"] {
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.variableName {
+  font-weight: 500;
+}
+
+.variableToken {
+  font-size: 0.7rem;
+  color: var(--foreground-muted);
+  grid-column: 2;
+}
+
+.variableControls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.variableControls input[type="text"] {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 0.75rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.variableControls input[type="color"] {
+  width: 36px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.variableControls input[type="text"]:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+  outline: none;
+}
+
+.variableControls input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.previewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.previewHeader {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.previewWrapper {
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--background);
+}
+
+.outputSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.outputHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.copyButton {
+  font-size: 0.7rem;
+  color: var(--foreground-muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.copyButton:hover {
+  color: var(--foreground);
+  border-color: var(--foreground-muted);
+}
+
+.outputCode {
+  margin: 0;
+  background: var(--surface-hover);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--foreground);
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+}
+
+.codeLine {
+  display: block;
+}
+
+.codeBrace {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.codeVariable {
+  color: #6aa8de;
+}
+
+.codeValue {
+  color: #e56d90;
+}
+
+.codeComment {
+  color: var(--foreground-muted);
+}
