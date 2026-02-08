@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Head from "next/head";
 import { Inter } from "next/font/google";
 import dynamic from "next/dynamic";
@@ -26,6 +27,13 @@ const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const { version, publishedAt } = useNpmVersion();
+
+  // Scroll to top on initial load (prevents focus-related scroll jump)
+  useEffect(() => {
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   return (
     <>

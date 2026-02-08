@@ -42,6 +42,7 @@ export function ReactionsSection() {
             <Picker
               key={key}
               reactionsDefaultOpen={true}
+              autoFocusSearch={false}
               onEmojiClick={(emoji) => setSelectedEmoji(emoji.emoji)}
               theme={Theme.LIGHT}
             />
