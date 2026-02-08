@@ -35,7 +35,7 @@ async function fetchNpmData(): Promise<{ downloads: string; version: string }> {
       version: registryData.version || "4.x",
     };
   } catch {
-    return { downloads: "1M+", version: "4.x" };
+    return { downloads: "2M+", version: "4.x" };
   }
 }
 
@@ -56,16 +56,37 @@ async function fetchGitHubStars(): Promise<string> {
 }
 
 export function useNpmVersion() {
-  const [version, setVersion] = useState<string>("—");
+  const [data, setData] = useState<{ version: string; publishedAt: string }>({
+    version: "—",
+    publishedAt: "",
+  });
 
   useEffect(() => {
-    fetch("https://registry.npmjs.org/emoji-picker-react/latest")
+    fetch("https://registry.npmjs.org/emoji-picker-react")
       .then((res) => res.json())
-      .then((data) => setVersion(data.version || "4.x"))
-      .catch(() => setVersion("4.x"));
+      .then((pkg) => {
+        const latestVersion = pkg["dist-tags"]?.latest || "4.x";
+        const publishDate = pkg.time?.[latestVersion];
+
+        let formattedDate = "";
+        if (publishDate) {
+          const date = new Date(publishDate);
+          formattedDate = date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
+        }
+
+        setData({
+          version: latestVersion,
+          publishedAt: formattedDate ? `Updated ${formattedDate}` : "",
+        });
+      })
+      .catch(() => setData({ version: "4.x", publishedAt: "" }));
   }, []);
 
-  return version;
+  return data;
 }
 
 export function Stats({ className }: { className?: string }) {

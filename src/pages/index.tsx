@@ -25,7 +25,7 @@ const ReactionsSection = dynamic(
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const version = useNpmVersion();
+  const { version, publishedAt } = useNpmVersion();
 
   return (
     <>
@@ -54,8 +54,12 @@ export default function Home() {
           <div className={styles.heroContent}>
             <div className={styles.badge}>
               <span className={styles.badgeVersion}>v{version}</span>
-              <span>—</span>
-              <span>Fully Customizable</span>
+              {publishedAt && (
+                <>
+                  <span>—</span>
+                  <span>{publishedAt}</span>
+                </>
+              )}
             </div>
 
             <h1 className={styles.heroTitle}>
