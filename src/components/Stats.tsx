@@ -1,59 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-interface StatsData {
-  downloads: string;
-  stars: string;
-  version: string;
-}
-
-async function fetchNpmData(): Promise<{ downloads: string; version: string }> {
-  try {
-    const [downloadsRes, registryRes] = await Promise.all([
-      fetch(
-        "https://api.npmjs.org/downloads/point/last-month/emoji-picker-react",
-      ),
-      fetch("https://registry.npmjs.org/emoji-picker-react/latest"),
-    ]);
-
-    const downloadsData = await downloadsRes.json();
-    const registryData = await registryRes.json();
-
-    const downloads = downloadsData.downloads;
-    let formattedDownloads: string;
-    if (downloads >= 1000000) {
-      formattedDownloads = `${(downloads / 1000000).toFixed(1)}M`;
-    } else if (downloads >= 1000) {
-      formattedDownloads = `${Math.round(downloads / 1000)}k`;
-    } else {
-      formattedDownloads = downloads.toString();
-    }
-
-    return {
-      downloads: formattedDownloads,
-      version: registryData.version || "4.x",
-    };
-  } catch {
-    return { downloads: "2M+", version: "4.x" };
-  }
-}
-
-async function fetchGitHubStars(): Promise<string> {
-  try {
-    const res = await fetch(
-      "https://api.github.com/repos/ealush/emoji-picker-react",
-    );
-    const data = await res.json();
-    const stars = data.stargazers_count;
-    if (stars >= 1000) {
-      return `${(stars / 1000).toFixed(1)}k`;
-    }
-    return stars.toString();
-  } catch {
-    return "2k+";
-  }
-}
+import {
+  DEFAULT_STATS,
+  fetchGitHubStars,
+  fetchNpmData,
+  type StatsData,
+} from "@/lib/stats";
 
 export function useNpmVersion() {
   const [data, setData] = useState<{ version: string; publishedAt: string }>({
@@ -89,18 +42,22 @@ export function useNpmVersion() {
   return data;
 }
 
-export function Stats({ className }: { className?: string }) {
-  const [stats, setStats] = useState<StatsData>({
-    downloads: "—",
-    stars: "—",
-    version: "—",
-  });
+export function Stats({
+  className,
+  initialStats,
+}: {
+  className?: string;
+  initialStats?: StatsData;
+}) {
+  const [stats, setStats] = useState<StatsData>(
+    initialStats ?? DEFAULT_STATS,
+  );
 
   useEffect(() => {
     Promise.all([fetchNpmData(), fetchGitHubStars()]).then(
       ([npmData, stars]) => {
         setStats({
-          downloads: npmData.downloads + "/mo",
+          downloads: `${npmData.downloads}/mo`,
           stars,
           version: npmData.version,
         });
