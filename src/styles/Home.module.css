@@ -106,6 +106,39 @@
   overflow: hidden;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: -30% -15% auto;
+  height: 70%;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(244, 114, 182, 0.35),
+      rgba(244, 114, 182, 0) 55%
+    ),
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(96, 165, 250, 0.28),
+      rgba(96, 165, 250, 0) 60%
+    ),
+    radial-gradient(
+      circle at 50% 60%,
+      rgba(192, 132, 252, 0.25),
+      rgba(192, 132, 252, 0) 65%
+    );
+  filter: blur(70px);
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero::before {
+    opacity: 0.35;
+  }
+}
+
 /* Floating Emojis */
 .floatingEmojis {
   position: absolute;
@@ -176,6 +209,7 @@
   letter-spacing: -0.025em;
   line-height: 1.1;
   margin-bottom: 1rem;
+  color: var(--foreground);
 }
 
 .heroSubtitle {
@@ -273,6 +307,22 @@
   font-weight: 600;
   text-align: center;
   margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .heroTitle,
+  .sectionTitle {
+    background-image: linear-gradient(
+      90deg,
+      #f472b6 0%,
+      #c084fc 45%,
+      #60a5fa 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 }
 
 .sectionSubtitle {

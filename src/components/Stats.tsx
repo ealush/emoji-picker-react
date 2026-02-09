@@ -8,6 +8,12 @@ interface StatsData {
   version: string;
 }
 
+const DEFAULT_STATS: StatsData = {
+  downloads: "2.2M/mo",
+  stars: "1.4k",
+  version: "4.x",
+};
+
 async function fetchNpmData(): Promise<{ downloads: string; version: string }> {
   try {
     const [downloadsRes, registryRes] = await Promise.all([
@@ -35,7 +41,7 @@ async function fetchNpmData(): Promise<{ downloads: string; version: string }> {
       version: registryData.version || "4.x",
     };
   } catch {
-    return { downloads: "2M+", version: "4.x" };
+    return { downloads: "2.2M", version: DEFAULT_STATS.version };
   }
 }
 
@@ -51,7 +57,7 @@ async function fetchGitHubStars(): Promise<string> {
     }
     return stars.toString();
   } catch {
-    return "2k+";
+    return DEFAULT_STATS.stars;
   }
 }
 
@@ -90,17 +96,13 @@ export function useNpmVersion() {
 }
 
 export function Stats({ className }: { className?: string }) {
-  const [stats, setStats] = useState<StatsData>({
-    downloads: "—",
-    stars: "—",
-    version: "—",
-  });
+  const [stats, setStats] = useState<StatsData>(DEFAULT_STATS);
 
   useEffect(() => {
     Promise.all([fetchNpmData(), fetchGitHubStars()]).then(
       ([npmData, stars]) => {
         setStats({
-          downloads: npmData.downloads + "/mo",
+          downloads: `${npmData.downloads}/mo`,
           stars,
           version: npmData.version,
         });
