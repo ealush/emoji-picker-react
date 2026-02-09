@@ -7,6 +7,12 @@ import Link from "next/link";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Stats, useNpmVersion } from "../components/Stats";
+import {
+  DEFAULT_STATS,
+  fetchGitHubStars,
+  fetchNpmData,
+  type StatsData,
+} from "@/lib/stats";
 import { InstallSection } from "../components/InstallSection";
 import { FloatingEmojis } from "../components/FloatingEmojis";
 import PickerDemo from "../components/PickerDemo";
@@ -14,7 +20,11 @@ import { ReactionsSection } from "../components/ReactionsSection";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home() {
+interface HomeProps {
+  initialStats: StatsData;
+}
+
+export default function Home({ initialStats }: HomeProps) {
   const { version, publishedAt } = useNpmVersion();
 
   // Scroll to top on initial load (prevents focus-related scroll jump)
@@ -83,7 +93,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <Stats className={styles.stats} />
+            <Stats className={styles.stats} initialStats={initialStats} />
           </div>
         </section>
 
@@ -108,4 +118,31 @@ export default function Home() {
       <Analytics />
     </>
   );
+}
+
+export async function getStaticProps() {
+  try {
+    const [npmData, stars] = await Promise.all([
+      fetchNpmData(),
+      fetchGitHubStars(),
+    ]);
+
+    return {
+      props: {
+        initialStats: {
+          downloads: `${npmData.downloads}/mo`,
+          stars,
+          version: npmData.version,
+        },
+      },
+      revalidate: 3600,
+    };
+  } catch {
+    return {
+      props: {
+        initialStats: DEFAULT_STATS,
+      },
+      revalidate: 3600,
+    };
+  }
 }
