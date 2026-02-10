@@ -1,4 +1,3 @@
-import { GTAG } from "@/components/GTag";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
@@ -8,7 +7,6 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
-        <GTAG />
       </body>
     </Html>
   );
