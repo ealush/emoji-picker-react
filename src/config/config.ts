@@ -149,7 +149,7 @@ export type PickerConfigInternal = {
   hiddenEmojis: string[];
   emojiData?: EmojiData;
   categoryIcons: CategoryIcons;
-  nonce?: string,
+  nonce?: string;
 };
 
 export type PreviewConfig = {
