@@ -20,9 +20,14 @@ export const commonStyles = stylesheet.create({
   },
 });
 
-export const PickerStyleTag = React.memo(function PickerStyleTag() {
+export const PickerStyleTag = React.memo(function PickerStyleTag({
+  nonce,
+}: {
+  nonce?: string;
+}) {
   return (
     <style
+      nonce={nonce}
       suppressHydrationWarning
       dangerouslySetInnerHTML={{ __html: stylesheet.getStyle() }}
     />

@@ -115,6 +115,7 @@ export function basePickerConfig(): PickerConfigInternal {
     hiddenEmojis: [],
     emojiData: undefined,
     categoryIcons: {},
+    nonce: undefined,
   };
 }
 
@@ -148,6 +149,7 @@ export type PickerConfigInternal = {
   hiddenEmojis: string[];
   emojiData?: EmojiData;
   categoryIcons: CategoryIcons;
+  nonce?: string;
 };
 
 export type PreviewConfig = {

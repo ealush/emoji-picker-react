@@ -18,7 +18,7 @@ import { PickerProps } from './index';
 function EmojiPicker(props: PickerProps) {
   return (
     <ElementRefContextProvider>
-      <PickerStyleTag />
+      <PickerStyleTag nonce={props.nonce} />
       <PickerConfigProvider {...props}>
         <PickerDataProvider>
           <ContentControl />
