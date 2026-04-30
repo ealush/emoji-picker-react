@@ -105,6 +105,7 @@ The following is a complete list of all props accepted by `EmojiPicker`.
 | `previewConfig` | `PreviewConfig`                                  | `{ showPreview: true }` | Configuration for the bottom preview bar.                                |
 | `getEmojiUrl`   | `(unified: string, style: EmojiStyle) => string` | -                       | Function to override the default CDN URL for emoji images.               |
 | `categoryIcons` | `CategoryIcons`                                  | `{}`                    | Map `Categories` enum values to custom React nodes for navigation icons. |
+| `nonce`         | `string`                                         | `undefined`             | Content Security Policy (CSP) nonce for the inline style tag.            |
 
 ### ❤️ Reactions Picker Mode
 
@@ -139,6 +140,14 @@ When passing `customEmojis`, use this format:
   imgUrl: string;  // Image source
 }
 
+```
+
+### Content Security Policy (CSP)
+
+If your site has a CSP that blocks inline styles, you can pass a `nonce` to the `EmojiPicker` component. This nonce will be applied to the inline `<style>` tag.
+
+```jsx
+<EmojiPicker nonce="your-nonce-value" />
 ```
 
 ### Preview Config
