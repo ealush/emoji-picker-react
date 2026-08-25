@@ -282,11 +282,15 @@ If you encounter `global is not defined`, add this to your HTML:
 
 ---
 
+## More from the maintainer
+
+Building complex forms? Check out [**Vest**](https://vestjs.dev) — stateful validation for complex forms and workflows.
+
+---
+
 ## 🤝 Contributing
 
 We welcome contributions! Please check out the [Contributing Guide](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md) for how to run the project locally.
 
 **Shout Outs:**
 Design inspiration by [Pavel Bolo](https://pavelbolo.com).
-
-_If you enjoy using `emoji-picker-react`, check out [Vest validation framework](https://vestjs.dev)._
