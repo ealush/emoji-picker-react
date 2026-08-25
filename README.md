@@ -284,7 +284,7 @@ If you encounter `global is not defined`, add this to your HTML:
 
 ## More from the maintainer
 
-Building complex forms? Check out [**Vest**](https://vestjs.dev) — stateful validation for complex forms and workflows.
+Building complex forms? Check out [**Vest**](https://vestjs.dev) — a validation framework for stateful, async, and dependent validation.
 
 ---
 
