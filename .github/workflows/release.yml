@@ -24,10 +24,10 @@ jobs:
           git config user.email "code@ealush.com"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm ci
 
       - name: Build
-        run: yarn build
+        run: npm run build
 
       - name: Publish
         run: npm publish
