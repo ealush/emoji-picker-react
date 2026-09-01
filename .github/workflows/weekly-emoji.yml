@@ -1,0 +1,56 @@
+name: Weekly emoji data update
+
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Mondays 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update emoji packs to latest
+        run: npm install --save-dev emoji-datasource@latest emojibase-data@latest
+
+      - name: Rebuild emoji data and package
+        run: |
+          npm run build:data:src
+          npm run build:data:dist
+          npm run build
+
+      - name: Commit and bump patch if data changed
+        run: |
+          git config user.name "ealush"
+          git config user.email "code@ealush.com"
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No emoji data change - nothing to release"
+            exit 0
+          fi
+          git add package.json package-lock.json src/data dist 2>/dev/null || true
+          # also stage any generated data files
+          git add -A
+          npm version patch -m "chore: weekly emoji data update to %s [skip ci]"
+          git push origin HEAD:master
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
