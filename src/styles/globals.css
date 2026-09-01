@@ -1,68 +1,114 @@
 :root {
-  --max-width: 1200px;
-  --border-radius: 8px;
-  --font-sans:
-    "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, sans-serif;
-  --font-mono:
-    ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-    "Roboto Mono", monospace;
+  --max-width: 1080px;
+  --radius-sm: 7px;
+  --radius: 11px;
+  --radius-lg: 16px;
+  --header-h: 58px;
 
-  /* Light theme colors */
-  --foreground: #1a1a2e;
-  --foreground-muted: #64748b;
-  --background: #fafafa;
+  --foreground: #121213;
+  --foreground-soft: #1d1d1f;
+  --foreground-muted: #6e6e73;
+  --foreground-faint: #9a9aa0;
+  --background: #ffffff;
   --surface: #ffffff;
-  --surface-hover: #f8fafc;
-  --border: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-subtle: #eff6ff;
+  --surface-soft: #f6f6f3;
+  --surface-warm: #fbfaf7;
+  --border: #e8e8e6;
+  --border-strong: #d6d6d2;
+  --accent: #d94e18;
+  --accent-hover: #b84315;
+  --accent-soft: #fdf0e8;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* crafted paper grain - not a glow */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground: #f8fafc;
-    --foreground-muted: #94a3b8;
-    --background: #0f0f14;
-    --surface: #1a1a24;
-    --surface-hover: #252532;
-    --border: #2d2d3a;
-    --border-subtle: #1f1f2a;
-    --accent: #3b82f6;
-    --accent-hover: #60a5fa;
-    --accent-subtle: rgba(59, 130, 246, 0.1);
+    --foreground: #f5f5f3;
+    --foreground-soft: #e8e8e6;
+    --foreground-muted: #9aa0a6;
+    --foreground-faint: #7a7d82;
+    --background: #0b0b0d;
+    --surface: #131316;
+    --surface-soft: #1a1a1e;
+    --surface-warm: #1e1e22;
+    --border: #26262a;
+    --border-strong: #323238;
+    --accent: #ff6b2e;
+    --accent-hover: #ff7d46;
+    --accent-soft: rgba(255, 107, 46, 0.13);
   }
+  body::before { opacity: 0.05; }
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
+* { box-sizing: border-box; padding: 0; margin: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+html, body { max-width: 100vw; overflow-x: hidden; }
 body {
   font-family: var(--font-sans);
   color: var(--foreground);
   background: var(--background);
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.65;
+  letter-spacing: -0.011em;
 }
+a { color: inherit; text-decoration: none; }
+::selection { background: var(--foreground); color: var(--background); }
 
-a {
-  color: inherit;
-  text-decoration: none;
+/* Switch lab - 3 high-variation evolutions */
+[data-theme="switch-joy"] {
+  --foreground: #0a0a0c;
+  --foreground-muted: #6b6b70;
+  --foreground-faint: #9aa0a6;
+  --background: #f2f2f0;
+  --surface: #ffffff;
+  --surface-soft: #ececec;
+  --surface-warm: #f7f7f5;
+  --border: #d8d8d6;
+  --border-strong: #b8b8b6;
+  --accent: #e60012; /* Joy-Con neon red */
+  --accent-hover: #ff1a2a;
+  --accent-soft: #ffe6e8;
+  --accent-2: #00a9e0; /* Joy-Con blue for subtle second */
 }
-
-::selection {
-  background: var(--accent);
-  color: white;
+[data-theme="switch-clay"] {
+  --foreground: #1c1a19;
+  --foreground-muted: #6f6b66;
+  --foreground-faint: #9a9590;
+  --background: #f6f1eb;
+  --surface: #fffaf5;
+  --surface-soft: #efe8df;
+  --surface-warm: #f2ece3;
+  --border: #e8ddd0;
+  --border-strong: #d6c8b6;
+  --accent: #e60012; /* noir red on clay paper - premium toy punch */
+  --accent-hover: #ff1a2a;
+  --accent-soft: #ffe6e8;
+  --accent-2: #0a0a0c; /* ink second */
+}
+[data-theme="switch-noir"] {
+  --foreground: #f5f5f3;
+  --foreground-muted: #9aa0a6;
+  --foreground-faint: #6e7378;
+  --background: #07070a;
+  --surface: #0f0f12;
+  --surface-soft: #1a1a1e;
+  --surface-warm: #1e1e22;
+  --border: #24242a;
+  --border-strong: #2e2e34;
+  --accent: #ff2e55; /* neon coral on black */
+  --accent-hover: #ff4a6e;
+  --accent-soft: rgba(255,46,85,0.14);
+  --accent-2: #00e5cc; /* luxe teal */
 }

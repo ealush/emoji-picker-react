@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Head from "next/head";
-import { Inter } from "next/font/google";
+import { Inter, Fraunces } from "next/font/google";
 import styles from "@/styles/Home.module.css";
 import { Analytics } from "@vercel/analytics/react";
 import Link from "next/link";
@@ -19,6 +19,7 @@ import PickerDemo from "../components/PickerDemo";
 import { ReactionsSection } from "../components/ReactionsSection";
 
 const inter = Inter({ subsets: ["latin"] });
+const fraunces = Fraunces({ subsets: ["latin"], weight: ["700","800"], display: "swap", variable: "--font-display" });
 
 interface HomeProps {
   initialStats: StatsData;
@@ -26,6 +27,7 @@ interface HomeProps {
 
 export default function Home({ initialStats }: HomeProps) {
   const { version, publishedAt } = useNpmVersion();
+  useEffect(() => { document.documentElement.dataset.theme = "switch-clay"; }, []);
 
   // Scroll to top on initial load (prevents focus-related scroll jump)
   useEffect(() => {
@@ -52,7 +54,7 @@ export default function Home({ initialStats }: HomeProps) {
         <meta property="og:type" content="website" />
       </Head>
 
-      <main className={`${styles.main} ${inter.className}`}>
+      <main className={`${styles.main} ${inter.className} ${fraunces.variable}`}>
         <Header />
 
         {/* Hero Section */}
