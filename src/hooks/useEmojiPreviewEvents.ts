@@ -84,15 +84,28 @@ export function useEmojiPreviewEvents(
 
       const button = buttonFromTarget(e.target as HTMLElement);
 
-      if (button) {
-        const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
-        const buttonHeight = button.getBoundingClientRect().height;
-        if (belowFoldByPx < buttonHeight) {
-          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
-        }
-
-        focusElement(button);
+      if (!button) {
+        return;
       }
+
+      // Set preview synchronously rather than relying on the focus listener:
+      // virtualized rows can unmount the button before focusElement's rAF fires
+      // (e.g. Mac trackpad inertia scroll), so button.focus() becomes a no-op
+      // and the preview would otherwise freeze.
+      setPreviewFromButton(button, setPreviewEmoji);
+
+      const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
+      const buttonHeight = button.getBoundingClientRect().height;
+
+      if (belowFoldByPx < buttonHeight) {
+        // Partially below the fold: skip focus to avoid auto-scroll-into-view.
+        // Manually blur so the previous focus ring doesn't linger.
+        (document.activeElement as HTMLElement)?.blur?.();
+        return;
+      }
+
+      // Fully visible: focus too, so keyboard navigation continues from here.
+      focusElement(button);
     }
 
     return () => {
@@ -105,7 +118,7 @@ export function useEmojiPreviewEvents(
   }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
 }
 
-function handlePartiallyVisibleElementFocus(
+function setPreviewFromButton(
   button: HTMLElement,
   setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
 ) {
@@ -114,8 +127,6 @@ function handlePartiallyVisibleElementFocus(
   if (!unified || !originalUnified) {
     return;
   }
-
-  (document.activeElement as HTMLElement)?.blur?.();
 
   setPreviewEmoji({
     unified,
