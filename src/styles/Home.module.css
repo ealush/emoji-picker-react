@@ -554,3 +554,52 @@
     padding: 2rem 1rem 3rem;
   }
 }
+
+/* Gentle emoji rain - replaces toyish float, keeps playful but premium */
+.rainContainer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.rainDrop {
+  position: absolute;
+  top: -8%;
+  will-change: transform;
+  transform: translate3d(0,0,0);
+  opacity: 0.78;
+  filter: saturate(1.02);
+  pointer-events: auto;
+  cursor: default;
+}
+@media (prefers-color-scheme: dark) {
+  .rainDrop { opacity: 0.62; filter: saturate(0.95) brightness(1.05); }
+}
+
+.rainEmoji {
+  display: block;
+  animation-name: rainFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform, opacity;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.rainDrop:hover { z-index: 2; }
+.rainDrop:hover .rainEmoji {
+  animation-play-state: paused;
+  transform: scale(1.18);
+  filter: brightness(1.08);
+}
+
+@keyframes rainFall {
+  0% { transform: translateY(-8vh) rotate(var(--r, 0deg)); opacity: 0; }
+  7% { opacity: 1; }
+  93% { opacity: 1; }
+  100% { transform: translateY(118vh) rotate(calc(var(--r, 0deg) + var(--spin, 120deg))); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rainEmoji { animation: none; }
+  .rainDrop { transition: none; }
+}

@@ -4,146 +4,176 @@ import { useEffect, useState, useRef } from "react";
 import styles from "@/styles/Home.module.css";
 
 const allEmojis = [
-  "😊",
-  "🎨",
-  "⭐",
-  "🎉",
-  "🚀",
-  "💡",
-  "🎯",
-  "🔥",
-  "✨",
-  "🌟",
-  "💜",
-  "🎪",
-  "🎭",
-  "🎬",
-  "🎮",
-  "🎸",
-  "🌈",
-  "🦋",
-  "🍀",
-  "🌸",
-  "💎",
-  "🏆",
-  "⚡",
-  "🎈",
+  "😊","😂","🥹","🔥","✨","💬","🎉","🚀","❤️","🙌","🤔","😍","👏","⚡","🎨","💡","🌈","🍀","📌","⭐","💎","🥳","🤝","🎈","🧠","🦄","📦","😎","🫀","🌟",
 ];
 
-interface FloatingEmoji {
+interface RainDrop {
   id: number;
   emoji: string;
   x: number;
-  y: number;
   size: number;
   duration: number;
   delay: number;
-  distanceFromCenter: number; // 0-1, used for mouse interaction
+  rotate: number;
+  spin: number; // -120 to 120 random
 }
 
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+function shuffle<T>(a: T[]): T[] {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    [b[i], b[j]] = [b[j], b[i]];
   }
-  return shuffled;
+  return b;
 }
 
 export function FloatingEmojis() {
-  const [emojis, setEmojis] = useState<FloatingEmoji[]>([]);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [drops, setDrops] = useState<RainDrop[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mouseRef = useRef<{ x: number; y: number; inside: boolean }>({ x: -9999, y: -9999, inside: false });
+  const rafRef = useRef<number | null>(null);
+  // per-drop current offset, lerped
+  const curOffsetsRef = useRef<Map<number, { x: number; y: number }>>(new Map());
 
   useEffect(() => {
-    // Pick 6-8 random emojis on each page load
-    const count = 6 + Math.floor(Math.random() * 3); // 6, 7, or 8
-    const shuffled = shuffleArray(allEmojis);
-    const selected = shuffled.slice(0, count);
-
-    // Position emojis in a circle around the center
-    const generated = selected.map((emoji, i) => {
-      const angle = (i / count) * 2 * Math.PI - Math.PI / 2; // Start from top
-      const baseRadius = 35 + Math.random() * 10; // 35-45% from center
-
-      // Add slight randomization to position
-      const jitterX = (Math.random() - 0.5) * 8;
-      const jitterY = (Math.random() - 0.5) * 8;
-
-      // Normalize distance for interaction (0 = center, 1 = far edge)
-      const distanceFromCenter = baseRadius / 50;
-
-      return {
+    const count = 22;
+    const picked = shuffle(allEmojis).slice(0, count);
+    setDrops(
+      picked.map((emoji, i) => ({
         id: i,
         emoji,
-        x: 50 + Math.cos(angle) * baseRadius + jitterX,
-        y: 50 + Math.sin(angle) * baseRadius + jitterY,
-        size: 1.75 + Math.random() * 1.25,
-        duration: 8 + Math.random() * 10,
-        delay: Math.random() * -10,
-        distanceFromCenter,
-      };
-    });
-    setEmojis(generated);
+        x: Math.random() * 100,
+        size: 0.78 + Math.random() * 1.1, // 0.78-1.88 slight more variance
+        duration: 15 + Math.random() * 12, // 15-27s
+        delay: -(Math.random() * 22),
+        rotate: (Math.random() - 0.5) * 50, // initial tilt
+        spin: (Math.random() > 0.5 ? 1 : -1) * (60 + Math.random() * 90), // 60-150 deg random direction
+      }))
+    );
   }, []);
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // Calculate offset from center (-1 to 1 range)
-      const offsetX = (e.clientX - rect.left - centerX) / centerX;
-      const offsetY = (e.clientY - rect.top - centerY) / centerY;
-
-      // Only update if mouse is in the hero area
-      if (e.clientY < rect.bottom) {
-        setMouseOffset({
-          x: offsetX * 8, // Reduced: max 8px base offset
-          y: offsetY * 6, // Reduced: max 6px base offset
-        });
-      }
+    const onMove = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY, inside: true };
     };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    const onLeave = () => {
+      mouseRef.current.inside = false;
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
+    // also track when mouse leaves hero - container will be whole viewport, so leave is enough
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+    };
   }, []);
 
-  if (emojis.length === 0) return null;
+  useEffect(() => {
+    if (drops.length === 0) return;
+    // init offsets
+    drops.forEach((d) => curOffsetsRef.current.set(d.id, { x: 0, y: 0 }));
+
+    const BUBBLE_RADIUS = 380; // slightly larger, quarter screen+
+    const MAX_PUSH = 74; // stronger push
+
+    const tick = () => {
+      if (!containerRef.current) {
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      const mouse = mouseRef.current;
+      const dropsEls = containerRef.current.querySelectorAll<HTMLSpanElement>(`.${styles.rainDrop}`);
+
+      dropsEls.forEach((el) => {
+        const id = Number(el.dataset.id);
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+
+        let targetX = 0;
+        let targetY = 0;
+        if (mouse.inside) {
+          const dx = cx - mouse.x;
+          const dy = cy - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < BUBBLE_RADIUS && dist > 2) {
+            const norm = 1 - dist / BUBBLE_RADIUS;
+            const force = Math.pow(norm, 1.7) * MAX_PUSH; // weaker farther, smooth falloff
+            const angle = Math.atan2(dy, dx);
+            targetX = Math.cos(angle) * force;
+            targetY = Math.sin(angle) * force * 0.5; // less vertical push
+          }
+        }
+
+        const cur = curOffsetsRef.current.get(id) || { x: 0, y: 0 };
+        // lerp for gentle, non-janky motion
+        const nextX = cur.x + (targetX - cur.x) * 0.11;
+        const nextY = cur.y + (targetY - cur.y) * 0.11;
+        curOffsetsRef.current.set(id, { x: nextX, y: nextY });
+
+        // apply without React re-render
+        if (Math.abs(nextX) < 0.05 && Math.abs(nextY) < 0.05) {
+          el.style.transform = "translate3d(0,0,0)";
+        } else {
+          el.style.transform = `translate3d(${nextX.toFixed(2)}px,${nextY.toFixed(2)}px,0)`;
+        }
+      });
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+    rafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [drops]);
+
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const m = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReduced(m.matches);
+    const h = () => setReduced(m.matches);
+    m.addEventListener("change", h);
+    return () => m.removeEventListener("change", h);
+  }, []);
+
+  if (drops.length === 0) return null;
+  if (reduced) {
+    return (
+      <div ref={containerRef} className={styles.rainContainer} aria-hidden>
+        {drops.slice(0, 10).map((d) => (
+          <span key={d.id} className={styles.rainDrop} style={{ left: `${d.x}%`, fontSize: `${d.size}rem`, opacity: 0.18 }}>
+            {d.emoji}
+          </span>
+        ))}
+      </div>
+    );
+  }
 
   return (
-    <div
-      ref={containerRef}
-      className={styles.floatingEmojis}
-      aria-hidden="true"
-    >
-      {emojis.map((item) => {
-        // Farther emojis react more, closer ones react less
-        const sensitivity = 0.3 + item.distanceFromCenter * 0.7; // 0.3 to 1.0
-        // Farther emojis have longer transition delay (wave effect)
-        const transitionDelay = item.distanceFromCenter * 150; // 0 to ~150ms
-
-        return (
+    <div ref={containerRef} className={styles.rainContainer} aria-hidden>
+      {drops.map((d) => (
+        <span
+          key={d.id}
+          data-id={d.id}
+          className={styles.rainDrop}
+          style={{ left: `${d.x}%`, fontSize: `${d.size}rem` } as React.CSSProperties}
+        >
           <span
-            key={item.id}
-            className={styles.floatingEmoji}
-            style={{
-              left: `${item.x}%`,
-              top: `${item.y}%`,
-              fontSize: `${item.size}rem`,
-              animationDuration: `${item.duration}s`,
-              animationDelay: `${item.delay}s`,
-              transform: `translate(-50%, -50%) translate(${mouseOffset.x * sensitivity}px, ${mouseOffset.y * sensitivity}px)`,
-              transitionDelay: `${transitionDelay}ms`,
-            }}
+            className={styles.rainEmoji}
+            style={
+              {
+                animationDuration: `${d.duration}s`,
+                animationDelay: `${d.delay}s`,
+                display: "inline-block",
+                ["--r" as any]: `${d.rotate}deg`,
+                ["--spin" as any]: `${d.spin}deg`,
+              } as React.CSSProperties
+            }
           >
-            {item.emoji}
+            {d.emoji}
           </span>
-        );
-      })}
+        </span>
+      ))}
     </div>
   );
 }
