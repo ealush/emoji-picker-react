@@ -45,9 +45,12 @@ jobs:
             exit 0
           fi
           git add package.json package-lock.json src/data dist 2>/dev/null || true
-          # also stage any generated data files
           git add -A
-          npm version patch -m "chore: weekly emoji data update to %s [skip ci]"
+          # npm version requires clean working tree, so bump without git then commit all together
+          npm version patch --no-git-tag-version -m "chore: weekly emoji data update to %s [skip ci]"
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git add package.json package-lock.json
+          git commit -m "chore: weekly emoji data update to ${NEW_VERSION} [skip ci]"
           git push origin HEAD:master
 
       - name: Publish to npm
