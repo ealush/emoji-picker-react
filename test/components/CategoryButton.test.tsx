@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { stylesheet } from '../../src/Stylesheet/stylesheet';
 import { CategoryButton } from '../../src/components/navigation/CategoryButton';
 import { Categories, CategoryConfig } from '../../src/types/exposedTypes';
 
@@ -88,6 +89,24 @@ describe('CategoryButton', () => {
     expect(screen.getByTestId('config-icon')).toBeDefined();
     // Custom icon from prop should NOT be rendered
     expect(screen.queryByTestId('custom-icon')).toBeNull();
+  });
+
+  it('keeps a transparent background behind the sprite icon', () => {
+    // The suite renders components without the picker's <PickerStyleTag>,
+    // so mount the emitted CSS the same way the app does.
+    render(
+      <>
+        <style>{stylesheet.getStyle()}</style>
+        <CategoryButton {...defaultProps} />
+      </>,
+    );
+    const button = screen.getByRole('tab', { name: 'Smileys & People' });
+    // The Button reset composes with the sprite background-image across
+    // two cx() classes: the transparent background must survive so no
+    // native button face shows behind the icon.
+    expect(getComputedStyle(button).backgroundColor).toBe(
+      'rgba(0, 0, 0, 0)',
+    );
   });
 
   it('applies active class when isActiveCategory is true', () => {

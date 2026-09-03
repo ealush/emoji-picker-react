@@ -27,7 +27,12 @@ const styles = stylesheet.create({
     '.': 'epr-btn',
     cursor: 'pointer',
     border: '0',
-    background: 'none',
+    // Longhand, not `background: 'none'`: a shorthand reset shares its
+    // conflict keys with every background longhand, so cx() would drop
+    // this whole class wherever a later class sets background-image
+    // (e.g. the category nav sprite) and the native button face would
+    // show through.
+    backgroundColor: 'transparent',
     outline: 'none',
   },
 });
