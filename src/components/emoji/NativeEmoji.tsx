@@ -18,9 +18,12 @@ export function NativeEmoji({
   return (
     <span
       className={cx(
-        styles.nativeEmoji,
-        emojiStyles.common,
+        // Order matters: cx() lets the later class win same-property
+        // conflicts, so the zeroing reset must come first and the real
+        // font-size last — otherwise the emoji renders at 0px.
         emojiStyles.external,
+        emojiStyles.common,
+        styles.nativeEmoji,
         className,
       )}
       data-unified={unified}
