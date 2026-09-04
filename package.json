@@ -6,7 +6,8 @@
   "homepage": "https://ealush.com/emoji-picker-react",
   "files": [
     "dist",
-    "src"
+    "src",
+    "llms.txt"
   ],
   "description": "Emoji Picker component for React Applications on the web",
   "keywords": [
