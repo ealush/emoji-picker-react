@@ -1,6 +1,8 @@
 # Emoji Picker React
 
-A fully customizable emoji picker component for React apps.
+The most popular fully customizable emoji picker for React.
+
+[![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
 **[Live Demo](https://ealush.com/emoji-picker-react)** | **[Report a Bug](https://github.com/ealush/emoji-picker-react/issues)**
 
