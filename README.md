@@ -1,218 +1,75 @@
-# 🥒 Emoji Picker React (v4)
+# Emoji Picker React
 
-**The most popular, fully customizable emoji picker for React apps.**
+A fully customizable emoji picker component for React apps.
 
-**[🔴 Live Demo](https://ealush.com/emoji-picker-react)** | **[🐛 Report a Bug](https://github.com/ealush/emoji-picker-react/issues)**
+**[Live Demo](https://ealush.com/emoji-picker-react)** | **[Report a Bug](https://github.com/ealush/emoji-picker-react/issues)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
 ![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
 
----
+## Features
 
-## ✨ Features
+- Fully customizable through props and CSS variables
+- Light, dark, and auto themes
+- Reactions picker mode and custom click handlers
+- Dozens of built-in languages
+- Custom image-based emojis
+- Apple, Google, Facebook, Twitter, and native emoji styles
+- Responsive and mobile-friendly
+- SSR-safe
 
-- 🎨 **Fully Customizable**: Control styles via CSS variables.
-- 🌗 **Dark Mode**: Native support for light, dark, and auto themes.
-- 🖱️ **Interactivity**: Custom click handlers and reactions picker mode.
-- 🌍 **Multi-Language**: Built-in support for dozens of languages.
-- 🦄 **Custom Emojis**: seamless support for custom image-based emojis.
-- 📦 **Zero-Config**: Works out of the box with sensible defaults.
-- 📱 **Responsive**: Mobile-friendly design.
-- 🍎 **Multiple Styles**: Support for Apple, Google, Facebook, Twitter, and Native system emojis.
-
----
-
-## 🚀 Getting Started
-
-### Installation
+## Installation
 
 ```bash
 npm install emoji-picker-react
-
 ```
 
-### Basic Usage
-
-Render the component in your app. It works immediately with no required props.
+## Usage
 
 ```jsx
 import EmojiPicker from 'emoji-picker-react';
 
 function App() {
   return (
-    <div>
-      <EmojiPicker onEmojiClick={(emojiObject) => console.log(emojiObject)} />
-    </div>
+    <EmojiPicker onEmojiClick={(emojiData) => console.log(emojiData.emoji)} />
   );
 }
 ```
 
----
+`onEmojiClick` receives an `EmojiClickData` object (unified code, names, image URL, active skin tone) and the underlying mouse event.
 
-## 📚 Props Reference
-
-The following is a complete list of all props accepted by `EmojiPicker`.
-
-### 🎛️ General Configuration
-
-| Prop              | Type         | Default            | Description                                                                                  |
-| ----------------- | ------------ | ------------------ | -------------------------------------------------------------------------------------------- |
-| `open`            | `boolean`    | `true`             | Controls the visibility of the picker.                                                       |
-| `theme`           | `Theme`      | `Theme.LIGHT`      | The visual theme. Options: `'light'`, `'dark'`, `'auto'`.                                    |
-| `emojiStyle`      | `EmojiStyle` | `EmojiStyle.APPLE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
-| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`).                                 |
-| `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
-| `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
-| `emojiData`       | `object`     | `undefined`        | Pass imported locale data here for internationalization.                                     |
-
-### 📐 Dimensions & Styling
-
-| Prop        | Type            | Default  | Description                                |
-| ----------- | --------------- | -------- | ------------------------------------------ |
-| `width`     | `string`        | `number` | `350`                                      |
-| `height`    | `string`        | `number` | `450`                                      |
-| `style`     | `CSSProperties` | `{}`     | Inline styles applied to the root element. |
-| `className` | `string`        | `""`     | CSS class applied to the root element.     |
-
-### 🖱️ Events & Interaction
-
-| Prop               | Type                                                     | Description                                                          |
-| ------------------ | -------------------------------------------------------- | -------------------------------------------------------------------- |
-| `onEmojiClick`     | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks an emoji.                      |
-| `onReactionClick`  | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks a reaction (in reaction mode). |
-| `onSkinToneChange` | `(skinTone: SkinTones) => void`                          | Callback triggered when the user selects a new skin tone.            |
-
-### 🔎 Search & Categories
-
-| Prop                     | Type                     | Default                   | Description                                                          |
-| ------------------------ | ------------------------ | ------------------------- | -------------------------------------------------------------------- |
-| `searchDisabled`         | `boolean`                | `false`                   | If true, the search bar is completely removed.                       |
-| `searchPlaceholder`      | `string`                 | `"Search"`                | Placeholder text for the search input.                               |
-| `searchClearButtonLabel` | `string`                 | `"Clear"`                 | Aria label for the search clear button.                              |
-| `categories`             | `CategoryConfig[]`       | _(All)_                   | Array of category objects to customize order or visibility.          |
-| `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
-| `defaultSkinTone`        | `SkinTones`              | `SkinTones.NEUTRAL`       | The initial skin tone.                                               |
-| `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
-| `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`. |
-
-### 🦄 Customization & Advanced
-
-| Prop            | Type                                             | Default                 | Description                                                              |
-| --------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------ |
-| `customEmojis`  | `CustomEmoji[]`                                  | `[]`                    | Array of custom image-based emojis to inject.                            |
-| `hiddenEmojis`  | `string[]`                                       | `[]`                    | Array of unified IDs (e.g., `'1f921'`) to hide from the picker.          |
-| `previewConfig` | `PreviewConfig`                                  | `{ showPreview: true }` | Configuration for the bottom preview bar.                                |
-| `getEmojiUrl`   | `(unified: string, style: EmojiStyle) => string` | -                       | Function to override the default CDN URL for emoji images.               |
-| `categoryIcons` | `CategoryIcons`                                  | `{}`                    | Map `Categories` enum values to custom React nodes for navigation icons. |
-| `nonce`         | `string`                                         | `undefined`             | Content Security Policy (CSP) nonce for the inline style tag.            |
-
-### ❤️ Reactions Picker Mode
-
-| Prop                   | Type       | Default         | Description                                                              |
-| ---------------------- | ---------- | --------------- | ------------------------------------------------------------------------ |
-| `reactionsDefaultOpen` | `boolean`  | `false`         | If true, mounts in "Reactions" mode (single row) instead of full picker. |
-| `reactions`            | `string[]` | _(Default Set)_ | Array of unified IDs to display in the reactions bar.                    |
-| `allowExpandReactions` | `boolean`  | `true`          | If true, shows a `+` button to switch from reactions to full picker.     |
-
----
-
-## 🛠️ Detailed Configuration
-
-### CSS Variables
-
-Override default variables by targeting `.EmojiPickerReact` or `aside.EmojiPickerReact`.
-
-### CSS Variables
-
-You can customize the picker by overriding CSS variables.
-
-**[🎨 View Full List of CSS Variables](CSS_VARIABLES.md)**
-
-### Custom Emojis Data Structure
-
-When passing `customEmojis`, use this format:
-
-```ts
-{
-  id: string;      // Unique ID
-  names: string[]; // Search keywords
-  imgUrl: string;  // Image source
-}
-
-```
-
-### Content Security Policy (CSP)
-
-If your site has a CSP that blocks inline styles, you can pass a `nonce` to the `EmojiPicker` component. This nonce will be applied to the inline `<style>` tag.
+## Configuration
 
 ```jsx
-<EmojiPicker nonce="your-nonce-value" />
+<EmojiPicker
+  theme="dark"
+  emojiStyle="native"
+  width={320}
+  height={400}
+  previewConfig={{ showPreview: false }}
+/>
 ```
 
-### Preview Config
+See [PROPS.md](PROPS.md) for the complete props reference.
 
-Control the footer preview area using `previewConfig`:
+## Styling
 
-```ts
-{
-  defaultEmoji: string; // Default: "1f60a"
-  defaultCaption: string; // Default: "What's your mood?"
-  showPreview: boolean; // Default: true
+No stylesheet import needed. All styles are scoped via [Flairup](https://github.com/ealush/flairup) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles.
+
+Restyle the picker by overriding [CSS variables](CSS_VARIABLES.md) on `.EmojiPickerReact`:
+
+```css
+.EmojiPickerReact {
+  --epr-emoji-size: 32px;
 }
 ```
 
-### Custom Category Icons
+## Internationalization
 
-You can customize the navigation icons using one of two methods.
+Pass imported locale data via the `emojiData` prop:
 
-**Method 1: The `categoryIcons` prop**
-
-Map `Categories` enum values to valid React nodes:
-
-```tsx
-import EmojiPicker, { Categories } from 'emoji-picker-react';
-
-<EmojiPicker
-  categoryIcons={{
-    [Categories.SUGGESTED]: <img src="recent.png" alt="Recent" />,
-    [Categories.SMILEYS_PEOPLE]: <MyCustomFaceIcon />,
-  }}
-/>;
-```
-
-**Method 2: The `categories` configuration array**
-
-Define the icon directly within the category configuration object:
-
-```tsx
-import EmojiPicker, { Categories } from 'emoji-picker-react';
-
-<EmojiPicker
-  categories={[
-    {
-      category: Categories.SUGGESTED,
-      name: 'Recently Used',
-      icon: <img src="recent.png" alt="Recent" />,
-    },
-    {
-      category: Categories.SMILEYS_PEOPLE,
-      name: 'Smileys & People',
-      icon: <MyCustomFaceIcon />,
-    },
-  ]}
-/>;
-```
-
-> **Note:** If both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop.
-
----
-
-## 🌍 Internationalization (i18n)
-
-Import the dictionary you need and pass it to the `emojiData` prop.
-
-```javascript
+```jsx
 import EmojiPicker from 'emoji-picker-react';
 import es from 'emoji-picker-react/dist/data/emojis-es'; // Spanish
 
@@ -221,50 +78,15 @@ function App() {
 }
 ```
 
-<details>
-<summary><strong>View Supported Languages</strong></summary>
+See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the supported languages.
 
-- `emojis-bn` (Bengali 🇧🇩)
-- `emojis-da` (Danish 🇩🇰)
-- `emojis-de` (German 🇩🇪)
-- `emojis-en-gb` (English, GB 🇬🇧)
-- `emojis-en` (English, US 🇺🇸)
-- `emojis-es-mx` (Spanish, Mexico 🇲🇽)
-- `emojis-es` (Spanish 🇪🇸)
-- `emojis-et` (Estonian 🇪🇪)
-- `emojis-fi` (Finnish 🇫🇮)
-- `emojis-fr` (French 🇫🇷)
-- `emojis-hi` (Hindi 🇮🇳)
-- `emojis-hu` (Hungarian 🇭🇺)
-- `emojis-it` (Italian 🇮🇹)
-- `emojis-ja` (Japanese 🇯🇵)
-- `emojis-ko` (Korean 🇰🇷)
-- `emojis-lt` (Lithuanian 🇱🇹)
-- `emojis-ms` (Malay 🇲🇾)
-- `emojis-nb` (Norwegian Bokmål 🇳🇴)
-- `emojis-nl` (Dutch 🇳🇱)
-- `emojis-pl` (Polish 🇵🇱)
-- `emojis-pt` (Portuguese 🇵🇹)
-- `emojis-ru` (Russian 🇷🇺)
-- `emojis-sv` (Swedish 🇸🇪)
-- `emojis-th` (Thai 🇹🇭)
-- `emojis-uk` (Ukrainian 🇺🇦)
-- `emojis-zh-hant` (Traditional Chinese 🇹🇼)
-- `emojis-zh` (Simplified Chinese 🇨🇳)
+## Customization
 
-</details>
+Custom emojis, custom category icons, preview configuration, and CSP nonces are covered in [CUSTOMIZATION.md](CUSTOMIZATION.md).
 
----
+## Server-Side Rendering
 
-## ⚠️ Troubleshooting
-
-### Server-Side Rendering (Next.js / Remix)
-
-This package is SSR-safe and can be rendered on the server. Styles are inlined into the server-rendered HTML, so no extra setup is needed.
-
-Since the picker is usually opened on demand rather than shown immediately, lazy-loading it is still recommended as a performance optimization — it keeps the initial bundle smaller.
-
-**Next.js Example:**
+The picker renders on the server, with styles inlined into the server HTML — no setup needed. Since the picker is usually opened on demand rather than shown immediately, lazy-loading it is still recommended to keep the initial bundle small:
 
 ```javascript
 import dynamic from 'next/dynamic';
@@ -272,9 +94,11 @@ import dynamic from 'next/dynamic';
 const Picker = dynamic(() => import('emoji-picker-react'));
 ```
 
-### Vite
+## Troubleshooting
 
-If you encounter `global is not defined`, add this to your HTML:
+### `global is not defined` (Vite)
+
+Add this to your HTML:
 
 ```html
 <script>
@@ -282,17 +106,12 @@ If you encounter `global is not defined`, add this to your HTML:
 </script>
 ```
 
----
-
 ## More from the maintainer
 
 Building complex forms? Check out [**Vest**](https://vestjs.dev) — a validation framework for stateful, async, and dependent validation.
 
----
+## Contributing
 
-## 🤝 Contributing
+Contributions are welcome — see the [Contributing Guide](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md).
 
-We welcome contributions! Please check out the [Contributing Guide](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md) for how to run the project locally.
-
-**Shout Outs:**
 Design inspiration by [Pavel Bolo](https://pavelbolo.com).
