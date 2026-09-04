@@ -9,6 +9,7 @@ import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped,
 } from '../data/skinToneVariations';
+import { useIsMounted } from '../hooks/useIsMounted';
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
@@ -56,9 +57,16 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
 export function useGetEmojisByCategory(): (Category: Categories) => DataEmojis {
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const [suggestedUpdated] = useUpdateSuggested();
+  // Suggestions come from localStorage, which doesn't exist during SSR.
+  // Read them only after mount so the first client render matches the server.
+  const isMounted = useIsMounted();
 
   const suggested = React.useMemo(
     () => {
+      if (!isMounted) {
+        return [] as DataEmojis;
+      }
+
       const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
 
       return suggested
@@ -66,7 +74,7 @@ export function useGetEmojisByCategory(): (Category: Categories) => DataEmojis {
         .filter(Boolean) as DataEmojis;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [suggestedUpdated, suggestedEmojisModeConfig],
+    [isMounted, suggestedUpdated, suggestedEmojisModeConfig],
   );
 
   return function getEmojisByCategory(category: Categories): DataEmojis {
