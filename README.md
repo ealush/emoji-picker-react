@@ -260,14 +260,16 @@ function App() {
 
 ### Server-Side Rendering (Next.js / Remix)
 
-This package relies on the `window` object and must be rendered on the client.
+This package is SSR-safe and can be rendered on the server. Styles are inlined into the server-rendered HTML, so no extra setup is needed.
+
+Since the picker is usually opened on demand rather than shown immediately, lazy-loading it is still recommended as a performance optimization — it keeps the initial bundle smaller.
 
 **Next.js Example:**
 
 ```javascript
 import dynamic from 'next/dynamic';
 
-const Picker = dynamic(() => import('emoji-picker-react'), { ssr: false });
+const Picker = dynamic(() => import('emoji-picker-react'));
 ```
 
 ### Vite
