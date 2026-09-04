@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist",
+    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -40,7 +40,8 @@
     "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js",
     "build:data": "npm run build:data:src && npm run build:data:dist",
     "storybook": "npm run build:data && storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "docs:llms": "node ./scripts/generateLlmsTxt.js"
   },
   "peerDependencies": {
     "react": ">=16"
