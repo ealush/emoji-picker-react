@@ -15,11 +15,11 @@ type Suggested = SuggestedItem[];
 
 export function getSuggested(mode?: SuggestionMode): Suggested {
   try {
-    if (!window?.localStorage) {
+    if (typeof window === 'undefined' || !window.localStorage) {
       return [];
     }
     const recent = JSON.parse(
-      window?.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]',
+      window.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]',
     ) as Suggested;
 
     if (mode === SuggestionMode.FREQUENT) {
@@ -58,7 +58,10 @@ export function setSuggested(emoji: DataEmoji, skinTone: SkinTones) {
   nextList.length = Math.min(nextList.length, 14);
 
   try {
-    window?.localStorage.setItem(SUGGESTED_LS_KEY, JSON.stringify(nextList));
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem(SUGGESTED_LS_KEY, JSON.stringify(nextList));
     // Prevents the change from being seen immediately.
   } catch {
     // ignore

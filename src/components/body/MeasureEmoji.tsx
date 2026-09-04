@@ -11,6 +11,7 @@ import {
   useGetEmojisByCategory,
   emojiUnified,
 } from '../../dataUtils/emojiSelectors';
+import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import {
   useActiveSkinToneState,
   useEmojiSizeState,
@@ -27,7 +28,7 @@ export function MeasureEmoji() {
   const [emojiSize, setEmojiSize] = useEmojiSizeState();
   const ref = React.useRef<HTMLDivElement>(null);
 
-  React.useLayoutEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (ref.current) {
       setEmojiSize(ref.current.clientHeight);
     }
