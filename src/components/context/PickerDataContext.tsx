@@ -15,6 +15,7 @@ import {
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
 import { getSuggested } from '../../dataUtils/suggested';
+import { useIsMounted } from '../../hooks/useIsMounted';
 import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 
 import { usePickerConfig } from './PickerConfigContext';
@@ -126,8 +127,15 @@ export function useGetEmojisByCategory() {
   const { emojiData, emojiByUnified } = usePickerDataContext();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const [suggestedUpdated] = useUpdateSuggested();
+  // Suggestions come from localStorage, which doesn't exist during SSR.
+  // Read them only after mount so the first client render matches the server.
+  const isMounted = useIsMounted();
 
   const suggested = React.useMemo(() => {
+    if (!isMounted) {
+      return [] as DataEmojis;
+    }
+
     const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
 
     return suggested
@@ -141,7 +149,7 @@ export function useGetEmojisByCategory() {
       })
       .filter(Boolean) as DataEmojis;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
+  }, [isMounted, suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
 
   return function getEmojisByCategory(category: Categories): DataEmojis {
     if (category === Categories.SUGGESTED) {

@@ -39,7 +39,7 @@ export function useMouseDownHandlers(
   ContainerRef: React.MutableRefObject<NullableElement>,
   mouseEventSource: MOUSE_EVENT_SOURCE,
 ) {
-  const mouseDownTimerRef = useRef<undefined | number>();
+  const mouseDownTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const setVariationPicker = useSetVariationPicker();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
@@ -99,7 +99,7 @@ export function useMouseDownHandlers(
         return;
       }
 
-      mouseDownTimerRef.current = window?.setTimeout(() => {
+      mouseDownTimerRef.current = setTimeout(() => {
         disallowClickRef.current = true;
         mouseDownTimerRef.current = undefined;
         closeAllOpenToggles();

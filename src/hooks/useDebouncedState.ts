@@ -5,7 +5,7 @@ export function useDebouncedState<T>(
   delay: number = 0,
 ): [T, (value: T) => Promise<T>] {
   const [state, setState] = useState<T>(initialValue);
-  const timer = useRef<number | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function debouncedSetState(value: T) {
     return new Promise<T>((resolve) => {
@@ -13,7 +13,7 @@ export function useDebouncedState<T>(
         clearTimeout(timer.current);
       }
 
-      timer.current = window?.setTimeout(() => {
+      timer.current = setTimeout(() => {
         setState(value);
         resolve(value);
       }, delay);
