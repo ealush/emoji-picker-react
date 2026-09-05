@@ -26,7 +26,7 @@ import {
   emojiHasVariations,
   emojiNames,
   emojiUnified,
-} from '../dataUtils/emojiSelectors';
+} from '../dataUtils/emojiUtils';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
 import { isCustomEmoji } from '../typeRefinements/typeRefinements';

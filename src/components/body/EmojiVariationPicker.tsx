@@ -19,7 +19,7 @@ import {
   emojiHasVariations,
   emojiUnified,
   emojiVariations,
-} from '../../dataUtils/emojiSelectors';
+} from '../../dataUtils/emojiUtils';
 import {
   useAnchoredEmojiRef,
   useBodyRef,

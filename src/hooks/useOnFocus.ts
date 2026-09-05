@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { buttonFromTarget, emojiFromElement } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
-import { emojiHasVariations } from '../dataUtils/emojiSelectors';
+import { emojiHasVariations } from '../dataUtils/emojiUtils';
 import { EmojiStyle } from '../types/exposedTypes';
 
 import { preloadEmoji } from './preloadEmoji';

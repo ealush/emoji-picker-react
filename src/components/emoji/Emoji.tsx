@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiHasVariations, emojiNames } from '../../dataUtils/emojiSelectors';
+import { emojiHasVariations, emojiNames } from '../../dataUtils/emojiUtils';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
 import { ClickableEmojiButton } from './ClickableEmojiButton';

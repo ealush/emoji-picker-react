@@ -40,22 +40,21 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
         }
 
         return (
-          <React.Suspense key={category}>
-            <RenderCategory
-              categoryEmojis={getEmojisByCategory(category)}
-              categoryConfig={categoryConfig}
-              topOffset={currentOffset}
-              onHeightReady={(height) => {
-                if (categoryHeights[category] !== height) {
-                  setCategoryHeights((prev) => ({
-                    ...prev,
-                    [category]: height,
-                  }));
-                }
-              }}
-              scrollTop={scrollTop}
-            />
-          </React.Suspense>
+          <RenderCategory
+            key={category}
+            categoryEmojis={getEmojisByCategory(category)}
+            categoryConfig={categoryConfig}
+            topOffset={currentOffset}
+            onHeightReady={(height) => {
+              if (categoryHeights[category] !== height) {
+                setCategoryHeights((prev) => ({
+                  ...prev,
+                  [category]: height,
+                }));
+              }
+            }}
+            scrollTop={scrollTop}
+          />
         );
       })}
     </ul>

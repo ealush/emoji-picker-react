@@ -1,20 +1,18 @@
-import React from 'react';
-
-import { useUpdateSuggested } from '../components/context/PickerContext';
+// Pure data helpers plus the legacy global registry. This module intentionally
+// imports no React components, hooks, or context providers so it can never
+// form an import cycle with them. Context-aware lookups live in
+// components/context/PickerDataContext instead.
 import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
 import { CustomEmoji } from '../config/customEmojiConfig';
-import { useSuggestedEmojisModeConfig } from '../config/useConfig';
 import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped,
 } from '../data/skinToneVariations';
-import { useIsMounted } from '../hooks/useIsMounted';
 import { EmojiStyle, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
 import { indexEmoji } from './alphaNumericEmojiIndex';
-import { getSuggested } from './suggested';
 
 export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
@@ -52,39 +50,6 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
   }
 
   return emojiVariationUnified(emoji, skinTone) ?? unified;
-}
-
-export function useGetEmojisByCategory(): (Category: Categories) => DataEmojis {
-  const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
-  const [suggestedUpdated] = useUpdateSuggested();
-  // Suggestions come from localStorage, which doesn't exist during SSR.
-  // Read them only after mount so the first client render matches the server.
-  const isMounted = useIsMounted();
-
-  const suggested = React.useMemo(
-    () => {
-      if (!isMounted) {
-        return [] as DataEmojis;
-      }
-
-      const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
-
-      return suggested
-        .map((s) => emojiByUnified(s.unified))
-        .filter(Boolean) as DataEmojis;
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isMounted, suggestedUpdated, suggestedEmojisModeConfig],
-  );
-
-  return function getEmojisByCategory(category: Categories): DataEmojis {
-    if (category === Categories.SUGGESTED) {
-      return suggested;
-    }
-
-    // @ts-ignore
-    return emojis.emojis[category] ?? [];
-  };
 }
 
 // WARNING: DO NOT USE DIRECTLY

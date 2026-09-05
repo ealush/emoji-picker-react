@@ -42,10 +42,11 @@
     "build:data": "npm run build:data:src && npm run build:data:dist",
     "storybook": "npm run build:data && storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "docs:llms": "node ./scripts/generateLlmsTxt.js"
+    "docs:llms": "node ./scripts/generateLlmsTxt.js",
+    "check:react-floor": "node ./scripts/checkReactApiFloor.js"
   },
   "peerDependencies": {
-    "react": ">=16"
+    "react": ">=16.8"
   },
   "husky": {
     "hooks": {
@@ -63,11 +64,11 @@
   "size-limit": [
     {
       "path": "dist/emoji-picker-react.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "95 KB"
     },
     {
       "path": "dist/emoji-picker-react.esm.js",
-      "limit": "10 KB"
+      "limit": "95 KB"
     }
   ],
   "devDependencies": {

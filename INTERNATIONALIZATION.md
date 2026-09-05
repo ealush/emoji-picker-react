@@ -38,5 +38,6 @@ function App() {
 - `emojis-sv` (Swedish)
 - `emojis-th` (Thai)
 - `emojis-uk` (Ukrainian)
+- `emojis-vi` (Vietnamese)
 - `emojis-zh-hant` (Traditional Chinese)
 - `emojis-zh` (Simplified Chinese)

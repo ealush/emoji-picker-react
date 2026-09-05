@@ -11,7 +11,7 @@ import {
   useGetEmojiUrlConfig,
   usePreviewConfig,
 } from '../../config/useConfig';
-import { emojiName, emojiUnified } from '../../dataUtils/emojiSelectors';
+import { emojiName, emojiUnified } from '../../dataUtils/emojiUtils';
 import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';

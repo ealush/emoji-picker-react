@@ -57,7 +57,7 @@ describe('hydration with returning-user suggestions', () => {
     expect(firstClientHtml).toBe(serverHtml);
   });
 
-  it('shows stored suggestions after mount', async () => {
+  it('hydrates without errors and shows stored suggestions after mount', async () => {
     window.localStorage.clear();
     const html = renderToString(<EmojiPicker />);
 
@@ -70,13 +70,47 @@ describe('hydration with returning-user suggestions', () => {
     document.body.appendChild(container);
     container.innerHTML = html;
 
-    act(() => {
-      flushSync(() => {
-        hydrateRoot(container, <EmojiPicker />);
+    const hydrationErrors: unknown[][] = [];
+    const errorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation((...args: unknown[]) => {
+        if (
+          args.some(
+            (arg) =>
+              typeof arg === 'string' && arg.includes('useLayoutEffect'),
+          )
+        ) {
+          return;
+        }
+        hydrationErrors.push(args);
       });
-    });
-    await act(async () => {});
 
+    try {
+      act(() => {
+        flushSync(() => {
+          hydrateRoot(container, <EmojiPicker />);
+        });
+      });
+      await act(async () => {});
+    } finally {
+      errorSpy.mockRestore();
+    }
+
+    expect(
+      hydrationErrors.filter((args) =>
+        args.some(
+          (arg) =>
+            typeof arg === 'string' &&
+            /hydrat|suspense|client rendering|mismatch|did not match/i.test(
+              arg,
+            ),
+        ),
+      ),
+      `hydration logged errors: ${hydrationErrors
+        .map((args) => args.map(String).join(' ').slice(0, 300))
+        .join(' | ')}`,
+    ).toEqual([]);
+    expect(hydrationErrors).toEqual([]);
     expect(container.querySelector('[data-unified="1f600"]')).not.toBeNull();
   });
 });

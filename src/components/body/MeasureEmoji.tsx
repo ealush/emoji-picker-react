@@ -7,15 +7,13 @@ import {
   useGetEmojiUrlConfig,
   useLazyLoadEmojisConfig,
 } from '../../config/useConfig';
-import {
-  useGetEmojisByCategory,
-  emojiUnified,
-} from '../../dataUtils/emojiSelectors';
+import { emojiUnified } from '../../dataUtils/emojiUtils';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import {
   useActiveSkinToneState,
   useEmojiSizeState,
 } from '../context/PickerContext';
+import { useGetEmojisByCategory } from '../context/PickerDataContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 export function MeasureEmoji() {

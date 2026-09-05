@@ -105,9 +105,11 @@ const Picker = dynamic(() => import('emoji-picker-react'));
 
 ## Troubleshooting
 
-### `global is not defined` (Vite)
+### `global is not defined` (Vite, versions before 4.20)
 
-Add this to your HTML:
+Since 4.20 the picker is SSR-safe and no longer references the Node-style
+`global`. If you see `global is not defined`, upgrade to the latest version.
+On older versions only, the workaround was adding this to your HTML:
 
 ```html
 <script>
@@ -328,6 +330,7 @@ function App() {
 - `emojis-sv` (Swedish)
 - `emojis-th` (Thai)
 - `emojis-uk` (Ukrainian)
+- `emojis-vi` (Vietnamese)
 - `emojis-zh-hant` (Traditional Chinese)
 - `emojis-zh` (Simplified Chinese)
 
