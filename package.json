@@ -118,6 +118,6 @@
     "vitest": "^2.0.5"
   },
   "dependencies": {
-    "flairup": "1.1.1"
+    "flairup": "1.1.2"
   }
 }
