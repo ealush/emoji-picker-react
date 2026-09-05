@@ -1,0 +1,95 @@
+# Builds and deploys the website/ demo site to GitHub Pages.
+#
+# The picker dependency is refreshed to npm `latest` at build time (scheduled
+# and manual runs) instead of bump-commit-push loops: website/package-lock.json
+# pins everything except emoji-picker-react, which is installed --no-save, so
+# the tree never churns and the site can never be more than a day stale.
+# Tradeoff: a deploy is not bit-for-bit reproducible from the lockfile alone
+# (the picker version is resolved at build time); for a demo site this is the
+# right call.
+name: Website
+
+on:
+  push:
+    branches: ["master"]
+    paths: ["website/**"]
+  schedule:
+    - cron: "0 3 * * *" # daily 03:00 UTC: rebuild only if the picker moved
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    outputs:
+      stale: ${{ steps.refresh.outputs.stale }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: website/package-lock.json
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          # Automatically inject basePath and disable server image optimization.
+          static_site_generator: next
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: website/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('website/package-lock.json') }}-${{ hashFiles('website.[jt]s', 'website.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('website/package-lock.json') }}-
+      - name: Install dependencies
+        run: npm ci
+      - name: Refresh picker to latest (scheduled and manual runs)
+        id: refresh
+        if: github.event_name != 'push'
+        run: |
+          CURRENT=$(node -p "require('./package.json').dependencies['emoji-picker-react']")
+          LATEST=$(npm view emoji-picker-react version)
+          echo "Locked: $CURRENT, latest: $LATEST"
+          if [ "$LATEST" != "$CURRENT" ]; then
+            npm install --no-save "emoji-picker-react@$LATEST"
+            echo "stale=true" >> $GITHUB_OUTPUT
+          else
+            echo "stale=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Build with Next.js
+        if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
+        run: npx --no-install next build
+      - name: Static HTML export with Next.js
+        if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
+        run: npx --no-install next export
+      - name: Upload artifact
+        if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: website/out
+
+  deploy:
+    if: github.event_name != 'schedule' || needs.build.outputs.stale == 'true'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

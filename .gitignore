@@ -4,6 +4,7 @@ node_modules
 .cache
 dist
 .next
+out
 tsconfig.tsbuildinfo
 test-output.txt
 test-results/
