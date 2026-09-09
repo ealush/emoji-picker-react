@@ -8,6 +8,10 @@
  * `:focus-visible` (scale plus circular wash, no outline), which this spec
  * captures as a screenshot and asserts via computed style.
  *
+ * Targets the image-style reactions story: native glyphs render with
+ * different fonts per OS, which makes screenshot comparison flaky
+ * across CI and local machines.
+ *
  * @file a11y-reactions-focus.spec.ts
  */
 
@@ -37,7 +41,24 @@ async function tabToFirstReaction(page, reactions) {
 }
 
 test('keyboard focus on a reaction is visibly indicated', async ({ page }) => {
-  await page.goto(storyUrl('picker-reactions--reactions-menu'));
+  await page.goto(storyUrl('picker-reactions--reactions-menu-image'));
+
+  // CDN images must be fully loaded for a deterministic screenshot.
+  await page
+    .waitForFunction(
+      () => {
+        const images =
+          document.querySelectorAll<HTMLImageElement>('.epr-emoji-img');
+        return (
+          images.length > 0 &&
+          Array.from(images).every(
+            (img) => img.complete && img.naturalWidth > 0,
+          )
+        );
+      },
+      { timeout: 20000 },
+    )
+    .catch(() => {});
 
   const reactions = page.getByRole('list', { name: /reactions/i });
   const focusedLabel = await tabToFirstReaction(page, reactions);
