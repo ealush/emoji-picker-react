@@ -27,21 +27,6 @@ export function Reactions() {
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
 
-  // Move focus to the first reaction when the picker opens in reactions
-  // mode, so keyboard users land directly in the reaction set.
-  // Deliberately mount-only: when the user collapses the full picker by
-  // clicking, focus stays where they put it instead of being stolen.
-  // https://github.com/ealush/emoji-picker-react/issues/411
-  const openOnMount = React.useRef(reactionsOpen);
-  React.useEffect(() => {
-    if (!openOnMount.current) {
-      return;
-    }
-    ReactionsRef.current
-      ?.querySelector('button')
-      ?.focus({ preventScroll: true });
-  }, [ReactionsRef]);
-
   if (!reactionsOpen) {
     return null;
   }
@@ -96,14 +81,20 @@ const styles = stylesheet.create({
   reactionButton: {
     // Every picker button sets outline: none, and reaction buttons also
     // suppress the focus background, so keyboard focus was invisible.
-    // A :focus-visible ring on the button fixes that for every emoji
-    // style (the scale transform on the inner image is clipped by the
-    // button's overflow: hidden, and does nothing on inline native
-    // emoji). Scoped to the reactions bar so grid focus treatment is
+    // Focus mirrors the hover treatment (scale plus a soft circular
+    // wash, no outline ring): the scale transform on the inner image
+    // alone is clipped by the button's overflow: hidden, and does
+    // nothing on inline native emoji, so the button itself carries the
+    // effect. Scoped to the reactions bar so grid focus treatment is
     // untouched.
     // https://github.com/ealush/emoji-picker-react/issues/473
     ':focus-visible': {
-      boxShadow: '0 0 0 2px var(--epr-highlight-color)',
+      transform: 'scale(1.2)',
+      transition:
+        'background-color 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.5)',
+      backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
+      borderRadius: '50%',
+      outline: 'none',
     },
   },
   emojiButton: {

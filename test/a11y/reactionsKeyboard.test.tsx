@@ -58,16 +58,24 @@ async function waitForFocus(label: RegExp | string) {
 }
 
 describe('reactions keyboard support (a11y)', () => {
-  it('focuses the first reaction when reactions open', async () => {
+  it('does not steal focus when reactions open', async () => {
+    // Deliberate: opening in reactions mode leaves focus alone; keyboard
+    // users tab into the bar, where arrows take over (see below).
     // https://github.com/ealush/emoji-picker-react/issues/411
     renderReactions();
 
-    await waitForFocus('grinning face');
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    expect(document.activeElement?.tagName).not.toBe('BUTTON');
   });
 
   it('moves focus between reactions and the expand button with arrow keys', async () => {
     // https://github.com/ealush/emoji-picker-react/issues/411
     renderReactions();
+
+    // Keyboard users tab into the bar; arrows take over from there.
+    const bar = await screen.findByRole('list', { name: /reactions/i });
+    const [first] = Array.from(bar.querySelectorAll('button'));
+    first.focus();
     await waitForFocus('grinning face');
 
     fireEvent.keyDown(document.activeElement as HTMLElement, {
