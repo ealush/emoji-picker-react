@@ -7,32 +7,16 @@ on:
 
 permissions:
   contents: write
+  actions: write
   id-token: write
 
 jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      # Pushes authenticated with GITHUB_TOKEN do not trigger other
-      # workflows, so falling back to it would land the data commit without
-      # ever cutting the patch release. GH_TOKEN (PAT with contents:write)
-      # is required: fail fast when it is absent.
-      - name: Require GH_TOKEN for release-triggering push
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::error::GH_TOKEN secret is missing - weekly data updates need it so the push triggers the Release workflow"
-            exit 1
-          fi
-
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          # Do not persist credentials: the PAT must not sit in the git
-          # credential store while install/build scripts run. It is
-          # attached ephemerally to the remote only for the final push.
-          persist-credentials: false
 
       - uses: actions/setup-node@v4
         with:
@@ -54,11 +38,11 @@ jobs:
 
       # Versioning and publishing belong to semantic-release now: this job
       # only lands the data change. The chore(data) scope maps to a patch
-      # release via releaseRules in .releaserc.json. No [skip ci] — the
-      # push must trigger the Release workflow.
+      # release via releaseRules in .releaserc.json. No [skip ci].
+      # A push made with GITHUB_TOKEN does not trigger other workflows, so
+      # the Release workflow is dispatched explicitly instead — dispatches
+      # from GITHUB_TOKEN do create runs.
       - name: Commit data change if data changed
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
           git config user.name "ealush"
           git config user.email "code@ealush.com"
@@ -69,5 +53,9 @@ jobs:
           git add package.json package-lock.json src/data dist 2>/dev/null || true
           git add -A
           git commit -m "chore(data): weekly emoji data update"
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/ealush/emoji-picker-react.git"
           git push origin HEAD:master
+
+      - name: Dispatch Release workflow
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh workflow run release.yml --ref master
