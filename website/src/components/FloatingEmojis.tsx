@@ -36,8 +36,12 @@ export function FloatingEmojis() {
   const curOffsetsRef = useRef<Map<number, { x: number; y: number }>>(new Map());
 
   useEffect(() => {
-    const count = 29; // +30% rain density
-    const picked = shuffle(allEmojis).slice(0, count);
+    const count = 35;
+    const shuffled = shuffle(allEmojis);
+    const picked = Array.from(
+      { length: count },
+      (_, i) => shuffled[i % shuffled.length],
+    );
     setDrops(
       picked.map((emoji, i) => ({
         id: i,
@@ -86,7 +90,9 @@ export function FloatingEmojis() {
 
       dropsEls.forEach((el) => {
         const id = Number(el.dataset.id);
-        const rect = el.getBoundingClientRect();
+        const animated =
+          el.querySelector<HTMLSpanElement>(`.${styles.rainEmoji}`) ?? el;
+        const rect = animated.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
 
@@ -140,7 +146,7 @@ export function FloatingEmojis() {
   if (reduced) {
     return (
       <div ref={containerRef} className={styles.rainContainer} aria-hidden>
-        {drops.slice(0, 13).map((d) => (
+        {drops.slice(0, 16).map((d) => (
           <span key={d.id} className={styles.rainDrop} style={{ left: `${d.x}%`, fontSize: `${d.size}rem`, opacity: 0.18 }}>
             {d.emoji}
           </span>
