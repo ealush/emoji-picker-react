@@ -46,7 +46,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
-          # Automatically inject basePath and disable server image optimization.
+          # NOTE: this does not inject basePath; the subpath prefix lives in
+          # website/next.config.js and is verified by "Verify subpath asset
+          # URLs" below.
           static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v4
@@ -76,6 +78,13 @@ jobs:
       - name: Static HTML export with Next.js
         if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
         run: npx --no-install next export
+      - name: Verify subpath asset URLs
+        if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
+        run: |
+          if grep -rhoE '(src|href)="/_next/[^"]*"' out/ | head -1; then
+            echo "Root-absolute asset URLs found; the export is missing its basePath." >&2
+            exit 1
+          fi
       - name: Upload artifact
         if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
         uses: actions/upload-pages-artifact@v3

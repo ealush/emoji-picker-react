@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import Head from "next/head";
 import { Inter, Fraunces } from "next/font/google";
 import styles from "@/styles/Home.module.css";
-import { Analytics } from "@vercel/analytics/react";
 import Link from "next/link";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
@@ -45,7 +44,7 @@ export default function Home({ initialStats }: HomeProps) {
           content="A lightweight, customizable emoji picker component for React applications. TypeScript support, multiple themes, skin tones, and 1800+ emojis."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="./favicon.ico" />
         <meta property="og:title" content="emoji-picker-react" />
         <meta
           property="og:description"
@@ -116,8 +115,6 @@ export default function Home({ initialStats }: HomeProps) {
 
         <Footer />
       </main>
-
-      <Analytics />
     </>
   );
 }
