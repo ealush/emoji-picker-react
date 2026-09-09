@@ -1,3 +1,9 @@
+## [4.20.7](https://github.com/ealush/emoji-picker-react/compare/4.20.6...4.20.7) (2026-09-09)
+
+### Bug Fixes
+
+* keep translated emojiData after space bar preview ([#503](https://github.com/ealush/emoji-picker-react/issues/503)) ([#526](https://github.com/ealush/emoji-picker-react/issues/526)) ([21597b8](https://github.com/ealush/emoji-picker-react/commit/21597b83cf325971db75ed08e06af03244465fcd))
+
 ## [4.20.6](https://github.com/ealush/emoji-picker-react/compare/4.20.5...4.20.6) (2026-09-09)
 
 ### Bug Fixes
