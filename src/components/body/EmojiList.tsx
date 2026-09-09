@@ -34,9 +34,9 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   // native button role for activation semantics.
   // https://github.com/ealush/emoji-picker-react/issues/508
   // The list markup is kept for a backwards-compatible DOM structure;
-  // the grid role override is intentional (see below).
-  // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+  // the grid role override is intentional.
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
     <ul className={cx(styles.emojiList)} ref={EmojiListRef} role="grid">
       <MeasureEmoji />
       {categories.map((categoryConfig, index) => {
