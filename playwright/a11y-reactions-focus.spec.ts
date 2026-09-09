@@ -43,7 +43,8 @@ test('keyboard focus on a reaction is visibly indicated', async ({ page }) => {
   await page.goto(storyUrl('picker-reactions--reactions-menu'));
 
   const focusedLabel = await tabToFirstReaction(page);
-  const focused = page.getByRole('button', { name: focusedLabel });
+  const reactions = page.getByRole('list', { name: /reactions/i });
+  const focused = reactions.getByRole('button', { name: focusedLabel });
 
   // The focus ring itself (fails before the fix: box-shadow is none).
   await expect
@@ -55,7 +56,5 @@ test('keyboard focus on a reaction is visibly indicated', async ({ page }) => {
     .not.toBe('none');
 
   // Screenshot the focused bar to lock the visual treatment in.
-  await expect(page.getByRole('list', { name: /reactions/i })).toHaveScreenshot(
-    'reactions-keyboard-focus.png',
-  );
+  await expect(reactions).toHaveScreenshot('reactions-keyboard-focus.png');
 });
