@@ -27,8 +27,17 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   const labelHeight = getLabelHeight(EmojiListRef.current);
 
   let topOffset = 0;
+  // role="grid" makes screen readers switch out of virtual-cursor mode so
+  // arrow keys reach the picker's keyboard handler. Each category is one
+  // rowgroup: visual rows shift under virtualization, so the category is
+  // the only stable row unit. Emoji buttons intentionally keep their
+  // native button role for activation semantics.
+  // https://github.com/ealush/emoji-picker-react/issues/508
+  // The list markup is kept for a backwards-compatible DOM structure;
+  // the grid role override is intentional (see below).
+  // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
   return (
-    <ul className={cx(styles.emojiList)} ref={EmojiListRef}>
+    <ul className={cx(styles.emojiList)} ref={EmojiListRef} role="grid">
       <MeasureEmoji />
       {categories.map((categoryConfig) => {
         const category = categoryFromCategoryConfig(categoryConfig);
@@ -88,6 +97,7 @@ function RenderCategory({
     <EmojiCategory
       categoryConfig={categoryConfig}
       height={dimensions?.categoryHeight}
+      emojisPerRow={dimensions?.emojisPerRow}
       // Indicates that there are no visible emojis
       // Hence, the category should be hidden
       hidden={!emojis.length && virtualizedCounter === 0}

@@ -81,6 +81,12 @@ export function SkinTonePicker({
               key={skinToneVariation}
               skinToneVariation={skinToneVariation}
               isOpen={isOpen}
+              // Roving tabindex: when the fan is closed the inactive tones
+              // are invisible (opacity: 0, stacked), so they must not be
+              // reachable via Tab. The active tone stays tabbable to open
+              // the fan from the keyboard.
+              // https://github.com/ealush/emoji-picker-react/issues/492
+              tabIndex={isOpen || active ? 0 : -1}
               style={{
                 transform: cx(
                   vertical

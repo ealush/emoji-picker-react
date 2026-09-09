@@ -11,6 +11,17 @@ export function elementCountInRow(
     return 0;
   }
 
+  // The virtualized layout positions emojis with a fixed per-row count that
+  // is rendered onto the category content element. That count is the single
+  // source of truth: deriving it again from fractional rect widths can be
+  // off by one (e.g. category padding shrinking the content box), which
+  // makes arrow-up/arrow-down drift sideways by a column.
+  // https://github.com/ealush/emoji-picker-react/issues/502
+  const declared = Number(parent.dataset?.emojisPerRow);
+  if (Number.isInteger(declared) && declared > 0) {
+    return declared;
+  }
+
   const parentWidth = parent.getBoundingClientRect().width;
   const elementWidth = element.getBoundingClientRect().width;
   return Math.floor(parentWidth / elementWidth);

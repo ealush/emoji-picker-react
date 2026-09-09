@@ -19,6 +19,7 @@ type Props = Readonly<{
   hidden?: boolean;
   hiddenOnSearch?: boolean;
   height?: number;
+  emojisPerRow?: number;
 }>;
 
 export function EmojiCategory({
@@ -27,6 +28,7 @@ export function EmojiCategory({
   hidden,
   hiddenOnSearch,
   height,
+  emojisPerRow,
 }: Props) {
   const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
@@ -39,10 +41,16 @@ export function EmojiCategory({
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
       )}
       data-name={category}
+      role="rowgroup"
       aria-label={categoryName}
     >
       <h2 className={cx(styles.label)}>{categoryName}</h2>
-      <div className={cx(styles.categoryContent)} style={{ height }}>
+      <div
+        className={cx(styles.categoryContent)}
+        style={{ height }}
+        role="row"
+        data-emojis-per-row={emojisPerRow}
+      >
         {children}
       </div>
     </li>

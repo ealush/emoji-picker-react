@@ -27,6 +27,15 @@ export function Reactions() {
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
 
+  // Move focus to the first reaction when reactions open so keyboard
+  // users land directly in the reaction set.
+  // https://github.com/ealush/emoji-picker-react/issues/411
+  React.useEffect(() => {
+    ReactionsRef.current
+      ?.querySelector('button')
+      ?.focus({ preventScroll: true });
+  }, [ReactionsRef]);
+
   if (!reactionsOpen) {
     return null;
   }
@@ -52,6 +61,7 @@ export function Reactions() {
               unified={reaction}
               showVariations={false}
               className={cx(styles.emojiButton)}
+              buttonClassName={cx(styles.reactionButton)}
               noBackground
               getEmojiUrl={getEmojiUrl}
             />
@@ -76,6 +86,19 @@ const styles = stylesheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: '100%',
+  },
+  reactionButton: {
+    // Every picker button sets outline: none, and reaction buttons also
+    // suppress the focus background, so keyboard focus was invisible.
+    // A :focus-visible ring on the button fixes that for every emoji
+    // style (the scale transform on the inner image is clipped by the
+    // button's overflow: hidden, and does nothing on inline native
+    // emoji). Scoped to the reactions bar so grid focus treatment is
+    // untouched.
+    // https://github.com/ealush/emoji-picker-react/issues/473
+    ':focus-visible': {
+      boxShadow: '0 0 0 2px var(--epr-highlight-color)',
+    },
   },
   emojiButton: {
     ':hover': {

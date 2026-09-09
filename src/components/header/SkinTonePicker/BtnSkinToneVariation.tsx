@@ -12,6 +12,7 @@ type Props = {
   isActive: boolean;
   skinToneVariation: SkinTones;
   style?: React.CSSProperties;
+  tabIndex?: number;
 };
 
 // eslint-disable-next-line complexity
@@ -21,11 +22,13 @@ export function BtnSkinToneVariation({
   isActive,
   skinToneVariation,
   style,
+  tabIndex,
 }: Props) {
   return (
     <Button
       style={style}
       onClick={onClick}
+      tabIndex={tabIndex}
       className={cx(
         `epr-tone-${skinToneVariation}`,
         styles.tone,

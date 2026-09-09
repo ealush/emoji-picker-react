@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
 import {
+  focusElement,
   focusNextElementSibling,
   focusPrevElementSibling,
 } from '../DomUtils/focusElement';
@@ -20,6 +21,7 @@ import {
   useBodyRef,
   useCategoryNavigationRef,
   usePickerMainRef,
+  useReactionsRef,
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
@@ -59,6 +61,7 @@ export function useKeyboardNavigation() {
   useSearchInputKeyboardEvents();
   useSkinTonePickerKeyboardEvents();
   useCategoryNavigationKeyboardEvents();
+  useReactionsKeyboardEvents();
   useBodyKeyboardEvents();
 }
 
@@ -317,6 +320,75 @@ function useCategoryNavigationKeyboardEvents() {
       current.removeEventListener('keydown', onKeyDown);
     };
   }, [CategoryNavigationRef, BodyRef, onKeyDown]);
+}
+
+// Arrow keys move between reaction buttons (and the expand button)
+// while the reactions bar has focus. The bar lives outside the scroll
+// body, so the body handler never sees these events.
+// https://github.com/ealush/emoji-picker-react/issues/411
+function useReactionsKeyboardEvents() {
+  const ReactionsRef = useReactionsRef();
+
+  const onKeyDown = useMemo(
+    () =>
+      function onKeyDown(event: KeyboardEvent) {
+        const { key } = event;
+        const current = ReactionsRef.current;
+
+        if (!current) {
+          return;
+        }
+
+        const delta = reactionFocusDelta(key);
+
+        if (delta !== 0 && focusReactionSibling(current, delta)) {
+          event.preventDefault();
+        }
+      },
+    [ReactionsRef],
+  );
+
+  useEffect(() => {
+    const current = ReactionsRef.current;
+
+    if (!current) {
+      return;
+    }
+
+    current.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      current.removeEventListener('keydown', onKeyDown);
+    };
+  }, [ReactionsRef, onKeyDown]);
+}
+
+function reactionFocusDelta(key: string): number {
+  switch (key) {
+    case KeyboardEvents.ArrowRight:
+    case KeyboardEvents.ArrowDown:
+      return 1;
+    case KeyboardEvents.ArrowLeft:
+    case KeyboardEvents.ArrowUp:
+      return -1;
+    default:
+      return 0;
+  }
+}
+
+function focusReactionSibling(root: HTMLElement, delta: number): boolean {
+  const buttons = Array.from(root.querySelectorAll('button'));
+  const activeIndex = buttons.indexOf(
+    getActiveElement() as HTMLButtonElement,
+  );
+  const sibling = activeIndex === -1 ? null : buttons[activeIndex + delta];
+
+  if (!sibling) {
+    return false;
+  }
+
+  focusElement(sibling);
+  return true;
 }
 
 function useBodyKeyboardEvents() {
