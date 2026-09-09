@@ -43,6 +43,7 @@ jobs:
       # the Release workflow is dispatched explicitly instead — dispatches
       # from GITHUB_TOKEN do create runs.
       - name: Commit data change if data changed
+        id: commit
         run: |
           git config user.name "ealush"
           git config user.email "code@ealush.com"
@@ -54,8 +55,10 @@ jobs:
           git add -A
           git commit -m "chore(data): weekly emoji data update"
           git push origin HEAD:master
+          echo "created=true" >> "$GITHUB_OUTPUT"
 
       - name: Dispatch Release workflow
+        if: steps.commit.outputs.created == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run release.yml --ref master
