@@ -1,3 +1,9 @@
+## [4.20.6](https://github.com/ealush/emoji-picker-react/compare/4.20.5...4.20.6) (2026-09-09)
+
+### Bug Fixes
+
+* paint first category without waiting for visibility observer ([#525](https://github.com/ealush/emoji-picker-react/issues/525)) ([bf45ea0](https://github.com/ealush/emoji-picker-react/commit/bf45ea05da20f85b93cf3617cddcc4d3266cb971))
+
 ## [4.20.5](https://github.com/ealush/emoji-picker-react/compare/4.20.4...4.20.5) (2026-09-09)
 
 ### Bug Fixes
