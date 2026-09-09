@@ -81,7 +81,9 @@ jobs:
       - name: Verify subpath asset URLs
         if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
         run: |
-          if grep -rhoE '(src|href)="/_next/[^"]*"' out/ | head -1; then
+          matches=$(grep -rhoE '(src|href)="/_next/[^"]*"' out/ || true)
+          if [ -n "$matches" ]; then
+            echo "$matches" | head -5
             echo "Root-absolute asset URLs found; the export is missing its basePath." >&2
             exit 1
           fi
