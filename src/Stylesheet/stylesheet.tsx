@@ -1,5 +1,5 @@
-import { Styles, createSheet } from 'flairup';
 import * as React from 'react';
+import { Styles, createSheet } from 'shipstyles';
 
 import { ClassNames } from '../DomUtils/classNames';
 
