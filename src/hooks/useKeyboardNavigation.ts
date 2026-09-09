@@ -25,7 +25,10 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
-import { useSkinToneFanOpenState } from '../components/context/PickerContext';
+import {
+  useReactionsModeState,
+  useSkinToneFanOpenState,
+} from '../components/context/PickerContext';
 import { useSearchDisabledConfig } from '../config/useConfig';
 
 import {
@@ -328,6 +331,9 @@ function useCategoryNavigationKeyboardEvents() {
 // https://github.com/ealush/emoji-picker-react/issues/411
 function useReactionsKeyboardEvents() {
   const ReactionsRef = useReactionsRef();
+  // The reactions bar mounts late when the user collapses the full
+  // picker, so the listener effect must rerun when it opens.
+  const [reactionsOpen] = useReactionsModeState();
 
   const onKeyDown = useMemo(
     () =>
@@ -345,7 +351,9 @@ function useReactionsKeyboardEvents() {
           event.preventDefault();
         }
       },
-    [ReactionsRef],
+    // reactionsOpen: the bar mounts late on collapse, and the new
+    // callback identity reinstalls the listener effect below.
+    [ReactionsRef, reactionsOpen],
   );
 
   useEffect(() => {

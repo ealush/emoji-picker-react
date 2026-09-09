@@ -27,10 +27,16 @@ export function Reactions() {
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
 
-  // Move focus to the first reaction when reactions open so keyboard
-  // users land directly in the reaction set.
+  // Move focus to the first reaction when the picker opens in reactions
+  // mode, so keyboard users land directly in the reaction set.
+  // Deliberately mount-only: when the user collapses the full picker by
+  // clicking, focus stays where they put it instead of being stolen.
   // https://github.com/ealush/emoji-picker-react/issues/411
+  const openOnMount = React.useRef(reactionsOpen);
   React.useEffect(() => {
+    if (!openOnMount.current) {
+      return;
+    }
     ReactionsRef.current
       ?.querySelector('button')
       ?.focus({ preventScroll: true });

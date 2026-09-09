@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -81,6 +82,38 @@ describe('reactions keyboard support (a11y)', () => {
 
     fireEvent.keyDown(document.activeElement as HTMLElement, {
       key: 'ArrowLeft',
+    });
+    await waitForFocus(/grinning face with big eyes/i);
+  });
+
+  it('supports arrow keys in a late-mounted reactions bar', async () => {
+    // When the user collapses the full picker, the bar mounts after the
+    // keyboard listener effect first ran, so the listener must reinstall
+    // on open. (Autofocus stays mount-only: collapsing by mouse click
+    // must not steal focus.)
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        emojiStyle={EmojiStyle.NATIVE}
+        reactions={['1f600', '1f603']}
+        onEmojiClick={(_emoji, _event, api) => api?.collapseToReactions()}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole('button', { name: 'grinning face' }),
+    );
+
+    // The collapse mounted the bar; keyboard users tab into it.
+    const bar = await screen.findByRole('list', { name: /reactions/i });
+    const [first] = Array.from(bar.querySelectorAll('button'));
+    first.focus();
+    expect(document.activeElement?.getAttribute('aria-label')).toBe(
+      'grinning face',
+    );
+
+    fireEvent.keyDown(document.activeElement as HTMLElement, {
+      key: 'ArrowRight',
     });
     await waitForFocus(/grinning face with big eyes/i);
   });

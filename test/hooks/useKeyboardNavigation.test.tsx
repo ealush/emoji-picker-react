@@ -30,6 +30,7 @@ vi.mock('../../src/components/context/ElementRefContext', () => ({
 
 vi.mock('../../src/components/context/PickerContext', () => ({
   useSkinToneFanOpenState: vi.fn(() => [false, vi.fn()]),
+  useReactionsModeState: vi.fn(() => [false, vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
