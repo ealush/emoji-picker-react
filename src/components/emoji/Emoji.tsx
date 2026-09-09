@@ -14,6 +14,7 @@ type ClickableEmojiProps = Readonly<
     hiddenOnSearch?: boolean;
     emoji: DataEmoji;
     className?: string;
+    buttonClassName?: string;
     noBackground?: boolean;
     style?: React.CSSProperties;
   }
@@ -30,6 +31,7 @@ export function ClickableEmoji({
   lazyLoad,
   getEmojiUrl,
   className,
+  buttonClassName,
   noBackground = false,
   style,
 }: ClickableEmojiProps) {
@@ -45,6 +47,7 @@ export function ClickableEmoji({
       unified={unified}
       noBackground={noBackground}
       style={style}
+      className={buttonClassName}
     >
       <ViewOnlyEmoji
         unified={unified}

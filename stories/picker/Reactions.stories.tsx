@@ -38,6 +38,20 @@ export const ReactionsMenuNoExpand = (args: Props) => (
   />
 );
 
+// Image-style reactions for deterministic cross-platform screenshots:
+// native glyphs render with different fonts per OS, CDN images do not.
+export const ReactionsMenuImage = (args: Props) => (
+  <Template
+    {...args}
+    reactionsDefaultOpen={true}
+    emojiStyle={EmojiStyle.APPLE}
+    onReactionClick={(data) => {
+      console.log('Clicked reaction!', data);
+    }}
+  />
+);
+ReactionsMenuImage.parameters = { visualTest: false };
+
 export const CustomReactions = (args: Props) => (
   <Template
     {...args}
