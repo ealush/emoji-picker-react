@@ -3,19 +3,33 @@ name: Release
 on:
   push:
     branches:
-      - release
+      - master
+  workflow_dispatch:
+
+# Avoid overlapping releases when several commits land on master at once.
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '24'
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Configure Git
@@ -29,7 +43,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Publish
-        run: npm publish
+      - name: Release
+        run: npx semantic-release
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
