@@ -13,10 +13,23 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
+      # Pushes authenticated with GITHUB_TOKEN do not trigger other
+      # workflows, so falling back to it would land the data commit without
+      # ever cutting the patch release. GH_TOKEN (PAT with contents:write)
+      # is required: fail fast when it is absent.
+      - name: Require GH_TOKEN for release-triggering push
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::GH_TOKEN secret is missing - weekly data updates need it so the push triggers the Release workflow"
+            exit 1
+          fi
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
 
       - uses: actions/setup-node@v4
         with:
