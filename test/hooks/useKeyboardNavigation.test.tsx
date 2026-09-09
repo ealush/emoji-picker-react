@@ -6,6 +6,7 @@ import {
   useBodyRef,
   useCategoryNavigationRef,
   usePickerMainRef,
+  useReactionsRef,
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../../src/components/context/ElementRefContext';
@@ -22,12 +23,14 @@ vi.mock('../../src/components/context/ElementRefContext', () => ({
   useBodyRef: vi.fn(),
   useCategoryNavigationRef: vi.fn(),
   usePickerMainRef: vi.fn(),
+  useReactionsRef: vi.fn(),
   useSearchInputRef: vi.fn(),
   useSkinTonePickerRef: vi.fn(),
 }));
 
 vi.mock('../../src/components/context/PickerContext', () => ({
   useSkinToneFanOpenState: vi.fn(() => [false, vi.fn()]),
+  useReactionsModeState: vi.fn(() => [false, vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
@@ -90,6 +93,9 @@ describe('useKeyboardNavigation', () => {
       current: document.createElement('div'),
     });
     (useSkinTonePickerRef as any).mockReturnValue({
+      current: document.createElement('div'),
+    });
+    (useReactionsRef as any).mockReturnValue({
       current: document.createElement('div'),
     });
   });
