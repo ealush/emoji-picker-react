@@ -1,5 +1,5 @@
-import { cx } from 'flairup';
 import * as React from 'react';
+import { cx } from 'shipstyles';
 
 type Props = Readonly<{
   className?: string;

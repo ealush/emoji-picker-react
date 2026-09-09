@@ -57,7 +57,7 @@ See [PROPS.md](PROPS.md) for the complete props reference.
 
 ## Styling
 
-No stylesheet import needed. All styles are scoped via [Flairup](https://github.com/ealush/flairup) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles.
+No stylesheet import needed. All styles are scoped via [ShipStyles](https://github.com/ealush/shipstyles) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles.
 
 Restyle the picker by overriding [CSS variables](CSS_VARIABLES.md) on `.EmojiPickerReact`:
 

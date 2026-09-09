@@ -1,5 +1,5 @@
-import { cx } from 'flairup';
 import * as React from 'react';
+import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';

@@ -1,6 +1,6 @@
 /* eslint-disable complexity */
-import { cx } from 'flairup';
 import * as React from 'react';
+import { cx } from 'shipstyles';
 
 import { ClassNames } from '../../../DomUtils/classNames';
 import { stylesheet } from '../../../Stylesheet/stylesheet';

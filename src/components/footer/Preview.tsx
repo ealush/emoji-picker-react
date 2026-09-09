@@ -1,6 +1,6 @@
-import { cx } from 'flairup';
 import * as React from 'react';
 import { useState } from 'react';
+import { cx } from 'shipstyles';
 
 import {
   commonInteractionStyles,

@@ -1,6 +1,6 @@
-import { cx } from 'flairup';
 import * as React from 'react';
 import { useEffect } from 'react';
+import { cx } from 'shipstyles';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { focusFirstVisibleEmoji } from '../../DomUtils/keyboardNavigation';
