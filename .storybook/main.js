@@ -18,7 +18,7 @@ module.exports = {
   webpackFinal: async (config) => {
     config.module.rules.push({
       test: /\.(ts|js|tsx)?$/,
-      exclude: /node_modules\/(?!(flairup)\/).*/,
+      exclude: /node_modules\/(?!(shipstyles)\/).*/,
       use: [
         {
           loader: require.resolve('babel-loader'),
