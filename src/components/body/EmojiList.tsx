@@ -34,12 +34,12 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   // native button role for activation semantics.
   // https://github.com/ealush/emoji-picker-react/issues/508
   // The list markup is kept for a backwards-compatible DOM structure;
-  // the grid role override is intentional (see below).
-  // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+  // the grid role override is intentional.
   return (
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
     <ul className={cx(styles.emojiList)} ref={EmojiListRef} role="grid">
       <MeasureEmoji />
-      {categories.map((categoryConfig) => {
+      {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
 
         const currentOffset = topOffset;
@@ -54,6 +54,7 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
             categoryEmojis={getEmojisByCategory(category)}
             categoryConfig={categoryConfig}
             topOffset={currentOffset}
+            isFirstCategory={index === 0}
             onHeightReady={(height) => {
               if (categoryHeights[category] !== height) {
                 setCategoryHeights((prev) => ({
@@ -76,21 +77,32 @@ function RenderCategory({
   topOffset,
   onHeightReady,
   scrollTop,
+  isFirstCategory,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
   topOffset: number;
   onHeightReady: (height: number) => void;
   scrollTop: number;
+  isFirstCategory: boolean;
 }) {
   const [visibleCategories] = useVisibleCategoriesState();
+
+  // The observer is the only writer of visibleCategories. When it never
+  // fires (zero-height container at mount, hidden modal), no category
+  // would ever render. The first category paints optimistically to break
+  // the deadlock; the observer takes over from there.
+  // https://github.com/ealush/emoji-picker-react/issues/469
+  // https://github.com/ealush/emoji-picker-react/issues/475
+  const isCategoryVisible =
+    isFirstCategory || visibleCategories.includes(categoryConfig.category);
 
   const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
     categoryEmojis,
     topOffset,
     onHeightReady,
     scrollTop,
-    isCategoryVisible: visibleCategories.includes(categoryConfig.category),
+    isCategoryVisible,
   });
 
   return (
