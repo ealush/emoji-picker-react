@@ -107,4 +107,20 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
 
     expect(document.activeElement).toBe(editable);
   });
+
+  it('moves focus to the hovered emoji when focus is already inside the picker', async () => {
+    renderPickerWithExternalInput();
+
+    // Interacting with the picker: focus is inside, so hovering an emoji
+    // hands focus to it and arrow-key navigation continues from there.
+    const search = screen.getByLabelText('Type to search for an emoji');
+    (search as HTMLInputElement).focus();
+    expect(document.activeElement).toBe(search);
+
+    const emojiButton = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(emojiButton);
+    await flushFocus();
+
+    expect(document.activeElement).toBe(emojiButton);
+  });
 });

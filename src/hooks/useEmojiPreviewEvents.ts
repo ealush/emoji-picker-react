@@ -1,11 +1,15 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
+import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
   buttonFromTarget,
 } from '../DomUtils/selectors';
-import { useBodyRef } from '../components/context/ElementRefContext';
+import {
+  useBodyRef,
+  usePickerMainRef,
+} from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
 
 import {
@@ -18,6 +22,7 @@ export function useEmojiPreviewEvents(
   setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
 ) {
   const BodyRef = useBodyRef();
+  const PickerMainRef = usePickerMainRef();
   const isMouseDisallowed = useIsMouseDisallowed();
   const allowMouseMove = useAllowMouseMove();
 
@@ -86,10 +91,6 @@ export function useEmojiPreviewEvents(
         return;
       }
 
-      // Update the preview without moving DOM focus. Focusing the button
-      // here steals the caret from inputs outside the picker (issue #320);
-      // keyboard users still get focus-driven previews via onEnter, and
-      // arrow-key navigation moves focus explicitly.
       const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
 
       if (!unified || !originalUnified) {
@@ -100,6 +101,24 @@ export function useEmojiPreviewEvents(
         unified,
         originalUnified,
       });
+
+      // Let arrow-key navigation continue from the hovered emoji, but only
+      // when focus is already inside the picker (or nowhere meaningful).
+      // Pulling focus out of an external element steals the caret from
+      // host-app inputs (issue #320).
+      if (!isExternalElementFocused()) {
+        focusElement(button);
+      }
+    }
+
+    function isExternalElementFocused(): boolean {
+      const active = document.activeElement as HTMLElement | null;
+
+      if (!active || active === document.body || active === document.documentElement) {
+        return false;
+      }
+
+      return !PickerMainRef.current?.contains(active);
     }
 
     return () => {

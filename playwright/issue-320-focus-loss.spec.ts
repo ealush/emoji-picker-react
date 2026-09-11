@@ -74,3 +74,60 @@ test('hovering an emoji does not steal focus from an external editor', async ({
   // Acceptance criterion: the external editor keeps DOM focus.
   await expect(external).toBeFocused();
 });
+
+test('hovering an emoji with picker focus continues keyboard navigation from it', async ({
+  page,
+}) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(storyUrl('picker-overview--no-suggested'));
+
+  // Focus is inside the picker, so hover hands focus to the emoji and
+  // arrow keys proceed from there (pre-#320-fix continuity, preserved).
+  const search = page.getByLabel('Type to search for an emoji');
+  await search.focus();
+  await expect(search).toBeFocused();
+
+  const exposedLabel = await page.evaluate(() => {
+    const body = document.querySelector('.epr-body');
+    if (body) body.scrollTop = 120;
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(
+        '.epr-body button.epr-emoji',
+      ),
+    ).filter(b => b.getAttribute('aria-label'));
+    for (const b of buttons) {
+      const r = b.getBoundingClientRect();
+      const el = document.elementFromPoint(
+        r.x + r.width / 2,
+        r.y + r.height / 2,
+      );
+      if (el && (el === b || b.contains(el)))
+        return b.getAttribute('aria-label') ?? '';
+    }
+    return '';
+  });
+  expect(exposedLabel).not.toBe('');
+
+  const hovered = page
+    .locator('.epr-body')
+    .getByLabel(exposedLabel, { exact: true })
+    .first();
+  await hovered.hover();
+  await expect(hovered).toBeFocused();
+
+  // Arrow navigation now proceeds from the hovered emoji. Focus moves via
+  // requestAnimationFrame, so poll for the change.
+  await page.keyboard.press('ArrowRight');
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(
+          () =>
+            (document.activeElement as HTMLElement | null)?.getAttribute(
+              'aria-label',
+            ) ?? '',
+        ),
+      { timeout: 5000 },
+    )
+    .not.toBe(exposedLabel);
+});
