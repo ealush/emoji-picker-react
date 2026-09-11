@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
-import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
-import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
   buttonFromTarget,
@@ -84,15 +82,24 @@ export function useEmojiPreviewEvents(
 
       const button = buttonFromTarget(e.target as HTMLElement);
 
-      if (button) {
-        const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
-        const buttonHeight = button.getBoundingClientRect().height;
-        if (belowFoldByPx < buttonHeight) {
-          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
-        }
-
-        focusElement(button);
+      if (!button) {
+        return;
       }
+
+      // Update the preview without moving DOM focus. Focusing the button
+      // here steals the caret from inputs outside the picker (issue #320);
+      // keyboard users still get focus-driven previews via onEnter, and
+      // arrow-key navigation moves focus explicitly.
+      const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
+
+      if (!unified || !originalUnified) {
+        return;
+      }
+
+      setPreviewEmoji({
+        unified,
+        originalUnified,
+      });
     }
 
     return () => {
@@ -103,22 +110,4 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('keydown', onEscape);
     };
   }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
-}
-
-function handlePartiallyVisibleElementFocus(
-  button: HTMLElement,
-  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
-) {
-  const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
-
-  if (!unified || !originalUnified) {
-    return;
-  }
-
-  (document.activeElement as HTMLElement)?.blur?.();
-
-  setPreviewEmoji({
-    unified,
-    originalUnified,
-  });
 }
