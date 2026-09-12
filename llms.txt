@@ -209,6 +209,7 @@ Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this 
   id: string;      // Unique ID
   names: string[]; // Search keywords
   imgUrl: string;  // Image source
+  group?: string;  // Optional section; see grouping below
 }
 ```
 
@@ -222,6 +223,42 @@ Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this 
     },
   ]}
 />
+```
+
+### Grouping custom emojis
+
+Give customs a `group` to render each group as its own named section.
+Reference the group from a `{ category: Categories.CUSTOM, group }`
+entry in `categories` to place it anywhere in the order, with its own
+`name` and `icon`. Customs without a group share the classic bucket.
+Groups missing from `categories` are appended as their own sections
+automatically (after the standard categories), so grouped emojis always
+render somewhere. Omit `CUSTOM` from `categories` entirely to hide all
+customs — explicit `categories` stay an allowlist:
+
+### Updating groups at runtime
+
+`categories` and `customEmojis` are immutable inputs: replacing either
+array (even with a same-length array) rebuilds sections, tabs, search,
+and lookup. Mutating an array in place is not detected — always provide
+a new reference. Group strings are exact, case-sensitive identifiers.
+
+```tsx
+import EmojiPicker, { Categories } from 'emoji-picker-react';
+
+<EmojiPicker
+  customEmojis={[
+    { id: 'panda', names: ['panda'], imgUrl: pandaPng, group: 'animals' },
+    { id: 'ninja', names: ['ninja'], imgUrl: ninjaPng, group: 'people' },
+    { id: 'orphan', names: ['orphan'], imgUrl: orphanPng },
+  ]}
+  categories={[
+    Categories.SMILEYS_PEOPLE,
+    { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+    { category: Categories.CUSTOM, group: 'people', name: 'People' },
+    { category: Categories.CUSTOM, name: 'Misc' },
+  ]}
+/>;
 ```
 
 ## Preview Bar
@@ -238,9 +275,31 @@ Control the footer preview area with `previewConfig`:
 
 ## Custom Category Icons
 
-Customize the navigation icons using one of two methods.
+Customize the navigation icons using one of three methods.
 
-**Method 1: The `categoryIcons` prop**
+**Method 1: Recolor the default icons with CSS variables**
+
+The default icons follow two variables. Set them on the picker root via
+the `style` prop (the picker defines its own defaults on `.epr-main`, so
+values inherited from outer ancestors are shadowed):
+
+```tsx
+<EmojiPicker
+  style={
+    {
+      '--epr-category-icon-active-color': '#e11d48',
+      '--epr-category-icon-inactive-color': '#a8a29e',
+    } as React.CSSProperties
+  }
+/>
+```
+
+| Variable                             | Default                             |
+| :----------------------------------- | :---------------------------------- |
+| `--epr-category-icon-active-color`   | `#3371B7` (`#6AA9DD` in dark theme) |
+| `--epr-category-icon-inactive-color` | `#868686` (`#C0C0BF` in dark theme) |
+
+**Method 2: The `categoryIcons` prop**
 
 Map `Categories` enum values to React nodes:
 
@@ -255,7 +314,7 @@ import EmojiPicker, { Categories } from 'emoji-picker-react';
 />;
 ```
 
-**Method 2: The `categories` configuration array**
+**Method 3: The `categories` configuration array**
 
 Define the icon directly within the category configuration object:
 
@@ -278,7 +337,7 @@ import EmojiPicker, { Categories } from 'emoji-picker-react';
 />;
 ```
 
-Note: if both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop.
+Note: if both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop. `categoryIcons[Categories.CUSTOM]` applies to every custom group tab that does not define its own `icon`.
 
 ## Content Security Policy (CSP)
 
@@ -386,10 +445,11 @@ aside.EmojiPickerReact {
 
 ## 🏷️ Category Navigation
 
-| Variable                                | Description                          | Default   |
-| :-------------------------------------- | :----------------------------------- | :-------- |
-| `--epr-category-navigation-button-size` | Size of category navigation buttons. | `30px`    |
-| `--epr-category-icon-active-color`      | Color of the active category icon.   | `#6aa8de` |
+| Variable                                | Description                                                     | Default             |
+| :-------------------------------------- | :-------------------------------------------------------------- | :------------------ |
+| `--epr-category-navigation-button-size` | Size of category navigation buttons.                            | `30px`              |
+| `--epr-category-icon-active-color`      | Color of the active/hovered category icon (and focus ring).     | `#3371B7` (`#6AA9DD` in dark theme) |
+| `--epr-category-icon-inactive-color`    | Color of inactive category icons.                               | `#868686` (`#C0C0BF` in dark theme) |
 
 ## 📃 Category Labels
 

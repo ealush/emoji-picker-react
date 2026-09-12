@@ -39,7 +39,11 @@ export function useSetConfig(config: PickerConfig) {
     // not gonna...
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    config.customEmojis?.length,
+    // New references rebuild merged categories and data even at equal
+    // length; compareConfig above still gates no-op updates so inline
+    // literals don't loop.
+    config.categories,
+    config.customEmojis,
     config.open,
     config.emojiVersion,
     config.reactionsDefaultOpen,

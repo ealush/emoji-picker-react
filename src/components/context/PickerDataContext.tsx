@@ -34,9 +34,9 @@ export interface PickerDataContextValue {
 const PickerDataContext = React.createContext<PickerDataContextValue>({
   emojiData: {} as EmojiData,
   allEmojis: [],
-  allEmojisByUnified: {},
-  searchIndex: {},
-  customGroups: {},
+  allEmojisByUnified: Object.create(null),
+  searchIndex: Object.create(null),
+  customGroups: Object.create(null),
   emojiByUnified,
   activeVariationFromUnified: () => null,
 });
@@ -54,7 +54,10 @@ export function PickerDataProvider({
     // Clone to avoid mutation of shared source
     const newData: EmojiData = JSON.parse(JSON.stringify(emojiData));
 
-    const customGroups: Record<string, DataEmojis> = {};
+    // Group names and emoji ids are user-controlled strings: use
+    // null-prototype dictionaries so names like `__proto__` behave as
+    // ordinary data instead of resolving Object.prototype members.
+    const customGroups: Record<string, DataEmojis> = Object.create(null);
 
     if (customEmojis && customEmojis.length > 0) {
       for (const emoji of customEmojis) {
@@ -75,8 +78,10 @@ export function PickerDataProvider({
     const allEmojis: DataEmojis = Object.values(emojis)
       .concat(Object.values(customGroups))
       .flat();
-    const allEmojisByUnified: Record<string, DataEmoji> = {};
-    const searchIndex: Record<string, Record<string, DataEmoji>> = {};
+    const allEmojisByUnified: Record<string, DataEmoji> =
+      Object.create(null);
+    const searchIndex: Record<string, Record<string, DataEmoji>> =
+      Object.create(null);
 
     allEmojis.forEach((emoji) => {
       const unified = emoji[Keys.unified];
@@ -96,7 +101,7 @@ export function PickerDataProvider({
         .split('');
 
       joinedNameString.forEach((char: string) => {
-        searchIndex[char] = searchIndex[char] ?? {};
+        searchIndex[char] = searchIndex[char] ?? Object.create(null);
         searchIndex[char][unified] = emoji;
       });
     });

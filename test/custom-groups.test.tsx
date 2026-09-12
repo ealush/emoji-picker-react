@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker, { Props } from '../src';
 import { Categories } from '../src/config/categoryConfig';
@@ -70,8 +70,7 @@ const renderPicker = (props: Partial<Props> = {}) =>
  * Each `{ category: CUSTOM, group }` entry renders its own section with
  * its own nav tab; ungrouped customs share the classic bucket.
  */
-describe('custom emoji groups', () => {
-  it('renders one section and nav tab per group plus the shared bucket', async () => {
+describe('custom emoji groups', () => {  it('renders one section and nav tab per group plus the shared bucket', async () => {
     renderPicker();
 
     // Nav tabs.
@@ -263,5 +262,199 @@ describe('custom emoji groups', () => {
     expect(
       within(screen.getByRole('tablist')).getAllByRole('tab'),
     ).not.toHaveLength(0);
+  });
+});
+
+/**
+ * Runtime prop replacement. Both `customEmojis` and `categories` are
+ * immutable inputs: new references must rebuild every derived view, even
+ * when array lengths are unchanged.
+ */
+describe('custom emoji group updates', () => {
+  beforeEach(() => {
+    // Suggested emojis persist across tests in this file via localStorage;
+    // clicks in earlier tests would otherwise leak into search assertions.
+    window.localStorage.clear();
+  });
+
+  const pandaAnimals = {
+    names: ['Panda'],
+    imgUrl: 'https://example.com/panda.png',
+    id: 'panda',
+    group: 'animals',
+  };
+  const ninjaPeople = {
+    names: ['Ninja'],
+    imgUrl: 'https://example.com/ninja.png',
+    id: 'ninja',
+    group: 'people',
+  };
+
+  it('A: replaces same-length custom data without remounting', async () => {
+    const { rerender } = render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[pandaAnimals]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.getByRole('tab', { name: 'animals' })).toBeInTheDocument();
+
+    rerender(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[ninjaPeople]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.queryByRole('tab', { name: 'animals' })).toBeNull();
+    expect(
+      screen.queryByRole('rowgroup', { name: 'animals' }),
+    ).toBeNull();
+    expect(screen.getByRole('tab', { name: 'people' })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'people' })).getByLabelText(
+        'ninja',
+      ),
+    ).toBeInTheDocument();
+
+    const input = screen.getByLabelText('Type to search for an emoji');
+    await userEvent.type(input, 'ninja');
+    expect(await screen.findByLabelText('ninja')).toBeInTheDocument();
+    await userEvent.clear(input);
+    await userEvent.type(input, 'panda');
+    expect(screen.queryByLabelText('panda')).toBeNull();
+  });
+
+  it('B: replaces category presentation with the same emoji array', async () => {
+    const customs = [pandaAnimals, ninjaPeople];
+    const { rerender } = render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customs}
+        categories={[
+          {
+            category: Categories.CUSTOM,
+            group: 'animals',
+            name: 'Animals',
+            icon: <span data-testid="icon-v1">V1</span>,
+          },
+          { category: Categories.CUSTOM, group: 'people', name: 'People' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.getByRole('tab', { name: 'Animals' })).toBeInTheDocument();
+    expect(screen.getByTestId('icon-v1')).toBeInTheDocument();
+
+    rerender(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customs}
+        categories={[
+          { category: Categories.CUSTOM, group: 'people', name: 'People' },
+          {
+            category: Categories.CUSTOM,
+            group: 'animals',
+            name: 'Wildlife',
+            icon: <span data-testid="icon-v2">V2</span>,
+          },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    const tabs = within(screen.getByRole('tablist'))
+      .getAllByRole('tab')
+      .map(tab => tab.getAttribute('aria-label'));
+    expect(tabs).toEqual(['People', 'Wildlife']);
+    const headings = screen.getAllByRole('heading').map(h => h.textContent);
+    expect(headings).toEqual(['People', 'Wildlife']);
+    expect(screen.queryByRole('tab', { name: 'Animals' })).toBeNull();
+    expect(screen.getByTestId('icon-v2')).toBeInTheDocument();
+    expect(screen.queryByTestId('icon-v1')).toBeNull();
+  });
+
+  it('C: moves an emoji between groups keeping id and length', async () => {
+    const { rerender } = render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[pandaAnimals]}
+        categories={[
+          { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+          { category: Categories.CUSTOM, group: 'people', name: 'People' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'Animals' })).getByLabelText(
+        'panda',
+      ),
+    ).toBeInTheDocument();
+
+    rerender(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[{ ...pandaAnimals, group: 'people' }]}
+        categories={[
+          { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+          { category: Categories.CUSTOM, group: 'people', name: 'People' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'People' })).getByLabelText(
+        'panda',
+      ),
+    ).toBeInTheDocument();
+    // The emptied Animals section hides (display: none), dropping out of
+    // the accessibility tree: panda is gone from Animals.
+    expect(screen.queryByRole('rowgroup', { name: 'Animals' })).toBeNull();
+  });
+
+  it('D: moves an emoji between a group and the ungrouped bucket', async () => {
+    // Smileys keeps two tabs visible so the nav bar itself renders.
+    const categories = [
+      { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+      { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+      { category: Categories.CUSTOM, name: 'Misc' },
+    ];
+    const { rerender } = render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[pandaAnimals]}
+        categories={categories}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.getByRole('tab', { name: 'Animals' })).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Misc' })).toBeNull();
+
+    const ungrouped = { ...pandaAnimals };
+    delete (ungrouped as Partial<typeof ungrouped>).group;
+    rerender(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[ungrouped]}
+        categories={categories}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.queryByRole('tab', { name: 'Animals' })).toBeNull();
+    expect(screen.getByRole('tab', { name: 'Misc' })).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'Misc' })).getByLabelText(
+        'panda',
+      ),
+    ).toBeInTheDocument();
   });
 });
