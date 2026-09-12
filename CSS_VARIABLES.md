@@ -48,10 +48,11 @@ aside.EmojiPickerReact {
 
 ## 🏷️ Category Navigation
 
-| Variable                                | Description                          | Default   |
-| :-------------------------------------- | :----------------------------------- | :-------- |
-| `--epr-category-navigation-button-size` | Size of category navigation buttons. | `30px`    |
-| `--epr-category-icon-active-color`      | Color of the active category icon.   | `#6aa8de` |
+| Variable                                | Description                                                     | Default             |
+| :-------------------------------------- | :-------------------------------------------------------------- | :------------------ |
+| `--epr-category-navigation-button-size` | Size of category navigation buttons.                            | `30px`              |
+| `--epr-category-icon-active-color`      | Color of the active/hovered category icon (and focus ring).     | `#3371B7` (`#6AA9DD` in dark theme) |
+| `--epr-category-icon-inactive-color`    | Color of inactive category icons.                               | `#868686` (`#C0C0BF` in dark theme) |
 
 ## 📃 Category Labels
 

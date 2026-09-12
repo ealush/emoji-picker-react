@@ -11,7 +11,7 @@ import { categoryNameFromCategoryConfig } from '../../config/categoryConfig';
 import { CategoryConfig } from '../../types/exposedTypes';
 import { Button } from '../atoms/Button';
 
-import SVGNavigation from './svg/CategoryNav.svg';
+import { CategoryNavIcon } from './CategoryNavIcon';
 
 type Props = {
   isActiveCategory: boolean;
@@ -51,23 +51,23 @@ export function CategoryButton({
       role="tab"
       aria-controls="epr-category-nav-id"
     >
-      {hasCustomIcon ? icon : null}
+      {hasCustomIcon ? icon : <CategoryNavIcon category={category} />}
     </Button>
   );
 }
 
-const DarkActivePositionY = {
-  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 3)',
+const DarkActiveColor = {
+  color: 'var(--epr-category-icon-active-color, #6AA9DD)',
 };
-const DarkPositionY = {
-  backgroundPositionY: 'calc(var(--epr-category-navigation-button-size) * 2)',
+const DarkInactiveColor = {
+  color: 'var(--epr-category-icon-inactive-color, #C0C0BF)',
 };
 
 const DarkInactivePosition = {
   ':not(.epr-search-active)': {
     catBtn: {
-      ':hover': DarkActivePositionY,
-      '&.epr-active': DarkActivePositionY,
+      ':hover': DarkActiveColor,
+      '&.epr-active': DarkActiveColor,
     },
   },
 };
@@ -80,10 +80,11 @@ const styles = stylesheet.create({
     position: 'relative',
     height: 'var(--epr-category-navigation-button-size)',
     width: 'var(--epr-category-navigation-button-size)',
-    backgroundSize: 'calc(var(--epr-category-navigation-button-size) * 10)',
     outline: 'none',
-    backgroundPosition: '0 0',
-    backgroundImage: `url(${SVGNavigation})`,
+    // Icon glyphs are inline SVGs painted with currentColor, so the fill
+    // follows the --epr-category-icon-*-color variables.
+    // https://github.com/ealush/emoji-picker-react/issues/399
+    color: 'var(--epr-category-icon-inactive-color, #868686)',
     ':focus:before': {
       content: '',
       position: 'absolute',
@@ -94,54 +95,14 @@ const styles = stylesheet.create({
       border: '2px solid var(--epr-category-icon-active-color)',
       borderRadius: '50%',
     },
-    '&.epr-icn-suggested': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -8)',
-    },
-    '&.epr-icn-custom': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -9)',
-    },
-    '&.epr-icn-activities': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -4)',
-    },
-    '&.epr-icn-animals_nature': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -1)',
-    },
-    '&.epr-icn-flags': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -7)',
-    },
-    '&.epr-icn-food_drink': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -2)',
-    },
-    '&.epr-icn-objects': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -5)',
-    },
-    '&.epr-icn-smileys_people': {
-      backgroundPositionX: '0px',
-    },
-    '&.epr-icn-symbols': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -6)',
-    },
-    '&.epr-icn-travel_places': {
-      backgroundPositionX:
-        'calc(var(--epr-category-navigation-button-size) * -3)',
-    },
   },
   customIcon: {
     '.': 'epr-cat-btn-custom-icon',
-    backgroundImage: 'none',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  ...darkMode('catBtn', DarkPositionY),
+  ...darkMode('catBtn', DarkInactiveColor),
   '.epr-dark-theme': {
     ...DarkInactivePosition,
   },
