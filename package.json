@@ -136,7 +136,7 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
-    "vitest": "^2.0.5"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "shipstyles": "1.0.0"
