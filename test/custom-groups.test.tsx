@@ -103,9 +103,9 @@ describe('custom emoji groups', () => {
       ),
     ).toBeInTheDocument();
     expect(
-      within(screen.getByRole('rowgroup', { name: 'Animals' })).queryByLabelText(
-        'ninja',
-      ),
+      within(
+        screen.getByRole('rowgroup', { name: 'Animals' }),
+      ).queryByLabelText('ninja'),
     ).toBeNull();
   });
 
@@ -118,9 +118,7 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('tab', { name: 'animals' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'animals' })).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'animals' })).getByLabelText(
         'panda',
@@ -142,9 +140,7 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(
-      screen.getByRole('tab', { name: 'Animals' }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Animals' })).toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: 'Ghost' })).toBeNull();
   });
 
@@ -161,9 +157,7 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(screen.getAllByRole('heading', { name: 'Animals' })).toHaveLength(
-      1,
-    );
+    expect(screen.getAllByRole('heading', { name: 'Animals' })).toHaveLength(1);
     expect(screen.queryByRole('heading', { name: 'Animals 2' })).toBeNull();
   });
 
@@ -171,7 +165,7 @@ describe('custom emoji groups', () => {
     render(
       <EmojiPicker
         emojiData={minimalEmojiData}
-        customEmojis={customEmojis.filter(emoji => emoji.group)}
+        customEmojis={customEmojis.filter((emoji) => emoji.group)}
         autoFocusSearch={false}
       />,
     );
@@ -194,9 +188,7 @@ describe('custom emoji groups', () => {
     );
 
     expect(screen.queryByRole('tab', { name: 'animals' })).toBeNull();
-    expect(
-      screen.queryByRole('rowgroup', { name: 'animals' }),
-    ).toBeNull();
+    expect(screen.queryByRole('rowgroup', { name: 'animals' })).toBeNull();
     expect(
       screen.getByRole('heading', { name: 'Smileys & People' }),
     ).toBeInTheDocument();
