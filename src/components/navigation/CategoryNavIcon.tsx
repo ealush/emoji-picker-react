@@ -297,7 +297,18 @@ export function CategoryNavIcon({ category }: { category: string }) {
       viewBox={`${column * 20} 0 20 20`}
       width="100%"
       height="100%"
-      style={{ display: 'block' }}
+      // Absolutely positioned over the button's padding box, matching the
+      // geometry of the former background-image sprite. Percentage sizes
+      // alone would resolve against the smaller content box (the button
+      // reset carries padding), shrinking the glyph.
+      style={{
+        display: 'block',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+      }}
       aria-hidden="true"
     >
       {SHAPES[column] ?? null}
