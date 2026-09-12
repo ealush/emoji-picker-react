@@ -1,3 +1,9 @@
+## [4.22.1](https://github.com/ealush/emoji-picker-react/compare/4.22.0...4.22.1) (2026-09-12)
+
+### Bug Fixes
+
+* reactive group updates, safe group storage, observed categories ([#533](https://github.com/ealush/emoji-picker-react/issues/533)) ([ceda7d2](https://github.com/ealush/emoji-picker-react/commit/ceda7d2c0ebfdd85c739557cb8eee77b90aadee2))
+
 ## [4.22.0](https://github.com/ealush/emoji-picker-react/compare/4.21.1...4.22.0) (2026-09-12)
 
 ### Features
