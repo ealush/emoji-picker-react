@@ -1,3 +1,9 @@
+## [4.21.0](https://github.com/ealush/emoji-picker-react/compare/4.20.9...4.21.0) (2026-09-12)
+
+### Features
+
+* recolorable category navigation icons via CSS variables ([#399](https://github.com/ealush/emoji-picker-react/issues/399)) ([#530](https://github.com/ealush/emoji-picker-react/issues/530)) ([3108e7b](https://github.com/ealush/emoji-picker-react/commit/3108e7b120ed8a4b1c7ec21015d7ef2a621e3839))
+
 ## [4.20.9](https://github.com/ealush/emoji-picker-react/compare/4.20.8...4.20.9) (2026-09-12)
 
 ### Bug Fixes
