@@ -1,3 +1,9 @@
+## [4.22.2](https://github.com/ealush/emoji-picker-react/compare/4.22.1...4.22.2) (2026-09-12)
+
+### Bug Fixes
+
+* structural config compare and reference-based observer trigger ([#534](https://github.com/ealush/emoji-picker-react/issues/534)) ([6ddbd4e](https://github.com/ealush/emoji-picker-react/commit/6ddbd4e5359f2f23cf8159ad36ddbf322b6235ac))
+
 ## [4.22.1](https://github.com/ealush/emoji-picker-react/compare/4.22.0...4.22.1) (2026-09-12)
 
 ### Bug Fixes
