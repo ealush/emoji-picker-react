@@ -46,7 +46,7 @@ import EmojiPicker, { Categories } from 'emoji-picker-react';
     { category: Categories.CUSTOM, group: 'people', name: 'People' },
     { category: Categories.CUSTOM, name: 'Misc' },
   ]}
-/>
+/>;
 ```
 
 ## Preview Bar
