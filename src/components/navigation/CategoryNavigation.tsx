@@ -3,7 +3,11 @@ import { useState } from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import {
+  categoryFromCategoryConfig,
+  categoryIdFromCategoryConfig,
+  customGroupFromCategoryConfig,
+} from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useCategoryIconsConfig,
@@ -16,6 +20,7 @@ import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Categories } from '../../types/exposedTypes';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
+import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { CategoryButton } from './CategoryButton';
 
@@ -30,11 +35,22 @@ export function CategoryNavigation() {
   const categoryIcons = useCategoryIconsConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
+  const { customGroups, emojiData } = usePickerDataContext();
 
-  const visibleCategories = categoriesConfig.filter(
-    categoryConfig =>
-      !(isCustomCategory(categoryConfig) && hideCustomCategory),
-  );
+  const visibleCategories = categoriesConfig.filter(categoryConfig => {
+    if (isCustomCategory(categoryConfig) && hideCustomCategory) {
+      return false;
+    }
+    // Tabs navigating to an empty (hidden) section are dead weight.
+    const group = customGroupFromCategoryConfig(categoryConfig);
+    if (group) {
+      return (customGroups[group]?.length ?? 0) > 0;
+    }
+    if (isCustomCategory(categoryConfig)) {
+      return (emojiData.emojis?.[Categories.CUSTOM]?.length ?? 0) > 0;
+    }
+    return true;
+  });
 
   // A single tab navigates nowhere — hide the bar to reclaim its space.
   // https://github.com/ealush/emoji-picker-react/issues/396
@@ -52,22 +68,23 @@ export function CategoryNavigation() {
     >
       {visibleCategories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
-        const isActiveCategory = category === activeCategory;
+        const categoryId = categoryIdFromCategoryConfig(categoryConfig);
+        const isActiveCategory = categoryId === activeCategory;
 
         const allowNavigation = !isSearchMode && !isActiveCategory;
 
         return (
           <CategoryButton
-            key={category}
+            key={categoryId}
             category={category}
             isActiveCategory={isActiveCategory}
             allowNavigation={allowNavigation}
             categoryConfig={categoryConfig}
             customIcon={categoryIcons[category as Categories]}
             onClick={() => {
-              scrollCategoryIntoView(category);
+              scrollCategoryIntoView(categoryId);
               setTimeout(() => {
-                setActiveCategory(category);
+                setActiveCategory(categoryId);
               }, 10);
             }}
           />

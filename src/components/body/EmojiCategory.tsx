@@ -8,7 +8,7 @@ import {
   stylesheet,
 } from '../../Stylesheet/stylesheet';
 import {
-  categoryFromCategoryConfig,
+  categoryIdFromCategoryConfig,
   categoryNameFromCategoryConfig,
 } from '../../config/categoryConfig';
 import { CategoryConfig } from '../../types/exposedTypes';
@@ -30,7 +30,6 @@ export function EmojiCategory({
   height,
   emojisPerRow,
 }: Props) {
-  const category = categoryFromCategoryConfig(categoryConfig);
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
 
   return (
@@ -40,7 +39,7 @@ export function EmojiCategory({
         hidden && commonStyles.hidden,
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
       )}
-      data-name={category}
+      data-name={categoryIdFromCategoryConfig(categoryConfig)}
       role="rowgroup"
       aria-label={categoryName}
     >

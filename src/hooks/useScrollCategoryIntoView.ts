@@ -13,8 +13,9 @@ export function useScrollCategoryIntoView() {
     if (!BodyRef.current) {
       return;
     }
+    // Group names are user-controlled; escape for the attribute selector.
     const $category = BodyRef.current?.querySelector(
-      `[data-name="${category}"]`,
+      `[data-name="${CSS.escape(category)}"]`,
     ) as NullableElement;
 
     if (!$category) {

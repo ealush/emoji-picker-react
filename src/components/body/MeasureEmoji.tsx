@@ -1,6 +1,9 @@
 import * as React from 'react';
 
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import {
+  categoryFromCategoryConfig,
+  customGroupFromCategoryConfig,
+} from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useEmojiStyleConfig,
@@ -37,9 +40,12 @@ export function MeasureEmoji() {
   }
 
   const firstCategory = categories[0];
-  const dummyEmoji = getEmojisByCategory(
-    categoryFromCategoryConfig(firstCategory),
-  )[0];
+  const dummyEmoji = firstCategory
+    ? getEmojisByCategory(
+        categoryFromCategoryConfig(firstCategory),
+        customGroupFromCategoryConfig(firstCategory),
+      )[0]
+    : undefined;
   const unified = dummyEmoji ? emojiUnified(dummyEmoji, activeSkinTone) : '';
 
   if (!dummyEmoji) {

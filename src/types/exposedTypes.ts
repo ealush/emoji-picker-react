@@ -15,6 +15,12 @@ export type CategoryConfig = {
   category: Categories;
   name: string;
   icon?: React.ReactNode;
+  /**
+   * Selects a `CustomEmoji` group for `Categories.CUSTOM` entries. Each
+   * grouped entry renders its own section and nav tab; ungrouped entries
+   * share the classic customs bucket.
+   */
+  group?: string;
 };
 
 export type CategoryIcons = Partial<Record<Categories, React.ReactNode>>;

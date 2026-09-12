@@ -5,6 +5,8 @@ import {
   SuggestionMode,
 } from '../types/exposedTypes';
 
+import { CustomEmoji } from './customEmojiConfig';
+
 export { Categories };
 
 const categoriesOrdered: Categories[] = [
@@ -28,7 +30,51 @@ export const SuggestedRecent: CategoryConfig = {
 export type CustomCategoryConfig = {
   category: Categories.CUSTOM;
   name: string;
+  /**
+   * Selects the `CustomEmoji` group rendered in this section. Each entry
+   * may carry its own `name` and `icon`, so multiple custom sections can
+   * coexist — each placed wherever its entry sits in `categories`.
+   * Entries without a group share the ungrouped customs bucket.
+   */
+  group?: string;
 };
+
+/**
+ * Stable identity for a category entry. Custom groups are namespaced so
+ * duplicate `{ category: CUSTOM }` configs no longer collide in React
+ * keys, scroll targets, and active-tab detection.
+ */
+export function categoryIdFromCategoryConfig(
+  categoryConfig: CategoryConfig,
+): string {
+  const category = categoryFromCategoryConfig(categoryConfig);
+  if (isCustomGroupConfig(categoryConfig)) {
+    return `${category}:${categoryConfig.group}`;
+  }
+  return category;
+}
+
+function isCustomGroupConfig(
+  categoryConfig: CategoryConfig,
+): categoryConfig is CustomCategoryConfig & { group: string } {
+  if (categoryConfig.category !== Categories.CUSTOM) {
+    return false;
+  }
+  const group = (categoryConfig as CustomCategoryConfig).group;
+  return typeof group === 'string' && group.length > 0;
+}
+
+/**
+ * The `CustomEmoji` group rendered by a category entry, if any.
+ */
+export function customGroupFromCategoryConfig(
+  categoryConfig: CategoryConfig,
+): string | undefined {
+  if (isCustomGroupConfig(categoryConfig)) {
+    return categoryConfig.group;
+  }
+  return undefined;
+}
 
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {
@@ -100,6 +146,7 @@ export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],
   modifiers: CategoryConfigModifiers = {},
   emojiData?: EmojiData,
+  customEmojis: CustomEmoji[] = [],
 ): CategoriesConfig {
   const extra = ((): Record<Categories, CategoryConfig> => {
     // 1. Start with localized categories from emojiData
@@ -124,11 +171,56 @@ export function mergeCategoriesConfig(
 
   const base = baseCategoriesConfig(extra);
 
-  if (!userCategoriesConfig?.length) {
-    return base;
-  }
+  const explicit: CategoriesConfig = userCategoriesConfig?.length
+    ? userCategoriesConfig.map(mapUserEntry)
+    : base;
 
-  return userCategoriesConfig.map((category) => {
+  // Groups without a `categories` entry get an appended section so their
+  // emojis always render somewhere — unless the user opted out of customs
+  // entirely by listing `categories` without CUSTOM. `categories` remains
+  // the override for order, display name, and icon.
+  // https://github.com/ealush/emoji-picker-react/issues/510
+  const customInPlay =
+    !userCategoriesConfig?.length ||
+    userCategoriesConfig.some(
+      entry =>
+        entry === Categories.CUSTOM ||
+        (typeof entry !== 'string' && entry.category === Categories.CUSTOM),
+    );
+  const listedGroups = new Set(
+    explicit
+      .map(entry => customGroupFromCategoryConfig(entry))
+      .filter((group): group is string => !!group),
+  );
+  const appended: CategoriesConfig = !customInPlay
+    ? []
+    : Array.from(
+        new Set(
+          customEmojis
+            .map(emoji => emoji.group)
+            .filter((group): group is string => !!group),
+        ),
+      )
+        .filter(group => !listedGroups.has(group))
+        .map(group => ({
+          category: Categories.CUSTOM,
+          name: group,
+          group,
+        }));
+
+  // Collapse duplicate entries (same identity twice renders the same
+  // section twice under one React key); first occurrence wins.
+  const seen = new Set<string>();
+  return explicit.concat(appended).filter(entry => {
+    const id = categoryIdFromCategoryConfig(entry);
+    if (seen.has(id)) {
+      return false;
+    }
+    seen.add(id);
+    return true;
+  });
+
+  function mapUserEntry(category: Categories | CategoryConfig) {
     if (typeof category === 'string') {
       return getBaseConfigByCategory(category, extra[category]);
     }
@@ -137,7 +229,7 @@ export function mergeCategoriesConfig(
       ...getBaseConfigByCategory(category.category, extra[category.category]),
       ...category,
     };
-  });
+  }
 }
 
 function getBaseConfigByCategory(
