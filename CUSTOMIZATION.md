@@ -24,6 +24,29 @@ Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this 
 />
 ```
 
+### Grouping custom emojis
+
+Give customs a `group` to render each group as its own named section.
+Reference the group from a `{ category: Categories.CUSTOM, group }`
+entry in `categories` to place it anywhere in the order, with its own
+`name` and `icon`. Customs without a group share the classic bucket:
+
+```tsx
+<EmojiPicker
+  customEmojis={[
+    { id: 'panda', names: ['panda'], imgUrl: pandaPng, group: 'animals' },
+    { id: 'ninja', names: ['ninja'], imgUrl: ninjaPng, group: 'people' },
+    { id: 'orphan', names: ['orphan'], imgUrl: orphanPng },
+  ]}
+  categories={[
+    Categories.SMILEYS_PEOPLE,
+    { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+    { category: Categories.CUSTOM, group: 'people', name: 'People' },
+    { category: Categories.CUSTOM, name: 'Misc' },
+  ]}
+/>
+```
+
 ## Preview Bar
 
 Control the footer preview area with `previewConfig`:

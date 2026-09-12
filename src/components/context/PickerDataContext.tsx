@@ -26,6 +26,7 @@ export interface PickerDataContextValue {
   allEmojis: DataEmojis;
   allEmojisByUnified: Record<string, DataEmoji>;
   searchIndex: Record<string, Record<string, DataEmoji>>;
+  customGroups: Record<string, DataEmojis>;
   emojiByUnified: (unified?: string) => DataEmoji | undefined;
   activeVariationFromUnified: (unified: string) => SkinTones | null;
 }
@@ -35,6 +36,7 @@ const PickerDataContext = React.createContext<PickerDataContextValue>({
   allEmojis: [],
   allEmojisByUnified: {},
   searchIndex: {},
+  customGroups: {},
   emojiByUnified,
   activeVariationFromUnified: () => null,
 });
@@ -52,14 +54,27 @@ export function PickerDataProvider({
     // Clone to avoid mutation of shared source
     const newData: EmojiData = JSON.parse(JSON.stringify(emojiData));
 
+    const customGroups: Record<string, DataEmojis> = {};
+
     if (customEmojis && customEmojis.length > 0) {
-      newData.emojis[Categories.CUSTOM] =
-        customEmojis.map(customToRegularEmoji);
+      for (const emoji of customEmojis) {
+        if (!emoji.group) {
+          continue;
+        }
+        customGroups[emoji.group] = customGroups[emoji.group] ?? [];
+        customGroups[emoji.group].push(customToRegularEmoji(emoji));
+      }
+
+      newData.emojis[Categories.CUSTOM] = customEmojis
+        .filter(emoji => !emoji.group)
+        .map(customToRegularEmoji);
     }
 
     const emojis = newData.emojis || {};
 
-    const allEmojis: DataEmojis = Object.values(emojis).flat();
+    const allEmojis: DataEmojis = Object.values(emojis)
+      .concat(Object.values(customGroups))
+      .flat();
     const allEmojisByUnified: Record<string, DataEmoji> = {};
     const searchIndex: Record<string, Record<string, DataEmoji>> = {};
 
@@ -91,6 +106,7 @@ export function PickerDataProvider({
       allEmojis,
       allEmojisByUnified,
       searchIndex,
+      customGroups,
     };
   }, [genericEmojiData, customEmojis]);
 
@@ -124,7 +140,7 @@ export function usePickerDataContext() {
 }
 
 export function useGetEmojisByCategory() {
-  const { emojiData, emojiByUnified } = usePickerDataContext();
+  const { emojiData, emojiByUnified, customGroups } = usePickerDataContext();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
   const [suggestedUpdated] = useUpdateSuggested();
   // Suggestions come from localStorage, which doesn't exist during SSR.
@@ -151,9 +167,16 @@ export function useGetEmojisByCategory() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted, suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
 
-  return function getEmojisByCategory(category: Categories): DataEmojis {
+  return function getEmojisByCategory(
+    category: Categories,
+    group?: string,
+  ): DataEmojis {
     if (category === Categories.SUGGESTED) {
       return suggested;
+    }
+
+    if (category === Categories.CUSTOM && group) {
+      return customGroups[group] ?? [];
     }
 
     return emojiData.emojis?.[category] ?? [];

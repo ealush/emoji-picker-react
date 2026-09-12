@@ -3,7 +3,10 @@ import { useState } from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import {
+  categoryFromCategoryConfig,
+  categoryIdFromCategoryConfig,
+} from '../../config/categoryConfig';
 import {
   useCategoriesConfig,
   useCategoryIconsConfig,
@@ -52,22 +55,23 @@ export function CategoryNavigation() {
     >
       {visibleCategories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
-        const isActiveCategory = category === activeCategory;
+        const categoryId = categoryIdFromCategoryConfig(categoryConfig);
+        const isActiveCategory = categoryId === activeCategory;
 
         const allowNavigation = !isSearchMode && !isActiveCategory;
 
         return (
           <CategoryButton
-            key={category}
+            key={categoryId}
             category={category}
             isActiveCategory={isActiveCategory}
             allowNavigation={allowNavigation}
             categoryConfig={categoryConfig}
             customIcon={categoryIcons[category as Categories]}
             onClick={() => {
-              scrollCategoryIntoView(category);
+              scrollCategoryIntoView(categoryId);
               setTimeout(() => {
-                setActiveCategory(category);
+                setActiveCategory(categoryId);
               }, 10);
             }}
           />

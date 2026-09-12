@@ -20,6 +20,29 @@ export const CustomEmojis = (args: Props) => (
   <Template {...args} customEmojis={customEmojis} />
 );
 
+/**
+ * Demonstrates grouping custom emojis into their own named sections.
+ * Each `{ category: CUSTOM, group }` entry renders its own tab and
+ * section — placed wherever it sits in `categories` — with its own
+ * `name` and `icon`. Ungrouped customs share the classic bucket.
+ * https://github.com/ealush/emoji-picker-react/issues/510
+ */
+export const CustomEmojisGrouped = (args: Props) => (
+  <Template
+    {...args}
+    customEmojis={[
+      ...customEmojis.slice(0, 2).map((emoji) => ({ ...emoji, group: 'fun' })),
+      ...customEmojis.slice(2).map((emoji) => ({ ...emoji, group: 'gear' })),
+    ]}
+    categories={[
+      Categories.SMILEYS_PEOPLE,
+      { category: Categories.CUSTOM, group: 'fun', name: 'Fun' },
+      { category: Categories.CUSTOM, group: 'gear', name: 'Gear' },
+      { category: Categories.CUSTOM, name: 'Misc' },
+    ]}
+  />
+);
+
 export const CustomEmojisDefered = (args: Props) => {
   const [custom, setCustomEmojis] = useState<any>(undefined);
 

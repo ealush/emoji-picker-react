@@ -28,7 +28,51 @@ export const SuggestedRecent: CategoryConfig = {
 export type CustomCategoryConfig = {
   category: Categories.CUSTOM;
   name: string;
+  /**
+   * Selects the `CustomEmoji` group rendered in this section. Each entry
+   * may carry its own `name` and `icon`, so multiple custom sections can
+   * coexist — each placed wherever its entry sits in `categories`.
+   * Entries without a group share the ungrouped customs bucket.
+   */
+  group?: string;
 };
+
+/**
+ * Stable identity for a category entry. Custom groups are namespaced so
+ * duplicate `{ category: CUSTOM }` configs no longer collide in React
+ * keys, scroll targets, and active-tab detection.
+ */
+export function categoryIdFromCategoryConfig(
+  categoryConfig: CategoryConfig,
+): string {
+  const category = categoryFromCategoryConfig(categoryConfig);
+  if (isCustomGroupConfig(categoryConfig)) {
+    return `${category}:${categoryConfig.group}`;
+  }
+  return category;
+}
+
+function isCustomGroupConfig(
+  categoryConfig: CategoryConfig,
+): categoryConfig is CustomCategoryConfig & { group: string } {
+  if (categoryConfig.category !== Categories.CUSTOM) {
+    return false;
+  }
+  const group = (categoryConfig as CustomCategoryConfig).group;
+  return typeof group === 'string' && group.length > 0;
+}
+
+/**
+ * The `CustomEmoji` group rendered by a category entry, if any.
+ */
+export function customGroupFromCategoryConfig(
+  categoryConfig: CategoryConfig,
+): string | undefined {
+  if (isCustomGroupConfig(categoryConfig)) {
+    return categoryConfig.group;
+  }
+  return undefined;
+}
 
 const configByCategory: Record<Categories, CategoryConfig> = {
   [Categories.SUGGESTED]: {

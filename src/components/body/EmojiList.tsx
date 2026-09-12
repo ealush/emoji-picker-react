@@ -4,7 +4,11 @@ import { cx } from 'shipstyles';
 import { ClassNames } from '../../DomUtils/classNames';
 import { getLabelHeight } from '../../DomUtils/elementPositionInRow';
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { categoryFromCategoryConfig } from '../../config/categoryConfig';
+import {
+  categoryFromCategoryConfig,
+  categoryIdFromCategoryConfig,
+  customGroupFromCategoryConfig,
+} from '../../config/categoryConfig';
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
@@ -41,25 +45,27 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
       <MeasureEmoji />
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
+        const categoryId = categoryIdFromCategoryConfig(categoryConfig);
+        const group = customGroupFromCategoryConfig(categoryConfig);
 
         const currentOffset = topOffset;
-        const categoryHeight = categoryHeights[category];
+        const categoryHeight = categoryHeights[categoryId];
         if (categoryHeight) {
           topOffset += categoryHeight + labelHeight;
         }
 
         return (
           <RenderCategory
-            key={category}
-            categoryEmojis={getEmojisByCategory(category)}
+            key={categoryId}
+            categoryEmojis={getEmojisByCategory(category, group)}
             categoryConfig={categoryConfig}
             topOffset={currentOffset}
             isFirstCategory={index === 0}
             onHeightReady={(height) => {
-              if (categoryHeights[category] !== height) {
+              if (categoryHeights[categoryId] !== height) {
                 setCategoryHeights((prev) => ({
                   ...prev,
-                  [category]: height,
+                  [categoryId]: height,
                 }));
               }
             }}
@@ -95,7 +101,10 @@ function RenderCategory({
   // https://github.com/ealush/emoji-picker-react/issues/469
   // https://github.com/ealush/emoji-picker-react/issues/475
   const isCategoryVisible =
-    isFirstCategory || visibleCategories.includes(categoryConfig.category);
+    isFirstCategory ||
+    visibleCategories.includes(
+      categoryIdFromCategoryConfig(categoryConfig),
+    );
 
   const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
     categoryEmojis,
