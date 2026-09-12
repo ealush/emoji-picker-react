@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
+import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
 import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
@@ -107,9 +108,23 @@ export function useEmojiPreviewEvents(
       // Pulling focus out of an external element steals the caret from
       // host-app inputs (issue #320). The guard runs again inside the
       // deferred callback in case focus moved out after this event.
-      if (!isExternalElementFocused()) {
+      // Partially visible buttons are never focused: focusing would make
+      // the browser scroll them into view, yanking the scroll position
+      // while the user is browsing (see also PR #509).
+      if (
+        !isExternalElementFocused() &&
+        !isPartiallyBelowFold(button, bodyRef)
+      ) {
         focusElement(button, () => !isExternalElementFocused());
       }
+    }
+
+    function isPartiallyBelowFold(
+      button: HTMLButtonElement,
+      body: HTMLElement | null,
+    ): boolean {
+      const belowFoldByPx = detectEmojyPartiallyBelowFold(button, body);
+      return belowFoldByPx < button.getBoundingClientRect().height;
     }
 
     function isExternalElementFocused(): boolean {
