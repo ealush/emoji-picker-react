@@ -40,3 +40,14 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npm run test:visual
+
+  # llms.txt is generated from committed docs; fail if it drifts.
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm run docs:llms
+      - run: git diff --exit-code -- llms.txt

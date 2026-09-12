@@ -36,6 +36,13 @@ automatically (after the standard categories), so grouped emojis always
 render somewhere. Omit `CUSTOM` from `categories` entirely to hide all
 customs — explicit `categories` stay an allowlist:
 
+### Updating groups at runtime
+
+`categories` and `customEmojis` are immutable inputs: replacing either
+array (even with a same-length array) rebuilds sections, tabs, search,
+and lookup. Mutating an array in place is not detected — always provide
+a new reference. Group strings are exact, case-sensitive identifiers.
+
 ```tsx
 import EmojiPicker, { Categories } from 'emoji-picker-react';
 

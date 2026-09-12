@@ -7,9 +7,17 @@ import { useBodyRef } from '../components/context/ElementRefContext';
 export function useActiveCategoryScrollDetection({
   setActiveCategory,
   setVisibleCategories,
+  categoryIdentitiesKey,
 }: {
   setActiveCategory: (category: string) => void;
   setVisibleCategories: (categories: string[]) => void;
+  /**
+   * Stable string derived from the rendered category identities
+   * (e.g. ids joined). Re-subscribes the observer when sections are
+   * added or removed so new elements are observed and detached ones
+   * stop contributing; unrelated renders keep the same key.
+   */
+  categoryIdentitiesKey: string;
 }) {
   const BodyRef = useBodyRef();
 
@@ -67,5 +75,5 @@ export function useActiveCategoryScrollDetection({
     return () => {
       observer.disconnect();
     };
-  }, [BodyRef, setActiveCategory, setVisibleCategories]);
+  }, [BodyRef, categoryIdentitiesKey, setActiveCategory, setVisibleCategories]);
 }
