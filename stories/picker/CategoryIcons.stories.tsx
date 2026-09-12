@@ -193,7 +193,7 @@ export const MonochromeIcons = () => {
         style={
           {
             '--epr-category-icon-active-color': '#18181b',
-            '--epr-category-icon-inactive-color': '#d4d4d8',
+            '--epr-category-icon-inactive-color': '#18181b',
           } as React.CSSProperties
         }
       />

@@ -91,9 +91,12 @@ test('suggested tab renders a visible default glyph', async ({ page }) => {
   const tab = page.getByRole('tab', { name: 'Frequently Used' });
   await expect(tab).toBeVisible();
 
-  // Inline SVG glyph with real geometry (not an empty box).
+  // Inline SVG glyph with real geometry (not an empty box). Measure a
+  // rendered path rather than the svg container, which keeps a nonzero
+  // layout box from width/height 100% even when empty.
   const box = await tab
-    .locator('svg')
+    .locator('svg path')
+    .first()
     .evaluate(el => el.getBoundingClientRect().toJSON());
   expect(box.width).toBeGreaterThan(0);
   expect(box.height).toBeGreaterThan(0);
