@@ -176,27 +176,37 @@ export function mergeCategoriesConfig(
     : base;
 
   // Groups without a `categories` entry get an appended section so their
-  // emojis always render somewhere. `categories` remains the override for
-  // order, display name, and icon.
+  // emojis always render somewhere — unless the user opted out of customs
+  // entirely by listing `categories` without CUSTOM. `categories` remains
+  // the override for order, display name, and icon.
   // https://github.com/ealush/emoji-picker-react/issues/510
+  const customInPlay =
+    !userCategoriesConfig?.length ||
+    userCategoriesConfig.some(
+      entry =>
+        entry === Categories.CUSTOM ||
+        (typeof entry !== 'string' && entry.category === Categories.CUSTOM),
+    );
   const listedGroups = new Set(
     explicit
       .map(entry => customGroupFromCategoryConfig(entry))
       .filter((group): group is string => !!group),
   );
-  const appended: CategoriesConfig = Array.from(
-    new Set(
-      customEmojis
-        .map(emoji => emoji.group)
-        .filter((group): group is string => !!group),
-    ),
-  )
-    .filter(group => !listedGroups.has(group))
-    .map(group => ({
-      category: Categories.CUSTOM,
-      name: group,
-      group,
-    }));
+  const appended: CategoriesConfig = !customInPlay
+    ? []
+    : Array.from(
+        new Set(
+          customEmojis
+            .map(emoji => emoji.group)
+            .filter((group): group is string => !!group),
+        ),
+      )
+        .filter(group => !listedGroups.has(group))
+        .map(group => ({
+          category: Categories.CUSTOM,
+          name: group,
+          group,
+        }));
 
   // Collapse duplicate entries (same identity twice renders the same
   // section twice under one React key); first occurrence wins.

@@ -161,9 +161,45 @@ describe('custom emoji groups', () => {
       />,
     );
 
+    expect(screen.getAllByRole('heading', { name: 'Animals' })).toHaveLength(
+      1,
+    );
+    expect(screen.queryByRole('heading', { name: 'Animals 2' })).toBeNull();
+  });
+
+  it('hides the ungrouped Custom tab when every custom is grouped', () => {
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customEmojis.filter(emoji => emoji.group)}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.queryByRole('tab', { name: 'Custom Emojis' })).toBeNull();
+    expect(screen.getByRole('tab', { name: 'animals' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'people' })).toBeInTheDocument();
+  });
+
+  it('respects categories as an allowlist: no CUSTOM, no appended groups', () => {
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customEmojis}
+        categories={[
+          { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.queryByRole('tab', { name: 'animals' })).toBeNull();
     expect(
-      screen.getAllByRole('heading', { name: 'Animals' }),
-    ).toHaveLength(1);
+      screen.queryByRole('rowgroup', { name: 'animals' }),
+    ).toBeNull();
+    expect(
+      screen.getByRole('heading', { name: 'Smileys & People' }),
+    ).toBeInTheDocument();
   });
 
   it('places group sections in categories order, interleaved with standard categories', () => {

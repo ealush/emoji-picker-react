@@ -32,7 +32,9 @@ Reference the group from a `{ category: Categories.CUSTOM, group }`
 entry in `categories` to place it anywhere in the order, with its own
 `name` and `icon`. Customs without a group share the classic bucket.
 Groups missing from `categories` are appended as their own sections
-automatically, so grouped emojis always render somewhere:
+automatically (after the standard categories), so grouped emojis always
+render somewhere. Omit `CUSTOM` from `categories` entirely to hide all
+customs — explicit `categories` stay an allowlist:
 
 ```tsx
 import EmojiPicker, { Categories } from 'emoji-picker-react';

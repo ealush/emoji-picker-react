@@ -35,16 +35,19 @@ export function CategoryNavigation() {
   const categoryIcons = useCategoryIconsConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
-  const { customGroups } = usePickerDataContext();
+  const { customGroups, emojiData } = usePickerDataContext();
 
   const visibleCategories = categoriesConfig.filter(categoryConfig => {
     if (isCustomCategory(categoryConfig) && hideCustomCategory) {
       return false;
     }
-    // Group tabs with no members navigate to an empty (hidden) section.
+    // Tabs navigating to an empty (hidden) section are dead weight.
     const group = customGroupFromCategoryConfig(categoryConfig);
     if (group) {
       return (customGroups[group]?.length ?? 0) > 0;
+    }
+    if (isCustomCategory(categoryConfig)) {
+      return (emojiData.emojis?.[Categories.CUSTOM]?.length ?? 0) > 0;
     }
     return true;
   });
