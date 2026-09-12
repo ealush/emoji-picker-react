@@ -123,4 +123,22 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
 
     expect(document.activeElement).toBe(emojiButton);
   });
+
+  it('does not steal focus that moved outside between hover and the deferred callback', async () => {
+    renderPickerWithExternalInput();
+
+    const search = screen.getByLabelText('Type to search for an emoji');
+    (search as HTMLInputElement).focus();
+
+    const emojiButton = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(emojiButton);
+
+    // Focus leaves the picker before the requestAnimationFrame callback
+    // runs (e.g. fast tab-out). The deferred focus must stand down.
+    const external = screen.getByTestId('external-editor') as HTMLInputElement;
+    external.focus();
+    await flushFocus();
+
+    expect(document.activeElement).toBe(external);
+  });
 });

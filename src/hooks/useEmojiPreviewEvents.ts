@@ -105,9 +105,10 @@ export function useEmojiPreviewEvents(
       // Let arrow-key navigation continue from the hovered emoji, but only
       // when focus is already inside the picker (or nowhere meaningful).
       // Pulling focus out of an external element steals the caret from
-      // host-app inputs (issue #320).
+      // host-app inputs (issue #320). The guard runs again inside the
+      // deferred callback in case focus moved out after this event.
       if (!isExternalElementFocused()) {
-        focusElement(button);
+        focusElement(button, () => !isExternalElementFocused());
       }
     }
 

@@ -1,11 +1,19 @@
 import { NullableElement } from './selectors';
 
-export function focusElement(element: NullableElement) {
+export function focusElement(
+  element: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   if (!element) {
     return;
   }
 
   requestAnimationFrame(() => {
+    // Rechecked here rather than at call time: focus may have moved in the
+    // meantime (e.g. hover scheduled focus, then the user tabbed out).
+    if (shouldFocus && !shouldFocus()) {
+      return;
+    }
     element.focus();
   });
 }
