@@ -7,9 +7,30 @@
  * @file custom-groups.spec.ts
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
+
+/**
+ * A visible heading does not prove the section's images have loaded, so
+ * wait for every image inside the locator to complete before capturing.
+ * Same readiness idea as waitForEmojisToLoad in category-icons.spec.ts.
+ */
+async function waitForSectionImages(section: Locator) {
+  await expect(async () => {
+    const loaded = await section
+      .locator('img.epr-emoji-img')
+      .evaluateAll(els =>
+        els.map(
+          img =>
+            (img as HTMLImageElement).complete &&
+            (img as HTMLImageElement).naturalWidth > 0,
+        ),
+      );
+    expect(loaded.length).toBeGreaterThan(0);
+    expect(loaded.every(Boolean)).toBe(true);
+  }).toPass({ timeout: 10000 });
+}
 
 test('custom groups render own tabs and navigate to own sections', async ({
   page,
@@ -33,7 +54,6 @@ test('grouped nav bar matches snapshot', async ({ page }) => {
   await expect(
     page.getByRole('tablist', { name: 'Category navigation' }),
   ).toBeVisible();
-  await page.waitForTimeout(800);
   await expect(page.locator('.epr-category-nav')).toHaveScreenshot(
     'groups-nav.png',
   );
@@ -44,8 +64,7 @@ test('group section matches snapshot', async ({ page }) => {
   await page.getByRole('tab', { name: 'Fun' }).click();
   const heading = page.getByRole('heading', { name: 'Fun' });
   await expect(heading).toBeVisible();
-  await page.waitForTimeout(800);
-  await expect(
-    heading.locator('xpath=ancestor::li[@role="rowgroup"]'),
-  ).toHaveScreenshot('groups-fun-section.png');
+  const section = heading.locator('xpath=ancestor::li[@role="rowgroup"]');
+  await waitForSectionImages(section);
+  await expect(section).toHaveScreenshot('groups-fun-section.png');
 });
