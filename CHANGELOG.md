@@ -1,3 +1,9 @@
+## [4.20.8](https://github.com/ealush/emoji-picker-react/compare/4.20.7...4.20.8) (2026-09-12)
+
+### Bug Fixes
+
+* keep external focus when hovering emojis ([#320](https://github.com/ealush/emoji-picker-react/issues/320)) ([#527](https://github.com/ealush/emoji-picker-react/issues/527)) ([ac11985](https://github.com/ealush/emoji-picker-react/commit/ac119853cfbffd821064eeb2034cb0303f587d8f))
+
 ## [4.20.7](https://github.com/ealush/emoji-picker-react/compare/4.20.6...4.20.7) (2026-09-09)
 
 ### Bug Fixes
