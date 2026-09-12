@@ -1,3 +1,9 @@
+## [4.21.1](https://github.com/ealush/emoji-picker-react/compare/4.21.0...4.21.1) (2026-09-12)
+
+### Bug Fixes
+
+* never focus partially-below-fold emojis on hover ([#531](https://github.com/ealush/emoji-picker-react/issues/531)) ([9f6b395](https://github.com/ealush/emoji-picker-react/commit/9f6b395ed82983934e5022b3a9e15bf276e8a678))
+
 ## [4.21.0](https://github.com/ealush/emoji-picker-react/compare/4.20.9...4.21.0) (2026-09-12)
 
 ### Features
