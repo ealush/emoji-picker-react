@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
 import React from 'react';
 
-import EmojiPicker, { Categories, CategoryConfig } from '../../src';
+import EmojiPicker, { Categories, CategoryConfig, Theme } from '../../src';
 
 const meta = {
   title: 'Picker/CategoryIcons',
@@ -160,7 +160,70 @@ const storyParameters = {
   visualTestDelay: 1500,
 };
 
+/**
+ * Demonstrates recoloring the default navigation icons with CSS variables.
+ * The active/hovered icon follows `--epr-category-icon-active-color`.
+ * Note: the variables must be set on the picker root itself (via the
+ * `style` prop), because the picker defines their defaults on `.epr-main`,
+ * which shadows values inherited from outer ancestors.
+ */
+export const ThemedIconColors = () => {
+  return (
+    <div style={{ height: '500px' }}>
+      <EmojiPicker
+        style={
+          {
+            '--epr-category-icon-active-color': '#e11d48',
+            '--epr-category-icon-inactive-color': '#a8a29e',
+          } as React.CSSProperties
+        }
+      />
+    </div>
+  );
+};
+
+/**
+ * Demonstrates a monochrome navigation bar: both variables set to the
+ * same color, so active and inactive icons are indistinguishable by color.
+ */
+export const MonochromeIcons = () => {
+  return (
+    <div style={{ height: '500px' }}>
+      <EmojiPicker
+        style={
+          {
+            '--epr-category-icon-active-color': '#18181b',
+            '--epr-category-icon-inactive-color': '#d4d4d8',
+          } as React.CSSProperties
+        }
+      />
+    </div>
+  );
+};
+
+/**
+ * Demonstrates recolored navigation icons on the dark theme.
+ */
+export const ThemedDarkIcons = () => {
+  return (
+    <div style={{ height: '500px' }}>
+      <EmojiPicker
+        theme={Theme.DARK}
+        style={
+          {
+            '--epr-category-icon-active-color': '#fbbf24',
+            '--epr-category-icon-inactive-color': '#57534e',
+          } as React.CSSProperties
+        }
+      />
+    </div>
+  );
+};
+
 CategoryIconsProp.parameters = storyParameters;
 CategoryConfigIcon.parameters = storyParameters;
 IconPrecedence.parameters = storyParameters;
 ImageCategoryIcons.parameters = storyParameters;
+ThemedIconColors.parameters = storyParameters;
+MonochromeIcons.parameters = storyParameters;
+ThemedDarkIcons.parameters = storyParameters;
