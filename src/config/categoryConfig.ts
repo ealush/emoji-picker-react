@@ -5,6 +5,8 @@ import {
   SuggestionMode,
 } from '../types/exposedTypes';
 
+import { CustomEmoji } from './customEmojiConfig';
+
 export { Categories };
 
 const categoriesOrdered: Categories[] = [
@@ -144,6 +146,7 @@ export function mergeCategoriesConfig(
   userCategoriesConfig: UserCategoryConfig = [],
   modifiers: CategoryConfigModifiers = {},
   emojiData?: EmojiData,
+  customEmojis: CustomEmoji[] = [],
 ): CategoriesConfig {
   const extra = ((): Record<Categories, CategoryConfig> => {
     // 1. Start with localized categories from emojiData
@@ -168,11 +171,46 @@ export function mergeCategoriesConfig(
 
   const base = baseCategoriesConfig(extra);
 
-  if (!userCategoriesConfig?.length) {
-    return base;
-  }
+  const explicit: CategoriesConfig = userCategoriesConfig?.length
+    ? userCategoriesConfig.map(mapUserEntry)
+    : base;
 
-  return userCategoriesConfig.map((category) => {
+  // Groups without a `categories` entry get an appended section so their
+  // emojis always render somewhere. `categories` remains the override for
+  // order, display name, and icon.
+  // https://github.com/ealush/emoji-picker-react/issues/510
+  const listedGroups = new Set(
+    explicit
+      .map(entry => customGroupFromCategoryConfig(entry))
+      .filter((group): group is string => !!group),
+  );
+  const appended: CategoriesConfig = Array.from(
+    new Set(
+      customEmojis
+        .map(emoji => emoji.group)
+        .filter((group): group is string => !!group),
+    ),
+  )
+    .filter(group => !listedGroups.has(group))
+    .map(group => ({
+      category: Categories.CUSTOM,
+      name: group,
+      group,
+    }));
+
+  // Collapse duplicate entries (same identity twice renders the same
+  // section twice under one React key); first occurrence wins.
+  const seen = new Set<string>();
+  return explicit.concat(appended).filter(entry => {
+    const id = categoryIdFromCategoryConfig(entry);
+    if (seen.has(id)) {
+      return false;
+    }
+    seen.add(id);
+    return true;
+  });
+
+  function mapUserEntry(category: Categories | CategoryConfig) {
     if (typeof category === 'string') {
       return getBaseConfigByCategory(category, extra[category]);
     }
@@ -181,7 +219,7 @@ export function mergeCategoriesConfig(
       ...getBaseConfigByCategory(category.category, extra[category.category]),
       ...category,
     };
-  });
+  }
 }
 
 function getBaseConfigByCategory(

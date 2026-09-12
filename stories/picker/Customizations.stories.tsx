@@ -31,8 +31,9 @@ export const CustomEmojisGrouped = (args: Props) => (
   <Template
     {...args}
     customEmojis={[
-      ...customEmojis.slice(0, 2).map((emoji) => ({ ...emoji, group: 'fun' })),
-      ...customEmojis.slice(2).map((emoji) => ({ ...emoji, group: 'gear' })),
+      ...customEmojis.slice(0, 2).map(emoji => ({ ...emoji, group: 'fun' })),
+      ...customEmojis.slice(2, 4).map(emoji => ({ ...emoji, group: 'gear' })),
+      ...customEmojis.slice(4),
     ]}
     categories={[
       Categories.SMILEYS_PEOPLE,

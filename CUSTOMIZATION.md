@@ -9,6 +9,7 @@ Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this 
   id: string;      // Unique ID
   names: string[]; // Search keywords
   imgUrl: string;  // Image source
+  group?: string;  // Optional section; see grouping below
 }
 ```
 
@@ -29,7 +30,9 @@ Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this 
 Give customs a `group` to render each group as its own named section.
 Reference the group from a `{ category: Categories.CUSTOM, group }`
 entry in `categories` to place it anywhere in the order, with its own
-`name` and `icon`. Customs without a group share the classic bucket:
+`name` and `icon`. Customs without a group share the classic bucket.
+Groups missing from `categories` are appended as their own sections
+automatically, so grouped emojis always render somewhere:
 
 ```tsx
 import EmojiPicker, { Categories } from 'emoji-picker-react';
@@ -125,7 +128,7 @@ import EmojiPicker, { Categories } from 'emoji-picker-react';
 />;
 ```
 
-Note: if both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop.
+Note: if both methods are used for the same category, the icon from the `categories` configuration takes precedence over the `categoryIcons` prop. `categoryIcons[Categories.CUSTOM]` applies to every custom group tab that does not define its own `icon`.
 
 ## Content Security Policy (CSP)
 

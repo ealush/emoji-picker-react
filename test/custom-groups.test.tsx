@@ -87,12 +87,83 @@ describe('custom emoji groups', () => {
     expect(screen.getByRole('heading', { name: 'Misc' })).toBeInTheDocument();
 
     // Each emoji lives in exactly one section.
-    const panda = await screen.findByLabelText('panda');
-    const ninja = await screen.findByLabelText('ninja');
-    const orphan = await screen.findByLabelText('orphan');
-    expect(panda).toBeInTheDocument();
-    expect(ninja).toBeInTheDocument();
-    expect(orphan).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'Animals' })).getByLabelText(
+        'panda',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'People' })).getByLabelText(
+        'ninja',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'Misc' })).getByLabelText(
+        'orphan',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'Animals' })).queryByLabelText(
+        'ninja',
+      ),
+    ).toBeNull();
+  });
+
+  it('auto-appends a section for groups missing from categories', async () => {
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customEmojis}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(
+      screen.getByRole('tab', { name: 'animals' }),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole('rowgroup', { name: 'animals' })).getByLabelText(
+        'panda',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('hides tabs for groups with no members', () => {
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customEmojis}
+        categories={[
+          { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+          { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+          { category: Categories.CUSTOM, group: 'ghost', name: 'Ghost' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(
+      screen.getByRole('tab', { name: 'Animals' }),
+    ).toBeInTheDocument();
+    expect(screen.queryByRole('tab', { name: 'Ghost' })).toBeNull();
+  });
+
+  it('renders duplicate group entries once', () => {
+    render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={customEmojis}
+        categories={[
+          { category: Categories.CUSTOM, group: 'animals', name: 'Animals' },
+          { category: Categories.CUSTOM, group: 'animals', name: 'Animals 2' },
+        ]}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(
+      screen.getAllByRole('heading', { name: 'Animals' }),
+    ).toHaveLength(1);
   });
 
   it('places group sections in categories order, interleaved with standard categories', () => {

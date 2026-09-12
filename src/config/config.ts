@@ -64,6 +64,7 @@ export function mergeConfig(
       suggestionMode: config.suggestedEmojisMode,
     },
     userConfig.emojiData,
+    userConfig.customEmojis,
   );
 
   config.hiddenEmojis.forEach((emoji) => {
