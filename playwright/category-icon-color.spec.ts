@@ -85,3 +85,31 @@ test('dark theme uses the dark icon defaults', async ({ page }) => {
     'rgb(192, 192, 191)', // #C0C0BF
   );
 });
+
+test('suggested tab renders a visible default glyph', async ({ page }) => {
+  await page.goto(storyUrl('picker-overview--default'));
+  const tab = page.getByRole('tab', { name: 'Frequently Used' });
+  await expect(tab).toBeVisible();
+
+  // Inline SVG glyph with real geometry (not an empty box).
+  const box = await tab
+    .locator('svg')
+    .evaluate(el => el.getBoundingClientRect().toJSON());
+  expect(box.width).toBeGreaterThan(0);
+  expect(box.height).toBeGreaterThan(0);
+});
+
+test('custom icons render with no grey background behind them', async ({
+  page,
+}) => {
+  await page.goto(storyUrl('picker-categoryicons--category-icons-prop'));
+  const customButtons = page.locator('.epr-cat-btn-custom-icon');
+  await expect(customButtons).toHaveCount(5);
+
+  const backgrounds = await customButtons.evaluateAll(els =>
+    els.map(el => window.getComputedStyle(el).backgroundColor),
+  );
+  for (const bg of backgrounds) {
+    expect(bg).toBe('rgba(0, 0, 0, 0)');
+  }
+});
