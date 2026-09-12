@@ -52,8 +52,7 @@ describe('compareConfig', () => {
     expect(compareConfig(prev, next)).toBe(false);
   });
 
-  it('treats reordered categories as different', () => {
-    const prev: PickerConfig = {
+  it('treats reordered categories as different', () => {    const prev: PickerConfig = {
       ...baseProps,
       categories: [Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE],
     };
@@ -101,6 +100,58 @@ describe('compareConfig', () => {
     };
 
     expect(compareConfig(prev, next)).toBe(true);
+  });
+
+  it('treats swapped icon references as different', () => {
+    const prev: PickerConfig = {
+      ...baseProps,
+      categories: [
+        {
+          category: Categories.CUSTOM,
+          group: 'animals',
+          name: 'Animals',
+          icon: 'icon-a' as never,
+        },
+      ],
+    };
+    const next: PickerConfig = {
+      ...baseProps,
+      categories: [
+        {
+          category: Categories.CUSTOM,
+          group: 'animals',
+          name: 'Animals',
+          icon: 'icon-b' as never,
+        },
+      ],
+    };
+
+    expect(compareConfig(prev, next)).toBe(false);
+  });
+
+  it('treats a stable icon reference as equivalent', () => {
+    const icon = 'icon-a' as never;
+    const categories = [
+      {
+        category: Categories.CUSTOM,
+        group: 'animals',
+        name: 'Animals',
+        icon,
+      },
+    ] as PickerConfig['categories'];
+    const prev: PickerConfig = { ...baseProps, categories };
+    const next: PickerConfig = { ...baseProps, categories };
+
+    expect(compareConfig(prev, next)).toBe(true);
+  });
+
+  it('distinguishes delimiter-containing names structurally', () => {
+    const prev = withCustomEmojis([{ id: 'a' }]);
+    (prev.customEmojis as { names: string[] }[])[0].names = ['x,y'];
+    const next = withCustomEmojis([{ id: 'a' }]);
+    (next.customEmojis as { names: string[] }[])[0].names = ['x', 'y'];
+
+    expect(compareConfig(prev, next)).toBe(false);
   });
 });
 

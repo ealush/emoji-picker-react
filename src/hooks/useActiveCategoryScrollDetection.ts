@@ -3,21 +3,21 @@ import { useEffect } from 'react';
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
 import { asSelectors, ClassNames } from '../DomUtils/classNames';
 import { useBodyRef } from '../components/context/ElementRefContext';
+import { CategoriesConfig } from '../config/categoryConfig';
 
 export function useActiveCategoryScrollDetection({
   setActiveCategory,
   setVisibleCategories,
-  categoryIdentitiesKey,
+  categories,
 }: {
   setActiveCategory: (category: string) => void;
   setVisibleCategories: (categories: string[]) => void;
   /**
-   * Stable string derived from the rendered category identities
-   * (e.g. ids joined). Re-subscribes the observer when sections are
-   * added or removed so new elements are observed and detached ones
-   * stop contributing; unrelated renders keep the same key.
+   * Effective category list. The merged array reference only changes when
+   * the configuration is re-merged, so the observer re-subscribes exactly
+   * when sections are added or removed — no serialization involved.
    */
-  categoryIdentitiesKey: string;
+  categories: CategoriesConfig;
 }) {
   const BodyRef = useBodyRef();
 
@@ -75,5 +75,5 @@ export function useActiveCategoryScrollDetection({
     return () => {
       observer.disconnect();
     };
-  }, [BodyRef, categoryIdentitiesKey, setActiveCategory, setVisibleCategories]);
+  }, [BodyRef, categories, setActiveCategory, setVisibleCategories]);
 }

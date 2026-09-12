@@ -36,16 +36,12 @@ export function CategoryNavigation() {
   const hideCustomCategory = useShouldHideCustomEmojis();
   const { customGroups, emojiData } = usePickerDataContext();
 
-  // Rendered section identities. Passed to the scroll-detection hook so
-  // added/removed sections are (re-)subscribed; stable across renders
-  // unless the effective category list changes.
-  const categoryIdentitiesKey = categoriesConfig
-    .map(entry => categoryIdFromCategoryConfig(entry))
-    .join('|');
+  // The observer re-subscribes when the merged categories reference
+  // changes (sections added/removed); the reference is stable otherwise.
   useActiveCategoryScrollDetection({
     setActiveCategory,
     setVisibleCategories,
-    categoryIdentitiesKey,
+    categories: categoriesConfig,
   });
 
   const visibleCategories = categoriesConfig.filter(categoryConfig => {

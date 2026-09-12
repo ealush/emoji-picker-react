@@ -1,3 +1,5 @@
+import { Categories, CategoryConfig } from '../types/exposedTypes';
+
 import { UserCategoryConfig } from './categoryConfig';
 import { PickerConfig } from './config';
 import { CustomEmoji } from './customEmojiConfig';
@@ -27,35 +29,74 @@ export function compareConfig(prev: PickerConfig, next: PickerConfig) {
     prev.searchDisabled === next.searchDisabled &&
     prev.skinTonePickerLocation === next.skinTonePickerLocation &&
     prevCustomEmojis.length === nextCustomEmojis.length &&
-    customEmojisKey(prevCustomEmojis) === customEmojisKey(nextCustomEmojis) &&
-    categoriesKey(prev.categories) === categoriesKey(next.categories) &&
+    customEmojisEqual(prevCustomEmojis, nextCustomEmojis) &&
+    categoriesEqual(prev.categories, next.categories) &&
     prev.emojiData === next.emojiData
   );
 }
 
 /**
- * Content identity for custom emojis. Length alone misses regroups and
- * swaps, which would leave merged categories, search, and sections stale.
+ * Structural content equality for custom emojis. Length alone misses
+ * regroups and swaps, which would leave merged categories, search, and
+ * sections stale. Fields are compared element-wise (never serialized
+ * with delimiters) so user-controlled values cannot collide.
  */
-function customEmojisKey(customEmojis: CustomEmoji[]): string {
-  return customEmojis
-    .map(
-      emoji =>
-        `${emoji.id}:${emoji.group ?? ''}:${emoji.names.join(',')}:${emoji.imgUrl}`,
-    )
-    .join('|');
+function customEmojisEqual(
+  prev: CustomEmoji[],
+  next: CustomEmoji[],
+): boolean {
+  if (prev.length !== next.length) {
+    return false;
+  }
+  return prev.every((emoji, index) => {
+    const other = next[index];
+    return (
+      emoji.id === other.id &&
+      (emoji.group ?? '') === (other.group ?? '') &&
+      emoji.imgUrl === other.imgUrl &&
+      emoji.names.length === other.names.length &&
+      emoji.names.every((name, nameIndex) => name === other.names[nameIndex])
+    );
+  });
 }
 
 /**
- * Content identity for the categories input. Order, labels, icons, and
- * group selection all flow into the merged configuration.
+ * Structural content equality for the categories input. Order, labels,
+ * group selection, and icon identity all flow into the merged
+ * configuration. Icons compare by reference: swapping one icon element
+ * for another must rebuild, while a stable reference stays cheap.
  */
-function categoriesKey(categories: UserCategoryConfig | undefined): string {
-  return (categories ?? [])
-    .map(entry =>
-      typeof entry === 'string'
-        ? entry
-        : `${entry.category}:${entry.name}:${entry.group ?? ''}:${entry.icon ? '1' : ''}`,
-    )
-    .join('|');
+function categoriesEqual(
+  prev: UserCategoryConfig | undefined,
+  next: UserCategoryConfig | undefined,
+): boolean {
+  const prevEntries = prev ?? [];
+  const nextEntries = next ?? [];
+  if (prevEntries.length !== nextEntries.length) {
+    return false;
+  }
+  return prevEntries.every((entry, index) =>
+    categoryEntriesEqual(entry, nextEntries[index]),
+  );
+}
+
+/**
+ * One categories entry compared structurally. Icons compare by reference:
+ * swapping one icon element for another rebuilds, a stable reference stays
+ * cheap. Delimited serialization is avoided so user-controlled values
+ * cannot collide.
+ */
+function categoryEntriesEqual(
+  entry: Categories | CategoryConfig,
+  other: Categories | CategoryConfig,
+): boolean {
+  if (typeof entry === 'string' || typeof other === 'string') {
+    return entry === other;
+  }
+  return (
+    entry.category === other.category &&
+    entry.name === other.name &&
+    (entry.group ?? '') === (other.group ?? '') &&
+    entry.icon === other.icon
+  );
 }

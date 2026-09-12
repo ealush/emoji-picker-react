@@ -70,7 +70,8 @@ const renderPicker = (props: Partial<Props> = {}) =>
  * Each `{ category: CUSTOM, group }` entry renders its own section with
  * its own nav tab; ungrouped customs share the classic bucket.
  */
-describe('custom emoji groups', () => {  it('renders one section and nav tab per group plus the shared bucket', async () => {
+describe('custom emoji groups', () => {
+  it('renders one section and nav tab per group plus the shared bucket', async () => {
     renderPicker();
 
     // Nav tabs.
@@ -310,9 +311,7 @@ describe('custom emoji group updates', () => {
     );
 
     expect(screen.queryByRole('tab', { name: 'animals' })).toBeNull();
-    expect(
-      screen.queryByRole('rowgroup', { name: 'animals' }),
-    ).toBeNull();
+    expect(screen.queryByRole('rowgroup', { name: 'animals' })).toBeNull();
     expect(screen.getByRole('tab', { name: 'people' })).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'people' })).getByLabelText(
@@ -369,13 +368,47 @@ describe('custom emoji group updates', () => {
 
     const tabs = within(screen.getByRole('tablist'))
       .getAllByRole('tab')
-      .map(tab => tab.getAttribute('aria-label'));
+      .map((tab) => tab.getAttribute('aria-label'));
     expect(tabs).toEqual(['People', 'Wildlife']);
-    const headings = screen.getAllByRole('heading').map(h => h.textContent);
+    const headings = screen.getAllByRole('heading').map((h) => h.textContent);
     expect(headings).toEqual(['People', 'Wildlife']);
     expect(screen.queryByRole('tab', { name: 'Animals' })).toBeNull();
     expect(screen.getByTestId('icon-v2')).toBeInTheDocument();
     expect(screen.queryByTestId('icon-v1')).toBeNull();
+  });
+
+  it('E: replaces only the group icon, keeping everything else', async () => {
+    const categories = (icon: React.ReactNode) => [
+      { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+      {
+        category: Categories.CUSTOM,
+        group: 'animals',
+        name: 'Animals',
+        icon,
+      },
+    ];
+    const { rerender } = render(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[pandaAnimals]}
+        categories={categories(<span data-testid="icon-old">O</span>)}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.getByTestId('icon-old')).toBeInTheDocument();
+
+    rerender(
+      <EmojiPicker
+        emojiData={minimalEmojiData}
+        customEmojis={[pandaAnimals]}
+        categories={categories(<span data-testid="icon-new">N</span>)}
+        autoFocusSearch={false}
+      />,
+    );
+
+    expect(screen.getByTestId('icon-new')).toBeInTheDocument();
+    expect(screen.queryByTestId('icon-old')).toBeNull();
   });
 
   it('C: moves an emoji between groups keeping id and length', async () => {
