@@ -1,3 +1,9 @@
+## [4.22.0](https://github.com/ealush/emoji-picker-react/compare/4.21.1...4.22.0) (2026-09-12)
+
+### Features
+
+* group custom emojis into placeable named sections ([#532](https://github.com/ealush/emoji-picker-react/issues/532)) ([ad4cc5e](https://github.com/ealush/emoji-picker-react/commit/ad4cc5e8376c8acd2c2d3c9da7a91d1d070ad1e0))
+
 ## [4.21.1](https://github.com/ealush/emoji-picker-react/compare/4.21.0...4.21.1) (2026-09-12)
 
 ### Bug Fixes
