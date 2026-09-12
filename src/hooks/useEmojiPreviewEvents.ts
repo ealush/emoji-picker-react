@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useEffect } from 'react';
 
-import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
 import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
   buttonFromTarget,
 } from '../DomUtils/selectors';
-import { useBodyRef } from '../components/context/ElementRefContext';
+import {
+  useBodyRef,
+  usePickerMainRef,
+} from '../components/context/ElementRefContext';
 import { PreviewEmoji } from '../components/footer/Preview';
 
 import {
@@ -20,6 +22,7 @@ export function useEmojiPreviewEvents(
   setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
 ) {
   const BodyRef = useBodyRef();
+  const PickerMainRef = usePickerMainRef();
   const isMouseDisallowed = useIsMouseDisallowed();
   const allowMouseMove = useAllowMouseMove();
 
@@ -84,15 +87,39 @@ export function useEmojiPreviewEvents(
 
       const button = buttonFromTarget(e.target as HTMLElement);
 
-      if (button) {
-        const belowFoldByPx = detectEmojyPartiallyBelowFold(button, bodyRef);
-        const buttonHeight = button.getBoundingClientRect().height;
-        if (belowFoldByPx < buttonHeight) {
-          return handlePartiallyVisibleElementFocus(button, setPreviewEmoji);
-        }
-
-        focusElement(button);
+      if (!button) {
+        return;
       }
+
+      const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
+
+      if (!unified || !originalUnified) {
+        return;
+      }
+
+      setPreviewEmoji({
+        unified,
+        originalUnified,
+      });
+
+      // Let arrow-key navigation continue from the hovered emoji, but only
+      // when focus is already inside the picker (or nowhere meaningful).
+      // Pulling focus out of an external element steals the caret from
+      // host-app inputs (issue #320). The guard runs again inside the
+      // deferred callback in case focus moved out after this event.
+      if (!isExternalElementFocused()) {
+        focusElement(button, () => !isExternalElementFocused());
+      }
+    }
+
+    function isExternalElementFocused(): boolean {
+      const active = document.activeElement as HTMLElement | null;
+
+      if (!active || active === document.body || active === document.documentElement) {
+        return false;
+      }
+
+      return !PickerMainRef.current?.contains(active);
     }
 
     return () => {
@@ -103,22 +130,4 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('keydown', onEscape);
     };
   }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
-}
-
-function handlePartiallyVisibleElementFocus(
-  button: HTMLElement,
-  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
-) {
-  const { unified, originalUnified } = allUnifiedFromEmojiElement(button);
-
-  if (!unified || !originalUnified) {
-    return;
-  }
-
-  (document.activeElement as HTMLElement)?.blur?.();
-
-  setPreviewEmoji({
-    unified,
-    originalUnified,
-  });
 }
