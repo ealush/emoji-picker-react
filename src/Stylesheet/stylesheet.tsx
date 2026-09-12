@@ -40,7 +40,7 @@ export const commonInteractionStyles = stylesheet.create({
       categoryBtn: {
         ':hover': {
           opacity: '1',
-          backgroundPositionY: 'var(--epr-category-navigation-button-size)',
+          color: 'var(--epr-category-icon-active-color, #3371B7)',
         },
       },
       hiddenOnSearch: {
@@ -68,11 +68,11 @@ export const commonInteractionStyles = stylesheet.create({
     categoryBtn: {
       ':hover': {
         opacity: '1',
-        backgroundPositionY: 'var(--epr-category-navigation-button-size)',
+        color: 'var(--epr-category-icon-active-color, #3371B7)',
       },
       '&.epr-active': {
         opacity: '1',
-        backgroundPositionY: 'var(--epr-category-navigation-button-size)',
+        color: 'var(--epr-category-icon-active-color, #3371B7)',
       },
     },
     visibleOnSearchOnly: {

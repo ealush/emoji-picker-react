@@ -95,6 +95,8 @@ const DarkTheme = {
     'var(--epr-dark-emoji-variation-indicator-color)',
   '--epr-category-icon-active-color':
     'var(--epr-dark-category-icon-active-color)',
+  '--epr-category-icon-inactive-color':
+    'var(--epr-dark-category-icon-inactive-color)',
   '--epr-skin-tone-picker-menu-color':
     'var(--epr-dark-skin-tone-picker-menu-color)',
   '--epr-skin-tone-outer-border-color':
@@ -132,7 +134,8 @@ const styles = stylesheet.create({
       '--epr-picker-border-color': '#e7e7e7',
       '--epr-bg-color': '#fff',
       '--epr-reactions-bg-color': '#ffffff90',
-      '--epr-category-icon-active-color': '#6aa8de',
+      '--epr-category-icon-active-color': '#3371B7',
+      '--epr-category-icon-inactive-color': '#868686',
       '--epr-skin-tone-picker-menu-color': '#ffffff95',
       '--epr-skin-tone-outer-border-color': '#555555',
       '--epr-skin-tone-inner-border-color': 'var(--epr-bg-color)',
@@ -214,7 +217,8 @@ const styles = stylesheet.create({
       '--epr-dark-reactions-bg-color': '#22222290',
       '--epr-dark-search-input-bg-color-active': 'var(--epr-dark)',
       '--epr-dark-emoji-variation-indicator-color': '#444',
-      '--epr-dark-category-icon-active-color': '#3271b7',
+      '--epr-dark-category-icon-active-color': '#6AA9DD',
+      '--epr-dark-category-icon-inactive-color': '#C0C0BF',
       '--epr-dark-skin-tone-picker-menu-color': '#22222295',
       '--epr-dark-skin-tone-outer-border-color':
         'var(--epr-dark-picker-border-color)',
