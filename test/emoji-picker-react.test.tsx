@@ -149,6 +149,25 @@ describe('EmojiPicker', () => {
     expect(onSkinToneChange).toHaveBeenCalledWith(SkinTones.MEDIUM);
   });
 
+  it('hides category navigation when only one category is configured', async () => {
+    renderPicker({
+      categories: [
+        {
+          name: 'Smileys & People',
+          category: Categories.SMILEYS_PEOPLE,
+        },
+      ],
+    });
+
+    expect(
+      screen.queryByRole('tablist', { name: 'Category navigation' }),
+    ).toBeNull();
+    // Emojis themselves still render.
+    expect(
+      await screen.findAllByLabelText('grinning face'),
+    ).not.toHaveLength(0);
+  });
+
   it('hides search when searchDisabled is set', () => {
     renderPicker({ searchDisabled: true });
 

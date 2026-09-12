@@ -117,6 +117,18 @@ describe('CategoryNavigation', () => {
     (useShouldHideCustomEmojis as any).mockReturnValue(true);
 
     const { container } = render(<CategoryNavigation />);
-    expect(container.firstChild).toBeEmptyDOMElement();
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders nothing when only one category is visible', () => {
+    (useCategoriesConfig as any).mockReturnValue([
+      { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+    ]);
+
+    const { container, queryByRole } = render(<CategoryNavigation />);
+    expect(container.firstChild).toBeNull();
+    expect(
+      queryByRole('tablist', { name: 'Category navigation' }),
+    ).toBeNull();
   });
 });

@@ -31,6 +31,17 @@ export function CategoryNavigation() {
   const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
 
+  const visibleCategories = categoriesConfig.filter(
+    categoryConfig =>
+      !(isCustomCategory(categoryConfig) && hideCustomCategory),
+  );
+
+  // A single tab navigates nowhere — hide the bar to reclaim its space.
+  // https://github.com/ealush/emoji-picker-react/issues/396
+  if (visibleCategories.length <= 1) {
+    return null;
+  }
+
   return (
     <div
       className={cx(styles.nav)}
@@ -39,13 +50,9 @@ export function CategoryNavigation() {
       id="epr-category-nav-id"
       ref={CategoryNavigationRef}
     >
-      {categoriesConfig.map((categoryConfig) => {
+      {visibleCategories.map(categoryConfig => {
         const category = categoryFromCategoryConfig(categoryConfig);
         const isActiveCategory = category === activeCategory;
-
-        if (isCustomCategory(categoryConfig) && hideCustomCategory) {
-          return null;
-        }
 
         const allowNavigation = !isSearchMode && !isActiveCategory;
 

@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react';
 import React from 'react';
 
-import EmojiPicker, { Props } from '../../src';
+import EmojiPicker, { Categories, Props } from '../../src';
 import { SuggestionMode } from '../../src/types/exposedTypes';
 import { Template } from '../utils/pickerStoryUtils';
 
@@ -30,4 +30,13 @@ export const RecentlyUsed = (args: Props) => (
 
 export const LazyLoaded = (args: Props) => (
   <Template {...args} lazyLoadEmojis={true} />
+);
+
+export const SingleCategory = (args: Props) => (
+  <Template
+    {...args}
+    categories={[
+      { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
+    ]}
+  />
 );
