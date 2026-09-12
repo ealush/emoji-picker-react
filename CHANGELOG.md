@@ -1,3 +1,9 @@
+## [4.20.9](https://github.com/ealush/emoji-picker-react/compare/4.20.8...4.20.9) (2026-09-12)
+
+### Bug Fixes
+
+* hide category navigation when only one category is visible ([#396](https://github.com/ealush/emoji-picker-react/issues/396)) ([#529](https://github.com/ealush/emoji-picker-react/issues/529)) ([673c5a1](https://github.com/ealush/emoji-picker-react/commit/673c5a143ade7d18274e728ed3836083bd3eb8fd))
+
 ## [4.20.8](https://github.com/ealush/emoji-picker-react/compare/4.20.7...4.20.8) (2026-09-12)
 
 ### Bug Fixes
