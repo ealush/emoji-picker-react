@@ -26,6 +26,20 @@
     "type": "git",
     "url": "https://github.com/ealush/emoji-picker-react.git"
   },
+  "overrides": {
+    "decode-uri-component": "0.2.2",
+    "deep-object-diff": "1.1.9",
+    "ua-parser-js": "0.7.41",
+    "minimist": "1.2.8",
+    "loader-utils": "2.0.4",
+    "form-data": "4.0.6",
+    "request": {
+      "form-data": "2.5.6"
+    },
+    "tsconfig-paths": {
+      "json5": "1.0.2"
+    }
+  },
   "scripts": {
     "start": "tsdx watch",
     "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
