@@ -144,5 +144,5 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('blur', onLeave, true);
       bodyRef?.removeEventListener('keydown', onEscape);
     };
-  }, [BodyRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
+  }, [BodyRef, PickerMainRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
 }
