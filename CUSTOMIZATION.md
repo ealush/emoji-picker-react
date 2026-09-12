@@ -32,6 +32,8 @@ entry in `categories` to place it anywhere in the order, with its own
 `name` and `icon`. Customs without a group share the classic bucket:
 
 ```tsx
+import EmojiPicker, { Categories } from 'emoji-picker-react';
+
 <EmojiPicker
   customEmojis={[
     { id: 'panda', names: ['panda'], imgUrl: pandaPng, group: 'animals' },
