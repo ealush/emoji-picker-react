@@ -38,9 +38,31 @@ Control the footer preview area with `previewConfig`:
 
 ## Custom Category Icons
 
-Customize the navigation icons using one of two methods.
+Customize the navigation icons using one of three methods.
 
-**Method 1: The `categoryIcons` prop**
+**Method 1: Recolor the default icons with CSS variables**
+
+The default icons follow two variables. Set them on the picker root via
+the `style` prop (the picker defines its own defaults on `.epr-main`, so
+values inherited from outer ancestors are shadowed):
+
+```tsx
+<EmojiPicker
+  style={
+    {
+      '--epr-category-icon-active-color': '#e11d48',
+      '--epr-category-icon-inactive-color': '#a8a29e',
+    } as React.CSSProperties
+  }
+/>
+```
+
+| Variable                             | Default                             |
+| :----------------------------------- | :---------------------------------- |
+| `--epr-category-icon-active-color`   | `#3371B7` (`#6AA9DD` in dark theme) |
+| `--epr-category-icon-inactive-color` | `#868686` (`#C0C0BF` in dark theme) |
+
+**Method 2: The `categoryIcons` prop**
 
 Map `Categories` enum values to React nodes:
 
@@ -55,7 +77,7 @@ import EmojiPicker, { Categories } from 'emoji-picker-react';
 />;
 ```
 
-**Method 2: The `categories` configuration array**
+**Method 3: The `categories` configuration array**
 
 Define the icon directly within the category configuration object:
 
