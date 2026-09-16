@@ -75,9 +75,8 @@ jobs:
       - name: Build with Next.js
         if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
         run: npx --no-install next build
-      - name: Static HTML export with Next.js
-        if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
-        run: npx --no-install next export
+        # NOTE: Next 15 removed `next export`; with `output: 'export'` in
+        # website/next.config.js, `next build` writes `out/` directly.
       - name: Verify subpath asset URLs
         if: github.event_name != 'schedule' || steps.refresh.outputs.stale == 'true'
         run: |
