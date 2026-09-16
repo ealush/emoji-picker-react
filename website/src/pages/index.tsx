@@ -120,6 +120,10 @@ export default function Home({ initialStats }: HomeProps) {
 }
 
 export async function getStaticProps() {
+  // NOTE: `output: 'export'` (static export) does not support ISR, so there
+  // is intentionally no `revalidate` here. Stats are baked in at build time;
+  // the site rebuilds daily via the Website workflow when the picker moves.
+  // `next export` was removed in Next 15; `next build` writes `out/` directly.
   try {
     const [npmData, stars] = await Promise.all([
       fetchNpmData(),
@@ -134,14 +138,12 @@ export async function getStaticProps() {
           version: npmData.version,
         },
       },
-      revalidate: 3600,
     };
   } catch {
     return {
       props: {
         initialStats: DEFAULT_STATS,
       },
-      revalidate: 3600,
     };
   }
 }
