@@ -42,7 +42,7 @@ Production behavior may keep the first registration to avoid crashing a runtime,
 
 ## 3. Ordering
 
-Generic previous/next-region movement uses **DOM document order of registered region roots**.
+Generic previous/next-region movement uses **DOM document order of currently active/focusable registered region roots**.
 
 It MUST NOT use:
 - registration/mount order;
@@ -52,6 +52,8 @@ It MUST NOT use:
 Wrappers are naturally handled because DOM order compares actual registered roots.
 
 Consumer nodes that are not registered regions are skipped by the arrow-navigation graph. They remain reachable through normal browser Tab order.
+
+A registered region that is hidden, inert, disabled, disconnected, or otherwise not a valid focus destination is filtered out before traversal. In compact reactions mode, managed-panel regions therefore remain registered but are not part of the active traversal list.
 
 ### Portals
 
@@ -90,7 +92,10 @@ Only an unhandled edge movement may delegate to cross-region navigation.
 - `ArrowUp` / `ArrowDown`: logical row movement while such a destination exists;
 - when vertical movement crosses the top edge, move to the previous focusable region in DOM order;
 - moving below the last logical row does not leave the picker unless a future RFC defines such behavior;
-- typing an alphanumeric key runs the shared type-to-search transition only when Search is registered and enabled; otherwise it is a picker no-op and focus remains in Grid.
+- typing an alphanumeric key runs the shared type-to-search transition only when Search is registered and enabled;
+- uncontrolled type-to-search commits and focuses Search immediately;
+- controlled type-to-search emits the proposal and keeps Grid focus until that exact proposal is accepted on the next committed render;
+- if Search is absent/disabled or a controlled proposal is rejected, the key does not move focus.
 
 ### Reactions
 
@@ -113,9 +118,11 @@ v5 preserves this rule:
 
 This semantic exception wins over generic DOM-order traversal.
 
+A consumer who deliberately places Search after/below Grid in DOM/visual order still gets this semantic Search↔Grid search-mode jump. That mismatch is part of the same consumer responsibility described in the CSS/DOM-order rule above.
+
 ## 6. Omitted regions
 
-Omitted or non-rendering regions are absent from the graph.
+Omitted or non-rendering regions are absent from the active graph. Registered-but-inert/hidden regions are also excluded until they become focusable again.
 
 Examples:
 - no CategoryNav: Search Down → Grid;
@@ -134,14 +141,14 @@ Example:
 
 ```tsx
 <Root>
-  <Panel>
-    <CategoryNav />
-    <button>Close</button>
-    <Search />
-    <Viewport><List /></Viewport>
-  </Panel>
+  <CategoryNav />
+  <button>Close</button>
+  <Search />
+  <Viewport><List /></Viewport>
 </Root>
 ```
+
+Root places these non-Reactions children inside its managed panel automatically.
 
 The Close button is reachable by Tab/Shift+Tab. ArrowDown from CategoryNav goes to Search because only picker regions participate in the picker-specific arrow graph.
 
