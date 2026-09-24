@@ -25,6 +25,7 @@ Required architecture:
 - default packaged data shares one prepared core across Roots;
 - custom-emoji derived data may be cached by dataset identity + custom-emojis reference/identity;
 - never mutate caller-provided `emojiData` or `customEmojis`;
+- prepared `EmojiInfo` records and nested public arrays are deeply frozen once and safely shared rather than copied per lookup;
 - do not JSON stringify/parse the complete dataset on each Root mount.
 
 Executable invariant:
