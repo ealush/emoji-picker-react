@@ -71,7 +71,6 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | `onSearchChange` | Immediate user-driven raw search callback. |
 | `suggestedEmojis` | Ordered caller-defined Suggested-category unified IDs. |
 | `onReactionsModeChange` | Observe compact reactions ↔ full Panel state changes. |
-| `idPrefix` | Optional deterministic namespace for any library-owned DOM IDs that cannot be eliminated. |
 
 Initial v5 intentionally does **not** add `skinTone`, `mode`, `defaultMode`, or `onModeChange`.
 
@@ -115,7 +114,8 @@ v4 has no exports map, so arbitrary deep paths can resolve accidentally.
 v5 policy:
 
 - all existing main-entry exports above receive explicit package compatibility;
-- current documented locale imports under `dist/data/emojis-*` receive either explicit v5 compatibility aliases or a documented direct migration to `emoji-picker-react/data/emojis-*`;
+- current documented locale imports under `dist/data/emojis-*` remain supported in v5 through deprecated compatibility export aliases;
+- `emoji-picker-react/data/emojis-*` is the canonical v5 locale path and migration target;
 - arbitrary undocumented `dist/*` / `src/*` imports are unsupported and may be blocked by the v5 exports map;
 - package consumer fixtures must verify the supported paths against the packed artifact before merge.
 
