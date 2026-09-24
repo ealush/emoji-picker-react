@@ -18,7 +18,7 @@ Initial v5 exports:
 
 There is intentionally **no public Panel primitive**.
 
-Root owns one internal full-picker panel wrapper and renders all non-Reactions children inside it. The wrapper exposes `data-epr-part="panel"` for styling, but consumers do not have to place a component whose only legal position would be directly under Root.
+Root owns one internal full-picker panel wrapper. When Reactions is present as the first non-null direct child, Root renders it before the panel; all subsequent children are panel content. The wrapper exposes `data-epr-part="panel"` for styling, but consumers do not have to place a component whose only legal position would be directly under Root.
 
 ## 2. Composition grammar
 
@@ -51,7 +51,7 @@ Root renders conceptually:
 <aside data-epr-part="root">
   <Reactions />
   <div data-epr-part="panel">
-    {/* every non-Reactions Root child, in caller order */}
+    {/* every Root child after the optional leading Reactions, in caller order */}
   </div>
 </aside>
 ```
