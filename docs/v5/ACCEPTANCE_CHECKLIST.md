@@ -54,7 +54,6 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] `onSearchChange` implemented.
 - [ ] `suggestedEmojis` implemented.
 - [ ] `onReactionsModeChange` implemented.
-- [ ] `idPrefix` implemented.
 - [ ] no unapproved controlled `skinTone` or `mode/defaultMode` API was added.
 
 ## 6. Search semantics
@@ -67,7 +66,9 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] default filtering debounce is 100 ms.
 - [ ] pending older filter computation is canceled by newer query.
 - [ ] clear emits `onSearchChange('')`.
-- [ ] type-to-search uses the same transition service.
+- [ ] type-to-search uses the same transition service when Search is registered/enabled.
+- [ ] with Search omitted, printable Grid typing is a no-op: no search mutation/callback and Grid focus stays put.
+- [ ] explicit controlled `searchValue` can still filter List when Search is omitted.
 - [ ] parent-driven controlled changes do not re-emit callback.
 - [ ] IME composition does not commit intermediate filter queries.
 - [ ] IME composition does not trigger type-to-search shortcuts.
@@ -108,7 +109,9 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] Panel is a direct Root child (fragments excepted).
 - [ ] Reactions is optional, singleton, and outside Panel.
 - [ ] all full-picker regions are Panel descendants.
-- [ ] exactly one List is inside exactly one Viewport.
+- [ ] exactly one Viewport exists per Root.
+- [ ] that Viewport contains exactly one direct List child.
+- [ ] extra/empty Viewports fail fast in development.
 - [ ] Search/CategoryNav/Preview may be omitted.
 - [ ] arbitrary consumer UI may be inserted inside Panel.
 - [ ] unsupported root-level consumer UI is rejected/documented.
@@ -128,6 +131,9 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] required roles cannot be overridden.
 - [ ] internal handlers execute before consumer handlers.
 - [ ] consumer `preventDefault` is not an undocumented behavior override.
+- [ ] primitive docs correctly state that React ErrorBoundaries do not catch event-handler exceptions.
+- [ ] RootProps exactly includes the documented behavior props, including `autoFocusSearch`.
+- [ ] RootProps requires `children` and cleanly composes native `<aside>` attributes.
 - [ ] Search `inputProps` and `inputRef` behave as specified.
 - [ ] List does not accept arbitrary children.
 
@@ -176,7 +182,6 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] hard-coded `epr-category-nav-id` is gone.
 - [ ] two default pickers have no duplicate library-owned IDs.
 - [ ] two primitive Roots have no duplicate library-owned IDs.
-- [ ] `idPrefix` namespaces any unavoidable generated IDs.
 - [ ] all library ARIA ID references resolve inside their owning Root.
 - [ ] no ARIA relationship crosses Root instances.
 
@@ -233,6 +238,10 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] `emoji-picker-react/data` exports `getEmojiByUnified`.
 - [ ] `emoji-picker-react/data` exports `searchEmojis`.
 - [ ] `EmojiInfo` and data option types match DATA_API.md.
+- [ ] returned `EmojiInfo` records are runtime-frozen.
+- [ ] returned `names` and `variations` arrays are runtime-frozen.
+- [ ] `searchEmojis` returns a fresh frozen result array.
+- [ ] mutating returned data cannot corrupt later lookup/search results.
 - [ ] lookup is case-insensitive and variation-aware as specified.
 - [ ] search uses same core as UI.
 - [ ] supplied `emojiData` affects lookup/search.
@@ -243,10 +252,11 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [ ] main entry preserves every v4 named export.
 - [ ] explicit exports map resolves main/primitives/data/locale paths.
-- [ ] documented v4 locale deep import has explicit compatibility/migration.
+- [ ] documented v4 `dist/data/emojis-*` imports remain working through deprecated compatibility aliases.
+- [ ] canonical `emoji-picker-react/data/emojis-*` imports resolve.
 - [ ] arbitrary undocumented deep imports are called out as unsupported.
 - [ ] ESM packed consumer passes.
-- [ ] CJS packed consumer passes if CJS remains published.
+- [ ] CJS packed consumer passes; v5 continues publishing CommonJS.
 - [ ] declarations resolve for all public subpaths.
 - [ ] Publint passes.
 - [ ] AreTheTypesWrong/equivalent passes.
@@ -274,3 +284,5 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] invalid-composition errors explain cause and remediation.
 - [ ] `llms.txt` is regenerated from distributable docs.
 - [ ] all unit, visual, docs, React-floor, package and performance checks pass.
+
+- [ ] default `className`, `style`, `width`, and `height` land on the actual Root `<aside>`.
