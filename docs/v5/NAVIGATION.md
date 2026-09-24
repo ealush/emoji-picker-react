@@ -16,7 +16,7 @@ Initial region kinds:
 | `grid` | yes | logical 2D emoji navigation |
 | `preview-skin-tone` | yes | skin-tone control when located in preview |
 
-`Panel`, `Viewport`, `Preview` itself, category groups, and consumer wrappers are not generic focus regions.
+Root's managed panel, `Viewport`, `Preview` itself, category groups, and consumer wrappers are not generic focus regions.
 
 Each region registration has:
 - an opaque instance ID;
