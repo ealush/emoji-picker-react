@@ -180,10 +180,12 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] search status remains a polite live region.
 - [ ] hard-coded `epr-search-id` is gone.
 - [ ] hard-coded `epr-category-nav-id` is gone.
-- [ ] two default pickers have no duplicate library-owned IDs.
-- [ ] two primitive Roots have no duplicate library-owned IDs.
-- [ ] all library ARIA ID references resolve inside their owning Root.
-- [ ] no ARIA relationship crosses Root instances.
+- [ ] a default fixture with no consumer IDs contains zero library-generated `[id]` attributes.
+- [ ] two default pickers still contain zero library-generated IDs.
+- [ ] a primitive fixture with no consumer IDs contains zero library-generated `[id]` attributes.
+- [ ] two primitive Roots still contain zero library-generated IDs.
+- [ ] no library-generated `aria-controls`, `aria-labelledby`, or `aria-describedby` IDREF is emitted.
+- [ ] no speculative `idPrefix` API ships in initial v5.
 
 ## 15. React 16.8 / SSR
 
@@ -197,7 +199,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] no `useId`, `useSyncExternalStore`, or other React-18-only runtime dependency.
 - [ ] no localStorage/window/document access during SSR.
 - [ ] hydration-first markup is deterministic.
-- [ ] multiple SSR Roots hydrate without duplicate global IDs.
+- [ ] multiple SSR Roots hydrate while generating no library-owned DOM IDs.
 
 ## 16. Performance: data core
 
@@ -231,6 +233,8 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] variation picker remains visible/keyboard-operable in custom composition.
 - [ ] bare primitives do not silently apply full branded appearance.
 - [ ] default picker remains visually compatible.
+- [ ] default `className`, `style`, `width`, and `height` land on the actual Root `<aside>`.
+- [ ] DefaultAppearance emits no DOM wrapper.
 
 ## 19. Data API
 
@@ -284,5 +288,3 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] invalid-composition errors explain cause and remediation.
 - [ ] `llms.txt` is regenerated from distributable docs.
 - [ ] all unit, visual, docs, React-floor, package and performance checks pass.
-
-- [ ] default `className`, `style`, `width`, and `height` land on the actual Root `<aside>`.
