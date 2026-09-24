@@ -31,24 +31,45 @@ function EmojiPicker(props: PickerProps) {
         >
           <Reactions />
 
-          <Panel>
-            <DefaultHeaderLayout>
-              <Search />
-              <CategoryNav />
-            </DefaultHeaderLayout>
+          <DefaultHeaderLayout>
+            <Search />
+            <CategoryNav />
+          </DefaultHeaderLayout>
 
-            <Viewport>
-              <List />
-            </Viewport>
+          <Viewport>
+            <List />
+          </Viewport>
 
-            <Preview />
-          </Panel>
+          <Preview />
         </Root>
       </DefaultAppearance>
     </ErrorBoundary>
   );
 }
 ```
+
+Root renders the actual DOM shape conceptually as:
+
+```tsx
+<aside data-epr-part="root">
+  <Reactions />
+
+  <div data-epr-part="panel">
+    <DefaultHeaderLayout>
+      <Search />
+      <CategoryNav />
+    </DefaultHeaderLayout>
+
+    <Viewport>
+      <List />
+    </Viewport>
+
+    <Preview />
+  </div>
+</aside>
+```
+
+The managed panel wrapper is created by Root around every non-Reactions child. It is not a public primitive.
 
 ## Root DOM ownership
 
@@ -64,21 +85,6 @@ Therefore the default picker MUST preserve v4 root ownership:
 `DefaultAppearance` MUST NOT emit an extra DOM wrapper.
 
 It may be implemented as a React context/provider, style-registration component, fragment-like component, or another DOM-less mechanism, but its rendered child is the actual Root `aside`.
-
-This is required both for v4 source/DOM compatibility and for ref/class/style semantics.
-
-## Grammar invariants
-
-- Root contains exactly one Panel.
-- Reactions, when present, is a sibling of Panel.
-- Every picker-mode region is a descendant of Panel.
-- Exactly one Viewport exists.
-- Viewport contains exactly one direct List.
-- Search, CategoryNav and Preview are optional.
-- Skin-tone UI remains owned by Search or Preview according to `skinTonePickerLocation`.
-- Panel is the single subtree Root hides/inerts while compact reactions are active.
-
-The exact public grammar is in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ## Responsibilities
 
@@ -110,17 +116,22 @@ Owns:
 - search transition service;
 - reactions state/observer;
 - navigation generation token;
+- the managed full-picker panel wrapper;
 - configuration shared by child primitives.
 
 ### Reactions
 
 Public managed compact-reaction region.
 
-### Panel
+It must be a direct Root child so Root can keep it outside the managed panel.
 
-Public structural container for **all** full-picker UI.
+### Managed panel
 
-Panel is not itself an arrow-navigation focus region. Root may use it to apply hidden/inert/presence state as one unit.
+Private DOM wrapper exposed as `data-epr-part="panel"`.
+
+It contains every non-Reactions Root child and is the single subtree Root hides/inerts when compact reactions are active.
+
+Consumers may place arbitrary wrappers, close buttons, branding and layout containers inside this managed panel simply by rendering them as normal Root children.
 
 ### DefaultHeaderLayout
 
@@ -136,11 +147,15 @@ Public managed tablist region.
 
 ### Viewport
 
-Public single scroll/measurement container.
+Public scroll/measurement container.
+
+At most one is supported per Root.
 
 ### List
 
 Public managed grid region. It owns category rows/groups, managed emoji buttons and virtualization.
+
+If rendered, List is the direct child of Viewport.
 
 ### Preview
 
@@ -149,11 +164,12 @@ Public optional preview region, including preview-position skin-tone control.
 ## Conditional behavior
 
 - `searchDisabled`: Search renders/registers nothing.
-- Search primitive omitted: no built-in type-to-search capture is active; explicit `searchValue` may still filter List.
+- Search primitive omitted: no built-in type-to-search capture is active; explicit controlled `searchValue` may still filter List.
 - `previewConfig.showPreview=false`: Preview renders/registers nothing.
 - `skinTonesDisabled`: no skin-tone control participates.
-- compact reactions active: Reactions is interactive; Panel and every descendant are hidden/inert/non-focusable as one managed subtree.
-- Reactions primitive absent: Root behaves as full-picker-only and Panel stays active.
+- compact reactions active: Reactions is interactive; the managed panel and every descendant are hidden/inert/non-focusable as one subtree.
+- Reactions primitive absent: Root behaves as full-picker-only and the managed panel stays active.
+- Viewport/List omitted: the composition remains valid but has no emoji grid.
 
 ## One-engine failure examples
 
@@ -163,6 +179,7 @@ The implementation violates this contract if:
 - default and primitives use different navigation engines;
 - data entry point duplicates search/normalization;
 - fixes must be applied in two behavior implementations;
-- `DefaultAppearance` inserts a wrapper and moves v4 root props away from Root.
+- DefaultAppearance inserts a wrapper and moves v4 root props away from Root;
+- a public Panel component reappears merely to satisfy internal presence/inert requirements.
 
 A source-architecture test MUST be added once final module paths exist.
