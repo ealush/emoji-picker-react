@@ -43,29 +43,18 @@ const [search, setSearch] = useState('');
 
 This is the supported way to externally clear/synchronize the query.
 
-### Controlled skin tone
+### Observe reaction-mode changes
 
 ```tsx
-const [skinTone, setSkinTone] = useState('neutral');
-
 <EmojiPicker
-  skinTone={skinTone}
-  onSkinToneChange={setSkinTone}
+  reactionsDefaultOpen
+  onReactionsModeChange={(reactionsOpen) => {
+    updateLayout(reactionsOpen);
+  }}
 />
 ```
 
-### Controlled picker/reactions mode
-
-```tsx
-const [mode, setMode] = useState<'picker' | 'reactions'>('reactions');
-
-<EmojiPicker
-  mode={mode}
-  onModeChange={setMode}
-/>
-```
-
-Existing reaction APIs remain compatible, including `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, and the `collapseToReactions()` callback API.
+This addresses applications that need to adapt surrounding layout when the compact reactions UI expands/collapses without introducing a second controlled mode API.
 
 ### Caller-defined suggestions
 
