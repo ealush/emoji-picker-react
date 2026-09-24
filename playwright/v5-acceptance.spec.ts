@@ -239,18 +239,23 @@ test.describe.skip('v5 acceptance', () => {
     await page.goto(storyUrl('v5-acceptance--native-asset-probe'));
     await expect(page.getByRole('grid')).toBeVisible();
     await expect(page.locator('[data-epr-part="emoji"] img')).toHaveCount(0);
+    await expect(page.getByTestId('get-emoji-url-call-count')).toHaveText('0');
 
     expect(probeRequests).toBe(0);
   });
 
   test('broken emoji images do not break keyboard navigation', async ({ page }) => {
+    let brokenAssetRequests = 0;
+
     await page.route('**/__epr_broken_asset__/**', async (route) => {
+      brokenAssetRequests += 1;
       await route.fulfill({ status: 404, body: '' });
     });
 
     await page.goto(storyUrl('v5-acceptance--broken-image-assets'));
 
     const first = page.locator('[data-epr-part="emoji"]').first();
+    await expect.poll(() => brokenAssetRequests).toBeGreaterThan(0);
     await first.focus();
     const firstUnified = await first.getAttribute('data-unified');
 
@@ -275,6 +280,8 @@ test.describe.skip('v5 acceptance', () => {
 
     await expect(first.getByLabel('Type to search for an emoji')).toHaveValue('p');
     await expect(second.getByLabel('Type to search for an emoji')).toHaveValue('');
+    await expect(first.locator(':focus')).toHaveCount(1);
+    await expect(second.locator(':focus')).toHaveCount(0);
 
     const ids = await roots.locator('[id]').evaluateAll((nodes) =>
       nodes.map((node) => node.id),
