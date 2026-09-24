@@ -3,144 +3,161 @@ import { describe, it } from 'vitest';
 /**
  * v5 implementation test plan.
  *
- * These TODOs describe tests that must become executable as the matching v5
- * surface lands. A green suite while these remain TODO is not v5 acceptance.
- * The release checklist requires every applicable TODO to be converted to a
- * real assertion (or removed only with a documented spec amendment).
+ * This PR contains no v5 runtime implementation. These TODOs are a binding
+ * test plan, not passing acceptance evidence. Before a v5 release every
+ * applicable TODO must become an executable assertion or be removed only
+ * through an explicit spec amendment.
  */
 
-describe('v5 compatibility surface', () => {
-  it.todo('renders the complete styled picker from the default export');
-  it.todo('keeps open');
-  it.todo('keeps lazyLoadEmojis');
-  it.todo('keeps categoryIcons');
-  it.todo('keeps getEmojiUrl');
-  it.todo('keeps emojiData and previewConfig');
-  it.todo('keeps searchDisabled and autoFocusSearch');
-  it.todo('keeps emojiVersion');
-  it.todo('keeps skinTonesDisabled and skinTonePickerLocation');
-  it.todo('keeps current reaction props and callbacks');
-  it.todo('keeps enum exports while accepting equivalent string literals');
+describe('v5 main-entry compatibility', () => {
+  it.todo('keeps default EmojiPicker');
+  it.todo('keeps Emoji');
+  it.todo('keeps top-level emojiByUnified behavior and return shape');
+  it.todo('keeps PickerProps and Props');
+  it.todo('keeps EmojiClickData');
+  it.todo('keeps CategoryIcons and CategoryConfig');
+  it.todo('keeps all current enum exports');
+  it.todo('accepts literal values alongside enum values');
+  it.todo('keeps existing default-picker props from V4_API_MATRIX');
   it.todo('keeps onEmojiClick collapseToReactions compatibility');
 });
 
 describe('v5 controlled search', () => {
-  it.todo('uses defaultSearchValue only for initial uncontrolled state');
-  it.todo('updates uncontrolled search after user input');
-  it.todo('calls onSearchChange for text input edits');
-  it.todo('calls onSearchChange with empty string from the clear button');
-  it.todo('calls onSearchChange for type-to-search from the grid');
-  it.todo('treats searchValue as the rendered source of truth');
-  it.todo('does not optimistically render a proposed controlled value');
-  it.todo('does not re-emit onSearchChange for parent-driven value changes');
-  it.todo('preserves the v4 Escape search-clear transition');
+  it.todo('uses defaultSearchValue once for uncontrolled initial state');
+  it.todo('emits raw user text synchronously through onSearchChange');
+  it.todo('treats searchValue as visible source of truth');
+  it.todo('does not optimistically render a proposal rejected by parent');
+  it.todo('does not re-emit parent-driven searchValue changes');
+  it.todo('normalizes a separate derived query for filtering');
+  it.todo('debounces filtering by 100ms by default');
+  it.todo('cancels older pending filter work when a newer query arrives');
+  it.todo('clear emits an empty raw value');
+  it.todo('type-to-search uses the same transition service');
+  it.todo('searchDisabled disables built-in type-to-search');
+  it.todo('does not commit intermediate IME composition filter values');
+  it.todo('does not run type-to-search shortcuts during IME composition');
+  it.todo('commits final IME value exactly once');
 });
 
-describe('v5 controlled skin tone', () => {
-  it.todo('uses defaultSkinTone for initial uncontrolled state');
-  it.todo('calls onSkinToneChange for a user selection');
-  it.todo('treats skinTone as source of truth when controlled');
-  it.todo('does not optimistically render a controlled skin-tone proposal');
-  it.todo('preserves disabled and picker-location behavior');
-});
-
-describe('v5 mode and reactions', () => {
-  it.todo('defaults to picker mode when no reaction initial-state prop is set');
-  it.todo('maps reactionsDefaultOpen to initial uncontrolled mode');
-  it.todo('lets defaultMode override reactionsDefaultOpen');
-  it.todo('treats mode as source of truth when controlled');
-  it.todo('emits onModeChange picker on user expansion');
-  it.todo('emits onModeChange reactions on collapseToReactions');
-  it.todo('does not optimistically change controlled mode');
-  it.todo('retains onReactionClick behavior');
-  it.todo('retains allowExpandReactions behavior');
-  it.todo('normalizes reaction unified identifiers through shared lookup');
-  it.todo('restores focus after collapsing to reactions');
+describe('v5 reaction observation', () => {
+  it.todo('does not emit onReactionsModeChange on initial mount');
+  it.todo('emits false once when reactions expand to full picker');
+  it.todo('emits true once when collapseToReactions changes state');
+  it.todo('does not emit on rerender without a state change');
+  it.todo('retains onReactionClick and allowExpandReactions');
+  it.todo('normalizes reaction identifiers through shared lookup');
 });
 
 describe('v5 caller-defined suggestions', () => {
-  it.todo('preserves frequent/recent localStorage behavior when absent');
-  it.todo('uses suggestedEmojis order when supplied');
-  it.todo('ignores unknown suggestedEmojis identifiers');
-  it.todo('does not mutate suggestedEmojis');
-  it.todo('does not write supplied suggestions into localStorage');
-  it.todo('continues updating persisted history for future built-in use');
+  it.todo('accepts uppercase unified identifiers');
+  it.todo('trims and lowercases identifiers for lookup');
+  it.todo('deduplicates after normalization preserving first occurrence');
+  it.todo('preserves caller order otherwise');
+  it.todo('ignores unknown identifiers');
+  it.todo('does not mutate the supplied array');
+  it.todo('does not persist supplied values into localStorage');
+  it.todo('preserves recent/frequent localStorage behavior when absent');
 });
 
-describe('v5 primitive exports', () => {
-  it.todo('exports Root');
-  it.todo('exports Reactions');
-  it.todo('exports Panel');
-  it.todo('exports Search');
-  it.todo('exports CategoryNav');
-  it.todo('exports Viewport');
-  it.todo('exports List');
-  it.todo('exports Preview');
-  it.todo('does not require a standalone SkinTone primitive');
-  it.todo('does not expose render-prop list composition');
+describe('v5 primitive exports and grammar', () => {
+  it.todo('exports Root Reactions Panel Search CategoryNav Viewport List Preview');
+  it.todo('requires exactly one Panel per Root');
+  it.todo('requires all full-picker regions to be Panel descendants');
+  it.todo('allows at most one Reactions sibling outside Panel');
+  it.todo('requires List inside exactly one Viewport');
+  it.todo('allows Search CategoryNav and Preview omission');
+  it.todo('allows arbitrary consumer UI inside Panel');
+  it.todo('rejects unsupported Root-level consumer UI');
+  it.todo('rejects duplicate singleton regions');
+  it.todo('rejects registered primitive portals outside Root');
+  it.todo('falls back to Panel when reactionsDefaultOpen has no Reactions');
+  it.todo('does not expose render-prop item composition');
+  it.todo('does not expose arbitrary emoji-button replacement');
 });
 
-describe('v5 composition validation', () => {
-  it.todo('rejects duplicate singleton Search regions in development');
-  it.todo('rejects duplicate CategoryNav regions in development');
-  it.todo('rejects duplicate List/grid regions in development');
-  it.todo('rejects List outside Viewport in development');
-  it.todo('warns when a registered region is portaled outside Root');
-  it.todo('isolates registries between multiple Roots');
+describe('v5 primitive DOM contracts', () => {
+  it.todo('forwards documented ref element types');
+  it.todo('forwards native aria data className style and event props');
+  it.todo('reserves data-epr namespace');
+  it.todo('does not allow required roles to be overridden');
+  it.todo('runs internal handlers before consumer handlers');
+  it.todo('supports Search inputProps and inputRef');
+  it.todo('does not accept arbitrary List children');
 });
 
-describe('v5 navigation algorithm', () => {
-  it.todo('orders registered regions by DOM document order');
-  it.todo('does not use registration mount order');
-  it.todo('skips non-region consumer elements for arrow navigation');
-  it.todo('leaves non-region consumer controls reachable by Tab');
-  it.todo('preserves Search Down to Grid while search is active');
-  it.todo('preserves Grid top-edge Up to Search while search is active');
-  it.todo('preserves category horizontal tab navigation');
-  it.todo('moves category Down to the next registered region');
-  it.todo('moves grid top-edge Up to the previous registered region');
-  it.todo('removes omitted/non-rendering regions from the graph');
-  it.todo('tracks logical grid coordinates independently of mounted DOM rows');
-  it.todo('materializes scrolls and focuses an offscreen logical destination');
-  it.todo('keeps real DOM focus on managed emoji buttons');
+describe('v5 error ownership', () => {
+  it.todo('keeps ErrorBoundary around the default picker');
+  it.todo('does not install ErrorBoundary inside primitive Root');
+  it.todo('lets consumer-child errors propagate from primitive Panel');
 });
 
-describe('v5 one-implementation architecture', () => {
-  it.todo('assembles the default picker from the same exported primitive modules');
-  it.todo('uses one search/data normalization implementation for UI and data API');
-  it.todo('uses one navigation implementation for default and custom compositions');
+describe('v5 one implementation', () => {
+  it.todo('assembles default picker from the exported primitive modules');
+  it.todo('uses one navigation engine for default and primitive compositions');
+  it.todo('uses one normalization/search core for UI and data entry');
+});
+
+describe('v5 navigation', () => {
+  it.todo('orders regions by DOM document order');
+  it.todo('does not use registration order');
+  it.todo('skips consumer non-region UI for arrow navigation');
+  it.todo('leaves consumer non-region UI in Tab order');
+  it.todo('preserves active-search Search to Grid exception');
+  it.todo('preserves active-search Grid top-edge to Search exception');
+  it.todo('preserves category tab horizontal navigation');
+  it.todo('navigates logical grid independently of materialized DOM');
+  it.todo('materializes scrolls and focuses an offscreen target');
+  it.todo('invalidates pending focus after query changes');
+  it.todo('invalidates pending focus after geometry changes');
+  it.todo('invalidates pending focus after dataset/category changes');
+  it.todo('invalidates pending focus after reactions transition and unmount');
+  it.todo('isolates navigation between Roots');
+});
+
+describe('v5 identity and accessibility', () => {
+  it.todo('removes fixed epr-search-id');
+  it.todo('removes fixed epr-category-nav-id');
+  it.todo('produces no duplicate library-owned IDs across two Roots');
+  it.todo('namespaces unavoidable IDs with idPrefix');
+  it.todo('keeps aria relationships inside the owning Root');
+  it.todo('keeps composite grid behavior from issue 508');
+  it.todo('keeps category accessibility context from issue 512');
+  it.todo('keeps search status as a polite live region');
+});
+
+describe('v5 data API', () => {
+  it.todo('exports getEmojiByUnified from emoji-picker-react/data');
+  it.todo('exports searchEmojis from emoji-picker-react/data');
+  it.todo('returns the exact EmojiInfo shape');
+  it.todo('normalizes unified lookup case-insensitively');
+  it.todo('maps variation lookup back to canonical base EmojiInfo');
+  it.todo('uses supplied emojiData for lookup and search');
+  it.todo('returns empty search results for an empty normalized query');
+  it.todo('does not import React or ShipStyles');
+  it.todo('does not promise Slack shortcode conversion');
+});
+
+describe('v5 React and SSR compatibility', () => {
+  it.todo('server-renders without window document or localStorage');
+  it.todo('hydrates deterministic initial markup');
+  it.todo('keeps persisted suggestions post-hydration');
+  it.todo('propagates nonce to every library-owned style tag');
+  it.todo('supports multiple Roots without cross-instance IDs');
 });
 
 describe('v5 styling contract', () => {
-  it.todo('accepts className and style on structural primitives');
-  it.todo('exposes only the documented stable data-epr-part names');
-  it.todo('preserves documented v4 CSS variables on the default picker');
-  it.todo('preserves structural viewport/list rules needed by virtualization');
-  it.todo('does not apply the full branded appearance to bare primitives');
+  it.todo('preserves documented v4 CSS variables');
+  it.todo('exposes the exact stable data-epr-part set');
+  it.todo('keeps protected structural viewport/list geometry');
+  it.todo('keeps variation overlay visible under supported composition');
+  it.todo('does not apply full branded appearance to bare primitives');
 });
 
-describe('v5 accessibility', () => {
-  it.todo('keeps the emoji collection as a composite widget for screen-reader arrow keys');
-  it.todo('keeps accessible category grouping context for emoji controls');
-  it.todo('keeps category navigation tablist semantics');
-  it.todo('keeps search status as a polite live region');
-  it.todo('does not create dangling aria references when optional primitives are omitted');
-});
-
-describe('v5 SSR and CSP', () => {
-  it.todo('server-renders without window document or localStorage');
-  it.todo('hydrates with deterministic initial suggestion state');
-  it.todo('applies persisted suggestions after hydration without warnings');
-  it.todo('propagates nonce to every library-owned style tag');
-});
-
-describe('v5 data and package API', () => {
-  it.todo('exposes lookup by unified code from emoji-picker-react/data');
-  it.todo('exposes names aliases and variations');
-  it.todo('reuses picker search semantics in the data API');
-  it.todo('documents locale-awareness of data search');
-  it.todo('supports documented locale package subpaths');
-  it.todo('retains the React >=16.8 peer floor');
-  it.todo('resolves declarations for main primitives data and locale entries');
+describe('v5 package contract', () => {
+  it.todo('resolves main primitives data and locale entries with declarations');
+  it.todo('preserves every current main-entry export');
+  it.todo('supports documented locale compatibility/migration');
+  it.todo('keeps React peer floor at >=16.8');
+  it.todo('passes packed ESM and CJS consumers');
   it.todo('passes package-shape validation');
 });
