@@ -1,10 +1,12 @@
 # v5 Public API Design
 
-This document is the intended user-facing shape for v5. `SPEC.md` is authoritative when there is a conflict.
+This document defines the intended consumer-facing v5 API. `SPEC.md` is authoritative when there is a conflict.
 
-## Plug-and-play remains the primary API
+The design goal is deliberately narrow: keep the familiar default component, add only proven capabilities, and expose structural composition without leaking implementation details.
 
-The README and website MUST introduce this first:
+## 1. Primary API
+
+The README and website continue to lead with:
 
 ```tsx
 import EmojiPicker from 'emoji-picker-react';
@@ -14,112 +16,52 @@ export function Composer() {
 }
 ```
 
-A user who does not need advanced composition should not need to learn primitives.
+A consumer who does not need structural composition should not need to learn anything new for v5.
 
-## Default component
+## 2. Existing props remain the foundation
 
-Representative target API:
+The complete v4 disposition is in [V4_COMPATIBILITY.md](./V4_COMPATIBILITY.md).
+
+v5 does not replace the current API with a new configuration object.
+
+Representative retained usage:
+
+```tsx
+<EmojiPicker
+  theme="dark"
+  emojiStyle="apple"
+  autoFocusSearch
+  searchPlaceholder="Search"
+  suggestedEmojisMode="frequent"
+  previewConfig={{ showPreview: true }}
+  onEmojiClick={handleEmoji}
+/>
+```
+
+Existing enum imports continue to work:
+
+```tsx
+<EmojiPicker
+  theme={Theme.DARK}
+  emojiStyle={EmojiStyle.APPLE}
+/>
+```
+
+The difference is that readable enum-backed props also accept their direct string values, so consumers are no longer forced to adopt the library's enum code style.
+
+## 3. New search control
+
+v5 adds the standard React controlled/uncontrolled pattern:
 
 ```ts
-export type Theme = 'light' | 'dark' | 'auto';
-export type EmojiStyle = 'native' | 'apple' | 'google' | 'facebook' | 'twitter';
-export type ImageEmojiStyle = Exclude<EmojiStyle, 'native'>;
-export type EmojiSource =
-  | 'native'
-  | {
-      type: 'remote';
-      style: ImageEmojiStyle;
-    }
-  | {
-      type: 'self-hosted';
-      style: ImageEmojiStyle;
-      getUrl: (emoji: {
-        unified: string;
-        style: ImageEmojiStyle;
-      }) => string;
-    };
-
-export type PickerMode = 'picker' | 'reactions';
-export type SuggestionMode = 'recent' | 'frequent';
-export type SkinTone =
-  | 'neutral'
-  | '1f3fb'
-  | '1f3fc'
-  | '1f3fd'
-  | '1f3fe'
-  | '1f3ff';
-
-export type EmojiSelectionContext = {
-  source: 'picker' | 'reactions';
-};
-
-export type ReactionsConfig = {
-  emojis?: string[];
-  expandable?: boolean;
-};
-
-export type Labels = {
-  searchPlaceholder?: string;
-  clearSearch?: string;
-  // Other existing localizable strings should be consolidated here.
-};
-
-export type EmojiRenderingProps =
-  | {
-      emojiStyle?: EmojiStyle;
-      emojiSource?: never;
-    }
-  | {
-      emojiStyle?: never;
-      emojiSource: EmojiSource;
-    };
-
-export type EmojiPickerProps = {
-  theme?: Theme;
-  width?: number | string;
-  height?: number | string;
-
+type V5SearchProps = {
   searchValue?: string;
   defaultSearchValue?: string;
   onSearchChange?: (value: string) => void;
-
-  skinTone?: SkinTone;
-  defaultSkinTone?: SkinTone;
-  onSkinToneChange?: (tone: SkinTone) => void;
-
-  mode?: PickerMode;
-  defaultMode?: PickerMode;
-  onModeChange?: (mode: PickerMode) => void;
-
-  reactions?: ReactionsConfig;
-  suggestions?: SuggestionMode | SuggestionsConfig;
-
-  categories?: CategoryConfig[];
-  customEmojis?: CustomEmoji[];
-  hiddenEmojis?: string[];
-
-  labels?: Labels;
-  locale?: string;
-
-  className?: string;
-  style?: React.CSSProperties;
-  nonce?: string;
-
-  onEmojiClick?: (
-    emoji: EmojiClickData,
-    event: MouseEvent,
-    context: EmojiSelectionContext,
-  ) => void;
-} & EmojiRenderingProps;
+};
 ```
 
-This type is illustrative rather than permission to add more top-level props. Prefer coherent configuration objects over a growing collection of booleans.
-
-`emojiStyle` remains the simple plug-and-play shortcut for the built-in rendering modes. `emojiSource` is the explicit advanced source contract. They are intentionally mutually exclusive so source precedence is never ambiguous.
-
-## Controlled state conventions
-
-Controlled and uncontrolled APIs follow normal React rules:
+### Controlled
 
 ```tsx
 const [search, setSearch] = useState('');
@@ -130,135 +72,213 @@ const [search, setSearch] = useState('');
 />
 ```
 
-Uncontrolled:
+`searchValue` is the source of truth for both the input and the filtered grid.
+
+If the parent ignores an `onSearchChange` call, the picker does not maintain a hidden optimistic query.
+
+### Uncontrolled
 
 ```tsx
 <EmojiPicker defaultSearchValue="party" />
 ```
 
-The same pattern applies to `skinTone` and `mode`.
+### Resetting on close
 
-## Reactions
+Issue #458 becomes ordinary React:
 
-The reactions feature remains integrated with the picker:
+```tsx
+const [search, setSearch] = useState('');
+const [open, setOpen] = useState(false);
+
+<Popover open={open} onOpenChange={(next) => {
+  setOpen(next);
+  if (!next) {
+    setSearch('');
+  }
+}}>
+  <EmojiPicker
+    searchValue={search}
+    onSearchChange={setSearch}
+  />
+</Popover>
+```
+
+The existing picker `open` prop still remains supported; consumers are not forced into this parent-owned pattern.
+
+## 4. Suggested emojis
+
+Existing:
+
+```tsx
+<EmojiPicker suggestedEmojisMode="frequent" />
+```
+
+New custom list:
 
 ```tsx
 <EmojiPicker
-  defaultMode="reactions"
-  reactions={{
-    emojis: ['1f44d', '2764-fe0f', '1f602'],
-    expandable: true,
-  }}
-  onEmojiClick={(emoji, event, { source }) => {
-    if (source === 'reactions') {
-      sendReaction(emoji);
-    }
+  suggestedEmojis={['1f601', '1f602', '1f603']}
+/>
+```
+
+Rules:
+- `suggestedEmojis` controls the contents/order of the Suggested category when supplied;
+- unknown and hidden IDs are skipped;
+- duplicate IDs keep their first occurrence;
+- `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
+
+There is no generic storage-adapter API in initial v5.
+
+## 5. Reactions observation
+
+The existing reactions API remains valid.
+
+v5 adds:
+
+```ts
+onReactionsModeChange?: (reactionsOpen: boolean) => void;
+```
+
+Example:
+
+```tsx
+<EmojiPicker
+  reactionsDefaultOpen
+  reactions={['1f44d', '2764-fe0f', '1f602']}
+  allowExpandReactions
+  onReactionsModeChange={(reactionsOpen) => {
+    setCompactLayout(reactionsOpen);
   }}
 />
 ```
 
-The existing compact-to-full transition remains part of the product.
+The existing imperative collapse path remains:
 
-## Primitives
+```tsx
+<EmojiPicker
+  reactionsDefaultOpen
+  onEmojiClick={(emoji, event, api) => {
+    sendEmoji(emoji);
+    api?.collapseToReactions();
+  }}
+/>
+```
+
+v5 does not require applications to migrate to a new `mode` state model.
+
+## 6. Structural primitives
 
 ```tsx
 import * as EmojiPicker from 'emoji-picker-react/primitives';
 
-export function BrandedPicker() {
+export function BrandedStructure() {
   return (
     <EmojiPicker.Root>
-      <header className="composer-picker-header">
-        <EmojiPicker.Search />
-        <EmojiPicker.SkinTone />
-      </header>
+      <EmojiPicker.Reactions />
 
-      <EmojiPicker.CategoryNav />
+      <EmojiPicker.Panel>
+        <EmojiPicker.Search>
+          <EmojiPicker.SkinTone />
+        </EmojiPicker.Search>
 
-      <EmojiPicker.Viewport>
-        <EmojiPicker.List />
-      </EmojiPicker.Viewport>
+        <EmojiPicker.CategoryNav />
 
-      <EmojiPicker.Preview />
+        <EmojiPicker.Viewport>
+          <EmojiPicker.List />
+        </EmojiPicker.Viewport>
+
+        <EmojiPicker.Preview />
+      </EmojiPicker.Panel>
     </EmojiPicker.Root>
   );
 }
 ```
 
-The primitives define meaningful picker regions, not every implementation node.
-
-### Required primitives
-
-- `Root`
-- `Panel`
-- `Search`
-- `SkinTone`
-- `CategoryNav`
-- `Viewport`
-- `List`
-- `Preview`
-- `Reactions`
-
-Variation UI may remain managed internally for the first v5 release unless exposing a primitive is necessary to support structural composition safely.
+This is a structural API, not a headless item renderer.
 
 ### Reordering
 
-This is supported:
+Supported:
 
 ```tsx
 <EmojiPicker.Root>
-  <EmojiPicker.CategoryNav />
-  <MyProductHeader />
-  <EmojiPicker.Search />
-  <EmojiPicker.Viewport>
-    <EmojiPicker.List />
-  </EmojiPicker.Viewport>
+  <EmojiPicker.Reactions />
+
+  <EmojiPicker.Panel>
+    <EmojiPicker.CategoryNav />
+
+    <MyProductHeader />
+
+    <EmojiPicker.Search>
+      <EmojiPicker.SkinTone />
+    </EmojiPicker.Search>
+
+    <EmojiPicker.Viewport>
+      <EmojiPicker.List />
+    </EmojiPicker.Viewport>
+  </EmojiPicker.Panel>
 </EmojiPicker.Root>
 ```
 
-The consumer controls layout order. The library retains behavior.
+The DOM order of managed regions determines cross-region arrow navigation. `MyProductHeader` is skipped by arrow navigation and remains normally reachable by Tab if it contains interactive elements.
 
 ### Omission
 
-Optional regions may be omitted declaratively:
+Supported:
 
 ```tsx
 <EmojiPicker.Root>
-  <EmojiPicker.Search />
-  <EmojiPicker.Viewport>
-    <EmojiPicker.List />
-  </EmojiPicker.Viewport>
+  <EmojiPicker.Panel>
+    <EmojiPicker.Search />
+
+    <EmojiPicker.Viewport>
+      <EmojiPicker.List />
+    </EmojiPicker.Viewport>
+  </EmojiPicker.Panel>
 </EmojiPicker.Root>
 ```
 
-Omitting `CategoryNav` must not make the grid unusable. Omitted regions must also be omitted from the navigation graph.
+Omitting CategoryNav and Preview must not make the grid unusable.
 
 ### No render props
 
-Do not ship:
+Not supported:
 
 ```tsx
 <EmojiPicker.List>
-  {({ emojis }) => ...}
+  {({ emojis }) => emojis.map(...)}
 </EmojiPicker.List>
 ```
 
-Do not require callbacks to express the picker skeleton.
+Not supported in initial v5:
 
-## Styling primitives
+```tsx
+<EmojiPicker.Emoji asChild>
+  <MyButton />
+</EmojiPicker.Emoji>
+```
 
-Primitives accept ordinary React styling props:
+The library continues to own managed emoji buttons, refs, activation, ARIA, variations and virtualization.
+
+## 7. Styling primitives
+
+Every structural primitive accepts `className` and `style`.
+
+Example:
 
 ```tsx
 <EmojiPicker.Root className="picker">
-  <EmojiPicker.Search className="search" />
-  <EmojiPicker.CategoryNav className="categories" />
-  <EmojiPicker.Viewport className="viewport">
-    <EmojiPicker.List className="list" />
-  </EmojiPicker.Viewport>
+  <EmojiPicker.Panel>
+    <EmojiPicker.Search className="search" />
+    <EmojiPicker.CategoryNav className="categories" />
+    <EmojiPicker.Viewport className="viewport">
+      <EmojiPicker.List className="list" />
+    </EmojiPicker.Viewport>
+  </EmojiPicker.Panel>
 </EmojiPicker.Root>
 ```
 
-Managed descendants expose documented part selectors:
+Managed descendants expose stable part selectors:
 
 ```css
 .picker [data-epr-part='emoji'] {
@@ -268,109 +288,134 @@ Managed descendants expose documented part selectors:
 .picker [data-epr-part='category-label'] {
   font: inherit;
 }
-
-.picker [data-epr-part='emoji']:focus-visible {
-  outline: 2px solid currentColor;
-}
 ```
 
-Structural CSS required by virtualization and keyboard correctness may be supplied by the library. The primitives entry point must not silently apply the complete branded v4 appearance.
+The supported/unsupported CSS boundary is specified in [STYLING_CONTRACT.md](./STYLING_CONTRACT.md).
 
-## Data API
+## 8. Skin-tone placement
 
-The supported data entry point replaces private imports:
+The plug-and-play component keeps:
+
+```tsx
+<EmojiPicker skinTonePickerLocation={SkinTonePickerLocation.SEARCH} />
+```
+
+Primitive consumers instead express placement through composition.
+
+Search placement:
+
+```tsx
+<EmojiPicker.Search>
+  <EmojiPicker.SkinTone />
+</EmojiPicker.Search>
+```
+
+Preview placement:
+
+```tsx
+<EmojiPicker.Preview>
+  <EmojiPicker.SkinTone />
+</EmojiPicker.Preview>
+```
+
+The default component keeps the legacy prop because it is a useful convenience and removing it would create migration work for no architectural benefit.
+
+## 9. Data API
 
 ```ts
 import {
   getEmojiByUnified,
-  searchEmojis,
   getEmojiVariations,
-  emojiToShortcode,
-  shortcodeToEmoji,
+  searchEmojis,
 } from 'emoji-picker-react/data';
 ```
 
-Exact helper names can be adjusted while implementing, but the final API must provide equivalent supported capabilities and tests.
+Representative target types:
 
-## Migration examples
+```ts
+type EmojiRecord = {
+  unified: string;
+  names: readonly string[];
+  variations: readonly string[];
+  addedIn?: string;
+};
 
-### Enums to literals
+function getEmojiByUnified(
+  unified: string,
+  options?: { emojiData?: EmojiData },
+): EmojiRecord | undefined;
 
-v4:
+function getEmojiVariations(
+  unified: string,
+  options?: { emojiData?: EmojiData },
+): readonly EmojiRecord[];
 
-```tsx
-<EmojiPicker theme={Theme.DARK} emojiStyle={EmojiStyle.APPLE} />
+function searchEmojis(
+  query: string,
+  options?: { emojiData?: EmojiData },
+): readonly EmojiRecord[];
 ```
 
-v5:
+Exact internal representation must not leak through this API.
 
-```tsx
-<EmojiPicker theme="dark" emojiStyle="apple" />
+The picker and this entry point share the same pure lookup/search implementation.
+
+Slack-specific shortcode generation is intentionally not promised in initial v5.
+
+## 10. Locale imports
+
+New supported path:
+
+```ts
+import es from 'emoji-picker-react/locale/es';
+
+<EmojiPicker emojiData={es} />
 ```
 
-### Reaction mode
+Documented legacy v4 imports continue working for v5:
 
-v4:
-
-```tsx
-<EmojiPicker
-  reactionsDefaultOpen
-  allowExpandReactions
-  reactions={reactions}
-  onReactionClick={handleReaction}
-/>
+```ts
+import es from 'emoji-picker-react/dist/data/emojis-es';
 ```
 
-v5:
+The legacy form is deprecated in docs, not abruptly removed.
 
-```tsx
-<EmojiPicker
-  defaultMode="reactions"
-  reactions={{ emojis: reactions, expandable: true }}
-  onEmojiClick={(emoji, event, context) => {
-    if (context.source === 'reactions') {
-      handleReaction(emoji, event);
-    }
-  }}
-/>
+## 11. Invalid composition errors
+
+Examples of invalid primitive composition:
+- two Search primitives;
+- two Lists;
+- List outside Viewport;
+- structural primitive outside its Root;
+- `reactionsDefaultOpen` with no Reactions primitive;
+- no Panel.
+
+Development/test errors should explain:
+1. what is invalid;
+2. why the picker cannot guarantee behavior;
+3. the supported composition.
+
+Example shape:
+
+```text
+[emoji-picker-react] <List> must be rendered inside exactly one <Viewport>
+belonging to the same <Root>. Move <List> under <Viewport>.
+See: <v5 primitives docs URL>
 ```
 
-### Category icons
+## 12. Explicitly not added in initial v5
 
-v4:
+To keep the surface narrow, initial v5 does not add:
+- generic `labels` configuration;
+- `locale` string prop;
+- generic persistence/storage adapters;
+- controlled skin-tone state;
+- controlled reaction-mode state;
+- controlled active category;
+- controlled active emoji/preview;
+- item-level render props;
+- emoji `asChild`;
+- generic `emojiSource` abstraction;
+- shortcode conversion.
 
-```tsx
-<EmojiPicker
-  categoryIcons={{
-    [Categories.FLAGS]: <FlagIcon />,
-  }}
-/>
-```
-
-v5:
-
-```tsx
-<EmojiPicker
-  categories={[
-    {
-      category: 'flags',
-      name: 'Flags',
-      icon: <FlagIcon />,
-    },
-  ]}
-/>
-```
-
-### Visibility
-
-v4:
-
-```tsx
-<EmojiPicker open={open} />
-```
-
-v5:
-
-```tsx
-{open ? <EmojiPicker /> : null}
-```
+These can be proposed later with concrete consumer cases and their own contracts.
