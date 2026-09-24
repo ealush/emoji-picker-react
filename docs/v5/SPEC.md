@@ -343,7 +343,7 @@ v5 is complete when:
 9. every v4 prop **and every current main-entry export** has an explicit disposition;
 10. primitive props/refs/grammar match PRIMITIVES.md;
 11. data/package subpaths match DATA_API.md and packed-consumer validation;
-12. React 16.8 runtime/SSR fixtures pass and library-owned IDs are instance-safe;
+12. React 16.8 runtime/SSR fixtures pass and initial v5 generates no library-owned DOM IDs;
 13. PERFORMANCE.md gates pass, including data-cache, render-count, scroll-work and bundle budgets;
 14. the v5 placeholder test contracts have been converted to executable coverage before a 5.x release can be built;
 15. every item in ACCEPTANCE_CHECKLIST.md is satisfied.
