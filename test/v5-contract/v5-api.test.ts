@@ -34,6 +34,8 @@ describe('v5 controlled search', () => {
   it.todo('clear emits an empty raw value');
   it.todo('type-to-search uses the same transition service');
   it.todo('searchDisabled disables built-in type-to-search');
+  it.todo('omitted Search disables built-in type-to-search and preserves Grid focus');
+  it.todo('controlled searchValue may still filter when Search is omitted');
   it.todo('does not commit intermediate IME composition filter values');
   it.todo('does not run type-to-search shortcuts during IME composition');
   it.todo('commits final IME value exactly once');
@@ -64,7 +66,9 @@ describe('v5 primitive exports and grammar', () => {
   it.todo('requires exactly one Panel per Root');
   it.todo('requires all full-picker regions to be Panel descendants');
   it.todo('allows at most one Reactions sibling outside Panel');
-  it.todo('requires List inside exactly one Viewport');
+  it.todo('requires exactly one Viewport per Root');
+  it.todo('requires exactly one direct List child inside that Viewport');
+  it.todo('rejects extra or empty Viewports');
   it.todo('allows Search CategoryNav and Preview omission');
   it.todo('allows arbitrary consumer UI inside Panel');
   it.todo('rejects unsupported Root-level consumer UI');
@@ -81,6 +85,8 @@ describe('v5 primitive DOM contracts', () => {
   it.todo('reserves data-epr namespace');
   it.todo('does not allow required roles to be overridden');
   it.todo('runs internal handlers before consumer handlers');
+  it.todo('RootProps includes every documented behavior prop including autoFocusSearch');
+  it.todo('RootProps requires children and composes native aside attributes');
   it.todo('supports Search inputProps and inputRef');
   it.todo('does not accept arbitrary List children');
 });
@@ -88,7 +94,14 @@ describe('v5 primitive DOM contracts', () => {
 describe('v5 error ownership', () => {
   it.todo('keeps ErrorBoundary around the default picker');
   it.todo('does not install ErrorBoundary inside primitive Root');
-  it.todo('lets consumer-child errors propagate from primitive Panel');
+  it.todo('lets consumer-child render errors propagate from primitive Panel');
+  it.todo('does not claim React ErrorBoundary catches consumer event-handler exceptions');
+});
+
+describe('v5 default root ownership', () => {
+  it.todo('DefaultAppearance emits no DOM wrapper');
+  it.todo('default className lands on the actual Root aside');
+  it.todo('default style width and height land on the actual Root aside');
 });
 
 describe('v5 one implementation', () => {
@@ -118,7 +131,7 @@ describe('v5 identity and accessibility', () => {
   it.todo('removes fixed epr-search-id');
   it.todo('removes fixed epr-category-nav-id');
   it.todo('produces no duplicate library-owned IDs across two Roots');
-  it.todo('namespaces unavoidable IDs with idPrefix');
+  it.todo('generates no library-owned DOM IDs in initial v5');
   it.todo('keeps aria relationships inside the owning Root');
   it.todo('keeps composite grid behavior from issue 508');
   it.todo('keeps category accessibility context from issue 512');
@@ -129,6 +142,10 @@ describe('v5 data API', () => {
   it.todo('exports getEmojiByUnified from emoji-picker-react/data');
   it.todo('exports searchEmojis from emoji-picker-react/data');
   it.todo('returns the exact EmojiInfo shape');
+  it.todo('returns runtime-frozen EmojiInfo records');
+  it.todo('freezes names and variations arrays');
+  it.todo('returns a fresh frozen search result array');
+  it.todo('cannot corrupt cached data by mutating returned values');
   it.todo('normalizes unified lookup case-insensitively');
   it.todo('maps variation lookup back to canonical base EmojiInfo');
   it.todo('uses supplied emojiData for lookup and search');
@@ -156,8 +173,10 @@ describe('v5 styling contract', () => {
 describe('v5 package contract', () => {
   it.todo('resolves main primitives data and locale entries with declarations');
   it.todo('preserves every current main-entry export');
-  it.todo('supports documented locale compatibility/migration');
+  it.todo('keeps documented v4 locale deep paths as deprecated compatibility aliases');
+  it.todo('supports canonical data locale subpaths');
   it.todo('keeps React peer floor at >=16.8');
-  it.todo('passes packed ESM and CJS consumers');
+  it.todo('passes packed ESM consumer');
+  it.todo('passes packed CJS consumer');
   it.todo('passes package-shape validation');
 });
