@@ -154,7 +154,7 @@ Important rules:
 - `searchValue` is the rendered source of truth when supplied;
 - user interaction emits `onSearchChange` but does not create a hidden optimistic value;
 - parent-driven changes do not re-emit the callback;
-- type-to-search uses the same transition as typing in the input;
+- type-to-search uses the same transition as typing in the input when Search is registered/enabled; with Search omitted it behaves like `searchDisabled` and leaves Grid focus/search state unchanged;
 - the clear button is a user-driven change and emits `onSearchChange('')`.
 
 Initial v5 does **not** add controlled skin tone, active category, focused emoji, variation state, scroll position, preview state, or picker mode. Those remain internal/existing APIs until a demonstrated consumer need justifies new surface.
@@ -262,13 +262,14 @@ Required:
 - data entry;
 - supported locale/data entry paths;
 - correct TypeScript declarations;
-- currently supported ESM and CommonJS consumption;
+- ESM consumption;
+- CommonJS consumption (v5 retains CJS support);
 - SSR safety;
 - package validation through Publint/AreTheTypesWrong or equivalent.
 
-The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) defines the React-16-safe ID strategy, real runtime compatibility fixtures and the prohibition on React-18-only runtime APIs such as `useId` and `useSyncExternalStore`.
+The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) defines the React-16-safe no-generated-ID strategy, real runtime compatibility fixtures and the prohibition on React-18-only runtime APIs such as `useId` and `useSyncExternalStore`.
 
-Adding an exports map intentionally blocks unspecified deep imports. That is a v5 breaking change. Existing documented locale imports MUST receive supported compatibility paths or a documented direct migration.
+Adding an exports map intentionally blocks unspecified deep imports. That is a v5 package-boundary break. Existing documented v4 locale imports under `dist/data/emojis-*` MUST remain working in v5 through deprecated compatibility export aliases, while `emoji-picker-react/data/emojis-*` becomes the canonical path.
 
 See [V4_API_MATRIX.md](./V4_API_MATRIX.md).
 
@@ -282,7 +283,7 @@ This behavior is not a promise that a user's persisted recents appear in server 
 
 CSP `nonce` must continue to reach every library-owned style tag, including styles used by the primitives/default composition.
 
-v5 removes document-global hard-coded IDs. The optional `idPrefix` escape hatch and multiple-root SSR rules are normative in [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
+v5 removes document-global hard-coded IDs and initial v5 generates no library-owned DOM IDs. No `idPrefix` API is added speculatively. Multiple-root SSR rules are normative in [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
 ## 14. Accessibility
 
