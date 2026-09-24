@@ -28,6 +28,7 @@ type EmojiPickerV5Additions = {
   searchValue?: string;
   defaultSearchValue?: string;
   onSearchChange?: (value: string) => void;
+  searchLabel?: string;
 
   suggestedEmojis?: string[];
 
@@ -82,9 +83,32 @@ Uncontrolled:
 <EmojiPicker defaultSearchValue="party" />
 ```
 
-The search input value changes immediately. Filtering remains an internal derived operation and may be debounced. If the Search primitive is omitted, built-in type-to-search is disabled just like `searchDisabled`, but an application may still drive filtering through controlled `searchValue` from its own external input. See [STATE.md](./STATE.md) for callback timing, IME handling and cancellation semantics.
+The visible value and callback use raw user text. Filtering uses a normalized derived query and is debounced as specified in [STATE.md](./STATE.md).
 
-## 5. Observe reactions/full-picker mode
+Type-to-search differs slightly between controlled and uncontrolled usage:
+
+- uncontrolled: commit the typed character and focus Search immediately;
+- controlled: emit the proposal first; focus Search only if the parent accepts that exact proposed value on the next committed render;
+- rejected controlled proposal: keep Grid focus where it was.
+
+If Search is omitted, built-in type-to-search behaves like `searchDisabled`, while an external application input may still drive filtering through controlled `searchValue`.
+
+## 5. Search accessibility label
+
+The current hard-coded English input label becomes configurable:
+
+```tsx
+<EmojiPicker
+  searchPlaceholder="Buscar"
+  searchLabel="Buscar un emoji"
+/>
+```
+
+`searchLabel` defaults to the current English accessible label, preserving plug-and-play behavior.
+
+Primitive consumers may also supply a consumer `aria-label` through Search `inputProps`; when supplied there, that explicit primitive-level label wins for that Search instance.
+
+## 6. Observe reactions/full-picker mode
 
 Issue #504 asks for surrounding-layout adaptation when reactions expand/collapse.
 
@@ -101,19 +125,34 @@ This is an observer, not a second controlled mode API.
 
 Existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `collapseToReactions()` remain.
 
-## 6. Caller-defined suggestions
+## 7. Caller-defined suggestions
 
 Issue #277 asks for a custom ordered Suggested list.
 
 ```tsx
 <EmojiPicker
-  suggestedEmojis={['1F601', '1f602', '1F603']}
+  suggestedEmojis={[
+    '1F601',
+    '1f44d-1f3fd',
+    '1F603',
+  ]}
 />
 ```
 
-Unified IDs are normalized case-insensitively and deduplicated while preserving first occurrence. Unknown IDs are ignored. See [STATE.md](./STATE.md).
+For standard emoji IDs:
+- matching is case-insensitive;
+- a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
+- duplicates are removed by canonical normalized ID, first occurrence wins.
 
-## 7. Structural primitives
+For custom emoji IDs:
+- exact custom ID matching is attempted before Unicode normalization;
+- caller-provided custom ID casing is preserved.
+
+When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
+
+See [STATE.md](./STATE.md).
+
+## 8. Structural primitives
 
 ```tsx
 import * as EmojiPicker from 'emoji-picker-react/primitives';
@@ -123,11 +162,12 @@ function ProductPicker() {
     <EmojiPicker.Root>
       <EmojiPicker.Reactions />
 
-      <EmojiPicker.Panel>
+      <div className="my-card">
         <EmojiPicker.CategoryNav />
 
         <div className="my-header">
           <MyBrand />
+          <button type="button">Close</button>
           <EmojiPicker.Search />
         </div>
 
@@ -136,23 +176,22 @@ function ProductPicker() {
         </EmojiPicker.Viewport>
 
         <EmojiPicker.Preview />
-      </EmojiPicker.Panel>
+      </div>
     </EmojiPicker.Root>
   );
 }
 ```
 
-**All full-picker regions belong inside Panel.**
+Root automatically creates the one managed full-picker panel wrapper around every direct child other than Reactions.
 
-That is required so Root can hide/inert the complete picker-mode subtree when reactions are active.
+That gives reactions mode one subtree to hide/inert without forcing consumers to render a public Panel component in exactly one legal location.
 
-The full primitive grammar, props, refs, native prop forwarding and handler composition rules are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+The full primitive grammar, props, refs, native prop forwarding and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
-### Required primitives
+### Required exports
 
 - `Root`
 - `Reactions`
-- `Panel`
 - `Search`
 - `CategoryNav`
 - `Viewport`
@@ -161,7 +200,9 @@ The full primitive grammar, props, refs, native prop forwarding and handler comp
 
 There is intentionally no standalone SkinTone primitive in initial v5. Existing skin-tone placement remains managed by Search/Preview.
 
-## 8. No render-prop/item renderer
+There is also intentionally no public Panel primitive; `data-epr-part="panel"` remains available for styling.
+
+## 9. No render-prop/item renderer
 
 v5 does not ship:
 
@@ -175,77 +216,84 @@ and does not initially ship arbitrary `asChild` replacement of emoji buttons.
 
 Managed emoji markup remains library-owned because it carries focus, ARIA, variations and virtualization behavior.
 
-## 9. Valid composition
+## 10. Valid composition
 
 ```tsx
 <EmojiPicker.Root>
-  <EmojiPicker.Panel>
+  <header>
     <EmojiPicker.Search />
     <EmojiPicker.CategoryNav />
-    <EmojiPicker.Viewport>
-      <EmojiPicker.List />
-    </EmojiPicker.Viewport>
-    <EmojiPicker.Preview />
-  </EmojiPicker.Panel>
-</EmojiPicker.Root>
-```
+  </header>
 
-Optional regions such as Search, CategoryNav and Preview may be omitted.
-
-Panel and Viewport/List are not optional structural grammar.
-
-Invalid examples:
-
-```tsx
-<EmojiPicker.Root>
-  <EmojiPicker.Search />
-  <EmojiPicker.Panel>
-    <EmojiPicker.Viewport>
-      <EmojiPicker.List />
-    </EmojiPicker.Viewport>
-  </EmojiPicker.Panel>
-</EmojiPicker.Root>
-```
-
-Search is outside Panel.
-
-```tsx
-<EmojiPicker.Root>
-  <EmojiPicker.Panel>
+  <EmojiPicker.Viewport>
     <EmojiPicker.List />
-  </EmojiPicker.Panel>
+  </EmojiPicker.Viewport>
+
+  <EmojiPicker.Preview />
 </EmojiPicker.Root>
 ```
 
-List is outside Viewport.
+Also valid:
+
+```tsx
+<EmojiPicker.Root searchValue={externalSearch}>
+  <MyExternalSearchControls />
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
+Here Search is omitted, so built-in type-to-search is disabled, but the controlled `searchValue` still filters List.
+
+Invalid:
 
 ```tsx
 <EmojiPicker.Root>
-  <EmojiPicker.Panel />
-  <EmojiPicker.Panel />
+  <EmojiPicker.List />
 </EmojiPicker.Root>
 ```
 
-Panel is duplicated.
+List requires Viewport.
 
-These fail fast according to [PRIMITIVES.md](./PRIMITIVES.md).
+Invalid:
 
-## 10. Styling
+```tsx
+<EmojiPicker.Root>
+  <EmojiPicker.Viewport>
+    <div />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
+Viewport requires exactly one direct List child.
+
+Invalid:
+
+```tsx
+<EmojiPicker.Root>
+  <div>
+    <EmojiPicker.Reactions />
+  </div>
+</EmojiPicker.Root>
+```
+
+Reactions must be a direct Root child so it remains outside the managed panel.
+
+## 11. Styling
 
 ```tsx
 <EmojiPicker.Root className="picker">
-  <EmojiPicker.Panel className="panel">
-    <EmojiPicker.Search className="search" />
-    <EmojiPicker.Viewport className="viewport">
-      <EmojiPicker.List className="list" />
-    </EmojiPicker.Viewport>
-  </EmojiPicker.Panel>
+  <EmojiPicker.Search className="search" />
+  <EmojiPicker.Viewport className="viewport">
+    <EmojiPicker.List className="list" />
+  </EmojiPicker.Viewport>
 </EmojiPicker.Root>
 ```
 
-Managed descendants expose the deliberately small stable part API defined in [STYLING.md](./STYLING.md).
+Managed descendants and the internal panel expose the deliberately small stable part API defined in [STYLING.md](./STYLING.md).
 
-## 11. Data API
+## 12. Data API
 
 The exact initial data entry point is defined in [DATA_API.md](./DATA_API.md):
 
@@ -259,9 +307,11 @@ import {
 
 The existing top-level `emojiByUnified` export remains unchanged and is **not** replaced by `getEmojiByUnified`.
 
+`searchEmojis` is dataset search, not "the exact results currently visible in one picker instance." Picker-only filters such as `emojiVersion`, `hiddenEmojis`, and `customEmojis` remain Root configuration.
+
 Initial v5 does not promise Slack-shortcode conversion because the current dataset does not establish canonical Slack alias semantics.
 
-## 12. Locale imports
+## 13. Locale imports
 
 v4 documentation currently uses:
 
@@ -269,26 +319,29 @@ v4 documentation currently uses:
 import es from 'emoji-picker-react/dist/data/emojis-es';
 ```
 
-v5 documents a stable package subpath such as:
+v5 canonicalizes:
 
 ```ts
 import es from 'emoji-picker-react/data/emojis-es';
 ```
 
-The new `emoji-picker-react/data/emojis-*` paths are canonical. Documented v4 `emoji-picker-react/dist/data/emojis-*` locale paths remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
+The documented v4 `dist/data/emojis-*` paths remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
 
-## 13. Error ownership
+## 14. Error ownership
 
 The default `<EmojiPicker />` keeps the current library ErrorBoundary.
 
-The primitives Root does not install one. Render/lifecycle errors from consumer UI inside Panel propagate to the application's own surrounding ErrorBoundary. Event-handler exceptions are not caught by React ErrorBoundaries and follow normal React/browser event behavior.
+The primitives Root does not install one. Render/lifecycle errors from consumer UI propagate to the application's surrounding ErrorBoundary when one exists. Event-handler exceptions are not caught by React ErrorBoundaries and follow normal React/browser event behavior.
 
-## 14. Development errors
+## 15. Development validation
 
-Invalid primitive composition should fail early with:
-- what is wrong;
-- why the composition is unsupported;
-- the expected structure;
-- a link/reference to primitive documentation.
+The validation model is intentionally narrow:
 
-Exact wording is not semver API.
+- render/context checks catch primitive-outside-Root, List-outside-Viewport, invalid Viewport children, and nested Reactions where detectable;
+- singleton duplicates are detected by Root registration after mount;
+- development throws on a second singleton registration;
+- production keeps the first registration authoritative and warns once;
+- there is no "missing Viewport after paint" validator because Viewport/List are optional;
+- SSR performs only render-time/context validation.
+
+Exact error text is not semver API.
