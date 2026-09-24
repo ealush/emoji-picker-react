@@ -1,85 +1,68 @@
 # v5 Visual Compatibility Contract
 
-## 1. Goal
+## Goal
 
 The default `<EmojiPicker />` is not visually redesigned in v5.
 
-Existing screenshots are regression evidence for the branded default component. They are not a promise that an unrelated future Playwright/browser/font environment can never require rebaselining.
+Existing Playwright snapshots are the reference baseline for the default composition.
 
-## 2. Default-component rule
+## Normal rule
 
-A v5 implementation should pass the existing screenshot corpus without changing expected images when run in the same effective test environment.
+Under the same:
+- browser version;
+- operating-system image;
+- fonts;
+- viewport/device scale;
+- Storybook fixture;
+- Playwright version;
 
-This covers existing tested states such as:
-- root dimensions and border geometry;
-- search/skin-tone placement;
-- category navigation;
-- category labels;
-- emoji spacing/sizing;
-- preview;
-- reactions;
-- focus states;
-- light/dark/auto stories already represented by the suite.
+the v5 default picker MUST pass the existing visual assertions without changing their expected snapshots.
 
-Primitive compositions are not required to inherit the branded appearance.
+Do not refresh screenshots merely because implementation internals changed.
 
-## 3. Adjudicating a screenshot failure
+Do not loosen tolerances merely to make a real regression pass.
 
-When an existing screenshot fails on the v5 branch:
+## Environment-drift adjudication
 
-1. Reproduce the exact same test with the exact same dependency/browser/font environment against the current base/v4 branch.
-2. If base passes and v5 fails, the failure is a v5 regression.
-3. If base fails in the same way, classify it as environment/tooling drift rather than v5 behavior.
-4. Rebaseline environment drift separately (or update the base snapshot in a dedicated change) before judging the v5 branch.
-5. Do not hide a v5-only difference by increasing global tolerance.
+The baseline is strict about the product, not about accidental infrastructure drift.
 
-This is the only normal path for changing an existing baseline during v5 implementation.
+If an existing snapshot fails after a browser/font/Playwright/CI-image change:
 
-## 4. Intentional visual changes
+1. reproduce the existing v4/base commit and the v5 branch in the **same updated environment**;
+2. compare both outputs;
+3. if both differ from the checked-in snapshot in the same way, classify it as environment drift;
+4. update the baseline in a separate, explicit snapshot-maintenance commit/PR with that evidence;
+5. rerun v5 against the newly adjudicated baseline.
 
-An intentional default visual change requires:
-- explicit maintainer approval;
-- a documented reason;
-- a spec/checklist amendment;
-- snapshot updates that describe the intended delta.
+A v5 implementation change and an environment-driven baseline refresh should not be mixed in one opaque diff.
 
-Do not combine an unrelated redesign with the v5 architecture refactor.
+## Intentional product changes
 
-## 5. Animation
+If the team intentionally approves a visual change:
+- amend this specification;
+- document the reason;
+- update the relevant acceptance expectation;
+- update snapshots explicitly.
 
-Static screenshots cannot prove transition quality.
+A major version does not automatically authorize visual redesign.
 
-The reactions expand/collapse acceptance test must additionally verify that the default branded root actually runs the height transition:
-- observe a `transitionrun` (or equivalent deterministic browser signal) for the relevant root/panel property after Expand;
-- observe completion;
-- verify the expanded picker is interactive after completion;
-- verify focus lands at the specified destination.
+## Animation
 
-The existing default transition duration/easing should remain unless an intentional visual change is approved.
+Static screenshots alone do not prove animation quality.
 
-The primitives engine supplies state/focus behavior. The branded default appearance supplies the polished animation. Custom primitive consumers may style motion differently.
+For reactions → picker expansion:
+- existing end-state visual snapshots remain relevant;
+- behavior tests must verify start/end mode, panel presence, focus transfer, and transition-state changes;
+- implementation review should inspect the motion manually when transition CSS/timing changes.
 
-## 6. Snapshot-policy prohibitions
+No public `data-epr-transition-state` attribute is required merely for testing. Prefer fixture/test hooks that do not become public styling API.
 
-Do not:
-- regenerate screenshots solely because internal DOM/components changed;
-- disable a pre-existing visual story because v5 made it inconvenient;
-- loosen global screenshot tolerance to hide a v5-only delta;
-- replace deterministic image-style snapshots with native system glyphs just to reduce implementation work.
+## Coverage language
 
-## 7. DOM changes
+"Visually unchanged" means states covered by existing visual fixtures must remain unchanged.
 
-Internal DOM may change when required for primitives, accessibility, or virtualization.
+If a required product state has no existing visual fixture and is load-bearing for v5 (for example a primitive-specific state), add a dedicated fixture rather than pretending the old suite covers it.
 
-A DOM change is acceptable when:
-- the default visible result remains equivalent;
-- existing a11y semantics do not regress;
-- public selectors documented in v4/v5 remain compatible or have an explicit migration.
+## Native emoji
 
-The visual goal is not “never change markup”; it is “do not make the consumer's default picker look different by accident.”
-
-## 8. Coverage gaps
-
-A state not covered by a pre-v5 screenshot is not automatically allowed to drift.
-
-Behavioral/default-style requirements in SPEC/API still apply. If implementation touches an uncovered but important state, add deterministic coverage rather than treating missing historical coverage as permission to redesign it.
+Native glyph rendering depends on platform fonts. Do not replace stable image-style visual coverage with native-font snapshots when doing so would make the suite less deterministic.
