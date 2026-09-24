@@ -121,6 +121,8 @@ v5 policy:
 
 The deep-import boundary is an intentional v5 package break, not permission to remove documented APIs.
 
+v5 continues publishing both ESM and CommonJS entry points. CJS compatibility is a release requirement, not an optional packaging decision.
+
 ## 7. React peer floor
 
 v5 retains `react >=16.8` unless a separate RFC changes it.
