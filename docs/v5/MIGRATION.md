@@ -100,13 +100,19 @@ v4 documentation currently uses deep locale imports such as:
 import es from 'emoji-picker-react/dist/data/emojis-es';
 ```
 
-v5 replaces documented deep imports with supported package exports, for example:
+v5 introduces canonical supported package exports:
 
 ```ts
 import es from 'emoji-picker-react/data/emojis-es';
 ```
 
-The final generated export pattern must be validated before release.
+The documented v4 path:
+
+```ts
+import es from 'emoji-picker-react/dist/data/emojis-es';
+```
+
+continues to resolve in v5 through a **deprecated compatibility export alias**. It is kept to avoid gratuitously breaking code copied from the project's own v4 documentation, but new code should use the canonical `/data/emojis-*` path.
 
 ### Undocumented deep imports
 
