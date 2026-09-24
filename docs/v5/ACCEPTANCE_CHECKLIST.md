@@ -52,6 +52,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] `searchValue` implemented.
 - [ ] `defaultSearchValue` implemented.
 - [ ] `onSearchChange` implemented.
+- [ ] `searchLabel` implemented and default search aria-label is no longer hard-coded English.
 - [ ] `suggestedEmojis` implemented.
 - [ ] `onReactionsModeChange` implemented.
 - [ ] no unapproved controlled `skinTone` or `mode/defaultMode` API was added.
@@ -66,20 +67,32 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] default filtering debounce is 100 ms.
 - [ ] pending older filter computation is canceled by newer query.
 - [ ] clear emits `onSearchChange('')`.
-- [ ] type-to-search uses the same transition service when Search is registered/enabled.
+- [ ] uncontrolled type-to-search commits and focuses Search immediately.
+- [ ] controlled type-to-search emits a proposal without moving focus first.
+- [ ] accepted controlled type-to-search focuses Search on the next committed render.
+- [ ] rejected controlled type-to-search leaves Grid focus unchanged.
+- [ ] pending type-to-search focus transfer is canceled by a newer proposal/unmount/Search removal/reactions transition.
 - [ ] with Search omitted, printable Grid typing is a no-op: no search mutation/callback and Grid focus stays put.
 - [ ] explicit controlled `searchValue` can still filter List when Search is omitted.
 - [ ] parent-driven controlled changes do not re-emit callback.
+- [ ] controlled rerenders do not overwrite the input DOM value during active IME composition.
+- [ ] IME composition does not emit intermediate `onSearchChange` values.
 - [ ] IME composition does not commit intermediate filter queries.
 - [ ] IME composition does not trigger type-to-search shortcuts.
-- [ ] final composition value produces exactly one committed filtering transition.
+- [ ] compositionend emits exactly one final proposal/commit.
+- [ ] accepted final controlled composition value is retained.
+- [ ] rejected final controlled composition value reconciles back to the parent value after composition ends.
+- [ ] final accepted composition value produces exactly one filtering transition.
 
 ## 7. Suggested emoji normalization
 
 - [ ] uppercase unified input such as `1F601` works.
-- [ ] entries are trimmed/lowercased for lookup.
-- [ ] duplicates are removed after normalization, first occurrence wins.
+- [ ] standard emoji entries are normalized for lookup.
+- [ ] standard skin-tone variation IDs preserve that exact variation for rendering.
+- [ ] exact custom emoji IDs are attempted before Unicode normalization and preserve casing.
+- [ ] duplicates are removed after render-identity normalization, first occurrence wins.
 - [ ] caller order is preserved otherwise.
+- [ ] `suggestedEmojis` overrides Suggested-category ordering/content and `suggestedEmojisMode` is ignored while it is present.
 - [ ] unknown IDs are ignored.
 - [ ] input array is not mutated.
 - [ ] supplied suggestions are not written into localStorage.
@@ -99,26 +112,24 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [ ] Root exported.
 - [ ] Reactions exported.
-- [ ] Panel exported.
 - [ ] Search exported.
 - [ ] CategoryNav exported.
 - [ ] Viewport exported.
 - [ ] List exported.
 - [ ] Preview exported.
-- [ ] exactly one Panel is required per Root.
-- [ ] Panel is a direct Root child (fragments excepted).
-- [ ] Reactions is optional, singleton, and outside Panel.
-- [ ] all full-picker regions are Panel descendants.
-- [ ] exactly one Viewport exists per Root.
-- [ ] that Viewport contains exactly one direct List child.
-- [ ] extra/empty Viewports fail fast in development.
-- [ ] Search/CategoryNav/Preview may be omitted.
-- [ ] arbitrary consumer UI may be inserted inside Panel.
-- [ ] unsupported root-level consumer UI is rejected/documented.
-- [ ] duplicate singleton primitives fail fast.
+- [ ] no public Panel primitive is exported.
+- [ ] Root creates exactly one managed `data-epr-part="panel"` wrapper around all non-Reactions children.
+- [ ] ordinary wrappers/headers/buttons are legal Root children and land inside that managed panel.
+- [ ] Reactions is optional, singleton, and a direct Root child outside the managed panel.
+- [ ] Viewport is optional and singleton.
+- [ ] if rendered, Viewport contains exactly one direct List child.
 - [ ] List outside Viewport fails fast.
-- [ ] registered primitives portaled outside Root fail/warn as specified.
-- [ ] reactionsDefaultOpen without Reactions falls back to Panel and warns in development.
+- [ ] Search/CategoryNav/Preview may be omitted.
+- [ ] duplicate singleton registration throws in development.
+- [ ] duplicate singleton registration keeps first authoritative + warns once in production.
+- [ ] render/context validation rules match PRIMITIVES.md.
+- [ ] SSR performs no post-mount singleton/absence validation.
+- [ ] reactionsDefaultOpen without Reactions falls back to the managed panel and warns in development.
 - [ ] no render-prop item API is required.
 - [ ] no accidental `asChild`/arbitrary emoji-button replacement ships.
 
@@ -151,7 +162,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] default export uses the same CategoryNav module.
 - [ ] default export uses the same Viewport/List modules.
 - [ ] default export uses the same Preview module.
-- [ ] default export uses the same Reactions/Panel modules.
+- [ ] default export uses the same Reactions primitive and Root-managed panel implementation.
 - [ ] no parallel keyboard-navigation engine exists.
 - [ ] UI and `/data` share normalization/search modules.
 - [ ] architecture assertion/test prevents a parallel private renderer from returning.
@@ -208,14 +219,18 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] prepared lookup/search core is cached by dataset identity.
 - [ ] ten Roots with same dataset build base index exactly once.
 - [ ] caller `emojiData` / `customEmojis` are never mutated.
+- [ ] `emojiVersion` and `hiddenEmojis` remain per-Root filters and do not rebuild the shared base index.
+- [ ] dev warns once after three consecutive identity-changing renders for `emojiData` and independently for `customEmojis`.
 - [ ] data cache does not strongly retain unmounted Root controllers.
 - [ ] cold preparation benchmark is <=110% of frozen v4 median.
 - [ ] same-dataset multi-Root benchmark proves cache reuse.
 
 ## 17. Performance: rendering/search/scroll
 
-- [ ] search median is <=110% of frozen v4 baseline.
-- [ ] no representative search fixture regresses >25% without explicit amendment/profiling.
+- [ ] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
+- [ ] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
+- [ ] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
+- [ ] v5 preserves an allowed Root-scoped query memo on top of the shared pure data core.
 - [ ] preview hover does not rerender Search/CategoryNav/Reactions.
 - [ ] scroll/virtualization does not rerender Search/CategoryNav/Preview/Reactions.
 - [ ] search update does not rerender Reactions.
@@ -248,7 +263,9 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] `searchEmojis` returns a fresh frozen result array.
 - [ ] mutating returned data cannot corrupt later lookup/search results.
 - [ ] lookup is case-insensitive and variation-aware as specified.
-- [ ] search uses same core as UI.
+- [ ] search uses the same normalization/index core as UI.
+- [ ] `/data` search is documented/tested as dataset search, not picker-visible results.
+- [ ] `/data` search does not apply Root-only `emojiVersion`, `hiddenEmojis`, `customEmojis`, category, or suggestion state.
 - [ ] supplied `emojiData` affects lookup/search.
 - [ ] `/data` imports neither React nor ShipStyles.
 - [ ] initial v5 does not accidentally promise Slack-shortcode compatibility.
