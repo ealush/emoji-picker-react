@@ -11,17 +11,30 @@ describe('v5 prepared data core', () => {
   it.todo('builds default dataset index once for ten same-data Roots');
   it.todo('returns the same prepared-core identity for the same emojiData object');
   it.todo('does not JSON clone the full default dataset per Root');
+  it.todo('keeps emojiVersion and hiddenEmojis as Root-local filters instead of fragmenting base cache');
   it.todo('does not mutate caller emojiData or customEmojis');
-  it.todo('keeps emojiVersion and hiddenEmojis as per-Root filters over shared base data');
-  it.todo('warns once after three consecutive emojiData identity changes in development');
-  it.todo('warns once after three consecutive customEmojis identity changes in development');
   it.todo('does not retain Root controllers through the data cache');
+});
+
+describe('v5 referential-stability diagnostics', () => {
+  it.todo('does not warn for one-off emojiData identity changes');
+  it.todo('warns once after three consecutive committed non-default emojiData identity changes');
+  it.todo('tracks customEmojis identity churn independently');
+  it.todo('does not deep-compare datasets merely to diagnose identity churn');
+});
+
+describe('v5 search performance invariants', () => {
+  it.todo('cold-query benchmark resets only per-Root query memo between samples');
+  it.todo('cold-query timing excludes base prepared-index construction');
+  it.todo('incremental typing benchmark keeps one Root query memo alive through each sequence');
+  it.todo('repeated identical query avoids a second full dataset scan');
+  it.todo('prepared-dataset generation change invalidates per-Root query memo');
 });
 
 describe('v5 render isolation', () => {
   it.todo('preview hover does not rerender Search CategoryNav or Reactions');
   it.todo('scroll does not rerender Search CategoryNav Preview or Reactions');
-  it.todo('search query changes do not rerender Reactions');
+  it.todo('accepted search query changes do not rerender Reactions');
   it.todo('Root A updates do not rerender Root B');
 });
 
@@ -34,12 +47,4 @@ describe('v5 package performance invariants', () => {
   it.todo('data entry imports neither React nor ShipStyles');
   it.todo('primitives-only consumer excludes default appearance wrapper');
   it.todo('single locale consumer does not include every locale');
-});
-
-
-describe('v5 search performance semantics', () => {
-  it.todo('supports cold-query measurement with prepared data but reset query memo');
-  it.todo('supports Root-scoped incremental query memo');
-  it.todo('preserves c to ca to cat incremental narrowing behavior');
-  it.todo('does not rebuild the base search index for query memo resets');
 });
