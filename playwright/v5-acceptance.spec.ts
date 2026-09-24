@@ -23,6 +23,21 @@ test.describe.skip('v5 acceptance', () => {
     await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
   });
 
+  test('default appearance does not wrap or steal Root DOM props', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--default-root-props'));
+
+    const host = page.getByTestId('default-picker-host');
+    const root = host.locator(':scope > aside[data-epr-part="root"]');
+
+    await expect(root).toHaveCount(1);
+    await expect(root).toHaveClass(/consumer-root-class/);
+    await expect(root).toHaveAttribute('data-consumer-root', 'true');
+    await expect(root).toHaveCSS('width', '420px');
+    await expect(root).toHaveCSS('height', '360px');
+  });
+
   test('all full-picker regions live inside one Panel', async ({ page }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
 
@@ -95,6 +110,24 @@ test.describe.skip('v5 acceptance', () => {
     await expect(page.locator('[data-epr-part="emoji"]:focus')).toBeVisible();
   });
 
+  test('omitting Search disables built-in type-to-search without moving Grid focus', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--without-search'));
+
+    await expect(page.getByLabel('Type to search for an emoji')).toHaveCount(0);
+
+    const emoji = page.locator('[data-epr-part="emoji"]').first();
+    await emoji.focus();
+    const unified = await emoji.getAttribute('data-unified');
+
+    await page.keyboard.press('p');
+
+    const focused = page.locator('[data-epr-part="emoji"]:focus');
+    await expect(focused).toHaveAttribute('data-unified', unified ?? '');
+    await expect(page.getByTestId('search-transition-count')).toHaveText('0');
+  });
+
   test('controlled search does not become optimistically uncontrolled', async ({
     page,
   }) => {
@@ -132,17 +165,62 @@ test.describe.skip('v5 acceptance', () => {
     const search = page.getByLabel('Type to search for an emoji');
     await search.focus();
 
-    await search.dispatchEvent('compositionstart', { data: '' });
-    await search.dispatchEvent('input', {
-      data: 'に',
-      inputType: 'insertCompositionText',
-      isComposing: true,
+    await search.evaluate((input: HTMLInputElement) => {
+      input.dispatchEvent(
+        new CompositionEvent('compositionstart', {
+          bubbles: true,
+          data: '',
+        }),
+      );
+
+      const setValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )?.set;
+      setValue?.call(input, 'に');
+
+      input.dispatchEvent(
+        new InputEvent('input', {
+          bubbles: true,
+          data: 'に',
+          inputType: 'insertCompositionText',
+          isComposing: true,
+        }),
+      );
     });
 
+    // Waiting longer than the normal debounce proves the intermediate
+    // composition value is not committed to filtering.
+    await page.waitForTimeout(110);
     await expect(page.getByTestId('filter-commit-count')).toHaveText('0');
 
-    await search.dispatchEvent('compositionend', { data: 'にこ' });
-    await expect(page.getByTestId('final-composition-value')).toHaveText('にこ');
+    await search.evaluate((input: HTMLInputElement) => {
+      const setValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )?.set;
+      setValue?.call(input, 'にこ');
+
+      input.dispatchEvent(
+        new CompositionEvent('compositionend', {
+          bubbles: true,
+          data: 'にこ',
+        }),
+      );
+      input.dispatchEvent(
+        new InputEvent('input', {
+          bubbles: true,
+          data: 'にこ',
+          inputType: 'insertText',
+          isComposing: false,
+        }),
+      );
+    });
+
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('にこ');
+    await page.waitForTimeout(110);
+    await expect(page.getByTestId('filter-commit-count')).toHaveText('1');
+    await expect(page.getByTestId('last-filter-query')).toHaveText('にこ');
   });
 
   test('type-to-search uses the same controlled search transition', async ({
@@ -191,7 +269,15 @@ test.describe.skip('v5 acceptance', () => {
     await page.getByLabel('grinning face', { exact: true }).focus();
     await page.getByRole('button', { name: 'Begin deferred navigation' }).click();
     await page.getByLabel('Type to search for an emoji').fill('cat');
-    await page.getByRole('button', { name: 'Resolve deferred navigation' }).click();
+    // Resolve through a fixture-only test hook so the act of resolving does
+    // not itself move browser focus away from Search.
+    await page.evaluate(() => {
+      (
+        window as typeof window & {
+          __eprResolveDeferredNavigation?: () => void;
+        }
+      ).__eprResolveDeferredNavigation?.();
+    });
 
     await expect(
       page.locator('[data-v5-stale-navigation-target="true"]'),
@@ -266,7 +352,7 @@ test.describe.skip('v5 acceptance', () => {
     expect(await focused.getAttribute('data-unified')).not.toBe(firstUnified);
   });
 
-  test('multiple Roots isolate search navigation and generated IDs', async ({
+  test('multiple Roots isolate search navigation and generate no library IDs', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--multiple-roots'));
@@ -283,23 +369,12 @@ test.describe.skip('v5 acceptance', () => {
     await expect(first.locator(':focus')).toHaveCount(1);
     await expect(second.locator(':focus')).toHaveCount(0);
 
-    const ids = await roots.locator('[id]').evaluateAll((nodes) =>
-      nodes.map((node) => node.id),
-    );
-    expect(new Set(ids).size).toBe(ids.length);
-  });
-
-  test('idPrefix namespaces all library-owned generated IDs', async ({ page }) => {
-    await page.goto(storyUrl('v5-acceptance--id-prefix'));
-
-    const root = page.locator('[data-epr-part="root"]');
-    const ids = await root.locator('[id]').evaluateAll((nodes) =>
-      nodes.map((node) => node.id),
-    );
-
-    for (const id of ids) {
-      expect(id.startsWith('fixture-picker-')).toBe(true);
-    }
+    // The fixture supplies no consumer-owned IDs. Initial v5 must therefore
+    // contain no library-generated DOM IDs or IDREF relationships.
+    await expect(roots.locator('[id]')).toHaveCount(0);
+    await expect(
+      roots.locator('[aria-controls], [aria-labelledby], [aria-describedby]'),
+    ).toHaveCount(0);
   });
 
   test('custom composition retains composite grid accessibility', async ({
