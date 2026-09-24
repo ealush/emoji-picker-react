@@ -87,7 +87,7 @@ Root creates the single managed full-picker panel wrapper internally around ever
 
 The variation picker remains managed inside the viewport/grid implementation.
 
-Reactions, when present, is a direct Root child. Every other Root child is placed inside Root's one managed full-picker panel wrapper, allowing ordinary application wrappers and controls without requiring a ceremonial public Panel component. The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+Reactions, when present, is the first non-null direct Root child. Root does not silently hoist it from a later position. Every subsequent Root child is placed inside Root's one managed full-picker panel wrapper, allowing ordinary application wrappers and controls without requiring a ceremonial public Panel component. The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### 4.1 Composition scope
 
