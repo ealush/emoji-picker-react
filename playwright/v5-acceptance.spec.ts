@@ -312,6 +312,30 @@ test.describe.skip('v5 acceptance', () => {
     ).toHaveAttribute('data-unified', unified!);
   });
 
+  test('caller-defined suggestions preserve variation and custom render identities', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--custom-suggestions'));
+
+    const suggested = page.locator(
+      '[data-epr-part="category"][data-v5-category="suggested"] [data-epr-part="emoji"]',
+    );
+
+    await expect(suggested).toHaveCount(3);
+    await expect(suggested.nth(0)).toHaveAttribute(
+      'data-v5-render-identity',
+      '1f44d-1f3fd',
+    );
+    await expect(suggested.nth(1)).toHaveAttribute(
+      'data-v5-render-identity',
+      'PartyParrot',
+    );
+    await expect(suggested.nth(2)).toHaveAttribute(
+      'data-v5-render-identity',
+      '1f603',
+    );
+  });
+
   test('keyboard navigation reaches an initially unmaterialized emoji', async ({
     page,
   }) => {
