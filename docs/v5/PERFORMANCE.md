@@ -30,6 +30,16 @@ Required architecture:
 - prepared public `EmojiInfo` records and nested arrays are deeply frozen once and safely shared;
 - do not JSON stringify/parse the complete dataset on each Root mount.
 
+### Referential stability
+
+Identity caching assumes application datasets are referentially stable.
+
+Documentation MUST tell consumers to memoize `emojiData` and `customEmojis` rather than creating equivalent inline objects/arrays on every render.
+
+Development builds SHOULD warn once when a mounted Root receives a new non-default `emojiData` identity on **3 consecutive committed renders**, or a new `customEmojis` identity on 3 consecutive committed renders, because this defeats cache reuse. A single/occasional identity change (for example changing locale) is valid and must not warn.
+
+The warning is diagnostic only; behavior remains correct with unstable identities.
+
 Executable invariant:
 
 - mounting 10 Roots against the same `emojiData` identity constructs the base lookup/search index exactly once.
@@ -202,4 +212,51 @@ Performance tests are split into:
 - render-count/browser-work tests on every CI run;
 - cold-query and warm/incremental wall-clock benchmark comparison in the benchmark job using the frozen Phase-0 baselines.
 
-A benchmark failure cannot be waived merely because functional tests pass.
+A benchmark failure cannot be waived merely because functional tests pass.## 3. Search
+
+Search performance is measured in two distinct modes because v4 has a stateful incremental-query cache. A single "warm repeated query" number would be misleading.
+
+### 3.1 Cold query benchmark
+
+Purpose: measure the pure prepared-core query cost without a per-Root query-result memo hit.
+
+Harness:
+- default English prepared dataset;
+- representative normalized queries of lengths 1, 2, 4, 8 and no-match;
+- construct/reuse the prepared dataset core before timing;
+- clear the per-Root query memo before each measured query;
+- warm the JavaScript engine/harness itself before recording;
+- at least 50 measured iterations per query;
+- median-of-five benchmark runs.
+
+Release gates:
+- v5 cold-query median for the fixture set MUST be no worse than 110% of the frozen Phase-0 v4 cold-query baseline measured with an equivalent cache-clear step;
+- no individual cold-query fixture may regress by more than 25% without an explicit spec amendment and profiling evidence.
+
+### 3.2 Warm/incremental typing benchmark
+
+Purpose: preserve v4's useful longest-prefix/incremental-query advantage.
+
+Harness:
+- model realistic typing sequences such as `c → ca → cat`, `s → sm → smi → smil → smile`, and a backspace/edit sequence;
+- keep one Root-scoped query memo alive for the sequence;
+- measure the incremental work for each accepted query transition;
+- run at least 50 sequences;
+- median-of-five benchmark runs.
+
+Release gates:
+- v5 incremental-sequence median MUST be no worse than 110% of the frozen Phase-0 v4 incremental baseline;
+- the implementation MAY keep a per-Root query-result/prefix memo;
+- that memo MUST be bounded/invalidated when prepared dataset identity changes and MUST NOT become part of the shared immutable data-core cache.
+
+### 3.3 Repeated identical query
+
+Repeated identical accepted queries may be memoized in v5.
+
+This is tested as an invariant rather than compared to a misleading wall-clock baseline:
+- the second identical query against the same Root/prepared-core generation performs no full dataset scan;
+- changing prepared dataset generation invalidates the memo.
+
+Search-index construction remains measured separately from both query modes.
+
+
