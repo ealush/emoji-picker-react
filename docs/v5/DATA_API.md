@@ -53,6 +53,8 @@ The readonly TypeScript surface is backed by runtime immutability:
 - `getEmojiByUnified` may return a shared frozen record directly;
 - caller-provided `emojiData` is never frozen or mutated by the library; normalized prepared records are separate internal objects.
 
+A JavaScript consumer mutating a returned record or nested array must fail/no-op according to normal frozen-object semantics and MUST NOT corrupt later lookup/search results.
+
 This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
 
 ## 3. Exact initial functions
@@ -83,14 +85,24 @@ No additional data helpers are required for initial v5.
 
 ### searchEmojis
 
-- trims and case-folds the query using the same normalization used by picker search;
+- trims and case-folds the query using the same normalization/search index used by picker search;
 - empty normalized query returns `[]`;
-- uses the same prepared search index and matching semantics as the picker;
 - preserves stable dataset order among matches;
 - returns canonical/base EmojiInfo records;
 - when `emojiData` is provided, names/search operate on that dataset;
-- does not include picker-only customEmojis because those are not part of the supplied EmojiData dataset;
 - returns a fresh frozen result array whose `EmojiInfo` entries are the shared deeply frozen records.
+
+**Important:** `searchEmojis` is dataset search, not a snapshot of one Picker instance's visible results.
+
+It deliberately does not apply Root-specific display layers such as:
+- `emojiVersion`;
+- `hiddenEmojis`;
+- internal `unicodeToHide`;
+- `customEmojis`;
+- category allowlists/order;
+- suggestion-mode state.
+
+Consumers who need exact picker-visible results should use the picker rather than assuming `searchEmojis` reproduces one Root's configured view.
 
 ## 4. Shortcodes
 
