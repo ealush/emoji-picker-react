@@ -49,7 +49,7 @@ The default rule for v5 is **preserve unless there is a strategic reason to brea
 | `defaultSearchValue` | Initial uncontrolled search query. |
 | `onSearchChange` | Observe user-driven search transitions. |
 | `skinTone` | Controlled skin tone. |
-| `mode` | Controlled `'picker' | 'reactions'` mode. |
+| `mode` | Controlled `'picker' \| 'reactions'` mode. |
 | `defaultMode` | Initial uncontrolled mode using the familiar controlled/uncontrolled convention. |
 | `onModeChange` | Observe user-driven mode transitions. |
 | `suggestedEmojis` | Caller-provided ordered unified IDs for the Suggested category, solving issue #277 narrowly. |
@@ -74,7 +74,7 @@ v4 historically allows arbitrary `dist/*` deep imports because there is no expor
 
 v5 adds an exports map. This is an intentional package-boundary break:
 
-- documented locale/data deep imports receive explicit supported v5 subpaths or compatibility export aliases;
+- documented locale/data deep imports receive explicit supported v5 subpaths and, where feasible, v5 compatibility export aliases so documented v4 code is not broken gratuitously;
 - arbitrary undocumented internals under `dist/*` are not guaranteed;
 - migration docs must show the supported replacement for every deep import used in current project documentation;
 - release notes must call out that unspecified deep imports may stop resolving.
