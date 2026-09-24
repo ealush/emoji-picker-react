@@ -32,8 +32,6 @@ type EmojiPickerV5Additions = {
   suggestedEmojis?: string[];
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
-
-  idPrefix?: string;
 };
 ```
 
@@ -115,17 +113,7 @@ Issue #277 asks for a custom ordered Suggested list.
 
 Unified IDs are normalized case-insensitively and deduplicated while preserving first occurrence. Unknown IDs are ignored. See [STATE.md](./STATE.md).
 
-## 7. SSR-safe identity
-
-v5 removes fixed global IDs and adds an optional prefix for any ID-bearing relationship that cannot be avoided:
-
-```tsx
-<EmojiPicker idPrefix="composer-emoji" />
-```
-
-See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
-
-## 8. Structural primitives
+## 7. Structural primitives
 
 ```tsx
 import * as EmojiPicker from 'emoji-picker-react/primitives';
@@ -173,7 +161,7 @@ The full primitive grammar, props, refs, native prop forwarding and handler comp
 
 There is intentionally no standalone SkinTone primitive in initial v5. Existing skin-tone placement remains managed by Search/Preview.
 
-## 9. No render-prop/item renderer
+## 8. No render-prop/item renderer
 
 v5 does not ship:
 
@@ -187,7 +175,7 @@ and does not initially ship arbitrary `asChild` replacement of emoji buttons.
 
 Managed emoji markup remains library-owned because it carries focus, ARIA, variations and virtualization behavior.
 
-## 10. Valid composition
+## 9. Valid composition
 
 ```tsx
 <EmojiPicker.Root>
@@ -242,7 +230,7 @@ Panel is duplicated.
 
 These fail fast according to [PRIMITIVES.md](./PRIMITIVES.md).
 
-## 11. Styling
+## 10. Styling
 
 ```tsx
 <EmojiPicker.Root className="picker">
@@ -257,7 +245,7 @@ These fail fast according to [PRIMITIVES.md](./PRIMITIVES.md).
 
 Managed descendants expose the deliberately small stable part API defined in [STYLING.md](./STYLING.md).
 
-## 12. Data API
+## 11. Data API
 
 The exact initial data entry point is defined in [DATA_API.md](./DATA_API.md):
 
@@ -273,7 +261,7 @@ The existing top-level `emojiByUnified` export remains unchanged and is **not** 
 
 Initial v5 does not promise Slack-shortcode conversion because the current dataset does not establish canonical Slack alias semantics.
 
-## 13. Locale imports
+## 12. Locale imports
 
 v4 documentation currently uses:
 
@@ -287,15 +275,15 @@ v5 documents a stable package subpath such as:
 import es from 'emoji-picker-react/data/emojis-es';
 ```
 
-The final exports-map pattern must be validated against real packed artifacts before release. Documented v4 locale imports receive an explicit compatibility/migration decision in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
+The new `emoji-picker-react/data/emojis-*` paths are canonical. Documented v4 `emoji-picker-react/dist/data/emojis-*` locale paths remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
 
-## 14. Error ownership
+## 13. Error ownership
 
 The default `<EmojiPicker />` keeps the current library ErrorBoundary.
 
 The primitives Root does not install one. Errors from consumer UI inside Panel propagate to the application's own error boundary.
 
-## 15. Development errors
+## 14. Development errors
 
 Invalid primitive composition should fail early with:
 - what is wrong;
