@@ -75,18 +75,19 @@ Required v5 primitives:
 
 - `Root`
 - `Reactions`
-- `Panel`
 - `Search`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
+Root creates the single managed full-picker panel wrapper internally around every non-Reactions child. `panel` remains a stable styling part, not a public composition primitive.
+
 `SkinTone` is intentionally **not** a required standalone primitive in the initial v5 contract. The existing `skinTonePickerLocation` behavior remains supported by `Search` and `Preview`. This keeps the initial public surface smaller and preserves the existing interaction model.
 
 The variation picker remains managed inside the viewport/grid implementation.
 
-`Panel` is mandatory. All full-picker regions (`Search`, `CategoryNav`, `Viewport/List`, `Preview`) must be descendants of exactly one Panel so reactions mode can hide/inert the entire full-picker subtree. The exact grammar and invalid-composition behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+Reactions, when present, is a direct Root child. Every other Root child is placed inside Root's one managed full-picker panel wrapper, allowing ordinary application wrappers and controls without requiring a ceremonial public Panel component. The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### 4.1 Composition scope
 
@@ -95,7 +96,7 @@ Consumers MAY:
 - reorder the major primitives;
 - omit optional regions;
 - wrap primitives in consumer layout elements;
-- insert ordinary application UI between primitives;
+- insert ordinary application UI and wrappers anywhere in the managed full-picker content;
 - apply documented styling hooks.
 
 Consumers MUST NOT be required to:
@@ -128,7 +129,7 @@ Key constraints:
 - CSS visual reordering that differs from DOM order does not redefine keyboard order;
 - non-region consumer content remains reachable through normal Tab navigation but is not automatically inserted into the picker's arrow-key region graph;
 - duplicate singleton regions fail fast in development;
-- `Panel` and `Viewport` are structural containers, not focus regions;
+- the managed panel and `Viewport` are structural containers, not focus regions;
 - the `List` grid is the `grid` focus region;
 - internal region keymaps remain semantic and preserve v4 behavior where specified;
 - multiple Roots are isolated.
@@ -145,6 +146,7 @@ Required:
 searchValue?: string;
 defaultSearchValue?: string;
 onSearchChange?: (value: string) => void;
+searchLabel?: string;
 ```
 
 Normative semantics are specified in [STATE.md](./STATE.md).
@@ -154,7 +156,10 @@ Important rules:
 - `searchValue` is the rendered source of truth when supplied;
 - user interaction emits `onSearchChange` but does not create a hidden optimistic value;
 - parent-driven changes do not re-emit the callback;
-- type-to-search uses the same transition as typing in the input when Search is registered/enabled; with Search omitted it behaves like `searchDisabled` and leaves Grid focus/search state unchanged;
+- type-to-search uses the same search transition when Search is registered/enabled;
+- in uncontrolled search, type-to-search commits the character and focuses Search immediately;
+- in controlled search, type-to-search emits a proposal but moves focus to Search only when the parent accepts that proposed value on the next committed render; a rejected proposal leaves Grid focus in place;
+- with Search omitted it behaves like `searchDisabled` and leaves Grid focus/search state unchanged;
 - the clear button is a user-driven change and emits `onSearchChange('')`.
 
 Initial v5 does **not** add controlled skin tone, active category, focused emoji, variation state, scroll position, preview state, or picker mode. Those remain internal/existing APIs until a demonstrated consumer need justifies new surface.
@@ -179,7 +184,7 @@ Required behavior:
 - initial mount does not emit unless separately documented before implementation;
 - existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `onEmojiClick(..., api).collapseToReactions()` remain supported;
 - reaction IDs are normalized through the same unified-code lookup used by the picker;
-- `Panel` owns full-picker presence/transition presentation but is not a navigation region.
+- Root's managed panel owns full-picker presence/transition presentation but is not a navigation region.
 
 The branded transition belongs to the official appearance layer. Root owns internal reactions state and focus restoration; bare primitives are not required to use the official motion.
 
@@ -216,6 +221,7 @@ In particular:
 - keep `skinTonesDisabled`;
 - keep `skinTonePickerLocation`;
 - keep `searchPlaceholder` and `searchClearButtonLabel`;
+- add `searchLabel` so default-picker consumers can localize the search input's accessible label instead of inheriting hard-coded English;
 - keep current reactions props and callbacks.
 
 String literals become accepted wherever v4 enums are accepted, but existing enum exports remain available for migration compatibility.
@@ -341,7 +347,7 @@ v5 is complete when:
 7. macro composition works without render props;
 8. styling obeys STYLING.md;
 9. every v4 prop **and every current main-entry export** has an explicit disposition;
-10. primitive props/refs/grammar match PRIMITIVES.md;
+10. primitive props/refs/grammar and Root-managed panel behavior match PRIMITIVES.md;
 11. data/package subpaths match DATA_API.md and packed-consumer validation;
 12. React 16.8 runtime/SSR fixtures pass and initial v5 generates no library-owned DOM IDs;
 13. PERFORMANCE.md gates pass, including data-cache, render-count, scroll-work and bundle budgets;
