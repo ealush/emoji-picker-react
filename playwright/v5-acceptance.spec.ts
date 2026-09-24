@@ -120,11 +120,12 @@ test.describe.skip('v5 acceptance', () => {
     const emoji = page.locator('[data-epr-part="emoji"]').first();
     await emoji.focus();
     const unified = await emoji.getAttribute('data-unified');
+    expect(unified).not.toBeNull();
 
     await page.keyboard.press('p');
 
     const focused = page.locator('[data-epr-part="emoji"]:focus');
-    await expect(focused).toHaveAttribute('data-unified', unified ?? '');
+    await expect(focused).toHaveAttribute('data-unified', unified!);
     await expect(page.getByTestId('search-transition-count')).toHaveText('0');
   });
 
