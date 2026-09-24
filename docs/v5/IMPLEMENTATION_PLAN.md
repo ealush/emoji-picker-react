@@ -84,7 +84,7 @@ Implement [NAVIGATION.md](./NAVIGATION.md) and [REACT_COMPATIBILITY.md](./REACT_
 - materialize/scroll/focus with navigation-generation cancellation;
 - multi-Root isolation;
 - removal of hard-coded document-global IDs;
-- `idPrefix` handling for unavoidable generated IDs.
+- elimination of initial library-owned DOM IDs; do not add a prefix API unless an unavoidable IDREF is separately specified.
 
 Run multiple-root SSR/hydration and React-16 runtime fixtures here, not only at release time.
 
@@ -134,7 +134,7 @@ Create Storybook/consumer fixtures for:
 - native asset probe;
 - broken image assets;
 - multiple Roots;
-- multiple SSR Roots with/without `idPrefix`.
+- multiple SSR Roots proving the initial implementation emits no library-owned DOM IDs.
 
 Packed consumer checks at this phase must prove:
 - primitives resolve with declarations;
@@ -162,7 +162,8 @@ Compile representative v4 TypeScript usage against v5 declarations.
 Expose exactly the initial API in [DATA_API.md](./DATA_API.md).
 
 Then:
-- add stable locale package subpaths;
+- add stable canonical locale package subpaths;
+- preserve documented v4 `dist/data/emojis-*` paths as deprecated export aliases;
 - test locale-aware search when `emojiData` is supplied;
 - verify one locale import does not pull every locale;
 - keep shortcode conversion out until a canonical mapping source is specified.
@@ -175,11 +176,11 @@ Validate packed artifacts with:
 - Publint;
 - AreTheTypesWrong or equivalent;
 - ESM consumer;
-- CJS consumer if CJS remains published;
+- CJS consumer (v5 retains CommonJS support);
 - React 16.8 consumer;
 - current React consumer;
 - supported locale imports;
-- documented v4 deep-locale compatibility/migration;
+- documented v4 `dist/data/emojis-*` compatibility aliases plus canonical `/data/emojis-*` imports;
 - size-limit/analyzer.
 
 Unspecified arbitrary `dist/*`/ `src/*` imports may be blocked and are called out as the intentional package-boundary break.
