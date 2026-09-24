@@ -1,10 +1,8 @@
-# v5 State Semantics
+# v5 State and Input Semantics
 
-Initial v5 adds only the state surface justified by demonstrated consumer needs.
+Initial v5 adds only state surfaces backed by demonstrated consumer needs.
 
 ## 1. Controlled/uncontrolled search
-
-Public API:
 
 ```ts
 searchValue?: string;
@@ -15,131 +13,167 @@ onSearchChange?: (value: string) => void;
 ### Controlled
 
 When `searchValue` is present:
-- it is the rendered source of truth;
-- user interaction calculates a proposed next value and calls `onSearchChange`;
-- the picker does not render a hidden optimistic copy;
-- the visible/filtering query changes only when the parent supplies a new `searchValue`.
+- it is the visible input/source-of-truth value;
+- a user edit synchronously computes the proposed raw next value and invokes `onSearchChange(next)`;
+- the picker does not keep an optimistic controlled copy;
+- filtering uses the value supplied by the parent.
 
-Programmatic parent updates do not call `onSearchChange` again.
+If the parent ignores a proposal, the visible value remains unchanged.
 
-Example: with `searchValue="cat"`, typing `p` proposes `"catp"`. If the parent ignores the callback, the rendered query remains `"cat"`.
+Parent-driven `searchValue` changes do not re-emit `onSearchChange`.
 
 ### Uncontrolled
 
 When `searchValue` is absent:
-- initial state comes from `defaultSearchValue` or `""`;
-- the picker owns subsequent changes;
-- user changes still call `onSearchChange` when provided.
+- initial input value is `defaultSearchValue ?? ''`;
+- user edits update the visible uncontrolled value immediately;
+- `onSearchChange`, when supplied, fires synchronously with each committed user edit.
 
-`defaultSearchValue` is read when the component instance mounts. A true unmount/remount creates a new uncontrolled lifetime.
+`defaultSearchValue` is read once per mounted lifetime.
 
-Switching between controlled and uncontrolled search during one mounted lifetime is unsupported. Development builds may warn; warning text is not public API.
+Switching between controlled and uncontrolled during one mounted lifetime is unsupported and SHOULD warn in development.
 
-## 2. Search transitions
+## 2. Raw input versus normalized filter
 
-The following are user-driven search changes and use one shared transition:
-- editing the input;
-- the clear button;
+The visible/callback value is the user's raw string.
+
+Filtering derives a normalized query:
+
+```text
+trim surrounding whitespace
+→ locale-insensitive lowercase/case-fold equivalent to current picker search
+```
+
+Do not rewrite the visible controlled input to the normalized value.
+
+Example:
+- visible value: `" Cat "`
+- callback value: `" Cat "`
+- filter query: `"cat"`
+
+## 3. Debouncing
+
+Input value and `onSearchChange` are immediate.
+
+Filtering/search-result recomputation remains debounced at **100 ms by default**, preserving the current behavior unless a separately benchmarked implementation can remove the delay without regressing input/scroll responsiveness.
+
+The debounce duration is an implementation constant, not a new public prop in initial v5.
+
+When a newer query arrives before the timer fires, the older pending filter computation is canceled.
+
+## 4. IME composition
+
+During an active IME composition:
+- the input may display composition text normally;
+- consumer input/composition handlers still receive native events;
+- picker filtering MUST NOT commit intermediate composition strings;
+- type-to-search keyboard shortcuts MUST NOT interpret composition keystrokes as picker commands.
+
+On `compositionend`:
+- the final input value is treated as the committed user value;
+- `onSearchChange` follows normal controlled/uncontrolled semantics if React's change event has not already emitted that final value;
+- filtering is scheduled once for the final normalized query.
+
+Tests cover Japanese/CJK-style composition so duplicate callbacks/filter commits are caught.
+
+## 5. Search transitions
+
+These all use one search transition service:
+- input editing;
+- clear button;
 - Escape when existing behavior clears search;
-- type-to-search from the picker keyboard-navigation surfaces.
+- type-to-search from picker regions.
 
-Examples:
-- clear proposes `""`;
-- typing from the grid focuses Search and proposes the appended query;
-- when `searchDisabled` is true, built-in type-to-search remains disabled as in v4.
+Clear proposes/emits `''`.
 
-No callback fires merely because emoji data/categories changed.
+Type-to-search appends to the current **visible raw value**, transfers focus to Search, and then follows the same controlled/uncontrolled rules.
 
-## 3. Reactions-mode observation
+When `searchDisabled` is true, built-in type-to-search remains disabled.
 
-Public addition:
+## 6. Reaction-mode observation
 
 ```ts
 onReactionsModeChange?: (reactionsOpen: boolean) => void;
 ```
 
-This observes the existing reactions/full-picker state; it does not introduce a second mode model.
-
 Semantics:
 - `true`: compact Reactions is active;
-- `false`: full Picker panel is active;
-- fire only after an actual state transition;
-- expanding reactions emits `false`;
-- collapsing to reactions emits `true`;
+- `false`: full Panel is active;
+- emit only after an actual state change;
+- expansion emits `false`;
+- `collapseToReactions()` emits `true` if it changes state;
 - initial mount does not emit;
-- rerenders that preserve the same state do not emit.
+- no duplicate emission on rerender.
 
-Existing APIs remain authoritative for capability/initial state:
-- `reactionsDefaultOpen`;
-- `allowExpandReactions`;
-- `reactions`;
-- `onReactionClick`;
-- `onEmojiClick(..., api).collapseToReactions()`.
+This is observational. Initial v5 does not add controlled `mode/defaultMode`.
 
-## 4. Collapse behavior
+## 7. Reactions focus
 
-When `collapseToReactions()` is called:
-- if the reactions UI is available, transition to compact reactions;
-- emit `onReactionsModeChange(true)` once if state changed;
-- if already in reactions mode, do not emit again;
-- if reactions are unavailable, preserve existing safe behavior and document any development warning added.
+On reactions→Panel expansion:
+- remember the initiating reaction/expand control;
+- activate Panel;
+- after its destination exists, preserve current autofocus semantics;
+- Search is preferred when present and autofocus is enabled;
+- otherwise use the next valid region from NAVIGATION.md.
 
-## 5. Focus across reactions transitions
+On collapse:
+- deactivate/inert Panel;
+- restore focus to the initiating control when it still exists;
+- otherwise use the first valid Reactions control.
 
-On reactions → picker expansion:
-- save the initiating reaction/expand control as a restoration target;
-- after the full panel becomes focusable, preserve existing default auto-focus behavior;
-- if Search is absent, focus the next valid picker region according to NAVIGATION.md.
+No focus transfer waits for an arbitrary animation timeout.
 
-On picker → reactions collapse:
-- restore focus to a valid reactions control;
-- prefer the saved initiating control when it still exists;
-- otherwise focus the first available reaction/expand control.
-
-Focus transfer happens after the destination exists, not after an arbitrary timeout coupled to animation duration.
-
-## 6. Suggested emojis
-
-v5 keeps:
-- `suggestedEmojisMode` (`recent` / `frequent`);
-- current localStorage persistence.
-
-v5 adds:
+## 8. Suggested emoji normalization
 
 ```ts
 suggestedEmojis?: string[];
 ```
 
-Semantics:
-- absent: current persistence/mode logic applies;
-- present: the supplied ordered list is the Suggested category source;
-- unknown IDs are ignored;
-- the input array is never mutated;
-- supplying values does not write those values to localStorage;
-- normal emoji selections may continue updating persisted history for future built-in use.
+Each entry:
+1. must be a string;
+2. is trimmed;
+3. is normalized to lowercase for unified/custom lookup;
+4. is resolved through the same Root data lookup used by reactions/picker;
+5. unknown entries are ignored;
+6. duplicates after normalization are removed, first occurrence wins;
+7. caller order is otherwise preserved.
 
-No generalized storage adapter or controlled recents store is introduced in initial v5.
+Uppercase input from issue #277 (for example `"1F601"`) is explicitly supported.
 
-## 7. State intentionally not exposed
+There is no minimum or maximum list length in initial v5.
 
-Initial v5 does not add public controlled APIs for:
+Supplying `suggestedEmojis` does not write those entries to localStorage. Normal user selections may continue updating persisted history for future built-in recent/frequent use.
+
+## 9. Async navigation cancellation
+
+Logical keyboard navigation may request an emoji row that is not currently materialized.
+
+Root owns a monotonically increasing navigation generation token.
+
+A pending materialize/scroll/focus operation captures the generation. It MUST abort without moving focus when the generation changes because of:
+- normalized search/filter change;
+- categories/data/custom-emojis change;
+- viewport geometry/column-count change;
+- reactions/full-picker transition;
+- Root unmount.
+
+Rapid input or resize must never focus an emoji from a stale grid snapshot.
+
+## 10. State intentionally not added
+
+Initial v5 does not expose controlled:
 - skin tone beyond existing `defaultSkinTone` + `onSkinToneChange`;
 - active category;
-- focused/highlighted emoji;
-- preview emoji;
-- variation picker open state;
+- focused emoji;
+- preview item;
+- variation-open state;
 - scroll position;
-- reactions mode itself.
+- reactions mode.
 
-These may be reconsidered when a concrete consumer use case cannot be solved by the existing surface.
+## 11. SSR/hydration
 
-## 8. SSR/hydration
+localStorage is not read during SSR.
 
-localStorage is never read during SSR.
+Server output and hydration-first output use deterministic non-persisted suggestions. Persisted suggestions may apply after mount.
 
-Server output and the hydration-first client render use deterministic non-persisted suggestion state. Persisted suggestions may be applied after hydration.
-
-Tests must assert:
-- no hydration warnings;
-- no server `window`/`document` dependency;
-- persisted suggestions can appear after hydration without replacing unrelated state.
+See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) for identity and real React-16 runtime requirements.
