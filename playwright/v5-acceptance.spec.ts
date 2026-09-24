@@ -101,15 +101,26 @@ test.describe.skip('v5 composable picker acceptance', () => {
   }) => {
     await page.goto(storyUrl('v5-acceptance--virtualized-keyboard'));
 
+    // The fixture must place this deterministic target far enough below the
+    // initial viewport that virtualization does not materialize it on load.
+    const target = page.locator(
+      'button[data-v5-virtualization-target="true"]',
+    );
+    await expect(target).toHaveCount(0);
+
     await page.getByLabel('grinning face', { exact: true }).focus();
 
-    for (let i = 0; i < 20; i += 1) {
+    // Navigate logically until the offscreen target is materialized. The exact
+    // row count is fixture-owned; this upper bound only prevents an infinite
+    // loop if navigation regresses.
+    for (let i = 0; i < 100 && (await target.count()) === 0; i += 1) {
       await page.keyboard.press('ArrowDown');
     }
 
-    const focused = page.locator('button:focus[data-epr-part="emoji"]');
-    await expect(focused).toBeVisible();
-    await expect(focused).toBeInViewport();
+    await expect(target).toHaveCount(1);
+    await expect(target).toBeFocused();
+    await expect(target).toBeVisible();
+    await expect(target).toBeInViewport();
   });
 
   test('reactions retain the polished expand-to-picker transition', async ({
@@ -176,15 +187,19 @@ test.describe.skip('v5 composable picker acceptance', () => {
   test('native source makes no emoji-image network requests', async ({ page }) => {
     const emojiImageRequests: string[] = [];
 
+    // This acceptance fixture must not contain unrelated image resources.
+    // Classify by browser resource type so arbitrary/self-hosted URLs cannot
+    // evade the assertion by using an unexpected filename.
     page.on('request', (request) => {
-      const url = request.url();
-      if (/emoji-datasource|emoji.*\.(png|webp|svg)/i.test(url)) {
-        emojiImageRequests.push(url);
+      if (request.resourceType() === 'image') {
+        emojiImageRequests.push(request.url());
       }
     });
 
     await page.goto(storyUrl('v5-acceptance--native-zero-network'));
+    const root = page.locator('[data-epr-part="root"]');
     await expect(page.getByRole('grid')).toBeVisible();
+    await expect(root.locator('img')).toHaveCount(0);
 
     expect(emojiImageRequests).toEqual([]);
   });
