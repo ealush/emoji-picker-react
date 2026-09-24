@@ -133,9 +133,9 @@ Key constraints:
 
 The default composition MUST reproduce the current v4 focus behavior.
 
-## 6. Controlled state
+## 6. Controlled search
 
-v5 adds standard controlled/uncontrolled APIs only where there is demonstrated consumer need.
+v5 adds controlled/uncontrolled search because issue #458 demonstrates a concrete need to externally clear and synchronize the query.
 
 Required:
 
@@ -143,43 +143,43 @@ Required:
 searchValue?: string;
 defaultSearchValue?: string;
 onSearchChange?: (value: string) => void;
-
-skinTone?: SkinTone;
-defaultSkinTone?: SkinTone;
-onSkinToneChange?: (skinTone: SkinTone) => void;
-
-mode?: 'picker' | 'reactions';
-defaultMode?: 'picker' | 'reactions';
-onModeChange?: (mode: 'picker' | 'reactions') => void;
 ```
 
 Normative semantics are specified in [STATE.md](./STATE.md).
 
 Important rules:
 
-- a controlled prop is the rendered source of truth;
-- user interaction emits the corresponding callback but does not create a hidden optimistic value;
-- programmatic prop changes do not re-emit callbacks;
-- type-to-search uses the same search transition as typing in the input;
-- the clear button is a user-driven search change and emits `onSearchChange('')`;
-- v5 does not promise controlled active-category, focused-emoji, variation-open, scroll-position, or preview state.
+- `searchValue` is the rendered source of truth when supplied;
+- user interaction emits `onSearchChange` but does not create a hidden optimistic value;
+- parent-driven changes do not re-emit the callback;
+- type-to-search uses the same transition as typing in the input;
+- the clear button is a user-driven change and emits `onSearchChange('')`.
+
+Initial v5 does **not** add controlled skin tone, active category, focused emoji, variation state, scroll position, preview state, or picker mode. Those remain internal/existing APIs until a demonstrated consumer need justifies new surface.
 
 ## 7. Reactions
 
 Reactions remain integrated because compact-to-full expansion is an existing product capability.
 
-v5 adds controlled mode without requiring existing consumers to rewrite their reaction handling.
+Issue #504 demonstrates a need to **observe** whether the picker is in reactions mode. Initial v5 adds the narrow callback:
+
+```ts
+onReactionsModeChange?: (reactionsOpen: boolean) => void;
+```
 
 Required behavior:
 
-- `mode` / `defaultMode` expose the current full-picker vs reactions state;
-- user-driven expansion/collapse emits `onModeChange`;
-- the existing reactions list, `onReactionClick`, and `onEmojiClick(..., api)` collapse capability remain available in v5 unless a later deprecation is separately approved;
-- `reactionsDefaultOpen` and `allowExpandReactions` remain supported compatibility props in v5; documentation may prefer `defaultMode` for new code;
-- reaction IDs are normalized through the same unified-code lookup used by the picker; matching is case-insensitive for hexadecimal code points and existing variation-selector behavior is preserved;
+- `true` means the compact reactions UI is active;
+- `false` means the full picker is active;
+- the callback fires only when the reactions-mode state actually changes;
+- user-driven expansion emits `false`;
+- `collapseToReactions()` emits `true` when it changes the state;
+- initial mount does not emit unless separately documented before implementation;
+- existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `onEmojiClick(..., api).collapseToReactions()` remain supported;
+- reaction IDs are normalized through the same unified-code lookup used by the picker;
 - `Panel` owns full-picker presence/transition presentation but is not a navigation region.
 
-The branded transition belongs to the official appearance layer. Root owns mode/focus state; primitives are not required to use the official motion when consumed without the official appearance layer.
+The branded transition belongs to the official appearance layer. Root owns internal reactions state and focus restoration; bare primitives are not required to use the official motion.
 
 ## 8. Suggestions and recents
 
@@ -321,7 +321,7 @@ v5 is complete when:
 2. the default component is assembled from the same exported structural primitives used by advanced consumers;
 3. the canonical composition and navigation rules are implemented;
 4. existing visual/interaction/a11y tests pass under the visual adjudication policy;
-5. controlled search, skin tone, and mode follow STATE.md;
+5. controlled search and reaction-mode observation follow STATE.md;
 6. reactions retain existing capability and transition behavior;
 7. macro composition works without render props;
 8. styling obeys STYLING.md;
