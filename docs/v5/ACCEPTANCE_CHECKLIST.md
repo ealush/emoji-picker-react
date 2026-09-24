@@ -152,7 +152,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [ ] default EmojiPicker retains the existing ErrorBoundary behavior.
 - [ ] primitive Root does not install a library ErrorBoundary.
-- [ ] render/lifecycle errors from arbitrary consumer children inside Panel propagate to the consumer's surrounding ErrorBoundary.
+- [ ] render/lifecycle errors from arbitrary consumer children inside Root's managed panel propagate to the consumer's surrounding ErrorBoundary.
 - [ ] event-handler exceptions are not claimed to be caught by React ErrorBoundaries.
 
 ## 12. One implementation
