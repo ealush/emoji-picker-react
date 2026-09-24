@@ -1,22 +1,19 @@
 import { expect, test } from '@playwright/test';
 
 /**
- * v5 acceptance contract.
+ * v5 acceptance test plan.
  *
- * Keep this suite skipped until v5 stories/entry points are implemented.
- * As each scenario becomes available, remove the corresponding skip and make
- * the scenario pass. Do not weaken the assertions to accommodate regressions.
- *
- * Existing Playwright visual tests remain active separately and their snapshot
- * baselines MUST NOT be regenerated merely because v5 internals changed.
+ * The implementation does not exist in this contract-only PR, so this suite
+ * remains skipped here. Before a v5 release, the release checklist requires
+ * the skip to be removed and every scenario to pass against real Storybook
+ * fixtures. A green Playwright run while this describe is skipped is not v5
+ * acceptance evidence.
  */
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
-test.describe.skip('v5 composable picker acceptance', () => {
-  test('plug-and-play default remains the zero-configuration path', async ({
-    page,
-  }) => {
+test.describe.skip('v5 acceptance', () => {
+  test('plug-and-play default remains zero configuration', async ({ page }) => {
     await page.goto(storyUrl('v5-acceptance--plug-and-play-default'));
 
     await expect(page.getByLabel('Type to search for an emoji')).toBeVisible();
@@ -27,38 +24,45 @@ test.describe.skip('v5 composable picker acceptance', () => {
     await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
   });
 
-  test('custom composition controls structural order without render props', async ({
+  test('custom composition controls macro DOM order without render props', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
 
-    const order = await page.locator('[data-v5-region]').evaluateAll((nodes) =>
-      nodes.map((node) => node.getAttribute('data-v5-region')),
+    const order = await page.locator('[data-v5-layout-item]').evaluateAll((nodes) =>
+      nodes.map((node) => node.getAttribute('data-v5-layout-item')),
     );
 
-    expect(order).toEqual(['categories', 'product-header', 'search', 'viewport']);
+    expect(order).toEqual([
+      'categories',
+      'product-header',
+      'search',
+      'panel',
+    ]);
   });
 
-  test('reordered composition keeps cross-region keyboard navigation', async ({
+  test('arrow navigation uses registered DOM order and skips consumer UI', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
 
-    const categories = page.getByRole('tablist', {
-      name: 'Category navigation',
-    });
+    const firstCategory = page
+      .getByRole('tablist', { name: 'Category navigation' })
+      .getByRole('tab')
+      .first();
+    const productButton = page.getByRole('button', { name: 'Product action' });
     const search = page.getByLabel('Type to search for an emoji');
 
-    await categories.getByRole('tab').first().focus();
+    await firstCategory.focus();
     await page.keyboard.press('ArrowDown');
 
-    // In this acceptance fixture Search is the next registered vertical region.
     await expect(search).toBeFocused();
+    await expect(productButton).not.toBeFocused();
 
-    await page.keyboard.press('ArrowDown');
-    await expect(
-      page.locator('button:focus[aria-label="grinning face"]'),
-    ).toBeVisible();
+    // The consumer control still participates in ordinary browser Tab order.
+    await firstCategory.focus();
+    await page.keyboard.press('Tab');
+    await expect(productButton).toBeFocused();
   });
 
   test('omitting category navigation keeps search-to-grid navigation usable', async ({
@@ -70,138 +74,143 @@ test.describe.skip('v5 composable picker acceptance', () => {
     await search.focus();
     await page.keyboard.press('ArrowDown');
 
-    await expect(
-      page.locator('button:focus[aria-label="grinning face"]'),
-    ).toBeVisible();
+    await expect(page.locator('[data-epr-part="emoji"]:focus')).toBeVisible();
   });
 
-  test('managed emoji grid preserves row navigation when composed', async ({
+  test('controlled search does not become optimistically uncontrolled', async ({
     page,
   }) => {
-    await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
+    await page.goto(storyUrl('v5-acceptance--controlled-search-stale-parent'));
 
-    const first = page.getByLabel('grinning face', { exact: true });
-    await first.focus();
+    const search = page.getByLabel('Type to search for an emoji');
+    await expect(search).toHaveValue('cat');
 
-    await page.keyboard.press('ArrowRight');
-    const afterRight = page.locator('button:focus[data-epr-part="emoji"]');
-    await expect(afterRight).toBeVisible();
+    await search.pressSequentially('p');
 
-    const rightUnified = await afterRight.getAttribute('data-unified');
-
-    await page.keyboard.press('ArrowDown');
-    const afterDown = page.locator('button:focus[data-epr-part="emoji"]');
-    await expect(afterDown).toBeVisible();
-
-    expect(await afterDown.getAttribute('data-unified')).not.toBe(rightUnified);
+    // Fixture records proposals but deliberately does not update searchValue.
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('catp');
+    await expect(search).toHaveValue('cat');
   });
 
-  test('keyboard navigation can reach a virtualized below-fold emoji', async ({
+  test('type-to-search uses the controlled search transition', async ({ page }) => {
+    await page.goto(storyUrl('v5-acceptance--controlled-search'));
+
+    await page.getByLabel('grinning face', { exact: true }).focus();
+    await page.keyboard.press('p');
+
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('p');
+    await expect(page.getByLabel('Type to search for an emoji')).toHaveValue('p');
+  });
+
+  test('keyboard navigation reaches and focuses an initially unmaterialized emoji', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--virtualized-keyboard'));
 
-    // The fixture must place this deterministic target far enough below the
-    // initial viewport that virtualization does not materialize it on load.
-    const target = page.locator(
-      'button[data-v5-virtualization-target="true"]',
-    );
-    await expect(target).toHaveCount(0);
+    const targetSelector = '[data-v5-virtualization-target="true"]';
+    await expect(page.locator(targetSelector)).toHaveCount(0);
 
     await page.getByLabel('grinning face', { exact: true }).focus();
 
-    // Navigate logically until the offscreen target is materialized. The exact
-    // row count is fixture-owned; this upper bound only prevents an infinite
-    // loop if navigation regresses.
-    for (let i = 0; i < 100 && (await target.count()) === 0; i += 1) {
+    for (let i = 0; i < 100; i += 1) {
+      const focusedTarget = await page.evaluate((selector) => {
+        const active = document.activeElement;
+        return active instanceof HTMLElement && active.matches(selector);
+      }, targetSelector);
+
+      if (focusedTarget) {
+        break;
+      }
+
       await page.keyboard.press('ArrowDown');
     }
 
+    const target = page.locator(targetSelector);
     await expect(target).toHaveCount(1);
     await expect(target).toBeFocused();
-    await expect(target).toBeVisible();
     await expect(target).toBeInViewport();
   });
 
-  test('reactions retain the polished expand-to-picker transition', async ({
+  test('reactions expand into the full picker and transfer focus', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--reactions-expand'));
 
-    const reactions = page.getByRole('list', { name: 'Reactions' });
-    await expect(reactions).toBeVisible();
-
+    await expect(page.getByRole('list', { name: 'Reactions' })).toBeVisible();
+    await page.getByLabel('Show all Emojis').focus();
     await page.getByLabel('Show all Emojis').click();
 
-    await expect(page.getByLabel('Type to search for an emoji')).toBeVisible();
+    await expect(page.getByTestId('picker-mode')).toHaveText('picker');
     await expect(page.getByRole('grid')).toBeVisible();
-
-    // Story exposes transition completion for deterministic acceptance testing.
-    await expect(page.locator('[data-epr-transition-state="expanded"]')).toHaveCount(
-      1,
-    );
+    await expect(page.getByLabel('Type to search for an emoji')).toBeFocused();
   });
 
-  test('controlled mode drives reactions and full picker', async ({ page }) => {
-    await page.goto(storyUrl('v5-acceptance--controlled-mode'));
+  test('collapseToReactions remains compatible and restores focus', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--collapse-to-reactions'));
 
+    await page.getByLabel('grinning face', { exact: true }).click();
+
+    await expect(page.getByTestId('picker-mode')).toHaveText('reactions');
     await expect(page.getByRole('list', { name: 'Reactions' })).toBeVisible();
-
-    await page.getByRole('button', { name: 'Set picker mode' }).click();
-    await expect(page.getByRole('grid')).toBeVisible();
-
-    await page.getByRole('button', { name: 'Set reactions mode' }).click();
-    await expect(page.getByRole('list', { name: 'Reactions' })).toBeVisible();
+    await expect(
+      page.getByRole('list', { name: 'Reactions' }).getByRole('button').first(),
+    ).toBeFocused();
   });
 
-  test('controlled search is externally resettable', async ({ page }) => {
-    await page.goto(storyUrl('v5-acceptance--controlled-search'));
+  test('native rendering never invokes the emoji image URL resolver', async ({
+    page,
+  }) => {
+    let probeRequests = 0;
 
-    const search = page.getByLabel('Type to search for an emoji');
-    await search.fill('party');
-    await expect(search).toHaveValue('party');
-
-    await page.getByRole('button', { name: 'Reset search' }).click();
-    await expect(search).toHaveValue('');
-  });
-
-  test('primitive styling hooks expose stable managed parts', async ({ page }) => {
-    await page.goto(storyUrl('v5-acceptance--styled-primitives'));
-
-    const requiredParts = [
-      'root',
-      'search',
-      'category-nav',
-      'viewport',
-      'list',
-      'category',
-      'category-label',
-      'emoji',
-    ];
-
-    for (const part of requiredParts) {
-      await expect(page.locator(`[data-epr-part="${part}"]`).first()).toBeVisible();
-    }
-  });
-
-  test('native source makes no emoji-image network requests', async ({ page }) => {
-    const emojiImageRequests: string[] = [];
-
-    // This acceptance fixture must not contain unrelated image resources.
-    // Classify by browser resource type so arbitrary/self-hosted URLs cannot
-    // evade the assertion by using an unexpected filename.
-    page.on('request', (request) => {
-      if (request.resourceType() === 'image') {
-        emojiImageRequests.push(request.url());
-      }
+    await page.route('**/__epr_asset_probe__/**', async (route) => {
+      probeRequests += 1;
+      await route.fulfill({ status: 204 });
     });
 
-    await page.goto(storyUrl('v5-acceptance--native-zero-network'));
-    const root = page.locator('[data-epr-part="root"]');
+    // Fixture uses emojiStyle="native" plus a getEmojiUrl resolver that points
+    // every possible image at /__epr_asset_probe__/... . Native rendering must
+    // never invoke/request that resolver output.
+    await page.goto(storyUrl('v5-acceptance--native-asset-probe'));
     await expect(page.getByRole('grid')).toBeVisible();
-    await expect(root.locator('img')).toHaveCount(0);
 
-    expect(emojiImageRequests).toEqual([]);
+    await expect(
+      page.locator('[data-epr-part="emoji"] img'),
+    ).toHaveCount(0);
+    expect(probeRequests).toBe(0);
+  });
+
+  test('broken emoji images do not break keyboard navigation', async ({ page }) => {
+    await page.route('**/__epr_broken_asset__/**', async (route) => {
+      await route.fulfill({ status: 404, body: '' });
+    });
+
+    await page.goto(storyUrl('v5-acceptance--broken-image-assets'));
+
+    const first = page.locator('[data-epr-part="emoji"]').first();
+    await first.focus();
+    const firstUnified = await first.getAttribute('data-unified');
+
+    await page.keyboard.press('ArrowRight');
+
+    const focused = page.locator('[data-epr-part="emoji"]:focus');
+    await expect(focused).toBeVisible();
+    expect(await focused.getAttribute('data-unified')).not.toBe(firstUnified);
+  });
+
+  test('multiple roots do not leak typeahead or focus state', async ({ page }) => {
+    await page.goto(storyUrl('v5-acceptance--multiple-roots'));
+
+    const pickers = page.locator('[data-epr-part="root"]');
+    const first = pickers.nth(0);
+    const second = pickers.nth(1);
+
+    await first.locator('[data-epr-part="emoji"]').first().focus();
+    await page.keyboard.press('p');
+
+    await expect(first.getByLabel('Type to search for an emoji')).toHaveValue('p');
+    await expect(second.getByLabel('Type to search for an emoji')).toHaveValue('');
   });
 
   test('custom composition retains screen-reader grid semantics', async ({
@@ -211,9 +220,11 @@ test.describe.skip('v5 composable picker acceptance', () => {
 
     const grid = page.getByRole('grid');
     await expect(grid).toBeVisible();
-
     await expect(
       grid.getByRole('rowgroup', { name: 'Smileys & People' }),
+    ).toBeVisible();
+    await expect(
+      grid.getByLabel('grinning face', { exact: true }),
     ).toBeVisible();
   });
 });
