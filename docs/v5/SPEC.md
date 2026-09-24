@@ -65,7 +65,7 @@ This is a source-architecture invariant, not a user-facing runtime API assertion
 - the default picker MUST NOT own a second search implementation, second grid implementation, second reactions implementation, or second keyboard-navigation implementation;
 - shared data/search/selection logic MUST live below both entry points rather than be copied into `/data` and UI-specific modules.
 
-The canonical default composition is specified in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md). A v5 implementation that keeps the v4 renderer and merely exports parallel "primitive" wrappers does not satisfy this contract.
+The canonical default composition is specified in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md), and the exact public primitive grammar/prop/ref contract is specified in [PRIMITIVES.md](./PRIMITIVES.md). A v5 implementation that keeps the v4 renderer and merely exports parallel "primitive" wrappers does not satisfy this contract.
 
 A static architecture assertion SHOULD be added when the final source module paths exist. Runtime tests should continue to test observable behavior rather than private hook names.
 
@@ -85,6 +85,8 @@ Required v5 primitives:
 `SkinTone` is intentionally **not** a required standalone primitive in the initial v5 contract. The existing `skinTonePickerLocation` behavior remains supported by `Search` and `Preview`. This keeps the initial public surface smaller and preserves the existing interaction model.
 
 The variation picker remains managed inside the viewport/grid implementation.
+
+`Panel` is mandatory. All full-picker regions (`Search`, `CategoryNav`, `Viewport/List`, `Preview`) must be descendants of exactly one Panel so reactions mode can hide/inert the entire full-picker subtree. The exact grammar and invalid-composition behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### 4.1 Composition scope
 
@@ -193,7 +195,7 @@ To address issue #277, v5 adds one narrow capability:
 suggestedEmojis?: string[];
 ```
 
-When supplied, this list becomes the contents of the suggested category instead of reading the built-in recent/frequent list. The array order is preserved. Invalid/unknown unified IDs are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
+When supplied, this list becomes the contents of the suggested category instead of reading the built-in recent/frequent list. Entries are trimmed and normalized case-insensitively; duplicates are removed after normalization with first occurrence winning; caller order is otherwise preserved. Invalid/unknown unified IDs are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
 
 Management/reset UI requested by #505 is not part of the v5 architecture contract and may ship independently.
 
@@ -241,20 +243,17 @@ v5 exposes a supported `emoji-picker-react/data` entry point to solve issue #430
 
 The public data API MUST reuse the same underlying normalization/search/data modules as the picker. Do not duplicate search semantics.
 
-Initial required capabilities:
+The exact initial function names, return types, normalization and locale behavior are fixed in [DATA_API.md](./DATA_API.md).
 
-- lookup by unified code;
-- access to names/aliases and variations;
-- search using the same matching semantics as the picker;
-- supported shortcode conversion where the packaged data can provide it.
+Initial v5 deliberately does **not** promise Slack-style shortcode conversion because the current dataset does not establish canonical Slack alias/skin-tone semantics.
 
-The API must document whether each operation is locale-aware. Do not imply locale-aware search if the initial implementation only operates on the imported/default dataset.
+The existing top-level `emojiByUnified` export remains source-compatible and is not replaced by the new data entry point.
 
-Bundle-size behavior must be measured before finalizing the subpath shape.
+Bundle/tree-shaking behavior is governed by [PERFORMANCE.md](./PERFORMANCE.md).
 
 ## 12. Package boundaries
 
-v5 introduces explicit package exports only after all intended public subpaths are known.
+v5 introduces explicit package exports only after all intended public subpaths are known, but consumer-package validation starts early in implementation rather than being deferred to the end.
 
 Required:
 
@@ -267,7 +266,7 @@ Required:
 - SSR safety;
 - package validation through Publint/AreTheTypesWrong or equivalent.
 
-The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. Do not casually introduce React-18-only primitives such as `useId` or `useSyncExternalStore`.
+The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) defines the React-16-safe ID strategy, real runtime compatibility fixtures and the prohibition on React-18-only runtime APIs such as `useId` and `useSyncExternalStore`.
 
 Adding an exports map intentionally blocks unspecified deep imports. That is a v5 breaking change. Existing documented locale imports MUST receive supported compatibility paths or a documented direct migration.
 
@@ -282,6 +281,8 @@ SSR output MUST NOT depend on localStorage. The server and hydration-first rende
 This behavior is not a promise that a user's persisted recents appear in server HTML.
 
 CSP `nonce` must continue to reach every library-owned style tag, including styles used by the primitives/default composition.
+
+v5 removes document-global hard-coded IDs. The optional `idPrefix` escape hatch and multiple-root SSR rules are normative in [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
 ## 14. Accessibility
 
@@ -299,7 +300,20 @@ At minimum:
 
 The regressions described by issues #508 and #512 must have dedicated tests based on their observable behavior, not merely issue-number references.
 
-## 15. Out of scope
+## 15. Performance
+
+Performance requirements are normative in [PERFORMANCE.md](./PERFORMANCE.md).
+
+At minimum, v5 must:
+- cache immutable prepared data/search indexes by dataset identity rather than rebuilding them per Root;
+- avoid a frequently changing omnibus picker context;
+- slice state so scroll/preview/search changes do not rerender unrelated regions;
+- coalesce high-frequency scroll work;
+- cancel stale asynchronous materialize/focus work;
+- preserve the current 95 KB main-package hard cap unless separately amended;
+- prove primitives/data entry-point tree-shaking through packed consumer fixtures.
+
+## 16. Out of scope
 
 Unless separately approved, initial v5 does not include:
 
@@ -313,7 +327,7 @@ Unless separately approved, initial v5 does not include:
 - telemetry;
 - paid runtime features.
 
-## 16. Definition of done
+## 17. Definition of done
 
 v5 is complete when:
 
@@ -325,7 +339,10 @@ v5 is complete when:
 6. reactions retain existing capability and transition behavior;
 7. macro composition works without render props;
 8. styling obeys STYLING.md;
-9. every v4 prop has an explicit disposition;
-10. data/package subpaths are documented and validated;
-11. the v5 placeholder test contracts have been converted to executable coverage before a 5.x release can be built;
-12. every item in ACCEPTANCE_CHECKLIST.md is satisfied.
+9. every v4 prop **and every current main-entry export** has an explicit disposition;
+10. primitive props/refs/grammar match PRIMITIVES.md;
+11. data/package subpaths match DATA_API.md and packed-consumer validation;
+12. React 16.8 runtime/SSR fixtures pass and library-owned IDs are instance-safe;
+13. PERFORMANCE.md gates pass, including data-cache, render-count, scroll-work and bundle budgets;
+14. the v5 placeholder test contracts have been converted to executable coverage before a 5.x release can be built;
+15. every item in ACCEPTANCE_CHECKLIST.md is satisfied.
