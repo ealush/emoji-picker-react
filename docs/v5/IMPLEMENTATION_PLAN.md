@@ -49,6 +49,7 @@ Before extracting UI primitives:
 - make the default packaged dataset immutable from picker instances;
 - cache prepared data by dataset identity as required by PERFORMANCE.md;
 - remove per-Root full JSON clone/index construction from the default path;
+- add the dev-only referential-stability warning for repeatedly changing `emojiData` / `customEmojis` identities;
 - define the normalized `/data` adapters in [DATA_API.md](./DATA_API.md);
 - preserve the existing top-level `emojiByUnified` implementation contract.
 
@@ -107,8 +108,9 @@ Extract the components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.m
 The default picker must render those same component modules.
 
 Required implementation checks:
-- Panel is exactly one managed full-picker subtree;
-- full-picker regions outside Panel fail fast;
+- Root creates exactly one internal managed full-picker panel around every non-Reactions child;
+- no public Panel primitive is introduced;
+- arbitrary consumer wrappers/controls remain legal Root children and land inside that managed panel;
 - Viewport/List grammar is validated;
 - every primitive forwards the documented ref/native props;
 - internal handlers compose according to PRIMITIVES.md;
@@ -122,8 +124,8 @@ Expose `emoji-picker-react/primitives` in the build early enough to test the rea
 
 Create Storybook/consumer fixtures for:
 - default zero-config picker;
-- reordered regions entirely inside Panel;
-- non-region consumer control inside Panel;
+- reordered regions with ordinary consumer wrappers/controls among them;
+- non-region consumer control inside the Root-managed panel;
 - omitted CategoryNav;
 - controlled search with stale parent;
 - IME search composition;
@@ -190,7 +192,8 @@ Unspecified arbitrary `dist/*`/ `src/*` imports may be blocked and are called ou
 Run every [PERFORMANCE.md](./PERFORMANCE.md) gate against the frozen Phase-0 baseline:
 
 - cold/warm data preparation;
-- search;
+- cold-query search;
+- warm/incremental typing search;
 - one/ten Root initialization;
 - render isolation;
 - scroll commit coalescing;
