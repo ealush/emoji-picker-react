@@ -120,7 +120,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] no public Panel primitive is exported.
 - [ ] Root creates exactly one managed `data-epr-part="panel"` wrapper around all non-Reactions children.
 - [ ] ordinary wrappers/headers/buttons are legal Root children and land inside that managed panel.
-- [ ] Reactions is optional, singleton, and a direct Root child outside the managed panel.
+- [ ] Reactions is optional, singleton, and the first non-null direct Root child outside the managed panel.
 - [ ] Viewport is optional and singleton.
 - [ ] if rendered, Viewport contains exactly one direct List child.
 - [ ] List outside Viewport fails fast.
