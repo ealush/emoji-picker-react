@@ -99,7 +99,8 @@ describe('v5 primitive exports and managed-panel grammar', () => {
   it.todo('requires exactly one direct List child when Viewport is rendered');
   it.todo('rejects List outside Viewport');
   it.todo('rejects empty multiple-child or non-List Viewport content');
-  it.todo('requires Reactions to be a direct Root child');
+  it.todo('requires Reactions to be the first non-null direct Root child');
+  it.todo('does not silently hoist a later Reactions child');
   it.todo('rejects nested Reactions');
   it.todo('rejects duplicate singleton region registrations in development');
   it.todo('keeps the first singleton registration authoritative in production while duplicate is mounted');
