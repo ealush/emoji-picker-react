@@ -150,11 +150,7 @@ Do not introduce new uses of the legacy casing.
 
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
 
-v5 also removes fixed document-global ARIA IDs. If an application renders multiple independently hydrated SSR picker roots and needs deterministic library-generated IDs, it may provide a unique `idPrefix`:
-
-```tsx
-<EmojiPicker idPrefix="comment-composer-emoji" />
-```
+v5 also removes the current fixed document-global ARIA IDs. Initial v5 does not replace them with generated IDs or an `idPrefix` API; the initial implementation is required to avoid library-owned DOM IDs entirely.
 
 See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
