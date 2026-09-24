@@ -23,6 +23,22 @@ Representative target API:
 ```ts
 export type Theme = 'light' | 'dark' | 'auto';
 export type EmojiStyle = 'native' | 'apple' | 'google' | 'facebook' | 'twitter';
+export type ImageEmojiStyle = Exclude<EmojiStyle, 'native'>;
+export type EmojiSource =
+  | 'native'
+  | {
+      type: 'remote';
+      style: ImageEmojiStyle;
+    }
+  | {
+      type: 'self-hosted';
+      style: ImageEmojiStyle;
+      getUrl: (emoji: {
+        unified: string;
+        style: ImageEmojiStyle;
+      }) => string;
+    };
+
 export type PickerMode = 'picker' | 'reactions';
 export type SuggestionMode = 'recent' | 'frequent';
 export type SkinTone =
@@ -48,9 +64,18 @@ export type Labels = {
   // Other existing localizable strings should be consolidated here.
 };
 
+export type EmojiRenderingProps =
+  | {
+      emojiStyle?: EmojiStyle;
+      emojiSource?: never;
+    }
+  | {
+      emojiStyle?: never;
+      emojiSource: EmojiSource;
+    };
+
 export type EmojiPickerProps = {
   theme?: Theme;
-  emojiStyle?: EmojiStyle;
   width?: number | string;
   height?: number | string;
 
@@ -85,10 +110,12 @@ export type EmojiPickerProps = {
     event: MouseEvent,
     context: EmojiSelectionContext,
   ) => void;
-};
+} & EmojiRenderingProps;
 ```
 
 This type is illustrative rather than permission to add more top-level props. Prefer coherent configuration objects over a growing collection of booleans.
+
+`emojiStyle` remains the simple plug-and-play shortcut for the built-in rendering modes. `emojiSource` is the explicit advanced source contract. They are intentionally mutually exclusive so source precedence is never ambiguous.
 
 ## Controlled state conventions
 
