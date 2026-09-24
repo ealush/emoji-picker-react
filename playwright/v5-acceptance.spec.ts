@@ -38,7 +38,7 @@ test.describe.skip('v5 acceptance', () => {
     await expect(root).toHaveCSS('height', '360px');
   });
 
-  test('all full-picker regions live inside one Panel', async ({ page }) => {
+  test('Root creates one managed panel containing all full-picker regions', async ({ page }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
 
     const panel = page.locator('[data-epr-part="panel"]');
@@ -55,7 +55,7 @@ test.describe.skip('v5 acceptance', () => {
     ).toHaveCount(0);
   });
 
-  test('custom composition controls order inside Panel without render props', async ({
+  test('custom composition controls order inside the managed panel without render props', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
@@ -190,9 +190,14 @@ test.describe.skip('v5 acceptance', () => {
       );
     });
 
+    // Controlled rerenders must not overwrite the browser's composition
+    // buffer even though no accepted search/filter state has changed yet.
+    await expect(search).toHaveValue('に');
+
     // Waiting longer than the normal debounce proves the intermediate
     // composition value is not committed to filtering.
     await page.waitForTimeout(110);
+    await expect(search).toHaveValue('に');
     await expect(page.getByTestId('filter-commit-count')).toHaveText('0');
 
     await search.evaluate((input: HTMLInputElement) => {
@@ -219,21 +224,92 @@ test.describe.skip('v5 acceptance', () => {
     });
 
     await expect(page.getByTestId('last-search-proposal')).toHaveText('にこ');
+    await expect(search).toHaveValue('にこ');
     await page.waitForTimeout(110);
     await expect(page.getByTestId('filter-commit-count')).toHaveText('1');
     await expect(page.getByTestId('last-filter-query')).toHaveText('にこ');
   });
 
-  test('type-to-search uses the same controlled search transition', async ({
+  test('rejected controlled IME proposal reconciles after compositionend', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--ime-search-rejected'));
+
+    const search = page.getByLabel('Type to search for an emoji');
+    await expect(search).toHaveValue('cat');
+
+    await search.evaluate((input: HTMLInputElement) => {
+      input.dispatchEvent(
+        new CompositionEvent('compositionstart', {
+          bubbles: true,
+          data: '',
+        }),
+      );
+
+      const setValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )?.set;
+      setValue?.call(input, 'にこ');
+
+      input.dispatchEvent(
+        new CompositionEvent('compositionend', {
+          bubbles: true,
+          data: 'にこ',
+        }),
+      );
+      input.dispatchEvent(
+        new InputEvent('input', {
+          bubbles: true,
+          data: 'にこ',
+          inputType: 'insertText',
+          isComposing: false,
+        }),
+      );
+    });
+
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('にこ');
+    await expect(search).toHaveValue('cat');
+    await expect(page.getByTestId('filter-commit-count')).toHaveText('0');
+  });
+
+  test('accepted controlled type-to-search focuses Search only after acceptance', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--controlled-search'));
 
-    await page.getByLabel('grinning face', { exact: true }).focus();
+    const gridEmoji = page.getByLabel('grinning face', { exact: true });
+    const search = page.getByLabel('Type to search for an emoji');
+
+    await gridEmoji.focus();
     await page.keyboard.press('p');
 
     await expect(page.getByTestId('last-search-proposal')).toHaveText('p');
-    await expect(page.getByLabel('Type to search for an emoji')).toHaveValue('p');
+    await expect(search).toHaveValue('p');
+    await expect(search).toBeFocused();
+  });
+
+  test('rejected controlled type-to-search keeps Grid focus', async ({
+    page,
+  }) => {
+    await page.goto(
+      storyUrl('v5-acceptance--controlled-typeahead-rejected'),
+    );
+
+    const gridEmoji = page.getByLabel('grinning face', { exact: true });
+    const search = page.getByLabel('Type to search for an emoji');
+
+    await gridEmoji.focus();
+    const unified = await gridEmoji.getAttribute('data-unified');
+    expect(unified).not.toBeNull();
+
+    await page.keyboard.press('p');
+
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('p');
+    await expect(search).toHaveValue('');
+    await expect(
+      page.locator('[data-epr-part="emoji"]:focus'),
+    ).toHaveAttribute('data-unified', unified!);
   });
 
   test('keyboard navigation reaches an initially unmaterialized emoji', async ({
@@ -268,7 +344,13 @@ test.describe.skip('v5 acceptance', () => {
     await page.goto(storyUrl('v5-acceptance--stale-navigation'));
 
     await page.getByLabel('grinning face', { exact: true }).focus();
-    await page.getByRole('button', { name: 'Begin deferred navigation' }).click();
+    await page.evaluate(() => {
+      (
+        window as typeof window & {
+          __eprBeginDeferredNavigation?: () => void;
+        }
+      ).__eprBeginDeferredNavigation?.();
+    });
     await page.getByLabel('Type to search for an emoji').fill('cat');
     // Resolve through a fixture-only test hook so the act of resolving does
     // not itself move browser focus away from Search.
@@ -286,7 +368,7 @@ test.describe.skip('v5 acceptance', () => {
     await expect(page.getByLabel('Type to search for an emoji')).toBeFocused();
   });
 
-  test('reaction expansion emits observer and transfers focus into Panel', async ({
+  test('reaction expansion emits observer and transfers focus into the managed panel', async ({
     page,
   }) => {
     await page.goto(storyUrl('v5-acceptance--reactions-expand'));
@@ -311,6 +393,33 @@ test.describe.skip('v5 acceptance', () => {
     await expect(
       page.getByRole('list', { name: 'Reactions' }).getByRole('button').first(),
     ).toBeFocused();
+  });
+
+  test('default picker searchLabel localizes the accessible name', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--localized-search-label'));
+
+    await expect(page.getByLabel('Buscar un emoji')).toBeVisible();
+    await expect(
+      page.getByLabel('Type to search for an emoji'),
+    ).toHaveCount(0);
+  });
+
+  test('caller-defined suggested emoji preserves requested skin-tone variation', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--suggested-skin-tone'));
+
+    const suggested = page
+      .locator('[data-epr-part="category"][data-category="suggested"]')
+      .locator('[data-epr-part="emoji"]')
+      .first();
+
+    await expect(suggested).toHaveAttribute(
+      'data-unified',
+      '1f44d-1f3fd',
+    );
   });
 
   test('native rendering never invokes standard emoji image resolver', async ({
