@@ -1,60 +1,85 @@
 # v5 Visual Compatibility Contract
 
-## Rule
+## 1. Goal
 
-The v5 default `<EmojiPicker />` is a refactor and API modernization, not a visual redesign.
+The default `<EmojiPicker />` is not visually redesigned in v5.
 
-The existing Playwright screenshot corpus is the baseline for the default component.
+Existing screenshots are regression evidence for the branded default component. They are not a promise that an unrelated future Playwright/browser/font environment can never require rebaselining.
 
-## Existing visual tests
+## 2. Default-component rule
 
-The repository already captures visual behavior through:
-- `playwright/storybook-visual.spec.ts`;
-- screenshot assertions in `playwright/core-interactions.spec.ts`;
-- category navigation visual tests;
-- category icon visual tests;
-- custom group snapshots;
-- accessibility/reactions visual coverage;
-- other existing screenshot-bearing Playwright tests.
+A v5 implementation should pass the existing screenshot corpus without changing expected images when run in the same effective test environment.
 
-All of these remain release gates.
-
-## Snapshot policy
-
-During v5 implementation:
-
-- **Do not regenerate existing snapshots merely because internals changed.**
-- **Do not increase the global screenshot-difference tolerance to make v5 pass.**
-- **Do not disable an existing visual story to avoid a regression.**
-- **Do not replace stable image-style stories with native glyph screenshots where cross-platform font rendering makes the comparison weaker.**
-
-An existing baseline may change only when:
-1. the visual change is separately intentional and approved;
-2. the change is documented in the PR;
-3. the v5 specification/checklist is updated when the change alters this contract.
-
-## What "same visual" covers
-
-For existing default compositions, preserve:
+This covers existing tested states such as:
 - root dimensions and border geometry;
-- search field geometry;
-- search/skin-tone positioning;
-- category navigation placement and selected-state appearance;
-- category label placement;
-- emoji sizes and spacing;
-- preview placement and dimensions;
-- reaction-bar geometry;
-- expand control appearance;
-- reaction-to-picker expansion presentation;
-- focus-visible appearance;
-- light/dark/auto behavior covered by existing fixtures.
+- search/skin-tone placement;
+- category navigation;
+- category labels;
+- emoji spacing/sizing;
+- preview;
+- reactions;
+- focus states;
+- light/dark/auto stories already represented by the suite.
 
-Internal DOM may change when required for the new architecture, as long as accessibility semantics and user-visible behavior do not regress.
+Primitive compositions are not required to inherit the branded appearance.
 
-## Primitives are different
+## 3. Adjudicating a screenshot failure
 
-The primitives entry point is not required to inherit the complete official picker appearance.
+When an existing screenshot fails on the v5 branch:
 
-It must retain structural CSS necessary for correct behavior and must expose styling hooks documented in `SPEC.md`.
+1. Reproduce the exact same test with the exact same dependency/browser/font environment against the current base/v4 branch.
+2. If base passes and v5 fails, the failure is a v5 regression.
+3. If base fails in the same way, classify it as environment/tooling drift rather than v5 behavior.
+4. Rebaseline environment drift separately (or update the base snapshot in a dedicated change) before judging the v5 branch.
+5. Do not hide a v5-only difference by increasing global tolerance.
 
-Visual compatibility applies to the default assembled component, not to a new custom primitive composition.
+This is the only normal path for changing an existing baseline during v5 implementation.
+
+## 4. Intentional visual changes
+
+An intentional default visual change requires:
+- explicit maintainer approval;
+- a documented reason;
+- a spec/checklist amendment;
+- snapshot updates that describe the intended delta.
+
+Do not combine an unrelated redesign with the v5 architecture refactor.
+
+## 5. Animation
+
+Static screenshots cannot prove transition quality.
+
+The reactions expand/collapse acceptance test must additionally verify that the default branded root actually runs the height transition:
+- observe a `transitionrun` (or equivalent deterministic browser signal) for the relevant root/panel property after Expand;
+- observe completion;
+- verify the expanded picker is interactive after completion;
+- verify focus lands at the specified destination.
+
+The existing default transition duration/easing should remain unless an intentional visual change is approved.
+
+The primitives engine supplies state/focus behavior. The branded default appearance supplies the polished animation. Custom primitive consumers may style motion differently.
+
+## 6. Snapshot-policy prohibitions
+
+Do not:
+- regenerate screenshots solely because internal DOM/components changed;
+- disable a pre-existing visual story because v5 made it inconvenient;
+- loosen global screenshot tolerance to hide a v5-only delta;
+- replace deterministic image-style snapshots with native system glyphs just to reduce implementation work.
+
+## 7. DOM changes
+
+Internal DOM may change when required for primitives, accessibility, or virtualization.
+
+A DOM change is acceptable when:
+- the default visible result remains equivalent;
+- existing a11y semantics do not regress;
+- public selectors documented in v4/v5 remain compatible or have an explicit migration.
+
+The visual goal is not “never change markup”; it is “do not make the consumer's default picker look different by accident.”
+
+## 8. Coverage gaps
+
+A state not covered by a pre-v5 screenshot is not automatically allowed to drift.
+
+Behavioral/default-style requirements in SPEC/API still apply. If implementation touches an uncovered but important state, add deterministic coverage rather than treating missing historical coverage as permission to redesign it.
