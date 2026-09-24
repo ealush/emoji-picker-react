@@ -3,407 +3,329 @@
 Status: implementation contract  
 Target: `emoji-picker-react@5`
 
-## 1. Product priorities
+## 1. Product contract
 
-v5 is a strategic architecture release, not a redesign and not an excuse to remove working APIs.
+v5 has one primary product and one advanced composition surface:
 
-Priority order:
+1. **Plug and play** — `<EmojiPicker />` remains the primary, complete, styled API.
+2. **Structural primitives** — advanced consumers may rearrange the picker's major regions while the library continues to own the difficult behavior.
 
-1. **Keep the plug-and-play path effortless.** `<EmojiPicker />` remains the primary product.
-2. **Preserve existing behavior and appearance unless a change is explicitly approved.**
-3. **Add structural composition without handing consumers responsibility for navigation, accessibility, virtualization, or emoji selection.**
-4. **Keep the public surface narrow.** Add APIs only for demonstrated use cases.
-5. **Make invalid compositions fail early and descriptively.**
-6. **Keep implementation details replaceable.**
-
-The advanced API is a **structural compound-component API**, not a fully headless renderer.
+The primitives API is intentionally **not** a fully headless/item-renderer API in v5. It provides macro-structure composition without asking consumers to reimplement emoji buttons, grid semantics, virtualization, variations, focus management, or keyboard behavior.
 
 v5 MUST NOT use render props as its composition mechanism.
 
-## 2. Compatibility policy
+The design priorities, in order, are:
 
-All documented v4 capabilities remain available in v5 unless `V4_COMPATIBILITY.md` explicitly says otherwise.
+1. preserve the zero-configuration path;
+2. preserve accessibility and keyboard behavior;
+3. keep the public surface narrow and familiar;
+4. enable meaningful structural composition;
+5. avoid breaking v4 APIs unless the break is strategically necessary.
 
-The default component must retain:
-- current default dimensions and branded appearance;
-- search, category navigation, skin tones, preview, custom emojis, suggestions, localization and supported emoji styles;
-- reactions and the compact-to-full-picker transition;
-- SSR safety, CSP nonce support, virtualization, keyboard navigation and screen-reader semantics.
+## 2. Default compatibility
 
-A major version does not by itself justify consumer migration work. Prefer additive APIs and deprecations over removals.
+### 2.1 Visual compatibility
 
-The complete v4 disposition is normative in [V4_COMPATIBILITY.md](./V4_COMPATIBILITY.md).
+The default v5 picker is not a redesign. Against the same test environment and fixtures, the v5 default composition MUST match the v4 baseline for existing visual tests.
 
-## 3. One renderer, one behavioral engine
+See [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md) for baseline adjudication. Snapshot refreshes are not a valid way to hide a product regression.
 
-The default picker and the primitives entry point MUST use the same structural primitive implementations and the same behavioral engine.
+### 2.2 Behavioral compatibility
 
-This is stricter than behavioral similarity.
+Unless the v4 API matrix explicitly says otherwise, the default picker preserves:
 
-### 3.1 Canonical default composition
-
-The default component MUST be implemented as the official composition below, plus the default appearance layer:
-
-```tsx
-function EmojiPicker(props: EmojiPickerProps) {
-  return (
-    <DefaultAppearance>
-      <Root {...props}>
-        <Reactions />
-
-        <Panel>
-          <Search>
-            {showSkinToneInSearch(props) ? <SkinTone /> : null}
-          </Search>
-
-          <CategoryNav />
-
-          <Viewport>
-            <List />
-          </Viewport>
-
-          <Preview>
-            {showSkinToneInPreview(props) ? <SkinTone /> : null}
-          </Preview>
-        </Panel>
-      </Root>
-    </DefaultAppearance>
-  );
-}
-```
-
-`DefaultAppearance` is internal styling only. It MUST NOT contain search, data, selection, navigation, virtualization, persistence, or reactions state.
-
-The default entry MUST NOT maintain a separate classic implementation of any primitive.
-
-### 3.2 Enforceable architecture boundary
-
-A v5 architecture test MUST fail if the default component imports default-only implementations of:
-- search/filtering;
-- emoji data lookup;
-- virtualization;
+- search and type-to-search;
+- category navigation;
+- skin-tone selection and placement;
+- recent/frequent suggestions;
+- custom image emojis and grouped custom categories;
+- hidden emojis;
+- preview behavior;
+- localization through emoji data;
+- all currently supported emoji styles;
+- custom emoji URL resolution;
+- SSR safety;
+- virtualization/lazy image behavior;
 - keyboard navigation;
-- selection;
-- suggestions;
-- reactions state.
+- current screen-reader grid semantics;
+- CSP nonce support;
+- reactions mode and compact-to-full transition;
+- the existing visibility API.
 
-The default component may import:
-- the shared public primitive implementations;
-- prop normalization/legacy compatibility adapters;
-- the branded appearance layer.
+The complete v4 prop disposition is specified in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
 
-Shared data/search algorithms live in internal pure modules. Both the UI engine and `emoji-picker-react/data` consume/re-export those same modules rather than duplicating algorithms.
+## 3. One behavioral implementation
 
-## 4. Primitive responsibilities
+The default picker and structural primitives MUST NOT fork behavior.
 
-Public entry point:
+This is a source-architecture invariant, not a user-facing runtime API assertion:
 
-```ts
-import * as EmojiPicker from 'emoji-picker-react/primitives';
-```
+- the default picker MUST instantiate the same exported primitive components used by `emoji-picker-react/primitives`;
+- the default picker may add private layout wrappers and the official appearance stylesheet/provider;
+- the default picker MUST NOT own a second search implementation, second grid implementation, second reactions implementation, or second keyboard-navigation implementation;
+- shared data/search/selection logic MUST live below both entry points rather than be copied into `/data` and UI-specific modules.
 
-Required structural primitives:
+The canonical default composition is specified in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md). A v5 implementation that keeps the v4 renderer and merely exports parallel "primitive" wrappers does not satisfy this contract.
+
+A static architecture assertion SHOULD be added when the final source module paths exist. Runtime tests should continue to test observable behavior rather than private hook names.
+
+## 4. Structural primitives
+
+Required v5 primitives:
 
 - `Root`
 - `Reactions`
 - `Panel`
 - `Search`
-- `SkinTone`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
-### 4.1 Root
+`SkinTone` is intentionally **not** a required standalone primitive in the initial v5 contract. The existing `skinTonePickerLocation` behavior remains supported by `Search` and `Preview`. This keeps the initial public surface smaller and preserves the existing interaction model.
 
-`Root` owns the picker instance and shared engine:
-- config normalization;
-- search state;
-- active category and active emoji state needed internally;
-- skin tone state;
-- suggestions persistence;
-- reaction/full-picker state;
-- variation state;
-- region registry;
-- focus restoration;
-- selection dispatch;
-- shared emoji data/indexes.
+The variation picker remains managed inside the viewport/grid implementation.
 
-This state is not automatically public. Public control/observation is exposed only where specified in `API.md`.
+### 4.1 Composition scope
 
-Each Root is isolated. No state, refs, keyboard targets, typeahead, or persistence instance state may leak between two Roots on the same page.
+Consumers MAY:
 
-### 4.2 Panel
+- reorder the major primitives;
+- omit optional regions;
+- wrap primitives in consumer layout elements;
+- insert ordinary application UI between primitives;
+- apply documented styling hooks.
 
-`Panel` is the expanded-picker structural container.
+Consumers MUST NOT be required to:
 
-- It is not a keyboard-navigation region.
-- Exactly one Panel is required in a primitives composition.
-- It is the visibility/focus target used when expanding from Reactions.
-- Branded transition CSS belongs to the default appearance layer, not to Panel's behavioral engine.
+- render individual emojis through a callback;
+- recreate grid/row semantics;
+- wire internal refs;
+- recreate keyboard handlers;
+- implement virtualization;
+- implement variation behavior;
+- forward internal ARIA ownership relationships.
 
-### 4.3 Search
+### 4.2 Item-level customization
 
-`Search` owns the managed search input and search accessibility/status UI.
+v5 does not promise arbitrary replacement of managed emoji-button markup.
 
-It may contain trailing children. The canonical default uses this to place `SkinTone` next to search without introducing a render callback.
+This is deliberate. Stable parts/CSS tokens cover visual theming. If real consumer requirements later demonstrate that item-level React composition is necessary, it should be designed as a separate RFC with explicit ref/handler/ARIA/variation semantics rather than shipping an unsafe escape hatch speculatively.
 
-Omitting Search is supported. External controlled search can still filter the List through Root's `searchValue`.
+Do not describe the v5 primitives API as fully headless.
 
-### 4.4 SkinTone
+## 5. Navigation and focus
 
-At most one `SkinTone` primitive may exist in a Root.
+Navigation rules are normative and are specified in [NAVIGATION.md](./NAVIGATION.md).
 
-It may be composed inside Search, Preview, or another ordinary wrapper.
+Key constraints:
 
-The v4 `skinTonePickerLocation` prop remains a plug-and-play convenience used by the canonical default composition. Primitive consumers choose placement through composition instead.
+- cross-region navigation uses registered semantic regions rather than hard-coded DOM siblings;
+- **DOM document order of registered region roots** is the order source for generic previous/next-region movement;
+- registration mount order is never navigation order;
+- CSS visual reordering that differs from DOM order does not redefine keyboard order;
+- non-region consumer content remains reachable through normal Tab navigation but is not automatically inserted into the picker's arrow-key region graph;
+- duplicate singleton regions fail fast in development;
+- `Panel` and `Viewport` are structural containers, not focus regions;
+- the `List` grid is the `grid` focus region;
+- internal region keymaps remain semantic and preserve v4 behavior where specified;
+- multiple Roots are isolated.
 
-### 4.5 CategoryNav
+The default composition MUST reproduce the current v4 focus behavior.
 
-CategoryNav owns category tabs and their internal horizontal keyboard behavior.
+## 6. Controlled state
 
-It is optional. If omitted, the grid remains usable and category changes caused by scroll/search continue internally.
+v5 adds standard controlled/uncontrolled APIs only where there is demonstrated consumer need.
 
-### 4.6 Viewport and List
-
-`Viewport` is the managed scroll/measurement container.  
-`List` is the managed emoji grid.
-
-Exactly one List must be a descendant of exactly one Viewport.
-
-Viewport owns structural behavior required for scrolling, measurement and variation-overlay placement. List owns:
-- category rowgroups;
-- logical emoji coordinates;
-- row virtualization;
-- managed emoji buttons;
-- emoji ARIA semantics.
-
-Consumers do not render individual emoji items in v5.
-
-### 4.7 Preview
-
-Preview owns the existing preview content and may contain trailing children. It is optional in primitive compositions.
-
-The default composition retains it so the v4 default appearance is unchanged.
-
-Omitting Preview does not expose active-preview state as a new public API in v5. A custom preview renderer is explicitly outside the initial v5 surface.
-
-### 4.8 Reactions
-
-Reactions owns the existing compact reaction bar. It is optional unless `reactionsDefaultOpen` is true.
-
-Reaction expansion/collapse state is shared through Root. The default appearance layer supplies the branded morph animation. Primitive consumers receive the state/visibility/focus behavior but are free to style motion differently.
-
-## 5. Composition validity
-
-Supported:
-- wrappers around primitives;
-- reordering managed regions;
-- omitting optional regions;
-- inserting arbitrary application UI between managed regions;
-- className/style on structural primitives.
-
-Unsupported in v5:
-- two instances of a singleton primitive such as Search, SkinTone, CategoryNav, Viewport, List, Preview, Reactions or Panel;
-- List outside Viewport;
-- structural primitives portaled outside the Root DOM subtree;
-- CSS visual reordering that intentionally disagrees with DOM order and expects arrow navigation to follow visual order;
-- arbitrary replacement of managed emoji-button markup.
-
-Invalid structural composition MUST produce a descriptive development/test error that names the violated rule and the relevant primitive.
-
-## 6. Navigation contract
-
-The full algorithm and key map are normative in [NAVIGATION.md](./NAVIGATION.md).
-
-Summary:
-- each interactive primitive registers an instance-scoped semantic region;
-- registration mount order is never used as navigation order;
-- active region order is derived from DOM document order within Root;
-- ordinary wrappers do not affect ordering;
-- non-region consumer UI is skipped by managed arrow navigation but remains reachable through normal Tab order;
-- CSS `order`, transforms and absolute positioning do not redefine navigation order;
-- region-internal handlers own horizontal/grid movement;
-- cross-region movement happens only at defined region boundaries.
-
-The default composition MUST preserve the current v4 keyboard graph, including search-mode behavior and legacy `skinTonePickerLocation` behavior.
-
-## 7. Public state additions
-
-v5 adds only the controlled state required by demonstrated use cases.
-
-### 7.1 Search
+Required:
 
 ```ts
 searchValue?: string;
 defaultSearchValue?: string;
 onSearchChange?: (value: string) => void;
+
+skinTone?: SkinTone;
+defaultSkinTone?: SkinTone;
+onSkinToneChange?: (skinTone: SkinTone) => void;
+
+mode?: 'picker' | 'reactions';
+defaultMode?: 'picker' | 'reactions';
+onModeChange?: (mode: 'picker' | 'reactions') => void;
 ```
 
-Semantics:
-- when `searchValue` is supplied, it is the sole source of truth for both input text and filtering;
-- user typing, type-to-search from the grid, and clear-button actions call `onSearchChange(nextValue)`;
-- the picker does not optimistically filter using an uncommitted internal value in controlled mode;
-- if the parent does not update `searchValue`, the rendered/filter value remains the supplied prop;
-- programmatic prop changes do not call `onSearchChange`;
-- `defaultSearchValue` is read when a Root instance mounts;
-- a true unmount/remount creates a new instance and re-reads the default;
-- switching controlled/uncontrolled mode during one mounted instance is unsupported and should warn in development.
+Normative semantics are specified in [STATE.md](./STATE.md).
 
-`searchDisabled` continues to remove the built-in search UI/typeahead. A supplied controlled `searchValue` may still externally filter the grid.
+Important rules:
 
-No other new controlled state is required for initial v5.
+- a controlled prop is the rendered source of truth;
+- user interaction emits the corresponding callback but does not create a hidden optimistic value;
+- programmatic prop changes do not re-emit callbacks;
+- type-to-search uses the same search transition as typing in the input;
+- the clear button is a user-driven search change and emits `onSearchChange('')`;
+- v5 does not promise controlled active-category, focused-emoji, variation-open, scroll-position, or preview state.
 
-## 8. Suggestions
+## 7. Reactions
 
-Existing `suggestedEmojisMode` remains.
+Reactions remain integrated because compact-to-full expansion is an existing product capability.
 
-v5 adds the narrow API requested by issue #277:
+v5 adds controlled mode without requiring existing consumers to rewrite their reaction handling.
+
+Required behavior:
+
+- `mode` / `defaultMode` expose the current full-picker vs reactions state;
+- user-driven expansion/collapse emits `onModeChange`;
+- the existing reactions list, `onReactionClick`, and `onEmojiClick(..., api)` collapse capability remain available in v5 unless a later deprecation is separately approved;
+- `reactionsDefaultOpen` and `allowExpandReactions` remain supported compatibility props in v5; documentation may prefer `defaultMode` for new code;
+- reaction IDs are normalized through the same unified-code lookup used by the picker; matching is case-insensitive for hexadecimal code points and existing variation-selector behavior is preserved;
+- `Panel` owns full-picker presence/transition presentation but is not a navigation region.
+
+The branded transition belongs to the official appearance layer. Root owns mode/focus state; primitives are not required to use the official motion when consumed without the official appearance layer.
+
+## 8. Suggestions and recents
+
+Do not design a generalized persistence adapter in v5 without evidence.
+
+v5 preserves existing `suggestedEmojisMode` behavior and localStorage persistence.
+
+To address issue #277, v5 adds one narrow capability:
 
 ```ts
 suggestedEmojis?: string[];
 ```
 
-When provided:
-- it replaces localStorage-derived contents of the Suggested category;
-- order follows the supplied array;
-- IDs are normalized using the same unified-ID normalization used elsewhere;
-- unknown/hidden IDs are skipped;
-- duplicates keep the first occurrence;
-- `suggestedEmojisMode` is ignored for list generation while this prop is present.
+When supplied, this list becomes the contents of the suggested category instead of reading the built-in recent/frequent list. The array order is preserved. Invalid/unknown unified IDs are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
 
-Application-owned frequency stores, reset APIs and context menus are not part of initial v5. They require a separate API design rather than a speculative generic storage adapter.
+Management/reset UI requested by #505 is not part of the v5 architecture contract and may ship independently.
 
-## 9. Reactions
+## 9. Existing v4 configuration
 
-The current v4 reactions API is preserved in v5:
-- `reactionsDefaultOpen`
-- `reactions`
-- `allowExpandReactions`
-- `onReactionClick`
-- `onEmojiClick(..., api)` with `api.collapseToReactions()`
+v5 deliberately retains useful v4 configuration rather than replacing it with speculative abstractions.
 
-v5 adds the observation requested by issue #504:
+In particular:
 
-```ts
-onReactionsModeChange?: (reactionsOpen: boolean) => void;
-```
+- keep `open`;
+- keep `categoryIcons`;
+- keep `getEmojiUrl`;
+- keep `emojiData`;
+- keep `previewConfig`;
+- keep `searchDisabled`;
+- keep `autoFocusSearch`;
+- keep `emojiVersion`;
+- keep `skinTonesDisabled`;
+- keep `skinTonePickerLocation`;
+- keep `searchPlaceholder` and `searchClearButtonLabel`;
+- keep current reactions props and callbacks.
 
-Rules:
-- the callback fires only when the mode actually changes;
-- expand invokes it with `false`;
-- `collapseToReactions()` invokes it with `true`;
-- initial mount does not fire it;
-- Escape behavior remains the current v4 behavior and does not implicitly collapse the full picker;
-- reaction unified IDs use the same lookup/normalization rules as the existing picker.
+String literals become accepted wherever v4 enums are accepted, but existing enum exports remain available for migration compatibility.
 
-No new public controlled `mode` prop is required for initial v5.
+`lazyLoadEmojis` remains supported in v5. If virtualization later makes the option semantically redundant, deprecate it before removal rather than silently changing its meaning.
 
-## 10. Styling contract
+## 10. Styling
 
-The complete styling boundary is normative in [STYLING_CONTRACT.md](./STYLING_CONTRACT.md).
+The default picker keeps the official appearance.
 
-Principles:
-- default `<EmojiPicker />` receives the branded v4 appearance;
-- primitives receive only structural styles required for correct behavior;
-- `className` and `style` do not imply every CSS property is safe to override;
-- reserved structural properties are documented;
-- documented v4 CSS variables remain supported;
-- stable `data-epr-part` names are public styling selectors and changing/removing one is semver-significant.
+The primitives entry point exposes structural behavior plus only the minimum library-owned structural CSS required for correctness. See [STYLING.md](./STYLING.md).
 
-A stable part attribute on an internal managed element does not make that element a public composition primitive.
+The contract distinguishes:
 
-## 11. Item-level composition
+- **protected structural rules** needed for scrolling, measurement, focus, virtualization and variation positioning;
+- **appearance rules/tokens** consumers may override.
 
-Initial v5 intentionally does **not** expose:
-- render-prop emoji lists;
-- arbitrary emoji-button replacement;
-- `asChild` for emoji items;
-- custom variation-popover renderers.
+Public `data-epr-part` names are versioned API once shipped. Only parts needed for supported styling use cases should be exposed.
 
-This is deliberate surface-area control, not an unfinished hidden requirement.
+v5 does not promise that arbitrary CSS which changes layout mechanics (for example `display: contents` on required structural containers or disabling required scroll containment) preserves virtualization.
 
-Item replacement intersects refs, activation, ARIA, variations, virtualization, measurement and focus. It requires its own RFC and acceptance suite before becoming public.
+## 11. Data API
 
-The v5 primitives API therefore promises **structural composition of picker regions**, not a fully headless emoji renderer.
+v5 exposes a supported `emoji-picker-react/data` entry point to solve issue #430 without private imports.
 
-## 12. Data API
+The public data API MUST reuse the same underlying normalization/search/data modules as the picker. Do not duplicate search semantics.
 
-`emoji-picker-react/data` exposes a small supported read API backed by the same pure data/search modules used by the picker.
+Initial required capabilities:
 
-Required initial capabilities:
-- lookup an emoji by unified ID;
-- read names and variations from that result;
-- search emojis using the picker's search semantics.
+- lookup by unified code;
+- access to names/aliases and variations;
+- search using the same matching semantics as the picker;
+- supported shortcode conversion where the packaged data can provide it.
 
-The API must support the package's default data and an explicitly supplied locale data object without bundling every locale into the default data entry.
+The API must document whether each operation is locale-aware. Do not imply locale-aware search if the initial implementation only operates on the imported/default dataset.
 
-Slack-specific shortcode generation is not part of the initial v5 contract. Issue #430 is satisfied in v5 by supported access to the underlying names/unified/variation data; shortcode policy can be added later after its alias/version semantics are designed.
+Bundle-size behavior must be measured before finalizing the subpath shape.
 
-## 13. Packaging
+## 12. Package boundaries
 
-v5 MUST:
-- add an explicit `exports` map;
-- expose `.`, `./primitives`, `./data`, and supported locale paths;
-- preserve the existing React peer floor `>=16.8` unless a separate explicitly approved change raises it;
-- preserve the currently supported CJS and ESM consumption modes;
-- emit correct declarations for every public subpath;
-- pass package-shape validation.
+v5 introduces explicit package exports only after all intended public subpaths are known.
 
-The implementation MUST NOT introduce React APIs above the declared floor.
+Required:
 
-### 13.1 Legacy deep imports
+- main entry;
+- primitives entry;
+- data entry;
+- supported locale/data entry paths;
+- correct TypeScript declarations;
+- currently supported ESM and CommonJS consumption;
+- SSR safety;
+- package validation through Publint/AreTheTypesWrong or equivalent.
 
-Documented v4 locale imports under `dist/data/*` receive an explicit v5 compatibility export and a deprecation notice.
+The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. Do not casually introduce React-18-only primitives such as `useId` or `useSyncExternalStore`.
 
-Other undocumented deep imports are not public API and may be blocked by the exports map. This is an intentional v5 package-boundary break and must be called out in the migration guide.
+Adding an exports map intentionally blocks unspecified deep imports. That is a v5 breaking change. Existing documented locale imports MUST receive supported compatibility paths or a documented direct migration.
 
-The implementation phases may use source-relative imports before the final exports map exists; public-subpath acceptance tests run after the build/export phase. There is no requirement that source development imports resolve through package exports before packaging is implemented.
+See [V4_API_MATRIX.md](./V4_API_MATRIX.md).
 
-## 14. Accessibility and SSR
+## 13. SSR and hydration
 
-The default and primitive compositions MUST preserve these concrete behaviors:
+The existing localStorage-backed suggestion behavior remains client-only.
 
-- emoji list has a composite `role="grid"` so Windows screen readers enter focus/forms mode and pass arrow keys through;
-- each category is a named `role="rowgroup"`;
-- managed emoji controls retain native button activation and an accessible emoji name;
-- category navigation retains tablist/tab semantics;
-- search result status remains a polite live region;
-- real DOM focus remains on managed interactive elements;
-- no Root accesses `window`, `document`, or localStorage during server rendering in a way that breaks render-to-string;
-- localStorage-backed suggestions are treated as client persistence and must hydrate without React mismatch warnings;
-- CSP nonce reaches every style element emitted by the default or primitives path.
+SSR output MUST NOT depend on localStorage. The server and hydration-first render use the deterministic non-persisted state; persisted suggestions may be applied after mount. Acceptance tests must verify no hydration mismatch.
 
-These restate the regressions covered by #508 and #512 rather than relying on issue numbers as the specification.
+This behavior is not a promise that a user's persisted recents appear in server HTML.
 
-## 15. Visual compatibility
+CSP `nonce` must continue to reach every library-owned style tag, including styles used by the primitives/default composition.
 
-The default component is not visually redesigned in v5.
+## 14. Accessibility
 
-Existing visual tests remain the primary baseline, with the adjudication process in [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md). A baseline is not immutable when the test environment itself changes; environment drift must be proven against the v4/base branch before rebaselining.
+v5 preserves the accessibility behavior established by the current grid implementation.
 
-Primitive compositions have no obligation to look like the branded picker unless the consumer applies equivalent appearance styles.
+At minimum:
 
-## 16. Acceptance artifacts
+- the emoji collection remains a composite widget that allows screen readers to pass arrow keys to the application;
+- category groups expose their accessible names;
+- emoji controls preserve accessible names;
+- category navigation remains a tablist;
+- search status remains a polite live region;
+- reordered/omitted structural primitives must not create dangling ARIA references;
+- no primitive consumer must manually wire library-owned ARIA IDs.
 
-- `test/v5-contract/v5-api.test.ts` is the unit-test inventory until implementation exists.
-- `playwright/v5-acceptance.spec.ts` is the E2E acceptance inventory until its stories exist.
-- These skipped/TODO tests are **not** current coverage.
-- Before v5 release every required TODO/skip must become an executable passing test or be removed only with a documented specification amendment.
-- `npm run check:v5-release` is the meta-gate that fails while unfinished TODO/skip markers or the required acceptance story file remain.
+The regressions described by issues #508 and #512 must have dedicated tests based on their observable behavior, not merely issue-number references.
 
-## 17. Definition of done
+## 15. Out of scope
 
-v5 is complete only when:
+Unless separately approved, initial v5 does not include:
 
-1. the default component is still the shortest and primary usage path;
-2. default visuals pass the adjudicated v4 baseline;
-3. the default renderer is literally the canonical composition of the shared primitives;
-4. primitives can safely reorder/omit supported regions without render props;
-5. navigation follows the specified algorithm in default and reordered compositions;
-6. search is controllable with standard React semantics;
-7. reactions retain existing behavior and expose mode-change observation;
-8. styling boundaries and reserved structural CSS are documented and tested;
-9. the minimal data API and public package subpaths are implemented;
-10. the complete v4 compatibility matrix is honored;
-11. all release checks in `ACCEPTANCE_CHECKLIST.md` pass.
+- arbitrary item render callbacks;
+- `asChild` on emoji buttons;
+- a generalized storage adapter;
+- controlled scroll position;
+- controlled variation-popover state;
+- a new visual design;
+- framework wrappers;
+- telemetry;
+- paid runtime features.
+
+## 16. Definition of done
+
+v5 is complete when:
+
+1. the default component still provides the complete picker in one component;
+2. the default component is assembled from the same exported structural primitives used by advanced consumers;
+3. the canonical composition and navigation rules are implemented;
+4. existing visual/interaction/a11y tests pass under the visual adjudication policy;
+5. controlled search, skin tone, and mode follow STATE.md;
+6. reactions retain existing capability and transition behavior;
+7. macro composition works without render props;
+8. styling obeys STYLING.md;
+9. every v4 prop has an explicit disposition;
+10. data/package subpaths are documented and validated;
+11. the v5 placeholder test contracts have been converted to executable coverage before a 5.x release can be built;
+12. every item in ACCEPTANCE_CHECKLIST.md is satisfied.
