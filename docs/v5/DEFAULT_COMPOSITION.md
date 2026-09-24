@@ -1,132 +1,139 @@
 # v5 Canonical Default Composition
 
-This file makes the "one implementation" requirement concrete.
+The default picker MUST be implemented using the same exported primitive component modules available from `emoji-picker-react/primitives`.
 
-The default export MUST be implemented by composing the same public structural primitives exported from `emoji-picker-react/primitives`. Private layout wrappers and the official appearance provider are allowed; alternate implementations of search, reactions, list/grid, preview, or keyboard behavior are not.
+Private wrappers may provide appearance/layout only. Search, reactions, grid/list, preview and navigation behavior may not be reimplemented in a parallel "classic" tree.
 
-Conceptually, the default component is:
+## Canonical tree
 
 ```tsx
-function EmojiPicker(props: EmojiPickerProps) {
+function EmojiPicker(props: PickerProps) {
   return (
-    <DefaultAppearance nonce={props.nonce}>
-      <Root {...props}>
-        <Reactions />
+    <ErrorBoundary>
+      <DefaultAppearance
+        theme={props.theme}
+        width={props.width}
+        height={props.height}
+        className={props.className}
+        style={props.style}
+        nonce={props.nonce}
+      >
+        <Root {...behaviorProps(props)}>
+          <Reactions />
 
-        <Panel>
-          <DefaultHeaderLayout>
-            <Search />
-            <CategoryNav />
-          </DefaultHeaderLayout>
+          <Panel>
+            <DefaultHeaderLayout>
+              <Search />
+              <CategoryNav />
+            </DefaultHeaderLayout>
 
-          <Viewport>
-            <List />
-          </Viewport>
+            <Viewport>
+              <List />
+            </Viewport>
 
-          <Preview />
-        </Panel>
-      </Root>
-    </DefaultAppearance>
+            <Preview />
+          </Panel>
+        </Root>
+      </DefaultAppearance>
+    </ErrorBoundary>
   );
 }
 ```
+
+The current top-level ErrorBoundary remains a default-component concern. It is not part of the primitives Root.
+
+## Grammar invariants
+
+- Root contains exactly one Panel.
+- Reactions, when present, is a sibling of Panel.
+- Every picker-mode region is a descendant of Panel.
+- Viewport contains exactly one List.
+- Search, CategoryNav and Preview are optional.
+- Skin-tone UI remains owned by Search or Preview according to `skinTonePickerLocation`.
+- Panel is the single subtree Root hides/inerts while compact reactions are active.
+
+The exact public grammar is in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ## Responsibilities
 
 ### DefaultAppearance
 
-Private implementation detail.
+Private.
 
-It provides the branded v4-compatible visual layer:
-- ShipStyles/default stylesheet;
-- light/dark/auto appearance;
+Owns only:
+- official ShipStyles/default visual layer;
+- theme;
 - default dimensions;
-- reactions morph animation;
-- official CSS variables.
+- v4-compatible spacing/colors;
+- branded compact→full reaction transition;
+- public v4 CSS variables.
 
-It MUST NOT own search state, grid state, navigation, reactions state, selection logic, or emoji data.
+It does not own picker state, data, navigation or selection.
 
 ### Root
 
-Public primitive.
+Public behavior/controller boundary.
 
-Owns picker behavior/state and isolates one picker instance from another.
+Owns:
+- one picker instance;
+- stable services;
+- sliced state;
+- data-core reference;
+- semantic region registry;
+- search transition service;
+- reactions state/observer;
+- navigation generation token;
+- configuration shared by child primitives.
 
 ### Reactions
 
-Public primitive and registered focus region.
-
-It renders only when mode requires it. It shares emoji lookup/selection behavior with the picker.
+Public managed compact-reaction region.
 
 ### Panel
 
-Public structural primitive, **not** a focus region.
+Public structural container for **all** full-picker UI.
 
-It is the full-picker container used for presence/transition/layout. In the default appearance it participates in the compact-reactions → full-picker animation.
-
-A primitives consumer that does not need reactions may still use `Panel` as the full-picker wrapper, but Root may accept a single direct full-picker subtree without `Panel` only if the implementation can preserve the same semantics. The preferred documented composition uses Panel.
+Panel is not itself an arrow-navigation focus region. Root may use it to apply hidden/inert/presence state as one unit.
 
 ### DefaultHeaderLayout
 
-Private non-behavioral wrapper.
-
-It exists only to reproduce v4 layout. It MUST NOT own interactive state.
+Private appearance/layout wrapper only.
 
 ### Search
 
-Public focus region.
-
-It includes the search input, search status live region, clear button, and the existing search-position skin-tone control when `skinTonePickerLocation="SEARCH"`.
-
-This is intentionally narrower than exposing every header atom as a primitive.
+Public managed search region, including its input, live status, clear control and search-position skin-tone control.
 
 ### CategoryNav
 
-Public focus region.
-
-It owns category tabs and their tablist semantics.
+Public managed tablist region.
 
 ### Viewport
 
-Public structural primitive, **not** itself a focus region.
-
-It owns the required scroll/measurement container for the emoji collection and variation overlay.
+Public scroll/measurement container.
 
 ### List
 
-Public `grid` focus region.
-
-It owns:
-- category groups;
-- managed emoji buttons;
-- row/column semantics;
-- virtualization;
-- logical-grid navigation integration.
+Public managed grid region. It owns category rows/groups, managed emoji buttons and virtualization.
 
 ### Preview
 
-Public optional region.
+Public optional preview region, including preview-position skin-tone control.
 
-It renders preview content and the existing preview-position skin-tone control when `skinTonePickerLocation="PREVIEW"`.
+## Conditional behavior
 
-## Default conditional behavior
+- `searchDisabled`: Search renders/registers nothing.
+- `previewConfig.showPreview=false`: Preview renders/registers nothing.
+- `skinTonesDisabled`: no skin-tone control participates.
+- compact reactions active: Reactions is interactive; Panel and every descendant are hidden/inert/non-focusable as one managed subtree.
+- Reactions primitive absent: Root behaves as full-picker-only and Panel stays active.
 
-The canonical tree remains stable even when a region returns no visible UI.
+## One-engine failure examples
 
-Examples:
-- `searchDisabled`: Search registers no search focus destination and renders no search UI.
-- `previewConfig.showPreview=false`: Preview renders no preview region.
-- `skinTonesDisabled`: no skin-tone destination is registered.
-- reactions mode: Reactions is visible; Panel is retained/mounted according to transition/performance needs but its normal content is not focusable while inactive.
+The implementation violates this contract if:
+- default export imports a private Search instead of the public Search module;
+- default export uses a separate private grid/list renderer;
+- default and primitives use different navigation engines;
+- data entry point duplicates search/normalization;
+- fixes must be applied in two behavior implementations.
 
-## Falsifiable one-engine rule
-
-The implementation fails this contract if:
-
-- the default export imports/uses a private Search instead of the public Search primitive;
-- the default export imports/uses a private List/Grid instead of the public List primitive;
-- default and primitives use separate keyboard-navigation hooks/state machines;
-- `emoji-picker-react/data` reimplements search/normalization separately from the picker;
-- fixes to selection/search/navigation must be applied twice to keep default and primitives in sync.
-
-Private wrappers that only provide layout or appearance do not violate the rule.
+A source-architecture test MUST be added once final module paths exist.
