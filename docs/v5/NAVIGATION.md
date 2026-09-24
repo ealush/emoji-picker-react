@@ -90,7 +90,7 @@ Only an unhandled edge movement may delegate to cross-region navigation.
 - `ArrowUp` / `ArrowDown`: logical row movement while such a destination exists;
 - when vertical movement crosses the top edge, move to the previous focusable region in DOM order;
 - moving below the last logical row does not leave the picker unless a future RFC defines such behavior;
-- typing an alphanumeric key runs the shared type-to-search transition.
+- typing an alphanumeric key runs the shared type-to-search transition only when Search is registered and enabled; otherwise it is a picker no-op and focus remains in Grid.
 
 ### Reactions
 
@@ -120,6 +120,7 @@ Omitted or non-rendering regions are absent from the graph.
 Examples:
 - no CategoryNav: Search Down → Grid;
 - no Search: Categories Up does not target an absent Search;
+- no Search: printable typing in Grid does not mutate search/filter state or move focus;
 - no Preview: no effect on grid navigation;
 - disabled skin tones: no skin-tone destination.
 
@@ -133,10 +134,12 @@ Example:
 
 ```tsx
 <Root>
-  <CategoryNav />
-  <button>Close</button>
-  <Search />
-  <Viewport><List /></Viewport>
+  <Panel>
+    <CategoryNav />
+    <button>Close</button>
+    <Search />
+    <Viewport><List /></Viewport>
+  </Panel>
 </Root>
 ```
 
