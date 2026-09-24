@@ -200,7 +200,7 @@ To address issue #277, v5 adds one narrow capability:
 suggestedEmojis?: string[];
 ```
 
-When supplied, this list becomes the contents of the suggested category instead of reading the built-in recent/frequent list. Entries are trimmed and normalized case-insensitively; duplicates are removed after normalization with first occurrence winning; caller order is otherwise preserved. Invalid/unknown unified IDs are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
+When supplied, this list becomes the contents/order of the Suggested category and `suggestedEmojisMode` is ignored for category contents while the prop is present. Standard Unicode IDs are trimmed and normalized case-insensitively; valid skin-tone variation IDs preserve that exact variation for rendering. Exact custom-emoji ID lookup happens before Unicode normalization so custom ID casing is preserved. Duplicates are removed by resolved render identity with first occurrence winning; caller order is otherwise preserved. Unknown entries are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
 
 Management/reset UI requested by #505 is not part of the v5 architecture contract and may ship independently.
 
