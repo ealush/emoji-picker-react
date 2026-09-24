@@ -21,7 +21,7 @@ The default rule for v5 is **preserve unless there is a strategic reason to brea
 | `className` | **Keep** | Applies to default picker root. |
 | `onEmojiClick` | **Keep signature compatibility** | Preserve optional third-argument API including `collapseToReactions`; do not replace it with a required context object. |
 | `onReactionClick` | **Keep** | No forced handler rewrite in v5. |
-| `onSkinToneChange` | **Keep** | Also used by controlled `skinTone`. |
+| `onSkinToneChange` | **Keep** | Existing callback semantics remain. |
 | `searchDisabled` | **Keep** | Primitive Search simply does not render/register when disabled. |
 | `searchPlaceholder` | **Keep** | No speculative labels object required for v5. |
 | `searchPlaceHolder` | **Compatibility alias; deprecate** | Preserve runtime behavior, document `searchPlaceholder` as canonical spelling. |
@@ -48,11 +48,8 @@ The default rule for v5 is **preserve unless there is a strategic reason to brea
 | `searchValue` | Controlled search query. |
 | `defaultSearchValue` | Initial uncontrolled search query. |
 | `onSearchChange` | Observe user-driven search transitions. |
-| `skinTone` | Controlled skin tone. |
-| `mode` | Controlled `'picker' \| 'reactions'` mode. |
-| `defaultMode` | Initial uncontrolled mode using the familiar controlled/uncontrolled convention. |
-| `onModeChange` | Observe user-driven mode transitions. |
 | `suggestedEmojis` | Caller-provided ordered unified IDs for the Suggested category, solving issue #277 narrowly. |
+| `onReactionsModeChange` | Observe compact-reactions ↔ full-picker state changes, solving issue #504 narrowly. |
 
 ## Exported enum/type compatibility
 
