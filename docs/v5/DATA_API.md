@@ -42,6 +42,19 @@ export type EmojiDataOptions = Readonly<{
 
 The `EmojiData` type used by this entry point is exported from `emoji-picker-react/data`.
 
+### Runtime immutability
+
+The readonly TypeScript surface is backed by runtime immutability:
+
+- every prepared `EmojiInfo` record is `Object.freeze`d;
+- each record's `names` array is frozen;
+- each record's `variations` array is frozen;
+- `searchEmojis` returns a fresh frozen result array containing the shared frozen records;
+- `getEmojiByUnified` may return a shared frozen record directly;
+- caller-provided `emojiData` is never frozen or mutated by the library; normalized prepared records are separate internal objects.
+
+This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
+
 ## 3. Exact initial functions
 
 ```ts
@@ -65,7 +78,8 @@ No additional data helpers are required for initial v5.
 - accepts base or variation unified code;
 - variation lookup returns the canonical/base EmojiInfo whose `variations` includes the requested variation;
 - returns `undefined` for unknown/empty input;
-- does not mutate the dataset.
+- does not mutate the dataset;
+- returns a deeply frozen `EmojiInfo` record when found.
 
 ### searchEmojis
 
@@ -75,7 +89,8 @@ No additional data helpers are required for initial v5.
 - preserves stable dataset order among matches;
 - returns canonical/base EmojiInfo records;
 - when `emojiData` is provided, names/search operate on that dataset;
-- does not include picker-only customEmojis because those are not part of the supplied EmojiData dataset.
+- does not include picker-only customEmojis because those are not part of the supplied EmojiData dataset;
+- returns a fresh frozen result array whose `EmojiInfo` entries are the shared deeply frozen records.
 
 ## 4. Shortcodes
 
