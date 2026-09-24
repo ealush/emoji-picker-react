@@ -18,32 +18,26 @@ This is not a promise that every CSS property may be arbitrarily overridden with
 
 ## 2. Structural CSS
 
-The following categories are library-owned structural behavior and may be enforced by classes/inline styles as needed:
+The library guarantees correct behavior only while these structural responsibilities remain intact:
 
-### Root/Panel
-- positioning needed for overlays;
-- containment required by the reactions/full-picker transition;
-- box sizing.
+| Part | Reserved structural responsibility |
+| --- | --- |
+| `root` | picker-instance containing block where required by overlays |
+| `panel` | expanded-region presence/layout used by picker mode transitions |
+| `viewport` | vertical scroll container, horizontal clipping and measurement boundary |
+| `list` | logical/virtualized grid container |
+| `category` | category positioning/measurement boundary |
+| `category-content` | grid layout and measured category height |
+| `emoji` | measured cell geometry used by logical row/column calculations |
+| `variation-picker` | overlay positioning that must not corrupt grid measurement |
 
-### Viewport
-- vertical scroll containment;
-- horizontal overflow prevention where required;
-- positioning context for virtual rows/variation UI;
-- dimensions/measurement hooks required by virtualization.
+The implementation must document the exact declarations that carry these responsibilities once v5 lands.
 
-### List/Grid
-- logical row geometry;
-- virtual-row positioning;
-- hidden/offscreen measurement nodes;
-- focus target visibility/scroll behavior.
+Consumers MUST NOT be told that every value of `display`, `position`, `overflow`, row height, or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container is outside the keyboard/virtualization guarantee.
 
-### Variation UI
-- positioning/stacking needed to attach the variation picker to the managed grid;
-- escape from clipping should use a library-managed strategy, not require consumer overflow hacks.
+When a dimension affects measurement, the library must either measure the resulting DOM or expose/document the dimension as a supported structural token. Do not keep a hidden geometry constant that can disagree with a documented customization variable.
 
-Consumers MUST NOT be told that every value of `display`, `position`, `overflow`, row height, or containment is safe to override.
-
-Documentation should mark protected structural properties where relevant.
+Variation UI must have a supported library-owned positioning strategy. Consumers must not need to break Viewport overflow merely to keep the variation picker visible.
 
 ## 3. Appearance CSS
 
@@ -132,17 +126,21 @@ Initial required part API:
 - `panel`
 - `search`
 - `search-clear`
+- `skin-tone`
 - `category-nav`
 - `category-tab`
 - `viewport`
 - `list`
 - `category`
 - `category-label`
+- `category-content`
 - `emoji`
 - `variation-picker`
 - `preview`
 
 Part names are public API once released. Renaming/removing one is semver-significant.
+
+A part is not automatically a composition primitive. `skin-tone`, `category-content`, and `variation-picker` may remain managed while still exposing stable styling hooks.
 
 Do not expose private measurement nodes or every implementation wrapper as parts.
 
@@ -154,7 +152,14 @@ Parts/tokens can style it, but v5 does not promise arbitrary React-node insertio
 
 This intentionally avoids exposing internal focus, variation and virtualization mechanics before there is a safe, proven item-composition design.
 
-## 7. Structural failure policy
+## 7. Specificity and cascade
+
+- structural correctness must not depend on Tailwind/CSS Modules being loaded in a particular order;
+- cosmetic consumer overrides should win through ordinary cascade without requiring `!important`;
+- broad `!important` usage is not a substitute for a clear structural boundary;
+- the default appearance may continue using ShipStyles unless implementation deliberately changes it.
+
+## 8. Structural failure policy
 
 When a consumer supplies CSS that breaks documented structural invariants, the library does not guarantee virtualization/navigation behavior.
 
@@ -164,3 +169,12 @@ Where a failure can be detected cheaply (for example a required Viewport has bec
 - a link/reference to the styling contract.
 
 Do not use `!important` broadly as a substitute for a clear structural contract.
+
+
+## 9. Required styling tests
+
+Before v5 ships, executable coverage must prove:
+- a custom primitive composition can apply cosmetic classes without the branded default appearance;
+- changing supported emoji size/padding variables updates measurement and keyboard row math correctly;
+- cosmetic overrides do not break virtualization;
+- the variation picker remains visible and keyboard-operable in a custom primitive composition.
