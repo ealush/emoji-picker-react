@@ -68,9 +68,10 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | --- | --- |
 | `searchValue` | Controlled visible search value. |
 | `defaultSearchValue` | Initial uncontrolled search value. |
-| `onSearchChange` | Immediate user-driven raw search callback. |
+| `onSearchChange` | Immediate ordinary user-driven raw search callback; IME commits once at composition end. |
+| `searchLabel` | Localizable accessible label for the built-in search input. |
 | `suggestedEmojis` | Ordered caller-defined Suggested-category unified IDs. |
-| `onReactionsModeChange` | Observe compact reactions ↔ full Panel state changes. |
+| `onReactionsModeChange` | Observe compact reactions ↔ Root-managed full-picker panel state changes. |
 
 Initial v5 intentionally does **not** add `skinTone`, `mode`, `defaultMode`, or `onModeChange`.
 
