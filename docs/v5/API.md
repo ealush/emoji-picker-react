@@ -82,7 +82,7 @@ Uncontrolled:
 <EmojiPicker defaultSearchValue="party" />
 ```
 
-The search input value changes immediately. Filtering remains an internal derived operation and may be debounced. See [STATE.md](./STATE.md) for callback timing, IME handling and cancellation semantics.
+The search input value changes immediately. Filtering remains an internal derived operation and may be debounced. If the Search primitive is omitted, built-in type-to-search is disabled just like `searchDisabled`, but an application may still drive filtering through controlled `searchValue` from its own external input. See [STATE.md](./STATE.md) for callback timing, IME handling and cancellation semantics.
 
 ## 5. Observe reactions/full-picker mode
 
@@ -281,7 +281,7 @@ The new `emoji-picker-react/data/emojis-*` paths are canonical. Documented v4 `e
 
 The default `<EmojiPicker />` keeps the current library ErrorBoundary.
 
-The primitives Root does not install one. Errors from consumer UI inside Panel propagate to the application's own error boundary.
+The primitives Root does not install one. Render/lifecycle errors from consumer UI inside Panel propagate to the application's own surrounding ErrorBoundary. Event-handler exceptions are not caught by React ErrorBoundaries and follow normal React/browser event behavior.
 
 ## 14. Development errors
 
