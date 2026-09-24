@@ -12,6 +12,9 @@ describe('v5 prepared data core', () => {
   it.todo('returns the same prepared-core identity for the same emojiData object');
   it.todo('does not JSON clone the full default dataset per Root');
   it.todo('does not mutate caller emojiData or customEmojis');
+  it.todo('keeps emojiVersion and hiddenEmojis as per-Root filters over shared base data');
+  it.todo('warns once after three consecutive emojiData identity changes in development');
+  it.todo('warns once after three consecutive customEmojis identity changes in development');
   it.todo('does not retain Root controllers through the data cache');
 });
 
@@ -31,4 +34,12 @@ describe('v5 package performance invariants', () => {
   it.todo('data entry imports neither React nor ShipStyles');
   it.todo('primitives-only consumer excludes default appearance wrapper');
   it.todo('single locale consumer does not include every locale');
+});
+
+
+describe('v5 search performance semantics', () => {
+  it.todo('supports cold-query measurement with prepared data but reset query memo');
+  it.todo('supports Root-scoped incremental query memo');
+  it.todo('preserves c to ca to cat incremental narrowing behavior');
+  it.todo('does not rebuild the base search index for query memo resets');
 });
