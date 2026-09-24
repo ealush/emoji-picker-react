@@ -24,7 +24,7 @@ CI MUST build the packed v5 artifact and execute a minimal consumer against:
 
 The React 16 fixture must verify:
 - default picker mount/unmount;
-- primitive Root/Panel/Search/Viewport/List mount;
+- primitive Root/Search/Viewport/List mount;
 - click selection;
 - keyboard search/navigation smoke path;
 - SSR render using `react-dom/server`;
