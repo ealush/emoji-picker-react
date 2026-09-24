@@ -74,13 +74,13 @@ Use primitives only when you need to own macro layout/order:
 import * as EmojiPicker from 'emoji-picker-react/primitives';
 
 <EmojiPicker.Root>
-  <EmojiPicker.CategoryNav />
-
-  <MyHeader>
-    <EmojiPicker.Search />
-  </MyHeader>
-
   <EmojiPicker.Panel>
+    <EmojiPicker.CategoryNav />
+
+    <MyHeader>
+      <EmojiPicker.Search />
+    </MyHeader>
+
     <EmojiPicker.Viewport>
       <EmojiPicker.List />
     </EmojiPicker.Viewport>
@@ -142,7 +142,15 @@ Do not introduce new uses of the legacy casing.
 
 ## React peer requirement
 
-v5 retains the existing React peer floor of `>=16.8` unless a separate release decision changes it.
+v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
+
+v5 also removes fixed document-global ARIA IDs. If an application renders multiple independently hydrated SSR picker roots and needs deterministic library-generated IDs, it may provide a unique `idPrefix`:
+
+```tsx
+<EmojiPicker idPrefix="comment-composer-emoji" />
+```
+
+See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
 ## Styling
 
@@ -155,3 +163,10 @@ The primitives API adds a deliberately small `data-epr-part` styling surface. Se
 A breaking release is not a requirement to break every old interface.
 
 If an existing API remains useful and does not prevent the v5 architecture, v5 keeps it.
+
+
+## Existing named exports
+
+v5 preserves the existing main-entry exports, including `Emoji`, `emojiByUnified`, `PickerProps`, `Props`, `EmojiClickData`, `CategoryIcons`, and `CategoryConfig`.
+
+The new `emoji-picker-react/data` API is additive; it does not replace the existing top-level `emojiByUnified`.
