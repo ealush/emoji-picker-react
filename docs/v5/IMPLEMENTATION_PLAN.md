@@ -1,243 +1,158 @@
 # v5 Implementation Plan
 
-This plan implements the public contract from the outside in while keeping the current picker green at every phase.
+Implementation proceeds from public behavior inward.
 
-## Phase 0: establish the baseline
+## Phase 0 — establish the baseline
 
-Before implementation work:
-
+Before v5 runtime work:
 - run all current unit tests;
-- run all Playwright interaction and visual tests;
-- record current package size;
-- record the current React peer floor and CJS/ESM build outputs;
-- document pre-existing flakes/failures before v5 changes;
-- do not regenerate snapshots merely because implementation starts.
+- run all current Playwright interaction tests;
+- run all current visual tests;
+- record current package size/build output;
+- document any pre-existing flaky/failing checks.
 
-The v4/base branch remains the comparison point for visual-environment drift.
+Do not start by regenerating screenshots.
 
-## Phase 1: add contract tests around current v4 behavior
+## Phase 1 — characterize current behavior
 
-Before refactoring, turn the compatibility matrix into executable regression coverage for:
-- every documented v4 prop;
-- `onEmojiClick(..., api).collapseToReactions()`;
-- `skinTonePickerLocation` SEARCH/PREVIEW behavior;
-- `categoryIcons` precedence;
-- `getEmojiUrl`;
-- `open`;
-- `lazyLoadEmojis`;
-- locale data;
-- reactions expand/collapse;
-- current SSR behavior.
+Add/confirm tests for the behavior v5 must preserve:
+- current focus graph;
+- search mode exceptions;
+- reactions expansion/collapse;
+- `collapseToReactions()`;
+- screen-reader grid roles/names;
+- SSR with persisted-suggestions code present;
+- CSP nonce propagation.
 
-This prevents the architecture refactor from silently redefining existing APIs.
+Issue #508 behavior must be restated/tested: the emoji collection is a composite widget so Windows screen readers allow arrow keys to reach the app.
 
-## Phase 2: extract shared pure data/search modules
+Issue #512 behavior must be restated/tested: category grouping provides enough accessible context that emoji controls are announced with their category context where supported.
 
-Unify pure algorithms used by the UI:
-- lookup by unified;
-- names/variations;
-- search/index logic;
-- unified normalization.
+## Phase 2 — shared internal engine, no public primitives yet
 
-Do not create the public `/data` entry yet.
+Refactor current behavior into one Root-scoped implementation:
+- picker state;
+- data lookup/search;
+- selection;
+- navigation registry;
+- logical grid navigation;
+- focus restoration.
 
-The goal is one implementation that the UI and later public data entry can both consume.
+Keep current default DOM/appearance stable during this phase.
 
-No renderer changes in this phase.
+No second "headless implementation" is permitted.
 
-## Phase 3: extract Root engine without changing DOM
+## Phase 3 — formalize region navigation
 
-Centralize instance-scoped behavior:
-- search;
-- skin tone;
-- active category/preview state needed internally;
-- suggestions;
-- reactions state;
-- variation state;
-- selection dispatch;
-- element/region registration.
+Implement [NAVIGATION.md](./NAVIGATION.md):
+- Root-scoped registry;
+- singleton validation;
+- DOM-order traversal;
+- local region keymaps;
+- search-mode exception;
+- virtualization materialize/scroll/focus;
+- multi-root isolation.
 
-Keep current rendered markup and branded styles unchanged.
+Add real unit tests around the registry/algorithm before exposing primitives.
 
-The phase is complete only when current screenshots and keyboard tests still pass.
+## Phase 4 — controlled state
 
-## Phase 4: formalize region navigation
+Implement [STATE.md](./STATE.md) one surface at a time:
+1. search;
+2. skin tone;
+3. mode.
 
-Implement [NAVIGATION.md](./NAVIGATION.md).
+Add executable tests for each transition, including controlled parents that intentionally do not update their value.
 
-Requirements:
-- semantic region registry scoped to one Root;
-- DOM document order, never effect/mount order;
-- active/inactive region handling;
-- duplicate singleton diagnostics;
-- Root containment checks;
-- no hard-coded sibling traversal for cross-region movement;
-- logical grid coordinates independent of virtualized DOM.
+## Phase 5 — extract the canonical primitives
 
-Preserve the current default focus graph with compatibility adapters where explicitly specified.
+Extract the structural components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md).
 
-Add unit tests for the navigation graph before exposing primitives.
+The default picker must then render those same component modules.
 
-## Phase 5: split the current renderer into shared structural primitives
+Add a source-architecture test or build-time assertion that makes accidental private forks difficult once final module paths exist.
 
-Create internal versions of:
-- Root
-- Reactions
-- Panel
-- Search
-- SkinTone
-- CategoryNav
-- Viewport
-- List
-- Preview
+## Phase 6 — expose `/primitives`
 
-Refactor the default picker into the canonical composition from `SPEC.md`.
+Publish the primitives from source first while the repository build still controls module resolution.
 
-At this point these components can remain internal.
+Create Storybook fixtures that import the same exported source modules.
 
-Add an architecture boundary test proving the default entry has no default-only search/navigation/data/virtualization/selection implementation.
-
-Default visual snapshots must still pass.
-
-## Phase 6: separate structural and branded styles
-
-Move only behaviorally required CSS into the structural layer described by `STYLING_CONTRACT.md`.
-
-Keep the current v4 visual presentation in the default appearance layer.
-
-Do not attempt to make every CSS property override-safe.
-
-Add tests for:
-- supported emoji size/padding variables and measurement;
-- custom cosmetic styling;
-- variation overlay in custom structure.
-
-## Phase 7: add controlled search
-
-Implement:
-- `searchValue`;
-- `defaultSearchValue`;
-- `onSearchChange`.
-
-Use one controllable-state implementation for:
-- direct typing;
-- clear button;
-- grid type-to-search.
-
-Follow the exact source-of-truth semantics in `SPEC.md`.
-
-Do not add controlled skin-tone/mode/category APIs in this phase.
-
-## Phase 8: add narrow v5 feature APIs
-
-Implement:
-- `suggestedEmojis`;
-- `onReactionsModeChange`;
-- string-literal acceptance for readable enum-backed props.
-
-Preserve every v4 API in `V4_COMPATIBILITY.md`.
-
-Do not introduce:
-- `emojiSource`;
-- generic labels;
-- generic persistence adapters;
-- generic controlled mode.
-
-## Phase 9: expose primitives
-
-Publish `emoji-picker-react/primitives` from the shared primitive modules created in Phase 5.
-
-Add Storybook acceptance fixtures for:
-- canonical/default composition;
-- reordered regions;
+Required fixtures:
+- plug-and-play default;
+- reordered regions with a non-region product control between them;
 - omitted CategoryNav;
-- omitted Preview;
 - controlled search;
-- custom structural styling;
+- controlled mode;
+- styled primitives;
 - virtualized keyboard target;
-- reactions expansion;
-- native zero-image mode;
-- invalid composition diagnostics.
+- native renderer with an asset-probe URL resolver;
+- broken image renderer.
 
-Unskip the matching Playwright cases only as their fixtures exist.
+At this stage the package `exports` map does not need to be final yet.
 
-## Phase 10: expose minimal data API
+## Phase 7 — minimal public API additions
 
-Publish `emoji-picker-react/data` by re-exporting adapters over the pure modules from Phase 2.
+Add:
+- controlled search;
+- controlled skin tone;
+- controlled mode;
+- `suggestedEmojis`;
+- literal-value acceptance alongside existing enum exports.
 
-Required:
-- lookup by unified;
-- names/variations;
-- search;
-- optional explicit locale data input.
+Do **not** remove the retained v4 APIs listed in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
 
-Do not duplicate picker search logic inside the public entry.
+## Phase 8 — data API
 
-Do not add shortcode conversion in initial v5.
+Refactor/expose shared data modules so UI and `/data` call the same normalization/search implementation.
 
-## Phase 11: package exports
+Measure:
+- default bundle size;
+- data subpath bundle size;
+- whether importing one locale/data module drags unrelated locales.
 
-After built outputs exist:
+Finalize helper names only after consumer examples and tests exist.
 
-- add an explicit exports map;
-- expose root/primitives/data/new locale paths;
-- preserve documented `dist/data/emojis-*` imports via compatibility mappings;
-- intentionally block unsupported arbitrary deep imports;
-- preserve CJS and ESM;
-- preserve `react >=16.8`;
-- add Publint/AreTheTypesWrong or equivalent validation.
+## Phase 9 — package exports
 
-Public-subpath tests run against the built package in this phase; source development before this phase may use internal relative imports.
+Once actual build artifacts exist:
+- add main/primitives/data/locale exports;
+- preserve supported CJS/ESM behavior;
+- keep React `>=16.8`;
+- add declarations for every public subpath;
+- run Publint;
+- run AreTheTypesWrong or equivalent;
+- test a small ESM consumer;
+- test a small CJS consumer if CJS remains published;
+- verify documented v4 locale deep imports have a clear migration.
 
-## Phase 12: docs
+Adding `exports` intentionally blocks arbitrary undocumented deep imports; call this out in release notes.
 
-Update:
-- README;
-- PROPS.md;
-- CUSTOMIZATION.md;
-- INTERNATIONALIZATION.md;
-- CSS_VARIABLES.md only when the implementation changes documented structural facts;
-- website examples;
-- llms.txt.
+## Phase 10 — acceptance conversion
 
-Documentation order:
+The repository currently contains v5 test plans before the implementation exists.
 
-1. one-line plug-and-play quick start;
-2. normal customization/events;
-3. controlled search and new small APIs;
-4. structural primitives;
-5. data API;
-6. migration/private-import notes.
+Before release:
+- create every referenced Storybook fixture;
+- convert every applicable `it.todo` into a real assertion;
+- remove `describe.skip` from the v5 Playwright suite;
+- if the design changes, amend the spec and test plan explicitly rather than silently deleting a scenario.
 
-Do not lead normal users into primitives.
+A green run while the v5 suite is skipped is **not** v5 acceptance evidence.
 
-## Phase 13: visual adjudication and acceptance
+## Phase 11 — documentation
 
-Run the full visual suite.
+Update consumer docs in this order:
+1. zero-config quick start;
+2. ordinary configuration;
+3. new controlled state;
+4. styling;
+5. structural primitives;
+6. data API;
+7. migration.
 
-For any failure:
-1. rerun the same snapshot/test environment against the base/v4 branch;
-2. if base passes and v5 fails, treat it as a v5 regression;
-3. if base fails identically, treat it as environment/tooling drift and update baselines separately before proceeding;
-4. intentional design changes require an explicit spec amendment.
+The primitives API must not displace the default picker from the README hero path.
 
-Then run:
-- type check;
-- lint;
-- all unit tests;
-- full Playwright;
-- Storybook build;
-- production package build;
-- package validation;
-- size checks;
-- SSR tests;
-- `npm run check:v5-release`.
+## Phase 12 — release gate
 
-## Implementation constraints
-
-- Prefer small commits that keep the default picker working.
-- Do not rewrite the picker from scratch.
-- Do not invent new public API to make an internal refactor easier.
-- Do not expose internal state solely because it already exists.
-- Do not convert styling hooks into structural primitives unless consumers need structural ownership.
-- Do not weaken navigation/a11y/visual checks to accommodate the implementation.
+Complete [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md), including the full v4 API matrix and visual adjudication policy.
