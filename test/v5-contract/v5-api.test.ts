@@ -32,13 +32,22 @@ describe('v5 controlled search', () => {
   it.todo('debounces filtering by 100ms by default');
   it.todo('cancels older pending filter work when a newer query arrives');
   it.todo('clear emits an empty raw value');
-  it.todo('type-to-search uses the same transition service');
+  it.todo('uncontrolled type-to-search commits and focuses Search immediately');
+  it.todo('controlled type-to-search proposes without moving focus');
+  it.todo('accepted controlled type-to-search moves focus to Search on commit');
+  it.todo('rejected controlled type-to-search keeps Grid focus');
+  it.todo('newer proposal cancels pending controlled type-to-search focus');
+  it.todo('Search removal and reactions transition cancel pending type-to-search focus');
   it.todo('searchDisabled disables built-in type-to-search');
   it.todo('omitted Search disables built-in type-to-search and preserves Grid focus');
   it.todo('controlled searchValue may still filter when Search is omitted');
+  it.todo('does not overwrite controlled DOM value during active IME composition');
+  it.todo('does not emit intermediate IME onSearchChange values');
   it.todo('does not commit intermediate IME composition filter values');
   it.todo('does not run type-to-search shortcuts during IME composition');
-  it.todo('commits final IME value exactly once');
+  it.todo('emits final IME proposal exactly once');
+  it.todo('keeps accepted final controlled IME value');
+  it.todo('reconciles rejected final controlled IME value after compositionend');
 });
 
 describe('v5 reaction observation', () => {
@@ -52,29 +61,35 @@ describe('v5 reaction observation', () => {
 
 describe('v5 caller-defined suggestions', () => {
   it.todo('accepts uppercase unified identifiers');
-  it.todo('trims and lowercases identifiers for lookup');
-  it.todo('deduplicates after normalization preserving first occurrence');
+  it.todo('normalizes standard emoji identifiers for lookup');
+  it.todo('preserves exact standard skin-tone variation for rendering');
+  it.todo('matches exact custom emoji id before Unicode normalization');
+  it.todo('preserves custom emoji id casing');
+  it.todo('deduplicates by resolved render identity preserving first occurrence');
   it.todo('preserves caller order otherwise');
   it.todo('ignores unknown identifiers');
   it.todo('does not mutate the supplied array');
   it.todo('does not persist supplied values into localStorage');
-  it.todo('preserves recent/frequent localStorage behavior when absent');
+  it.todo('ignores suggestedEmojisMode for category content while suggestedEmojis is present');
+  it.todo('preserves recent/frequent localStorage behavior when suggestedEmojis is absent');
 });
 
 describe('v5 primitive exports and grammar', () => {
-  it.todo('exports Root Reactions Panel Search CategoryNav Viewport List Preview');
-  it.todo('requires exactly one Panel per Root');
-  it.todo('requires all full-picker regions to be Panel descendants');
-  it.todo('allows at most one Reactions sibling outside Panel');
-  it.todo('requires exactly one Viewport per Root');
-  it.todo('requires exactly one direct List child inside that Viewport');
-  it.todo('rejects extra or empty Viewports');
+  it.todo('exports Root Reactions Search CategoryNav Viewport List Preview');
+  it.todo('does not export a public Panel primitive');
+  it.todo('Root creates exactly one managed panel around non-Reactions children');
+  it.todo('allows arbitrary consumer wrappers and controls as Root children');
+  it.todo('requires Reactions to be a direct Root child');
+  it.todo('allows at most one Reactions primitive');
+  it.todo('allows Viewport omission');
+  it.todo('allows at most one Viewport');
+  it.todo('requires exactly one direct List child when Viewport is rendered');
+  it.todo('rejects List outside Viewport');
   it.todo('allows Search CategoryNav and Preview omission');
-  it.todo('allows arbitrary consumer UI inside Panel');
-  it.todo('rejects unsupported Root-level consumer UI');
-  it.todo('rejects duplicate singleton regions');
+  it.todo('throws on duplicate singleton registration in development');
+  it.todo('keeps first singleton authoritative and warns once in production');
   it.todo('rejects registered primitive portals outside Root');
-  it.todo('falls back to Panel when reactionsDefaultOpen has no Reactions');
+  it.todo('falls back to managed panel when reactionsDefaultOpen has no Reactions');
   it.todo('does not expose render-prop item composition');
   it.todo('does not expose arbitrary emoji-button replacement');
 });
@@ -88,13 +103,15 @@ describe('v5 primitive DOM contracts', () => {
   it.todo('RootProps includes every documented behavior prop including autoFocusSearch');
   it.todo('RootProps requires children and composes native aside attributes');
   it.todo('supports Search inputProps and inputRef');
+  it.todo('supports searchLabel for default picker accessible name');
+  it.todo('lets primitive Search inputProps aria-label override Root searchLabel for that instance');
   it.todo('does not accept arbitrary List children');
 });
 
 describe('v5 error ownership', () => {
   it.todo('keeps ErrorBoundary around the default picker');
   it.todo('does not install ErrorBoundary inside primitive Root');
-  it.todo('lets consumer-child render errors propagate from primitive Panel');
+  it.todo('lets consumer-child render errors propagate from Root managed panel');
   it.todo('does not claim React ErrorBoundary catches consumer event-handler exceptions');
 });
 
@@ -130,9 +147,9 @@ describe('v5 navigation', () => {
 describe('v5 identity and accessibility', () => {
   it.todo('removes fixed epr-search-id');
   it.todo('removes fixed epr-category-nav-id');
-  it.todo('produces no duplicate library-owned IDs across two Roots');
   it.todo('generates no library-owned DOM IDs in initial v5');
-  it.todo('keeps aria relationships inside the owning Root');
+  it.todo('two Roots still generate no library-owned DOM IDs');
+  it.todo('emits no library-owned IDREF relationships');
   it.todo('keeps composite grid behavior from issue 508');
   it.todo('keeps category accessibility context from issue 512');
   it.todo('keeps search status as a polite live region');
@@ -150,6 +167,8 @@ describe('v5 data API', () => {
   it.todo('maps variation lookup back to canonical base EmojiInfo');
   it.todo('uses supplied emojiData for lookup and search');
   it.todo('returns empty search results for an empty normalized query');
+  it.todo('documents and enforces data search as dataset search rather than picker-visible results');
+  it.todo('does not apply Root-only emojiVersion hiddenEmojis customEmojis category or suggestion filters');
   it.todo('does not import React or ShipStyles');
   it.todo('does not promise Slack shortcode conversion');
 });
