@@ -129,7 +129,7 @@ It must be a direct Root child so Root can keep it outside the managed panel.
 
 Private DOM wrapper exposed as `data-epr-part="panel"`.
 
-It contains every non-Reactions Root child and is the single subtree Root hides/inerts when compact reactions are active.
+It contains every Root child after the optional leading Reactions child and is the single subtree Root hides/inerts when compact reactions are active.
 
 Consumers may place arbitrary wrappers, close buttons, branding and layout containers inside this managed panel simply by rendering them as normal Root children.
 
