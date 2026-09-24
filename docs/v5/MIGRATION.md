@@ -43,6 +43,15 @@ const [search, setSearch] = useState('');
 
 This is the supported way to externally clear/synchronize the query.
 
+The built-in search input's accessible label can now be localized independently:
+
+```tsx
+<EmojiPicker
+  searchPlaceholder="Buscar"
+  searchLabel="Buscar un emoji"
+/>
+```
+
 ### Observe reaction-mode changes
 
 ```tsx
@@ -74,21 +83,21 @@ Use primitives only when you need to own macro layout/order:
 import * as EmojiPicker from 'emoji-picker-react/primitives';
 
 <EmojiPicker.Root>
-  <EmojiPicker.Panel>
-    <EmojiPicker.CategoryNav />
+  <EmojiPicker.CategoryNav />
 
-    <MyHeader>
-      <EmojiPicker.Search />
-    </MyHeader>
+  <MyHeader>
+    <EmojiPicker.Search />
+  </MyHeader>
 
-    <EmojiPicker.Viewport>
-      <EmojiPicker.List />
-    </EmojiPicker.Viewport>
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
 
-    <EmojiPicker.Preview />
-  </EmojiPicker.Panel>
+  <EmojiPicker.Preview />
 </EmojiPicker.Root>
 ```
+
+Root automatically wraps all non-Reactions children in its one managed full-picker panel subtree. Consumers do not render a Panel primitive.
 
 The library still owns emoji buttons, navigation, accessibility semantics, virtualization, variations, and selection.
 
