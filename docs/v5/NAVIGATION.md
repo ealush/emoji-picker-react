@@ -179,3 +179,19 @@ At minimum:
 - search results status remains a polite live region.
 
 If virtualization requires `aria-rowindex` / `aria-rowcount` or equivalent metadata for correct announcements, the implementation must add and test it rather than exposing that burden to consumers.
+
+
+## 11. Stale asynchronous navigation
+
+Materializing an offscreen logical destination may complete on a later animation frame.
+
+Every such operation captures the Root navigation generation from STATE.md/PERFORMANCE.md.
+
+Before scrolling or focusing, completion MUST verify that the generation is still current. A stale completion is discarded after:
+- normalized search/filter change;
+- categories/data/custom-emojis change;
+- viewport geometry/column-count change;
+- reactions/full-picker transition;
+- Root unmount.
+
+This prevents a row calculated from an obsolete grid from stealing focus after rapid typing, resize, configuration changes, or mode transition.
