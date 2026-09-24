@@ -278,7 +278,7 @@ Invalid:
 </EmojiPicker.Root>
 ```
 
-Reactions must be a direct Root child so it remains outside the managed panel.
+Reactions must be the first non-null direct Root child so it remains outside the managed panel without Root silently reordering consumer children.
 
 ## 11. Styling
 
