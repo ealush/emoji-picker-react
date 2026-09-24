@@ -86,9 +86,15 @@ These all use one search transition service:
 
 Clear proposes/emits `''`.
 
-Type-to-search appends to the current **visible raw value**, transfers focus to Search, and then follows the same controlled/uncontrolled rules.
+Type-to-search appends to the current **visible raw value**, transfers focus to Search, and then follows the same controlled/uncontrolled rules **only when a Search primitive is currently registered**.
 
-When `searchDisabled` is true, built-in type-to-search remains disabled.
+When `searchDisabled` is true **or Search is omitted**, built-in type-to-search behaves as disabled:
+- printable-key handling does not mutate the picker search state;
+- no `onSearchChange` callback fires;
+- Grid focus remains where it is;
+- the library does not prevent the key merely to simulate a missing Search region.
+
+Explicit application-controlled `searchValue` may still filter List even when Search is omitted. This allows an application to drive filtering from its own external input without enabling the picker's built-in type-to-search capture.
 
 ## 6. Reaction-mode observation
 
