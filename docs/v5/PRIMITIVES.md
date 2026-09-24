@@ -2,62 +2,124 @@
 
 This document defines the public contract of `emoji-picker-react/primitives`.
 
-The primitive layer provides **macro composition with managed behavior**. It is not a fully headless item-renderer API.
+The primitive layer provides **macro composition with managed behavior**. It is not a fully headless/item-renderer API.
 
-## 1. Grammar
+## 1. Public primitives
 
-The supported shape is:
+Initial v5 exports:
+
+- `Root`
+- `Reactions`
+- `Search`
+- `CategoryNav`
+- `Viewport`
+- `List`
+- `Preview`
+
+There is intentionally **no public Panel primitive**.
+
+Root owns one internal full-picker panel wrapper and renders all non-Reactions children inside it. The wrapper exposes `data-epr-part="panel"` for styling, but consumers do not have to place a component whose only legal position would be directly under Root.
+
+## 2. Composition grammar
+
+The common shape is:
 
 ```tsx
 <Root>
   <Reactions />
 
-  <Panel>
-    <Search />
+  <div className="my-card">
     <CategoryNav />
+
+    <div className="my-header">
+      <MyBrand />
+      <Search />
+    </div>
 
     <Viewport>
       <List />
     </Viewport>
 
     <Preview />
-  </Panel>
+  </div>
 </Root>
+```
+
+Root renders conceptually:
+
+```tsx
+<aside data-epr-part="root">
+  <Reactions />
+  <div data-epr-part="panel">
+    {/* every non-Reactions Root child, in caller order */}
+  </div>
+</aside>
 ```
 
 Rules:
 
 - `Root` is required.
-- Exactly one `Panel` MUST exist under each Root.
-- `Panel` MUST be a direct child of Root, except for transparent React fragments.
-- At most one `Reactions` may exist and it MUST be a direct child of Root.
-- Exactly one `Viewport` MUST exist under Panel.
-- Viewport MUST contain exactly one direct `List` child.
-- `List` MUST NOT exist outside that Viewport.
-- `Search`, `CategoryNav`, and `Preview` are optional singleton descendants of Panel.
-- Reactions MUST NOT be nested inside Panel.
-- Arbitrary consumer UI may be placed **inside Panel**, but not inside Viewport.
-- Root-level consumer UI outside Panel is unsupported because Root must be able to hide/inert the entire picker-mode subtree during reactions mode.
+- `Reactions` is optional and singleton.
+- Reactions MUST be a direct Root child so Root can keep it outside the managed panel.
+- Every direct Root child other than Reactions becomes panel content.
+- Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
+- `Search`, `CategoryNav`, `Viewport`, and `Preview` are optional singleton regions anywhere inside panel content.
+- At most one `Viewport` is supported per Root.
+- If `List` is rendered, it MUST be the single direct child of Viewport.
+- A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
+- Reactions nested inside panel content is invalid.
 - Registered primitives rendered through a portal outside Root are unsupported.
 
-Extra empty Viewports are invalid. Missing required Panel/Viewport/List is a programmer error, not a recoverable runtime state.
+This grammar deliberately has no mandatory public wrapper whose absence can only be discovered after mount.
 
-Development builds fail fast with a descriptive error for grammar violations.
+## 3. Reactions behavior
 
-## 2. Reactions grammar behavior
+If Reactions is absent:
+- Root behaves as a full-picker-only controller;
+- the managed panel is active;
+- `reactionsDefaultOpen={true}` is normalized to full-picker mode;
+- development builds warn once that compact reactions cannot be represented;
+- `onReactionsModeChange` is not emitted for that initial normalization.
 
-If a consumer does not render `Reactions`, Root operates as a full picker only.
+When compact reactions are active, Root applies hidden/inert/non-focusable state to the one internal panel wrapper. Consumers do not manage this state.
 
-If `reactionsDefaultOpen={true}` is supplied but no Reactions primitive exists:
-- development builds warn that the initial reactions request cannot be represented;
-- runtime falls back to showing Panel rather than rendering a blank picker;
-- `onReactionsModeChange` is not fired for this normalization because no user-visible transition occurred.
+If `allowExpandReactions={false}`, compact mode may remain terminal exactly as in v4.
 
-If Reactions exists but `allowExpandReactions={false}`, compact mode may remain terminal exactly as in v4.
+## 4. Validation mechanism
 
-Panel owns the entire full-picker subtree. When compact reactions are active, Root/Panel ensure every Panel descendant is hidden/inert/non-focusable as one unit.
+Validation is intentionally limited to invariants the library can enforce reliably.
 
-## 3. Exact Root prop contract
+### Render-time/context validation
+
+These fail immediately in development when the component renders:
+
+- any primitive outside Root;
+- List outside Viewport;
+- Viewport with zero, multiple, or a non-List direct child;
+- Reactions rendered from inside the managed panel rather than as a direct Root child, once panel context is available.
+
+### Registration-time singleton validation
+
+Search, CategoryNav, Viewport, Preview and Reactions register with the Root-scoped registry.
+
+When a second singleton of the same kind registers:
+
+- **development:** throw a descriptive error naming the duplicate primitive;
+- **production:** the first registration remains authoritative, the later registration is ignored by picker behavior, and a warning is emitted once.
+
+Registration validation happens after mount for arbitrarily nested primitives. It is not an SSR validator.
+
+### SSR
+
+Server rendering performs only validation available from render-time context/direct Root children.
+
+There is no post-mount/absence validation during SSR.
+
+Because Viewport/List are optional rather than required, initial v5 has no "missing Viewport after paint" failure mode.
+
+Exact development error text is not semver API.
+
+## 5. Exact Root prop contract
 
 Root owns behavior/configuration. It does not own the branded default appearance.
 
@@ -78,6 +140,7 @@ type RootBehaviorProps = Pick<
   | 'searchDisabled'
   | 'searchPlaceholder'
   | 'searchPlaceHolder'
+  | 'searchLabel'
   | 'searchClearButtonLabel'
   | 'categories'
   | 'categoryIcons'
@@ -103,7 +166,7 @@ type RootBehaviorProps = Pick<
 export type RootProps =
   Omit<
     React.HTMLAttributes<HTMLElement>,
-    keyof RootBehaviorProps | 'children'
+    keyof RootBehaviorProps | 'children' | 'role'
   > &
   RootBehaviorProps & {
     children: React.ReactNode;
@@ -112,22 +175,23 @@ export type RootProps =
 
 Consequences:
 
-- `className`, `style`, `id`, ordinary `aria-*`, ordinary `data-*`, title and root event handlers come from the native `aside` attributes.
-- `theme`, `width`, and `height` remain default-`EmojiPicker` appearance props, not Root behavior props.
-- `autoFocusSearch` is Root configuration because it affects the managed Search descendant.
-- `nonce` is Root configuration because structural/library-owned style injection may require it.
-- `children` is required and must satisfy the grammar above.
+- Root renders the actual `aside`.
+- `className`, `style`, `id`, ordinary non-reserved `aria-*`, ordinary non-reserved `data-*`, title and root event handlers come from native `aside` attributes.
+- `role` is library-owned and cannot override the Root landmark semantics.
+- `theme`, `width`, and `height` remain default-`EmojiPicker` appearance props.
+- `autoFocusSearch` affects the managed Search descendant.
+- `nonce` covers library-owned style injection.
+- `children` is required.
 
-If `PickerProps` later gains another behavior prop before v5 ships, the compatibility matrix and this Pick list must be updated together.
+If `PickerProps` gains another behavioral prop before v5 ships, this Pick list and V4_API_MATRIX must be updated together.
 
-## 4. Ref and DOM contracts
+## 6. Ref and DOM contracts
 
-Every structural primitive uses `React.forwardRef`.
+Every public structural primitive uses `React.forwardRef`.
 
 | Primitive | Default root element | Forwarded ref |
 | --- | --- | --- |
 | Root | `aside` | `React.Ref<HTMLElement>` |
-| Panel | `div` | `React.Ref<HTMLDivElement>` |
 | Reactions | `ul` | `React.Ref<HTMLUListElement>` |
 | Search | `div` region wrapper | `React.Ref<HTMLDivElement>` |
 | CategoryNav | `div role="tablist"` | `React.Ref<HTMLDivElement>` |
@@ -135,11 +199,14 @@ Every structural primitive uses `React.forwardRef`.
 | List | `ul role="grid"` | `React.Ref<HTMLUListElement>` |
 | Preview | `div` | `React.Ref<HTMLDivElement>` |
 
+The internal panel is not ref-addressable in initial v5. Consumers can style it through `[data-epr-part="panel"]` and can place their own wrapper inside Root when they need a ref.
+
 v5 does not add `as` or `asChild` polymorphism.
 
-## 5. Native prop forwarding
+## 7. Native prop forwarding
 
-Each primitive forwards ordinary native props valid for its root element, including:
+Every public primitive forwards ordinary native props valid for its root element, including:
+
 - `id`;
 - non-reserved `aria-*`;
 - non-reserved `data-*`;
@@ -148,35 +215,36 @@ Each primitive forwards ordinary native props valid for its root element, includ
 - `style`;
 - ordinary event handlers.
 
-Reserved behavioral props are not overridable through native forwarding.
+The library owns `role` on every primitive and omits it from the public native prop type. This avoids inconsistent accessibility escape hatches.
 
-Reserved examples:
-- List `role="grid"`;
-- CategoryNav `role="tablist"`;
-- library `data-epr-part`;
+The library also reserves:
+
+- `data-epr-*`;
 - internal focus-management attributes;
-- required hidden/inert state while reactions are active.
+- required hidden/inert state.
 
-The `data-epr-*` namespace is reserved for the library. Consumer `data-*` attributes outside that namespace are forwarded.
+Consumer `data-*` attributes outside `data-epr-*` are forwarded.
 
-Initial v5 does not generate library-owned `id` attributes. A consumer-supplied native `id` is forwarded unchanged and remains consumer-owned.
+Initial v5 generates no library-owned DOM `id` attributes. Consumer IDs remain consumer-owned.
 
-## 6. Handler composition and exceptions
+## 8. Handler composition and exceptions
 
 For handlers attached to a primitive root:
+
 1. library behavioral handler runs first;
 2. consumer handler runs second with the same event.
 
-Consumer `preventDefault()` is **not** a supported way to disable required picker behavior.
+Consumer `preventDefault()` is not a supported way to disable required picker behavior.
 
 If a consumer event handler throws:
+
 - primitives do not catch it;
-- React ErrorBoundaries do **not** catch event-handler exceptions;
-- the exception follows normal React/browser event-handler error behavior unless the consumer catches it explicitly.
+- React ErrorBoundaries do not catch event-handler exceptions;
+- the exception follows normal React/browser event-handler behavior unless the consumer catches it explicitly.
 
-Render/lifecycle errors thrown by arbitrary consumer children inside Panel are also not intercepted by primitive Root because primitives install no library ErrorBoundary.
+Render/lifecycle errors from arbitrary consumer UI are not intercepted by primitive Root because primitives install no library ErrorBoundary.
 
-## 7. Search-specific props
+## 9. Search-specific props
 
 Search renders a managed search region containing the input, status live region, clear control, search icon, and (when configured) the search-position skin-tone control.
 
@@ -203,66 +271,74 @@ The wrapper ref and `inputRef` are distinct.
 
 `inputProps` may customize ordinary input attributes such as `name`, `aria-label`, `autoComplete`, and consumer event listeners. Internal input handlers run before consumer handlers.
 
-Search value, placeholder, autofocus and change semantics are configured through Root/default picker props so there is one source of truth.
+Root/default-picker props own the canonical built-in input value, placeholder, accessible label, autofocus and change semantics.
 
-## 8. List contract
+## 10. Viewport and List
 
-`List` owns all list/grid descendants and does not accept consumer children.
+List owns all grid descendants and does not accept consumer children.
 
 ```ts
 export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
   'role' | 'children'
 >;
-```
-
-It owns categories, virtual rows, managed emoji buttons, row/group semantics and variation integration.
-
-## 9. Panel, Viewport, CategoryNav, Preview, Reactions
-
-```ts
-export type PanelProps =
-  Omit<React.HTMLAttributes<HTMLDivElement>, 'role'> & {
-    children: React.ReactNode;
-  };
 
 export type ViewportProps =
-  Omit<React.HTMLAttributes<HTMLDivElement>, 'role' | 'children'> & {
+  Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    'role' | 'children'
+  > & {
     children: React.ReactElement<ListProps, typeof List>;
   };
-
-export type CategoryNavProps =
-  Omit<React.HTMLAttributes<HTMLDivElement>, 'role' | 'children'>;
-
-export type PreviewProps =
-  Omit<React.HTMLAttributes<HTMLDivElement>, 'children'>;
-
-export type ReactionsProps =
-  Omit<React.HTMLAttributes<HTMLUListElement>, 'children'>;
 ```
 
-CategoryNav, Preview and Reactions own their managed descendants.
+Viewport runtime-validates exactly one direct List child.
 
-The Viewport child type is a developer aid; runtime validation still enforces exactly one direct List because TypeScript alone cannot protect JavaScript consumers or every JSX widening case.
+The type is a developer aid; runtime validation remains necessary for JavaScript consumers and JSX widening.
 
-## 10. Error boundaries
+## 11. CategoryNav, Preview and Reactions
+
+```ts
+export type CategoryNavProps =
+  Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    'role' | 'children'
+  >;
+
+export type PreviewProps =
+  Omit<
+    React.HTMLAttributes<HTMLDivElement>,
+    'role' | 'children'
+  >;
+
+export type ReactionsProps =
+  Omit<
+    React.HTMLAttributes<HTMLUListElement>,
+    'role' | 'children'
+  >;
+```
+
+They own their managed descendants.
+
+## 12. Error boundaries
 
 The default `<EmojiPicker />` retains the current library ErrorBoundary around the complete default picker.
 
 The primitives entry point installs no ErrorBoundary in Root or any child primitive.
 
 Therefore:
-- render/lifecycle errors from picker internals or consumer children propagate to the nearest consumer-owned ErrorBoundary outside the primitives tree;
-- event-handler exceptions are not caught by React ErrorBoundaries at all.
 
-## 11. Styling
+- render/lifecycle errors propagate to a consumer-owned surrounding ErrorBoundary when one exists;
+- event-handler exceptions are not caught by React ErrorBoundaries.
 
-All primitive root elements expose the stable parts listed in [STYLING.md](./STYLING.md).
+## 13. Styling
+
+All public primitive root elements and the internal managed panel expose the stable parts listed in STYLING.md.
 
 Native style/class forwarding does not relax protected structural CSS responsibilities.
 
-## 12. Type/version compatibility
+## 14. Type/version compatibility
 
-The public primitive types must compile with the package's declared React peer floor.
+The public primitive types must compile with the declared React peer floor.
 
 Do not use runtime/type helpers whose contract silently assumes React 18 while the peer range remains `>=16.8`.
