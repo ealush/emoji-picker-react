@@ -4,31 +4,46 @@ This directory is the implementation contract for v5.
 
 Read in this order:
 
-1. [SPEC.md](./SPEC.md) — product and architecture requirements.
-2. [API.md](./API.md) — target public API and composition examples.
-3. [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) — recommended implementation sequence and boundaries.
-4. [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md) — visual-regression policy.
-5. [MIGRATION.md](./MIGRATION.md) — intended v4-to-v5 migration.
-6. [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) — release gate.
+1. [SPEC.md](./SPEC.md) — product guarantees and architectural boundaries.
+2. [V4_API_MATRIX.md](./V4_API_MATRIX.md) — disposition of every existing public prop/API.
+3. [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md) — the canonical plug-and-play tree and falsifiable one-implementation rule.
+4. [API.md](./API.md) — consumer-facing v5 additions and primitive examples.
+5. [STATE.md](./STATE.md) — controlled/uncontrolled semantics.
+6. [NAVIGATION.md](./NAVIGATION.md) — exact region identity/order/key behavior.
+7. [STYLING.md](./STYLING.md) — structural CSS versus appearance customization.
+8. [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md) — visual baseline and environment-drift adjudication.
+9. [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) — implementation sequence.
+10. [MIGRATION.md](./MIGRATION.md) — v4 → v5 consumer migration.
+11. [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) — release gate.
 
-Executable contracts:
-- `test/v5-contract/v5-api.test.ts` — Vitest TODO contract. Convert TODOs into assertions as v5 surfaces land.
-- `playwright/v5-acceptance.spec.ts` — skipped end-to-end acceptance contract. Unskip scenarios as their fixtures become available.
-- existing `playwright/*` visual snapshots — unchanged default-component visual baseline.
+Test plans:
+- `test/v5-contract/v5-api.test.ts`
+- `playwright/v5-acceptance.spec.ts`
 
-## Decision hierarchy
+These are intentionally placeholders while this PR contains no v5 runtime implementation. They are **not executed v5 acceptance evidence**. Before release, every applicable unit TODO must become a real assertion and the Playwright suite must be unskipped against real fixtures.
 
-If documents disagree:
-1. `SPEC.md`
-2. `ACCEPTANCE_CHECKLIST.md`
-3. `API.md`
-4. `MIGRATION.md`
-5. examples/comments in tests
-
-Do not resolve ambiguity by weakening default visual compatibility, keyboard behavior, accessibility, or the plug-and-play API.
+Existing v4 unit/interaction/visual suites remain active throughout implementation.
 
 ## Product statement
 
-v5 should remain the easiest way to add a complete React emoji picker while allowing advanced teams to compose its major regions without taking ownership of the difficult behavior.
+**Start with one component. Compose the structure only when you need to.**
 
-**Compose presentation. Keep behavior managed.**
+The default picker remains the path of least resistance. Structural primitives let advanced consumers rearrange the macro skeleton without taking ownership of the behavior that makes the picker difficult to implement correctly.
+
+## API-design rule
+
+v5 should make strategic changes, not maximize the number of breaking changes.
+
+Prefer:
+- familiar React conventions;
+- narrow surface area;
+- additive control;
+- explicit supported escape hatches;
+- fail-fast invalid composition;
+- documented migration.
+
+Avoid:
+- speculative abstractions;
+- exposing internal machinery;
+- duplicate implementations;
+- broad override APIs whose safety contract is unclear.
