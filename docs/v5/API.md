@@ -182,7 +182,7 @@ function ProductPicker() {
 }
 ```
 
-Root automatically creates the one managed full-picker panel wrapper around every direct child other than Reactions.
+Root automatically creates the one managed full-picker panel wrapper around every child after the optional leading Reactions child.
 
 That gives reactions mode one subtree to hide/inert without forcing consumers to render a public Panel component in exactly one legal location.
 
