@@ -1,158 +1,238 @@
 # v5 Implementation Plan
 
-Implementation proceeds from public behavior inward.
+Implementation proceeds from public behavior inward. Each phase must leave the existing plug-and-play picker green.
 
-## Phase 0 — establish the baseline
+## Phase 0 — freeze compatibility and performance baselines
 
-Before v5 runtime work:
+Before runtime refactoring:
+
 - run all current unit tests;
-- run all current Playwright interaction tests;
-- run all current visual tests;
+- run all current Playwright interaction/visual tests;
 - record current package size/build output;
+- create the benchmark harness required by [PERFORMANCE.md](./PERFORMANCE.md);
+- record the pre-refactor v4 benchmark baseline using that harness;
+- add packed-package ESM/CJS consumer smoke fixtures;
+- add a React 16.8 runtime/SSR consumer fixture;
 - document any pre-existing flaky/failing checks.
 
-Do not start by regenerating screenshots.
+Baseline metrics must include:
+- default dataset preparation/index construction;
+- representative search queries;
+- one-picker initialization;
+- ten-picker same-dataset initialization;
+- scroll/virtualization commit counts;
+- key render-count probes.
+
+Do not begin by refreshing screenshots or changing size thresholds.
 
 ## Phase 1 — characterize current behavior
 
-Add/confirm tests for the behavior v5 must preserve:
-- current focus graph;
-- search mode exceptions;
-- reactions expansion/collapse;
+Add/confirm executable tests for:
+- current default focus graph;
+- active-search navigation exceptions;
+- reactions expand/collapse;
 - `collapseToReactions()`;
-- screen-reader grid roles/names;
-- SSR with persisted-suggestions code present;
-- CSP nonce propagation.
+- issue #508 composite-grid behavior;
+- issue #512 category accessibility context;
+- SSR/localStorage behavior;
+- CSP nonce propagation;
+- current ErrorBoundary behavior;
+- current top-level exports, including `Emoji` and `emojiByUnified`.
 
-Issue #508 behavior must be restated/tested: the emoji collection is a composite widget so Windows screen readers allow arrow keys to reach the app.
+Remove current fixed global IDs only when equivalent/better accessibility is covered by tests.
 
-Issue #512 behavior must be restated/tested: category grouping provides enough accessible context that emoji controls are announced with their category context where supported.
+## Phase 2 — pure shared data core
 
-## Phase 2 — shared internal engine, no public primitives yet
+Before extracting UI primitives:
 
-Refactor current behavior into one Root-scoped implementation:
-- picker state;
-- data lookup/search;
-- selection;
-- navigation registry;
-- logical grid navigation;
-- focus restoration.
+- isolate dataset normalization, lookup and search into pure modules;
+- make the default packaged dataset immutable from picker instances;
+- cache prepared data by dataset identity as required by PERFORMANCE.md;
+- remove per-Root full JSON clone/index construction from the default path;
+- define the normalized `/data` adapters in [DATA_API.md](./DATA_API.md);
+- preserve the existing top-level `emojiByUnified` implementation contract.
 
-Keep current default DOM/appearance stable during this phase.
+Run data-core benchmarks after this phase. Ten Roots with the same dataset must report one base index construction.
 
-No second "headless implementation" is permitted.
+## Phase 3 — Root controller and sliced state
 
-## Phase 3 — formalize region navigation
+Create one Root-scoped controller architecture:
 
-Implement [NAVIGATION.md](./NAVIGATION.md):
-- Root-scoped registry;
-- singleton validation;
-- DOM-order traversal;
-- local region keymaps;
-- search-mode exception;
-- virtualization materialize/scroll/focus;
-- multi-root isolation.
+- stable data/services context;
+- narrowly split search state;
+- reactions state;
+- preview state;
+- variation state;
+- skin-tone state;
+- viewport/geometry state;
+- imperative Root-scoped navigation registry.
 
-Add real unit tests around the registry/algorithm before exposing primitives.
+Do not create another broad PickerContext whose value changes for unrelated state.
 
-## Phase 4 — state API additions
+Use only React-16.8-compatible runtime APIs.
+
+Add render-count assertions from PERFORMANCE.md before continuing.
+
+## Phase 4 — region navigation and identity
+
+Implement [NAVIGATION.md](./NAVIGATION.md) and [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md):
+
+- semantic region registration;
+- DOM-document-order traversal;
+- duplicate/portal validation;
+- logical grid coordinates independent of mounted DOM;
+- materialize/scroll/focus with navigation-generation cancellation;
+- multi-Root isolation;
+- removal of hard-coded document-global IDs;
+- `idPrefix` handling for unavoidable generated IDs.
+
+Run multiple-root SSR/hydration and React-16 runtime fixtures here, not only at release time.
+
+## Phase 5 — state/API additions
 
 Implement [STATE.md](./STATE.md):
+
 1. controlled/uncontrolled search;
-2. reaction-mode observation;
-3. caller-defined suggested emojis.
+2. immediate raw callback + 100 ms derived filtering;
+3. IME composition semantics;
+4. reaction-mode observation;
+5. normalized caller-defined suggested emojis.
 
-For controlled search, include a parent that intentionally ignores a proposed value so the source-of-truth semantics are executable.
+Tests include a controlled parent that intentionally ignores proposed search changes.
 
-## Phase 5 — extract the canonical primitives
+## Phase 6 — extract canonical public primitives
 
-Extract the structural components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md).
+Extract the components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.md) with the exact types/grammar in [PRIMITIVES.md](./PRIMITIVES.md).
 
-The default picker must then render those same component modules.
+The default picker must render those same component modules.
 
-Add a source-architecture test or build-time assertion that makes accidental private forks difficult once final module paths exist.
+Required implementation checks:
+- Panel is exactly one managed full-picker subtree;
+- full-picker regions outside Panel fail fast;
+- Viewport/List grammar is validated;
+- every primitive forwards the documented ref/native props;
+- internal handlers compose according to PRIMITIVES.md;
+- primitive Root does not install the default ErrorBoundary.
 
-## Phase 6 — expose `/primitives`
+Add a source-architecture assertion that prevents reintroducing a private parallel Search/List/Reactions tree.
 
-Publish the primitives from source first while the repository build still controls module resolution.
+## Phase 7 — primitives fixtures and early package/tree-shaking validation
 
-Create Storybook fixtures that import the same exported source modules.
+Expose `emoji-picker-react/primitives` in the build early enough to test the real output.
 
-Required fixtures:
-- plug-and-play default;
-- reordered regions with a non-region product control between them;
+Create Storybook/consumer fixtures for:
+- default zero-config picker;
+- reordered regions entirely inside Panel;
+- non-region consumer control inside Panel;
 - omitted CategoryNav;
-- controlled search;
+- controlled search with stale parent;
+- IME search composition;
 - reaction-mode observer;
 - styled primitives;
-- virtualized keyboard target;
-- native renderer with an asset-probe URL resolver;
-- broken image renderer.
+- virtualized offscreen navigation;
+- stale navigation cancellation;
+- native asset probe;
+- broken image assets;
+- multiple Roots;
+- multiple SSR Roots with/without `idPrefix`.
 
-At this stage the package `exports` map does not need to be final yet.
+Packed consumer checks at this phase must prove:
+- primitives resolve with declarations;
+- importing primitives does not drag in the default appearance wrapper;
+- the data entry does not import React/ShipStyles.
 
-## Phase 7 — minimal public API additions
+Do not defer these package-shape discoveries to the final week.
 
-Add:
-- controlled search;
-- controlled search;
-- `onReactionsModeChange`;
-- `suggestedEmojis`;
-- literal-value acceptance alongside existing enum exports.
+## Phase 8 — public type compatibility
 
-Do **not** remove the retained v4 APIs listed in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
+Implement the full [V4_API_MATRIX.md](./V4_API_MATRIX.md):
 
-## Phase 8 — data API
+- keep every existing main-entry symbol;
+- keep `Emoji`;
+- keep top-level `emojiByUnified`;
+- keep `PickerProps` and `Props`;
+- keep exported enums/types;
+- add literal acceptance without removing enum imports;
+- add the small v5 prop set.
 
-Refactor/expose shared data modules so UI and `/data` call the same normalization/search implementation.
+Compile representative v4 TypeScript usage against v5 declarations.
 
-Measure:
-- default bundle size;
-- data subpath bundle size;
-- whether importing one locale/data module drags unrelated locales.
+## Phase 9 — data entry and locale exports
 
-Finalize helper names only after consumer examples and tests exist.
+Expose exactly the initial API in [DATA_API.md](./DATA_API.md).
 
-## Phase 9 — package exports
+Then:
+- add stable locale package subpaths;
+- test locale-aware search when `emojiData` is supplied;
+- verify one locale import does not pull every locale;
+- keep shortcode conversion out until a canonical mapping source is specified.
 
-Once actual build artifacts exist:
-- add main/primitives/data/locale exports;
-- preserve supported CJS/ESM behavior;
-- keep React `>=16.8`;
-- add declarations for every public subpath;
-- run Publint;
-- run AreTheTypesWrong or equivalent;
-- test a small ESM consumer;
-- test a small CJS consumer if CJS remains published;
-- verify documented v4 locale deep imports have a clear migration.
+## Phase 10 — final exports map/package validation
 
-Adding `exports` intentionally blocks arbitrary undocumented deep imports; call this out in release notes.
+Finalize `package.json#exports` only after the actual artifacts/subpaths are known.
 
-## Phase 10 — acceptance conversion
+Validate packed artifacts with:
+- Publint;
+- AreTheTypesWrong or equivalent;
+- ESM consumer;
+- CJS consumer if CJS remains published;
+- React 16.8 consumer;
+- current React consumer;
+- supported locale imports;
+- documented v4 deep-locale compatibility/migration;
+- size-limit/analyzer.
 
-The repository currently contains v5 test plans before the implementation exists.
+Unspecified arbitrary `dist/*`/ `src/*` imports may be blocked and are called out as the intentional package-boundary break.
 
-Before release:
-- create every referenced Storybook fixture;
-- convert every applicable `it.todo` into a real assertion;
-- remove `describe.skip` from the v5 Playwright suite;
-- if the design changes, amend the spec and test plan explicitly rather than silently deleting a scenario.
+## Phase 11 — performance gate
 
-A green run while the v5 suite is skipped is **not** v5 acceptance evidence.
+Run every [PERFORMANCE.md](./PERFORMANCE.md) gate against the frozen Phase-0 baseline:
 
-## Phase 11 — documentation
+- cold/warm data preparation;
+- search;
+- one/ten Root initialization;
+- render isolation;
+- scroll commit coalescing;
+- multi-root data sharing;
+- navigation cancellation;
+- bundle/tree-shaking.
 
-Update consumer docs in this order:
-1. zero-config quick start;
-2. ordinary configuration;
-3. new controlled state;
+A functional green suite does not override a failed performance gate.
+
+## Phase 12 — acceptance conversion
+
+Before v5 can ship:
+
+- every applicable `it.todo` becomes a real assertion;
+- the v5 Playwright `describe.skip` is removed;
+- every referenced fixture exists;
+- test plans changed by design amendments are updated explicitly rather than silently deleted.
+
+A green CI run while v5 tests remain TODO/skipped is not v5 acceptance evidence.
+
+## Phase 13 — consumer documentation
+
+Update docs in this order:
+
+1. one-line quick start;
+2. existing configuration;
+3. controlled search/reaction observer/custom suggestions;
 4. styling;
 5. structural primitives;
 6. data API;
-7. migration.
+7. migration/package boundaries.
 
-The primitives API must not displace the default picker from the README hero path.
+The README hero remains the default component, not primitives.
 
-## Phase 12 — release gate
+Regenerate `llms.txt` after any root distributable-doc change.
 
-Complete [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md), including the full v4 API matrix and visual adjudication policy.
+## Phase 14 — release gate
+
+Complete [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).
+
+No phase may silently relax:
+- visual compatibility;
+- React peer floor;
+- package export compatibility;
+- performance thresholds;
+- accessibility/navigation behavior.
