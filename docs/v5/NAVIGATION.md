@@ -1,194 +1,181 @@
 # v5 Navigation Contract
 
-This document defines the keyboard-navigation model for both the default picker and the primitives API.
+This document defines cross-region focus behavior for the structural primitives.
 
-## Goals
+## 1. Region model
 
-- Preserve the current default picker keyboard behavior.
-- Allow supported structural reordering without relying on React mount order or sibling selectors.
-- Keep real DOM focus on managed controls.
-- Keep virtualization an implementation detail.
-- Keep arbitrary consumer UI reachable through normal browser Tab order without pretending it is part of the picker arrow-key graph.
+The navigation graph contains focusable **regions**, not every DOM node.
 
-## 1. Region registry
+Initial region kinds:
 
-Each Root owns its own registry.
+| Region | Singleton per Root | Focus behavior |
+| --- | --- | --- |
+| `reactions` | yes | horizontal/vertical sibling reaction navigation |
+| `search` | yes | input + local clear/skin-tone behavior |
+| `categories` | yes | horizontal tab navigation |
+| `grid` | yes | logical 2D emoji navigation |
+| `preview-skin-tone` | yes | skin-tone control when located in preview |
 
-Managed interactive region kinds are:
+`Panel`, `Viewport`, `Preview` itself, category groups, and consumer wrappers are not generic focus regions.
 
-```ts
-type RegionKind =
-  | 'search'
-  | 'skin-tone'
-  | 'categories'
-  | 'grid'
-  | 'reactions';
-```
+Each region registration has:
+- an opaque instance ID;
+- a semantic kind;
+- a root DOM element;
+- optional local focus-entry function;
+- optional local edge handlers.
 
-`Panel`, `Viewport` and `Preview` are structural containers, not navigation regions.
+The semantic kind is not used as a global singleton key across the document; it is scoped to one Root.
 
-Each region registers:
-- a stable instance token;
-- its RegionKind;
-- its root HTMLElement;
-- whether it is currently active/eligible for managed navigation.
+## 2. Uniqueness
 
-### Uniqueness
+For v5, all listed region kinds are singletons inside one Root.
 
-Each RegionKind is singleton within one Root.
+Mounting two Search primitives, two CategoryNav primitives, two Lists, or two Reactions primitives in one Root is invalid.
 
-A second active registration of the same kind is an invalid composition and must produce a descriptive development/test error.
+Development builds MUST fail fast with a descriptive error or warning that names:
+- the duplicate primitive;
+- why the composition is unsupported;
+- the relevant v5 composition documentation.
 
-React StrictMode effect replay is not a duplicate: registration must be keyed by the primitive instance token and tolerate its own cleanup/re-registration.
+Production behavior may keep the first registration to avoid crashing a runtime, but duplicate behavior is unsupported.
 
-## 2. Ordering
+## 3. Ordering
 
-Registration order is never navigation order.
+Generic previous/next-region movement uses **DOM document order of registered region roots**.
 
-When cross-region movement is needed, Root orders active regions by their actual DOM document order using their registered root elements.
+It MUST NOT use:
+- registration/mount order;
+- React render timing;
+- object insertion order.
 
-Consequences:
-- ordinary wrapper elements do not matter;
-- React child mount timing does not matter;
-- application UI that is not a managed region is not inserted into the arrow-key graph;
-- CSS `order`, transforms, absolute positioning or other visual-only reordering do not change the managed graph;
-- structural primitives portaled outside the Root DOM subtree are unsupported.
+Wrappers are naturally handled because DOM order compares actual registered roots.
 
-If a consumer needs an unrelated button/link between regions, it remains reachable with Tab/Shift+Tab. Arrow keys remain scoped to the picker widget.
+Consumer nodes that are not registered regions are skipped by the arrow-navigation graph. They remain reachable through normal browser Tab order.
 
-## 3. Active regions
+### Portals
 
-A registered region can be temporarily inactive.
+A registered primitive rendered into a portal outside Root's DOM subtree is unsupported in v5 because document order no longer represents the picker's structural skeleton.
 
-Examples:
-- CategoryNav is inactive while search mode hides category navigation.
-- Panel regions are inactive while the reactions bar is the visible mode.
-- Reactions is inactive while the expanded picker is visible.
-- a disabled SkinTone control is inactive.
+Development builds SHOULD warn when a region root is not contained by the Root DOM element.
 
-Inactive regions are skipped when calculating previous/next managed regions.
+### CSS visual reordering
 
-## 4. Cross-region navigation
+Consumers MAY use CSS, but arrow navigation follows DOM order, not CSS `order`, transforms, or visual coordinates.
 
-`previousRegion(current)` and `nextRegion(current)` mean the previous/next active registered region in DOM order.
+If a consumer visually reorders regions without changing DOM order, they own the resulting mismatch. Documentation must say this explicitly.
 
-Regions do not automatically transition on every Up/Down press. Each region defines when it has reached its own boundary.
+## 4. Local versus cross-region keys
+
+Each region first handles keys meaningful within itself.
+
+Only an unhandled edge movement may delegate to cross-region navigation.
 
 ### Search
 
-- ArrowDown: focus the first focusable target in `nextRegion(search)`.
-- Enter: activate the first visible emoji in Grid, preserving v4 behavior.
-- ArrowRight: when a SkinTone primitive is composed as Search trailing content, open/focus it as today.
-- ordinary text-editing keys retain native input behavior.
+- text input behaves normally for text editing;
+- `ArrowDown` enters the next applicable picker region;
+- when the existing search-position skin-tone control is enabled, the existing Search ↔ skin-tone horizontal behavior is preserved;
+- `Enter` preserves current behavior of activating/focusing the first visible result where applicable.
 
-### SkinTone
+### Categories
 
-The skin-tone control owns movement inside its open menu.
-
-For primitive compositions:
-- exit toward the previous/next managed region follows DOM order at the boundary;
-- ordinary wrappers do not affect this.
-
-For the plug-and-play legacy `skinTonePickerLocation="PREVIEW"` configuration, v4 focus behavior is preserved even when it differs from the generic primitive-placement rule. This is a compatibility adapter, not the primitive navigation model.
-
-### CategoryNav
-
-- ArrowLeft/ArrowRight: previous/next category tab.
-- ArrowUp: focus the first target in `previousRegion(categories)`.
-- ArrowDown: focus the first target in `nextRegion(categories)`.
-- type-to-search: route through the same search command described below.
-
-In the canonical default composition this remains:
-- Up -> Search
-- Down -> Grid
-
-In a supported reordered composition such as Categories -> Search -> Grid:
-- Up -> no previous managed region
-- Down -> Search
-
-This is deliberate and deterministic.
+- `ArrowLeft` / `ArrowRight`: previous/next category tab;
+- `ArrowDown`: enter the next focusable registered region after Categories in DOM order, normally Grid;
+- `ArrowUp`: enter the previous focusable registered region in DOM order.
 
 ### Grid
 
-Within the grid:
-- ArrowLeft/ArrowRight move one logical emoji;
-- ArrowUp/ArrowDown move one logical row;
-- category/virtualization boundaries must not alter logical movement;
-- Space preserves variation-picker behavior;
-- typing an alphanumeric key routes through the shared type-to-search command.
-
-At the top logical row:
-- ArrowUp exits to `previousRegion(grid)`.
-
-At the bottom logical row:
-- ArrowDown does not automatically leave the grid in v5.
-
-This preserves the current picker model and avoids inventing Preview as an arrow-key destination.
+- `ArrowLeft` / `ArrowRight`: logical adjacent emoji;
+- `ArrowUp` / `ArrowDown`: logical row movement while such a destination exists;
+- when vertical movement crosses the top edge, move to the previous focusable region in DOM order;
+- moving below the last logical row does not leave the picker unless a future RFC defines such behavior;
+- typing an alphanumeric key runs the shared type-to-search transition.
 
 ### Reactions
 
-While reactions are visible:
-- ArrowLeft/ArrowUp move to the previous reaction/expand button;
-- ArrowRight/ArrowDown move to the next reaction/expand button;
-- boundaries do not wrap unless current v4 behavior changes before implementation starts;
-- activating Expand transitions to Panel and moves focus to the first active Panel region, preferring Search and otherwise the earliest active region in DOM order.
+- arrow keys move between reaction buttons/expand control using existing behavior;
+- expansion changes mode and intentionally transfers focus into the full picker according to STATE.md;
+- collapse restores focus according to STATE.md.
 
-When `collapseToReactions()` is invoked, focus is restored to the expand control when it exists, otherwise to the first reaction.
+### Preview skin tone
 
-## 5. Type-to-search
+Local fan navigation preserves v4 behavior. Edge movement delegates to the nearest focusable region in DOM order where doing so matches the physical placement.
 
-The type-to-search command is instance-scoped to Root.
+## 5. Search-mode exception
 
-If Search is present and enabled:
-1. close open toggles/variation UI as v4 does;
-2. focus Search;
-3. compute the next search string;
-4. route that value through the same controlled/uncontrolled search update path as direct input.
+v4 has a useful semantic shortcut: while search results are active, navigation should enter the result grid rather than detouring through category tabs that are not relevant to the filtered result.
 
-If Search is omitted or `searchDisabled` is true, managed type-to-search is disabled. An externally supplied `searchValue` may still filter the List.
+v5 preserves this rule:
 
-For controlled search, no optimistic internal filter value exists: the parent must commit the next `searchValue`.
+- Search `ArrowDown` while search is active → Grid.
+- Grid top-edge `ArrowUp` while search is active → Search.
 
-## 6. Escape precedence
+This semantic exception wins over generic DOM-order traversal.
 
-Preserve the current v4 precedence:
+## 6. Omitted regions
 
-1. If a variation/toggle UI is open, Escape closes it and stops.
-2. Otherwise Escape clears search, scrolls the picker to the top and focuses Search when Search exists.
-3. Escape does not implicitly collapse the expanded picker to Reactions.
+Omitted or non-rendering regions are absent from the graph.
 
-If Search is omitted, step 2 clears internal/uncontrolled search state when applicable and leaves focus on the current managed element.
+Examples:
+- no CategoryNav: Search Down → Grid;
+- no Search: Categories Up does not target an absent Search;
+- no Preview: no effect on grid navigation;
+- disabled skin tones: no skin-tone destination.
 
-## 7. Virtualization
+There are no placeholder/dead graph nodes.
 
-The navigation model stores logical identity/coordinates independently of the mounted DOM row.
+## 7. Consumer UI between primitives
 
-When the next logical target is unmounted:
-1. request the Viewport to materialize/scroll the target;
-2. wait until the target's managed button registers;
-3. focus that exact button;
-4. retain the original keyboard command as one logical movement.
+Arbitrary consumer UI inserted between registered primitives is **not** automatically part of arrow navigation.
 
-A row becoming materialized before focus moves to it is not success.
+Example:
 
-Acceptance coverage must prove a target absent from the initial DOM becomes focused through keyboard navigation.
+```tsx
+<Root>
+  <CategoryNav />
+  <button>Close</button>
+  <Search />
+  <Viewport><List /></Viewport>
+</Root>
+```
 
-## 8. Accessibility invariants
+The Close button is reachable by Tab/Shift+Tab. ArrowDown from CategoryNav goes to Search because only picker regions participate in the picker-specific arrow graph.
 
-- Grid keeps `role="grid"`.
-- Categories keep named `role="rowgroup"` containers.
-- Managed emoji controls remain native buttons with accessible names.
-- CategoryNav keeps tablist/tab semantics.
-- Real DOM focus remains on the active managed control.
-- Reordering structural primitives must not require consumer-owned refs or ARIA wiring.
+Consumers who require their own control to join the arrow graph need a future explicit extension API; v5 does not expose internal region registration as a public escape hatch.
 
-## 9. Invalid/unsupported layouts
+## 8. Virtualized grid
 
-The following are outside the guarantee:
-- CSS visual order that disagrees with DOM order;
-- portaled structural regions;
-- duplicate singleton regions;
-- List outside Viewport;
-- application UI expecting to participate in arrow-key navigation without being a managed primitive.
+The grid owns logical coordinates independent of mounted DOM rows.
 
-These layouts may still use normal Tab navigation where the browser naturally supports it.
+A logical destination includes enough information to:
+1. identify the emoji;
+2. determine category/row/column;
+3. ensure its row is materialized;
+4. scroll it into view if required;
+5. focus the registered real button after materialization.
+
+Navigation MUST NOT stop merely because a destination DOM node is currently absent.
+
+Real focus remains on the actual emoji button.
+
+## 9. Multiple roots
+
+All region registries, typeahead/search state, variation state, and focus-restoration state are scoped to Root context.
+
+A keyboard event originating in Root A must not mutate or focus Root B.
+
+Document-level listeners, if retained, must filter by the owning Root.
+
+## 10. Accessibility semantics
+
+The grid retains a composite-widget role so Windows screen readers enter an interaction mode in which arrow keys reach the application.
+
+At minimum:
+- one Grid per List;
+- category sections represented as named row groups (or an equivalent tested structure);
+- emoji controls remain named interactive descendants;
+- category tabs remain a tablist;
+- search results status remains a polite live region.
+
+If virtualization requires `aria-rowindex` / `aria-rowcount` or equivalent metadata for correct announcements, the implementation must add and test it rather than exposing that burden to consumers.
