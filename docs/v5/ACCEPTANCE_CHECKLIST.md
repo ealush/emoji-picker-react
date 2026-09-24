@@ -67,11 +67,10 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] default filtering debounce is 100 ms.
 - [ ] pending older filter computation is canceled by newer query.
 - [ ] clear emits `onSearchChange('')`.
-- [ ] uncontrolled type-to-search commits and focuses Search immediately.
-- [ ] controlled type-to-search emits a proposal without moving focus first.
-- [ ] accepted controlled type-to-search focuses Search on the next committed render.
-- [ ] rejected controlled type-to-search leaves Grid focus unchanged.
-- [ ] pending type-to-search focus transfer is canceled by a newer proposal/unmount/Search removal/reactions transition.
+- [ ] type-to-search focuses Search immediately in both controlled and uncontrolled mode.
+- [ ] focus transfer is not conditional on the parent accepting the proposal.
+- [ ] typing a burst such as `c`,`a`,`t` from the Grid yields `c`, `ca`, `cat` and leaves focus in Search.
+- [ ] a parent that accepts and transforms (for example `v => v.trimStart()`) still gets focus in Search.
 - [ ] with Search omitted, printable Grid typing is a no-op: no search mutation/callback and Grid focus stays put.
 - [ ] explicit controlled `searchValue` can still filter List when Search is omitted.
 - [ ] parent-driven controlled changes do not re-emit callback.
@@ -80,8 +79,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] IME composition does not commit intermediate filter queries.
 - [ ] IME composition does not trigger type-to-search shortcuts.
 - [ ] compositionend emits exactly one final proposal/commit.
-- [ ] accepted final controlled composition value is retained.
-- [ ] rejected final controlled composition value reconciles back to the parent value after composition ends.
+- [ ] controlled input reconciles to the parent `searchValue` after composition ends, whether or not the parent accepted the composed value.
 - [ ] final accepted composition value produces exactly one filtering transition.
 
 ## 7. Suggested emoji normalization
@@ -89,7 +87,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] uppercase unified input such as `1F601` works.
 - [ ] standard emoji entries are normalized for lookup.
 - [ ] standard skin-tone variation IDs preserve that exact variation for rendering.
-- [ ] exact custom emoji IDs are attempted before Unicode normalization and preserve casing.
+- [ ] custom emoji IDs resolve case-insensitively, matching how `customEmojis` are indexed.
 - [ ] duplicates are removed after render-identity normalization, first occurrence wins.
 - [ ] caller order is preserved otherwise.
 - [ ] `suggestedEmojis` overrides Suggested-category ordering/content and `suggestedEmojisMode` is ignored while it is present.
@@ -111,16 +109,17 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 ## 9. Primitive grammar
 
 - [ ] Root exported.
-- [ ] Reactions exported.
 - [ ] Search exported.
 - [ ] CategoryNav exported.
 - [ ] Viewport exported.
 - [ ] List exported.
 - [ ] Preview exported.
 - [ ] no public Panel primitive is exported.
-- [ ] Root creates exactly one managed `data-epr-part="panel"` wrapper around all non-Reactions children.
+- [ ] no public Reactions primitive is exported.
+- [ ] Root creates exactly one managed `data-epr-part="panel"` wrapper around all children.
+- [ ] Root renders `data-epr-part="reactions"` from props alone, with no child element required.
 - [ ] ordinary wrappers/headers/buttons are legal Root children and land inside that managed panel.
-- [ ] Reactions is optional, singleton, and the first non-null direct Root child outside the managed panel.
+- [ ] there is no child-ordering rule: Root preserves caller order.
 - [ ] Viewport is optional and singleton.
 - [ ] if rendered, Viewport contains exactly one direct List child.
 - [ ] List outside Viewport fails fast.
@@ -129,7 +128,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] duplicate singleton registration keeps first authoritative + warns once in production.
 - [ ] render/context validation rules match PRIMITIVES.md.
 - [ ] SSR performs no post-mount singleton/absence validation.
-- [ ] reactionsDefaultOpen without Reactions falls back to the managed panel and warns in development.
+- [ ] `reactionsDefaultOpen` works on a bare primitive Root with no extra child and no warning.
 - [ ] no render-prop item API is required.
 - [ ] no accidental `asChild`/arbitrary emoji-button replacement ships.
 
@@ -162,7 +161,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [ ] default export uses the same CategoryNav module.
 - [ ] default export uses the same Viewport/List modules.
 - [ ] default export uses the same Preview module.
-- [ ] default export uses the same Reactions primitive and Root-managed panel implementation.
+- [ ] default export uses the same Root-managed reactions and panel implementation.
 - [ ] no parallel keyboard-navigation engine exists.
 - [ ] UI and `/data` share normalization/search modules.
 - [ ] architecture assertion/test prevents a parallel private renderer from returning.

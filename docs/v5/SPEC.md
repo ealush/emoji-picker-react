@@ -74,20 +74,29 @@ A static architecture assertion SHOULD be added when the final source module pat
 Required v5 primitives:
 
 - `Root`
-- `Reactions`
 - `Search`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
-Root creates the single managed full-picker panel wrapper internally around every non-Reactions child. `panel` remains a stable styling part, not a public composition primitive.
+Root places every child inside one managed full-picker panel wrapper, and renders the compact reactions UI beside it when reactions are configured. `panel` and `reactions` are stable styling parts, not public composition primitives.
 
-`SkinTone` is intentionally **not** a required standalone primitive in the initial v5 contract. The existing `skinTonePickerLocation` behavior remains supported by `Search` and `Preview`. This keeps the initial public surface smaller and preserves the existing interaction model.
+### 4.0 What earns a primitive
 
-The variation picker remains managed inside the viewport/grid implementation.
+> A component belongs in the public primitive API only if a consumer can meaningfully decide **where it goes** or **what it does**. No behavioral props plus exactly one legal position means it is boilerplate — render it from Root and expose a `data-epr-part` hook instead.
 
-Reactions, when present, is the first non-null direct Root child. Root does not silently hoist it from a later position. Every subsequent Root child is placed inside Root's one managed full-picker panel wrapper, allowing ordinary application wrappers and controls without requiring a ceremonial public Panel component. The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+Applying that test, initial v5 deliberately does not export:
+
+- **`Panel`** — no props, one legal position, and its whole job is to be the subtree Root inerts.
+- **`Reactions`** — no behavioral props; `reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick` and `onReactionsModeChange` are all already Root props. Expressing "this picker has reactions" by rendering a positional child duplicates `reactionsDefaultOpen`, and it forced a child-ordering rule that bought nothing.
+- **`SkinTone`** — `skinTonePickerLocation` already decides its placement; Search and Preview host it.
+
+The variation picker likewise remains managed inside the viewport/grid implementation.
+
+`Viewport` and `List` **do** stay separate: two real elements, two different styling/measurement jobs, two independent `className`/`style`/`ref` targets. The test above is about ceremony, not about collapsing every adjacent pair.
+
+The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### 4.1 Composition scope
 
@@ -157,8 +166,7 @@ Important rules:
 - user interaction emits `onSearchChange` but does not create a hidden optimistic value;
 - parent-driven changes do not re-emit the callback;
 - type-to-search uses the same search transition when Search is registered/enabled;
-- in uncontrolled search, type-to-search commits the character and focuses Search immediately;
-- in controlled search, type-to-search emits a proposal but moves focus to Search only when the parent accepts that proposed value on the next committed render; a rejected proposal leaves Grid focus in place;
+- type-to-search focuses Search immediately in both controlled and uncontrolled mode, then follows ordinary input semantics; focus transfer is not conditional on the parent accepting the proposal;
 - with Search omitted it behaves like `searchDisabled` and leaves Grid focus/search state unchanged;
 - the clear button is a user-driven change and emits `onSearchChange('')`.
 
@@ -184,6 +192,7 @@ Required behavior:
 - initial mount does not emit unless separately documented before implementation;
 - existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `onEmojiClick(..., api).collapseToReactions()` remain supported;
 - reaction IDs are normalized through the same unified-code lookup used by the picker;
+- reactions are enabled by those props alone, exactly as in v4 — there is no element to render and therefore no "configured but not rendered" state to normalize;
 - Root's managed panel owns full-picker presence/transition presentation but is not a navigation region.
 
 The branded transition belongs to the official appearance layer. Root owns internal reactions state and focus restoration; bare primitives are not required to use the official motion.
@@ -200,7 +209,7 @@ To address issue #277, v5 adds one narrow capability:
 suggestedEmojis?: string[];
 ```
 
-When supplied, this list becomes the contents/order of the Suggested category and `suggestedEmojisMode` is ignored for category contents while the prop is present. Standard Unicode IDs are trimmed and normalized case-insensitively; valid skin-tone variation IDs preserve that exact variation for rendering. Exact custom-emoji ID lookup happens before Unicode normalization so custom ID casing is preserved. Duplicates are removed by resolved render identity with first occurrence winning; caller order is otherwise preserved. Unknown entries are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
+When supplied, this list becomes the contents/order of the Suggested category and `suggestedEmojisMode` is ignored for category contents while the prop is present. Entries are trimmed and lowercased — one case-insensitive rule for both Unicode and custom IDs, matching how `customEmojis` are already indexed. A valid skin-tone variation keeps that exact variation for rendering rather than collapsing to the neutral base. Duplicates are removed by resolved render identity with first occurrence winning; caller order is otherwise preserved. Unknown entries are ignored. Supplying `suggestedEmojis` does not write those values to localStorage.
 
 Management/reset UI requested by #505 is not part of the v5 architecture contract and may ship independently.
 

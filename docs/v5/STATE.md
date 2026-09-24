@@ -93,19 +93,21 @@ When a printable type-to-search key is handled from Grid:
 
 When a printable type-to-search key is handled from Grid:
 
-1. compute the proposed next raw value;
-2. emit `onSearchChange(proposed)`;
-3. keep Grid focus in place for now;
-4. on the next committed render, if `searchValue === proposed`, focus Search and schedule filtering from that accepted value;
-5. if the parent did not accept that exact proposal on that commit, cancel the pending focus transfer and leave Grid focus unchanged.
+1. focus Search immediately;
+2. compute the proposed next raw value;
+3. emit `onSearchChange(proposed)`;
+4. filtering is scheduled only when the parent supplies a new accepted `searchValue`, per §3.
 
-The pending type-to-search focus request is also canceled by:
-- a newer search proposal;
-- Root unmount;
-- Search becoming unavailable/disabled;
-- reactions/full-picker transition.
+Focus transfer is **not** conditional on the parent accepting the proposal.
 
-This makes focus transfer part of the accepted search transition rather than a side effect of a proposal the parent may reject.
+This is the same thing a controlled `<input>` already does: you type into it, the parent ignores the change, the visible value does not move, and you remain focused in the input. Type-to-search is just that interaction started from one keystroke earlier.
+
+Deferring focus until acceptance was considered and rejected, because it breaks two ordinary cases:
+
+- **Fast typing.** Typing `cat` from the Grid would emit three proposals before the first commit lands. Each subsequent key computes from the still-unchanged accepted value, so the parent sees `c`, `a`, `t` rather than `c`, `ca`, `cat`, and focus never transfers.
+- **Parents that accept and transform.** `onSearchChange={v => setSearch(v.trimStart())}` has accepted the edit, but the accepted value never equals the exact proposal, so focus would stay stranded in the Grid while the results change underneath it.
+
+Because focus moves on the first key, every subsequent keystroke is an ordinary input edit and follows §1. There is no proposal queue, no pending-focus token, and no acceptance comparison.
 
 ### Search omitted/disabled
 
@@ -143,8 +145,9 @@ At `compositionend`:
 - read the final DOM raw value;
 - emit `onSearchChange(final)` once;
 - preserve the final composition DOM value until the next committed render;
-- if the parent accepts `searchValue === final`, keep it and schedule filtering;
-- otherwise reconcile the DOM input back to the parent-controlled `searchValue` after composition has ended, without scheduling results for the rejected value.
+- then reconcile the input to whatever `searchValue` the parent supplies, exactly as an ordinary controlled input would.
+
+No acceptance comparison is needed. If the parent took the value, reconciling is a no-op; if it rejected or transformed it, reconciling shows the real controlled value. Filtering is scheduled by the accepted-value rule in §3 either way.
 
 This prevents controlled rerenders during composition from closing the candidate window, moving the caret, or duplicating composition text.
 
@@ -208,19 +211,20 @@ When the prop is present, it fully determines Suggested-category contents/order.
 For each entry:
 
 1. require a string and trim surrounding whitespace;
-2. try exact custom-emoji ID lookup first; custom IDs preserve caller casing;
-3. otherwise normalize a standard Unicode unified code to lowercase hexadecimal form;
-4. validate a standard variation through the base-emoji lookup;
-5. **preserve the caller's normalized exact variation unified for rendering** rather than replacing it with the neutral/base unified;
-6. ignore unknown entries;
-7. deduplicate by resolved render identity, first occurrence wins;
-8. preserve caller order otherwise.
+2. lowercase it, which is the single normalization used for both custom and Unicode IDs;
+3. look it up through the same Root data lookup used by reactions and the picker;
+4. **preserve that normalized ID for rendering** rather than replacing a skin-tone variation with its neutral/base unified;
+5. ignore unknown entries;
+6. deduplicate by resolved render identity, first occurrence wins;
+7. preserve caller order otherwise.
+
+One case-insensitive rule covers both ID kinds, because custom emoji IDs are *already* lowercased when they enter the data layer — `customToRegularEmoji` does `emoji.id.toLowerCase()` in both `src/components/context/PickerDataContext.tsx` and `src/dataUtils/emojiSelectors.ts`. A custom emoji registered as `{ id: 'PartyParrot' }` is stored under `partyparrot`, so an exact-case lookup would miss it and the entry would be silently dropped. There is no separate exact-match pass and no casing carve-out.
 
 Examples:
 
 - `"1F601"` → render identity `"1f601"`;
 - `"1F44D-1F3FD"` → render identity `"1f44d-1f3fd"`, not neutral `"1f44d"`;
-- a custom emoji ID `"PartyParrot"` stays `"PartyParrot"` when that exact custom ID exists.
+- custom ID `"PartyParrot"` → render identity `"partyparrot"`, matching how `customEmojis` was indexed.
 
 Supplying `suggestedEmojis` does not write those entries into localStorage by itself.
 

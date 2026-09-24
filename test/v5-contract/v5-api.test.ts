@@ -37,12 +37,11 @@ describe('v5 controlled search', () => {
   it.todo('searchDisabled disables built-in type-to-search');
   it.todo('omitted Search disables built-in type-to-search and preserves Grid focus');
   it.todo('controlled searchValue may still filter when Search is omitted');
-  it.todo('uncontrolled type-to-search commits and focuses Search immediately');
-  it.todo('controlled type-to-search emits proposal without moving Grid focus');
-  it.todo('accepted controlled type-to-search focuses Search on next committed render');
-  it.todo('rejected controlled type-to-search leaves Grid focus unchanged');
-  it.todo('newer search proposal cancels pending controlled type-to-search focus');
-  it.todo('Search removal Root unmount and reactions transition cancel pending type-to-search focus');
+  it.todo('type-to-search focuses Search immediately when uncontrolled');
+  it.todo('type-to-search focuses Search immediately when controlled');
+  it.todo('focuses Search even when the controlled parent rejects the proposal');
+  it.todo('focuses Search when the controlled parent accepts and transforms the value');
+  it.todo('burst typing c a t from Grid proposes c then ca then cat');
 });
 
 describe('v5 search IME behavior', () => {
@@ -54,7 +53,7 @@ describe('v5 search IME behavior', () => {
   it.todo('controlled compositionend emits final proposal exactly once');
   it.todo('controlled IME preserves final composition DOM value until next committed render');
   it.todo('accepted controlled IME value schedules filtering once');
-  it.todo('rejected controlled IME value reconciles DOM back to parent value after composition');
+  it.todo('controlled IME reconciles DOM to the parent value after composition regardless of acceptance');
 });
 
 describe('v5 search accessibility', () => {
@@ -77,8 +76,7 @@ describe('v5 caller-defined suggestions', () => {
   it.todo('accepts uppercase standard unified identifiers');
   it.todo('trims and lowercases standard unicode identifiers for lookup');
   it.todo('preserves an exact valid skin-tone variation for rendering');
-  it.todo('matches exact custom emoji IDs before unicode normalization');
-  it.todo('preserves custom emoji ID casing');
+  it.todo('resolves custom emoji IDs case-insensitively as customEmojis are indexed');
   it.todo('deduplicates by resolved render identity preserving first occurrence');
   it.todo('preserves caller order otherwise');
   it.todo('ignores unknown identifiers');
@@ -89,24 +87,22 @@ describe('v5 caller-defined suggestions', () => {
 });
 
 describe('v5 primitive exports and managed-panel grammar', () => {
-  it.todo('exports Root Reactions Search CategoryNav Viewport List Preview');
+  it.todo('exports Root Search CategoryNav Viewport List Preview');
   it.todo('does not export a public Panel primitive');
+  it.todo('does not export a public Reactions primitive');
   it.todo('Root creates exactly one managed panel DOM wrapper');
-  it.todo('places every direct non-Reactions Root child into the managed panel');
+  it.todo('places every direct Root child into the managed panel in caller order');
   it.todo('allows arbitrary consumer wrappers and UI in managed panel content');
   it.todo('allows Search CategoryNav Preview and Viewport omission');
   it.todo('allows at most one Viewport per Root');
   it.todo('requires exactly one direct List child when Viewport is rendered');
   it.todo('rejects List outside Viewport');
   it.todo('rejects empty multiple-child or non-List Viewport content');
-  it.todo('requires Reactions to be the first non-null direct Root child');
-  it.todo('does not silently hoist a later Reactions child');
-  it.todo('rejects nested Reactions');
   it.todo('rejects duplicate singleton region registrations in development');
   it.todo('keeps the first singleton registration authoritative in production while duplicate is mounted');
   it.todo('allows a later duplicate to become authoritative after the prior authoritative registration unmounts');
   it.todo('rejects registered primitive portals outside Root as specified');
-  it.todo('normalizes reactionsDefaultOpen to full picker when Reactions is absent');
+  it.todo('renders reactions from props alone with no Reactions child element');
   it.todo('does not expose render-prop item composition');
   it.todo('does not expose arbitrary emoji-button replacement');
 });
@@ -115,9 +111,10 @@ describe('v5 primitive DOM contracts', () => {
   it.todo('forwards documented ref element types');
   it.todo('forwards native aria data className style and event props');
   it.todo('reserves data-epr namespace');
+  it.todo('emits every library-owned data attribute inside the data-epr namespace');
   it.todo('does not allow role override on public primitives');
   it.todo('runs internal handlers before consumer handlers');
-  it.todo('RootProps includes every documented behavior prop including autoFocusSearch and searchLabel');
+  it.todo('RootProps covers every PickerProps key except the appearance-only list');
   it.todo('RootProps requires children and composes native aside attributes');
   it.todo('supports Search inputProps and inputRef');
   it.todo('does not accept arbitrary List children');

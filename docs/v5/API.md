@@ -87,9 +87,9 @@ The visible value and callback use raw user text. Filtering uses a normalized de
 
 Type-to-search differs slightly between controlled and uncontrolled usage:
 
-- uncontrolled: commit the typed character and focus Search immediately;
-- controlled: emit the proposal first; focus Search only if the parent accepts that exact proposed value on the next committed render;
-- rejected controlled proposal: keep Grid focus where it was.
+- both modes: focus Search immediately, then behave like ordinary input editing;
+- controlled: the keystroke is a proposal like any other edit, so a parent that ignores it simply leaves the value unchanged — the same thing that happens when you type into a controlled input whose parent ignores you;
+- focus transfer is never conditional on acceptance.
 
 If Search is omitted, built-in type-to-search behaves like `searchDisabled`, while an external application input may still drive filtering through controlled `searchValue`.
 
@@ -144,9 +144,7 @@ For standard emoji IDs:
 - a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
 - duplicates are removed by canonical normalized ID, first occurrence wins.
 
-For custom emoji IDs:
-- exact custom ID matching is attempted before Unicode normalization;
-- caller-provided custom ID casing is preserved.
+Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
 
 When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
@@ -160,8 +158,6 @@ import * as EmojiPicker from 'emoji-picker-react/primitives';
 function ProductPicker() {
   return (
     <EmojiPicker.Root>
-      <EmojiPicker.Reactions />
-
       <div className="my-card">
         <EmojiPicker.CategoryNav />
 
@@ -182,7 +178,7 @@ function ProductPicker() {
 }
 ```
 
-Root automatically creates the one managed full-picker panel wrapper around every child after the optional leading Reactions child.
+Root automatically creates the one managed full-picker panel wrapper around every child, and renders the compact reactions UI beside it when reactions props are supplied.
 
 That gives reactions mode one subtree to hide/inert without forcing consumers to render a public Panel component in exactly one legal location.
 
@@ -191,16 +187,21 @@ The full primitive grammar, props, refs, native prop forwarding and validation b
 ### Required exports
 
 - `Root`
-- `Reactions`
 - `Search`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
-There is intentionally no standalone SkinTone primitive in initial v5. Existing skin-tone placement remains managed by Search/Preview.
+Three things are deliberately **not** primitives, for the same reason: they carry no behavior of their own and have no meaningful position to choose.
 
-There is also intentionally no public Panel primitive; `data-epr-part="panel"` remains available for styling.
+| Not a primitive | Configured by | Styled by |
+| --- | --- | --- |
+| skin tone | `skinTonePickerLocation`, `skinTonesDisabled`, `defaultSkinTone` | `[data-epr-part="skin-tone"]` |
+| panel | — (Root wraps its children) | `[data-epr-part="panel"]` |
+| reactions | `reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, `onReactionsModeChange` | `[data-epr-part="reactions"]` |
+
+Compact reactions in particular are turned on by props, exactly as in v4 — you do not opt in by rendering an element.
 
 ## 9. No render-prop/item renderer
 
@@ -268,17 +269,7 @@ Invalid:
 
 Viewport requires exactly one direct List child.
 
-Invalid:
-
-```tsx
-<EmojiPicker.Root>
-  <div>
-    <EmojiPicker.Reactions />
-  </div>
-</EmojiPicker.Root>
-```
-
-Reactions must be the first non-null direct Root child so it remains outside the managed panel without Root silently reordering consumer children.
+There is no child-ordering rule. Root wraps whatever you give it, in the order you gave it.
 
 ## 11. Styling
 

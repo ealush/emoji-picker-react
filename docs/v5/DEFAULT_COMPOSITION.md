@@ -29,8 +29,6 @@ function EmojiPicker(props: PickerProps) {
           className={rootClassName}
           style={rootStyle}
         >
-          <Reactions />
-
           <DefaultHeaderLayout>
             <Search />
             <CategoryNav />
@@ -52,7 +50,7 @@ Root renders the actual DOM shape conceptually as:
 
 ```tsx
 <aside data-epr-part="root">
-  <Reactions />
+  <ul data-epr-part="reactions">…</ul>
 
   <div data-epr-part="panel">
     <DefaultHeaderLayout>
@@ -69,7 +67,7 @@ Root renders the actual DOM shape conceptually as:
 </aside>
 ```
 
-The managed panel wrapper is created by Root around every non-Reactions child. It is not a public primitive.
+Root creates both the compact reactions UI and the managed panel wrapper around its children. Neither is a public primitive, and the default picker passes no extra children to produce them — the reactions props alone do that, exactly as in v4.
 
 ## Root DOM ownership
 
@@ -119,17 +117,17 @@ Owns:
 - the managed full-picker panel wrapper;
 - configuration shared by child primitives.
 
-### Reactions
+### Managed reactions
 
-Public managed compact-reaction region.
+Private compact-reaction region exposed as `data-epr-part="reactions"`.
 
-It must be a direct Root child so Root can keep it outside the managed panel.
+Rendered by Root when reactions are configured. It is a sibling of the managed panel, never inside it.
 
 ### Managed panel
 
 Private DOM wrapper exposed as `data-epr-part="panel"`.
 
-It contains every Root child after the optional leading Reactions child and is the single subtree Root hides/inerts when compact reactions are active.
+It contains every Root child and is the single subtree Root hides/inerts when compact reactions are active.
 
 Consumers may place arbitrary wrappers, close buttons, branding and layout containers inside this managed panel simply by rendering them as normal Root children.
 
@@ -167,8 +165,8 @@ Public optional preview region, including preview-position skin-tone control.
 - Search primitive omitted: no built-in type-to-search capture is active; explicit controlled `searchValue` may still filter List.
 - `previewConfig.showPreview=false`: Preview renders/registers nothing.
 - `skinTonesDisabled`: no skin-tone control participates.
-- compact reactions active: Reactions is interactive; the managed panel and every descendant are hidden/inert/non-focusable as one subtree.
-- Reactions primitive absent: Root behaves as full-picker-only and the managed panel stays active.
+- compact reactions active: the managed reactions region is interactive; the managed panel and every descendant are hidden/inert/non-focusable as one subtree.
+- `allowExpandReactions={false}`: compact mode may remain terminal, exactly as in v4.
 - Viewport/List omitted: the composition remains valid but has no emoji grid.
 
 ## One-engine failure examples
@@ -180,6 +178,6 @@ The implementation violates this contract if:
 - data entry point duplicates search/normalization;
 - fixes must be applied in two behavior implementations;
 - DefaultAppearance inserts a wrapper and moves v4 root props away from Root;
-- a public Panel component reappears merely to satisfy internal presence/inert requirements.
+- a public Panel or Reactions component reappears merely to satisfy internal presence/inert requirements.
 
 A source-architecture test MUST be added once final module paths exist.

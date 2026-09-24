@@ -9,16 +9,30 @@ The primitive layer provides **macro composition with managed behavior**. It is 
 Initial v5 exports:
 
 - `Root`
-- `Reactions`
 - `Search`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
-There is intentionally **no public Panel primitive**.
+There is intentionally **no public `Panel` primitive and no public `Reactions` primitive**.
 
-Root owns one internal full-picker panel wrapper. When Reactions is present as the first non-null direct child, Root renders it before the panel; all subsequent children are panel content. The wrapper exposes `data-epr-part="panel"` for styling, but consumers do not have to place a component whose only legal position would be directly under Root.
+Both are rendered by Root and exposed for styling as `data-epr-part="panel"` and `data-epr-part="reactions"`.
+
+### Why these two are not primitives
+
+A structural primitive earns its place in the public API only when a consumer can meaningfully decide *where* it goes or *what* it does. Apply this test:
+
+> If a component has no behavioral props of its own and exactly one legal position, it is boilerplate. Render it from Root and expose a `data-epr-part` hook instead.
+
+`Panel` and `Reactions` both fail that test:
+
+- neither carries behavior — every reactions input (`reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, `onReactionsModeChange`) is already a Root prop;
+- neither has more than one legal position;
+- neither can be wrapped, reordered, or portaled;
+- everything a consumer actually wants from them — class, color, spacing, motion — is CSS, which the part hooks already provide.
+
+`Viewport` and `List` deliberately **do** remain separate primitives, because they are two distinct DOM elements with genuinely different styling and measurement responsibilities, and merging them would leave one props bag with two ambiguous targets. The heuristic above is about ceremony, not about collapsing every adjacent pair.
 
 ## 2. Composition grammar
 
@@ -26,8 +40,6 @@ The common shape is:
 
 ```tsx
 <Root>
-  <Reactions />
-
   <div className="my-card">
     <CategoryNav />
 
@@ -49,9 +61,11 @@ Root renders conceptually:
 
 ```tsx
 <aside data-epr-part="root">
-  <Reactions />
+  {/* compact reactions UI, rendered by Root when reactions are configured */}
+  <ul data-epr-part="reactions">…</ul>
+
   <div data-epr-part="panel">
-    {/* every Root child after the optional leading Reactions, in caller order */}
+    {/* every Root child, in caller order */}
   </div>
 </aside>
 ```
@@ -59,32 +73,28 @@ Root renders conceptually:
 Rules:
 
 - `Root` is required.
-- `Reactions` is optional and singleton.
-- When present, Reactions MUST be the first non-null direct Root child.
-- Root does not silently hoist/reorder Reactions from an arbitrary child position.
-- Every subsequent direct Root child becomes panel content.
+- Every direct Root child becomes panel content, in caller order.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
 - `Search`, `CategoryNav`, `Viewport`, and `Preview` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
 - If `List` is rendered, it MUST be the single direct child of Viewport.
 - A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
-- Reactions nested inside panel content is invalid.
 - Registered primitives rendered through a portal outside Root are unsupported.
 
-This grammar deliberately has no mandatory public wrapper whose absence can only be discovered after mount.
+There is no child-ordering rule to get wrong, and no mandatory public wrapper whose absence can only be discovered after mount.
 
 ## 3. Reactions behavior
 
-If Reactions is absent:
-- Root behaves as a full-picker-only controller;
-- the managed panel is active;
-- `reactionsDefaultOpen={true}` is normalized to full-picker mode;
-- development builds warn once that compact reactions cannot be represented;
-- `onReactionsModeChange` is not emitted for that initial normalization.
+Compact reactions are a Root capability configured entirely through props, exactly as in v4:
+
+- reactions mode is available whenever `allowExpandReactions` permits it;
+- `reactionsDefaultOpen={true}` starts in compact mode;
+- `onEmojiClick(..., api).collapseToReactions()` returns to compact mode;
+- `allowExpandReactions={false}` may leave compact mode terminal, exactly as in v4.
+
+Because presence is no longer expressed by rendering a child, there is no "`reactionsDefaultOpen` without a Reactions element" state to normalize and no development warning for it.
 
 When compact reactions are active, Root applies hidden/inert/non-focusable state to the one internal panel wrapper. Consumers do not manage this state.
-
-If `allowExpandReactions={false}`, compact mode may remain terminal exactly as in v4.
 
 ## 4. Validation mechanism
 
@@ -96,12 +106,11 @@ These fail immediately in development when the component renders:
 
 - any primitive outside Root;
 - List outside Viewport;
-- Viewport with zero, multiple, or a non-List direct child;
-- Reactions rendered from inside the managed panel rather than as the first non-null direct Root child.
+- Viewport with zero, multiple, or a non-List direct child.
 
 ### Registration-time singleton validation
 
-Search, CategoryNav, Viewport, Preview and Reactions register with the Root-scoped registry.
+Search, CategoryNav, Viewport and Preview register with the Root-scoped registry.
 
 When a second singleton of the same kind registers:
 
@@ -124,45 +133,22 @@ Exact development error text is not semver API.
 
 Root owns behavior/configuration. It does not own the branded default appearance.
 
-Conceptual public type:
+Root takes **every `PickerProps` behavior prop**. Rather than enumerating them, the type subtracts the short, closed list of appearance-only props:
 
 ```ts
-type RootBehaviorProps = Pick<
-  PickerProps,
-  | 'open'
-  | 'emojiStyle'
-  | 'emojiVersion'
-  | 'emojiData'
-  | 'getEmojiUrl'
-  | 'customEmojis'
-  | 'hiddenEmojis'
-  | 'lazyLoadEmojis'
-  | 'autoFocusSearch'
-  | 'searchDisabled'
-  | 'searchPlaceholder'
-  | 'searchPlaceHolder'
-  | 'searchLabel'
-  | 'searchClearButtonLabel'
-  | 'categories'
-  | 'categoryIcons'
-  | 'suggestedEmojisMode'
-  | 'defaultSkinTone'
-  | 'skinTonesDisabled'
-  | 'skinTonePickerLocation'
-  | 'onSkinToneChange'
-  | 'previewConfig'
-  | 'reactionsDefaultOpen'
-  | 'reactions'
-  | 'allowExpandReactions'
-  | 'onReactionClick'
-  | 'onEmojiClick'
-  | 'nonce'
-  | 'searchValue'
-  | 'defaultSearchValue'
-  | 'onSearchChange'
-  | 'suggestedEmojis'
-  | 'onReactionsModeChange'
->;
+/**
+ * Appearance props owned by the default <EmojiPicker /> wrapper, plus the two
+ * that Root already accepts as native `aside` attributes. This list is short
+ * and stable; the behavior set is long and grows.
+ */
+type PickerAppearanceProps =
+  | 'theme'
+  | 'width'
+  | 'height'
+  | 'className'
+  | 'style';
+
+export type RootBehaviorProps = Omit<PickerProps, PickerAppearanceProps>;
 
 export type RootProps =
   Omit<
@@ -174,6 +160,8 @@ export type RootProps =
   };
 ```
 
+Subtracting rather than enumerating is deliberate. A new behavior prop on `PickerProps` flows to Root automatically, so the two cannot silently drift; only a new *appearance* prop requires editing this list, and appearance additions are rare and obvious.
+
 Consequences:
 
 - Root renders the actual `aside`.
@@ -184,7 +172,7 @@ Consequences:
 - `nonce` covers library-owned style injection.
 - `children` is required.
 
-If `PickerProps` gains another behavioral prop before v5 ships, this Pick list and V4_API_MATRIX must be updated together.
+A type test MUST assert `Exclude<keyof PickerProps, keyof RootProps | PickerAppearanceProps>` is `never`, so a behavior prop cannot be added to the default picker without reaching Root.
 
 ## 6. Ref and DOM contracts
 
@@ -193,14 +181,13 @@ Every public structural primitive uses `React.forwardRef`.
 | Primitive | Default root element | Forwarded ref |
 | --- | --- | --- |
 | Root | `aside` | `React.Ref<HTMLElement>` |
-| Reactions | `ul` | `React.Ref<HTMLUListElement>` |
 | Search | `div` region wrapper | `React.Ref<HTMLDivElement>` |
 | CategoryNav | `div role="tablist"` | `React.Ref<HTMLDivElement>` |
 | Viewport | `div` | `React.Ref<HTMLDivElement>` |
 | List | `ul role="grid"` | `React.Ref<HTMLUListElement>` |
 | Preview | `div` | `React.Ref<HTMLDivElement>` |
 
-The internal panel is not ref-addressable in initial v5. Consumers can style it through `[data-epr-part="panel"]` and can place their own wrapper inside Root when they need a ref.
+The internal panel and the compact reactions UI are not ref-addressable in initial v5. Consumers style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
 
 v5 does not add `as` or `asChild` polymorphism.
 
@@ -225,6 +212,22 @@ The library also reserves:
 - required hidden/inert state.
 
 Consumer `data-*` attributes outside `data-epr-*` are forwarded.
+
+### All library data attributes live in the reserved namespace
+
+v4 emits several library-owned data attributes *outside* that namespace — `data-unified` (`ClickableEmojiButton.tsx`, `NativeEmoji.tsx`), `data-name` and `data-emojis-per-row` (`EmojiCategory.tsx`). That contradicts the rule above: the library is writing into the space it declares consumer-owned, and a consumer `data-name` would be indistinguishable from a library one.
+
+v5 moves every library-owned data attribute into the reserved namespace:
+
+| v4 attribute | v5 attribute |
+| --- | --- |
+| `data-unified` | `data-epr-unified` |
+| `data-name` (category id) | `data-epr-category` |
+| `data-emojis-per-row` | `data-epr-emojis-per-row` |
+
+These are undocumented in v4 — they appear in no public documentation and are not part of the v4 compatibility matrix — so this is an internal rename, not a consumer break. Internal unit/visual tests that select on the old names are updated with the rename.
+
+Once renamed they are public API on the same terms as `data-epr-part`: listed in [STYLING.md](./STYLING.md), and semver-significant to change.
 
 Initial v5 generates no library-owned DOM `id` attributes. Consumer IDs remain consumer-owned.
 
@@ -272,7 +275,15 @@ The wrapper ref and `inputRef` are distinct.
 
 `inputProps` may customize ordinary input attributes such as `name`, `aria-label`, `autoComplete`, and consumer event listeners. Internal input handlers run before consumer handlers.
 
-Root/default-picker props own the canonical built-in input value, placeholder, accessible label, autofocus and change semantics.
+Root/default-picker props own the canonical built-in input value, placeholder, autofocus and change semantics.
+
+**Accessible-label precedence**, most specific wins:
+
+1. `inputProps['aria-label']` on this Search instance;
+2. the Root/default-picker `searchLabel` prop;
+3. the built-in English default.
+
+`searchLabel` exists so default-picker consumers, who cannot reach `inputProps`, can still localize the label. Primitive consumers already holding `inputProps` are not forced to go through Root for it.
 
 ## 10. Viewport and List
 
@@ -297,7 +308,9 @@ Viewport runtime-validates exactly one direct List child.
 
 The type is a developer aid; runtime validation remains necessary for JavaScript consumers and JSX widening.
 
-## 11. CategoryNav, Preview and Reactions
+These stay two primitives rather than one because they are two real elements with different jobs — Viewport is the scroll/measurement boundary, List is the grid — and each needs its own `className`/`style`/`ref`. Collapsing them would leave a single props bag with two ambiguous targets.
+
+## 11. CategoryNav and Preview
 
 ```ts
 export type CategoryNavProps =
@@ -311,15 +324,11 @@ export type PreviewProps =
     React.HTMLAttributes<HTMLDivElement>,
     'role' | 'children'
   >;
-
-export type ReactionsProps =
-  Omit<
-    React.HTMLAttributes<HTMLUListElement>,
-    'role' | 'children'
-  >;
 ```
 
 They own their managed descendants.
+
+The compact reactions UI has no public props type because it is not a public component; it is configured through Root props and styled through `[data-epr-part="reactions"]`.
 
 ## 12. Error boundaries
 

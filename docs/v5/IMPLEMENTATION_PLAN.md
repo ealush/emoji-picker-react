@@ -108,13 +108,15 @@ Extract the components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.m
 The default picker must render those same component modules.
 
 Required implementation checks:
-- Root creates exactly one internal managed full-picker panel around every non-Reactions child;
-- no public Panel primitive is introduced;
+- Root creates exactly one internal managed full-picker panel around every child, plus the managed reactions region from props alone;
+- no public Panel or Reactions primitive is introduced;
 - arbitrary consumer wrappers/controls remain legal Root children and land inside that managed panel;
 - Viewport/List grammar is validated;
 - every primitive forwards the documented ref/native props;
 - internal handlers compose according to PRIMITIVES.md;
-- primitive Root does not install the default ErrorBoundary.
+- primitive Root does not install the default ErrorBoundary;
+- library-owned data attributes are renamed into the `data-epr-*` namespace per STYLING.md, updating the internal unit/visual tests that select on the v4 names;
+- the `RootProps` type test from PRIMITIVES.md §5 is in place, so a new `PickerProps` behavior prop cannot skip Root.
 
 Add a source-architecture assertion that prevents reintroducing a private parallel Search/List/Reactions tree.
 

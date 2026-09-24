@@ -31,7 +31,7 @@ The semantic kind is not used as a global singleton key across the document; it 
 
 For v5, all listed region kinds are singletons inside one Root.
 
-Mounting two Search primitives, two CategoryNav primitives, two Lists, or two Reactions primitives in one Root is invalid.
+Mounting two Search primitives, two CategoryNav primitives, or two Lists in one Root is invalid.
 
 On a second singleton registration:
 
@@ -93,9 +93,8 @@ Only an unhandled edge movement may delegate to cross-region navigation.
 - when vertical movement crosses the top edge, move to the previous focusable region in DOM order;
 - moving below the last logical row does not leave the picker unless a future RFC defines such behavior;
 - typing an alphanumeric key runs the shared type-to-search transition only when Search is registered and enabled;
-- uncontrolled type-to-search commits and focuses Search immediately;
-- controlled type-to-search emits the proposal and keeps Grid focus until that exact proposal is accepted on the next committed render;
-- if Search is absent/disabled or a controlled proposal is rejected, the key does not move focus.
+- when it runs, it focuses Search immediately in both controlled and uncontrolled mode;
+- if Search is absent or disabled, the key is a picker no-op and Grid focus is unchanged.
 
 ### Reactions
 
@@ -148,7 +147,7 @@ Example:
 </Root>
 ```
 
-Root places these non-Reactions children inside its managed panel automatically.
+Root places these children inside its managed panel automatically.
 
 The Close button is reachable by Tab/Shift+Tab. ArrowDown from CategoryNav goes to Search because only picker regions participate in the picker-specific arrow graph.
 

@@ -140,9 +140,23 @@ Initial required part API:
 
 Part names are public API once released. Renaming/removing one is semver-significant.
 
-A part is not automatically a composition primitive. `skin-tone`, `category-content`, and `variation-picker` may remain managed while still exposing stable styling hooks.
+A part is not automatically a composition primitive. `skin-tone`, `category-content`, `variation-picker`, `panel`, and `reactions` are all managed by the library while still exposing stable styling hooks — see [PRIMITIVES.md](./PRIMITIVES.md) §1 for why a part is a weaker commitment than a primitive.
 
 Do not expose private measurement nodes or every implementation wrapper as parts.
+
+### Library data attributes
+
+Beyond `data-epr-part`, the library emits a small set of value-carrying data attributes. All of them live in the reserved `data-epr-*` namespace so they can never collide with consumer `data-*` props:
+
+| Attribute | On | Value |
+| --- | --- | --- |
+| `data-epr-unified` | `[data-epr-part="emoji"]` | lowercase unified code actually rendered, including skin-tone variation |
+| `data-epr-category` | `[data-epr-part="category"]` | category id, or the custom group name |
+| `data-epr-emojis-per-row` | `[data-epr-part="category-content"]` | measured column count |
+
+These replace v4's unnamespaced `data-unified`, `data-name` and `data-emojis-per-row`. The v4 names were undocumented and are not part of the compatibility matrix, so this is an internal rename.
+
+Like part names, these are public API once released and semver-significant to change.
 
 ## 6. Emoji item boundary
 

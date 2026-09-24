@@ -119,13 +119,13 @@ test.describe.skip('v5 acceptance', () => {
 
     const emoji = page.locator('[data-epr-part="emoji"]').first();
     await emoji.focus();
-    const unified = await emoji.getAttribute('data-unified');
+    const unified = await emoji.getAttribute('data-epr-unified');
     expect(unified).not.toBeNull();
 
     await page.keyboard.press('p');
 
     const focused = page.locator('[data-epr-part="emoji"]:focus');
-    await expect(focused).toHaveAttribute('data-unified', unified!);
+    await expect(focused).toHaveAttribute('data-epr-unified', unified!);
     await expect(page.getByTestId('search-transition-count')).toHaveText('0');
   });
 
@@ -289,27 +289,43 @@ test.describe.skip('v5 acceptance', () => {
     await expect(search).toBeFocused();
   });
 
-  test('rejected controlled type-to-search keeps Grid focus', async ({
+  test('rejected controlled type-to-search still focuses Search', async ({
     page,
   }) => {
     await page.goto(
       storyUrl('v5-acceptance--controlled-typeahead-rejected'),
     );
 
-    const gridEmoji = page.getByLabel('grinning face', { exact: true });
     const search = page.getByLabel('Type to search for an emoji');
 
-    await gridEmoji.focus();
-    const unified = await gridEmoji.getAttribute('data-unified');
-    expect(unified).not.toBeNull();
-
+    await page.getByLabel('grinning face', { exact: true }).focus();
     await page.keyboard.press('p');
 
+    // The proposal is emitted and the parent ignores it, so the value does
+    // not move -- exactly like typing into a controlled input whose parent
+    // ignores the change. Focus is not conditional on acceptance.
     await expect(page.getByTestId('last-search-proposal')).toHaveText('p');
     await expect(search).toHaveValue('');
-    await expect(
-      page.locator('[data-epr-part="emoji"]:focus'),
-    ).toHaveAttribute('data-unified', unified!);
+    await expect(search).toBeFocused();
+  });
+
+  test('burst type-to-search appends rather than replacing', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--controlled-search'));
+
+    const search = page.getByLabel('Type to search for an emoji');
+
+    await page.getByLabel('grinning face', { exact: true }).focus();
+    await page.keyboard.press('c');
+    await page.keyboard.press('a');
+    await page.keyboard.press('t');
+
+    // Focus moves on the first key, so the following keys are ordinary input
+    // edits. A deferred/acceptance-gated focus transfer would produce "t".
+    await expect(page.getByTestId('last-search-proposal')).toHaveText('cat');
+    await expect(search).toHaveValue('cat');
+    await expect(search).toBeFocused();
   });
 
   test('caller-defined suggestions preserve variation and custom render identities', async ({
@@ -318,20 +334,20 @@ test.describe.skip('v5 acceptance', () => {
     await page.goto(storyUrl('v5-acceptance--custom-suggestions'));
 
     const suggested = page.locator(
-      '[data-epr-part="category"][data-name="suggested"] [data-epr-part="emoji"]',
+      '[data-epr-part="category"][data-epr-category="suggested"] [data-epr-part="emoji"]',
     );
 
     await expect(suggested).toHaveCount(3);
     await expect(suggested.nth(0)).toHaveAttribute(
-      'data-unified',
+      'data-epr-unified',
       '1f44d-1f3fd',
     );
     await expect(suggested.nth(1)).toHaveAttribute(
-      'data-unified',
-      'PartyParrot',
+      'data-epr-unified',
+      'partyparrot',
     );
     await expect(suggested.nth(2)).toHaveAttribute(
-      'data-unified',
+      'data-epr-unified',
       '1f603',
     );
   });
@@ -430,22 +446,6 @@ test.describe.skip('v5 acceptance', () => {
     ).toHaveCount(0);
   });
 
-  test('caller-defined suggested emoji preserves requested skin-tone variation', async ({
-    page,
-  }) => {
-    await page.goto(storyUrl('v5-acceptance--suggested-skin-tone'));
-
-    const suggested = page
-      .locator('[data-epr-part="category"][data-category="suggested"]')
-      .locator('[data-epr-part="emoji"]')
-      .first();
-
-    await expect(suggested).toHaveAttribute(
-      'data-unified',
-      '1f44d-1f3fd',
-    );
-  });
-
   test('native rendering never invokes standard emoji image resolver', async ({
     page,
   }) => {
@@ -477,13 +477,13 @@ test.describe.skip('v5 acceptance', () => {
     const first = page.locator('[data-epr-part="emoji"]').first();
     await expect.poll(() => brokenAssetRequests).toBeGreaterThan(0);
     await first.focus();
-    const firstUnified = await first.getAttribute('data-unified');
+    const firstUnified = await first.getAttribute('data-epr-unified');
 
     await page.keyboard.press('ArrowRight');
 
     const focused = page.locator('[data-epr-part="emoji"]:focus');
     await expect(focused).toBeVisible();
-    expect(await focused.getAttribute('data-unified')).not.toBe(firstUnified);
+    expect(await focused.getAttribute('data-epr-unified')).not.toBe(firstUnified);
   });
 
   test('multiple Roots isolate search navigation and generate no library IDs', async ({

@@ -97,7 +97,7 @@ import * as EmojiPicker from 'emoji-picker-react/primitives';
 </EmojiPicker.Root>
 ```
 
-Root automatically wraps every child after the optional leading Reactions child in its one managed full-picker panel subtree. Consumers do not render a Panel primitive.
+Root wraps every child in its one managed full-picker panel subtree, and renders the compact reactions UI itself when you pass reactions props. There is no Panel primitive and no Reactions primitive to place — style them with `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`.
 
 The library still owns emoji buttons, navigation, accessibility semantics, virtualization, variations, and selection.
 
