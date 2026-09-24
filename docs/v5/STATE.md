@@ -1,42 +1,10 @@
 # v5 State Semantics
 
-## 1. Controlled/uncontrolled rule
+Initial v5 adds only the state surface justified by demonstrated consumer needs.
 
-For every controlled pair, v5 follows the ordinary React model:
+## 1. Controlled/uncontrolled search
 
-```ts
-value?: T;
-defaultValue?: T;
-onValueChange?: (next: T) => void;
-```
-
-Applied to:
-- search;
-- skin tone;
-- picker mode.
-
-### Controlled
-
-When the controlled prop is present:
-- it is the rendered source of truth;
-- user interaction calculates the proposed next value and calls the callback;
-- the picker does not render a hidden optimistic copy;
-- the UI reflects the new value only when the parent supplies it.
-
-Programmatic parent updates do not call the change callback again.
-
-### Uncontrolled
-
-When the controlled prop is absent:
-- the initial value comes from `default*` or the documented default;
-- the picker owns subsequent changes;
-- user interaction also calls the change callback when provided.
-
-Switching between controlled and uncontrolled mode during one mounted lifetime is unsupported. A development warning is recommended but the exact message is not public API.
-
-## 2. Search
-
-Public additions:
+Public API:
 
 ```ts
 searchValue?: string;
@@ -44,93 +12,97 @@ defaultSearchValue?: string;
 onSearchChange?: (value: string) => void;
 ```
 
-User-driven transitions include:
-- typing/editing the input;
-- clear button;
-- Escape when current v4 behavior clears search;
-- type-to-search from the grid/category/reaction-adjacent picker surfaces.
+### Controlled
 
-All use the same transition function.
+When `searchValue` is present:
+- it is the rendered source of truth;
+- user interaction calculates a proposed next value and calls `onSearchChange`;
+- the picker does not render a hidden optimistic copy;
+- the visible/filtering query changes only when the parent supplies a new `searchValue`.
+
+Programmatic parent updates do not call `onSearchChange` again.
+
+Example: with `searchValue="cat"`, typing `p` proposes `"catp"`. If the parent ignores the callback, the rendered query remains `"cat"`.
+
+### Uncontrolled
+
+When `searchValue` is absent:
+- initial state comes from `defaultSearchValue` or `""`;
+- the picker owns subsequent changes;
+- user changes still call `onSearchChange` when provided.
+
+`defaultSearchValue` is read when the component instance mounts. A true unmount/remount creates a new uncontrolled lifetime.
+
+Switching between controlled and uncontrolled search during one mounted lifetime is unsupported. Development builds may warn; warning text is not public API.
+
+## 2. Search transitions
+
+The following are user-driven search changes and use one shared transition:
+- editing the input;
+- the clear button;
+- Escape when existing behavior clears search;
+- type-to-search from the picker keyboard-navigation surfaces.
 
 Examples:
-- clear button proposes `""`;
-- typing `p` into controlled `searchValue="cat"` proposes `"catp"`;
-- if the parent ignores `onSearchChange("catp")`, the rendered query remains `"cat"`.
+- clear proposes `""`;
+- typing from the grid focuses Search and proposes the appended query;
+- when `searchDisabled` is true, built-in type-to-search remains disabled as in v4.
 
-No callback fires merely because the parent changed `searchValue`.
+No callback fires merely because emoji data/categories changed.
 
-## 3. Skin tone
+## 3. Reactions-mode observation
 
 Public addition:
 
 ```ts
-skinTone?: SkinTone;
+onReactionsModeChange?: (reactionsOpen: boolean) => void;
 ```
 
-Existing:
-- `defaultSkinTone`;
-- `onSkinToneChange`;
-- `skinTonesDisabled`;
-- `skinTonePickerLocation`.
+This observes the existing reactions/full-picker state; it does not introduce a second mode model.
 
-In controlled mode, selection emits `onSkinToneChange(next)`; rendering continues to use the supplied `skinTone` until the parent changes it.
+Semantics:
+- `true`: compact Reactions is active;
+- `false`: full Picker panel is active;
+- fire only after an actual state transition;
+- expanding reactions emits `false`;
+- collapsing to reactions emits `true`;
+- initial mount does not emit;
+- rerenders that preserve the same state do not emit.
 
-The v4 enum remains exported; string literals are also accepted.
+Existing APIs remain authoritative for capability/initial state:
+- `reactionsDefaultOpen`;
+- `allowExpandReactions`;
+- `reactions`;
+- `onReactionClick`;
+- `onEmojiClick(..., api).collapseToReactions()`.
 
-## 4. Picker mode / reactions
+## 4. Collapse behavior
 
-Public additions:
+When `collapseToReactions()` is called:
+- if the reactions UI is available, transition to compact reactions;
+- emit `onReactionsModeChange(true)` once if state changed;
+- if already in reactions mode, do not emit again;
+- if reactions are unavailable, preserve existing safe behavior and document any development warning added.
 
-```ts
-mode?: 'picker' | 'reactions';
-defaultMode?: 'picker' | 'reactions';
-onModeChange?: (mode: 'picker' | 'reactions') => void;
-```
-
-Compatibility mapping:
-- if neither `mode` nor `defaultMode` is supplied, existing `reactionsDefaultOpen` determines the initial uncontrolled mode;
-- if `defaultMode` is supplied, it takes precedence over `reactionsDefaultOpen`;
-- if `mode` is supplied, it is authoritative.
-
-User-driven expansion proposes `'picker'`.
-User-driven collapse proposes `'reactions'`.
-
-In controlled mode, animation/presence must correspond to the actual supplied `mode`, not an internal optimistic mode.
-
-## 5. Collapse behavior and compatibility API
-
-v4 exposes `api.collapseToReactions()` as the optional third argument to `onEmojiClick`.
-
-v5 keeps this compatibility capability.
-
-When called:
-- if reactions are configured/available, propose mode `'reactions'`;
-- emit `onModeChange('reactions')` when this is a user/application initiated transition;
-- uncontrolled mode changes immediately;
-- controlled mode waits for the parent to update `mode`.
-
-If reactions are unavailable, the method is a safe no-op in production and may warn in development.
-
-## 6. Focus across mode transitions
+## 5. Focus across reactions transitions
 
 On reactions → picker expansion:
-- save the initiating reaction/expand control as the restoration target;
-- after the full panel becomes focusable, focus Search when present and auto-focus behavior allows it;
-- otherwise focus CategoryNav when present;
-- otherwise focus the first visible emoji.
+- save the initiating reaction/expand control as a restoration target;
+- after the full panel becomes focusable, preserve existing default auto-focus behavior;
+- if Search is absent, focus the next valid picker region according to NAVIGATION.md.
 
 On picker → reactions collapse:
-- restore focus to the control that initiated expansion when it still exists;
-- otherwise focus the first available reaction button;
-- otherwise focus Root without inventing a hidden control.
+- restore focus to a valid reactions control;
+- prefer the saved initiating control when it still exists;
+- otherwise focus the first available reaction/expand control.
 
-Focus transfer must happen after the destination is mounted but must not require arbitrary delays tied to animation duration.
+Focus transfer happens after the destination exists, not after an arbitrary timeout coupled to animation duration.
 
-## 7. Suggestions
+## 6. Suggested emojis
 
 v5 keeps:
-- `suggestedEmojisMode`: `recent` / `frequent`;
-- existing client localStorage persistence.
+- `suggestedEmojisMode` (`recent` / `frequent`);
+- current localStorage persistence.
 
 v5 adds:
 
@@ -139,23 +111,35 @@ suggestedEmojis?: string[];
 ```
 
 Semantics:
-- when absent, current persistence/mode logic applies;
-- when present, it is the suggested-category source;
-- order is caller-defined;
+- absent: current persistence/mode logic applies;
+- present: the supplied ordered list is the Suggested category source;
 - unknown IDs are ignored;
-- the array is not mutated;
-- supplying it does not overwrite localStorage;
-- emoji selections may continue updating the user's persisted history for future use when the prop is removed.
+- the input array is never mutated;
+- supplying values does not write those values to localStorage;
+- normal emoji selections may continue updating persisted history for future built-in use.
 
-v5 does **not** add a generalized controlled recents store or storage adapter.
+No generalized storage adapter or controlled recents store is introduced in initial v5.
+
+## 7. State intentionally not exposed
+
+Initial v5 does not add public controlled APIs for:
+- skin tone beyond existing `defaultSkinTone` + `onSkinToneChange`;
+- active category;
+- focused/highlighted emoji;
+- preview emoji;
+- variation picker open state;
+- scroll position;
+- reactions mode itself.
+
+These may be reconsidered when a concrete consumer use case cannot be solved by the existing surface.
 
 ## 8. SSR/hydration
 
 localStorage is never read during SSR.
 
-The hydration-first client render must match server output. Persisted suggestions may be applied in an effect after hydration.
+Server output and the hydration-first client render use deterministic non-persisted suggestion state. Persisted suggestions may be applied after hydration.
 
 Tests must assert:
 - no hydration warnings;
 - no server `window`/`document` dependency;
-- persisted suggestions appear after client hydration without replacing unrelated state.
+- persisted suggestions can appear after hydration without replacing unrelated state.
