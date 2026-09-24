@@ -26,20 +26,14 @@ A consumer who does not need structural customization should not need to know th
 Representative additions:
 
 ```ts
-type PickerMode = 'picker' | 'reactions';
-
 type EmojiPickerV5Additions = {
   searchValue?: string;
   defaultSearchValue?: string;
   onSearchChange?: (value: string) => void;
 
-  skinTone?: SkinToneValue;
-
-  mode?: PickerMode;
-  defaultMode?: PickerMode;
-  onModeChange?: (mode: PickerMode) => void;
-
   suggestedEmojis?: string[];
+
+  onReactionsModeChange?: (reactionsOpen: boolean) => void;
 };
 ```
 
@@ -101,42 +95,22 @@ Use cases:
 
 The full semantics are in [STATE.md](./STATE.md).
 
-## 5. Controlled skin tone
+## 5. Observe reactions/full-picker mode
+
+Issue #504 asks for layout adaptation when the picker expands/collapses. v5 adds the narrow observer:
 
 ```tsx
-const [skinTone, setSkinTone] = useState<SkinToneValue>('neutral');
-
 <EmojiPicker
-  skinTone={skinTone}
-  onSkinToneChange={setSkinTone}
+  reactionsDefaultOpen
+  onReactionsModeChange={(reactionsOpen) => {
+    updateLayout(reactionsOpen);
+  }}
 />
 ```
 
-Existing `defaultSkinTone`, `skinTonesDisabled`, and `skinTonePickerLocation` remain supported.
+Existing reactions configuration and callbacks remain unchanged. v5 does not add a second controlled `mode/defaultMode` API without a demonstrated need.
 
-## 6. Controlled reactions/full-picker mode
-
-```tsx
-const [mode, setMode] = useState<'picker' | 'reactions'>('reactions');
-
-<EmojiPicker
-  mode={mode}
-  onModeChange={setMode}
-  reactions={['1f44d', '2764-fe0f', '1f602']}
-/>
-```
-
-For uncontrolled new code:
-
-```tsx
-<EmojiPicker defaultMode="reactions" />
-```
-
-Existing `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, and `collapseToReactions()` compatibility remain.
-
-This is intentionally additive rather than forcing every reactions consumer to rewrite handlers.
-
-## 7. Custom suggested emojis
+## 6. Custom suggested emojis
 
 To solve the concrete use case in issue #277:
 
@@ -154,7 +128,7 @@ This ordered list replaces the built-in persisted suggested list while provided.
 
 It does not create a generalized storage adapter or controlled recents API.
 
-## 8. Structural primitives
+## 7. Structural primitives
 
 ```tsx
 import * as EmojiPicker from 'emoji-picker-react/primitives';
@@ -217,7 +191,7 @@ Nor does it initially promise arbitrary `asChild` replacement for each emoji but
 
 Those APIs expose ref/ARIA/variation/virtualization responsibilities that the library should continue to own until a safe item-level composition contract is designed.
 
-## 9. Valid and invalid compositions
+## 8. Valid and invalid compositions
 
 Valid:
 
@@ -274,7 +248,7 @@ Registered picker primitives must remain inside the Root DOM subtree.
 
 Development builds should fail fast or warn descriptively for invalid structures.
 
-## 10. Styling primitives
+## 9. Styling primitives
 
 ```tsx
 <EmojiPicker.Root className="picker">
@@ -302,7 +276,7 @@ Use documented parts for managed descendants:
 
 See [STYLING.md](./STYLING.md) for the line between appearance customization and protected structural rules.
 
-## 11. Data API
+## 10. Data API
 
 The supported data entry point replaces private deep imports:
 
@@ -323,7 +297,7 @@ shortcodeToEmoji(':+1:');
 
 Exact helper names must be finalized before implementation is declared complete. The same normalization/search modules must power both the UI and this entry point.
 
-## 12. Locale/data imports
+## 11. Locale/data imports
 
 v4 documentation currently teaches imports such as:
 
@@ -339,7 +313,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 The exact exports-map pattern must be validated against generated output before release.
 
-## 13. API errors and development warnings
+## 12. API errors and development warnings
 
 Invalid primitive composition should fail early in development with a useful message.
 
