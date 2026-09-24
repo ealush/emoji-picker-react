@@ -33,12 +33,12 @@ For v5, all listed region kinds are singletons inside one Root.
 
 Mounting two Search primitives, two CategoryNav primitives, two Lists, or two Reactions primitives in one Root is invalid.
 
-Development builds MUST fail fast with a descriptive error or warning that names:
-- the duplicate primitive;
-- why the composition is unsupported;
-- the relevant v5 composition documentation.
+On a second singleton registration:
 
-Production behavior may keep the first registration to avoid crashing a runtime, but duplicate behavior is unsupported.
+- **development:** throw a descriptive error naming the duplicate primitive and the supported composition;
+- **production:** keep the first registration authoritative, ignore the later registration for picker behavior, and warn once.
+
+This matches PRIMITIVES.md. Duplicate compositions are unsupported in every environment; production merely avoids turning a configuration mistake into a hard crash.
 
 ## 3. Ordering
 
