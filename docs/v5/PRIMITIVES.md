@@ -60,8 +60,9 @@ Rules:
 
 - `Root` is required.
 - `Reactions` is optional and singleton.
-- Reactions MUST be a direct Root child so Root can keep it outside the managed panel.
-- Every direct Root child other than Reactions becomes panel content.
+- When present, Reactions MUST be the first non-null direct Root child.
+- Root does not silently hoist/reorder Reactions from an arbitrary child position.
+- Every subsequent direct Root child becomes panel content.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
 - `Search`, `CategoryNav`, `Viewport`, and `Preview` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
@@ -96,7 +97,7 @@ These fail immediately in development when the component renders:
 - any primitive outside Root;
 - List outside Viewport;
 - Viewport with zero, multiple, or a non-List direct child;
-- Reactions rendered from inside the managed panel rather than as a direct Root child, once panel context is available.
+- Reactions rendered from inside the managed panel rather than as the first non-null direct Root child.
 
 ### Registration-time singleton validation
 
@@ -105,7 +106,7 @@ Search, CategoryNav, Viewport, Preview and Reactions register with the Root-scop
 When a second singleton of the same kind registers:
 
 - **development:** throw a descriptive error naming the duplicate primitive;
-- **production:** the first registration remains authoritative, the later registration is ignored by picker behavior, and a warning is emitted once.
+- **production:** the first mounted registration remains authoritative; later duplicates are ignored by picker behavior. If the authoritative registration unmounts while a duplicate is still mounted, the oldest remaining registration becomes authoritative on the next registry update. A warning is emitted once per duplicate kind.
 
 Registration validation happens after mount for arbitrarily nested primitives. It is not an SSR validator.
 
