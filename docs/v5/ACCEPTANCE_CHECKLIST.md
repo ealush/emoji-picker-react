@@ -1,251 +1,276 @@
 # v5 Acceptance Checklist
 
-Every applicable item must be satisfied before publishing `emoji-picker-react@5`.
+Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
-## Contract integrity
+## 1. Normative-contract integrity
 
-- [ ] `SPEC.md` matches the implemented product.
-- [ ] `DEFAULT_COMPOSITION.md` matches the actual default component tree.
-- [ ] `NAVIGATION.md` matches the actual focus algorithm.
-- [ ] `STATE.md` matches controlled/uncontrolled behavior.
-- [ ] `V4_API_MATRIX.md` has a disposition for every v4 public prop/export.
-- [ ] `STYLING.md` matches the actual protected structural CSS and public styling hooks.
-- [ ] Any intentional design deviation was documented before removing/changing the corresponding test scenario.
+- [ ] There is exactly one normative v4 compatibility matrix: `V4_API_MATRIX.md`.
+- [ ] There is exactly one normative styling contract: `STYLING.md`.
+- [ ] `SPEC.md`, `API.md`, `PRIMITIVES.md`, `DEFAULT_COMPOSITION.md`, `STATE.md`, `NAVIGATION.md`, `PERFORMANCE.md`, `REACT_COMPATIBILITY.md`, and `DATA_API.md` do not contradict one another.
+- [ ] Any implementation deviation is first captured as an explicit spec amendment rather than silently changing tests.
 
-## Plug-and-play compatibility
+## 2. Plug-and-play compatibility
 
-- [ ] `import EmojiPicker from 'emoji-picker-react'` remains the primary usage.
-- [ ] `<EmojiPicker />` renders a complete picker with no composition.
-- [ ] Default width/height remain v4-compatible.
-- [ ] Search, category navigation, grid, and preview are present by default.
-- [ ] Existing custom emojis/groups still work.
-- [ ] Existing localization through `emojiData` still works.
-- [ ] Existing emoji styles still work.
-- [ ] Existing CSP nonce support still works.
-- [ ] Existing reactions compact/full experience still works.
-- [ ] Existing `open` behavior still works.
+- [ ] `import EmojiPicker from 'emoji-picker-react'` remains primary usage.
+- [ ] `<EmojiPicker />` renders a complete usable picker with no composition.
+- [ ] Default dimensions/appearance remain v4-compatible.
+- [ ] Search, category navigation, grid and preview remain present by default.
+- [ ] Reactions retain compact→full behavior.
+- [ ] Existing `open` behavior remains.
+- [ ] Existing custom emoji/group behavior remains.
+- [ ] Existing localization via `emojiData` remains.
+- [ ] Existing emoji styles remain.
+- [ ] CSP nonce remains functional.
 
-## v4 API preservation
+## 3. Current main-entry exports
 
-- [ ] `open` retained.
-- [ ] `theme` retained.
-- [ ] `emojiStyle` retained.
-- [ ] `emojiVersion` retained.
-- [ ] `lazyLoadEmojis` retained.
-- [ ] `autoFocusSearch` retained.
-- [ ] `emojiData` retained.
-- [ ] dimensions/style/className retained.
-- [ ] `onEmojiClick` signature remains compatible.
-- [ ] `collapseToReactions()` remains compatible.
-- [ ] `onReactionClick` retained.
-- [ ] `onSkinToneChange` retained.
-- [ ] `searchDisabled` retained.
-- [ ] search placeholder/clear-label props retained.
-- [ ] `categories` retained with existing allowlist/order semantics.
-- [ ] `suggestedEmojisMode` retained.
-- [ ] `defaultSkinTone` retained.
-- [ ] `skinTonesDisabled` retained.
-- [ ] `skinTonePickerLocation` retained.
-- [ ] `customEmojis` retained.
-- [ ] `hiddenEmojis` retained.
-- [ ] `previewConfig` retained.
-- [ ] `getEmojiUrl` retained.
-- [ ] `categoryIcons` retained.
-- [ ] `nonce` retained.
-- [ ] existing reactions props retained.
-- [ ] existing enum exports retained.
-- [ ] string literals are accepted without requiring enum imports.
-- [ ] `searchPlaceHolder` compatibility alias remains accepted and is documented deprecated.
+- [ ] default `EmojiPicker` retained.
+- [ ] `Emoji` retained with existing props.
+- [ ] top-level `emojiByUnified` retained with existing behavior/return shape.
+- [ ] `PickerProps` retained.
+- [ ] `Props` remains a `PickerProps` alias.
+- [ ] `EmojiClickData` retained.
+- [ ] `CategoryIcons` retained.
+- [ ] `CategoryConfig` retained.
+- [ ] `Theme`, `EmojiStyle`, `SkinTones`, `Categories`, `SuggestionMode`, and `SkinTonePickerLocation` retained.
+- [ ] representative v4 TypeScript imports compile against the packed v5 declarations.
 
-## Controlled state
+## 4. Existing picker props
 
-- [ ] controlled search implemented.
-- [ ] uncontrolled search implemented.
-- [ ] stale controlled parent does not cause hidden optimistic search UI.
-- [ ] clear button emits `onSearchChange('')`.
-- [ ] type-to-search emits the same search transition.
-- [ ] parent-driven search changes do not re-emit.
-- [ ] controlled skin tone implemented.
-- [ ] controlled skin tone waits for parent update.
-- [ ] controlled mode implemented.
-- [ ] uncontrolled `defaultMode` implemented.
-- [ ] `reactionsDefaultOpen` compatibility precedence matches STATE.md.
-- [ ] expand emits `onModeChange('picker')`.
-- [ ] collapse emits `onModeChange('reactions')`.
-- [ ] controlled mode waits for parent update.
-- [ ] focus transfer/restoration matches STATE.md.
+- [ ] Every v4 prop in `V4_API_MATRIX.md` remains source-compatible unless explicitly marked otherwise.
+- [ ] `searchPlaceHolder` legacy spelling still works and is documented deprecated.
+- [ ] literal enum-backed values are accepted without removing enum exports.
+- [ ] `onEmojiClick(..., api).collapseToReactions()` remains.
+- [ ] `getEmojiUrl` remains the custom/self-hosted asset escape hatch.
+- [ ] `categoryIcons` remains.
+- [ ] `lazyLoadEmojis` remains.
+- [ ] `previewConfig` remains.
+- [ ] current reaction props/callbacks remain.
 
-## Suggestions
+## 5. New v5 additions
 
-- [ ] built-in recent/frequent behavior preserved.
-- [ ] localStorage behavior preserved.
-- [ ] `suggestedEmojis` supported.
-- [ ] supplied order preserved.
-- [ ] unknown IDs ignored safely.
-- [ ] supplied array not mutated.
-- [ ] supplied values not written to localStorage.
-- [ ] selections may still update persisted history for later built-in use.
+- [ ] `searchValue` implemented.
+- [ ] `defaultSearchValue` implemented.
+- [ ] `onSearchChange` implemented.
+- [ ] `suggestedEmojis` implemented.
+- [ ] `onReactionsModeChange` implemented.
+- [ ] `idPrefix` implemented.
+- [ ] no unapproved controlled `skinTone` or `mode/defaultMode` API was added.
 
-## One implementation
+## 6. Search semantics
 
-- [ ] default component imports/uses the same exported Root primitive module.
-- [ ] default component imports/uses the same exported Search primitive module.
-- [ ] default component imports/uses the same exported CategoryNav primitive module.
-- [ ] default component imports/uses the same exported Viewport/List primitive modules.
-- [ ] default component imports/uses the same exported Preview primitive module.
-- [ ] default component imports/uses the same exported Reactions/Panel primitive modules.
-- [ ] no duplicate keyboard-navigation implementation exists.
-- [ ] no duplicate emoji search/normalization implementation exists between UI and `/data`.
-- [ ] architecture assertion/test exists once module paths are finalized.
+- [ ] uncontrolled input changes immediately.
+- [ ] controlled value is authoritative.
+- [ ] stale controlled parent does not produce an optimistic visible value.
+- [ ] `onSearchChange` receives raw visible text synchronously.
+- [ ] filtering uses normalized derived query rather than rewriting visible input.
+- [ ] default filtering debounce is 100 ms.
+- [ ] pending older filter computation is canceled by newer query.
+- [ ] clear emits `onSearchChange('')`.
+- [ ] type-to-search uses the same transition service.
+- [ ] parent-driven controlled changes do not re-emit callback.
+- [ ] IME composition does not commit intermediate filter queries.
+- [ ] IME composition does not trigger type-to-search shortcuts.
+- [ ] final composition value produces exactly one committed filtering transition.
 
-## Primitive composition
+## 7. Suggested emoji normalization
 
-- [ ] `Root` exported.
-- [ ] `Reactions` exported.
-- [ ] `Panel` exported.
-- [ ] `Search` exported.
-- [ ] `CategoryNav` exported.
-- [ ] `Viewport` exported.
-- [ ] `List` exported.
-- [ ] `Preview` exported.
-- [ ] primitives can be reordered in DOM.
-- [ ] primitives can be wrapped in consumer layout elements.
-- [ ] ordinary consumer UI can be inserted between primitives.
-- [ ] optional regions can be omitted.
-- [ ] no render-prop list API is required.
-- [ ] consumers do not wire internal refs/ARIA IDs.
-- [ ] List outside Viewport fails fast in development.
-- [ ] duplicate singleton regions fail fast in development.
-- [ ] portaled registered regions outside Root warn/fail in development.
-- [ ] item-level arbitrary React replacement is not accidentally exposed as an undocumented API.
+- [ ] uppercase unified input such as `1F601` works.
+- [ ] entries are trimmed/lowercased for lookup.
+- [ ] duplicates are removed after normalization, first occurrence wins.
+- [ ] caller order is preserved otherwise.
+- [ ] unknown IDs are ignored.
+- [ ] input array is not mutated.
+- [ ] supplied suggestions are not written into localStorage.
+- [ ] existing persisted recent/frequent behavior remains when prop is absent.
 
-## Navigation
+## 8. Reactions observation
 
-- [ ] registered-region traversal uses DOM document order.
-- [ ] registration mount order does not affect navigation.
-- [ ] non-region consumer controls are skipped by picker arrow navigation.
-- [ ] non-region controls remain reachable by normal Tab.
-- [ ] Search Down enters next applicable region.
-- [ ] active-search Search Down goes directly to Grid.
-- [ ] Categories Left/Right navigate tabs.
-- [ ] Categories Up/Down follow NAVIGATION.md.
-- [ ] Grid Left/Right navigate logical adjacent emojis.
-- [ ] Grid Up/Down navigate logical rows.
-- [ ] Grid top-edge Up follows NAVIGATION.md.
-- [ ] active-search Grid top-edge Up returns to Search.
+- [ ] expand emits `onReactionsModeChange(false)` once.
+- [ ] collapse emits `onReactionsModeChange(true)` once.
+- [ ] initial mount does not emit.
+- [ ] unchanged rerenders do not emit.
+- [ ] `allowExpandReactions=false` remains.
+- [ ] reaction identifiers use shared case-insensitive normalization.
+- [ ] focus restores to a valid reactions control after collapse.
+
+## 9. Primitive grammar
+
+- [ ] Root exported.
+- [ ] Reactions exported.
+- [ ] Panel exported.
+- [ ] Search exported.
+- [ ] CategoryNav exported.
+- [ ] Viewport exported.
+- [ ] List exported.
+- [ ] Preview exported.
+- [ ] exactly one Panel is required per Root.
+- [ ] Panel is a direct Root child (fragments excepted).
+- [ ] Reactions is optional, singleton, and outside Panel.
+- [ ] all full-picker regions are Panel descendants.
+- [ ] exactly one List is inside exactly one Viewport.
+- [ ] Search/CategoryNav/Preview may be omitted.
+- [ ] arbitrary consumer UI may be inserted inside Panel.
+- [ ] unsupported root-level consumer UI is rejected/documented.
+- [ ] duplicate singleton primitives fail fast.
+- [ ] List outside Viewport fails fast.
+- [ ] registered primitives portaled outside Root fail/warn as specified.
+- [ ] reactionsDefaultOpen without Reactions falls back to Panel and warns in development.
+- [ ] no render-prop item API is required.
+- [ ] no accidental `asChild`/arbitrary emoji-button replacement ships.
+
+## 10. Primitive DOM/ref contract
+
+- [ ] every structural primitive uses `forwardRef`.
+- [ ] forwarded element types match PRIMITIVES.md.
+- [ ] native `aria-*`, non-reserved `data-*`, className, style and event props forward as specified.
+- [ ] `data-epr-*` namespace remains library-reserved.
+- [ ] required roles cannot be overridden.
+- [ ] internal handlers execute before consumer handlers.
+- [ ] consumer `preventDefault` is not an undocumented behavior override.
+- [ ] Search `inputProps` and `inputRef` behave as specified.
+- [ ] List does not accept arbitrary children.
+
+## 11. Error ownership
+
+- [ ] default EmojiPicker retains the existing ErrorBoundary behavior.
+- [ ] primitive Root does not install a library ErrorBoundary.
+- [ ] errors from arbitrary consumer children inside Panel propagate to the consumer's boundary.
+
+## 12. One implementation
+
+- [ ] default export uses the same exported Root module.
+- [ ] default export uses the same Search module.
+- [ ] default export uses the same CategoryNav module.
+- [ ] default export uses the same Viewport/List modules.
+- [ ] default export uses the same Preview module.
+- [ ] default export uses the same Reactions/Panel modules.
+- [ ] no parallel keyboard-navigation engine exists.
+- [ ] UI and `/data` share normalization/search modules.
+- [ ] architecture assertion/test prevents a parallel private renderer from returning.
+
+## 13. Navigation
+
+- [ ] region registry is Root-scoped.
+- [ ] generic region ordering uses DOM document order, not registration order.
+- [ ] consumer non-region controls are skipped by picker arrow navigation but remain tabbable.
+- [ ] active-search Search↔Grid exception works.
+- [ ] category tab horizontal navigation works.
+- [ ] grid logical Left/Right/Up/Down works.
 - [ ] omitted regions create no dead destinations.
-- [ ] virtualized offscreen destination is materialized, scrolled, then focused.
+- [ ] offscreen logical destination is materialized, scrolled and focused.
 - [ ] focus remains on real emoji controls.
-- [ ] multiple Roots do not leak focus/typeahead state.
+- [ ] stale materialize/focus requests are canceled after query change.
+- [ ] stale requests are canceled after resize/column change.
+- [ ] stale requests are canceled after data/category change.
+- [ ] stale requests are canceled after reactions transition/unmount.
+- [ ] multiple Roots never focus/mutate one another.
 
-## Reactions
+## 14. Accessibility and IDs
 
-- [ ] current default reaction list behavior preserved.
-- [ ] `allowExpandReactions=false` preserved.
-- [ ] reaction IDs use shared normalization/lookup.
-- [ ] expand changes mode without duplicating picker data/selection logic.
-- [ ] branded default transition remains visually compatible.
-- [ ] bare primitives are not forced to use branded motion.
-- [ ] collapseToReactions compatibility works in controlled and uncontrolled mode.
-- [ ] focus restores to a valid reaction control after collapse.
-
-## Accessibility
-
-- [ ] emoji collection remains a composite widget that allows screen-reader arrow navigation.
-- [ ] issue #508 regression behavior has an executable test.
-- [ ] category grouping/accessibility context from issue #512 has an executable test.
-- [ ] emoji controls have accessible names.
-- [ ] category navigation remains a tablist.
+- [ ] issue #508 composite-widget behavior has an executable regression test.
+- [ ] issue #512 category-context behavior has an executable regression test.
+- [ ] category nav remains a tablist.
 - [ ] search status remains a polite live region.
-- [ ] omitted/reordered primitives create no dangling ARIA references.
-- [ ] consumers do not manually forward library-owned ARIA IDs.
-- [ ] focus-visible treatment remains usable.
+- [ ] hard-coded `epr-search-id` is gone.
+- [ ] hard-coded `epr-category-nav-id` is gone.
+- [ ] two default pickers have no duplicate library-owned IDs.
+- [ ] two primitive Roots have no duplicate library-owned IDs.
+- [ ] `idPrefix` namespaces any unavoidable generated IDs.
+- [ ] all library ARIA ID references resolve inside their owning Root.
+- [ ] no ARIA relationship crosses Root instances.
 
-## Styling
+## 15. React 16.8 / SSR
 
-- [ ] default v4 CSS variables listed in STYLING.md remain supported.
-- [ ] structural CSS responsibilities are documented.
-- [ ] Viewport scroll/positioning invariants are enforced/documented.
-- [ ] virtual-row geometry remains correct under supported styling.
-- [ ] variation UI is not accidentally clipped by the supported default/primitive structure.
-- [ ] public part names match STYLING.md exactly.
-- [ ] no private measurement wrapper is accidentally exposed as a stable part.
-- [ ] primitive `className`/`style` customization works for documented regions.
-- [ ] bare primitives do not silently receive the full branded appearance.
+- [ ] static React-floor check passes.
+- [ ] packed artifact mounts under real React 16.8.x.
+- [ ] primitives mount under real React 16.8.x.
+- [ ] click/keyboard smoke path works under React 16.8.x.
+- [ ] React 16 server rendering works.
+- [ ] React 16 hydration works without warnings.
+- [ ] current React runtime fixture also passes.
+- [ ] no `useId`, `useSyncExternalStore`, or other React-18-only runtime dependency.
+- [ ] no localStorage/window/document access during SSR.
+- [ ] hydration-first markup is deterministic.
+- [ ] multiple SSR Roots hydrate without duplicate global IDs.
 
-## Assets and failures
+## 16. Performance: data core
 
-- [ ] native emoji mode does not invoke image URL resolution for standard emojis.
-- [ ] `getEmojiUrl` custom/self-hosted behavior remains supported.
-- [ ] custom image emojis continue to render regardless of standard emoji style.
-- [ ] broken standard emoji images do not break keyboard navigation.
-- [ ] image load failure behavior is tested.
+- [ ] default dataset is not JSON-cloned per Root.
+- [ ] prepared lookup/search core is cached by dataset identity.
+- [ ] ten Roots with same dataset build base index exactly once.
+- [ ] caller `emojiData` / `customEmojis` are never mutated.
+- [ ] data cache does not strongly retain unmounted Root controllers.
+- [ ] cold preparation benchmark is <=110% of frozen v4 median.
+- [ ] same-dataset multi-Root benchmark proves cache reuse.
 
-## SSR/hydration/CSP
+## 17. Performance: rendering/search/scroll
 
-- [ ] server render does not access `window`, `document`, or localStorage.
-- [ ] hydration-first output is deterministic.
-- [ ] persisted suggestions may apply after hydration without mismatch warnings.
-- [ ] controlled state hydrates without mismatch.
-- [ ] CSP nonce reaches every library-owned style tag used by default/primitives.
+- [ ] search median is <=110% of frozen v4 baseline.
+- [ ] no representative search fixture regresses >25% without explicit amendment/profiling.
+- [ ] preview hover does not rerender Search/CategoryNav/Reactions.
+- [ ] scroll/virtualization does not rerender Search/CategoryNav/Preview/Reactions.
+- [ ] search update does not rerender Reactions.
+- [ ] Root A updates do not rerender Root B.
+- [ ] scroll listener remains passive.
+- [ ] virtualization work is coalesced to at most one scheduled update per animation frame per Root.
+- [ ] single-picker initialization median is <=110% of frozen v4 baseline.
 
-## Data API
+## 18. Styling
 
-- [ ] `emoji-picker-react/data` is public.
-- [ ] unified lookup works.
-- [ ] names/aliases are exposed.
-- [ ] variations are exposed.
-- [ ] search reuses the UI's matching implementation.
-- [ ] locale behavior is explicitly documented.
-- [ ] shortcode helpers are included only where data semantics are defined/tested.
-- [ ] data import size measured.
-- [ ] importing one locale does not unexpectedly pull all locales, or the cost is explicitly accepted/documented.
+- [ ] all documented v4 CSS variables remain supported unless explicitly deprecated.
+- [ ] public part list matches STYLING.md exactly, including `skin-tone` and `category-content`.
+- [ ] protected structural properties are documented.
+- [ ] supported emoji size/padding changes update measurement/row math.
+- [ ] cosmetic overrides do not break virtualization.
+- [ ] variation picker remains visible/keyboard-operable in custom composition.
+- [ ] bare primitives do not silently apply full branded appearance.
+- [ ] default picker remains visually compatible.
 
-## Packaging
+## 19. Data API
 
-- [ ] React peer floor remains `>=16.8` unless separately approved.
-- [ ] no accidental React-18-only API dependency.
-- [ ] explicit `exports` map exists.
-- [ ] main export resolves with declarations.
-- [ ] primitives export resolves with declarations.
-- [ ] data export resolves with declarations.
-- [ ] documented locale/data subpaths resolve.
-- [ ] documented v4 deep locale import has a migration path.
-- [ ] unspecified `dist/*` deep imports are explicitly called out as unsupported/breaking.
-- [ ] supported ESM consumer fixture passes.
-- [ ] supported CJS consumer fixture passes if CJS remains published.
+- [ ] existing top-level `emojiByUnified` remains unchanged.
+- [ ] `emoji-picker-react/data` exports `getEmojiByUnified`.
+- [ ] `emoji-picker-react/data` exports `searchEmojis`.
+- [ ] `EmojiInfo` and data option types match DATA_API.md.
+- [ ] lookup is case-insensitive and variation-aware as specified.
+- [ ] search uses same core as UI.
+- [ ] supplied `emojiData` affects lookup/search.
+- [ ] `/data` imports neither React nor ShipStyles.
+- [ ] initial v5 does not accidentally promise Slack-shortcode compatibility.
+
+## 20. Packaging/tree-shaking
+
+- [ ] main entry preserves every v4 named export.
+- [ ] explicit exports map resolves main/primitives/data/locale paths.
+- [ ] documented v4 locale deep import has explicit compatibility/migration.
+- [ ] arbitrary undocumented deep imports are called out as unsupported.
+- [ ] ESM packed consumer passes.
+- [ ] CJS packed consumer passes if CJS remains published.
+- [ ] declarations resolve for all public subpaths.
 - [ ] Publint passes.
-- [ ] AreTheTypesWrong or equivalent passes.
-- [ ] default bundle/size-limit regression is measured and justified if changed.
+- [ ] AreTheTypesWrong/equivalent passes.
+- [ ] primitives-only consumer does not pull branded default appearance wrapper.
+- [ ] one locale import does not eagerly include all locales.
+- [ ] main size-limit remains <=95 KB unless separately amended with attribution.
 
-## Visual compatibility
+## 21. Visual compatibility
 
-- [ ] existing default visual tests pass in the same environment.
-- [ ] screenshots were not refreshed to hide an implementation regression.
-- [ ] tolerance was not loosened to hide an implementation regression.
-- [ ] any environment drift was adjudicated using VISUAL_COMPATIBILITY.md.
-- [ ] intentional visual changes, if any, have explicit spec amendment.
-- [ ] reactions animation changes received behavioral tests and manual visual review.
+- [ ] existing visual tests pass in the same environment.
+- [ ] screenshots are not refreshed to hide a v5 regression.
+- [ ] tolerance is not loosened to hide a v5 regression.
+- [ ] environment drift is adjudicated using VISUAL_COMPATIBILITY.md.
+- [ ] reaction motion changes receive behavioral tests and manual visual review.
 
-## Test conversion
+## 22. Test conversion / docs
 
-- [ ] every applicable `it.todo` in `test/v5-contract/v5-api.test.ts` is a real assertion.
-- [ ] the v5 Playwright `describe.skip` is removed.
-- [ ] every referenced v5 Storybook fixture exists.
-- [ ] virtualization fixture proves the target starts unmaterialized.
-- [ ] native asset-probe fixture proves the image resolver is not invoked.
-- [ ] broken-image fixture proves navigation survives failures.
-- [ ] multi-root fixture proves isolation.
-- [ ] a green CI run is not presented as v5 acceptance while the v5 suite remains skipped.
-
-## Documentation and release
-
-- [ ] README leads with `<EmojiPicker />`.
-- [ ] primitives are documented as advanced macro composition, not "fully headless".
-- [ ] controlled state examples are documented.
-- [ ] valid/invalid primitive compositions are documented.
-- [ ] structural CSS constraints are documented.
-- [ ] full v4 API matrix is linked from migration docs.
-- [ ] package deep-import break is in release notes.
-- [ ] errors/warnings for invalid composition explain cause and remediation.
-- [ ] all acceptance tests and existing CI pass.
+- [ ] every applicable v5 `it.todo` is converted to a real assertion.
+- [ ] v5 Playwright `describe.skip` is removed.
+- [ ] every referenced fixture exists.
+- [ ] green CI is not presented as v5 acceptance while TODO/skipped cases remain.
+- [ ] README still leads with one-line `<EmojiPicker />`.
+- [ ] primitives are described as macro composition, not fully headless.
+- [ ] migration links full export/prop matrix.
+- [ ] invalid-composition errors explain cause and remediation.
+- [ ] `llms.txt` is regenerated from distributable docs.
+- [ ] all unit, visual, docs, React-floor, package and performance checks pass.
