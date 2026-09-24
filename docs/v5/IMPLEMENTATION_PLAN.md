@@ -55,14 +55,14 @@ Implement [NAVIGATION.md](./NAVIGATION.md):
 
 Add real unit tests around the registry/algorithm before exposing primitives.
 
-## Phase 4 — controlled state
+## Phase 4 — state API additions
 
-Implement [STATE.md](./STATE.md) one surface at a time:
-1. search;
-2. skin tone;
-3. mode.
+Implement [STATE.md](./STATE.md):
+1. controlled/uncontrolled search;
+2. reaction-mode observation;
+3. caller-defined suggested emojis.
 
-Add executable tests for each transition, including controlled parents that intentionally do not update their value.
+For controlled search, include a parent that intentionally ignores a proposed value so the source-of-truth semantics are executable.
 
 ## Phase 5 — extract the canonical primitives
 
@@ -83,7 +83,7 @@ Required fixtures:
 - reordered regions with a non-region product control between them;
 - omitted CategoryNav;
 - controlled search;
-- controlled mode;
+- reaction-mode observer;
 - styled primitives;
 - virtualized keyboard target;
 - native renderer with an asset-probe URL resolver;
@@ -95,8 +95,8 @@ At this stage the package `exports` map does not need to be final yet.
 
 Add:
 - controlled search;
-- controlled skin tone;
-- controlled mode;
+- controlled search;
+- `onReactionsModeChange`;
 - `suggestedEmojis`;
 - literal-value acceptance alongside existing enum exports.
 
