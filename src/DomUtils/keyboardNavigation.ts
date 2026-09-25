@@ -14,9 +14,12 @@ import {
   closestCategoryContent,
 } from './selectors';
 
-export function focusFirstVisibleEmoji(parent: NullableElement) {
+export function focusFirstVisibleEmoji(
+  parent: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   const emoji = firstVisibleEmoji(parent);
-  focusElement(emoji);
+  focusElement(emoji, shouldFocus);
   scrollEmojiAboveLabel(emoji);
 }
 
@@ -27,11 +30,17 @@ export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
   firstEmoji?.click();
 }
 
-export function focusLastVisibleEmoji(parent: NullableElement) {
-  focusElement(lastVisibleEmoji(parent));
+export function focusLastVisibleEmoji(
+  parent: NullableElement,
+  shouldFocus?: () => boolean,
+) {
+  focusElement(lastVisibleEmoji(parent), shouldFocus);
 }
 
-export function focusNextVisibleEmoji(element: NullableElement) {
+export function focusNextVisibleEmoji(
+  element: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   if (!element) {
     return;
   }
@@ -39,14 +48,17 @@ export function focusNextVisibleEmoji(element: NullableElement) {
   const next = nextVisibleEmoji(element);
 
   if (!next) {
-    return focusFirstVisibleEmoji(nextCategory(element));
+    return focusFirstVisibleEmoji(nextCategory(element), shouldFocus);
   }
 
-  focusElement(next);
+  focusElement(next, shouldFocus);
   scrollEmojiAboveLabel(next);
 }
 
-export function focusPrevVisibleEmoji(element: NullableElement) {
+export function focusPrevVisibleEmoji(
+  element: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   if (!element) {
     return;
   }
@@ -54,16 +66,17 @@ export function focusPrevVisibleEmoji(element: NullableElement) {
   const prev = prevVisibleEmoji(element);
 
   if (!prev) {
-    return focusLastVisibleEmoji(prevCategory(element));
+    return focusLastVisibleEmoji(prevCategory(element), shouldFocus);
   }
 
-  focusElement(prev);
+  focusElement(prev, shouldFocus);
   scrollEmojiAboveLabel(prev);
 }
 
 export function focusVisibleEmojiOneRowUp(
   element: NullableElement,
   exitUp: () => void,
+  shouldFocus?: () => boolean,
 ) {
   if (!element) {
     return;
@@ -75,18 +88,21 @@ export function focusVisibleEmojiOneRowUp(
     return exitUp();
   }
 
-  focusElement(prev);
+  focusElement(prev, shouldFocus);
   scrollEmojiAboveLabel(prev);
 }
 
-export function focusVisibleEmojiOneRowDown(element: NullableElement) {
+export function focusVisibleEmojiOneRowDown(
+  element: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   if (!element) {
     return;
   }
 
   const next = visibleEmojiOneRowDown(element);
 
-  return focusElement(next);
+  return focusElement(next, shouldFocus);
 }
 
 function visibleEmojiOneRowUp(element: HTMLElement) {

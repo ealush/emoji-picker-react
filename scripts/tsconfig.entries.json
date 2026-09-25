@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "sourceMap": false,
+    "incremental": false,
+    "outDir": "../dist",
+    "rootDir": "../src"
+  },
+  "include": ["../src/primitives/index.ts", "../src/data.ts", "../src/svg.d.ts"]
+}

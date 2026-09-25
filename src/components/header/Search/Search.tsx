@@ -2,14 +2,25 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
+import { DEFAULT_SEARCH_INPUT_LABEL } from '../../../config/config';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
+  useSearchLabelConfig,
   useSearchPlaceHolderConfig,
 } from '../../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFilter } from '../../../hooks/useFilter';
+import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
+import { useSearchInputController } from '../../../hooks/useSearchController';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
+import {
+  composeHandlers,
+  mergeRefs,
+} from '../../../primitives/nativeProps';
+import type {
+  SearchProps,
+} from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
 import { useSearchInputRef } from '../../context/ElementRefContext';
@@ -19,7 +30,13 @@ import { BtnClearSearch } from './BtnClearSearch';
 import { IcnSearch } from './IcnSearch';
 import SVGTimes from './svg/times.svg';
 
-export function SearchContainer() {
+export function SearchContainer({
+  inputProps,
+  inputRef,
+}: {
+  inputProps?: SearchProps['inputProps'];
+  inputRef?: SearchProps['inputRef'];
+} = {}) {
   const searchDisabled = useSearchDisabledConfig();
 
   const isSkinToneInSearch = useIsSkinToneInSearch();
@@ -30,45 +47,98 @@ export function SearchContainer() {
 
   return (
     <Flex className={cx(styles.overlay)}>
-      <Search />
+      <Search inputProps={inputProps} inputRef={inputRef} />
 
       {isSkinToneInSearch ? <SkinTonePicker /> : null}
     </Flex>
   );
 }
 
-export function Search() {
+export function Search({
+  inputProps,
+  inputRef,
+}: {
+  inputProps?: SearchProps['inputProps'];
+  inputRef?: SearchProps['inputRef'];
+} = {}) {
   const closeAllOpenToggles = useCloseAllOpenToggles();
   const SearchInputRef = useSearchInputRef();
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
-  const { statusSearchResults, searchTerm, onChange } = useFilter();
+  const searchLabel = useSearchLabelConfig();
+  const { statusSearchResults, searchTerm } = useFilter();
+  const {
+    value,
+    handleChange,
+    handleCompositionStart,
+    handleCompositionEnd,
+  } = useSearchInputController();
+  useRegisterRegion('search', SearchInputRef);
 
-  const input = SearchInputRef?.current;
-  const value = input?.value;
+  // Consumer input customization. `aria-label` follows the precedence
+  // inputProps > searchLabel > English default; internal input handlers
+  // run before consumer handlers. Input-owned keys are stripped even from
+  // JavaScript callers that bypass the types.
+  const {
+    'aria-label': consumerAriaLabel,
+    onFocus: consumerOnFocus,
+    onBlur: consumerOnBlur,
+    onCompositionStart: consumerOnCompositionStart,
+    onCompositionEnd: consumerOnCompositionEnd,
+    onKeyDown: consumerOnKeyDown,
+    onKeyUp: consumerOnKeyUp,
+    type: _type,
+    value: _value,
+    defaultValue: _defaultValue,
+    onChange: _onChange,
+    autoFocus: _autoFocus,
+    placeholder: _placeholder,
+    'aria-controls': _ariaControls,
+    ...safeInputProps
+  } = (inputProps ?? {}) as Record<string, unknown>;
+  void _type;
+  void _value;
+  void _defaultValue;
+  void _onChange;
+  void _autoFocus;
+  void _placeholder;
+  void _ariaControls;
 
   return (
     <Relative className={cx(styles.searchContainer)}>
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
-        aria-label={'Type to search for an emoji'}
-        onFocus={closeAllOpenToggles}
+        aria-label={
+          (consumerAriaLabel as string | undefined) ??
+          searchLabel ??
+          DEFAULT_SEARCH_INPUT_LABEL
+        }
+        onFocus={composeHandlers(closeAllOpenToggles, consumerOnFocus as never)}
+        onBlur={consumerOnBlur as never}
         className={cx(styles.search)}
         type="text"
-        aria-controls="epr-search-id"
         placeholder={placeholder}
-        onChange={(event) => {
-          onChange(event?.target?.value ?? value);
-        }}
-        ref={SearchInputRef}
+        value={value}
+        onChange={handleChange}
+        onCompositionStart={composeHandlers(
+          handleCompositionStart,
+          consumerOnCompositionStart as never,
+        )}
+        onCompositionEnd={composeHandlers(
+          handleCompositionEnd,
+          consumerOnCompositionEnd as never,
+        )}
+        onKeyDown={consumerOnKeyDown as never}
+        onKeyUp={consumerOnKeyUp as never}
+        ref={mergeRefs(SearchInputRef, inputRef)}
+        {...(safeInputProps as React.InputHTMLAttributes<HTMLInputElement>)}
       />
       {searchTerm ? (
         <div
           role="status"
           className={cx('epr-status-search-results', styles.visuallyHidden)}
           aria-live="polite"
-          id="epr-search-id"
           aria-atomic="true"
         >
           {statusSearchResults}

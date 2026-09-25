@@ -1,4 +1,4 @@
-import { EmojiStyle } from '../types/exposedTypes';
+import { EmojiStyle, EmojiStyleValue } from '../types/exposedTypes';
 
 const CDN_URL_APPLE =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/';
@@ -9,7 +9,7 @@ const CDN_URL_TWITTER =
 const CDN_URL_GOOGLE =
   'https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/';
 
-export function cdnUrl(emojiStyle: EmojiStyle): string {
+export function cdnUrl(emojiStyle: EmojiStyleValue): string {
   switch (emojiStyle) {
     case EmojiStyle.TWITTER:
       return CDN_URL_TWITTER;

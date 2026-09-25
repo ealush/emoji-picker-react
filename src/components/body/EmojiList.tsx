@@ -12,6 +12,8 @@ import {
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
+import { useRegisterRegion } from '../../hooks/useRegisterRegion';
+import { mergeRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
 import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
@@ -20,13 +22,27 @@ import { useGetEmojisByCategory } from '../context/PickerDataContext';
 import { EmojiCategory } from './EmojiCategory';
 import { MeasureEmoji } from './MeasureEmoji';
 
-export function EmojiList({ scrollTop }: { scrollTop: number }) {
+export function EmojiList({
+  scrollTop,
+  outerRef,
+  className,
+  nativeProps,
+}: {
+  scrollTop: number;
+  outerRef?: React.Ref<HTMLUListElement>;
+  className?: string;
+  nativeProps?: Omit<
+    React.HTMLAttributes<HTMLUListElement>,
+    'role' | 'children' | 'className' | 'ref'
+  >;
+}) {
   const categories = useCategoriesConfig();
   const [categoryHeights, setCategoryHeights] = React.useState<{
     [key: string]: number;
   }>({});
   const EmojiListRef = useEmojiListRef();
   const getEmojisByCategory = useGetEmojisByCategory();
+  useRegisterRegion('grid', EmojiListRef);
 
   const labelHeight = getLabelHeight(EmojiListRef.current);
 
@@ -41,7 +57,14 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   // the grid role override is intentional.
   return (
     // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
-    <ul className={cx(styles.emojiList)} ref={EmojiListRef} role="grid">
+    <ul
+      {...nativeProps}
+      className={cx(styles.emojiList, className)}
+      ref={mergeRefs(EmojiListRef, outerRef)}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+      role="grid"
+      data-epr-part="list"
+    >
       <MeasureEmoji />
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);

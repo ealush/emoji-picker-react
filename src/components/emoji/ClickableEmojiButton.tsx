@@ -47,9 +47,10 @@ export function ClickableEmojiButton({
         noBackground && styles.noBackground,
         className,
       )}
-      data-unified={unified}
+      data-epr-part="emoji"
+      data-epr-unified={unified}
       aria-label={getAriaLabel(emojiNames)}
-      data-full-name={emojiNames}
+      data-epr-full-name={emojiNames}
       style={style}
     >
       {children}

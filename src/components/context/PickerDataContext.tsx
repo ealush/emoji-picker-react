@@ -1,12 +1,13 @@
 import React from 'react';
 
-import { CustomEmoji } from '../../config/customEmojiConfig';
-import { useSuggestedEmojisModeConfig } from '../../config/useConfig';
-import defaultEmojiData from '../../data/emojis';
+import {
+  useSuggestedEmojisConfig,
+  useSuggestedEmojisModeConfig,
+} from '../../config/useConfig';
+import { getPickerDataSnapshot } from '../../data-core/pickerData';
 import {
   DataEmoji,
   DataEmojis,
-  EmojiProperties,
   EmojiProperties as Keys,
 } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -15,6 +16,8 @@ import {
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
 import { getSuggested } from '../../dataUtils/suggested';
+import { resolveSuggestedRenderIds } from '../../dataUtils/suggestedEmojis';
+import { useDataIdentityStabilityWarning } from '../../hooks/useDataIdentityStabilityWarning';
 import { useIsMounted } from '../../hooks/useIsMounted';
 import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 
@@ -48,70 +51,22 @@ export function PickerDataProvider({
 }) {
   const { customEmojis, emojiData: genericEmojiData } = usePickerConfig();
 
+  useDataIdentityStabilityWarning(genericEmojiData, customEmojis);
+
+  // Phase 2 shared derivation: no per-Root JSON clone of the full dataset,
+  // caller data never mutated, base index shared by dataset identity, custom
+  // derivation cached separately by customEmojis identity. emojiVersion /
+  // hiddenEmojis remain per-Root filtering layers elsewhere and never force
+  // a base-index rebuild.
   const data = React.useMemo(() => {
-    const emojiData = genericEmojiData || (defaultEmojiData as EmojiData);
-
-    // Clone to avoid mutation of shared source
-    const newData: EmojiData = JSON.parse(JSON.stringify(emojiData));
-
-    // Group names and emoji ids are user-controlled strings: use
-    // null-prototype dictionaries so names like `__proto__` behave as
-    // ordinary data instead of resolving Object.prototype members.
-    const customGroups: Record<string, DataEmojis> = Object.create(null);
-
-    if (customEmojis && customEmojis.length > 0) {
-      for (const emoji of customEmojis) {
-        if (!emoji.group) {
-          continue;
-        }
-        customGroups[emoji.group] = customGroups[emoji.group] ?? [];
-        customGroups[emoji.group].push(customToRegularEmoji(emoji));
-      }
-
-      newData.emojis[Categories.CUSTOM] = customEmojis
-        .filter(emoji => !emoji.group)
-        .map(customToRegularEmoji);
-    }
-
-    const emojis = newData.emojis || {};
-
-    const allEmojis: DataEmojis = Object.values(emojis)
-      .concat(Object.values(customGroups))
-      .flat();
-    const allEmojisByUnified: Record<string, DataEmoji> =
-      Object.create(null);
-    const searchIndex: Record<string, Record<string, DataEmoji>> =
-      Object.create(null);
-
-    allEmojis.forEach((emoji) => {
-      const unified = emoji[Keys.unified];
-      allEmojisByUnified[unified] = emoji;
-
-      if (emoji[Keys.variations]) {
-        emoji[Keys.variations]?.forEach((variation) => {
-          allEmojisByUnified[variation] = emoji;
-        });
-      }
-
-      // Index for search
-      // Re-implement indexEmoji logic here to be local
-      const joinedNameString = (emoji[Keys.name] || [])
-        .join('')
-        .toLowerCase()
-        .split('');
-
-      joinedNameString.forEach((char: string) => {
-        searchIndex[char] = searchIndex[char] ?? Object.create(null);
-        searchIndex[char][unified] = emoji;
-      });
-    });
+    const snapshot = getPickerDataSnapshot(genericEmojiData, customEmojis);
 
     return {
-      emojiData: newData,
-      allEmojis,
-      allEmojisByUnified,
-      searchIndex,
-      customGroups,
+      emojiData: snapshot.emojiData,
+      allEmojis: snapshot.allEmojis,
+      allEmojisByUnified: snapshot.allEmojisByUnified,
+      searchIndex: snapshot.searchIndex,
+      customGroups: snapshot.customGroups,
     };
   }, [genericEmojiData, customEmojis]);
 
@@ -147,6 +102,7 @@ export function usePickerDataContext() {
 export function useGetEmojisByCategory() {
   const { emojiData, emojiByUnified, customGroups } = usePickerDataContext();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
+  const callerSuggestedEmojis = useSuggestedEmojisConfig();
   const [suggestedUpdated] = useUpdateSuggested();
   // Suggestions come from localStorage, which doesn't exist during SSR.
   // Read them only after mount so the first client render matches the server.
@@ -155,6 +111,24 @@ export function useGetEmojisByCategory() {
   const suggested = React.useMemo(() => {
     if (!isMounted) {
       return [] as DataEmojis;
+    }
+
+    // Caller-defined suggestions fully determine contents/order while the
+    // prop is present; persistence mode is ignored and nothing is written
+    // to localStorage by this path.
+    if (callerSuggestedEmojis !== undefined) {
+      return resolveSuggestedRenderIds(callerSuggestedEmojis, (id) =>
+        emojiByUnified(id),
+      )
+        .map((identity) => {
+          const emoji = emojiByUnified(identity);
+          if (!emoji) return undefined;
+          return {
+            ...emoji,
+            [Keys.unified]: identity,
+          };
+        })
+        .filter(Boolean) as DataEmojis;
     }
 
     const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
@@ -170,7 +144,13 @@ export function useGetEmojisByCategory() {
       })
       .filter(Boolean) as DataEmojis;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMounted, suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
+  }, [
+    isMounted,
+    suggestedUpdated,
+    suggestedEmojisModeConfig,
+    callerSuggestedEmojis,
+    emojiByUnified,
+  ]);
 
   return function getEmojisByCategory(
     category: Categories,
@@ -185,16 +165,5 @@ export function useGetEmojisByCategory() {
     }
 
     return emojiData.emojis?.[category] ?? [];
-  };
-}
-
-function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
-  return {
-    [EmojiProperties.name]: emoji.names.map((name: string) =>
-      name.toLowerCase(),
-    ),
-    [EmojiProperties.unified]: emoji.id.toLowerCase(),
-    [EmojiProperties.added_in]: '0',
-    [EmojiProperties.imgUrl]: emoji.imgUrl,
   };
 }

@@ -30,7 +30,7 @@ import {
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
 import { isCustomEmoji } from '../typeRefinements/typeRefinements';
-import { EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
+import { EmojiClickData, EmojiStyle, EmojiStyleValue, SkinTones } from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
@@ -185,7 +185,7 @@ function emojiFromEvent(
 function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
-  activeEmojiStyle: EmojiStyle,
+  activeEmojiStyle: EmojiStyleValue,
   getEmojiUrl: GetEmojiUrl,
 ): EmojiClickData {
   const names = emojiNames(emoji);
@@ -210,7 +210,7 @@ function emojiClickOutput(
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? EmojiStyle.APPLE) {
+    getImageUrl(emojiStyle: EmojiStyleValue = activeEmojiStyle ?? EmojiStyle.APPLE) {
       return getEmojiUrl(unified, emojiStyle);
     },
     imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),

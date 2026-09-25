@@ -152,7 +152,7 @@ function elementOffsetLeft(element: NullableElement): number {
 }
 
 export function unifiedFromEmojiElement(emoji: NullableElement): string | null {
-  return elementDataSetKey(buttonFromTarget(emoji), 'unified') ?? null;
+  return elementDataSetKey(buttonFromTarget(emoji), 'eprUnified') ?? null;
 }
 
 export function originalUnifiedFromEmojiElement(

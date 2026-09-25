@@ -78,6 +78,7 @@ export function EmojiVariationPicker() {
   return (
     <div
       ref={VariationPickerRef}
+      data-epr-part="variation-picker"
       className={cx(
         styles.variationPicker,
         getMenuDirection() === Direction.Down && styles.pointingUp,

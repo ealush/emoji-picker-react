@@ -4,11 +4,11 @@ import { usePickerConfig } from '../components/context/PickerConfigContext';
 import { useReactionsModeState } from '../components/context/PickerContext';
 import {
   EmojiClickData,
-  EmojiStyle,
+  EmojiStyleValue,
   SkinTonePickerLocation,
   SkinTones,
-  SuggestionMode,
-  Theme,
+  SuggestionModeValue,
+  ThemeValue,
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
@@ -58,7 +58,7 @@ export function useSkinTonesDisabledConfig(): boolean {
   return skinTonesDisabled;
 }
 
-export function useEmojiStyleConfig(): EmojiStyle {
+export function useEmojiStyleConfig(): EmojiStyleValue {
   const { emojiStyle } = usePickerConfig();
   return emojiStyle;
 }
@@ -126,13 +126,13 @@ export function usePreviewConfig(): PreviewConfig {
   return previewConfig;
 }
 
-export function useThemeConfig(): Theme {
+export function useThemeConfig(): ThemeValue {
   const { theme } = usePickerConfig();
 
   return theme;
 }
 
-export function useSuggestedEmojisModeConfig(): SuggestionMode {
+export function useSuggestedEmojisModeConfig(): SuggestionModeValue {
   const { suggestedEmojisMode } = usePickerConfig();
   return suggestedEmojisMode;
 }
@@ -184,10 +184,37 @@ export function useReactionsConfig(): string[] {
 
 export function useGetEmojiUrlConfig(): (
   unified: string,
-  style: EmojiStyle,
+  style: EmojiStyleValue,
 ) => string {
   const { getEmojiUrl } = usePickerConfig();
   return getEmojiUrl;
+}
+
+export function useSearchValueConfig(): string | undefined {
+  const { searchValue } = usePickerConfig();
+  return searchValue;
+}
+
+export function useDefaultSearchValueConfig(): string | undefined {
+  const { defaultSearchValue } = usePickerConfig();
+  return defaultSearchValue;
+}
+
+export function useSearchLabelConfig(): string | undefined {
+  const { searchLabel } = usePickerConfig();
+  return searchLabel;
+}
+
+export function useSuggestedEmojisConfig(): string[] | undefined {
+  const { suggestedEmojis } = usePickerConfig();
+  return suggestedEmojis;
+}
+
+export function useOnReactionsModeChangeConfig():
+  | ((reactionsOpen: boolean) => void)
+  | undefined {
+  const { onReactionsModeChange } = usePickerConfig();
+  return onReactionsModeChange;
 }
 
 function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {

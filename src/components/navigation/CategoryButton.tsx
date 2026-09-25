@@ -46,10 +46,10 @@ export function CategoryButton({
         },
       )}
       onClick={onClick}
+      data-epr-part="category-tab"
       aria-label={categoryNameFromCategoryConfig(categoryConfig)}
       aria-selected={isActiveCategory}
       role="tab"
-      aria-controls="epr-category-nav-id"
     >
       {hasCustomIcon ? icon : <CategoryNavIcon category={category} />}
     </Button>

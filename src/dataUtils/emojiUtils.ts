@@ -1,6 +1,6 @@
 import { cdnUrl } from '../config/cdnUrls';
 import { skinTonesMapped } from '../data/skinToneVariations';
-import { EmojiStyle, SkinTones } from '../types/exposedTypes';
+import { EmojiStyleValue, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, EmojiProperties, WithName } from './DataTypes';
 
@@ -44,7 +44,7 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
 
 export function emojiUrlByUnified(
   unified: string,
-  emojiStyle: EmojiStyle,
+  emojiStyle: EmojiStyleValue,
 ): string {
   return `${cdnUrl(emojiStyle)}${unified}.png`;
 }

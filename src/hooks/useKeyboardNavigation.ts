@@ -26,23 +26,29 @@ import {
   useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
 import {
+  useNavigationRegistry,
   useReactionsModeState,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 import { useSearchDisabledConfig } from '../config/useConfig';
+import {
+  NavigationRegionKind,
+  RegisteredRegion,
+} from '../state/navigationRegistry';
+import { getNextRegion, getPrevRegion } from '../state/regionTraversal';
 
 import {
   useCloseAllOpenToggles,
   useHasOpenToggles,
 } from './useCloseAllOpenToggles';
 import { useDisallowMouseMove } from './useDisallowMouseMove';
-import { useAppendSearch, useClearSearch } from './useFilter';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
   useFocusSkinTonePicker,
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
+import { useClearSearchValue, useTypeToSearchKey } from './useSearchController';
 import useSetVariationPicker from './useSetVariationPicker';
 import {
   useIsSkinToneInPreview,
@@ -70,7 +76,7 @@ export function useKeyboardNavigation() {
 
 function usePickerMainKeyboardEvents() {
   const PickerMainRef = usePickerMainRef();
-  const clearSearch = useClearSearch();
+  const clearSearch = useClearSearchValue();
   const scrollTo = useScrollTo();
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
@@ -131,6 +137,7 @@ function useSearchInputKeyboardEvents() {
   const SearchInputRef = useSearchInputRef();
   const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
   const goDownFromSearchInput = useGoDownFromSearchInput();
+  const focusNextRegionFromSearch = useFocusNextRegionFrom('search');
   const isSkinToneInSearch = useIsSkinToneInSearch();
 
   const onKeyDown = useMemo(
@@ -149,7 +156,7 @@ function useSearchInputKeyboardEvents() {
             break;
           case KeyboardEvents.ArrowDown:
             event.preventDefault();
-            goDownFromSearchInput();
+            focusNextRegionFromSearch(goDownFromSearchInput);
             break;
           case KeyboardEvents.Enter:
             event.preventDefault();
@@ -160,6 +167,7 @@ function useSearchInputKeyboardEvents() {
     [
       focusSkinTonePicker,
       goDownFromSearchInput,
+      focusNextRegionFromSearch,
       setSkinToneFanOpenState,
       BodyRef,
       isSkinToneInSearch,
@@ -279,6 +287,8 @@ function useCategoryNavigationKeyboardEvents() {
   const CategoryNavigationRef = useCategoryNavigationRef();
   const BodyRef = useBodyRef();
   const onType = useOnType();
+  const focusPrevRegionFromCategories = useFocusPrevRegionFrom('categories');
+  const focusNextRegionFromCategories = useFocusNextRegionFrom('categories');
 
   const onKeyDown = useMemo(
     () =>
@@ -288,7 +298,7 @@ function useCategoryNavigationKeyboardEvents() {
         switch (key) {
           case KeyboardEvents.ArrowUp:
             event.preventDefault();
-            focusSearchInput();
+            focusPrevRegionFromCategories(() => focusSearchInput());
             break;
           case KeyboardEvents.ArrowRight:
             event.preventDefault();
@@ -300,14 +310,22 @@ function useCategoryNavigationKeyboardEvents() {
             break;
           case KeyboardEvents.ArrowDown:
             event.preventDefault();
-            focusFirstVisibleEmoji(BodyRef.current);
+            focusNextRegionFromCategories(() =>
+              focusFirstVisibleEmoji(BodyRef.current),
+            );
             break;
           default:
             onType(event);
             break;
         }
       },
-    [BodyRef, focusSearchInput, onType],
+    [
+      BodyRef,
+      focusSearchInput,
+      focusPrevRegionFromCategories,
+      focusNextRegionFromCategories,
+      onType,
+    ],
   );
 
   useEffect(() => {
@@ -405,6 +423,7 @@ function useBodyKeyboardEvents() {
   const setVariationPicker = useSetVariationPicker();
   const hasOpenToggles = useHasOpenToggles();
   const closeAllOpenToggles = useCloseAllOpenToggles();
+  const registry = useNavigationRegistry();
 
   const onType = useOnType();
 
@@ -416,14 +435,20 @@ function useBodyKeyboardEvents() {
 
         const activeElement = buttonFromTarget(getActiveElement());
 
+        // Navigation-generation guard (STATE.md §10): a pending
+        // materialize/scroll/focus completion aborts when search, data,
+        // geometry, or reactions state changed underneath it.
+        const generation = registry.currentGeneration();
+        const focusGuard = () => registry.isCurrent(generation);
+
         switch (key) {
           case KeyboardEvents.ArrowRight:
             event.preventDefault();
-            focusNextVisibleEmoji(activeElement);
+            focusNextVisibleEmoji(activeElement, focusGuard);
             break;
           case KeyboardEvents.ArrowLeft:
             event.preventDefault();
-            focusPrevVisibleEmoji(activeElement);
+            focusPrevVisibleEmoji(activeElement, focusGuard);
             break;
           case KeyboardEvents.ArrowDown:
             event.preventDefault();
@@ -431,7 +456,7 @@ function useBodyKeyboardEvents() {
               closeAllOpenToggles();
               break;
             }
-            focusVisibleEmojiOneRowDown(activeElement);
+            focusVisibleEmojiOneRowDown(activeElement, focusGuard);
             break;
           case KeyboardEvents.ArrowUp:
             event.preventDefault();
@@ -439,7 +464,7 @@ function useBodyKeyboardEvents() {
               closeAllOpenToggles();
               break;
             }
-            focusVisibleEmojiOneRowUp(activeElement, goUpFromBody);
+            focusVisibleEmojiOneRowUp(activeElement, goUpFromBody, focusGuard);
             break;
           case KeyboardEvents.Space:
             event.preventDefault();
@@ -456,6 +481,7 @@ function useBodyKeyboardEvents() {
       setVariationPicker,
       hasOpenToggles,
       closeAllOpenToggles,
+      registry,
     ],
   );
 
@@ -493,6 +519,7 @@ function useGoDownFromSearchInput() {
 function useGoUpFromBody() {
   const focusSearchInput = useFocusSearchInput();
   const focusCategoryNavigation = useFocusCategoryNavigation();
+  const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
   const isSearchMode = useIsSearchMode();
 
   return useCallback(
@@ -500,9 +527,100 @@ function useGoUpFromBody() {
       if (isSearchMode) {
         return focusSearchInput();
       }
-      return focusCategoryNavigation();
+      // Previous focusable region in DOM order (normally Categories), with
+      // the legacy direct target as fallback when the graph is empty.
+      focusPrevRegionFromGrid(() => focusCategoryNavigation());
     },
-    [focusSearchInput, isSearchMode, focusCategoryNavigation],
+    [
+      focusSearchInput,
+      isSearchMode,
+      focusCategoryNavigation,
+      focusPrevRegionFromGrid,
+    ],
+  );
+}
+
+// Cross-region focus through the registered semantic graph. Returns true
+// when a region handled the move; callers keep their legacy direct target
+// as fallback so unregistered trees behave exactly as before.
+function useFocusRegion() {
+  const focusSearchInput = useFocusSearchInput();
+  const focusCategoryNavigation = useFocusCategoryNavigation();
+  const focusSkinTonePicker = useFocusSkinTonePicker();
+  const BodyRef = useBodyRef();
+  const ReactionsRef = useReactionsRef();
+  const registry = useNavigationRegistry();
+
+  return useCallback(
+    function focusRegion(region: RegisteredRegion | undefined): boolean {
+      if (!region) {
+        return false;
+      }
+      // Grid entry is a materialize/scroll/focus operation: capture the
+      // navigation generation so a stale completion cannot steal focus.
+      const generation = registry.currentGeneration();
+      const focusGuard = () => registry.isCurrent(generation);
+      switch (region.kind as NavigationRegionKind) {
+        case 'search':
+          focusSearchInput();
+          return true;
+        case 'categories':
+          focusCategoryNavigation();
+          return true;
+        case 'grid':
+          focusFirstVisibleEmoji(BodyRef.current, focusGuard);
+          return true;
+        case 'reactions': {
+          const firstButton =
+            ReactionsRef.current?.querySelector('button');
+          focusElement(firstButton ?? null, focusGuard);
+          return true;
+        }
+        case 'preview-skin-tone':
+          focusSkinTonePicker();
+          return true;
+      }
+    },
+    [
+      focusSearchInput,
+      focusCategoryNavigation,
+      focusSkinTonePicker,
+      BodyRef,
+      ReactionsRef,
+      registry,
+    ],
+  );
+}
+
+function useFocusNextRegionFrom(from: NavigationRegionKind) {
+  const registry = useNavigationRegistry();
+  const PickerMainRef = usePickerMainRef();
+  const focusRegion = useFocusRegion();
+
+  return useCallback(
+    function focusNextRegion(fallback?: () => void) {
+      const next = getNextRegion(registry, PickerMainRef.current, from);
+      if (!focusRegion(next)) {
+        fallback?.();
+      }
+    },
+    [registry, PickerMainRef, focusRegion, from],
+  );
+}
+
+function useFocusPrevRegionFrom(from: NavigationRegionKind) {
+  const registry = useNavigationRegistry();
+  const PickerMainRef = usePickerMainRef();
+  const focusRegion = useFocusRegion();
+
+  return useCallback(
+    function focusPrevRegion(fallback?: () => void) {
+      const prev = getPrevRegion(registry, PickerMainRef.current, from);
+      if (!focusRegion(prev)) {
+        fallback?.();
+      }
+    },
+    [registry, PickerMainRef, focusRegion, from],
   );
 }
 
@@ -531,8 +649,7 @@ function focusPrevSkinTone() {
 }
 
 function useOnType() {
-  const appendSearch = useAppendSearch();
-  const focusSearchInput = useFocusSearchInput();
+  const typeToSearch = useTypeToSearchKey();
   const searchDisabled = useSearchDisabledConfig();
   const closeAllOpenToggles = useCloseAllOpenToggles();
 
@@ -546,8 +663,7 @@ function useOnType() {
     if (key.match(/(^[a-zA-Z0-9]$){1}/)) {
       event.preventDefault();
       closeAllOpenToggles();
-      focusSearchInput();
-      appendSearch(key);
+      typeToSearch(key);
     }
   };
 }

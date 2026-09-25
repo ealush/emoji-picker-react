@@ -6,13 +6,12 @@ import {
 import {
   FilterState,
   useFilterRef,
+  useNavigationRegistry,
   useSearchTermState,
 } from '../components/context/PickerContext';
 import { useSearchResultsConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiUtils';
-
-import { useFocusSearchInput } from './useFocus';
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
@@ -25,35 +24,6 @@ function useSetFilterRef() {
     }
 
     filterRef.current = setter;
-  };
-}
-
-export function useClearSearch() {
-  const applySearch = useApplySearch();
-  const SearchInputRef = useSearchInputRef();
-  const focusSearchInput = useFocusSearchInput();
-
-  return function clearSearch() {
-    if (SearchInputRef.current) {
-      SearchInputRef.current.value = '';
-    }
-
-    applySearch('');
-    focusSearchInput();
-  };
-}
-
-export function useAppendSearch() {
-  const SearchInputRef = useSearchInputRef();
-  const applySearch = useApplySearch();
-
-  return function appendSearch(str: string) {
-    if (SearchInputRef.current) {
-      SearchInputRef.current.value = `${SearchInputRef.current.value}${str}`;
-      applySearch(getNormalizedSearchTerm(SearchInputRef.current.value));
-    } else {
-      applySearch(getNormalizedSearchTerm(str));
-    }
   };
 }
 
@@ -79,7 +49,9 @@ export function useFilter() {
   function onChange(inputValue: string) {
     const filter = filterRef.current;
 
-    const nextValue = inputValue.toLowerCase();
+    // Normalized derived query (STATE.md §2): the visible/callback value
+    // stays raw, filtering folds case and trims surrounding whitespace.
+    const nextValue = getNormalizedSearchTerm(inputValue);
 
     if (filter?.[nextValue] || nextValue.length <= 1) {
       return applySearch(nextValue);
@@ -105,8 +77,11 @@ export function useFilter() {
 function useApplySearch() {
   const [, setSearchTerm] = useSearchTermState();
   const PickerMainRef = usePickerMainRef();
+  const registry = useNavigationRegistry();
 
   return function applySearch(searchTerm: string) {
+    // A new accepted filter obsoletes pending grid materialize/focus work.
+    registry.invalidate();
     requestAnimationFrame(() => {
       setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
         () => {

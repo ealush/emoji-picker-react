@@ -3,6 +3,7 @@ import {
   CategoryConfig,
   EmojiData,
   SuggestionMode,
+  SuggestionModeValue,
 } from '../types/exposedTypes';
 
 import { CustomEmoji } from './customEmojiConfig';
@@ -240,5 +241,5 @@ function getBaseConfigByCategory(
 }
 
 type CategoryConfigModifiers = {
-  suggestionMode?: SuggestionMode;
+  suggestionMode?: SuggestionModeValue;
 };

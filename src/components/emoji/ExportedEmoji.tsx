@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { EmojiStyle } from '../../types/exposedTypes';
+import { EmojiStyle, EmojiStyleValue } from '../../types/exposedTypes';
 
 import { GetEmojiUrl } from './BaseEmojiProps';
 import { ViewOnlyEmoji } from './ViewOnlyEmoji';
@@ -14,7 +14,7 @@ export function ExportedEmoji({
   emojiUrl,
 }: {
   unified: string;
-  emojiStyle?: EmojiStyle;
+  emojiStyle?: EmojiStyleValue;
   size?: number;
   lazyLoad?: boolean;
   getEmojiUrl?: GetEmojiUrl;

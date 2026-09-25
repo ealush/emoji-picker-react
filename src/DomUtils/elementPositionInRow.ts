@@ -1,4 +1,4 @@
-import { DEFAULT_LABEL_HEIGHT } from '../components/main/PickerMain';
+import { DEFAULT_LABEL_HEIGHT } from '../components/main/labelHeight';
 
 import { ClassNames, asSelectors } from './classNames';
 import { NullableElement } from './selectors';
@@ -17,7 +17,7 @@ export function elementCountInRow(
   // off by one (e.g. category padding shrinking the content box), which
   // makes arrow-up/arrow-down drift sideways by a column.
   // https://github.com/ealush/emoji-picker-react/issues/502
-  const declared = Number(parent.dataset?.emojisPerRow);
+  const declared = Number(parent.dataset?.eprEmojisPerRow);
   if (Number.isInteger(declared) && declared > 0) {
     return declared;
   }

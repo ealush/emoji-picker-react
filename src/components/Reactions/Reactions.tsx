@@ -12,6 +12,7 @@ import {
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
+import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useReactionsRef } from '../context/ElementRefContext';
 import { useReactionsModeState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
@@ -27,6 +28,10 @@ export function Reactions() {
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
 
+  // Registered before the closed-mode early return so collapsing the full
+  // picker registers the bar and expanding unregisters it.
+  useRegisterRegion('reactions', ReactionsRef, [reactionsOpen]);
+
   if (!reactionsOpen) {
     return null;
   }
@@ -36,6 +41,7 @@ export function Reactions() {
       className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
       ref={ReactionsRef}
       aria-label="Reactions"
+      data-epr-part="reactions"
     >
       {reactions.map((reaction) => {
         const emoji = emojiByUnified(reaction);
@@ -45,7 +51,7 @@ export function Reactions() {
         }
 
         return (
-          <li key={reaction}>
+          <li key={reaction} data-epr-part="reaction">
             <ClickableEmoji
               emoji={emoji as DataEmoji}
               emojiStyle={emojiStyle}
