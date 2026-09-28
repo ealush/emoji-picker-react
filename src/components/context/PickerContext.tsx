@@ -154,6 +154,11 @@ export function PickerContextProvider({ children }: Props) {
   }
   React.useEffect(() => {
     const registry = registryRef.current as NavigationRegistry;
+    // The registry object persists across remounts (ref-held), so revive
+    // it on every mount: without this, the unmount cleanup below leaves
+    // all generation-guarded navigation permanently dead after any
+    // remount (including the StrictMode double-mount).
+    registry.revive();
     return () => {
       // Root unmount invalidates pending materialize/scroll/focus work.
       registry.dispose();

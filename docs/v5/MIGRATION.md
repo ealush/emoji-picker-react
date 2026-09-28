@@ -155,6 +155,24 @@ Notably retained:
 
 Do not introduce new uses of the legacy casing.
 
+## Changed defaults
+
+The default `emojiStyle` is now native instead of Apple: a default
+`<EmojiPicker />` renders OS glyphs with no image loading, so the
+picker paints instantly and works fully offline. Every style remains
+supported; to keep the previous look, pass it explicitly:
+
+```tsx
+<EmojiPicker
+  emojiStyle={EmojiStyle.APPLE}
+  onEmojiClick={handleEmoji}
+/>
+```
+
+The same default applies to the standalone `Emoji` component. Click
+payloads still carry usable `imageUrl` values: URL resolution falls
+back to Apple CDN assets when the active style has no image set.
+
 ## React peer requirement
 
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.

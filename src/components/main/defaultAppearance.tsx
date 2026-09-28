@@ -3,6 +3,10 @@ import { cx } from 'shipstyles';
 
 import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
+import {
+  DEFAULT_PICKER_HEIGHT,
+  DEFAULT_PICKER_WIDTH,
+} from '../../config/config';
 import { Theme, ThemeValue } from '../../types/exposedTypes';
 
 import { DEFAULT_LABEL_HEIGHT } from './labelHeight';
@@ -44,6 +48,10 @@ export function defaultRootStyle({
   style: React.CSSProperties | undefined;
 }): React.CSSProperties {
   return {
+    // v4-compatible default dimensions; consumer style and explicit
+    // width/height props both override them.
+    width: getDimension(DEFAULT_PICKER_WIDTH),
+    height: getDimension(DEFAULT_PICKER_HEIGHT),
     ...style,
     ...(width !== undefined ? { width: getDimension(width) } : {}),
     ...(height !== undefined ? { height: getDimension(height) } : {}),
@@ -59,7 +67,29 @@ const DarkTheme = {
     'var(--epr-dark-emoji-variation-picker-bg-color)',
   '--epr-hover-bg-color-reduced-opacity':
     'var(--epr-dark-hover-bg-color-reduced-opacity)',
-  '--epr-highlight-color': '#c0c0c0',
+  '--epr-highlight-color': 'var(--epr-dark-highlight-color)',
+  '--epr-text-color': 'var(--epr-dark-text-color)',
+  '--epr-hover-bg-color': 'var(--epr-dark-hover-bg-color)',
+  '--epr-focus-bg-color': 'var(--epr-dark-focus-bg-color)',
+  '--epr-search-input-bg-color': 'var(--epr-dark-search-input-bg-color)',
+  '--epr-category-label-bg-color': 'var(--epr-dark-category-label-bg-color)',
+  '--epr-picker-border-color': 'var(--epr-dark-picker-border-color)',
+  '--epr-bg-color': 'var(--epr-dark-bg-color)',
+  '--epr-reactions-bg-color': 'var(--epr-dark-reactions-bg-color)',
+  '--epr-search-input-bg-color-active':
+    'var(--epr-dark-search-input-bg-color-active)',
+  '--epr-emoji-variation-indicator-color':
+    'var(--epr-dark-emoji-variation-indicator-color)',
+  '--epr-category-icon-active-color':
+    'var(--epr-dark-category-icon-active-color)',
+  '--epr-category-icon-inactive-color':
+    'var(--epr-dark-category-icon-inactive-color)',
+  '--epr-skin-tone-picker-menu-color':
+    'var(--epr-dark-skin-tone-picker-menu-color)',
+  '--epr-skin-tone-outer-border-color':
+    'var(--epr-dark-skin-tone-outer-border-color)',
+  '--epr-skin-tone-inner-border-color':
+    'var(--epr-dark-skin-tone-inner-border-color)',
   '--epr-dark-text-color': 'var(--epr-highlight-color)',
   '--epr-dark-hover-bg-color': '#363636f6',
   '--epr-dark-hover-bg-color-reduced-opacity': '#36363680',
@@ -208,16 +238,5 @@ const styles = stylesheet.create({
   darkTheme: {
     '.': ClassNames.darkTheme,
     '--': DarkTheme,
-  },
-  reactionsMenu: {
-    '.': ClassNames.reactions,
-    height: '50px',
-    display: 'inline-flex',
-    backgroundColor: 'var(--epr-reactions-bg-color)',
-    // @ts-ignore - backdropFilter is not recognized.
-    backdropFilter: 'blur(8px)',
-    '--': {
-      '--epr-picker-border-radius': '50px',
-    },
   },
 });

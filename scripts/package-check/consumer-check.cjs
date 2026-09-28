@@ -7,9 +7,19 @@ const requireFromScratch = createRequire(__filename);
 const pkgDir = requireFromScratch.resolve('emoji-picker-react/package.json').replace(/package\.json$/, '');
 const read = (subpath) => readFileSync(pkgDir + subpath, 'utf8');
 
+const pending = [];
+
 function check(name, fn) {
-  fn();
-  console.log(`ok: ${name}`);
+  pending.push({ name, fn });
+}
+
+async function runChecks() {
+  // Sequential: checks share globals (window/document) and the packed
+  // module registry, so they must not interleave.
+  for (const { name, fn } of pending) {
+    await fn();
+    console.log(`ok: ${name}`);
+  }
 }
 
 // Main entry resolves with declarations.
@@ -136,4 +146,99 @@ check('packed main server-renders', () => {
   assert.ok(!/\sid="/.test(html.replace(/<style[\s\S]*?<\/style>/g, '')), 'SSR markup contains library ids');
 });
 
-console.log('packed CJS consumer: all checks passed');
+// Packed entries mount, interact, and unmount in a real DOM.
+check('packed entries client-mount', async () => {
+  const { JSDOM } = requireFromScratch('jsdom');
+  const dom = new JSDOM('<!doctype html><html><body></body></html>', {
+    url: 'http://localhost/',
+  });
+  global.window = dom.window;
+  global.document = dom.window.document;
+  global.navigator = dom.window.navigator;
+  if (typeof global.IntersectionObserver === 'undefined') {
+    global.IntersectionObserver = class {
+      constructor(callback) {
+        this.callback = callback;
+      }
+      observe(target) {
+        this.callback([{ isIntersecting: true, intersectionRatio: 1, target }], this);
+      }
+      unobserve() {}
+      disconnect() {}
+      takeRecords() {
+        return [];
+      }
+    };
+  }
+  if (typeof global.requestAnimationFrame === 'undefined') {
+    global.requestAnimationFrame = (cb) => setTimeout(cb, 16);
+    global.cancelAnimationFrame = (cb) => clearTimeout(cb);
+  }
+
+  const React = requireFromScratch('react');
+  const ReactDOMClient = requireFromScratch('react-dom/client');
+  global.IS_REACT_ACT_ENVIRONMENT = true;
+  const { default: EmojiPicker } = requireFromScratch('emoji-picker-react');
+  const primitives = requireFromScratch('emoji-picker-react/primitives');
+
+  const clicked = [];
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  const root = ReactDOMClient.createRoot(container);
+  const { act } = requireFromScratch('react-dom/test-utils');
+  await act(async () => {
+    root.render(
+      React.createElement(
+        primitives.Root,
+        { emojiData: undefined, onEmojiClick: (emoji) => clicked.push(emoji) },
+        React.createElement(primitives.Search),
+        React.createElement(
+          primitives.Viewport,
+          null,
+          React.createElement(primitives.List),
+        ),
+        React.createElement(primitives.Preview),
+      ),
+    );
+  });
+  const input = container.querySelector('input');
+  assert.ok(input, 'primitive Search input mounted');
+  assert.ok(container.querySelector('[role="grid"]'), 'primitive grid mounted');
+
+  const mainContainer = document.createElement('div');
+  document.body.appendChild(mainContainer);
+  const mainRoot = ReactDOMClient.createRoot(mainContainer);
+  let selected = null;
+  await act(async () => {
+    mainRoot.render(
+      React.createElement(EmojiPicker, {
+        onEmojiClick: (emoji) => {
+          selected = emoji;
+        },
+      }),
+    );
+  });
+  const button = mainContainer.querySelector('[data-epr-part="emoji"]');
+  assert.ok(button, 'default emoji button mounted');
+  button.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 50));
+  assert.ok(selected && selected.unified, 'packed onEmojiClick fired');
+
+  await act(async () => {
+    root.unmount();
+    mainRoot.unmount();
+  });
+  // Globals intentionally stay installed: picker timers may still fire
+  // after unmount, and deleting window/document first turns those into
+  // uncaught ReferenceErrors after the checks pass.
+});
+
+runChecks().then(
+  () => {
+    console.log('packed CJS consumer: all checks passed');
+  },
+  (error) => {
+    console.error(error);
+    process.exit(1);
+  },
+);

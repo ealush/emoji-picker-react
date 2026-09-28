@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { ClassNames } from '../DomUtils/classNames';
+import { PickerStyleTag } from '../Stylesheet/stylesheet';
 import { Reactions } from '../components/Reactions/Reactions';
 import {
   ElementRefContextProvider,
@@ -27,6 +28,7 @@ import {
 import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../hooks/useOnFocus';
+import { useReactionsFocusManager } from '../hooks/useReactionsFocus';
 
 import { mergeRefs } from './nativeProps';
 import { RootScopeProvider } from './scope';
@@ -151,6 +153,7 @@ const RootAside = React.forwardRef<
   const searchModeActive = useIsSearchMode();
   useKeyboardNavigation();
   useOnFocus();
+  useReactionsFocusManager();
 
   const { className, style, ...nativeAside } = asideProps as {
     className?: string;
@@ -170,6 +173,16 @@ const RootAside = React.forwardRef<
 
   return (
     <>
+      {/*
+        Managed components (search/grid/tabs/…) carry their styles on the
+        shared component sheet; measurement, virtualization and keyboard
+        navigation depend on those rules, so every Root emits them. The
+        branded layer (theme classes, transitions, default tokens via the
+        default tree's className) is what bare compositions opt out of —
+        never the functional component styles. Bundle separation (no
+        default-appearance module in this closure) is asserted separately.
+      */}
+      <PickerStyleTag nonce={behaviorNonce} />
       <StructuralStyleTag nonce={behaviorNonce} />
       <aside
         {...(nativeAside as React.HTMLAttributes<HTMLElement>)}
@@ -181,6 +194,10 @@ const RootAside = React.forwardRef<
             [ClassNames.searchActive]: searchModeActive,
             [ClassNames.reactions]: reactionsOpen,
           },
+          // Collapsed presentation is cx-referenced (not just the marker
+          // class) so the stylesheet emits it: shipstyles only emits
+          // class-mapped rules for style objects that reach cx.
+          reactionsOpen && structuralStyles.collapsed,
           className,
         )}
         style={{
@@ -229,6 +246,11 @@ function ManagedPanel({
       data-epr-part="panel"
       className={cx(structuralStyles.panel)}
       hidden={hidden}
+      // Inline (not the hidden attribute alone): author display:flex from
+      // the structural panel class would otherwise override the
+      // user-agent [hidden] rule, leaving a visually expanded picker
+      // with an inert grid when reactions mode collapses it.
+      style={hidden ? { display: 'none' } : undefined}
       ref={setInert}
     >
       {children}

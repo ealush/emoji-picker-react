@@ -135,6 +135,27 @@ async function main() {
     join(repoRoot, 'dist', 'data.d.ts'),
     join(repoRoot, 'dist', 'data.d.mts'),
   );
+  // Main-entry ESM twin: tsdx emits dist/emoji-picker-react.esm.js with
+  // ESM syntax, which Node refuses to load as .js under the package's
+  // explicit CommonJS type. The .mjs twin is byte-identical but
+  // unambiguous, matching the primitives/data dual-entry convention.
+  // The exports map points the import condition at the twin; the .js
+  // original stays for bundlers and size-limit.
+  const mainEsm = join(repoRoot, 'dist', 'emoji-picker-react.esm.js');
+  if (existsSync(mainEsm)) {
+    copyFileSync(mainEsm, join(repoRoot, 'dist', 'emoji-picker-react.esm.mjs'));
+  }
+  // ESM-typed twin for the main declarations: index.d.ts resolves as
+  // CommonJS under the package type, so the ESM condition needs ESM-typed
+  // declarations to agree with its .mjs implementation (same trick as the
+  // primitives/data twins above). Bundle first: the tsdx-emitted
+  // index.d.ts carries extensionless relative imports, which fail
+  // strictly under node16-ESM resolution.
+  const mainDts = join(repoRoot, 'dist', 'index.d.ts');
+  if (existsSync(mainDts)) {
+    await bundleDeclarations(mainDts);
+    copyFileSync(mainDts, join(repoRoot, 'dist', 'index.d.mts'));
+  }
   console.log('entry builds complete: dist/primitives, dist/data');
 }
 

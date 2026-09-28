@@ -58,6 +58,21 @@ describe('v5 data core (Phase 2 slice)', () => {
     expect(Object.isFrozen(searchEmojis(''))).toBe(true);
   });
 
+  it('single-char queries match the full scan via the prepared bucket', () => {
+    const core = getPreparedCore();
+    for (const char of ['a', 's', 'z']) {
+      const expected = core.records
+        .filter((record) => record.names.some((name) => name.includes(char)))
+        .map((record) => record.unified);
+      expect(searchEmojis(char).map((record) => record.unified)).toEqual(
+        expected,
+      );
+    }
+    // Unknown single chars return a frozen empty array.
+    expect(searchEmojis('￿')).toEqual([]);
+    expect(Object.isFrozen(searchEmojis('￿'))).toBe(true);
+  });
+
   it('uses supplied emojiData for lookup and search without mutating it', () => {
     const custom: EmojiData = {
       categories: {},

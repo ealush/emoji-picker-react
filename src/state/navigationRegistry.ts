@@ -94,6 +94,18 @@ export class NavigationRegistry {
     return !this.disposed && token === this.generation;
   }
 
+  /**
+   * Revive a disposed registry when its Root remounts. The registry object
+   * persists across remounts (held in a ref), but the unmount cleanup
+   * disposes it — without a revive, every generation-guarded focus stays
+   * dead after any remount (StrictMode double-mount included). Bumps the
+   * generation so pre-unmount completions cannot fire post-remount.
+   */
+  revive(): void {
+    this.disposed = false;
+    this.generation += 1;
+  }
+
   dispose(): void {
     this.disposed = true;
     this.regions = [];

@@ -388,4 +388,24 @@ describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
       expect(document.activeElement).toBe(second);
     });
   });
+
+  it('dispose aborts pending guarded completions', () => {
+    const registry = new NavigationRegistry();
+    const token = registry.currentGeneration();
+    expect(registry.isCurrent(token)).toBe(true);
+    registry.dispose();
+    expect(registry.isCurrent(token)).toBe(false);
+  });
+
+  it('revive re-enables a disposed registry with a fresh generation', () => {
+    const registry = new NavigationRegistry();
+    const stale = registry.currentGeneration();
+    registry.dispose();
+    expect(registry.isCurrent(stale)).toBe(false);
+    registry.revive();
+    // Pre-unmount tokens stay dead across the remount boundary…
+    expect(registry.isCurrent(stale)).toBe(false);
+    // …while completions captured after the revive proceed.
+    expect(registry.isCurrent(registry.currentGeneration())).toBe(true);
+  });
 });

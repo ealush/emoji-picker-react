@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import { PickerStyleTag } from './Stylesheet/stylesheet';
 import { Header } from './components/header/Header';
 import {
   defaultRootClassName,
@@ -28,16 +27,17 @@ function EmojiPicker(props: PickerProps) {
 
   return (
     <>
-      <PickerStyleTag nonce={props.nonce} />
-      <Root
-        {...(behaviorProps as RootBehaviorProps)}
-        className={defaultRootClassName(theme, className)}
-        style={defaultRootStyle({ width, height, style })}
-      >
-        <DefaultAppearance>
-          <ContentControl />
-        </DefaultAppearance>
-      </Root>
+      {props.open === false ? null : (
+        <Root
+          {...(behaviorProps as RootBehaviorProps)}
+          className={defaultRootClassName(theme, className)}
+          style={defaultRootStyle({ width, height, style })}
+        >
+          <DefaultAppearance>
+            <ContentControl />
+          </DefaultAppearance>
+        </Root>
+      )}
     </>
   );
 }

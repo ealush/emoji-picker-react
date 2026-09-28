@@ -6,6 +6,8 @@ import type { EmojiDataOptions, EmojiInfo } from './types';
 
 export type { EmojiDataOptions, EmojiInfo };
 
+const EMPTY_RESULTS: readonly EmojiInfo[] = Object.freeze([]);
+
 /**
  * Lookup by base or variation unified code.
  * Trims/lowercases input, returns the canonical base record or undefined.
@@ -36,13 +38,21 @@ export function searchEmojis(
 ): readonly EmojiInfo[] {
   const normalized = normalizeQuery(query);
   if (!normalized) {
-    return Object.freeze([]) as readonly EmojiInfo[];
+    return EMPTY_RESULTS;
   }
 
   const core = getPreparedCore(options?.emojiData);
   const memoized = core.queryMemo.get(normalized);
   if (memoized) {
     return Object.freeze([...memoized]) as readonly EmojiInfo[];
+  }
+
+  // Single-character queries hit the prepared bucket (same membership as
+  // a full scan: joined names contain the char iff some name includes it).
+  if (normalized.length === 1) {
+    const bucket = core.byChar.get(normalized) ?? EMPTY_RESULTS;
+    core.queryMemo.set(normalized, bucket);
+    return Object.freeze([...bucket]) as readonly EmojiInfo[];
   }
 
   const matches: EmojiInfo[] = [];

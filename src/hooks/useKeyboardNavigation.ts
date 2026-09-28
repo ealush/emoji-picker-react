@@ -139,6 +139,7 @@ function useSearchInputKeyboardEvents() {
   const goDownFromSearchInput = useGoDownFromSearchInput();
   const focusNextRegionFromSearch = useFocusNextRegionFrom('search');
   const isSkinToneInSearch = useIsSkinToneInSearch();
+  const isSearchMode = useIsSearchMode();
 
   const onKeyDown = useMemo(
     () =>
@@ -156,7 +157,13 @@ function useSearchInputKeyboardEvents() {
             break;
           case KeyboardEvents.ArrowDown:
             event.preventDefault();
-            focusNextRegionFromSearch(goDownFromSearchInput);
+            // The active-search Search↔Grid exception (NAVIGATION.md §5)
+            // wins over generic DOM-order traversal.
+            if (isSearchMode) {
+              goDownFromSearchInput();
+            } else {
+              focusNextRegionFromSearch(goDownFromSearchInput);
+            }
             break;
           case KeyboardEvents.Enter:
             event.preventDefault();
@@ -168,6 +175,7 @@ function useSearchInputKeyboardEvents() {
       focusSkinTonePicker,
       goDownFromSearchInput,
       focusNextRegionFromSearch,
+      isSearchMode,
       setSkinToneFanOpenState,
       BodyRef,
       isSkinToneInSearch,
@@ -308,7 +316,7 @@ function useCategoryNavigationKeyboardEvents() {
             event.preventDefault();
             focusPrevElementSibling(getActiveElement());
             break;
-          case KeyboardEvents.ArrowDown:
+        case KeyboardEvents.ArrowDown:
             event.preventDefault();
             focusNextRegionFromCategories(() =>
               focusFirstVisibleEmoji(BodyRef.current),
@@ -542,8 +550,9 @@ function useGoUpFromBody() {
 
 // Cross-region focus through the registered semantic graph. Returns true
 // when a region handled the move; callers keep their legacy direct target
-// as fallback so unregistered trees behave exactly as before.
-function useFocusRegion() {
+// as fallback so unregistered trees behave exactly as before. Exported for
+// focus-restoration flows (reactions transitions) that target regions.
+export function useFocusRegion() {
   const focusSearchInput = useFocusSearchInput();
   const focusCategoryNavigation = useFocusCategoryNavigation();
   const focusSkinTonePicker = useFocusSkinTonePicker();

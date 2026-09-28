@@ -5,9 +5,14 @@
   "typings": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/emoji-picker-react.esm.js",
-      "require": "./dist/index.js",
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/emoji-picker-react.esm.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
       "default": "./dist/index.js"
     },
     "./primitives": {
@@ -34,13 +39,13 @@
     },
     "./data/emojis-*": {
       "types": "./dist/data/emojis-*.d.ts",
-      "import": "./dist/data/emojis-*.js",
+      "import": "./dist/data/emojis-*.mjs",
       "require": "./dist/data/emojis-*.js",
       "default": "./dist/data/emojis-*.js"
     },
     "./dist/data/emojis-*": {
       "types": "./dist/data/emojis-*.d.ts",
-      "import": "./dist/data/emojis-*.js",
+      "import": "./dist/data/emojis-*.mjs",
       "require": "./dist/data/emojis-*.js",
       "default": "./dist/data/emojis-*.js"
     },
@@ -67,7 +72,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ealush/emoji-picker-react.git"
+    "url": "git+https://github.com/ealush/emoji-picker-react.git"
   },
   "funding": [
     {
@@ -105,7 +110,7 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
-    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js",
+    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js && node ./scripts/buildDataTwins.js",
     "build:data": "npm run build:data:src && npm run build:data:dist",
     "build:entries": "node ./scripts/build-entries.js",
     "storybook": "npm run build:data && storybook dev -p 6006",
@@ -114,7 +119,8 @@
     "check:react-floor": "node ./scripts/checkReactApiFloor.js",
     "check:react16": "node ./scripts/react16-fixture/run.js",
     "check:package": "node ./scripts/package-check/run.js",
-    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit"
+    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit",
+    "check:perf": "node ./bench/run.js"
   },
   "peerDependencies": {
     "react": ">=16.8"
@@ -198,5 +204,14 @@
   },
   "dependencies": {
     "shipstyles": "1.0.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ealush/emoji-picker-react/issues"
   }
 }

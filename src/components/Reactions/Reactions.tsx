@@ -10,11 +10,11 @@ import {
   useGetEmojiUrlConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useReactionsRef } from '../context/ElementRefContext';
 import { useReactionsModeState } from '../context/PickerContext';
+import { usePickerDataContext } from '../context/PickerDataContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
 import { BtnPlus } from './BtnPlus';
@@ -27,6 +27,7 @@ export function Reactions() {
   const emojiStyle = useEmojiStyleConfig();
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
+  const { emojiByUnified } = usePickerDataContext();
 
   // Registered before the closed-mode early return so collapsing the full
   // picker registers the bar and expanding unregisters it.
@@ -43,19 +44,23 @@ export function Reactions() {
       aria-label="Reactions"
       data-epr-part="reactions"
     >
-      {reactions.map((reaction) => {
-        const emoji = emojiByUnified(reaction);
+      {reactions.map((reaction, index) => {
+        // Reaction identifiers use the same shared Root lookup as the
+        // picker, normalized case-insensitively (V4_API_MATRIX.md §2).
+        const normalized =
+          typeof reaction === 'string' ? reaction.trim().toLowerCase() : '';
+        const emoji = normalized ? emojiByUnified(normalized) : undefined;
 
         if (!emoji) {
           return null;
         }
 
         return (
-          <li key={reaction} data-epr-part="reaction">
+          <li key={`${index}:${normalized}`} data-epr-part="reaction">
             <ClickableEmoji
               emoji={emoji as DataEmoji}
               emojiStyle={emojiStyle}
-              unified={reaction}
+              unified={normalized}
               showVariations={false}
               className={cx(styles.emojiButton)}
               buttonClassName={cx(styles.reactionButton)}

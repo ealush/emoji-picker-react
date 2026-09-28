@@ -28,7 +28,8 @@ import { CustomEmoji } from './customEmojiConfig';
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
-export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
+export const DEFAULT_PICKER_WIDTH = 350;
+export const DEFAULT_PICKER_HEIGHT = 450;export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
 export const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = 'Clear';
 export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
 export const SEARCH_RESULTS_SUFFIX =
@@ -95,10 +96,10 @@ export function basePickerConfig(): PickerConfigInternal {
     className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
-    emojiStyle: EmojiStyle.APPLE,
+    emojiStyle: EmojiStyle.NATIVE,
     emojiVersion: null,
     getEmojiUrl: emojiUrlByUnified,
-    height: 450,
+    height: DEFAULT_PICKER_HEIGHT,
     lazyLoadEmojis: false,
     previewConfig: {
       ...basePreviewConfig,
@@ -113,7 +114,7 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
-    width: 350,
+    width: DEFAULT_PICKER_WIDTH,
     reactionsDefaultOpen: false,
     reactions: DEFAULT_REACTIONS,
     open: true,

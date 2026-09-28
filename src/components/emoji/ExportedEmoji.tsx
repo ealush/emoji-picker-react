@@ -8,7 +8,7 @@ import { ViewOnlyEmoji } from './ViewOnlyEmoji';
 export function ExportedEmoji({
   unified,
   size = 32,
-  emojiStyle = EmojiStyle.APPLE,
+  emojiStyle = EmojiStyle.NATIVE,
   lazyLoad = false,
   getEmojiUrl,
   emojiUrl,

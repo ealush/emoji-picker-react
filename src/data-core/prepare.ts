@@ -19,6 +19,13 @@ export interface PreparedCore {
   readonly records: readonly EmojiInfo[];
   /** Base unified -> record plus variation unified -> base record. */
   readonly byUnified: ReadonlyMap<string, EmojiInfo>;
+  /**
+   * Single-character bucket: char -> base records whose joined lowercase
+   * names include it, in dataset order. Preserves v4's useful O(1)
+   * first-keystroke narrowing on top of the shared immutable core, so
+   * cold single-char queries never pay a full scan.
+   */
+  readonly byChar: ReadonlyMap<string, readonly EmojiInfo[]>;
   /** Per-core query memo: normalized query -> matching records. */
   readonly queryMemo: Map<string, readonly EmojiInfo[]>;
 }
@@ -79,6 +86,7 @@ function readStringArray(raw: unknown): string[] {
 
 function appendEntry(
   byUnified: Map<string, EmojiInfo>,
+  byCharMutable: Map<string, EmojiInfo[]>,
   records: EmojiInfo[],
   entry: unknown,
 ): void {
@@ -107,6 +115,25 @@ function appendEntry(
       byUnified.set(variation, info);
     }
   }
+  indexCharBucket(byCharMutable, names, info);
+}
+
+// One bucket entry per distinct character keeps the per-record cost
+// proportional to name length, not name length squared.
+function indexCharBucket(
+  byCharMutable: Map<string, EmojiInfo[]>,
+  names: readonly string[],
+  info: EmojiInfo,
+): void {
+  const distinctChars = Array.from(new Set(names.join('')));
+  for (const char of distinctChars) {
+    const bucket = byCharMutable.get(char);
+    if (bucket) {
+      bucket.push(info);
+    } else {
+      byCharMutable.set(char, [info]);
+    }
+  }
 }
 
 export function getPreparedCore(emojiData?: EmojiData): PreparedCore {
@@ -119,6 +146,7 @@ export function getPreparedCore(emojiData?: EmojiData): PreparedCore {
   prepareCount += 1;
 
   const byUnified = new Map<string, EmojiInfo>();
+  const byCharMutable = new Map<string, EmojiInfo[]>();
   const records: EmojiInfo[] = [];
 
   const groups = source.emojis ?? {};
@@ -126,13 +154,19 @@ export function getPreparedCore(emojiData?: EmojiData): PreparedCore {
   for (const key of Object.keys(groups)) {
     const list = groups[key] ?? [];
     for (const entry of list) {
-      appendEntry(byUnified, records, entry);
+      appendEntry(byUnified, byCharMutable, records, entry);
     }
   }
+
+  const byChar = new Map<string, readonly EmojiInfo[]>();
+  byCharMutable.forEach((bucket, char) => {
+    byChar.set(char, Object.freeze(bucket));
+  });
 
   const core: PreparedCore = {
     records,
     byUnified,
+    byChar,
     queryMemo: new Map<string, readonly EmojiInfo[]>(),
   };
 

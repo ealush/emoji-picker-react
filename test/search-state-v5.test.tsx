@@ -202,8 +202,14 @@ describe('v5 controlled search (STATE.md §1–§4)', () => {
     fireEvent.change(input, { target: { value: 'z' } });
     expect(proposals).toEqual(['z']);
 
-    // A rejected proposal schedules no filtering: the full grid survives
-    // well past the debounce window.
+    // A rejected proposal does not persist visibly: the input reconciles
+    // back to the accepted prop on the next frame.
+    await vi.waitFor(() => {
+      expect(input.value).toBe('');
+    });
+
+    // ...and schedules no filtering: the full grid survives well past the
+    // debounce window.
     await settle(300);
     expect(gridUnified(U.cat)).not.toBeNull();
     expect(gridUnified(U.dog)).not.toBeNull();
@@ -320,6 +326,62 @@ describe('v5 type-to-search (STATE.md §4)', () => {
 
     expect(onSearchChange).not.toHaveBeenCalled();
     expect(document.activeElement).toBe(first);
+  });
+
+  it('burst typing from the Grid proposes c, then ca, then cat', async () => {
+    const proposals: string[] = [];
+    render(<AcceptingPicker proposals={proposals} />);
+    const first = gridButton('grinning face');
+    const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+
+    act(() => {
+      first.focus();
+    });
+    // The first key moves focus into Search, so the following keys are
+    // ordinary input edits. A deferred focus transfer would emit 'c','a','t'.
+    fireEvent.keyDown(first, { key: 'c' });
+    fireEvent.change(input, { target: { value: 'ca' } });
+    fireEvent.change(input, { target: { value: 'cat' } });
+
+    expect(proposals).toEqual(['c', 'ca', 'cat']);
+    expect(input.value).toBe('cat');
+    await vi.waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+  });
+
+  it('accept-and-transform parent still lands focus in Search', async () => {
+    const proposals: string[] = [];
+    function TransformingPicker() {
+      const [value, setValue] = React.useState('');
+      return (
+        <EmojiPicker
+          emojiData={minimalEmojiData}
+          emojiStyle={EmojiStyle.NATIVE}
+          searchValue={value}
+          onSearchChange={(next) => {
+            proposals.push(next);
+            setValue(next.toUpperCase());
+          }}
+        />
+      );
+    }
+    render(<TransformingPicker />);
+    const first = gridButton('grinning face');
+    const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+
+    act(() => {
+      first.focus();
+    });
+    fireEvent.keyDown(first, { key: 'd' });
+
+    // The parent accepted a transformed value, never the exact proposal —
+    // focus transfer must not depend on an acceptance comparison.
+    expect(proposals).toEqual(['d']);
+    await vi.waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+    expect(input.value).toBe('D');
   });
 });
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { asSelectors, ClassNames } from '../DomUtils/classNames';
 import { EmojiButtonSelector } from '../DomUtils/selectors';
 import {
   useEmojiListRef,
@@ -54,7 +55,25 @@ export function useCategoryHeight(emojiCount: number):
 
     if (pickerWidth === 0 || emojiSize === 0) return;
 
-    const emojisPerRow = Math.max(1, Math.floor(pickerWidth / emojiSize));
+    // Rows live inside the category content box, not the full list:
+    // category margins/padding shrink the usable width, and dividing
+    // the raw list width would overcount columns so the last emoji in
+    // every row spills past the content edge (into the scrollbar).
+    // Measure a rendered, visible content box when one exists; fall back
+    // to the list width (identical when categories carry no horizontal
+    // inset). Hidden categories report zero width and are skipped.
+    const contentBoxes = listEl.querySelectorAll(
+      asSelectors(ClassNames.categoryContent),
+    );
+    let rowWidth = pickerWidth;
+    for (const box of Array.from(contentBoxes)) {
+      const width = (box as HTMLElement).clientWidth;
+      if (width > 0) {
+        rowWidth = width;
+        break;
+      }
+    }
+    const emojisPerRow = Math.max(1, Math.floor(rowWidth / emojiSize));
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;
 

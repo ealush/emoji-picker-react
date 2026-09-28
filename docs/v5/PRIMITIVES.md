@@ -347,6 +347,21 @@ All public primitive root elements and the internal managed panel expose the sta
 
 Native style/class forwarding does not relax protected structural CSS responsibilities.
 
+A bare Root does not inherit the default token sheet, so a custom
+design supplies the documented `--epr-*` tokens it consumes (starting
+from the documented defaults and overriding per theme). Without them,
+token-driven functional styles — input heights, tab sizes, preview
+height — have no value and the corresponding controls collapse.
+Supply a `box-sizing: border-box` reset as well: padded controls
+otherwise overflow the scrollable root, which focus scrolling then
+reveals.
+`stories/v5/CustomDesigns.stories.tsx` demonstrates the pattern: one
+shared token base plus a small per-design delta, custom CSS limited to
+appearance-safe declarations. Structural properties (viewport
+overflow, list/category layout, emoji geometry) must never be
+overridden; measurement, virtualization and keyboard row math depend
+on them.
+
 ## 14. Type/version compatibility
 
 The public primitive types must compile with the declared React peer floor.

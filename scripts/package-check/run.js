@@ -30,7 +30,9 @@ function sh(command, args, options) {
 const REQUIRED = [
   'dist/index.js',
   'dist/index.d.ts',
+  'dist/index.d.mts',
   'dist/emoji-picker-react.esm.js',
+  'dist/emoji-picker-react.esm.mjs',
   'dist/primitives/index.js',
   'dist/primitives/index.mjs',
   'dist/primitives/index.d.ts',
@@ -38,6 +40,7 @@ const REQUIRED = [
   'dist/data/index.mjs',
   'dist/data.d.ts',
   'dist/data/emojis-es.js',
+  'dist/data/emojis-es.mjs',
   'dist/data/emojis-es.d.ts',
 ];
 
