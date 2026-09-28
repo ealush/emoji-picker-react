@@ -61,9 +61,9 @@ function fireIntersections(ids: string[]) {
     (target) =>
       ({
         target,
-        isIntersecting: ids.includes(target.getAttribute('data-name') ?? ''),
+        isIntersecting: ids.includes(target.getAttribute('data-epr-category') ?? ''),
         intersectionRatio: ids.includes(
-          target.getAttribute('data-name') ?? '',
+          target.getAttribute('data-epr-category') ?? '',
         )
           ? 1
           : 0,

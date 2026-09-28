@@ -9,7 +9,7 @@ import emojis from '../data/emojis';
 import skinToneVariations, {
   skinTonesMapped,
 } from '../data/skinToneVariations';
-import { EmojiStyle, SkinTones } from '../types/exposedTypes';
+import { EmojiStyleValue, SkinTones } from '../types/exposedTypes';
 
 import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
 import { indexEmoji } from './alphaNumericEmojiIndex';
@@ -55,7 +55,7 @@ export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
 // WARNING: DO NOT USE DIRECTLY
 export function emojiUrlByUnified(
   unified: string,
-  emojiStyle: EmojiStyle,
+  emojiStyle: EmojiStyleValue,
 ): string {
   return `${cdnUrl(emojiStyle)}${unified}.png`;
 }

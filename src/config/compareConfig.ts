@@ -28,11 +28,33 @@ export function compareConfig(prev: PickerConfig, next: PickerConfig) {
     prev.style === next.style &&
     prev.searchDisabled === next.searchDisabled &&
     prev.skinTonePickerLocation === next.skinTonePickerLocation &&
+    prev.searchValue === next.searchValue &&
+    prev.defaultSearchValue === next.defaultSearchValue &&
+    prev.searchLabel === next.searchLabel &&
+    suggestedEmojisEqual(prev.suggestedEmojis, next.suggestedEmojis) &&
     prevCustomEmojis.length === nextCustomEmojis.length &&
     customEmojisEqual(prevCustomEmojis, nextCustomEmojis) &&
     categoriesEqual(prev.categories, next.categories) &&
     prev.emojiData === next.emojiData
   );
+}
+
+/**
+ * Element-wise equality for caller-defined suggestions. Compared by value
+ * (not identity) so inline literals with equal contents don't rebuild the
+ * merged configuration on every parent render.
+ */
+function suggestedEmojisEqual(
+  prev: string[] | undefined,
+  next: string[] | undefined,
+): boolean {
+  if (prev === next) {
+    return true;
+  }
+  if (!prev || !next || prev.length !== next.length) {
+    return false;
+  }
+  return prev.every((entry, index) => entry === next[index]);
 }
 
 /**

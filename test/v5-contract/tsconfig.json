@@ -1,0 +1,21 @@
+{
+  // Type-checks the v5 contract tests, including compile-time assertions
+  // (type aliases, Props aliasing, RootProps coverage, negative
+  // @ts-expect-error cases). Vitest executes these files but never
+  // type-checks them, so this project closes that gap. Checked by
+  // `npm run check:compat`.
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "jsx": "react",
+    "lib": ["dom", "esnext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["node", "@testing-library/jest-dom"]
+  },
+  "include": ["./*.test.ts", "./*.test.tsx", "../../src/**/*"]
+}

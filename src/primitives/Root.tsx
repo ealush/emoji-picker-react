@@ -1,0 +1,259 @@
+import * as React from 'react';
+import { cx } from 'shipstyles';
+
+import { ClassNames } from '../DomUtils/classNames';
+import { PickerStyleTag } from '../Stylesheet/stylesheet';
+import { Reactions } from '../components/Reactions/Reactions';
+import {
+  ElementRefContextProvider,
+  usePickerMainRef,
+} from '../components/context/ElementRefContext';
+import { PickerConfigProvider } from '../components/context/PickerConfigContext';
+import {
+  PickerContextProvider,
+  useReactionsModeState,
+} from '../components/context/PickerContext';
+import { PickerDataProvider } from '../components/context/PickerDataContext';
+import {
+  NavigationInvalidation,
+  ReactionsModeObserver,
+  SearchSync,
+} from '../components/main/PickerMainBehaviors';
+import { ActiveCategoryProvider } from '../components/navigation/CategoryNavigation';
+import { basePickerConfig } from '../config/config';
+import {
+  MutableConfigContext,
+  useDefineMutableConfig,
+} from '../config/mutableConfig';
+import useIsSearchMode from '../hooks/useIsSearchMode';
+import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
+import { useOnFocus } from '../hooks/useOnFocus';
+import { useReactionsFocusManager } from '../hooks/useReactionsFocus';
+
+import { mergeRefs } from './nativeProps';
+import { RootScopeProvider } from './scope';
+import { StructuralStyleTag, structuralStyles } from './structuralStyles';
+import type { RootProps } from './types';
+
+// Public Root primitive (docs/v5/PRIMITIVES.md §5, docs/v5/DEFAULT_COMPOSITION.md).
+//
+// Root owns behavior/configuration and renders the actual `aside`. It does
+// not own the branded default appearance: theme/width/height stay with the
+// default wrapper, while `className`/`style`/other native `aside`
+// attributes land on the real element. `role` is library-owned and
+// `data-epr-*` is reserved, so both are stripped from consumer props.
+//
+// Root renders the compact reactions UI from props alone plus exactly one
+// internal managed full-picker panel wrapper around every child. There is
+// intentionally no public Panel or Reactions primitive. Root installs no
+// ErrorBoundary; consumer render errors propagate to the application's
+// own boundary.
+
+const APPEARANCE_ONLY_PROPS = new Set([
+  'theme',
+  'width',
+  'height',
+  'className',
+  'style',
+]);
+
+const BEHAVIOR_KEYS: ReadonlySet<string> = new Set(
+  Object.keys(basePickerConfig()),
+);
+
+// Event callbacks live outside the base config shape (they are Partial-only
+// inputs), but they are behavior: they feed the mutable config, never the
+// DOM element.
+const CALLBACK_KEYS = new Set([
+  'onEmojiClick',
+  'onReactionClick',
+  'onSkinToneChange',
+]);
+
+function splitRootProps(props: Omit<RootProps, 'children'>): {
+  behaviorProps: Record<string, unknown>;
+  asideProps: Record<string, unknown>;
+} {
+  const behaviorProps: Record<string, unknown> = {};
+  const asideProps: Record<string, unknown> = {};
+  for (const key of Object.keys(props)) {
+    assignRootProp(key, (props as Record<string, unknown>)[key], behaviorProps, asideProps);
+  }
+  return { behaviorProps, asideProps };
+}
+
+const NON_BEHAVIOR_PROPS = new Set(['role', 'theme', 'width', 'height']);
+
+function assignRootProp(
+  key: string,
+  value: unknown,
+  behaviorProps: Record<string, unknown>,
+  asideProps: Record<string, unknown>,
+): void {
+  if (NON_BEHAVIOR_PROPS.has(key) || key.startsWith('data-epr-')) {
+    return;
+  }
+  if (
+    CALLBACK_KEYS.has(key) ||
+    (BEHAVIOR_KEYS.has(key) && !APPEARANCE_ONLY_PROPS.has(key))
+  ) {
+    behaviorProps[key] = value;
+    return;
+  }
+  asideProps[key] = value;
+}
+
+export const Root = React.forwardRef<HTMLElement, RootProps>(function Root(
+  props,
+  forwardedRef,
+) {
+  const { children, ...rest } = props;
+  const { behaviorProps, asideProps } = splitRootProps(rest);
+  const mutableRef = useDefineMutableConfig({
+    onEmojiClick: behaviorProps.onEmojiClick as never,
+    onReactionClick: behaviorProps.onReactionClick as never,
+    onSkinToneChange: behaviorProps.onSkinToneChange as never,
+    onSearchChange: behaviorProps.onSearchChange as never,
+    onReactionsModeChange: behaviorProps.onReactionsModeChange as never,
+  });
+
+  return (
+    <ElementRefContextProvider>
+      <PickerConfigProvider {...behaviorProps}>
+        <MutableConfigContext.Provider value={mutableRef}>
+          <PickerDataProvider>
+            <PickerContextProvider>
+              <RootScopeProvider>
+                <RootAside
+                  ref={forwardedRef}
+                  asideProps={asideProps}
+                  behaviorNonce={behaviorProps.nonce as string | undefined}
+                >
+                  {children}
+                </RootAside>
+              </RootScopeProvider>
+            </PickerContextProvider>
+          </PickerDataProvider>
+        </MutableConfigContext.Provider>
+      </PickerConfigProvider>
+    </ElementRefContextProvider>
+  );
+});
+
+const RootAside = React.forwardRef<
+  HTMLElement,
+  {
+    asideProps: Record<string, unknown>;
+    behaviorNonce: string | undefined;
+    children: React.ReactNode;
+  }
+>(function RootAside({ asideProps, behaviorNonce, children }, forwardedRef) {
+  const PickerMainRef = usePickerMainRef();
+  const [reactionsOpen] = useReactionsModeState();
+  const searchModeActive = useIsSearchMode();
+  useKeyboardNavigation();
+  useOnFocus();
+  useReactionsFocusManager();
+
+  const { className, style, ...nativeAside } = asideProps as {
+    className?: string;
+    style?: React.CSSProperties;
+    [key: string]: unknown;
+  };
+  // Compact reactions mode drops explicit dimensions so the compact
+  // presentation applies — the same conditional the default wrapper used
+  // to compute, now owned by Root presence handling.
+  const { height, width, ...styleProps } = (style ?? {}) as Omit<
+    React.CSSProperties,
+    'height' | 'width'
+  > & {
+    height?: React.CSSProperties['height'];
+    width?: React.CSSProperties['width'];
+  };
+
+  return (
+    <>
+      {/*
+        Managed components (search/grid/tabs/…) carry their styles on the
+        shared component sheet; measurement, virtualization and keyboard
+        navigation depend on those rules, so every Root emits them. The
+        branded layer (theme classes, transitions, default tokens via the
+        default tree's className) is what bare compositions opt out of —
+        never the functional component styles. Bundle separation (no
+        default-appearance module in this closure) is asserted separately.
+      */}
+      <PickerStyleTag nonce={behaviorNonce} />
+      <StructuralStyleTag nonce={behaviorNonce} />
+      <aside
+        {...(nativeAside as React.HTMLAttributes<HTMLElement>)}
+        ref={mergeRefs<HTMLElement>(forwardedRef, PickerMainRef)}
+        data-epr-part="root"
+        className={cx(
+          structuralStyles.root,
+          {
+            [ClassNames.searchActive]: searchModeActive,
+            [ClassNames.reactions]: reactionsOpen,
+          },
+          // Collapsed presentation is cx-referenced (not just the marker
+          // class) so the stylesheet emits it: shipstyles only emits
+          // class-mapped rules for style objects that reach cx.
+          reactionsOpen && structuralStyles.collapsed,
+          className,
+        )}
+        style={{
+          ...styleProps,
+          ...(!reactionsOpen && { height, width }),
+        }}
+      >
+        <Reactions />
+        <ManagedPanel hidden={reactionsOpen}>
+          <ActiveCategoryProvider>{children}</ActiveCategoryProvider>
+        </ManagedPanel>
+        <SearchSync />
+        <ReactionsModeObserver />
+        <NavigationInvalidation />
+      </aside>
+    </>
+  );
+});
+
+// The single managed full-picker panel wrapper. `hidden` renders
+// declaratively; `inert` is applied imperatively because the supported
+// React versions do not all render it as a DOM attribute. Ref callbacks
+// do not participate in hydration comparison, so SSR output stays clean.
+function ManagedPanel({
+  hidden,
+  children,
+}: {
+  hidden: boolean;
+  children: React.ReactNode;
+}) {
+  const setInert = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      if (!node) {
+        return;
+      }
+      if (hidden) {
+        node.setAttribute('inert', '');
+      } else {
+        node.removeAttribute('inert');
+      }
+    },
+    [hidden],
+  );
+  return (
+    <div
+      data-epr-part="panel"
+      className={cx(structuralStyles.panel)}
+      hidden={hidden}
+      // Inline (not the hidden attribute alone): author display:flex from
+      // the structural panel class would otherwise override the
+      // user-agent [hidden] rule, leaving a visually expanded picker
+      // with an inert grid when reactions mode collapses it.
+      style={hidden ? { display: 'none' } : undefined}
+      ref={setInert}
+    >
+      {children}
+    </div>
+  );
+}

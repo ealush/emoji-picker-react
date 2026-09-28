@@ -9,3 +9,4 @@ tsconfig.tsbuildinfo
 test-output.txt
 test-results/
 *.txt
+bench/.tmp/

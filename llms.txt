@@ -11,7 +11,7 @@ The most popular fully customizable emoji picker for React.
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live Demo](https://ealush.com/emoji-picker-react)** | **[Report a Bug](https://github.com/ealush/emoji-picker-react/issues)**
+**[Live Demo](https://ealush.com/emoji-picker-react)** | **[Report a Bug](https://github.com/ealush/emoji-picker-react/issues)** | **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
@@ -116,6 +116,10 @@ On older versions only, the workaround was adding this to your HTML:
   window.global = window;
 </script>
 ```
+
+## Support Emoji Picker React
+
+Emoji Picker React is independently maintained. If your team relies on it, you can help fund ongoing maintenance and releases through [GitHub Sponsors](https://github.com/sponsors/ealush). Organizations can also support the project through [Tidelift](https://tidelift.com/subscription/pkg/npm-emoji-picker-react).
 
 ## More from the maintainer
 

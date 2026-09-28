@@ -11,6 +11,7 @@ import {
 import skinToneVariations from '../../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../../hooks/useFocus';
+import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
 import Absolute from '../../Layout/Absolute';
 import Relative from '../../Layout/Relative';
 import { useSkinTonePickerRef } from '../../context/ElementRefContext';
@@ -28,6 +29,10 @@ type Props = {
 };
 
 export function SkinTonePickerMenu() {
+  const SkinTonePickerRef = useSkinTonePickerRef();
+  // Preview-located skin-tone control is its own focus region; the
+  // search-located fan stays covered by local Search behavior.
+  useRegisterRegion('preview-skin-tone', SkinTonePickerRef);
   return (
     <Relative style={{ height: ITEM_SIZE }}>
       <Absolute style={{ bottom: 0, right: 0 }}>
@@ -72,7 +77,11 @@ export function SkinTonePicker({
           : { flexBasis: expandedSize }
       }
     >
-      <div className={cx(styles.select)} ref={SkinTonePickerRef}>
+      <div
+        className={cx(styles.select)}
+        ref={SkinTonePickerRef}
+        data-epr-part="skin-tone"
+      >
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
 

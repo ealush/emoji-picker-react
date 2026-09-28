@@ -26,7 +26,7 @@ describe('elementCountInRow', () => {
     const parent = document.createElement('div');
     const element = document.createElement('button');
     parent.appendChild(element);
-    parent.setAttribute('data-emojis-per-row', '9');
+    parent.setAttribute('data-epr-emojis-per-row', '9');
     mockRect(parent, 348);
     mockRect(element, 40);
 

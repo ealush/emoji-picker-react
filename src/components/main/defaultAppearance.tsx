@@ -4,75 +4,62 @@ import { cx } from 'shipstyles';
 import { ClassNames } from '../../DomUtils/classNames';
 import { stylesheet } from '../../Stylesheet/stylesheet';
 import {
-  useClassNameConfig,
-  useStyleConfig,
-  useThemeConfig,
-} from '../../config/useConfig';
-import useIsSearchMode from '../../hooks/useIsSearchMode';
-import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
-import { useOnFocus } from '../../hooks/useOnFocus';
-import { Theme } from '../../types/exposedTypes';
-import { usePickerMainRef } from '../context/ElementRefContext';
-import {
-  PickerContextProvider,
-  useReactionsModeState,
-} from '../context/PickerContext';
+  DEFAULT_PICKER_HEIGHT,
+  DEFAULT_PICKER_WIDTH,
+} from '../../config/config';
+import { Theme, ThemeValue } from '../../types/exposedTypes';
 
-type Props = Readonly<{
-  children: React.ReactNode;
-}>;
+import { DEFAULT_LABEL_HEIGHT } from './labelHeight';
 
-export const DEFAULT_LABEL_HEIGHT = 40;
+// Official default appearance (docs/v5/STYLING.md §1,
+// docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: classes are merged
+// onto the actual Root `aside` via its native `className` prop, so consumer
+// `className`/`style`/`width`/`height` keep v4 root ownership. The component
+// itself renders no DOM wrapper.
+export function DefaultAppearance({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
 
-export default function PickerMain({ children }: Props) {
-  return (
-    <PickerContextProvider>
-      <PickerRootElement>{children}</PickerRootElement>
-    </PickerContextProvider>
+// Official default appearance for the picker root (docs/v5/STYLING.md §1,
+// docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: these classes are
+// merged onto the actual Root `aside` via its native `className` prop, so
+// consumer `className`/`style`/`width`/`height` keep v4 root ownership.
+// Selector names are unchanged from v4, keeping pixel compatibility.
+export function defaultRootClassName(
+  theme: ThemeValue | undefined,
+  className?: string,
+): string {
+  return cx(
+    styles.main,
+    styles.baseVariables,
+    theme === Theme.DARK && styles.darkTheme,
+    theme === Theme.AUTO && styles.autoThemeDark,
+    className,
   );
 }
 
-type RootProps = Readonly<{
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}>;
+export function defaultRootStyle({
+  width,
+  height,
+  style,
+}: {
+  width: string | number | undefined;
+  height: string | number | undefined;
+  style: React.CSSProperties | undefined;
+}): React.CSSProperties {
+  return {
+    // v4-compatible default dimensions; consumer style and explicit
+    // width/height props both override them.
+    width: getDimension(DEFAULT_PICKER_WIDTH),
+    height: getDimension(DEFAULT_PICKER_HEIGHT),
+    ...style,
+    ...(width !== undefined ? { width: getDimension(width) } : {}),
+    ...(height !== undefined ? { height: getDimension(height) } : {}),
+  };
+}
 
-function PickerRootElement({ children }: RootProps) {
-  const [reactionsMode] = useReactionsModeState();
-  const theme = useThemeConfig();
-  const searchModeActive = useIsSearchMode();
-  const PickerMainRef = usePickerMainRef();
-  const className = useClassNameConfig();
-  const style = useStyleConfig();
-
-  useKeyboardNavigation();
-  useOnFocus();
-
-  const { width, height, ...styleProps } = style || {};
-
-  return (
-    <aside
-      className={cx(
-        styles.main,
-        styles.baseVariables,
-        theme === Theme.DARK && styles.darkTheme,
-        theme === Theme.AUTO && styles.autoThemeDark,
-        {
-          [ClassNames.searchActive]: searchModeActive,
-        },
-        reactionsMode && styles.reactionsMenu,
-        className,
-      )}
-      ref={PickerMainRef}
-      style={{
-        ...styleProps,
-        ...(!reactionsMode && { height, width }),
-      }}
-    >
-      {children}
-    </aside>
-  );
+function getDimension(dimension: string | number): string | number {
+  return typeof dimension === 'number' ? `${dimension}px` : dimension;
 }
 
 const DarkTheme = {
@@ -103,6 +90,23 @@ const DarkTheme = {
     'var(--epr-dark-skin-tone-outer-border-color)',
   '--epr-skin-tone-inner-border-color':
     'var(--epr-dark-skin-tone-inner-border-color)',
+  '--epr-dark-text-color': 'var(--epr-highlight-color)',
+  '--epr-dark-hover-bg-color': '#363636f6',
+  '--epr-dark-hover-bg-color-reduced-opacity': '#36363680',
+  '--epr-dark-focus-bg-color': '#474747',
+  '--epr-dark-search-input-bg-color': '#333333',
+  '--epr-dark-category-label-bg-color': '#222222e6',
+  '--epr-dark-picker-border-color': '#151617',
+  '--epr-dark-bg-color': '#222222',
+  '--epr-dark-reactions-bg-color': '#22222290',
+  '--epr-dark-search-input-bg-color-active': 'var(--epr-dark)',
+  '--epr-dark-emoji-variation-indicator-color': '#444',
+  '--epr-dark-category-icon-active-color': '#6AA9DD',
+  '--epr-dark-category-icon-inactive-color': '#C0C0BF',
+  '--epr-dark-skin-tone-picker-menu-color': '#22222295',
+  '--epr-dark-skin-tone-outer-border-color':
+    'var(--epr-dark-picker-border-color)',
+  '--epr-dark-skin-tone-inner-border-color': '#00000000',
 };
 
 const styles = stylesheet.create({
@@ -234,16 +238,5 @@ const styles = stylesheet.create({
   darkTheme: {
     '.': ClassNames.darkTheme,
     '--': DarkTheme,
-  },
-  reactionsMenu: {
-    '.': 'epr-reactions',
-    height: '50px',
-    display: 'inline-flex',
-    backgroundColor: 'var(--epr-reactions-bg-color)',
-    // @ts-ignore - backdropFilter is not recognized.
-    backdropFilter: 'blur(8px)',
-    '--': {
-      '--epr-picker-border-radius': '50px',
-    },
   },
 });

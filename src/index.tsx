@@ -12,11 +12,14 @@ export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 
 export {
   EmojiStyle,
+  EmojiStyleValue,
   SkinTones,
   Theme,
+  ThemeValue,
   Categories,
   EmojiClickData,
   SuggestionMode,
+  SuggestionModeValue,
   SkinTonePickerLocation,
   CategoryIcons,
   CategoryConfig,
@@ -32,6 +35,8 @@ export default function EmojiPicker(props: PickerProps) {
     onEmojiClick: props.onEmojiClick,
     onReactionClick: props.onReactionClick,
     onSkinToneChange: props.onSkinToneChange,
+    onSearchChange: props.onSearchChange,
+    onReactionsModeChange: props.onReactionsModeChange,
   });
 
   return (

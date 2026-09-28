@@ -3,6 +3,54 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/emoji-picker-react.esm.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./primitives": {
+      "import": {
+        "types": "./dist/primitives/index.d.mts",
+        "default": "./dist/primitives/index.mjs"
+      },
+      "require": {
+        "types": "./dist/primitives/index.d.ts",
+        "default": "./dist/primitives/index.js"
+      },
+      "default": "./dist/primitives/index.js"
+    },
+    "./data": {
+      "import": {
+        "types": "./dist/data.d.mts",
+        "default": "./dist/data/index.mjs"
+      },
+      "require": {
+        "types": "./dist/data.d.ts",
+        "default": "./dist/data/index.js"
+      },
+      "default": "./dist/data/index.js"
+    },
+    "./data/emojis-*": {
+      "types": "./dist/data/emojis-*.d.ts",
+      "import": "./dist/data/emojis-*.mjs",
+      "require": "./dist/data/emojis-*.js",
+      "default": "./dist/data/emojis-*.js"
+    },
+    "./dist/data/emojis-*": {
+      "types": "./dist/data/emojis-*.d.ts",
+      "import": "./dist/data/emojis-*.mjs",
+      "require": "./dist/data/emojis-*.js",
+      "default": "./dist/data/emojis-*.js"
+    },
+    "./package.json": "./package.json"
+  },
   "homepage": "https://ealush.com/emoji-picker-react",
   "files": [
     "dist",
@@ -24,7 +72,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ealush/emoji-picker-react.git"
+    "url": "git+https://github.com/ealush/emoji-picker-react.git"
   },
   "funding": [
     {
@@ -52,7 +100,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
+    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run build:entries && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -62,12 +110,17 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
-    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js",
+    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js && node ./scripts/buildDataTwins.js",
     "build:data": "npm run build:data:src && npm run build:data:dist",
+    "build:entries": "node ./scripts/build-entries.js",
     "storybook": "npm run build:data && storybook dev -p 6006",
     "build-storybook": "storybook build",
     "docs:llms": "node ./scripts/generateLlmsTxt.js",
-    "check:react-floor": "node ./scripts/checkReactApiFloor.js"
+    "check:react-floor": "node ./scripts/checkReactApiFloor.js",
+    "check:react16": "node ./scripts/react16-fixture/run.js",
+    "check:package": "node ./scripts/package-check/run.js",
+    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit",
+    "check:perf": "node ./bench/run.js"
   },
   "peerDependencies": {
     "react": ">=16.8"
@@ -138,6 +191,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
+    "rollup-plugin-dts": "^4.2.3",
     "rollup-plugin-svg": "^2.0.0",
     "semantic-release": "^25.0.9",
     "size-limit": "^8.0.1",
@@ -150,5 +204,14 @@
   },
   "dependencies": {
     "shipstyles": "1.0.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ealush/emoji-picker-react/issues"
   }
 }

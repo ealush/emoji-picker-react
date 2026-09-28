@@ -1,13 +1,13 @@
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUnified, emojiVariations } from '../dataUtils/emojiUtils';
-import { EmojiStyle } from '../types/exposedTypes';
+import { EmojiStyle, EmojiStyleValue } from '../types/exposedTypes';
 import { Dimensions } from '../virtualization/virtualizationHelpers';
 
 // eslint-disable-next-line max-params
 export function preloadEmojiIfNeeded(
   emoji: undefined | DataEmoji,
-  emojiStyles: EmojiStyle,
+  emojiStyles: EmojiStyleValue,
   scrollTop: number,
   clientHeight: number,
   topOffset: number,
@@ -51,7 +51,7 @@ export function preloadEmojiIfNeeded(
 export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
-  emojiStyle: EmojiStyle,
+  emojiStyle: EmojiStyleValue,
 ): void {
   if (!emoji) {
     return;

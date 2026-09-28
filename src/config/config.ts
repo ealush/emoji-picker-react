@@ -8,14 +8,18 @@ import {
   EmojiClickData,
   EmojiData,
   EmojiStyle,
+  EmojiStyleValue,
   SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
+  SuggestionModeValue,
   Theme,
+  ThemeValue,
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
+  UserCategoryConfig,
   baseCategoriesConfig,
   mergeCategoriesConfig,
 } from './categoryConfig';
@@ -24,6 +28,8 @@ import { CustomEmoji } from './customEmojiConfig';
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
+export const DEFAULT_PICKER_WIDTH = 350;
+export const DEFAULT_PICKER_HEIGHT = 450;export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
 export const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = 'Clear';
 export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
 export const SEARCH_RESULTS_SUFFIX =
@@ -90,10 +96,10 @@ export function basePickerConfig(): PickerConfigInternal {
     className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
-    emojiStyle: EmojiStyle.APPLE,
+    emojiStyle: EmojiStyle.NATIVE,
     emojiVersion: null,
     getEmojiUrl: emojiUrlByUnified,
-    height: 450,
+    height: DEFAULT_PICKER_HEIGHT,
     lazyLoadEmojis: false,
     previewConfig: {
       ...basePreviewConfig,
@@ -108,7 +114,7 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
-    width: 350,
+    width: DEFAULT_PICKER_WIDTH,
     reactionsDefaultOpen: false,
     reactions: DEFAULT_REACTIONS,
     open: true,
@@ -117,6 +123,12 @@ export function basePickerConfig(): PickerConfigInternal {
     emojiData: undefined,
     categoryIcons: {},
     nonce: undefined,
+    searchValue: undefined,
+    defaultSearchValue: undefined,
+    onSearchChange: undefined,
+    searchLabel: undefined,
+    suggestedEmojis: undefined,
+    onReactionsModeChange: undefined,
   };
 }
 
@@ -128,10 +140,10 @@ export type PickerConfigInternal = {
   defaultSkinTone: SkinTones;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
-  emojiStyle: EmojiStyle;
+  emojiStyle: EmojiStyleValue;
   categories: CategoriesConfig;
-  theme: Theme;
-  suggestedEmojisMode: SuggestionMode;
+  theme: ThemeValue;
+  suggestedEmojisMode: SuggestionModeValue;
   lazyLoadEmojis: boolean;
   previewConfig: PreviewConfig;
   className: string;
@@ -151,6 +163,25 @@ export type PickerConfigInternal = {
   emojiData?: EmojiData;
   categoryIcons: CategoryIcons;
   nonce?: string;
+  /**
+   * Controlled search value (raw user text). When present, it is the
+   * accepted visible source of truth; user edits emit `onSearchChange`
+   * proposals instead of committing locally. See docs/v5/STATE.md.
+   */
+  searchValue?: string;
+  /** Uncontrolled initial search value, read once per mounted lifetime. */
+  defaultSearchValue?: string;
+  /** Emitted synchronously with each committed (uncontrolled) or proposed (controlled) user edit. */
+  onSearchChange?: (value: string) => void;
+  /** Accessible label for the search input. Defaults to English. */
+  searchLabel?: string;
+  /**
+   * Caller-defined Suggested category contents/order (unified or custom
+   * IDs). While present, `suggestedEmojisMode` is ignored for contents.
+   */
+  suggestedEmojis?: string[];
+  /** Observes compact-reactions vs full-picker transitions. */
+  onReactionsModeChange?: (reactionsOpen: boolean) => void;
 };
 
 export type PreviewConfig = {
@@ -170,7 +201,13 @@ type ConfigExternal = {
   onEmojiClick: MouseDownEvent;
   onReactionClick: MouseDownEvent;
   onSkinToneChange: OnSkinToneChange;
-} & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
+  /**
+   * User-supplied allowlist/order/merge input. Bare `Categories` members
+   * are accepted alongside full configs (as in v4 usage and this repo's
+   * own tests); the merged internal representation stays `CategoriesConfig`.
+   */
+  categories: UserCategoryConfig;
+} & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide' | 'categories'>;
 
 export type PickerConfig = Partial<ConfigExternal>;
 

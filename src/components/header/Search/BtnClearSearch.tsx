@@ -7,13 +7,13 @@ import {
   stylesheet,
 } from '../../../Stylesheet/stylesheet';
 import { useSearchClearButtonLabelConfig } from '../../../config/useConfig';
-import { useClearSearch } from '../../../hooks/useFilter';
+import { useClearSearchValue } from '../../../hooks/useSearchController';
 import { Button } from '../../atoms/Button';
 
 import SVGTimes from './svg/times.svg';
 
 export function BtnClearSearch() {
-  const clearSearch = useClearSearch();
+  const clearSearch = useClearSearchValue();
   const searchClearButtonLabel = useSearchClearButtonLabelConfig();
 
   return (
@@ -23,6 +23,7 @@ export function BtnClearSearch() {
         commonInteractionStyles.visibleOnSearchOnly,
       )}
       onClick={clearSearch}
+      data-epr-part="search-clear"
       aria-label={searchClearButtonLabel}
       title={searchClearButtonLabel}
     >

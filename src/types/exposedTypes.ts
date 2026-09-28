@@ -7,7 +7,7 @@ export type EmojiClickData = {
   emoji: string;
   names: string[];
   imageUrl: string;
-  getImageUrl: (emojiStyle?: EmojiStyle) => string;
+  getImageUrl: (emojiStyle?: EmojiStyleValue) => string;
   isCustom: boolean;
 };
 
@@ -42,6 +42,8 @@ export enum SuggestionMode {
   FREQUENT = 'frequent',
 }
 
+export type SuggestionModeValue = SuggestionMode | 'recent' | 'frequent';
+
 export enum EmojiStyle {
   NATIVE = 'native',
   APPLE = 'apple',
@@ -50,11 +52,21 @@ export enum EmojiStyle {
   FACEBOOK = 'facebook',
 }
 
+export type EmojiStyleValue =
+  | EmojiStyle
+  | 'native'
+  | 'apple'
+  | 'twitter'
+  | 'google'
+  | 'facebook';
+
 export enum Theme {
   DARK = 'dark',
   LIGHT = 'light',
   AUTO = 'auto',
 }
+
+export type ThemeValue = Theme | 'dark' | 'light' | 'auto';
 
 export enum SkinTones {
   NEUTRAL = 'neutral',

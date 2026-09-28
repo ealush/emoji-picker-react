@@ -26,7 +26,7 @@ export function NativeEmoji({
         styles.nativeEmoji,
         className,
       )}
-      data-unified={unified}
+      data-epr-unified={unified}
       style={style}
     >
       {parseNativeEmoji(unified)}

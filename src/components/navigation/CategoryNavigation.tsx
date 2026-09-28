@@ -12,39 +12,56 @@ import {
   useCategoriesConfig,
   useCategoryIconsConfig,
 } from '../../config/useConfig';
-import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
+import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Categories } from '../../types/exposedTypes';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
-import { useVisibleCategoriesState } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { CategoryButton } from './CategoryButton';
 
-export function CategoryNavigation() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [, setVisibleCategories] = useVisibleCategoriesState();
-  const scrollCategoryIntoView = useScrollCategoryIntoView();
-  const isSearchMode = useIsSearchMode();
+// Active category state lives with the scroll container (Viewport), which
+// owns section observation. The tablist only highlights and scrolls.
+// Keeping observation in the tablist would stop section tracking whenever
+// the bar unmounts (single tab) or is omitted from a composition.
+const ActiveCategoryContext = React.createContext<{
+  activeCategory: string | null;
+  setActiveCategory: (category: string | null) => void;
+}>({
+  activeCategory: null,
+  setActiveCategory: () => {},
+});
 
+export function ActiveCategoryProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const value = React.useMemo(
+    () => ({ activeCategory, setActiveCategory }),
+    [activeCategory],
+  );
+  return (
+    <ActiveCategoryContext.Provider value={value}>
+      {children}
+    </ActiveCategoryContext.Provider>
+  );
+}
+
+export function useActiveCategory() {
+  return React.useContext(ActiveCategoryContext);
+}
+
+export function useVisibleCategoryConfigs() {
   const categoriesConfig = useCategoriesConfig();
-  const categoryIcons = useCategoryIconsConfig();
-  const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
   const { customGroups, emojiData } = usePickerDataContext();
 
-  // The observer re-subscribes when the merged categories reference
-  // changes (sections added/removed); the reference is stable otherwise.
-  useActiveCategoryScrollDetection({
-    setActiveCategory,
-    setVisibleCategories,
-    categories: categoriesConfig,
-  });
-
-  const visibleCategories = categoriesConfig.filter(categoryConfig => {
+  return categoriesConfig.filter(categoryConfig => {
     if (isCustomCategory(categoryConfig) && hideCustomCategory) {
       return false;
     }
@@ -58,6 +75,23 @@ export function CategoryNavigation() {
     }
     return true;
   });
+}
+
+export function CategoryNavigation() {
+  const { activeCategory, setActiveCategory } = useActiveCategory();
+  const scrollCategoryIntoView = useScrollCategoryIntoView();
+  const isSearchMode = useIsSearchMode();
+
+  const categoryIcons = useCategoryIconsConfig();
+  const CategoryNavigationRef = useCategoryNavigationRef();
+
+  const visibleCategories = useVisibleCategoryConfigs();
+
+  // Registered before the single-tab early return so the tab bar leaves
+  // the navigation graph when it unmounts.
+  useRegisterRegion('categories', CategoryNavigationRef, [
+    visibleCategories.length,
+  ]);
 
   // A single tab navigates nowhere — hide the bar to reclaim its space.
   // https://github.com/ealush/emoji-picker-react/issues/396
@@ -70,7 +104,6 @@ export function CategoryNavigation() {
       className={cx(styles.nav)}
       role="tablist"
       aria-label="Category navigation"
-      id="epr-category-nav-id"
       ref={CategoryNavigationRef}
     >
       {visibleCategories.map(categoryConfig => {

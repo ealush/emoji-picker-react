@@ -69,9 +69,9 @@ function fireVisible(dataName: string) {
       ({
         target,
         isIntersecting:
-          target.getAttribute('data-name') === dataName,
+          target.getAttribute('data-epr-category') === dataName,
         intersectionRatio:
-          target.getAttribute('data-name') === dataName ? 1 : 0,
+          target.getAttribute('data-epr-category') === dataName ? 1 : 0,
         boundingClientRect: {},
         intersectionRect: {},
         rootBounds: null,
@@ -83,7 +83,7 @@ function fireVisible(dataName: string) {
 
 function observedNames() {
   return observedTargets.map(
-    target => target.getAttribute('data-name') ?? '',
+    target => target.getAttribute('data-epr-category') ?? '',
   );
 }
 

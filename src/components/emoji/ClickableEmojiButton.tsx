@@ -20,6 +20,7 @@ type ClickableEmojiButtonProps = Readonly<{
   noBackground?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  tabIndex?: number;
 }>;
 
 export function ClickableEmojiButton({
@@ -33,9 +34,11 @@ export function ClickableEmojiButton({
   className,
   noBackground = false,
   style,
+  tabIndex,
 }: ClickableEmojiButtonProps) {
   return (
     <Button
+      tabIndex={tabIndex}
       className={cx(
         styles.emoji,
         hidden && commonStyles.hidden,
@@ -47,9 +50,10 @@ export function ClickableEmojiButton({
         noBackground && styles.noBackground,
         className,
       )}
-      data-unified={unified}
+      data-epr-part="emoji"
+      data-epr-unified={unified}
       aria-label={getAriaLabel(emojiNames)}
-      data-full-name={emojiNames}
+      data-epr-full-name={emojiNames}
       style={style}
     >
       {children}

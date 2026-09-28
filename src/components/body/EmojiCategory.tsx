@@ -39,16 +39,20 @@ export function EmojiCategory({
         hidden && commonStyles.hidden,
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
       )}
-      data-name={categoryIdFromCategoryConfig(categoryConfig)}
+      data-epr-part="category"
+      data-epr-category={categoryIdFromCategoryConfig(categoryConfig)}
       role="rowgroup"
       aria-label={categoryName}
     >
-      <h2 className={cx(styles.label)}>{categoryName}</h2>
+      <h2 className={cx(styles.label)} data-epr-part="category-label">
+        {categoryName}
+      </h2>
       <div
         className={cx(styles.categoryContent)}
         style={{ height }}
         role="row"
-        data-emojis-per-row={emojisPerRow}
+        data-epr-part="category-content"
+        data-epr-emojis-per-row={emojisPerRow}
       >
         {children}
       </div>

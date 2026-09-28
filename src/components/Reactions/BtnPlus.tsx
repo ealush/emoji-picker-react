@@ -15,6 +15,7 @@ export function BtnPlus() {
       title="Show all Emojis"
       tabIndex={0}
       className={cx(styles.plusSign)}
+      data-epr-part="expand-reactions"
       onClick={() => setReactionsMode(false)}
     />
   );

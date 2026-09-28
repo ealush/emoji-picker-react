@@ -17,6 +17,7 @@ type ClickableEmojiProps = Readonly<
     buttonClassName?: string;
     noBackground?: boolean;
     style?: React.CSSProperties;
+    tabIndex?: number;
   }
 >;
 
@@ -34,11 +35,13 @@ export function ClickableEmoji({
   buttonClassName,
   noBackground = false,
   style,
+  tabIndex,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
   return (
     <ClickableEmojiButton
+      tabIndex={tabIndex}
       hasVariations={hasVariations}
       showVariations={showVariations}
       hidden={hidden}
