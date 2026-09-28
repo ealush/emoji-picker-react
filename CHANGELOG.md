@@ -1,3 +1,5 @@
+## [4.22.3](https://github.com/ealush/emoji-picker-react/compare/4.22.2...4.22.3) (2026-09-28)
+
 ## [4.22.2](https://github.com/ealush/emoji-picker-react/compare/4.22.1...4.22.2) (2026-09-12)
 
 ### Bug Fixes
