@@ -25,11 +25,15 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
 }));
 
-vi.mock('../../src/config/useConfig', () => ({
-  useCategoriesConfig: vi.fn(),
-  useCategoryIconsConfig: vi.fn(() => ({})),
-  useClassNameConfig: vi.fn(() => ''),
-}));
+vi.mock('../../src/config/useConfig', async () => {
+  const { DEFAULT_LABELS } = await import('../../src/config/config');
+  return {
+    useLabels: vi.fn(() => DEFAULT_LABELS),
+    useCategoriesConfig: vi.fn(),
+    useCategoryIconsConfig: vi.fn(() => ({})),
+    useClassNameConfig: vi.fn(() => ''),
+  };
+});
 
 vi.mock('../../src/hooks/useActiveCategoryScrollDetection', () => ({
   useActiveCategoryScrollDetection: vi.fn(),
@@ -149,8 +153,6 @@ describe('CategoryNavigation', () => {
       </ActiveCategoryProvider>,
     );
     expect(container.firstChild).toBeNull();
-    expect(
-      queryByRole('tablist', { name: 'Category navigation' }),
-    ).toBeNull();
+    expect(queryByRole('tablist', { name: 'Category navigation' })).toBeNull();
   });
 });

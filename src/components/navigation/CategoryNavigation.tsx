@@ -9,6 +9,7 @@ import {
   customGroupFromCategoryConfig,
 } from '../../config/categoryConfig';
 import {
+  useLabels,
   useCategoriesConfig,
   useCategoryIconsConfig,
 } from '../../config/useConfig';
@@ -61,7 +62,7 @@ export function useVisibleCategoryConfigs() {
   const hideCustomCategory = useShouldHideCustomEmojis();
   const { customGroups, emojiData } = usePickerDataContext();
 
-  return categoriesConfig.filter(categoryConfig => {
+  return categoriesConfig.filter((categoryConfig) => {
     if (isCustomCategory(categoryConfig) && hideCustomCategory) {
       return false;
     }
@@ -84,6 +85,7 @@ export function CategoryNavigation() {
 
   const categoryIcons = useCategoryIconsConfig();
   const CategoryNavigationRef = useCategoryNavigationRef();
+  const labels = useLabels();
 
   const visibleCategories = useVisibleCategoryConfigs();
 
@@ -103,10 +105,10 @@ export function CategoryNavigation() {
     <div
       className={cx(styles.nav)}
       role="tablist"
-      aria-label="Category navigation"
+      aria-label={labels.categoryNavigation}
       ref={CategoryNavigationRef}
     >
-      {visibleCategories.map(categoryConfig => {
+      {visibleCategories.map((categoryConfig) => {
         const category = categoryFromCategoryConfig(categoryConfig);
         const categoryId = categoryIdFromCategoryConfig(categoryConfig);
         const isActiveCategory = categoryId === activeCategory;

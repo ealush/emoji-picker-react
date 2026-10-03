@@ -8,6 +8,7 @@ import {
   useReactionsConfig,
   useAllowExpandReactions,
   useGetEmojiUrlConfig,
+  useLabels,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
@@ -31,6 +32,7 @@ export const Reactions = React.memo(function Reactions() {
   const allowExpandReactions = useAllowExpandReactions();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const { emojiByUnified } = usePickerDataContext();
+  const labels = useLabels();
 
   // Registered before the closed-mode early return so collapsing the full
   // picker registers the bar and expanding unregisters it.
@@ -44,7 +46,7 @@ export const Reactions = React.memo(function Reactions() {
     <ul
       className={cx(styles.list, !reactionsOpen && commonStyles.hidden)}
       ref={ReactionsRef}
-      aria-label="Reactions"
+      aria-label={labels.reactions}
       data-epr-part="reactions"
     >
       {reactions.map((reaction, index) => {

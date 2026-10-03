@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
+import { useLabels } from '../../config/useConfig';
 import { Button } from '../atoms/Button';
 import { useReactionsModeState } from '../context/PickerContext';
 
@@ -9,10 +10,11 @@ import Plus from './svg/plus.svg';
 
 export function BtnPlus() {
   const [, setReactionsMode] = useReactionsModeState();
+  const labels = useLabels();
   return (
     <Button
-      aria-label="Show all Emojis"
-      title="Show all Emojis"
+      aria-label={labels.expandReactions}
+      title={labels.expandReactions}
       tabIndex={0}
       className={cx(styles.plusSign)}
       data-epr-part="expand-reactions"

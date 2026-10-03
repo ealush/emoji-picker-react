@@ -29,7 +29,8 @@ const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
 export const DEFAULT_PICKER_WIDTH = 350;
-export const DEFAULT_PICKER_HEIGHT = 450;export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
+export const DEFAULT_PICKER_HEIGHT = 450;
+export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
 export const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = 'Clear';
 export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
 export const SEARCH_RESULTS_SUFFIX =
@@ -39,12 +40,58 @@ export const SEARCH_RESULTS_ONE_RESULT_FOUND =
 export const SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND =
   '%n results' + SEARCH_RESULTS_SUFFIX;
 
+/**
+ * Every user-facing string the picker renders or announces. All keys are
+ * optional on the `labels` prop; anything omitted keeps its English
+ * default. Category names come from `categories` / localized `emojiData`,
+ * and the preview caption from `previewConfig.defaultCaption`.
+ */
+export type PickerLabels = {
+  searchPlaceholder: string;
+  /** Accessible name of the search input. */
+  searchLabel: string;
+  searchClear: string;
+  /** Live-region announcement and visible empty state. */
+  searchResultsNone: string;
+  searchResultsOne: string;
+  /** `%n` is replaced with the result count. */
+  searchResultsMany: string;
+  categoryNavigation: string;
+  reactions: string;
+  expandReactions: string;
+  skinToneNeutral: string;
+  skinToneLight: string;
+  skinToneMediumLight: string;
+  skinToneMedium: string;
+  skinToneMediumDark: string;
+  skinToneDark: string;
+};
+
+// English defaults, identical to the v4 strings so existing queries and
+// snapshots keep matching.
+export const DEFAULT_LABELS: PickerLabels = {
+  searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
+  searchLabel: DEFAULT_SEARCH_INPUT_LABEL,
+  searchClear: DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
+  searchResultsNone: SEARCH_RESULTS_NO_RESULTS_FOUND,
+  searchResultsOne: SEARCH_RESULTS_ONE_RESULT_FOUND,
+  searchResultsMany: SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
+  categoryNavigation: 'Category navigation',
+  reactions: 'Reactions',
+  expandReactions: 'Show all Emojis',
+  skinToneNeutral: 'Skin tone NEUTRAL',
+  skinToneLight: 'Skin tone LIGHT',
+  skinToneMediumLight: 'Skin tone MEDIUM_LIGHT',
+  skinToneMedium: 'Skin tone MEDIUM',
+  skinToneMediumDark: 'Skin tone MEDIUM_DARK',
+  skinToneDark: 'Skin tone DARK',
+};
+
 export function mergeConfig(
   userConfig: PickerConfig = {},
 ): PickerConfigInternal {
   const base = basePickerConfig();
 
-  // Get localized mood from emojiData, fallback to base default
   // Get localized mood from emojiData, fallback to base default
   const localizedMood = (
     userConfig.emojiData?.categories as Record<
@@ -129,6 +176,7 @@ export function basePickerConfig(): PickerConfigInternal {
     searchLabel: undefined,
     suggestedEmojis: undefined,
     onReactionsModeChange: undefined,
+    labels: undefined,
   };
 }
 
@@ -182,6 +230,11 @@ export type PickerConfigInternal = {
   suggestedEmojis?: string[];
   /** Observes compact-reactions vs full-picker transitions. */
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
+  /**
+   * Localized user-facing strings. Takes precedence over the individual
+   * `searchPlaceholder` / `searchLabel` / `searchClearButtonLabel` props.
+   */
+  labels?: Partial<PickerLabels>;
 };
 
 export type PreviewConfig = {
@@ -207,7 +260,10 @@ type ConfigExternal = {
    * own tests); the merged internal representation stays `CategoriesConfig`.
    */
   categories: UserCategoryConfig;
-} & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide' | 'categories'>;
+} & Omit<
+  PickerConfigInternal,
+  'previewConfig' | 'unicodeToHide' | 'categories'
+>;
 
 export type PickerConfig = Partial<ConfigExternal>;
 

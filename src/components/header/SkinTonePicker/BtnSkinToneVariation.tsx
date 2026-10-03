@@ -2,7 +2,8 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../../Stylesheet/stylesheet';
-import { skinTonesNamed } from '../../../data/skinToneVariations';
+import { PickerLabels } from '../../../config/config';
+import { useLabels } from '../../../config/useConfig';
 import { SkinTones } from '../../../types/exposedTypes';
 import { Button } from '../../atoms/Button';
 
@@ -24,6 +25,7 @@ export function BtnSkinToneVariation({
   style,
   tabIndex,
 }: Props) {
+  const labels = useLabels();
   return (
     <Button
       style={style}
@@ -36,10 +38,19 @@ export function BtnSkinToneVariation({
         isActive && styles.active,
       )}
       aria-pressed={isActive}
-      aria-label={`Skin tone ${skinTonesNamed[skinToneVariation as SkinTones]}`}
+      aria-label={labels[SKIN_TONE_LABEL_KEYS[skinToneVariation]]}
     ></Button>
   );
 }
+
+const SKIN_TONE_LABEL_KEYS: Record<SkinTones, keyof PickerLabels> = {
+  [SkinTones.NEUTRAL]: 'skinToneNeutral',
+  [SkinTones.LIGHT]: 'skinToneLight',
+  [SkinTones.MEDIUM_LIGHT]: 'skinToneMediumLight',
+  [SkinTones.MEDIUM]: 'skinToneMedium',
+  [SkinTones.MEDIUM_DARK]: 'skinToneMediumDark',
+  [SkinTones.DARK]: 'skinToneDark',
+};
 
 const styles = stylesheet.create({
   closedTone: {

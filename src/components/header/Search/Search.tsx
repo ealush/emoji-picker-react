@@ -2,7 +2,6 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
-import { DEFAULT_SEARCH_INPUT_LABEL } from '../../../config/config';
 import {
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
@@ -14,13 +13,8 @@ import { useFilter } from '../../../hooks/useFilter';
 import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
 import { useSearchInputController } from '../../../hooks/useSearchController';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
-import {
-  composeHandlers,
-  mergeRefs,
-} from '../../../primitives/nativeProps';
-import type {
-  SearchProps,
-} from '../../../primitives/types';
+import { composeHandlers, mergeRefs } from '../../../primitives/nativeProps';
+import type { SearchProps } from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
 import { useSearchInputRef } from '../../context/ElementRefContext';
@@ -67,12 +61,8 @@ export function Search({
   const autoFocus = useAutoFocusSearchConfig();
   const searchLabel = useSearchLabelConfig();
   const { statusSearchResults, searchTerm } = useFilter();
-  const {
-    value,
-    handleChange,
-    handleCompositionStart,
-    handleCompositionEnd,
-  } = useSearchInputController();
+  const { value, handleChange, handleCompositionStart, handleCompositionEnd } =
+    useSearchInputController();
   useRegisterRegion('search', SearchInputRef);
 
   // Consumer input customization. `aria-label` follows the precedence
@@ -110,11 +100,7 @@ export function Search({
       <input
         // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus={autoFocus}
-        aria-label={
-          (consumerAriaLabel as string | undefined) ??
-          searchLabel ??
-          DEFAULT_SEARCH_INPUT_LABEL
-        }
+        aria-label={(consumerAriaLabel as string | undefined) ?? searchLabel}
         onFocus={composeHandlers(closeAllOpenToggles, consumerOnFocus as never)}
         onBlur={consumerOnBlur as never}
         // Consumer classes merge with (never replace) the library class:

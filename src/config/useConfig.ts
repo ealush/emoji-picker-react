@@ -16,12 +16,10 @@ import {
 
 import { CategoriesConfig } from './categoryConfig';
 import {
+  DEFAULT_LABELS,
   DEFAULT_SEARCH_PLACEHOLDER,
-  DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
-  SEARCH_RESULTS_NO_RESULTS_FOUND,
-  SEARCH_RESULTS_ONE_RESULT_FOUND,
-  SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
   PickerDimensions,
+  PickerLabels,
   PreviewConfig,
 } from './config';
 import { CustomEmoji } from './customEmojiConfig';
@@ -32,18 +30,56 @@ export enum MOUSE_EVENT_SOURCE {
   PICKER = 'picker',
 }
 
+/**
+ * Resolved user-facing strings: English defaults, then the legacy
+ * individual props, then `labels` (highest precedence).
+ */
+export function useLabels(): PickerLabels {
+  const {
+    labels,
+    searchPlaceHolder,
+    searchPlaceholder,
+    searchLabel,
+    searchClearButtonLabel,
+  } = usePickerConfig();
+  return React.useMemo(() => {
+    const legacyPlaceholder = [searchPlaceHolder, searchPlaceholder].find(
+      (p) => p !== undefined && p !== DEFAULT_SEARCH_PLACEHOLDER,
+    );
+    const resolved: PickerLabels = { ...DEFAULT_LABELS };
+    if (legacyPlaceholder !== undefined) {
+      resolved.searchPlaceholder = legacyPlaceholder;
+    }
+    if (searchLabel !== undefined) {
+      resolved.searchLabel = searchLabel;
+    }
+    if (searchClearButtonLabel !== undefined) {
+      resolved.searchClear = searchClearButtonLabel;
+    }
+    if (labels) {
+      for (const key of Object.keys(labels) as Array<keyof PickerLabels>) {
+        const value = labels[key];
+        if (value !== undefined) {
+          resolved[key] = value;
+        }
+      }
+    }
+    return resolved;
+  }, [
+    labels,
+    searchPlaceHolder,
+    searchPlaceholder,
+    searchLabel,
+    searchClearButtonLabel,
+  ]);
+}
+
 export function useSearchPlaceHolderConfig(): string {
-  const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
-  return (
-    [searchPlaceHolder, searchPlaceholder].find(
-      (p) => p !== DEFAULT_SEARCH_PLACEHOLDER,
-    ) ?? DEFAULT_SEARCH_PLACEHOLDER
-  );
+  return useLabels().searchPlaceholder;
 }
 
 export function useSearchClearButtonLabelConfig(): string {
-  const { searchClearButtonLabel } = usePickerConfig();
-  return searchClearButtonLabel ?? DEFAULT_SEARCH_CLEAR_BUTTON_LABEL;
+  return useLabels().searchClear;
 }
 
 export function useDefaultSkinToneConfig(): SkinTones {
@@ -218,9 +254,8 @@ export function useDefaultSearchValueConfig(): string | undefined {
   return defaultSearchValue;
 }
 
-export function useSearchLabelConfig(): string | undefined {
-  const { searchLabel } = usePickerConfig();
-  return searchLabel;
+export function useSearchLabelConfig(): string {
+  return useLabels().searchLabel;
 }
 
 export function useSuggestedEmojisConfig(): string[] | undefined {
@@ -236,18 +271,18 @@ function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
     : dimensionConfig;
 }
 
-export function useSearchResultsConfig(searchResultsCount: number): string {
+export function formatSearchResultsLabel(
+  labels: PickerLabels,
+  searchResultsCount: number,
+): string {
   const hasResults = searchResultsCount > 0;
   const isPlural = searchResultsCount > 1;
 
   if (hasResults) {
     return isPlural
-      ? SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND.replace(
-          '%n',
-          searchResultsCount.toString(),
-        )
-      : SEARCH_RESULTS_ONE_RESULT_FOUND;
+      ? labels.searchResultsMany.replace('%n', searchResultsCount.toString())
+      : labels.searchResultsOne;
   }
 
-  return SEARCH_RESULTS_NO_RESULTS_FOUND;
+  return labels.searchResultsNone;
 }
