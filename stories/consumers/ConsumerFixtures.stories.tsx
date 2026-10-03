@@ -37,6 +37,29 @@ const meta = {
 
 export default meta;
 
+// Host controls (textareas, inputs, buttons outside the picker) take
+// platform default fonts and metrics, so their box size differs between
+// local machines and Linux CI and the region screenshot changes size.
+// Pin their metrics so baselines are portable; the picker is untouched.
+const HOST_CONTROL_RESET = `
+[data-consumer-shot] :is(textarea, input, button):not(aside *) {
+  box-sizing: border-box;
+  font: 13px/16px Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 3px 6px;
+  border: 1px solid #767676;
+  border-radius: 2px;
+  vertical-align: top;
+}
+[data-consumer-shot] :is(input, button):not(aside *) {
+  height: 24px;
+}
+[data-consumer-shot] textarea:not(aside *) {
+  height: 40px;
+  resize: none;
+}
+`;
+
 function Shot({
   shotKey,
   children,
@@ -46,9 +69,11 @@ function Shot({
 }) {
   return (
     <div
+      data-consumer-shot=""
       data-testid={`consumer-shot-${shotKey}`}
       style={{ display: 'inline-block', padding: 16 }}
     >
+      <style>{HOST_CONTROL_RESET}</style>
       {children}
     </div>
   );

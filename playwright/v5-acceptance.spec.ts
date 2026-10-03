@@ -257,6 +257,11 @@ test.describe('v5 acceptance', () => {
 
     const search = page.getByLabel('Type to search for an emoji');
     await expect(search).toHaveValue('cat');
+    // The initial 'cat' commit may land before or after the probe mounts
+    // (machine speed), so assert no commit relative to the settled state.
+    await expect(page.getByTestId('last-filter-query')).toHaveText('cat');
+    const commitCount = page.getByTestId('filter-commit-count');
+    const settledCommits = await commitCount.textContent();
 
     await search.evaluate((input: HTMLInputElement) => {
       input.dispatchEvent(
@@ -290,7 +295,10 @@ test.describe('v5 acceptance', () => {
 
     await expect(page.getByTestId('last-search-proposal')).toHaveText('にこ');
     await expect(search).toHaveValue('cat');
-    await expect(page.getByTestId('filter-commit-count')).toHaveText('0');
+    // Outlast the 100 ms derived-filter delay before asserting no commit.
+    await page.waitForTimeout(300);
+    await expect(commitCount).toHaveText(settledCommits ?? '');
+    await expect(page.getByTestId('last-filter-query')).toHaveText('cat');
   });
 
   test('accepted controlled type-to-search focuses Search only after acceptance', async ({

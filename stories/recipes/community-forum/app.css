@@ -1,5 +1,6 @@
 /* The host app around the picker (shared by every stack variant). */
 .forum-thread {
+  line-height: 1.4;
   width: 540px;
   padding: 20px;
   border-radius: 14px;
