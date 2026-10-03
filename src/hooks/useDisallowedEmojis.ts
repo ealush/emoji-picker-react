@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { usePickerDataContext } from '../components/context/PickerDataContext';
 import { useEmojiVersionConfig } from '../config/useConfig';
@@ -12,24 +12,26 @@ import {
 import { useIsUnicodeHidden } from './useHideEmojisByUniocode';
 
 export function useDisallowedEmojis() {
-  const DisallowedEmojisRef = useRef<Record<string, boolean>>({});
   const emojiVersionConfig = useEmojiVersionConfig();
   const { allEmojis } = usePickerDataContext();
 
   return useMemo(() => {
     const emojiVersion = parseFloat(`${emojiVersionConfig}`);
 
+    // A fresh record per version: lowering then raising emojiVersion must
+    // re-allow emojis, so results never accumulate across changes.
+    const disallowedEmojis: Record<string, boolean> = {};
+
     if (!emojiVersionConfig || Number.isNaN(emojiVersion)) {
-      return DisallowedEmojisRef.current;
+      return disallowedEmojis;
     }
 
-    return allEmojis.reduce((disallowedEmojis, emoji) => {
+    for (const emoji of allEmojis) {
       if (addedInNewerVersion(emoji, emojiVersion)) {
         disallowedEmojis[emojiUnified(emoji)] = true;
       }
-
-      return disallowedEmojis;
-    }, DisallowedEmojisRef.current);
+    }
+    return disallowedEmojis;
   }, [emojiVersionConfig, allEmojis]);
 }
 

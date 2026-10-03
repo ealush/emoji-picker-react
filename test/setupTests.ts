@@ -51,3 +51,28 @@ if (!('requestAnimationFrame' in globalThis)) {
   };
   globalThis.cancelAnimationFrame = () => undefined;
 }
+
+// Node >= 25 ships an experimental global `localStorage` that shadows
+// jsdom's and is unusable without `--localstorage-file`. Install an
+// in-memory Storage so tests behave the same on every Node version.
+if (typeof globalThis.localStorage?.clear !== 'function') {
+  const store = new Map<string, string>();
+  const memoryStorage: Storage = {
+    get length() {
+      return store.size;
+    },
+    clear: () => store.clear(),
+    getItem: (key) => (store.has(key) ? (store.get(key) as string) : null),
+    key: (index) => Array.from(store.keys())[index] ?? null,
+    removeItem: (key) => {
+      store.delete(key);
+    },
+    setItem: (key, value) => {
+      store.set(key, String(value));
+    },
+  };
+  Object.defineProperty(globalThis, 'localStorage', {
+    configurable: true,
+    value: memoryStorage,
+  });
+}

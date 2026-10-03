@@ -66,47 +66,46 @@ export function PreviewBody() {
 
   const show = emoji != null && previewEmoji != null;
 
-  return <PreviewContent />;
-
-  function PreviewContent() {
-    const defaultEmoji =
-      variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji);
-    if (!defaultEmoji) {
-      return null;
-    }
-    const defaultText = variationPickerEmoji
-      ? emojiName(variationPickerEmoji)
-      : previewConfig.defaultCaption;
-
-    return (
-      <>
-        <div>
-          {show ? (
-            <ViewOnlyEmoji
-              unified={previewEmoji?.unified as string}
-              emoji={emoji}
-              emojiStyle={emojiStyle}
-              size={45}
-              getEmojiUrl={getEmojiUrl}
-              className={cx(styles.emoji)}
-            />
-          ) : defaultEmoji ? (
-            <ViewOnlyEmoji
-              unified={emojiUnified(defaultEmoji)}
-              emoji={defaultEmoji}
-              emojiStyle={emojiStyle}
-              size={45}
-              getEmojiUrl={getEmojiUrl}
-              className={cx(styles.emoji)}
-            />
-          ) : null}
-        </div>
-        <div className={cx(styles.label)}>
-          {show ? emojiName(emoji) : defaultText}
-        </div>
-      </>
-    );
+  // Rendered inline rather than as a nested component: a component defined
+  // inside render gets a new identity every render, which remounted the
+  // preview (and reloaded its image) on every hover.
+  const defaultEmoji =
+    variationPickerEmoji ?? emojiByUnified(previewConfig.defaultEmoji);
+  if (!defaultEmoji) {
+    return null;
   }
+  const defaultText = variationPickerEmoji
+    ? emojiName(variationPickerEmoji)
+    : previewConfig.defaultCaption;
+
+  return (
+    <>
+      <div>
+        {show ? (
+          <ViewOnlyEmoji
+            unified={previewEmoji?.unified as string}
+            emoji={emoji}
+            emojiStyle={emojiStyle}
+            size={45}
+            getEmojiUrl={getEmojiUrl}
+            className={cx(styles.emoji)}
+          />
+        ) : (
+          <ViewOnlyEmoji
+            unified={emojiUnified(defaultEmoji)}
+            emoji={defaultEmoji}
+            emojiStyle={emojiStyle}
+            size={45}
+            getEmojiUrl={getEmojiUrl}
+            className={cx(styles.emoji)}
+          />
+        )}
+      </div>
+      <div className={cx(styles.label)}>
+        {show ? emojiName(emoji) : defaultText}
+      </div>
+    </>
+  );
 }
 
 export type PreviewEmoji = null | {

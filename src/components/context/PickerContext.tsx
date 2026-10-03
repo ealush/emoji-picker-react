@@ -9,7 +9,6 @@ import {
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
-import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { NavigationRegistry } from '../../state/navigationRegistry';
@@ -62,7 +61,6 @@ export interface PickerServices {
   filterQueryOrderRef: React.MutableRefObject<string[]>;
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
-  disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
   navigationRegistry: NavigationRegistry;
 }
 
@@ -71,7 +69,6 @@ const PickerServicesContext = React.createContext<PickerServices>({
   filterQueryOrderRef: { current: [] },
   disallowClickRef: { current: false },
   disallowMouseRef: { current: false },
-  disallowedEmojisRef: { current: {} },
   navigationRegistry: new NavigationRegistry(),
 });
 
@@ -132,7 +129,6 @@ const LoadSliceContext = React.createContext<{
 });
 
 export function PickerContextProvider({ children }: Props) {
-  const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
@@ -144,8 +140,6 @@ export function PickerContextProvider({ children }: Props) {
   const filterQueryOrderRef = React.useRef<string[]>([]);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
-  const disallowedEmojisRef =
-    React.useRef<Record<string, boolean>>(disallowedEmojis);
 
   const registryRef = React.useRef<NavigationRegistry | null>(null);
   if (registryRef.current === null) {
@@ -170,7 +164,6 @@ export function PickerContextProvider({ children }: Props) {
       filterQueryOrderRef,
       disallowClickRef,
       disallowMouseRef,
-      disallowedEmojisRef,
       navigationRegistry: registryRef.current as NavigationRegistry,
     }),
     // All members are stable refs; this value never changes identity.
@@ -353,11 +346,6 @@ export function useEmojiVariationPickerState() {
 export function useSkinToneFanOpenState() {
   const { skinToneFanOpenState } = React.useContext(SkinToneSliceContext);
   return skinToneFanOpenState;
-}
-
-export function useDisallowedEmojisRef() {
-  const { disallowedEmojisRef } = React.useContext(PickerServicesContext);
-  return disallowedEmojisRef;
 }
 
 export function useVisibleCategoriesState() {
