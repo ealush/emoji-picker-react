@@ -163,6 +163,16 @@ check('primitives load the dataset on demand', () => {
   assert.ok(staticClosure('dist/esm/index.mjs').includes(DATASET_MARKER), 'main ESM is missing the dataset');
 });
 
+// RSC: client entries are marked, the data entry is not.
+check('client entries carry "use client"', () => {
+  for (const file of ['dist/index.js', 'dist/esm/index.mjs', 'dist/primitives/index.js', 'dist/esm/primitives/index.mjs']) {
+    assert.ok(/^"use client";/.test(read(file)), `${file} lacks "use client"`);
+  }
+  for (const file of ['dist/esm/data.mjs', 'dist/data/index.js']) {
+    assert.ok(!read(file).includes('use client'), `${file} must stay server-usable`);
+  }
+});
+
 // One implementation across ESM entries: main and primitives share chunks.
 check('ESM entries share their implementation', () => {
   const chunksOf = (file) => new Set((read(file).match(/\.\/(?:\.\.\/)?chunks\/[^"']+/g) || []).map((c) => c.replace(/^.*chunks\//, '')));

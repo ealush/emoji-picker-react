@@ -93,6 +93,8 @@ async function main() {
     '--log-level=warning',
   ]);
 
+  markClientEntries();
+
   const tsc = spawnSync(
     'npx',
     ['tsc', '--project', join(repoRoot, 'scripts', 'tsconfig.entries.json')],
@@ -155,6 +157,31 @@ async function main() {
     copyFileSync(mainDts, join(repoRoot, 'dist', 'index.d.mts'));
   }
   console.log('entry builds complete: dist/esm (split), dist/primitives, dist/data');
+}
+
+// React Server Components: the picker and primitives are client
+// components, so their entry files carry "use client" (letting a Server
+// Component render <EmojiPicker /> directly). Only entry files are marked:
+// `emoji-picker-react/data` and shared chunks stay server-usable, e.g.
+// searchEmojis() inside a Server Component or route handler.
+function markClientEntries() {
+  const { readFileSync, writeFileSync } = require('fs');
+  const clientEntries = [
+    'dist/index.js',
+    'dist/esm/index.mjs',
+    'dist/primitives/index.js',
+    'dist/esm/primitives/index.mjs',
+  ];
+  for (const file of clientEntries) {
+    const path = join(repoRoot, file);
+    if (!existsSync(path)) {
+      throw new Error(`client entry missing: ${file}`);
+    }
+    const content = readFileSync(path, 'utf8');
+    if (!/^\s*['"]use client['"]/.test(content)) {
+      writeFileSync(path, `"use client";\n${content}`);
+    }
+  }
 }
 
 main().catch((error) => {
