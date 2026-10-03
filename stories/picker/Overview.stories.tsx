@@ -5,11 +5,11 @@ import EmojiPicker, { Categories, EmojiStyle, Props, Theme } from '../../src';
 import { Template, TemplateDark } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Overview',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 

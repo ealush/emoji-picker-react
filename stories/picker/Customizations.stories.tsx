@@ -6,11 +6,11 @@ import { Categories } from '../../src/config/categoryConfig';
 import { Template, customEmojis } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Customizations',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 
@@ -177,9 +177,8 @@ export const CustomEmojisDefered = (args: Props) => {
 
   return <Template {...args} customEmojis={custom} />;
 };
-CustomEmojisDefered.parameters = {
-  visualTestDelay: 2500,
-};
+// Custom emojis arrive on a timer: the visual test waits longer.
+CustomEmojisDefered.tags = ['visual-slow'];
 
 export const CustomPreviewConfig = (args: Props) => (
   <Template

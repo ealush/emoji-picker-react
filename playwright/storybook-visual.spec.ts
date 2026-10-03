@@ -1,17 +1,13 @@
 /**
  * Visual Regression Tests for Storybook Stories
  *
- * This file dynamically discovers all Storybook stories that have the
- * `visualTest: true` parameter and captures screenshot snapshots for each.
- * This enables automated visual regression testing across all component states.
- *
- * Stories can opt-in to visual testing by adding to their parameters:
+ * Discovers every story tagged `visual` in Storybook's index and captures a
+ * screenshot of each. Opt a story (or a whole file via its meta) in with:
  * ```
- * parameters: {
- *   visualTest: true,
- *   visualTestDelay: 500  // optional delay before capture
- * }
+ * tags: ['visual']
  * ```
+ * Tags, not parameters: Storybook's index.json carries tags but never
+ * parameters, so a parameter-based filter silently matched nothing.
  *
  * @file storybook-visual.spec.ts
  */
@@ -21,20 +17,14 @@ import { expect, test } from '@playwright/test';
 /** Storybook index.json entry structure */
 type StoryIndexEntry = {
   id: string;
-  parameters?: {
-    visualTest?: boolean;
-    visualTestDelay?: number;
-  };
+  type: string;
+  tags?: string[];
 };
 
-/**
- * Captures visual snapshots for all stories tagged with visualTest: true.
- * - Fetches the Storybook index.json to discover all available stories
- * - Filters to only stories with visualTest parameter enabled
- * - For each story, navigates to its iframe URL
- * - Waits for the story to render (with optional delay)
- * - Captures a screenshot and compares against baseline
- */
+/** Captures a screenshot for every story tagged `visual`. */
+// One test walks every tagged story; give it room.
+test.describe.configure({ timeout: 10 * 60 * 1000 });
+
 test('captures visual snapshots for tagged stories', async ({
   page,
   request,
@@ -47,14 +37,23 @@ test('captures visual snapshots for tagged stories', async ({
   };
   const entries = data.entries || data.stories || {};
   const stories = Object.values(entries).filter(
-    (story) => story.parameters?.visualTest,
+    (story) => story.type === 'story' && story.tags?.includes('visual'),
   );
+  // An empty match means the opt-in mechanism broke; never pass vacuously.
+  expect(stories.length).toBeGreaterThan(0);
 
   for (const story of stories) {
     await page.goto(`/iframe.html?id=${story.id}&viewMode=story`);
     await page.locator('#storybook-root').waitFor();
-    await page.waitForTimeout(story.parameters?.visualTestDelay ?? 300);
-    await expect(page.locator('#storybook-root')).toHaveScreenshot(
+    // Image emoji styles load from a CDN: wait until every image settled.
+    await page.waitForLoadState('networkidle');
+    await page.waitForFunction(() =>
+      Array.from(document.images).every((image) => image.complete),
+    );
+    await page.waitForTimeout(
+      story.tags?.includes('visual-slow') ? 3000 : 500,
+    );
+    await expect.soft(page.locator('#storybook-root')).toHaveScreenshot(
       `${story.id}.png`,
     );
   }

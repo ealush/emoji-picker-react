@@ -5,11 +5,11 @@ import EmojiPicker, { EmojiStyle, Props, Theme } from '../../src';
 import { Template, TemplateDark } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Reactions',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 
@@ -50,7 +50,7 @@ export const ReactionsMenuImage = (args: Props) => (
     }}
   />
 );
-ReactionsMenuImage.parameters = { visualTest: false };
+ReactionsMenuImage.tags = ['!visual'];
 
 export const CustomReactions = (args: Props) => (
   <Template
@@ -83,7 +83,7 @@ export const ReactionsMenuAuto = (args: Props) => (
     theme={Theme.AUTO}
   />
 );
-ReactionsMenuAuto.parameters = { visualTest: false };
+ReactionsMenuAuto.tags = ['!visual'];
 
 export const CollapseToReactions = () => (
   <EmojiPicker

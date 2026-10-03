@@ -6,11 +6,11 @@ import { SkinTonePickerLocation } from '../../src/types/exposedTypes';
 import { Template } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Skin Tones',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 

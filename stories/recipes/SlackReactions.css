@@ -1,0 +1,56 @@
+/* Slack — message reactions: a fixed quick-reaction bar that expands into a
+   full picker, in Slack's aubergine and Lato-like type. */
+.slack-stage {
+  font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  width: 460px;
+  padding: 16px;
+  background: #fff;
+}
+.slack-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #1d1c1d;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.slack-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #e8912d;
+  flex: none;
+}
+.slack-name {
+  font-weight: 900;
+}
+.slack-picker {
+  --epr-bg-color: #ffffff;
+  --epr-reactions-bg-color: #ffffff;
+  --epr-text-color: #1d1c1d;
+  --epr-highlight-color: #1264a3;
+  --epr-hover-bg-color: #f8f8f8;
+  --epr-focus-bg-color: #e8f5fa;
+  --epr-picker-border-color: #dddddd;
+  --epr-search-input-bg-color: #ffffff;
+  --epr-search-border-color: #868686;
+  --epr-search-border-color-active: #1264a3;
+  --epr-category-icon-active-color: #1264a3;
+  --epr-category-label-text-color: #616061;
+  --epr-category-label-bg-color: #ffffffee;
+  --epr-picker-border-radius: 8px;
+  margin-left: 46px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+  font-family: inherit;
+}
+.slack-picker [data-epr-part='category-label'] {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: none;
+}
+.slack-picker [data-epr-part='reactions'] {
+  padding: 0 6px;
+}
+.slack-picker [data-epr-part='reaction'] {
+  border-radius: 6px;
+}

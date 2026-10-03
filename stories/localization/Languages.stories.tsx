@@ -32,10 +32,10 @@ import zhHant from '../../dist/data/emojis-zh-hant';
 
 const meta: Meta<typeof EmojiPicker> = {
   title: 'Localization/Languages',
+  tags: ['visual'],
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 };
 

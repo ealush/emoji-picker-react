@@ -162,6 +162,7 @@
     }
   ],
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.63.0",
     "@semantic-release/changelog": "^7.0.0",
@@ -192,6 +193,7 @@
     "globals": "^17.13.0",
     "husky": "^9.1.7",
     "jsdom": "^30.1.1",
+    "prettier": "^3.9.9",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "rollup": "^4.64.0",
