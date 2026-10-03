@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Video call reactions",
+  "name": "VideoCallReactions",
+  "rootClass": "call-picker",
+  "root": "EmojiPicker"
+}

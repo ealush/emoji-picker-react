@@ -45,9 +45,7 @@ const EmotionRoot = styledEmotion(Picker.Root)`
   --epr-emoji-size: 34px;
   --epr-emoji-padding: 5px;
   --epr-horizontal-padding: 12px;
-  position: absolute;
-  inset: auto 0 0;
-  height: 330px;
+  height: 100%;
   border-radius: 16px 16px 0 0;
   background: var(--epr-bg-color);
   box-shadow: 0 -4px 24px rgb(0 0 0 / 18%);
@@ -86,9 +84,7 @@ const StyledComponentsRoot = styledComponents(Picker.Root)`
   --epr-emoji-size: 34px;
   --epr-emoji-padding: 5px;
   --epr-horizontal-padding: 12px;
-  position: absolute;
-  inset: auto 0 0;
-  height: 330px;
+  height: 100%;
   border-radius: 16px 16px 0 0;
   background: var(--epr-bg-color);
   box-shadow: 0 -4px 24px rgb(0 0 0 / 18%);
@@ -127,9 +123,7 @@ const MuiRoot = styledMui(Picker.Root)({
   "--epr-emoji-size": "34px",
   "--epr-emoji-padding": "5px",
   "--epr-horizontal-padding": "12px",
-  position: "absolute",
-  inset: "auto 0 0",
-  height: "330px",
+  height: "100%",
   borderRadius: "16px 16px 0 0",
   background: "var(--epr-bg-color)",
   boxShadow: "0 -4px 24px rgb(0 0 0 / 18%)",
@@ -152,8 +146,14 @@ export const MUI = () => <Shell Root={MuiRoot} />;
 
 /**
  * Tailwind v4: arbitrary properties for tokens, arbitrary variants for
- * parts. Requires `@layer epr;` before Tailwind (see tailwind.css).
+ * parts. cssLayer="epr" puts the picker's CSS in a cascade layer declared
+ * before Tailwind's (`@layer epr, theme, base, components, utilities;`),
+ * so utilities override it.
  */
+const LayeredRoot = (props: React.ComponentProps<typeof Picker.Root>) => (
+  <Picker.Root cssLayer="epr" {...props} />
+);
+
 const tailwind = [
   '[--epr-bg-color:#f2f2f7]',
   '[--epr-text-color:#3c3c43]',
@@ -167,9 +167,7 @@ const tailwind = [
   '[--epr-emoji-size:34px]',
   '[--epr-emoji-padding:5px]',
   '[--epr-horizontal-padding:12px]',
-  '[position:absolute]',
-  '[inset:auto_0_0]',
-  '[height:330px]',
+  '[height:100%]',
   '[border-radius:16px_16px_0_0]',
   '[background:var(--epr-bg-color)]',
   '[box-shadow:0_-4px_24px_rgb(0_0_0_/_18%)]',
@@ -180,7 +178,7 @@ const tailwind = [
   '[&_[data-epr-part=category-nav]_>_*]:[padding:8px_10px_22px]',
 ].join(' ');
 
-export const Tailwind = () => <Shell className={tailwind} />;
+export const Tailwind = () => <Shell Root={LayeredRoot} className={tailwind} />;
 
 /**
  * shadcn/ui: the brand palette lives in shadcn's theme variables (your
@@ -206,9 +204,7 @@ const shadcn = [
   '[--epr-emoji-size:34px]',
   '[--epr-emoji-padding:5px]',
   '[--epr-horizontal-padding:12px]',
-  '[position:absolute]',
-  '[inset:auto_0_0]',
-  '[height:330px]',
+  '[height:100%]',
   '[border-radius:16px_16px_0_0]',
   '[background:var(--epr-bg-color)]',
   '[box-shadow:0_-4px_24px_rgb(0_0_0_/_18%)]',
@@ -222,6 +218,6 @@ const shadcn = [
 export const Shadcn = () => (
   // display: contents — the theme scope adds no box.
   <div style={{ display: 'contents', ...shadcnTheme }}>
-    <Shell className={shadcn} />
+    <Shell Root={LayeredRoot} className={shadcn} />
   </div>
 );

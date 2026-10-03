@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Livestream chat",
+  "name": "LivestreamChat",
+  "rootClass": "stream-picker",
+  "root": "Picker.Root"
+}

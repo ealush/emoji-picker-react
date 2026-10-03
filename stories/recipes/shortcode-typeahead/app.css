@@ -1,0 +1,31 @@
+/* The host app around the picker (shared by every stack variant). */
+.typeahead-card {
+  width: 480px;
+  height: 330px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111827;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.typeahead-label {
+  margin: 0 0 8px;
+  color: #4b5563;
+  font-size: 13px;
+  font-weight: 600;
+}
+.typeahead-box {
+  padding: 12px 14px;
+  border: 2px solid #2563eb;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.typeahead-caret {
+  display: inline-block;
+  width: 2px;
+  height: 18px;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: #2563eb;
+}

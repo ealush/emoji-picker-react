@@ -41,6 +41,7 @@ function EmojiPicker({
 }) {
   return (
     <Picker.Root
+      cssLayer="epr"
       className={cn('shadcn-emoji-picker h-[368px] w-[324px] bg-transparent', className)}
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
       searchPlaceholder="Search emoji…"

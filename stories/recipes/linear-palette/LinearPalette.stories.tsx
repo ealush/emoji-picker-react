@@ -196,8 +196,14 @@ export const MUI = () => <Shell Root={MuiRoot} />;
 
 /**
  * Tailwind v4: arbitrary properties for tokens, arbitrary variants for
- * parts. Requires `@layer epr;` before Tailwind (see tailwind.css).
+ * parts. cssLayer="epr" puts the picker's CSS in a cascade layer declared
+ * before Tailwind's (`@layer epr, theme, base, components, utilities;`),
+ * so utilities override it.
  */
+const LayeredRoot = (props: React.ComponentProps<typeof Picker.Root>) => (
+  <Picker.Root cssLayer="epr" {...props} />
+);
+
 const tailwind = [
   '[--epr-bg-color:#1b1b1f]',
   '[--epr-text-color:#e3e4e8]',
@@ -236,7 +242,7 @@ const tailwind = [
   '[&_[data-epr-part=search]_>_*]:[padding:0_4px]',
 ].join(' ');
 
-export const Tailwind = () => <Shell className={tailwind} />;
+export const Tailwind = () => <Shell Root={LayeredRoot} className={tailwind} />;
 
 /**
  * shadcn/ui: the brand palette lives in shadcn's theme variables (your
@@ -293,6 +299,6 @@ const shadcn = [
 export const Shadcn = () => (
   // display: contents — the theme scope adds no box.
   <div style={{ display: 'contents', ...shadcnTheme }}>
-    <Shell className={shadcn} />
+    <Shell Root={LayeredRoot} className={shadcn} />
   </div>
 );

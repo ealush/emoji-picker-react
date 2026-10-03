@@ -15,6 +15,7 @@ import {
 import { InstallSection } from "../components/InstallSection";
 import { FloatingEmojis } from "../components/FloatingEmojis";
 import PickerDemo from "../components/PickerDemo";
+import { DesignsSection } from "../components/DesignsSection";
 import { ReactionsSection } from "../components/ReactionsSection";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -110,6 +111,8 @@ export default function Home({ initialStats }: HomeProps) {
         </section>
 
         <ReactionsSection />
+
+        <DesignsSection />
 
         <InstallSection />
 

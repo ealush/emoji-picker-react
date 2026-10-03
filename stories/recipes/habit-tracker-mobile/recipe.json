@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Habit tracker (mobile)",
+  "name": "HabitTrackerMobile",
+  "rootClass": "habit-picker",
+  "root": "Picker.Root"
+}

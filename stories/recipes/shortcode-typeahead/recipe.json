@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Shortcode typeahead",
+  "name": "ShortcodeTypeahead",
+  "rootClass": "typeahead-picker",
+  "root": "Picker.Root"
+}

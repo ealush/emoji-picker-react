@@ -2,11 +2,14 @@ import styles from "@/styles/PickerControls.module.css";
 import {
   Categories,
   EmojiStyle,
+  type EmojiStyleValue,
   PickerProps,
   SkinTonePickerLocation,
   SkinTones,
   SuggestionMode,
+  type SuggestionModeValue,
   Theme,
+  type ThemeValue,
 } from "emoji-picker-react";
 import * as React from "react";
 import emojiDataBn from "emoji-picker-react/dist/data/emojis-bn.json";
@@ -339,14 +342,14 @@ function SelectEmojiStyle({
   emojiStyle,
   setEmojiStyle,
 }: {
-  emojiStyle?: EmojiStyle;
-  setEmojiStyle: (emojiStyle: EmojiStyle) => void;
+  emojiStyle?: EmojiStyleValue;
+  setEmojiStyle: (emojiStyle: EmojiStyleValue) => void;
 }) {
   return (
     <Label text="Emoji Style">
       <select
         value={emojiStyle}
-        onChange={(e) => setEmojiStyle(e.target.value as EmojiStyle)}
+        onChange={(e) => setEmojiStyle(e.target.value as EmojiStyleValue)}
       >
         <option value={EmojiStyle.NATIVE}>Native</option>
         <option value={EmojiStyle.APPLE}>Apple</option>
@@ -362,12 +365,12 @@ function SelectTheme({
   theme,
   setTheme,
 }: {
-  theme?: Theme;
-  setTheme: (theme: Theme) => void;
+  theme?: ThemeValue;
+  setTheme: (theme: ThemeValue) => void;
 }) {
   return (
     <Label text="Theme">
-      <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
+      <select value={theme} onChange={(e) => setTheme(e.target.value as ThemeValue)}>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="auto">Auto</option>
@@ -380,14 +383,14 @@ function SelectSuggestionMode({
   suggestionMode,
   setSuggestionMode,
 }: {
-  suggestionMode?: SuggestionMode;
-  setSuggestionMode: (suggestionMode: SuggestionMode) => void;
+  suggestionMode?: SuggestionModeValue;
+  setSuggestionMode: (suggestionMode: SuggestionModeValue) => void;
 }) {
   return (
     <Label text="Suggestions">
       <select
         value={suggestionMode}
-        onChange={(e) => setSuggestionMode(e.target.value as SuggestionMode)}
+        onChange={(e) => setSuggestionMode(e.target.value as SuggestionModeValue)}
       >
         <option value={SuggestionMode.RECENT}>Recent</option>
         <option value={SuggestionMode.FREQUENT}>Frequent</option>

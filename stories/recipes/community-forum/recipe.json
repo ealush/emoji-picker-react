@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Community custom emojis",
+  "name": "CommunityForum",
+  "rootClass": "forum-picker",
+  "root": "Picker.Root"
+}

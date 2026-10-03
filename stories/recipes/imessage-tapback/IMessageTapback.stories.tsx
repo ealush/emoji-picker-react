@@ -117,8 +117,14 @@ export const MUI = () => <Shell Root={MuiRoot} />;
 
 /**
  * Tailwind v4: arbitrary properties for tokens, arbitrary variants for
- * parts. Requires `@layer epr;` before Tailwind (see tailwind.css).
+ * parts. cssLayer="epr" puts the picker's CSS in a cascade layer declared
+ * before Tailwind's (`@layer epr, theme, base, components, utilities;`),
+ * so utilities override it.
  */
+const LayeredRoot = (props: React.ComponentProps<typeof EmojiPicker>) => (
+  <EmojiPicker cssLayer="epr" {...props} />
+);
+
 const tailwind = [
   '[--epr-reactions-bg-color:rgb(58_58_60_/_85%)]',
   '[--epr-bg-color:#1c1c1e]',
@@ -136,7 +142,7 @@ const tailwind = [
   '[&_[data-epr-part=expand-reactions]]:[filter:invert(1)_brightness(1.6)]',
 ].join(' ');
 
-export const Tailwind = () => <Shell className={tailwind} />;
+export const Tailwind = () => <Shell Root={LayeredRoot} className={tailwind} />;
 
 /**
  * shadcn/ui: the brand palette lives in shadcn's theme variables (your
@@ -169,6 +175,6 @@ const shadcn = [
 export const Shadcn = () => (
   // display: contents — the theme scope adds no box.
   <div style={{ display: 'contents', ...shadcnTheme }}>
-    <Shell className={shadcn} />
+    <Shell Root={LayeredRoot} className={shadcn} />
   </div>
 );

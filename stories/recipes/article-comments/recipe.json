@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Article comments",
+  "name": "ArticleComments",
+  "rootClass": "comments-picker",
+  "root": "EmojiPicker"
+}

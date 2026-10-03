@@ -15,12 +15,13 @@ const meta = {
 export default meta;
 
 // Utilities go straight onto the parts' className. Tokens use arbitrary
-// properties; nested parts use arbitrary variants. Because the picker's
-// CSS sits in the `epr` layer declared before Tailwind's, every utility
-// wins without `!important`.
+// properties; nested parts use arbitrary variants. cssLayer="epr" puts the
+// picker's CSS in the `epr` layer, declared before Tailwind's (see
+// tailwind.css), so every utility wins without `!important`.
 export function TailwindCSS() {
   return (
     <Picker.Root
+      cssLayer="epr"
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
       searchPlaceholder="Search emoji"
       className={[

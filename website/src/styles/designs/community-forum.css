@@ -1,0 +1,102 @@
+/* The host app around the picker (shared by every stack variant). */
+.forum-thread {
+  width: 540px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #f4f4f5;
+  color: #18181b;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.forum-post {
+  padding: 16px 18px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.forum-post h2 {
+  margin: 8px 0 4px;
+  font-size: 17px;
+}
+.forum-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+}
+.forum-byline {
+  margin: 0;
+  color: #52525b;
+  font-size: 13px;
+}
+.forum-reply {
+  margin-top: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.forum-reply-label {
+  color: #3f3f46;
+  font-size: 13px;
+  font-weight: 600;
+}
+.forum-editor {
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* Community custom emojis — an inline reply-box picker; the community's
+   badge emojis render as rounded squares like the standard set. */
+.forum-picker {
+  --epr-bg-color: #ffffff;
+  --epr-text-color: #52525b;
+  --epr-highlight-color: #16a34a;
+  --epr-hover-bg-color: #f0fdf4;
+  --epr-focus-bg-color: #dcfce7;
+  --epr-search-input-bg-color: #fafafa;
+  --epr-search-input-bg-color-active: #ffffff;
+  --epr-search-border-color: #e4e4e7;
+  --epr-search-border-color-active: #16a34a;
+  --epr-search-input-height: 34px;
+  --epr-search-input-border-radius: 8px;
+  --epr-search-input-text-color: #18181b;
+  --epr-search-input-placeholder-color: #71717a;
+  --epr-category-label-bg-color: #fffffff2;
+  --epr-category-label-text-color: #52525b;
+  --epr-category-label-height: 28px;
+  --epr-category-icon-active-color: #15803d;
+  --epr-category-icon-inactive-color: #71717a;
+  --epr-category-navigation-button-size: 20px;
+  --epr-skin-tone-picker-menu-color: #ffffff;
+  --epr-emoji-size: 28px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 8px;
+  height: 300px;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  background: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.forum-picker [data-epr-part='search'] > * {
+  padding: 10px 10px 4px;
+}
+.forum-picker [data-epr-part='category-nav'] > * {
+  padding: 6px 10px;
+}
+.forum-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  border-radius: 6px;
+  background-color: #dcfce7;
+}
+.forum-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+.forum-picker [data-epr-part='emoji'] {
+  border-radius: 8px;
+}

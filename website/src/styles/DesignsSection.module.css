@@ -1,0 +1,71 @@
+.designsSection {
+  padding: 80px 24px;
+  background: #f8fafc;
+}
+
+.designsContent {
+  max-width: 1080px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.sectionTitle {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 40px);
+  color: #0f172a;
+}
+
+.sectionSubtitle {
+  max-width: 720px;
+  margin: 0 auto 32px;
+  color: #475569;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.sectionSubtitle code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: #e2e8f0;
+  font-size: 0.9em;
+}
+
+.designTabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.designTab {
+  padding: 8px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.designTab[aria-selected="true"] {
+  border-color: #0f172a;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+.designDescription {
+  min-height: 24px;
+  margin: 0 0 24px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.designStage {
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+  padding: 12px 0 24px;
+  text-align: left;
+}

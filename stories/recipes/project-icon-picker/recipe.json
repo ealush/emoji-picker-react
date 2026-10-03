@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Project icon picker",
+  "name": "ProjectIconPicker",
+  "rootClass": "project-picker",
+  "root": "Picker.Root"
+}

@@ -1,0 +1,144 @@
+/* The host app around the picker (shared by every stack variant). */
+.habit-phone {
+  position: relative;
+  width: 360px;
+  height: 720px;
+  overflow: hidden;
+  border: 10px solid #111827;
+  border-radius: 44px;
+  background: #ecfeff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.habit-screen {
+  padding: 34px 22px;
+  color: #0f172a;
+}
+.habit-back {
+  margin: 0 0 18px;
+  color: #0e7490;
+  font-size: 15px;
+}
+.habit-title {
+  margin: 0 0 18px;
+  font-size: 28px;
+}
+.habit-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 8%);
+  font-size: 17px;
+  font-weight: 600;
+}
+.habit-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #cffafe;
+  font-size: 22px;
+}
+.habit-sub {
+  margin: 10px 4px 0;
+  color: #475569;
+  font-size: 14px;
+}
+.habit-sheet {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  height: 430px;
+  border-radius: 24px 24px 0 0;
+  background: #ffffff;
+  box-shadow: 0 -10px 30px rgb(15 23 42 / 18%);
+}
+.habit-sheet-handle {
+  width: 40px;
+  height: 5px;
+  margin: 10px auto 4px;
+  border-radius: 3px;
+  background: #cbd5e1;
+}
+.habit-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 18px 8px;
+}
+.habit-sheet-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 17px;
+}
+.habit-sheet-header button {
+  border: 0;
+  background: transparent;
+  color: #0e7490;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Habit tracker — a mobile bottom sheet: pill search, horizontal tab strip
+   with a pill indicator, large tile-style emojis. */
+.habit-picker {
+  --epr-bg-color: #ffffff;
+  --epr-text-color: #475569;
+  --epr-highlight-color: #0e7490;
+  --epr-hover-bg-color: #ecfeff;
+  --epr-focus-bg-color: #cffafe;
+  --epr-search-input-bg-color: #f1f5f9;
+  --epr-search-input-bg-color-active: #f1f5f9;
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: #0e7490;
+  --epr-search-input-height: 38px;
+  --epr-search-input-border-radius: 999px;
+  --epr-search-input-padding: 0 16px 0 38px;
+  --epr-search-input-text-color: #0f172a;
+  --epr-search-input-placeholder-color: #64748b;
+  --epr-category-label-bg-color: #fffffff2;
+  --epr-category-label-text-color: #475569;
+  --epr-category-label-height: 30px;
+  --epr-category-icon-active-color: #0e7490;
+  --epr-category-icon-inactive-color: #64748b;
+  --epr-category-navigation-button-size: 22px;
+  --epr-emoji-size: 30px;
+  --epr-emoji-padding: 8px;
+  --epr-horizontal-padding: 14px;
+  flex: 1;
+  min-height: 0;
+  background: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.habit-picker [data-epr-part='search'] > * {
+  padding: 0 14px 6px;
+}
+.habit-picker [data-epr-part='category-nav'] > * {
+  padding: 6px 12px 8px;
+}
+.habit-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  border-radius: 999px;
+  background-color: #cffafe;
+}
+.habit-picker [data-epr-part='category-label'] {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: none;
+}
+.habit-picker [data-epr-part='emoji'] {
+  border-radius: 14px;
+  background-color: #f8fafc;
+}
+.habit-picker [data-epr-part='emoji']:hover {
+  background-color: #ecfeff;
+}
+.habit-picker [data-epr-part='emoji']:focus {
+  background-color: #cffafe;
+}

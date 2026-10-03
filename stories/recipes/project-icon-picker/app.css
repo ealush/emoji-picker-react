@@ -1,0 +1,47 @@
+/* The host app around the picker (shared by every stack variant). */
+.project-card {
+  width: 560px;
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #111827;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.project-heading {
+  margin: 0 0 18px;
+  font-size: 18px;
+}
+.project-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.project-tile {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fef3c7, #fde68a);
+  font-size: 34px;
+}
+.project-name {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+}
+.project-field-label {
+  margin: 0 0 6px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+.project-field {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}

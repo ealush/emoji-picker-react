@@ -13,18 +13,24 @@ export type ShellProps = {
   className?: string;
 };
 
-export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+export function Shell({
+  Root: RootComponent = Picker.Root,
+  className,
+}: ShellProps) {
   return (
     <div className="ios-phone">
-      <RootComponent         className={className}
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
-      >
-        <div className="ios-handle" />
-        <Picker.Viewport>
-          <Picker.List />
-        </Picker.Viewport>
-        <Picker.CategoryNav />
-      </RootComponent>
+      <div className="ios-sheet-host">
+        <RootComponent
+          className={className}
+          skinTonePickerLocation={SkinTonePickerLocation.NONE}
+        >
+          <div className="ios-handle" />
+          <Picker.Viewport>
+            <Picker.List />
+          </Picker.Viewport>
+          <Picker.CategoryNav />
+        </RootComponent>
+      </div>
     </div>
   );
 }

@@ -19,3 +19,10 @@
 }
 /* No section titles: hide them (the label-height token above is 0, so
    measurement and virtualization agree). */
+
+/* The sheet's position belongs to the host; the picker fills it. */
+.ios-sheet-host {
+  position: absolute;
+  inset: auto 0 0;
+  height: 330px;
+}

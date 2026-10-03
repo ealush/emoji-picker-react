@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Team chat composer",
+  "name": "TeamChat",
+  "rootClass": "chat-picker",
+  "root": "Picker.Root"
+}

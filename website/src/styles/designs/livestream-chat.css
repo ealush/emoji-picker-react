@@ -1,0 +1,127 @@
+/* The host app around the picker (shared by every stack variant). */
+.stream-layout {
+  display: flex;
+  width: 760px;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #0e0e10;
+  color: #efeff1;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.stream-video {
+  position: relative;
+  flex: 1;
+  background: radial-gradient(circle at 30% 30%, #4c1d95, #0e0e10 70%);
+}
+.stream-live {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e91916;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.stream-meta {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px;
+  background: linear-gradient(transparent, rgb(0 0 0 / 80%));
+  font-size: 14px;
+}
+.stream-meta span {
+  color: #d1d1d6;
+  font-size: 12px;
+}
+.stream-chat {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  border-left: 1px solid #2f2f35;
+  background: #18181b;
+}
+.stream-chat-title {
+  margin: 0;
+  padding: 12px;
+  border-bottom: 1px solid #2f2f35;
+  font-size: 13px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.stream-log {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 6px;
+  margin: 0;
+  padding: 10px 12px;
+  list-style: none;
+  font-size: 13px;
+}
+.stream-input {
+  margin: 8px 10px 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #2f2f35;
+  color: #c8c8d0;
+  font-size: 13px;
+}
+
+/* Livestream chat — docked under the chat log: dark, full column width,
+   tabs on top, short and dense. */
+.stream-picker {
+  --epr-bg-color: #1f1f23;
+  --epr-text-color: #c8c8d0;
+  --epr-highlight-color: #bf94ff;
+  --epr-hover-bg-color: #2f2f35;
+  --epr-focus-bg-color: #3d3d44;
+  --epr-search-input-bg-color: #0e0e10;
+  --epr-search-input-bg-color-active: #0e0e10;
+  --epr-search-border-color: #3d3d44;
+  --epr-search-border-color-active: #bf94ff;
+  --epr-search-input-height: 30px;
+  --epr-search-input-border-radius: 6px;
+  --epr-search-input-text-color: #efeff1;
+  --epr-search-input-placeholder-color: #a8a8b3;
+  --epr-category-label-bg-color: #1f1f23f2;
+  --epr-category-label-text-color: #c8c8d0;
+  --epr-category-label-height: 26px;
+  --epr-category-icon-active-color: #bf94ff;
+  --epr-category-icon-inactive-color: #a8a8b3;
+  --epr-category-navigation-button-size: 18px;
+  --epr-emoji-variation-picker-bg-color: #2f2f35;
+  --epr-emoji-size: 24px;
+  --epr-emoji-padding: 4px;
+  --epr-horizontal-padding: 10px;
+  height: 230px;
+  border-top: 1px solid #2f2f35;
+  background: var(--epr-bg-color);
+}
+.stream-picker [data-epr-part='category-nav'] > * {
+  padding: 8px 10px 4px;
+}
+.stream-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  box-shadow: 0 9px 0 -7px #bf94ff;
+}
+.stream-picker [data-epr-part='search'] > * {
+  padding: 4px 10px;
+}
+.stream-picker [data-epr-part='category-label'] {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.stream-picker [data-epr-part='emoji'] {
+  border-radius: 4px;
+}

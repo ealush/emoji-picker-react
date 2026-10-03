@@ -1,0 +1,6 @@
+{
+  "title": "Examples/Set a status dialog",
+  "name": "StatusDialog",
+  "rootClass": "status-picker",
+  "root": "Picker.Root"
+}
