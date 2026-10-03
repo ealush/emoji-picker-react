@@ -5,6 +5,7 @@ import {
   useEmojiStyleConfig,
   useEmojiVersionConfig,
   useDefaultSkinToneConfig,
+  useSkinToneConfig,
   useDefaultSearchValueConfig,
   useReactionsOpenConfig,
   useSearchValueConfig,
@@ -259,15 +260,25 @@ export function PickerContextProvider({ children }: Props) {
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const variationValue = useSliceValue(emojiVariationPickerState);
 
-  const activeSkinTone = useState<SkinTones>(defaultSkinTone);
+  // Controlled `skinTone` is the visible source of truth; the setter still
+  // updates local state (harmless while controlled) so switching back to
+  // uncontrolled resumes from the last selection. Selection always reports
+  // through onSkinToneChange, which the skin tone picker calls itself.
+  const controlledSkinTone = useSkinToneConfig();
+  const [localSkinTone, setLocalSkinTone] =
+    useState<SkinTones>(defaultSkinTone);
+  const effectiveSkinTone = controlledSkinTone ?? localSkinTone;
   const skinToneFanOpenState = useState<boolean>(false);
   const skinToneValue = React.useMemo(
     () => ({
-      activeSkinTone: activeSkinTone as ReactState<SkinTones>,
+      activeSkinTone: [
+        effectiveSkinTone,
+        setLocalSkinTone,
+      ] as ReactState<SkinTones>,
       skinToneFanOpenState: skinToneFanOpenState as ReactState<boolean>,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [activeSkinTone[0], skinToneFanOpenState[0]],
+    [effectiveSkinTone, skinToneFanOpenState[0]],
   );
 
   const activeCategoryState = useState<ActiveCategoryState>(null);

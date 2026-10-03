@@ -177,6 +177,7 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojis: undefined,
     onReactionsModeChange: undefined,
     labels: undefined,
+    skinTone: undefined,
   };
 }
 
@@ -235,6 +236,11 @@ export type PickerConfigInternal = {
    * `searchPlaceholder` / `searchLabel` / `searchClearButtonLabel` props.
    */
   labels?: Partial<PickerLabels>;
+  /**
+   * Controlled active skin tone. Pair with `onSkinToneChange`; while
+   * present, `defaultSkinTone` is ignored.
+   */
+  skinTone?: SkinTones;
 };
 
 export type PreviewConfig = {

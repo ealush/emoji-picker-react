@@ -87,6 +87,11 @@ export function useDefaultSkinToneConfig(): SkinTones {
   return defaultSkinTone;
 }
 
+export function useSkinToneConfig(): SkinTones | undefined {
+  const { skinTone } = usePickerConfig();
+  return skinTone;
+}
+
 export function useAllowExpandReactions(): boolean {
   const { allowExpandReactions } = usePickerConfig();
   return allowExpandReactions;
