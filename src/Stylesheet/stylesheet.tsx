@@ -2,8 +2,28 @@ import * as React from 'react';
 import { Styles, createSheet } from 'shipstyles';
 
 import { ClassNames } from '../DomUtils/classNames';
+import { isJsdom } from '../DomUtils/isJsdom';
 
 export const stylesheet = createSheet('epr', null);
+
+/**
+ * Every library rule ships inside the `epr` cascade layer, so any
+ * unlayered application CSS overrides it regardless of specificity or
+ * load order (plain CSS, CSS Modules, CSS-in-JS). Layered frameworks such
+ * as Tailwind put the picker beneath their utilities by declaring the
+ * layer first: `@layer epr;` before `@import "tailwindcss";`.
+ */
+export const CSS_LAYER = 'epr';
+
+export function inLayer(css: string): string {
+  // jsdom ignores rules inside @layer; emitting them unlayered there keeps
+  // computed styles (e.g. display: none on hidden sections) intact in
+  // jsdom-based test suites, ours and consumers'.
+  if (!css || isJsdom()) {
+    return css;
+  }
+  return `@layer ${CSS_LAYER}{${css}}`;
+}
 
 const hidden = {
   display: 'none',
@@ -29,7 +49,7 @@ export const PickerStyleTag = React.memo(function PickerStyleTag({
     <style
       nonce={nonce}
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: stylesheet.getStyle() }}
+      dangerouslySetInnerHTML={{ __html: inLayer(stylesheet.getStyle()) }}
     />
   );
 });

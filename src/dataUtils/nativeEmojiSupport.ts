@@ -1,3 +1,5 @@
+import { isJsdom } from '../DomUtils/isJsdom';
+
 // Native emoji support detection.
 //
 // The native emoji style renders with the platform's emoji font, which lags
@@ -111,17 +113,6 @@ function createProbeContext(): CanvasRenderingContext2D | null {
   } catch {
     return null;
   }
-}
-
-// jsdom has no canvas and reports every getContext call as an error,
-// which would surface in consumers' own test output. Read the user agent
-// from the document's window: on Node >= 21 the global `navigator` is
-// Node's own, not jsdom's.
-function isJsdom(): boolean {
-  const userAgent =
-    document.defaultView?.navigator?.userAgent ??
-    (typeof navigator !== 'undefined' ? navigator.userAgent : '');
-  return /jsdom/i.test(userAgent);
 }
 
 function measure(ctx: CanvasRenderingContext2D, emoji: string): number {

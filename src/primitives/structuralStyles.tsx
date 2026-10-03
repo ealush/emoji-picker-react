@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { createSheet } from 'shipstyles';
 
+import { inLayer } from '../Stylesheet/stylesheet';
+
 import {
   darkPickerTokens,
   lightPickerTokens,
@@ -93,7 +95,7 @@ export const StructuralStyleTag = React.memo(function StructuralStyleTag({
     <style
       nonce={nonce}
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: structuralSheet.getStyle() }}
+      dangerouslySetInnerHTML={{ __html: inLayer(structuralSheet.getStyle()) }}
     />
   );
 });
