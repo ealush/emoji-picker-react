@@ -6,3 +6,4 @@
 @import 'tailwindcss/utilities.css' layer(utilities) source(none);
 @source './Tailwind.stories.tsx';
 @source './Shadcn.stories.tsx';
+@source '../recipes';

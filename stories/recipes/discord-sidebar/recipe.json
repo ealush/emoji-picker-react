@@ -1,0 +1,6 @@
+{
+  "title": "Discord sidebar",
+  "name": "DiscordSidebar",
+  "rootClass": "discord-picker",
+  "root": "Picker.Root"
+}

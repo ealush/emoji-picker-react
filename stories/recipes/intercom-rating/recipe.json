@@ -1,0 +1,6 @@
+{
+  "title": "Intercom rating",
+  "name": "IntercomRating",
+  "rootClass": "intercom-scale",
+  "root": "EmojiPicker"
+}

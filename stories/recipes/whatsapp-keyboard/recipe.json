@@ -1,0 +1,6 @@
+{
+  "title": "WhatsApp keyboard panel",
+  "name": "WhatsAppKeyboard",
+  "rootClass": "wa-picker",
+  "root": "Picker.Root"
+}

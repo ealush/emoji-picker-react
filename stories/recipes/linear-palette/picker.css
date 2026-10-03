@@ -1,0 +1,50 @@
+/* Linear — command-palette style: large borderless search on top, no tabs,
+   no preview, compact dense grid, muted section titles. */
+/* Picker styles — the source of truth for every stack variant. */
+.linear-picker {
+  --epr-bg-color: #1b1b1f;
+  --epr-text-color: #e3e4e8;
+  --epr-highlight-color: #8b8ff8;
+  --epr-hover-bg-color: #2b2c33;
+  --epr-focus-bg-color: #33343c;
+  --epr-search-input-bg-color: transparent;
+  --epr-search-input-bg-color-active: transparent;
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: transparent;
+  --epr-search-input-height: 52px;
+  --epr-search-input-padding: 0 16px 0 44px;
+  --epr-search-input-text-color: #f7f8f8;
+  --epr-search-input-placeholder-color: #6b6f76;
+  --epr-category-label-bg-color: #1b1b1fee;
+  --epr-category-label-text-color: #8a8f98;
+  --epr-category-label-height: 28px;
+  --epr-emoji-variation-picker-bg-color: #26272d;
+  --epr-emoji-size: 24px;
+  --epr-emoji-padding: 6px;
+  --epr-horizontal-padding: 12px;
+  width: 560px;
+  height: 380px;
+  border: 1px solid #2e2f36;
+  border-radius: 12px;
+  background: var(--epr-bg-color);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 55%);
+  font-family: Inter, 'SF Pro Display', -apple-system, 'Segoe UI', sans-serif;
+  color: var(--epr-text-color);
+}
+.linear-picker [data-epr-part='search'] {
+  border-bottom: 1px solid #2e2f36;
+}
+.linear-picker [data-epr-part='search'] input {
+  font-size: 17px;
+}
+.linear-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+}
+.linear-picker [data-epr-part='emoji'] {
+  border-radius: 6px;
+}
+.linear-picker [data-epr-part='search'] > * {
+  padding: 0 4px;
+}

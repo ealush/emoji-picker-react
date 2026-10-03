@@ -1,0 +1,6 @@
+{
+  "title": "Windows 95",
+  "name": "Windows95",
+  "rootClass": "w95-picker",
+  "root": "Picker.Root"
+}

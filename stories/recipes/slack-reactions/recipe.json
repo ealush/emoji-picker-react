@@ -1,0 +1,6 @@
+{
+  "title": "Slack reactions",
+  "name": "SlackReactions",
+  "rootClass": "slack-picker",
+  "root": "EmojiPicker"
+}

@@ -166,7 +166,7 @@ export type RootProps =
   RootBehaviorProps & {
     children: React.ReactNode;
     /** Opt-in default color tokens (variables only). */
-    theme?: ThemeValue;
+    colorScheme?: ThemeValue;
   };
 ```
 
@@ -177,7 +177,7 @@ Consequences:
 - Root renders the actual `aside`.
 - `className`, `style`, `id`, ordinary non-reserved `aria-*`, ordinary non-reserved `data-*`, title and root event handlers come from native `aside` attributes.
 - `role` is library-owned and cannot override the Root landmark semantics.
-- `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `theme` only applies color tokens.
+- `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `colorScheme` only applies color tokens (named so CSS-in-JS wrappers, which reserve `theme`, pass it through).
 - `emojiData` accepts an object (synchronous, SSR-safe) or a loader; without it, the primitives entry loads the bundled dataset on demand.
 - `autoFocusSearch` affects the managed Search descendant.
 - `nonce` covers library-owned style injection.
@@ -369,7 +369,7 @@ All public primitive root elements and the internal managed panel expose the sta
 
 Native style/class forwarding does not relax protected structural CSS responsibilities.
 
-A bare Root carries the geometry tokens and a `box-sizing` reset, so it is functional without any appearance tokens; colors are opt-in through `theme` or the consumer's own `--epr-*` values. Library CSS lives in the `epr` cascade layer, so consumer CSS overrides it without specificity tricks (STYLING.md §7). Structural properties (viewport overflow, list/category layout, emoji geometry) must never be overridden; measurement, virtualization and keyboard row math depend on them. See `stories/recipes` for production-style compositions.
+A bare Root carries the geometry tokens and a `box-sizing` reset, so it is functional without any appearance tokens; colors are opt-in through `colorScheme` or the consumer's own `--epr-*` values. Library CSS lives in the `epr` cascade layer, so consumer CSS overrides it without specificity tricks (STYLING.md §7). Structural properties (viewport overflow, list/category layout, emoji geometry) must never be overridden; measurement, virtualization and keyboard row math depend on them. See `stories/recipes` for production-style compositions.
 
 ## 14. Type/version compatibility
 

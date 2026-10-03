@@ -1,0 +1,21 @@
+/* The surrounding mock app (shared by every stack variant). */
+.ios-phone {
+  position: relative;
+  width: 340px;
+  height: 560px;
+  overflow: hidden;
+  border-radius: 40px;
+  background: linear-gradient(180deg, #8ec5fc, #e0c3fc);
+  box-shadow: 0 0 0 10px #111, 0 20px 50px rgb(0 0 0 / 35%);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    Arial, sans-serif;
+}
+.ios-handle {
+  width: 36px;
+  height: 5px;
+  margin: 8px auto 6px;
+  border-radius: 3px;
+  background: #c7c7cc;
+}
+/* No section titles: hide them (the label-height token above is 0, so
+   measurement and virtualization agree). */

@@ -1,0 +1,6 @@
+{
+  "title": "iMessage tapback",
+  "name": "IMessageTapback",
+  "rootClass": "imessage-picker",
+  "root": "EmojiPicker"
+}

@@ -14,6 +14,7 @@ import type { ThemeValue } from '../types/exposedTypes';
  */
 export type PickerAppearanceProps =
   | 'theme'
+  | 'colorScheme'
   | 'width'
   | 'height'
   | 'className'
@@ -29,11 +30,12 @@ export type RootProps = Omit<
   RootBehaviorProps & {
     children: React.ReactNode;
     /**
-     * Opt-in color theme: applies the default light/dark color tokens as
+     * Opt-in color scheme: applies the default light/dark color tokens as
      * CSS variables on Root (no border, background or typography).
-     * Omit it to style a fully unbranded picker yourself.
+     * Omit it to style a fully unbranded picker yourself. (Not `theme`:
+     * CSS-in-JS libraries reserve that prop on components they wrap.)
      */
-    theme?: ThemeValue;
+    colorScheme?: ThemeValue;
   };
 
 export type SearchProps = Omit<

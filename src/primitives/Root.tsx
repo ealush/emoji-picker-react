@@ -106,10 +106,17 @@ function assignRootProp(
   if (NON_BEHAVIOR_PROPS.has(key) || key.startsWith('data-epr-')) {
     return;
   }
-  // `theme` is a Root appearance prop (color tokens), consumed by the
-  // aside; it never reaches behavior config.
-  if (key === 'theme') {
+  // `colorScheme` is a Root appearance prop (color tokens), consumed by
+  // the aside; it never reaches behavior config. It is not named `theme`:
+  // Emotion, styled-components and MUI reserve that prop on components
+  // they wrap, so a styled(Root) would swallow (or crash on) it.
+  if (key === 'colorScheme') {
     asideProps[key] = value;
+    return;
+  }
+  // `theme` is the default picker's v4 name; it is not a Root prop and
+  // must not leak onto the DOM element.
+  if (key === 'theme') {
     return;
   }
   if (
@@ -195,10 +202,15 @@ const RootAside = React.forwardRef<
   useOnFocus();
   useReactionsFocusManager();
 
-  const { className, style, theme, ...nativeAside } = asideProps as {
+  const {
+    className,
+    style,
+    colorScheme: theme,
+    ...nativeAside
+  } = asideProps as {
     className?: string;
     style?: React.CSSProperties;
-    theme?: ThemeValue;
+    colorScheme?: ThemeValue;
     [key: string]: unknown;
   };
   // Compact reactions mode drops explicit dimensions so the compact

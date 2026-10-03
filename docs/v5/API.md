@@ -412,7 +412,8 @@ Managed descendants and the internal panel expose the deliberately small stable 
 
 Styling is opt-in in both directions:
 
-- **Primitives are unbranded by default.** Root always applies the geometry tokens (sizes, spacing, stacking), so a bare composition is fully functional; colors are yours. `<Root theme="light" | "dark" | "auto">` opts into the default color tokens (CSS variables only — no border, background or font on Root).
+- **Primitives are unbranded by default.** Root always applies the geometry tokens (sizes, spacing, stacking), so a bare composition is fully functional; colors are yours. `<Root colorScheme="light" | "dark" | "auto">` opts into the default color tokens (CSS variables only — no border, background or font on Root).
+- **`colorScheme`, not `theme`.** Emotion, styled-components and MUI reserve a `theme` prop on the components they wrap, so `styled(Root)` / `styled(EmojiPicker)` would swallow it. The default picker accepts both (`colorScheme` wins); Root only takes `colorScheme`.
 - **The default picker is branded by default.** `<EmojiPicker unstyled />` keeps the batteries-included composition and behavior but drops the chrome and colors, for styling from scratch with `className`, `--epr-*` variables and `[data-epr-part]` selectors.
 
 ## 12. Data API

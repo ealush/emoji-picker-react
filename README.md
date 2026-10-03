@@ -87,7 +87,7 @@ function App() {
 }
 ```
 
-Regions can be omitted or reordered (reactions mode is driven by props, not by an element). A bare `Root` is functional but unbranded — bring your own colors, or opt into the default palette with `theme="light" | "dark" | "auto"`. The primitives entry also offers `Empty`, `Loading` and `SkinTone` parts, `CategoryNav orientation="vertical"` for side rails, hooks (`useActiveEmoji`, `useSkinTone`, `useSearchState`), and custom emoji cells/category headers through `<List components={{ Emoji, CategoryHeader }} />`.
+Regions can be omitted or reordered (reactions mode is driven by props, not by an element). A bare `Root` is functional but unbranded — bring your own colors, or opt into the default palette with `colorScheme="light" | "dark" | "auto"`. The primitives entry also offers `Empty`, `Loading` and `SkinTone` parts, `CategoryNav orientation="vertical"` for side rails, hooks (`useActiveEmoji`, `useSkinTone`, `useSearchState`), and custom emoji cells/category headers through `<List components={{ Emoji, CategoryHeader }} />`.
 
 The primitives entry does not bundle the emoji dataset up front (about 32 KB min+gz initially): pass `emojiData` (an object, or a loader like `() => import('emoji-picker-react/data/emojis-fr')`) or let it load the bundled English set on demand.
 

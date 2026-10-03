@@ -1,0 +1,43 @@
+/* The surrounding mock app (shared by every stack variant). */
+.wa-stage {
+  width: 680px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #efeae2;
+  font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+.wa-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+}
+.wa-bubble {
+  align-self: flex-start;
+  max-width: 60%;
+  padding: 6px 9px 8px;
+  border-radius: 7.5px;
+  background: #fff;
+  color: #111b21;
+  font-size: 14.2px;
+  box-shadow: 0 1px 0.5px rgb(11 20 26 / 13%);
+}
+.wa-bubble.wa-out {
+  align-self: flex-end;
+  background: #d9fdd3;
+}
+.wa-composer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: #f0f2f5;
+}
+.wa-input {
+  flex: 1;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: #fff;
+  color: #3b4a54;
+  font-size: 15px;
+}

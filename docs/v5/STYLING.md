@@ -15,7 +15,7 @@ It continues to support the documented v4 CSS custom properties.
 `emoji-picker-react/primitives` exposes the same behavioral renderer, unbranded by default:
 
 - every Root applies the geometry tokens (sizes, spacing, stacking) and a `box-sizing: border-box` reset, so a bare composition lays out and measures correctly with no appearance tokens;
-- `<Root theme="light" | "dark" | "auto">` opts into the default color tokens (variables only — no border, background or typography on Root);
+- `<Root colorScheme="light" | "dark" | "auto">` opts into the default color tokens (variables only — no border, background or typography on Root);
 - token presets are exported as data: `structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`.
 
 This is not a promise that every CSS property may be arbitrarily overridden without affecting behavior.

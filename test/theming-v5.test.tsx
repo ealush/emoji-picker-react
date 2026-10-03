@@ -45,7 +45,7 @@ describe('primitives theming', () => {
     ['dark', 'epr-theme-dark'],
     ['auto', 'epr-theme-auto'],
   ] as const)('applies the %s color theme on request', (theme, marker) => {
-    const { container } = render(<Bare theme={theme} />);
+    const { container } = render(<Bare colorScheme={theme} />);
     const aside = container.querySelector('aside') as HTMLElement;
     expect(aside.className).toContain(marker);
     expect(aside.getAttribute('theme')).toBeNull();
@@ -80,5 +80,48 @@ describe('unstyled default picker', () => {
   it('keeps the branded default otherwise', () => {
     const { container } = render(<EmojiPicker />);
     expect(container.querySelector('aside')?.className).toContain('epr-main');
+  });
+});
+
+describe('colorScheme survives CSS-in-JS wrappers', () => {
+  it('reaches Root through a wrapper that reserves `theme`', () => {
+    // Emotion, styled-components and MUI consume a `theme` prop on the
+    // components they wrap; colorScheme is never intercepted.
+    const Wrapper = ({
+      theme: _reserved,
+      ...props
+    }: React.ComponentProps<typeof Picker.Root> & { theme?: unknown }) => (
+      <Picker.Root {...props} />
+    );
+    const { container } = render(
+      <Wrapper colorScheme="dark">
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Wrapper>,
+    );
+    expect(container.querySelector('aside')?.className).toContain(
+      'epr-theme-dark',
+    );
+  });
+
+  it('the default picker accepts colorScheme, preferred over theme', () => {
+    const { container } = render(
+      <EmojiPicker colorScheme="dark" theme="light" />,
+    );
+    expect(container.querySelector('aside')?.className).toContain(
+      'epr-dark-theme',
+    );
+  });
+
+  it('a stray theme prop on Root never reaches the DOM', () => {
+    const { container } = render(
+      <Picker.Root {...({ theme: 'dark' } as object)}>
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>,
+    );
+    expect(container.querySelector('aside')?.hasAttribute('theme')).toBe(false);
   });
 });

@@ -1,0 +1,6 @@
+{
+  "title": "Teams (Fluent 2)",
+  "name": "TeamsFluent",
+  "rootClass": "teams-picker",
+  "root": "Picker.Root"
+}

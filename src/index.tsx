@@ -3,6 +3,7 @@ import './data/registerDefaultEmojiData';
 import * as React from 'react';
 
 import EmojiPickerReact from './EmojiPickerReact';
+import type { ThemeValue } from './types/exposedTypes';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
 import {
@@ -32,6 +33,12 @@ export type {
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 
 export interface PickerProps extends PickerConfig {
+  /**
+   * Color scheme: 'light' | 'dark' | 'auto'. Preferred over `theme`, which
+   * Emotion, styled-components and MUI reserve on components they wrap
+   * (a styled(EmojiPicker) would swallow it). `theme` remains supported.
+   */
+  colorScheme?: ThemeValue;
   /**
    * Render without the default appearance: no border, background, colors
    * or typography — only layout and behavior. Style it with `className`,

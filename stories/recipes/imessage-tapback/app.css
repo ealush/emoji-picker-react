@@ -1,0 +1,19 @@
+/* The surrounding mock app (shared by every stack variant). */
+.imessage-stage {
+  width: 420px;
+  padding: 40px 24px 24px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, #1c1c1e, #000);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    Arial, sans-serif;
+}
+.imessage-bubble {
+  max-width: 280px;
+  margin: 10px 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 20px;
+  background: #0066d6;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.35;
+}

@@ -1,0 +1,6 @@
+{
+  "title": "iOS bottom sheet",
+  "name": "IosBottomSheet",
+  "rootClass": "ios-sheet",
+  "root": "Picker.Root"
+}

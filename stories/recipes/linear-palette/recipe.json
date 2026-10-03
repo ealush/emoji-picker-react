@@ -1,0 +1,6 @@
+{
+  "title": "Linear command palette",
+  "name": "LinearPalette",
+  "rootClass": "linear-picker",
+  "root": "Picker.Root"
+}

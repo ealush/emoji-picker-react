@@ -1,0 +1,6 @@
+{
+  "title": "Material 3",
+  "name": "Material3",
+  "rootClass": "m3-picker",
+  "root": "Picker.Root"
+}

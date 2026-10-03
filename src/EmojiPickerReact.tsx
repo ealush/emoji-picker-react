@@ -18,8 +18,17 @@ import { PickerProps } from './index';
 // advanced consumers use. Private wrappers provide appearance/layout only;
 // all behavior lives in the shared primitives below.
 function EmojiPicker(props: PickerProps) {
-  const { theme, width, height, className, style, unstyled, ...behaviorProps } =
-    props;
+  const {
+    theme: legacyTheme,
+    colorScheme,
+    width,
+    height,
+    className,
+    style,
+    unstyled,
+    ...behaviorProps
+  } = props;
+  const theme = colorScheme ?? legacyTheme;
   // Static composition element: no props flow into it, so its identity
   // stays stable across parent rerenders and the memoized managed panel
   // can skip the whole full-picker subtree per keystroke.

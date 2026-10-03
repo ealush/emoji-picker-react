@@ -21,7 +21,7 @@ import type { EmojiClickData } from '../../src/types/exposedTypes';
 // CategoryNav, Viewport and Preview are optional singletons in any order;
 // ordinary consumer wrappers/controls land inside the managed panel.
 //
-// Each Root opts into the default color tokens with theme="light"
+// Each Root opts into the default color tokens with colorScheme="light"
 // (geometry tokens are always present) and overrides a small per-design
 // delta.
 // Custom CSS targets documented data-epr-part hooks and stays within
@@ -80,7 +80,7 @@ ${scope} {
 }`}</style>
       <style>{MIDNIGHT_CSS}</style>
       <Root
-        theme="light"
+        colorScheme="light"
         emojiStyle={EmojiStyle.NATIVE}
         reactions={['1f600', '1f603', '1f60d', '1f622', '1f44d', '2764-fe0f']}
         previewConfig={{
@@ -203,7 +203,7 @@ ${scope} {
 }`}</style>
       <style>{SLIM_CSS}</style>
       <Root
-        theme="light"
+        colorScheme="light"
         emojiStyle={EmojiStyle.NATIVE}
         onEmojiClick={onEmojiClick}
         className="slim-bar"
@@ -319,7 +319,7 @@ ${scope} {
 }`}</style>
       <style>{SIDEBAR_CSS}</style>
       <Root
-        theme="light"
+        colorScheme="light"
         emojiStyle={EmojiStyle.NATIVE}
         onEmojiClick={onEmojiClick}
         className="sidebar-explorer"

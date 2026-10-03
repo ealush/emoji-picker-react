@@ -130,7 +130,8 @@
     "check:package": "node ./scripts/package-check/run.js",
     "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
     "check:perf": "node ./bench/run.js",
-    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "recipes": "node ./scripts/generateRecipes.mjs"
   },
   "peerDependencies": {
     "react": ">=16.8"
@@ -199,6 +200,7 @@
     "globals": "^17.13.0",
     "husky": "^9.1.7",
     "jsdom": "^30.1.1",
+    "postcss": "^8.5.28",
     "prettier": "^3.9.9",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

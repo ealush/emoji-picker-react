@@ -1,0 +1,6 @@
+{
+  "title": "Polaris rating card",
+  "name": "PolarisRating",
+  "rootClass": "polaris-picker",
+  "root": "Picker.Root"
+}

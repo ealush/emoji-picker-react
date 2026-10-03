@@ -1,0 +1,6 @@
+{
+  "title": "Notion icon picker",
+  "name": "NotionIconPicker",
+  "rootClass": "notion-picker",
+  "root": "Picker.Root"
+}

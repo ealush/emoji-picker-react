@@ -30,7 +30,7 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | v4 prop | v5 disposition | Notes |
 | --- | --- | --- |
 | `open` | **Keep** | Same visibility behavior. |
-| `theme` | **Keep; improve typing** | Enum + literal values. |
+| `theme` | **Keep; improve typing** | Enum + literal values. `colorScheme` is the v5 name (CSS-in-JS wrappers reserve `theme`); `theme` stays as an alias. |
 | `emojiStyle` | **Keep; improve typing** | Enum + literal values. |
 | `emojiVersion` | **Keep** | Same meaning/default. |
 | `lazyLoadEmojis` | **Keep** | Image lazy loading is distinct from row virtualization. |

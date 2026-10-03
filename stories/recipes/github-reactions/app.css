@@ -1,0 +1,28 @@
+/* The surrounding mock app (shared by every stack variant). */
+.gh-stage {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',
+    Helvetica, Arial, sans-serif;
+  width: 420px;
+  padding: 16px;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1f2328;
+  font-size: 14px;
+}
+.gh-comment-header {
+  margin: -16px -16px 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid #d0d7de;
+  border-radius: 6px 6px 0 0;
+  background: #f6f8fa;
+  color: #59636e;
+}
+.gh-comment-header strong {
+  color: #1f2328;
+}
+.gh-popover-label {
+  margin: 14px 0 6px;
+  color: #59636e;
+  font-size: 12px;
+}

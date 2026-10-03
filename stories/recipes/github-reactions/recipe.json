@@ -1,0 +1,6 @@
+{
+  "title": "GitHub reactions",
+  "name": "GithubReactions",
+  "rootClass": "gh-picker",
+  "root": "EmojiPicker"
+}

@@ -1,0 +1,6 @@
+{
+  "title": "Geist minimal",
+  "name": "GeistMinimal",
+  "rootClass": "geist-picker",
+  "root": "Picker.Root"
+}
