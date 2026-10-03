@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 
+import { useNativeEmojiSupport } from '../components/context/PickerContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
 import { useEmojiVersionConfig } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
+import { isCountryFlagUnified } from '../dataUtils/nativeEmojiSupport';
 import {
   addedIn,
   emojiUnified,
@@ -14,25 +16,36 @@ import { useIsUnicodeHidden } from './useHideEmojisByUniocode';
 export function useDisallowedEmojis() {
   const emojiVersionConfig = useEmojiVersionConfig();
   const { allEmojis } = usePickerDataContext();
+  // Detected platform support applies only while emojiVersion is unpinned
+  // (the context is null otherwise).
+  const nativeSupport = useNativeEmojiSupport();
 
   return useMemo(() => {
-    const emojiVersion = parseFloat(`${emojiVersionConfig}`);
+    const emojiVersion = emojiVersionConfig
+      ? parseFloat(`${emojiVersionConfig}`)
+      : (nativeSupport?.maxVersion ?? NaN);
+    const hideCountryFlags = nativeSupport?.countryFlags === false;
 
     // A fresh record per version: lowering then raising emojiVersion must
     // re-allow emojis, so results never accumulate across changes.
     const disallowedEmojis: Record<string, boolean> = {};
 
-    if (!emojiVersionConfig || Number.isNaN(emojiVersion)) {
+    if (Number.isNaN(emojiVersion) && !hideCountryFlags) {
       return disallowedEmojis;
     }
 
     for (const emoji of allEmojis) {
-      if (addedInNewerVersion(emoji, emojiVersion)) {
-        disallowedEmojis[emojiUnified(emoji)] = true;
+      const unified = emojiUnified(emoji);
+      if (
+        (!Number.isNaN(emojiVersion) &&
+          addedInNewerVersion(emoji, emojiVersion)) ||
+        (hideCountryFlags && isCountryFlagUnified(unified))
+      ) {
+        disallowedEmojis[unified] = true;
       }
     }
     return disallowedEmojis;
-  }, [emojiVersionConfig, allEmojis]);
+  }, [emojiVersionConfig, nativeSupport, allEmojis]);
 }
 
 export function useIsEmojiDisallowed() {

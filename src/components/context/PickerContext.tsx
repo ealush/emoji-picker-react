@@ -2,17 +2,26 @@ import * as React from 'react';
 import { useState } from 'react';
 
 import {
+  useEmojiStyleConfig,
+  useEmojiVersionConfig,
   useDefaultSkinToneConfig,
   useDefaultSearchValueConfig,
   useReactionsOpenConfig,
   useSearchValueConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import {
+  DEFAULT_NATIVE_EMOJI_FONT,
+  NativeEmojiSupport,
+  detectNativeEmojiSupport,
+} from '../../dataUtils/nativeEmojiSupport';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { NavigationRegistry } from '../../state/navigationRegistry';
-import { SkinTones } from '../../types/exposedTypes';
+import { EmojiStyle, SkinTones } from '../../types/exposedTypes';
+
+import { usePickerMainRef } from './ElementRefContext';
 
 // v5 Phase 3 — one Root-scoped controller, narrowly sliced.
 //
@@ -53,7 +62,10 @@ function useDebouncedSliceValue<T>(
   // The debounced setter is functionally stable (stable setState + timer
   // ref), so capturing it alongside the state value is safe.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  return React.useMemo(() => [state, setState] as [T, (value: T) => Promise<T>], [state]);
+  return React.useMemo(
+    () => [state, setState] as [T, (value: T) => Promise<T>],
+    [state],
+  );
 }
 
 export interface PickerServices {
@@ -128,7 +140,49 @@ const LoadSliceContext = React.createContext<{
   isPastInitialLoad: true,
 });
 
+// Platform emoji support, probed once per Root after mount. `null` means
+// "no filtering": before mount (SSR and the hydration render), for image
+// emoji styles, and whenever the consumer pins `emojiVersion`.
+const NativeSupportContext = React.createContext<NativeEmojiSupport | null>(
+  null,
+);
+
+function useNativeEmojiSupportState(): NativeEmojiSupport | null {
+  const emojiStyle = useEmojiStyleConfig();
+  const emojiVersion = useEmojiVersionConfig();
+  const PickerMainRef = usePickerMainRef();
+  const shouldDetect = emojiStyle === EmojiStyle.NATIVE && !emojiVersion;
+  const [support, setSupport] = useState<NativeEmojiSupport | null>(null);
+
+  React.useEffect(() => {
+    if (!shouldDetect) {
+      setSupport(null);
+      return;
+    }
+    // Probe with the font the picker actually renders native emojis in,
+    // so a consumer font (e.g. a country-flag polyfill set through
+    // --epr-emoji-font-family) is what gets measured.
+    const root = PickerMainRef.current;
+    const customFont =
+      root && typeof getComputedStyle === 'function'
+        ? getComputedStyle(root)
+            .getPropertyValue('--epr-emoji-font-family')
+            .trim()
+        : '';
+    setSupport(
+      detectNativeEmojiSupport(customFont || DEFAULT_NATIVE_EMOJI_FONT),
+    );
+  }, [shouldDetect, PickerMainRef]);
+
+  return shouldDetect ? support : null;
+}
+
+export function useNativeEmojiSupport(): NativeEmojiSupport | null {
+  return React.useContext(NativeSupportContext);
+}
+
 export function PickerContextProvider({ children }: Props) {
+  const nativeSupport = useNativeEmojiSupportState();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
@@ -185,8 +239,7 @@ export function PickerContextProvider({ children }: Props) {
   // never run); `defaultSearchValue` is read once per mounted lifetime
   // via the state initializer.
   const searchValueConfig = useSearchValueConfig();
-  const initialAccepted =
-    searchValueConfig ?? defaultSearchValue ?? '';
+  const initialAccepted = searchValueConfig ?? defaultSearchValue ?? '';
   const displayState = useState<string>(initialAccepted);
   const committedState = useState<string>(initialAccepted);
   const composingState = useState<boolean>(false);
@@ -223,9 +276,11 @@ export function PickerContextProvider({ children }: Props) {
   const emojiSizeState = useState<number | null>(null);
   const viewportValue = React.useMemo(
     () => ({
-      activeCategoryState: activeCategoryState as ReactState<ActiveCategoryState>,
-      visibleCategoriesState:
-        visibleCategoriesState as ReactState<Array<string>>,
+      activeCategoryState:
+        activeCategoryState as ReactState<ActiveCategoryState>,
+      visibleCategoriesState: visibleCategoriesState as ReactState<
+        Array<string>
+      >,
       emojiSizeState: emojiSizeState as ReactState<number | null>,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -235,8 +290,9 @@ export function PickerContextProvider({ children }: Props) {
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
   const loadValue = React.useMemo(
     () => ({
-      emojisThatFailedToLoadState:
-        emojisThatFailedToLoadState as ReactState<Set<string>>,
+      emojisThatFailedToLoadState: emojisThatFailedToLoadState as ReactState<
+        Set<string>
+      >,
       isPastInitialLoad,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -247,21 +303,23 @@ export function PickerContextProvider({ children }: Props) {
 
   return (
     <PickerServicesContext.Provider value={servicesValue}>
-      <SearchSliceContext.Provider value={searchValue}>
-        <SearchInputSliceContext.Provider value={searchInputValue}>
-          <ReactionsSliceContext.Provider value={reactionsValue}>
-            <VariationSliceContext.Provider value={variationValue}>
-              <SkinToneSliceContext.Provider value={skinToneValue}>
-                <ViewportSliceContext.Provider value={viewportValue}>
-                  <LoadSliceContext.Provider value={loadValue}>
-                    {children}
-                  </LoadSliceContext.Provider>
-                </ViewportSliceContext.Provider>
-              </SkinToneSliceContext.Provider>
-            </VariationSliceContext.Provider>
-          </ReactionsSliceContext.Provider>
-        </SearchInputSliceContext.Provider>
-      </SearchSliceContext.Provider>
+      <NativeSupportContext.Provider value={nativeSupport}>
+        <SearchSliceContext.Provider value={searchValue}>
+          <SearchInputSliceContext.Provider value={searchInputValue}>
+            <ReactionsSliceContext.Provider value={reactionsValue}>
+              <VariationSliceContext.Provider value={variationValue}>
+                <SkinToneSliceContext.Provider value={skinToneValue}>
+                  <ViewportSliceContext.Provider value={viewportValue}>
+                    <LoadSliceContext.Provider value={loadValue}>
+                      {children}
+                    </LoadSliceContext.Provider>
+                  </ViewportSliceContext.Provider>
+                </SkinToneSliceContext.Provider>
+              </VariationSliceContext.Provider>
+            </ReactionsSliceContext.Provider>
+          </SearchInputSliceContext.Provider>
+        </SearchSliceContext.Provider>
+      </NativeSupportContext.Provider>
     </PickerServicesContext.Provider>
   );
 }
