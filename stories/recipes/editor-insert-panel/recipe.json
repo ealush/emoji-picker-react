@@ -2,5 +2,7 @@
   "title": "Examples/Doc editor insert panel",
   "name": "EditorInsertPanel",
   "rootClass": "editor-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A side-by-side panel: vertical rail, grid and a details pane via useActiveEmoji().",
+  "order": 3
 }

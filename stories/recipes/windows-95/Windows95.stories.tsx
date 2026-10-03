@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Windows 95',
+  title: 'Recipes/Examples/Windows 95',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

@@ -2,5 +2,7 @@
   "title": "Examples/Habit tracker (mobile)",
   "name": "HabitTrackerMobile",
   "rootClass": "habit-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A mobile bottom sheet with large, tile-style emojis.",
+  "order": 10
 }

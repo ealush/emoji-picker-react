@@ -1,5 +1,5 @@
-// Ported from stories/recipes/team-chat (scripts in the repo keep
-// the Storybook version as the source of truth).
+// Generated from stories/recipes/team-chat by scripts/portDesigns.mjs.
+// Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';

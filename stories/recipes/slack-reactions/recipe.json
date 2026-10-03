@@ -1,6 +1,8 @@
 {
-  "title": "Slack reactions",
+  "title": "Examples/Slack reactions",
   "name": "SlackReactions",
   "rootClass": "slack-picker",
-  "root": "EmojiPicker"
+  "root": "EmojiPicker",
+  "description": "The default picker in reactions mode with Slack's common reaction set.",
+  "order": 12
 }

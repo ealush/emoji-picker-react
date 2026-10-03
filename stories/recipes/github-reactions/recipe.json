@@ -1,6 +1,8 @@
 {
-  "title": "GitHub reactions",
+  "title": "Examples/GitHub reactions",
   "name": "GithubReactions",
   "rootClass": "gh-picker",
-  "root": "EmojiPicker"
+  "root": "EmojiPicker",
+  "description": "GitHub's fixed reaction set as a compact bar that never expands.",
+  "order": 13
 }

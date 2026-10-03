@@ -94,3 +94,7 @@ jobs:
           node-version: 24
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
+      # The website gallery, README screenshots and gallery are generated
+      # from stories/recipes; fail if a recipe changed without `npm run designs`.
+      - run: npm run designs
+      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs docs/designs README.md

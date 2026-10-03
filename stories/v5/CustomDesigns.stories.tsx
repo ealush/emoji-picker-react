@@ -33,7 +33,7 @@ import type { EmojiClickData } from '../../src/types/exposedTypes';
 // deterministic without network access.
 
 const meta = {
-  title: 'v5/CustomDesigns',
+  title: 'Recipes/Examples/Custom designs',
   parameters: {
     controls: { expanded: true },
   },

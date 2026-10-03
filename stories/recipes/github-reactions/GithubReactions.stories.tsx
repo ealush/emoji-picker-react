@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/GitHub reactions',
+  title: 'Recipes/Examples/GitHub reactions',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

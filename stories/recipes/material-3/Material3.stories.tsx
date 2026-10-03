@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Material 3',
+  title: 'Recipes/Examples/Material 3',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

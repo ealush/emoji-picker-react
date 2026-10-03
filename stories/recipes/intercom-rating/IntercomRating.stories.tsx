@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Intercom rating',
+  title: 'Recipes/Examples/Intercom rating',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

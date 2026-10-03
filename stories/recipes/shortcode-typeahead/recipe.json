@@ -2,5 +2,7 @@
   "title": "Examples/Shortcode typeahead",
   "name": "ShortcodeTypeahead",
   "rootClass": "typeahead-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A `:shortcode` autocomplete: the app's own text drives searchValue, no search box.",
+  "order": 6
 }

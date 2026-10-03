@@ -1,3 +1,4 @@
+/* Generated from stories/recipes/status-dialog by scripts/portDesigns.mjs. */
 /* The host app around the picker (shared by every stack variant). */
 .status-backdrop {
   display: grid;

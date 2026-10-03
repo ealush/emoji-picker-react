@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Geist minimal',
+  title: 'Recipes/Examples/Geist minimal',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

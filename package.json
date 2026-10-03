@@ -149,7 +149,8 @@
     "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
     "check:perf": "node ./bench/run.js",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
-    "recipes": "node ./scripts/generateRecipes.mjs"
+    "recipes": "node ./scripts/generateRecipes.mjs",
+    "designs": "node ./scripts/portDesigns.mjs"
   },
   "peerDependencies": {
     "react": ">=16.8"

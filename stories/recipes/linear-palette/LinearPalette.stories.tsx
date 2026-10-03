@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Linear command palette',
+  title: 'Recipes/Examples/Linear command palette',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

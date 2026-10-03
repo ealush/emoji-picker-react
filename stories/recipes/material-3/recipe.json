@@ -1,6 +1,8 @@
 {
-  "title": "Material 3",
+  "title": "Examples/Material 3",
   "name": "Material3",
   "rootClass": "m3-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "Material 3 with a bottom navigation bar and the M3 pill indicator.",
+  "order": 19
 }

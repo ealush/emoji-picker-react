@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/X composer',
+  title: 'Recipes/Examples/X composer',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

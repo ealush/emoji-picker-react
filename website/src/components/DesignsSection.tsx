@@ -20,7 +20,11 @@ export function DesignsSection() {
   const { Example } = example;
 
   return (
-    <section className={styles.designsSection} aria-labelledby="designs-title">
+    <section
+      id="designs"
+      className={styles.designsSection}
+      aria-labelledby="designs-title"
+    >
       <div className={styles.designsContent}>
         <h2 id="designs-title" className={styles.sectionTitle}>
           Fits any product, any design system

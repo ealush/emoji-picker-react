@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Notion icon picker',
+  title: 'Recipes/Examples/Notion icon picker',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;
