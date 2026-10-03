@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import type { PickerConfig } from '../config/config';
+import type { ThemeValue } from '../types/exposedTypes';
 
 // Public primitive prop contracts (docs/v5/PRIMITIVES.md §5, §9–§11).
 // React-16.8-compatible types only (no React-18-only type helpers).
@@ -25,6 +26,12 @@ export type RootProps = Omit<
 > &
   RootBehaviorProps & {
     children: React.ReactNode;
+    /**
+     * Opt-in color theme: applies the default light/dark color tokens as
+     * CSS variables on Root (no border, background or typography).
+     * Omit it to style a fully unbranded picker yourself.
+     */
+    theme?: ThemeValue;
   };
 
 export type SearchProps = Omit<

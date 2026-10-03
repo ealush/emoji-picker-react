@@ -151,7 +151,7 @@ const styles = stylesheet.create({
       pointerEvents: 'none',
     },
   },
-  '.epr-main:has(input:not(:placeholder-shown))': {
+  '.epr-structural-root:has(input:not(:placeholder-shown))': {
     nav: {
       opacity: '0.3',
       cursor: 'default',

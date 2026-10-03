@@ -31,6 +31,7 @@ import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../hooks/useOnFocus';
 import { useReactionsFocusManager } from '../hooks/useReactionsFocus';
+import { Theme, ThemeValue } from '../types/exposedTypes';
 
 import { mergeRefs } from './nativeProps';
 import { RootScopeProvider } from './scope';
@@ -84,7 +85,7 @@ function splitRootProps(props: Omit<RootProps, 'children'>): {
   return { behaviorProps, asideProps };
 }
 
-const NON_BEHAVIOR_PROPS = new Set(['role', 'theme', 'width', 'height']);
+const NON_BEHAVIOR_PROPS = new Set(['role', 'width', 'height']);
 
 function assignRootProp(
   key: string,
@@ -93,6 +94,12 @@ function assignRootProp(
   asideProps: Record<string, unknown>,
 ): void {
   if (NON_BEHAVIOR_PROPS.has(key) || key.startsWith('data-epr-')) {
+    return;
+  }
+  // `theme` is a Root appearance prop (color tokens), consumed by the
+  // aside; it never reaches behavior config.
+  if (key === 'theme') {
+    asideProps[key] = value;
     return;
   }
   if (
@@ -167,9 +174,10 @@ const RootAside = React.forwardRef<
   useOnFocus();
   useReactionsFocusManager();
 
-  const { className, style, ...nativeAside } = asideProps as {
+  const { className, style, theme, ...nativeAside } = asideProps as {
     className?: string;
     style?: React.CSSProperties;
+    theme?: ThemeValue;
     [key: string]: unknown;
   };
   // Compact reactions mode drops explicit dimensions so the compact
@@ -202,6 +210,9 @@ const RootAside = React.forwardRef<
         data-epr-part="root"
         className={cx(
           structuralStyles.root,
+          theme === Theme.LIGHT && structuralStyles.themeLight,
+          theme === Theme.DARK && structuralStyles.themeDark,
+          theme === Theme.AUTO && structuralStyles.themeAuto,
           {
             [ClassNames.searchActive]: searchModeActive,
             [ClassNames.reactions]: reactionsOpen,

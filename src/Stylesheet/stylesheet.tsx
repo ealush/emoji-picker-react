@@ -34,8 +34,13 @@ export const PickerStyleTag = React.memo(function PickerStyleTag({
   );
 });
 
+// Behavioral state selectors are scoped to the structural root class that
+// every Root carries (default picker and bare primitives alike). Scoping
+// them to the default appearance's classes (epr-main / EmojiPickerReact)
+// left bare compositions with an always-visible clear button, no active
+// category tab state, and search-hidden items that never hid.
 export const commonInteractionStyles = stylesheet.create({
-  '.epr-main': {
+  '.epr-structural-root': {
     ':has(input:not(:placeholder-shown))': {
       categoryBtn: {
         ':hover': {
@@ -64,7 +69,7 @@ export const commonInteractionStyles = stylesheet.create({
       overflow: 'hidden',
     },
   },
-  '.EmojiPickerReact:not(.epr-search-active)': {
+  '.epr-structural-root:not(.epr-search-active)': {
     categoryBtn: {
       ':hover': {
         opacity: '1',

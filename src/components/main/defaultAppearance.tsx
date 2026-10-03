@@ -28,7 +28,15 @@ export function DefaultAppearance({ children }: { children: React.ReactNode }) {
 export function defaultRootClassName(
   theme: ThemeValue | undefined,
   className?: string,
+  unstyled?: boolean,
 ): string {
+  // `unstyled` drops the branded chrome and color tokens entirely. Layout,
+  // geometry and behavior come from Root's structural sheet, so the picker
+  // stays fully functional while every color, border and font is the
+  // consumer's (style it through className and [data-epr-part] selectors).
+  if (unstyled) {
+    return cx(className);
+  }
   return cx(
     styles.main,
     styles.baseVariables,

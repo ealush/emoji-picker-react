@@ -1,16 +1,20 @@
 import * as React from 'react';
 import { createSheet } from 'shipstyles';
 
-import { DEFAULT_LABEL_HEIGHT } from '../components/main/labelHeight';
+import {
+  darkPickerTokens,
+  lightPickerTokens,
+  structuralPickerTokens,
+} from './tokens';
 
 // Library-owned structural CSS on its own stylesheet (docs/v5/STYLING.md
-// §1–§2). Only declarations required for correctness live here: the Root
-// containing block, the managed panel layout, and the dimension tokens
-// that measurement, virtualization and keyboard row math depend on. All
-// branded appearance (colors, themes, motion) stays in the default tree
-// on the main sheet, so a primitives-only consumer never pulls it in and
-// this tag never emits it. Values match the documented defaults so the
-// default tree — which re-declares them — renders identically.
+// §1–§2): the Root containing block, the managed panel layout, and the
+// geometry tokens that measurement, virtualization and keyboard row math
+// depend on. Opt-in color themes (variables only) live here too; the
+// branded chrome (border, background, radius, motion, typography) stays in
+// the default tree on the main sheet, so a primitives-only consumer never
+// pulls it in. Values match the documented defaults so the default tree —
+// which re-declares them — renders identically.
 const structuralSheet = createSheet('epr-structural', null);
 
 export const structuralStyles = structuralSheet.create({
@@ -28,13 +32,25 @@ export const structuralStyles = structuralSheet.create({
     // permanently shifted. The hidden fallback covers browsers without
     // overflow: clip support.
     overflowX: 'clip',
-    '--': {
-      '--epr-emoji-size': '30px',
-      '--epr-emoji-padding': '5px',
-      '--epr-emoji-fullsize':
-        'calc(var(--epr-emoji-size) + var(--epr-emoji-padding) * 2)',
-      '--epr-horizontal-padding': '10px',
-      '--epr-category-label-height': `${DEFAULT_LABEL_HEIGHT}px`,
+    // Every geometry token, so a bare Root lays out and measures
+    // correctly with no appearance tokens at all.
+    '--': structuralPickerTokens,
+  },
+  // Opt-in color themes for primitives (`<Root theme>`). Variables only:
+  // no borders, backgrounds or typography on the Root itself.
+  themeLight: {
+    '.': 'epr-theme-light',
+    '--': lightPickerTokens,
+  },
+  themeDark: {
+    '.': 'epr-theme-dark',
+    '--': { ...lightPickerTokens, ...darkPickerTokens },
+  },
+  themeAuto: {
+    '.': 'epr-theme-auto',
+    '--': lightPickerTokens,
+    '@media (prefers-color-scheme: dark)': {
+      '--': darkPickerTokens,
     },
   },
   panel: {

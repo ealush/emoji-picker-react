@@ -8,12 +8,7 @@ import {
 } from './components/main/defaultAppearance';
 import { compareConfig } from './config/compareConfig';
 import { useOpenConfig } from './config/useConfig';
-import {
-  List,
-  Preview,
-  Root,
-  Viewport,
-} from './primitives';
+import { List, Preview, Root, Viewport } from './primitives';
 import type { RootBehaviorProps } from './primitives/types';
 
 import { PickerProps } from './index';
@@ -23,7 +18,8 @@ import { PickerProps } from './index';
 // advanced consumers use. Private wrappers provide appearance/layout only;
 // all behavior lives in the shared primitives below.
 function EmojiPicker(props: PickerProps) {
-  const { theme, width, height, className, style, ...behaviorProps } = props;
+  const { theme, width, height, className, style, unstyled, ...behaviorProps } =
+    props;
   // Static composition element: no props flow into it, so its identity
   // stays stable across parent rerenders and the memoized managed panel
   // can skip the whole full-picker subtree per keystroke.
@@ -41,7 +37,7 @@ function EmojiPicker(props: PickerProps) {
       {props.open === false ? null : (
         <Root
           {...(behaviorProps as RootBehaviorProps)}
-          className={defaultRootClassName(theme, className)}
+          className={defaultRootClassName(theme, className, unstyled)}
           style={defaultRootStyle({ width, height, style })}
         >
           {content}

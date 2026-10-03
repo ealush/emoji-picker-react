@@ -27,7 +27,14 @@ export {
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 
-export interface PickerProps extends PickerConfig {}
+export interface PickerProps extends PickerConfig {
+  /**
+   * Render without the default appearance: no border, background, colors
+   * or typography — only layout and behavior. Style it with `className`,
+   * `--epr-*` variables and `[data-epr-part]` selectors.
+   */
+  unstyled?: boolean;
+}
 export type Props = PickerProps;
 
 export default function EmojiPicker(props: PickerProps) {
