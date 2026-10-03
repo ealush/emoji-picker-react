@@ -7,7 +7,8 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | Prop              | Type         | Default            | Description                                                                                  |
 | ----------------- | ------------ | ------------------ | -------------------------------------------------------------------------------------------- |
 | `open`            | `boolean`    | `true`             | Controls the visibility of the picker.                                                       |
-| `theme`           | `Theme`      | `Theme.LIGHT`      | The visual theme. Options: `'light'`, `'dark'`, `'auto'`.                                    |
+| `colorScheme`     | `Theme`      | `Theme.LIGHT`      | The color scheme. Options: `'light'`, `'dark'`, `'auto'`. Preferred over `theme`, which CSS-in-JS wrappers (Emotion, styled-components, MUI) reserve. |
+| `theme`           | `Theme`      | `Theme.LIGHT`      | Alias of `colorScheme`, kept for v4 compatibility.                                           |
 | `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
 | `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`). When unset with the native style, emojis the platform cannot render are hidden automatically. |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
@@ -23,7 +24,8 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels.         |
 | `style`     | `CSSProperties`      | `{}`    | Inline styles applied to the root element.            |
 | `className` | `string`             | `""`    | CSS class applied to the root element.                |
-| `unstyled`  | `boolean`            | `false` | Drop the default chrome and colors; keep layout and behavior. |
+| `unstyled`  | `boolean`            | `false` | Drop the default chrome and colors; keep layout and behavior. Use it to style the picker entirely with your own CSS, Tailwind, CSS Modules or CSS-in-JS. |
+| `cssLayer`  | `string`             | `undefined` | Emit the picker's CSS inside this cascade layer (e.g. `"epr"`). Use with Tailwind v4 or other `@layer` setups and declare it first: `@layer epr, theme, base, components, utilities;`. |
 
 Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
 

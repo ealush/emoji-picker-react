@@ -369,7 +369,7 @@ All public primitive root elements and the internal managed panel expose the sta
 
 Native style/class forwarding does not relax protected structural CSS responsibilities.
 
-A bare Root carries the geometry tokens and a `box-sizing` reset, so it is functional without any appearance tokens; colors are opt-in through `colorScheme` or the consumer's own `--epr-*` values. Library CSS lives in the `epr` cascade layer, so consumer CSS overrides it without specificity tricks (STYLING.md §7). Structural properties (viewport overflow, list/category layout, emoji geometry) must never be overridden; measurement, virtualization and keyboard row math depend on them. See `stories/recipes` for production-style compositions.
+A bare Root carries the geometry tokens and a `box-sizing` reset, so it is functional without any appearance tokens; colors are opt-in through `colorScheme` or the consumer's own `--epr-*` values. Library tokens are declared at zero specificity, so consumer CSS overrides them without specificity tricks; pass `cssLayer="epr"` for Tailwind v4 and other `@layer` setups (STYLING.md §7). Structural properties (viewport overflow, list/category layout, emoji geometry) must never be overridden; measurement, virtualization and keyboard row math depend on them. See `stories/recipes` for production-style compositions.
 
 ## 14. Type/version compatibility
 

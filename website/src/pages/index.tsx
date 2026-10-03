@@ -42,16 +42,19 @@ export default function Home({ initialStats }: HomeProps) {
         <title>emoji-picker-react — The Emoji Picker for React</title>
         <meta
           name="description"
-          content="A lightweight, customizable emoji picker component for React applications. TypeScript support, multiple themes, skin tones, and 1800+ emojis."
+          content="Plug-and-play emoji picker for React: complete and accessible out of the box, or unstyled and composable for any styling solution — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="./favicon.ico" />
         <meta property="og:title" content="emoji-picker-react" />
         <meta
           property="og:description"
-          content="The most popular emoji picker component for React"
+          content="The most popular emoji picker for React — plug-and-play, or unstyled and composable for any styling solution."
         />
         <meta property="og:type" content="website" />
+        {/* Documentation for LLMs and AI assistants (https://llmstxt.org). */}
+        <link rel="alternate" type="text/plain" title="llms.txt" href="./llms.txt" />
+        <link rel="alternate" type="text/plain" title="llms-full.txt" href="./llms-full.txt" />
       </Head>
 
       <main className={`${styles.main} ${inter.className} ${fraunces.variable}`}>

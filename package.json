@@ -66,9 +66,10 @@
   "files": [
     "dist",
     "src",
-    "llms.txt"
+    "llms.txt",
+    "llms-full.txt"
   ],
-  "description": "Emoji Picker component for React Applications on the web",
+  "description": "Plug-and-play emoji picker for React — complete and accessible out of the box, or unstyled and composable for any styling solution (Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI).",
   "keywords": [
     "emoji-picker",
     "react-emoji-picker",
@@ -76,7 +77,23 @@
     "emojis",
     "reactions",
     "reactions-picker",
-    "emoji-reactions"
+    "emoji-reactions",
+    "emoji picker",
+    "react emoji picker",
+    "unstyled",
+    "headless",
+    "composable",
+    "tailwind",
+    "shadcn",
+    "accessible",
+    "a11y",
+    "typescript",
+    "nextjs",
+    "react-19",
+    "skin-tones",
+    "emoji-search",
+    "i18n",
+    "llms.txt"
   ],
   "engines": {
     "node": ">=10"

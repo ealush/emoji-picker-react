@@ -1,6 +1,6 @@
 # 🎨 CSS Variables
 
-You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker's own CSS lives in the `epr` cascade layer, so ordinary CSS wins without specificity tricks.
+You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker declares its tokens at zero specificity (`:where()`), so any selector of yours wins — no specificity tricks or `!important`. Want the default look? Change nothing: these variables only fine-tune it. Want your own design? Combine them with the `unstyled` prop and the `[data-epr-part]` selectors (see the [README](README.md#styling-with-any-solution)).
 
 ```css
 .EmojiPickerReact {
@@ -20,6 +20,7 @@ aside.EmojiPickerReact {
 
 | Variable                     | Description                                        | Default   |
 | :--------------------------- | :------------------------------------------------- | :-------- |
+| `--epr-font-family`          | Font family of the picker's text.                  | `sans-serif` |
 | `--epr-emoji-size`           | Size of the emojis.                                | `30px`    |
 | `--epr-emoji-padding`        | Padding around each emoji.                         | `5px`     |
 | `--epr-emoji-gap`            | **Deprecated**. Use `--epr-emoji-padding` instead. | -         |

@@ -181,11 +181,13 @@ Hide titles with `[data-epr-part="category-label"] { display: none }` and set `-
 
 ## 7. Specificity and cascade
 
-All library rules ship inside the `epr` cascade layer (`@layer epr { … }`):
+Library CSS is unlayered by default, and token declarations are wrapped in `:where()` (zero specificity):
 
-- unlayered application CSS — plain CSS, CSS Modules, Emotion, styled-components, MUI `styled`/`sx` — overrides the picker regardless of specificity or load order;
-- layered frameworks put the picker beneath their own layers by declaring it first, e.g. Tailwind v4: `@layer epr, theme, base, components, utilities;` before importing Tailwind;
-- under jsdom, which ignores `@layer` rules, the CSS is emitted unlayered so test environments keep computed styles.
+- any consumer selector that sets an `--epr-*` token — plain CSS, CSS Modules, Emotion, styled-components, MUI `styled`/`sx`, Tailwind arbitrary properties — wins regardless of load order;
+- because the structural rules are unlayered, global application resets (`* { margin: 0; padding: 0 }`, `button { all: unset }`, …) cannot break the picker's layout — unlayered rules beat any layered reset, and the picker's selectors out-specify bare element resets;
+- part overrides (`[data-epr-part="…"]` under your root class) win by ordinary specificity;
+- layered frameworks can opt the picker into a layer with `cssLayer="epr"` and declare it first, e.g. Tailwind v4: `@layer epr, theme, base, components, utilities;` before importing Tailwind, so utilities override it. In that mode an unlayered global reset in the app would also override the picker, so keep resets in Tailwind's `base` layer;
+- under jsdom, which ignores `@layer` rules, the CSS is always emitted unlayered so test environments keep computed styles.
 
 Rules:
 
