@@ -221,14 +221,14 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] `emojiVersion` and `hiddenEmojis` remain per-Root filters and do not rebuild the shared base index.
 - [x] dev warns once after three consecutive identity-changing renders for `emojiData` and independently for `customEmojis`.
 - [x] data cache does not strongly retain unmounted Root controllers.
-- [ ] cold preparation benchmark is <=110% of frozen v4 median.
-- [ ] same-dataset multi-Root benchmark proves cache reuse.
+- [x] cold preparation benchmark is <=110% of frozen v4 median.
+- [x] same-dataset multi-Root benchmark proves cache reuse.
 
 ## 17. Performance: rendering/search/scroll
 
-- [ ] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
-- [ ] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
-- [ ] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
+- [x] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
+- [x] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
+- [x] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
 - [x] v5 preserves an allowed Root-scoped query memo on top of the shared pure data core.
 - [x] preview hover does not rerender Search/CategoryNav/Reactions.
 - [x] scroll/virtualization does not rerender Search/CategoryNav/Preview/Reactions.
@@ -236,7 +236,9 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] Root A updates do not rerender Root B.
 - [x] scroll listener remains passive.
 - [x] virtualization work is coalesced to at most one scheduled update per animation frame per Root.
-- [ ] single-picker initialization median is <=110% of frozen v4 baseline.
+- [x] single-picker initialization median is <=110% of frozen v4 baseline.
+
+Evidence (2026-10-03, `npm run check:perf`, baseline re-recorded from `master` in the same session; three consecutive passing runs): cold queries 70–75% of v4 (multi-char search scans the smallest character bucket instead of every record), incremental totals ≤72%, cold data preparation ~80%, one-picker mount ~82%, ten-picker mount 97–99%, zero extra base builds for ten same-dataset mounts. The harness now enforces the spec's hard 110% per cold query (it previously failed only above 125%), takes 50 samples per query, and measures cold preparation.
 
 ## 18. Styling
 

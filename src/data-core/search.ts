@@ -35,6 +35,30 @@ function memoizeQuery(
 }
 
 /**
+ * A record whose names contain the query contains every query character,
+ * so it sits in each of those characters' buckets. Scanning the smallest
+ * one (buckets keep record order) yields exactly the full-scan matches in
+ * the same order, for a fraction of the records.
+ */
+function smallestCandidateBucket(
+  core: ReturnType<typeof getPreparedCore>,
+  normalized: string,
+): readonly EmojiInfo[] {
+  let smallest: readonly EmojiInfo[] = core.records;
+  // Code points, matching how buckets are keyed (astral chars stay whole).
+  for (const char of Array.from(normalized)) {
+    const bucket = core.byChar.get(char);
+    if (!bucket) {
+      return EMPTY_RESULTS;
+    }
+    if (bucket.length < smallest.length) {
+      smallest = bucket;
+    }
+  }
+  return smallest;
+}
+
+/**
  * Lookup by base or variation unified code.
  * Trims/lowercases input, returns the canonical base record or undefined.
  */
@@ -83,7 +107,7 @@ export function searchEmojis(
   }
 
   const matches: EmojiInfo[] = [];
-  for (const record of core.records) {
+  for (const record of smallestCandidateBucket(core, normalized)) {
     const names = record.names;
     for (let i = 0; i < names.length; i += 1) {
       if (names[i].includes(normalized)) {

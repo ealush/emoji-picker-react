@@ -357,6 +357,9 @@ describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
     expect(buttons.length).toBeGreaterThan(1);
 
     const [first, second] = buttons;
+    // Resolve the input up front: awaiting a query between the key press
+    // and the change would let the deferred focus land first.
+    const input = await screen.findByRole('textbox');
     act(() => {
       first.focus();
     });
@@ -365,7 +368,6 @@ describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
     // ArrowRight schedules rAF-deferred focus on the sibling…
     fireEvent.keyDown(first, { key: 'ArrowRight' });
     // …but a synchronous filter change invalidates the generation first.
-    const input = await screen.findByRole('textbox');
     fireEvent.change(input, { target: { value: 'dog' } });
 
     await new Promise((resolve) => setTimeout(resolve, 60));
