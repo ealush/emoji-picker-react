@@ -46,6 +46,12 @@ If the team intentionally approves a visual change:
 
 A major version does not automatically authorize visual redesign.
 
+### Approved changes
+
+| Snapshot | Change | Reason |
+| --- | --- | --- |
+| `a11y-reactions-focus/reactions-keyboard-focus.png` | reactions row 49px → 50px tall | In v4 the collapsed pill still laid out the hidden full-picker regions, so the preview's 1px top border consumed a pixel of the 50px pill. v5 removes the hidden panel from layout (`display: none` + `inert`), so the row fills the pill. Glyphs, spacing and focus treatment are unchanged; verified against a v4 master build (ul 49px, aside 52px) and the v5 build (ul 50px, aside 52px). |
+
 ## Animation
 
 Static screenshots alone do not prove animation quality.
