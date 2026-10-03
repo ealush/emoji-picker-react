@@ -9,10 +9,11 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `open`            | `boolean`    | `true`             | Controls the visibility of the picker.                                                       |
 | `theme`           | `Theme`      | `Theme.LIGHT`      | The visual theme. Options: `'light'`, `'dark'`, `'auto'`.                                    |
 | `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
-| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`).                                 |
+| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`). When unset with the native style, emojis the platform cannot render are hidden automatically. |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
-| `emojiData`       | `object`     | `undefined`        | Pass imported locale data here for internationalization. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
+| `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
+| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading). |
 
 ## Dimensions & Styling
 
@@ -22,6 +23,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels.         |
 | `style`     | `CSSProperties`      | `{}`    | Inline styles applied to the root element.            |
 | `className` | `string`             | `""`    | CSS class applied to the root element.                |
+| `unstyled`  | `boolean`            | `false` | Drop the default chrome and colors; keep layout and behavior. |
 
 Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
 
@@ -49,8 +51,9 @@ Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
 | `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
 | `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order (unified or custom IDs). While present, `suggestedEmojisMode` is ignored for contents. |
 | `defaultSkinTone`        | `SkinTones`              | `SkinTones.NEUTRAL`       | The initial skin tone.                                               |
+| `skinTone`               | `SkinTones`              | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
-| `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`. |
+| `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. |
 
 ## Customization & Advanced
 

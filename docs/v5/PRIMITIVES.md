@@ -2,11 +2,11 @@
 
 This document defines the public contract of `emoji-picker-react/primitives`.
 
-The primitive layer provides **macro composition with managed behavior**. It is not a fully headless/item-renderer API.
+The primitive layer provides **composition with managed behavior**: rearrange the macro structure, read picker state through hooks, and replace the markup of emoji cells and category headers — while the library keeps owning focus, ARIA, keyboard navigation, virtualization, variations and selection.
 
 ## 1. Public primitives
 
-Initial v5 exports:
+v5 exports:
 
 - `Root`
 - `Search`
@@ -14,6 +14,11 @@ Initial v5 exports:
 - `Viewport`
 - `List`
 - `Preview`
+- `Empty` — renders while an applied search shows no emojis
+- `Loading` — renders while the dataset loads
+- `SkinTone` — the managed skin tone control, placed anywhere
+
+and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
 
 There is intentionally **no public `Panel` primitive and no public `Reactions` primitive**.
 
@@ -75,9 +80,10 @@ Rules:
 - `Root` is required.
 - Every direct Root child becomes panel content, in caller order.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
-- `Search`, `CategoryNav`, `Viewport`, and `Preview` are optional singleton regions anywhere inside panel content.
+- `Search`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
-- If `List` is rendered, it MUST be the single direct child of Viewport.
+- If `List` is rendered, it MUST be inside Viewport (ideally its direct child; wrappers added by styling libraries — Emotion's `css` prop, `styled(List)` — are fine). `Empty` and `Loading` go inside Viewport next to List.
+- `SkinTone` requires `skinTonePickerLocation={SkinTonePickerLocation.NONE}` so only one skin tone control exists (development warns otherwise).
 - A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
 - Registered primitives rendered through a portal outside Root are unsupported.
 
@@ -104,9 +110,10 @@ Validation is intentionally limited to invariants the library can enforce reliab
 
 These fail immediately in development when the component renders:
 
-- any primitive outside Root;
-- List outside Viewport;
-- Viewport with zero, multiple, or a non-List direct child.
+- any primitive (or hook) outside Root;
+- List outside Viewport.
+
+Viewport content is validated by behavior, not element identity: a second List fails the grid singleton registration, and a Viewport mounted without a List warns in development. (Identity checks such as `child.type === List` broke under element-wrapping libraries.)
 
 ### Registration-time singleton validation
 
@@ -146,7 +153,8 @@ type PickerAppearanceProps =
   | 'width'
   | 'height'
   | 'className'
-  | 'style';
+  | 'style'
+  | 'unstyled';
 
 export type RootBehaviorProps = Omit<PickerProps, PickerAppearanceProps>;
 
@@ -157,6 +165,8 @@ export type RootProps =
   > &
   RootBehaviorProps & {
     children: React.ReactNode;
+    /** Opt-in default color tokens (variables only). */
+    theme?: ThemeValue;
   };
 ```
 
@@ -167,7 +177,8 @@ Consequences:
 - Root renders the actual `aside`.
 - `className`, `style`, `id`, ordinary non-reserved `aria-*`, ordinary non-reserved `data-*`, title and root event handlers come from native `aside` attributes.
 - `role` is library-owned and cannot override the Root landmark semantics.
-- `theme`, `width`, and `height` remain default-`EmojiPicker` appearance props.
+- `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `theme` only applies color tokens.
+- `emojiData` accepts an object (synchronous, SSR-safe) or a loader; without it, the primitives entry loads the bundled dataset on demand.
 - `autoFocusSearch` affects the managed Search descendant.
 - `nonce` covers library-owned style injection.
 - `children` is required.
@@ -186,6 +197,9 @@ Every public structural primitive uses `React.forwardRef`.
 | Viewport | `div` | `React.Ref<HTMLDivElement>` |
 | List | `ul role="grid"` | `React.Ref<HTMLUListElement>` |
 | Preview | `div` | `React.Ref<HTMLDivElement>` |
+| Empty | `div` | `React.Ref<HTMLDivElement>` |
+| Loading | `div role="status"` | `React.Ref<HTMLDivElement>` |
+| SkinTone | `div` | `React.Ref<HTMLDivElement>` |
 
 The internal panel and the compact reactions UI are not ref-addressable in initial v5. Consumers style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
 
@@ -293,20 +307,25 @@ List owns all grid descendants and does not accept consumer children.
 export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
   'role' | 'children'
->;
+> & {
+  components?: {
+    Emoji?: React.ComponentType<EmojiRenderProps>;
+    CategoryHeader?: React.ComponentType<CategoryHeaderRenderProps>;
+  };
+};
 
 export type ViewportProps =
   Omit<
     React.HTMLAttributes<HTMLDivElement>,
     'role' | 'children'
   > & {
-    children: React.ReactElement<ListProps, typeof List>;
+    children: React.ReactNode;
   };
 ```
 
-Viewport runtime-validates exactly one direct List child.
+`components` replaces the markup of emoji cells and category headers; each receives the library-owned props to spread (see API.md §9). Define them outside render: a new identity remounts every cell.
 
-The type is a developer aid; runtime validation remains necessary for JavaScript consumers and JSX widening.
+Grid semantics are library-owned: `ul role="grid"` → category `role="rowgroup"` (named by `aria-label`) → content `role="row"` (presentational while virtualization renders no cells) → emoji `button role="gridcell"`. Category titles are visual (`aria-hidden`).
 
 These stay two primitives rather than one because they are two real elements with different jobs — Viewport is the scroll/measurement boundary, List is the grid — and each needs its own `className`/`style`/`ref`. Collapsing them would leave a single props bag with two ambiguous targets.
 
@@ -317,7 +336,10 @@ export type CategoryNavProps =
   Omit<
     React.HTMLAttributes<HTMLDivElement>,
     'role' | 'children'
-  >;
+  > & {
+    /** Tab axis; vertical stacks tabs and uses Up/Down. Default 'horizontal'. */
+    orientation?: 'horizontal' | 'vertical';
+  };
 
 export type PreviewProps =
   Omit<
@@ -347,23 +369,22 @@ All public primitive root elements and the internal managed panel expose the sta
 
 Native style/class forwarding does not relax protected structural CSS responsibilities.
 
-A bare Root does not inherit the default token sheet, so a custom
-design supplies the documented `--epr-*` tokens it consumes (starting
-from the documented defaults and overriding per theme). Without them,
-token-driven functional styles — input heights, tab sizes, preview
-height — have no value and the corresponding controls collapse.
-Supply a `box-sizing: border-box` reset as well: padded controls
-otherwise overflow the scrollable root, which focus scrolling then
-reveals.
-`stories/v5/CustomDesigns.stories.tsx` demonstrates the pattern: one
-shared token base plus a small per-design delta, custom CSS limited to
-appearance-safe declarations. Structural properties (viewport
-overflow, list/category layout, emoji geometry) must never be
-overridden; measurement, virtualization and keyboard row math depend
-on them.
+A bare Root carries the geometry tokens and a `box-sizing` reset, so it is functional without any appearance tokens; colors are opt-in through `theme` or the consumer's own `--epr-*` values. Library CSS lives in the `epr` cascade layer, so consumer CSS overrides it without specificity tricks (STYLING.md §7). Structural properties (viewport overflow, list/category layout, emoji geometry) must never be overridden; measurement, virtualization and keyboard row math depend on them. See `stories/recipes` for production-style compositions.
 
 ## 14. Type/version compatibility
 
 The public primitive types must compile with the declared React peer floor.
 
 Do not use runtime/type helpers whose contract silently assumes React 18 while the peer range remains `>=16.8`.
+
+## 15. Hooks
+
+Called inside Root (development throws outside it):
+
+```ts
+useActiveEmoji(): EmojiClickData | null; // hovered/focused emoji
+useSkinTone(): [SkinTones, (tone: SkinTones) => void]; // setter reports onSkinToneChange
+useSearchState(): { search: string; resultCount: number | null };
+```
+
+They read the same Root-scoped state the managed parts use, so a hand-built preview, skin tone control or status line stays in sync with the grid and callbacks.

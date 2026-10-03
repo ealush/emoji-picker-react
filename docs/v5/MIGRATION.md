@@ -75,6 +75,24 @@ This addresses applications that need to adapt surrounding layout when the compa
 
 This narrowly addresses application-defined suggested emojis without replacing the existing recent/frequent localStorage behavior.
 
+### Localize every string, control the skin tone
+
+```tsx
+<EmojiPicker labels={{ categoryNavigation: 'Categorías', skinToneNeutral: 'Tono neutro' }} />
+<EmojiPicker skinTone={tone} onSkinToneChange={setTone} />
+```
+
+## Behavior changes to review
+
+- **Native support detection.** With the (new default) native style and no `emojiVersion`, emojis the platform cannot render — and country flags where the platform has no flag glyphs, e.g. Windows — are hidden after mount. Pin `emojiVersion` to opt out.
+- **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
+- **Default text contrast.** The light theme's `--epr-text-color` is `#6b6b6b` (was `#858585`) to meet WCAG AA.
+- **CSS cascade layer.** Library CSS ships in `@layer epr`; your unlayered CSS now wins without `aside.EmojiPickerReact`-style specificity. Tailwind users: declare `@layer epr;` before importing Tailwind.
+- **Prop updates apply after mount.** `reactions`, `previewConfig`, `hiddenEmojis`, `allowExpandReactions`, `categoryIcons`, `getEmojiUrl` and `nonce` used to be ignored after the first render.
+- **Results announcement** counts what the list shows (hidden/disallowed emojis no longer counted).
+- **ESM build.** `import` resolves to `dist/esm/*.mjs` (code-split; the entries share one implementation). Deep imports into `dist` other than the documented locale paths are unsupported.
+- **React Server Components.** The main and primitives entries are marked `"use client"`; `emoji-picker-react/data` is server-usable.
+
 ## Structural composition is opt-in
 
 Use primitives only when you need to own macro layout/order:
@@ -99,7 +117,7 @@ import * as EmojiPicker from 'emoji-picker-react/primitives';
 
 Root wraps every child in its one managed full-picker panel subtree, and renders the compact reactions UI itself when you pass reactions props. There is no Panel primitive and no Reactions primitive to place — style them with `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`.
 
-The library still owns emoji buttons, navigation, accessibility semantics, virtualization, variations, and selection.
+The library still owns navigation, accessibility semantics, virtualization, variations, and selection — even when you replace emoji cell or category header markup through `List components`.
 
 ## Package subpaths
 

@@ -1,6 +1,6 @@
 # 🎨 CSS Variables
 
-You can customize specific parts of the picker by overriding these CSS variables. Target `.EmojiPickerReact` or `aside.EmojiPickerReact` to apply them.
+You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker's own CSS lives in the `epr` cascade layer, so ordinary CSS wins without specificity tricks.
 
 ```css
 .EmojiPickerReact {
@@ -67,8 +67,15 @@ aside.EmojiPickerReact {
 | Variable                   | Description                            | Default                 |
 | :------------------------- | :------------------------------------- | :---------------------- |
 | `--epr-preview-height`     | Height of the preview area.            | `70px`                  |
+| `--epr-preview-emoji-size` | Size of the preview emoji.             | `45px`                  |
 | `--epr-preview-text-size`  | Font size of text in the preview area. | `14px`                  |
 | `--epr-preview-text-color` | Text color in the preview area.        | `var(--epr-text-color)` |
+
+## 😀 Native Emoji Font
+
+| Variable                 | Description                                                                 | Default                       |
+| :----------------------- | :-------------------------------------------------------------------------- | :---------------------------- |
+| `--epr-emoji-font-family` | Font stack for native emojis (e.g. add a country-flag polyfill font first). Native support detection measures this font. | platform emoji fonts |
 
 ## 🖐️ Skin Tone Picker
 

@@ -182,10 +182,12 @@ The grid retains a composite-widget role so Windows screen readers enter an inte
 
 At minimum:
 - one Grid per List;
-- category sections represented as named row groups (or an equivalent tested structure);
-- emoji controls remain named interactive descendants;
-- category tabs remain a tablist;
+- category sections represented as named row groups; each owns one row while it renders cells (presentational while virtualization renders none), and the visual category title is `aria-hidden` (the rowgroup carries the name);
+- emoji controls are `button role="gridcell"`: named, natively activatable grid cells;
+- category tabs remain a tablist whose `aria-orientation` matches its layout (`CategoryNav orientation`): horizontal uses Left/Right between tabs and Up/Down to leave, vertical uses Up/Down between tabs and Left/Right to leave;
 - search results status remains a polite live region.
+
+Automated coverage: `playwright/recipes.spec.ts` runs axe (WCAG 2.1 AA) and keyboard checks over every recipe and integration and over the default picker.
 
 If virtualization requires `aria-rowindex` / `aria-rowcount` or equivalent metadata for correct announcements, the implementation must add and test it rather than exposing that burden to consumers.
 

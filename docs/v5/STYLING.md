@@ -8,11 +8,15 @@
 
 It continues to support the documented v4 CSS custom properties.
 
+`<EmojiPicker unstyled />` keeps the same composition and behavior but drops the branded chrome (border, background, radius, typography) and color tokens.
+
 ### Structural primitives
 
-`emoji-picker-react/primitives` exposes the same behavioral renderer without automatically applying the complete branded appearance.
+`emoji-picker-react/primitives` exposes the same behavioral renderer, unbranded by default:
 
-Primitives still require a small structural stylesheet for correctness.
+- every Root applies the geometry tokens (sizes, spacing, stacking) and a `box-sizing: border-box` reset, so a bare composition lays out and measures correctly with no appearance tokens;
+- `<Root theme="light" | "dark" | "auto">` opts into the default color tokens (variables only — no border, background or typography on Root);
+- token presets are exported as data: `structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`.
 
 This is not a promise that every CSS property may be arbitrarily overridden without affecting behavior.
 
@@ -97,8 +101,12 @@ The following variables are already documented public customization surface and 
 
 ### Preview
 - `--epr-preview-height`
+- `--epr-preview-emoji-size` (v5; default `45px`)
 - `--epr-preview-text-size`
 - `--epr-preview-text-color`
+
+### Native emoji font
+- `--epr-emoji-font-family` (v5) — font stack for native emojis, e.g. a country-flag polyfill font; native support detection measures this same font.
 
 ### Skin tone
 - `--epr-skin-tone-picker-menu-color`
@@ -137,10 +145,12 @@ Initial required part API:
 - `emoji`
 - `variation-picker`
 - `preview`
+- `empty` (v5, the `Empty` primitive)
+- `loading` (v5, the `Loading` primitive)
 
 Part names are public API once released. Renaming/removing one is semver-significant.
 
-A part is not automatically a composition primitive. `skin-tone`, `category-content`, `variation-picker`, `panel`, and `reactions` are all managed by the library while still exposing stable styling hooks — see [PRIMITIVES.md](./PRIMITIVES.md) §1 for why a part is a weaker commitment than a primitive.
+A part is not automatically a composition primitive. `category-content`, `variation-picker`, `panel`, and `reactions` are all managed by the library while still exposing stable styling hooks — see [PRIMITIVES.md](./PRIMITIVES.md) §1 for why a part is a weaker commitment than a primitive.
 
 Do not expose private measurement nodes or every implementation wrapper as parts.
 
@@ -153,6 +163,9 @@ Beyond `data-epr-part`, the library emits a small set of value-carrying data att
 | `data-epr-unified` | `[data-epr-part="emoji"]` | lowercase unified code actually rendered, including skin-tone variation |
 | `data-epr-category` | `[data-epr-part="category"]` | category id, or the custom group name |
 | `data-epr-emojis-per-row` | `[data-epr-part="category-content"]` | measured column count |
+| `data-epr-direction` | `[data-epr-part="skin-tone"]` | fan axis (`horizontal` / `vertical`) |
+
+State is exposed through ARIA where ARIA has a word for it: the active category tab is `[data-epr-part="category-tab"][aria-selected="true"]`, a vertical tab bar is `[role="tablist"][aria-orientation="vertical"]`.
 
 These replace v4's unnamespaced `data-unified`, `data-name` and `data-emojis-per-row`. The v4 names were undocumented and are not part of the compatibility matrix, so this is an internal rename.
 
@@ -160,13 +173,21 @@ Like part names, these are public API once released and semver-significant to ch
 
 ## 6. Emoji item boundary
 
-Managed emoji button markup remains library-owned in v5.
+Emoji cells and category headers can be replaced through `List components={{ Emoji, CategoryHeader }}` (see API.md §9). The library keeps owning their behavior: each component receives the library-owned props (type, role, class, position style, tabIndex, aria-label, `data-epr-*`) and must spread them onto its element. Ordering, virtualization and grid semantics stay library-owned; there is no render prop over the whole list.
 
-Parts/tokens can style it, but v5 does not promise arbitrary React-node insertion inside every emoji.
+### Hiding category titles
 
-This intentionally avoids exposing internal focus, variation and virtualization mechanics before there is a safe, proven item-composition design.
+Hide titles with `[data-epr-part="category-label"] { display: none }` and set `--epr-category-label-height: 0px`. A hidden title measures 0, so virtualization offsets stay correct.
 
 ## 7. Specificity and cascade
+
+All library rules ship inside the `epr` cascade layer (`@layer epr { … }`):
+
+- unlayered application CSS — plain CSS, CSS Modules, Emotion, styled-components, MUI `styled`/`sx` — overrides the picker regardless of specificity or load order;
+- layered frameworks put the picker beneath their own layers by declaring it first, e.g. Tailwind v4: `@layer epr, theme, base, components, utilities;` before importing Tailwind;
+- under jsdom, which ignores `@layer` rules, the CSS is emitted unlayered so test environments keep computed styles.
+
+Rules:
 
 - structural correctness must not depend on Tailwind/CSS Modules being loaded in a particular order;
 - cosmetic consumer overrides should win through ordinary cascade without requiring `!important`;

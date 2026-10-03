@@ -87,14 +87,21 @@ function App() {
 }
 ```
 
-Regions can be omitted or reordered (reactions mode is driven by props, not by an element). A bare `Root` carries no branded appearance; spread the documented design-token defaults with `defaultPickerTokens` from the same entry:
+Regions can be omitted or reordered (reactions mode is driven by props, not by an element). A bare `Root` is functional but unbranded — bring your own colors, or opt into the default palette with `theme="light" | "dark" | "auto"`. The primitives entry also offers `Empty`, `Loading` and `SkinTone` parts, `CategoryNav orientation="vertical"` for side rails, hooks (`useActiveEmoji`, `useSkinTone`, `useSearchState`), and custom emoji cells/category headers through `<List components={{ Emoji, CategoryHeader }} />`.
+
+The primitives entry does not bundle the emoji dataset up front (about 32 KB min+gz initially): pass `emojiData` (an object, or a loader like `() => import('emoji-picker-react/data/emojis-fr')`) or let it load the bundled English set on demand.
+
+Browse `stories/recipes` for 15 production-style designs (Slack, Discord, Linear, Notion, Material 3, Teams, WhatsApp, iOS, X, …) and `stories/integrations` for shadcn/ui, Tailwind, Emotion, styled-components, CSS Modules, plain CSS and MUI — each checked by screenshot, axe and keyboard tests.
+
+## Localization
+
+Every user-facing string can be translated with `labels` (category names come from the localized `emojiData`):
 
 ```jsx
-import { Root, defaultPickerTokens } from 'emoji-picker-react/primitives';
-
-<Root emojiData={data} style={defaultPickerTokens}>
-  {/* regions */}
-</Root>;
+<EmojiPicker
+  emojiData={es}
+  labels={{ searchPlaceholder: 'Buscar', searchLabel: 'Buscar un emoji', searchResultsNone: 'Sin resultados' }}
+/>
 ```
 
 ## Data API
@@ -112,7 +119,7 @@ getEmojiByUnified('1f600');
 
 ## Styling
 
-No stylesheet import needed. All styles are scoped via [ShipStyles](https://github.com/ealush/shipstyles) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles.
+No stylesheet import needed. All styles are scoped via [ShipStyles](https://github.com/ealush/shipstyles) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles. They ship inside the `epr` cascade layer, so your own CSS overrides them without specificity tricks (with Tailwind v4, declare `@layer epr;` before importing Tailwind). `<EmojiPicker unstyled />` drops the default look entirely.
 
 Restyle the picker by overriding [CSS variables](CSS_VARIABLES.md) on `.EmojiPickerReact`:
 

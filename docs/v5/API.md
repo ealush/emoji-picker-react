@@ -338,17 +338,9 @@ Invalid:
 
 List requires Viewport.
 
-Invalid:
+A Viewport without a List renders no grid (development warns).
 
-```tsx
-<EmojiPicker.Root>
-  <EmojiPicker.Viewport>
-    <div />
-  </EmojiPicker.Viewport>
-</EmojiPicker.Root>
-```
-
-Viewport requires exactly one direct List child, optionally accompanied by `Empty` and `Loading`.
+List must be inside Viewport (ideally its direct child; wrappers from styling libraries are fine), optionally accompanied by `Empty` and `Loading`. A second List is rejected.
 
 There is no child-ordering rule. Root wraps whatever you give it, in the order you gave it.
 
@@ -380,6 +372,14 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 ```
 
 `SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root, so set `skinTonePickerLocation` to `NONE` (development warns otherwise). To build a control from scratch instead, use `useSkinTone()`.
+
+## 10b2. Vertical category rail
+
+```tsx
+<EmojiPicker.CategoryNav orientation="vertical" />
+```
+
+Stacks the tabs and switches keyboard navigation to Up/Down between tabs (Left/Right leave the rail), announced through `aria-orientation`. `SkinTone` takes the same `orientation` prop for its fan.
 
 ## 10c. Hooks
 

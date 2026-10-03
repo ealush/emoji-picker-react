@@ -126,7 +126,7 @@ The `/data` entry MUST NOT:
 
 ## 6. Bundle behavior
 
-Importing `emoji-picker-react/data` may include the default packaged dataset.
+Importing `emoji-picker-react/data` includes (and registers) the default packaged dataset. The picker core no longer imports it statically: the main and data entries register it, while `emoji-picker-react/primitives` loads it on demand (its own chunk in the ESM build) unless `emojiData` is supplied. The package check gates both directions.
 
 Importing a specific locale dataset must not import all locales.
 
