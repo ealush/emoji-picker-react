@@ -207,6 +207,7 @@ export function basePickerConfig(): PickerConfigInternal {
     onReactionsModeChange: undefined,
     labels: undefined,
     skinTone: undefined,
+    cssLayer: undefined,
   };
 }
 
@@ -270,6 +271,13 @@ export type PickerConfigInternal = {
    * present, `defaultSkinTone` is ignored.
    */
   skinTone?: SkinTones;
+  /**
+   * Emit the picker's CSS inside this cascade layer (e.g. "epr"), for
+   * layered CSS frameworks such as Tailwind v4 whose utilities cannot
+   * beat unlayered CSS. Declare the layer first in your CSS:
+   * `@layer epr, theme, base, components, utilities;`. Default: unlayered.
+   */
+  cssLayer?: string;
 };
 
 export type PreviewConfig = {

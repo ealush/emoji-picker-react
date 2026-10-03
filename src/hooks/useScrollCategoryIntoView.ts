@@ -4,12 +4,17 @@ import {
   useBodyRef,
   usePickerMainRef,
 } from '../components/context/ElementRefContext';
+import { useNavigationRegistry } from '../components/context/PickerContext';
 
 export function useScrollCategoryIntoView() {
   const BodyRef = useBodyRef();
   const PickerMainRef = usePickerMainRef();
+  const registry = useNavigationRegistry();
 
   return function scrollCategoryIntoView(category: string): void {
+    // An explicit jump supersedes pending scroll/focus work (e.g. the
+    // post-search scroll to top).
+    registry.invalidate();
     if (!BodyRef.current) {
       return;
     }

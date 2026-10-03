@@ -101,13 +101,19 @@ function useApplySearch() {
   return function applySearch(searchTerm: string) {
     // A new accepted filter obsoletes pending grid materialize/focus work.
     registry.invalidate();
+    // The scroll back to the top lands after the debounce; navigation in
+    // the meantime (e.g. a category tab clicked right after clearing the
+    // search) supersedes it instead of being yanked back to the top.
+    const token = registry.currentGeneration();
     requestAnimationFrame(() => {
       if (!mountedRef.current) {
         return;
       }
       setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
         () => {
-          scrollTo(PickerMainRef.current, 0);
+          if (registry.isCurrent(token)) {
+            scrollTo(PickerMainRef.current, 0);
+          }
         },
       );
     });

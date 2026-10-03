@@ -48,6 +48,7 @@
       },
       "default": "./dist/data/emojis-*.js"
     },
+    "./dist/data/emojis-*.json": "./dist/data/emojis-*.json",
     "./dist/data/emojis-*": {
       "import": {
         "types": "./dist/data/emojis-*.d.mts",

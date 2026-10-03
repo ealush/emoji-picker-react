@@ -1,6 +1,0 @@
-{
-  "title": "Rebrand \u00b7 Phosphor terminal",
-  "name": "PhosphorTerminal",
-  "rootClass": "crt-picker",
-  "root": "Picker.Root"
-}

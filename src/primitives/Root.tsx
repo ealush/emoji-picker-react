@@ -173,6 +173,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>(
                       ref={forwardedRef}
                       asideProps={asideProps}
                       behaviorNonce={behaviorProps.nonce as string | undefined}
+                      cssLayer={behaviorProps.cssLayer as string | undefined}
                     >
                       {children}
                     </RootAside>
@@ -192,9 +193,13 @@ const RootAside = React.forwardRef<
   {
     asideProps: Record<string, unknown>;
     behaviorNonce: string | undefined;
+    cssLayer: string | undefined;
     children: React.ReactNode;
   }
->(function RootAside({ asideProps, behaviorNonce, children }, forwardedRef) {
+>(function RootAside(
+  { asideProps, behaviorNonce, cssLayer, children },
+  forwardedRef,
+) {
   const PickerMainRef = usePickerMainRef();
   const [reactionsOpen] = useReactionsModeState();
   const searchModeActive = useIsSearchMode();
@@ -235,8 +240,8 @@ const RootAside = React.forwardRef<
         never the functional component styles. Bundle separation (no
         default-appearance module in this closure) is asserted separately.
       */}
-      <PickerStyleTag nonce={behaviorNonce} />
-      <StructuralStyleTag nonce={behaviorNonce} />
+      <PickerStyleTag nonce={behaviorNonce} cssLayer={cssLayer} />
+      <StructuralStyleTag nonce={behaviorNonce} cssLayer={cssLayer} />
       <aside
         {...(nativeAside as React.HTMLAttributes<HTMLElement>)}
         ref={mergeRefs<HTMLElement>(forwardedRef, PickerMainRef)}

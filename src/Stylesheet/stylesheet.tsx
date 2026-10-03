@@ -7,22 +7,39 @@ import { isJsdom } from '../DomUtils/isJsdom';
 export const stylesheet = createSheet('epr', null);
 
 /**
- * Every library rule ships inside the `epr` cascade layer, so any
- * unlayered application CSS overrides it regardless of specificity or
- * load order (plain CSS, CSS Modules, CSS-in-JS). Layered frameworks such
- * as Tailwind put the picker beneath their utilities by declaring the
- * layer first: `@layer epr;` before `@import "tailwindcss";`.
+ * Library CSS is unlayered by default, like v4: library classes win over
+ * ordinary element/universal resets (`* { padding: 0 }`, `input { … }`),
+ * which unlayered app CSS would otherwise apply over a layered library.
+ *
+ * Design-token declarations (`--epr-*`) are emitted at zero specificity
+ * (`:where(…)`), so any consumer selector — one class, any load order —
+ * overrides them.
+ *
+ * `cssLayer` opts into a named cascade layer for layered frameworks
+ * (Tailwind v4 utilities cannot beat unlayered CSS): declare it first,
+ * e.g. `@layer epr, theme, base, components, utilities;`.
  */
-export const CSS_LAYER = 'epr';
+const TOKEN_RULE = /^([^{}@][^{}]*?)\s*\{((?:\s*--[\w-]+\s*:[^;{}]*;?)+)\s*\}$/;
 
-export function inLayer(css: string): string {
-  // jsdom ignores rules inside @layer; emitting them unlayered there keeps
-  // computed styles (e.g. display: none on hidden sections) intact in
-  // jsdom-based test suites, ours and consumers'.
-  if (!css || isJsdom()) {
+export function finalizeCss(css: string, cssLayer?: string): string {
+  if (!css) {
     return css;
   }
-  return `@layer ${CSS_LAYER}{${css}}`;
+  // jsdom supports neither @layer nor :where reliably; keep plain CSS
+  // there so jsdom suites keep computed styles.
+  if (isJsdom()) {
+    return css;
+  }
+  const out = css
+    .split('\n')
+    .map((line) => {
+      const match = TOKEN_RULE.exec(line.trim());
+      return match ? `:where(${match[1]}) {${match[2]}}` : line;
+    })
+    .join('\n');
+  return cssLayer && /^[a-zA-Z_][\w-]*$/.test(cssLayer)
+    ? `@layer ${cssLayer}{${out}}`
+    : out;
 }
 
 const hidden = {
@@ -42,14 +59,18 @@ export const commonStyles = stylesheet.create({
 
 export const PickerStyleTag = React.memo(function PickerStyleTag({
   nonce,
+  cssLayer,
 }: {
   nonce?: string;
+  cssLayer?: string;
 }) {
   return (
     <style
       nonce={nonce}
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: inLayer(stylesheet.getStyle()) }}
+      dangerouslySetInnerHTML={{
+        __html: finalizeCss(stylesheet.getStyle(), cssLayer),
+      }}
     />
   );
 });

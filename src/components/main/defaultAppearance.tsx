@@ -158,7 +158,8 @@ const styles = stylesheet.create({
     transition: 'height 0.3s ease-in-out, background-color 0.1s ease-in-out',
     '*': {
       boxSizing: 'border-box',
-      fontFamily: 'sans-serif',
+      // Overridable without a specificity fight (v4 hard-coded sans-serif).
+      fontFamily: 'var(--epr-font-family, sans-serif)',
     },
   },
   baseVariables: {

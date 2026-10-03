@@ -84,6 +84,9 @@ check('data entry resolves', () => {
 check('locale subpaths resolve', () => {
   const canonical = requireFromScratch('emoji-picker-react/data/emojis-es');
   const legacy = requireFromScratch('emoji-picker-react/dist/data/emojis-es');
+  // v4 docs and the project's own website imported the JSON datasets.
+  const legacyJson = requireFromScratch('emoji-picker-react/dist/data/emojis-es.json');
+  assert.ok(legacyJson.categories && legacyJson.emojis, 'legacy .json locale path');
   const dataset = canonical.default ?? canonical;
   assert.ok(dataset.categories && dataset.emojis, 'locale dataset shape');
   assert.ok((legacy.default ?? legacy).categories, 'legacy locale path shape');
