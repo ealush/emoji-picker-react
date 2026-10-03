@@ -199,6 +199,8 @@ For standard emoji IDs:
 
 Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
 
+Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
+
 When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
 See [STATE.md](./STATE.md).

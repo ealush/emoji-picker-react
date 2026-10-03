@@ -95,7 +95,7 @@ This narrowly addresses application-defined suggested emojis without replacing t
 - **Unknown props are ignored.** As in v4, props the picker does not define (including removed v3 props such as `pickerStyle`; use `style`) never reach the DOM, and development builds log one `console.warn` naming them. Identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`) are forwarded to the root element; for event handlers, use a wrapper element or the primitives.
 - **Prop updates apply after mount.** `reactions`, `previewConfig`, `hiddenEmojis`, `allowExpandReactions`, `categoryIcons`, `getEmojiUrl` and `nonce` used to be ignored after the first render.
 - **Results announcement** counts what the list shows (hidden/disallowed emojis no longer counted).
-- **ESM build.** `import` resolves to `dist/esm/*.mjs` (code-split; the entries share one implementation). Deep imports into `dist` other than the documented locale paths are unsupported.
+- **ESM build.** `import` resolves to `dist/esm/*.mjs` (code-split; the entries share one implementation). Deep imports into `dist` other than the documented locale paths are unsupported; the raw datasets at `emoji-picker-react/src/data/*.json` remain importable (deprecated; prefer `emoji-picker-react/data`).
 - **React Server Components.** The main and primitives entries are marked `"use client"`; `emoji-picker-react/data` is server-usable.
 
 ## Structural composition is opt-in
@@ -195,6 +195,11 @@ supported; to keep the previous look, pass it explicitly:
 The same default applies to the standalone `Emoji` component. Click
 payloads still carry usable `imageUrl` values: URL resolution falls
 back to Apple CDN assets when the active style has no image set.
+
+If you supply your own images (`getEmojiUrl` on the picker or `Emoji`,
+or `emojiUrl` on `Emoji`) without an `emojiStyle`, nothing changes:
+a custom image source keeps v4's image default (Apple), so your resolver
+is still called with `"apple"` as the style.
 
 ## React peer requirement
 

@@ -60,6 +60,7 @@
       },
       "default": "./dist/data/emojis-*.js"
     },
+    "./src/data/*.json": "./src/data/*.json",
     "./package.json": "./package.json"
   },
   "homepage": "https://ealush.com/emoji-picker-react",

@@ -595,6 +595,35 @@ describe('v5 caller-defined suggestions (STATE.md §9)', () => {
   });
 });
 
+describe('suggestedEmojis accepts native characters', () => {
+  // Real-consumer contract: Cherry Studio stores recents as the inserted
+  // characters and passes them straight through (its v4 patch API).
+  it('resolves characters with and without U+FE0F to dataset IDs', async () => {
+    const { container } = render(
+      <EmojiPicker
+        emojiStyle={EmojiStyle.NATIVE}
+        suggestedEmojis={['🧠', '©️', '©', '#️⃣', '❤', '🐦‍🔥', '🧠', 'not-an-emoji']}
+      />,
+    );
+    await screen.findByRole('textbox');
+    await settle(100);
+
+    const suggested = container.querySelector(
+      '[role="rowgroup"][aria-label="Frequently Used"]',
+    ) as HTMLElement;
+    const unifieds = Array.from(
+      suggested.querySelectorAll('button[data-epr-unified]'),
+    ).map((element) => element.getAttribute('data-epr-unified'));
+    expect(unifieds).toEqual([
+      '1f9e0',
+      '00a9-fe0f',
+      '0023-fe0f-20e3',
+      '2764-fe0f',
+      '1f426-200d-1f525',
+    ]);
+  });
+});
+
 describe('v5 search label (API.md §5)', () => {
   it('defaults to the English accessible label', async () => {
     renderPicker();

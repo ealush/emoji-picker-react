@@ -160,3 +160,47 @@ describe('unknown props on the default picker', () => {
     error.mockRestore();
   });
 });
+
+// v4 rendered images by default. A caller-supplied image source is an
+// explicit request for images (NextChat: getEmojiUrl to its own CDN, no
+// emojiStyle), so it keeps the v4 image default instead of going native.
+describe('custom image sources keep image rendering', () => {
+  const cdn = (unified: string, style: string) =>
+    `https://cdn.example/${style}/${unified}.png`;
+
+  it('Emoji with getEmojiUrl renders the custom image', () => {
+    const { container } = render(<Emoji unified="1f600" getEmojiUrl={cdn} />);
+    expect(container.querySelector('img')?.getAttribute('src')).toBe(
+      'https://cdn.example/apple/1f600.png',
+    );
+  });
+
+  it('Emoji with emojiUrl renders that image', () => {
+    const { container } = render(
+      <Emoji unified="1f600" emojiUrl="https://cdn.example/own.png" />,
+    );
+    expect(container.querySelector('img')?.getAttribute('src')).toBe(
+      'https://cdn.example/own.png',
+    );
+  });
+
+  it('Emoji without an image source stays native', () => {
+    const { container } = render(<Emoji unified="1f600" />);
+    expect(container.querySelector('img')).toBeNull();
+    expect(container.textContent).toContain('😀');
+  });
+
+  it('an explicit emojiStyle always wins', () => {
+    const { container } = render(
+      <Emoji unified="1f600" getEmojiUrl={cdn} emojiStyle={EmojiStyle.NATIVE} />,
+    );
+    expect(container.querySelector('img')).toBeNull();
+  });
+
+  it('the picker with getEmojiUrl requests images from it', async () => {
+    const getEmojiUrl = vi.fn(cdn);
+    render(<EmojiPicker emojiData={minimalEmojiData} getEmojiUrl={getEmojiUrl} />);
+    await screen.findAllByRole('gridcell');
+    expect(getEmojiUrl).toHaveBeenCalledWith('1f600', 'apple');
+  });
+});
