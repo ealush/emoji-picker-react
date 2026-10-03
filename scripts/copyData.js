@@ -1,18 +1,14 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
+const { copyFileSync, mkdirSync, readdirSync } = require('fs');
 const { join } = require('path');
-
-const { copyFileSync } = require('fs-extra');
-const { glob } = require('glob');
 
 // Internal runtime modules are compiled, never shipped as raw sources: a
 // raw .ts beside its .d.ts would win declaration resolution.
 const INTERNAL = new Set(['defaultEmojiData.ts', 'registerDefaultEmojiData.ts']);
 
-const files = glob
-  .sync('src/data/*.{json,ts}')
-  .filter((file) => !INTERNAL.has(file.split('/').pop()));
+const source = join(__dirname, '..', 'src', 'data');
+const target = join(__dirname, '..', 'dist', 'data');
+mkdirSync(target, { recursive: true });
 
-files.forEach((file) => {
-  const fileName = file.split('/').pop();
-  copyFileSync(file, join('./dist/data', fileName));
-});
+readdirSync(source)
+  .filter((file) => /\.(json|ts)$/.test(file) && !INTERNAL.has(file))
+  .forEach((file) => copyFileSync(join(source, file), join(target, file)));

@@ -5,7 +5,7 @@
   // `npm run check:compat` under node16 and bundler resolution.
   "compilerOptions": {
     "target": "ES2019",
-    "module": "ESNext",
+    "module": "Node16",
     "moduleResolution": "node16",
     "jsx": "react",
     "lib": ["dom", "esnext"],

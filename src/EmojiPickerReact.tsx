@@ -67,5 +67,5 @@ function ContentControl() {
   );
 }
 
-// eslint-disable-next-line complexity
+
 export default React.memo(EmojiPicker, compareConfig);

@@ -16,8 +16,10 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "noEmit": true,
+    "types": []
   }
 }

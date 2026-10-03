@@ -1,5 +1,5 @@
 import React from 'react';
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 
 import EmojiPicker from '../../src';
 import bn from '../../dist/data/emojis-bn';

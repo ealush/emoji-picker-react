@@ -62,7 +62,7 @@ function useDebouncedSliceValue<T>(
   const [state, setState] = tuple;
   // The debounced setter is functionally stable (stable setState + timer
   // ref), so capturing it alongside the state value is safe.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   return React.useMemo(
     () => [state, setState] as [T, (value: T) => Promise<T>],
     [state],

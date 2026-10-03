@@ -21,14 +21,17 @@ import emojibaseGroups from 'emojibase-data/meta/groups.json'; // eslint-disable
 // eslint-disable-next-line import/no-extraneous-dependencies
 import emojiDataSource from 'emoji-datasource/emoji.json'; // eslint-disable-line import/extensions
 import {
+  existsSync as pathExistsSync,
   lstatSync,
-  pathExistsSync,
   readdirSync,
-  readJsonSync,
+  readFileSync,
   writeFileSync,
-  writeJSONSync,
-  // @ts-ignore
-} from 'fs-extra';
+} from 'fs';
+
+const readJsonSync = (path: string) => JSON.parse(readFileSync(path, 'utf8'));
+// fs-extra's writeJSONSync wrote compact JSON followed by a newline.
+const writeJSONSync = (path: string, data: unknown, encoding: 'utf8') =>
+  writeFileSync(path, JSON.stringify(data) + '\n', encoding);
 
 import {
   CleanEmoji,

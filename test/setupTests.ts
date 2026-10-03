@@ -40,8 +40,8 @@ class MockIntersectionObserver implements IntersectionObserver {
 }
 
 if (!('IntersectionObserver' in globalThis)) {
-  // @ts-expect-error - test shim
-  globalThis.IntersectionObserver = MockIntersectionObserver;
+  (globalThis as { IntersectionObserver?: unknown }).IntersectionObserver =
+    MockIntersectionObserver;
 }
 
 if (!('requestAnimationFrame' in globalThis)) {

@@ -92,7 +92,7 @@ function usePickerMainKeyboardEvents() {
 
         disallowMouseMove();
         switch (key) {
-          // eslint-disable-next-line no-fallthrough
+
           case KeyboardEvents.Escape:
             event.preventDefault();
             if (hasOpenToggles()) {
@@ -446,7 +446,7 @@ function useBodyKeyboardEvents() {
 
   const onKeyDown = useMemo(
     () =>
-      // eslint-disable-next-line complexity
+
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 

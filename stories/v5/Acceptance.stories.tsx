@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import React, { useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from '../../src';

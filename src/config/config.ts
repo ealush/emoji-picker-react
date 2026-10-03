@@ -91,19 +91,24 @@ export const DEFAULT_LABELS: PickerLabels = {
   skinToneDark: 'Skin tone DARK',
 };
 
-export function mergeConfig(
-  rawUserConfig: PickerConfig = {},
-): PickerConfigInternal {
-  const base = basePickerConfig();
-  // Root resolves loaders before configuration is merged; a loader that
-  // reaches this point (direct internal use) is treated as "not loaded".
-  const userConfig = (
-    typeof rawUserConfig.emojiData === 'function'
-      ? { ...rawUserConfig, emojiData: undefined }
-      : rawUserConfig
-  ) as Omit<PickerConfig, 'emojiData'> & { emojiData?: EmojiData };
+type ResolvedUserConfig = Omit<PickerConfig, 'emojiData'> & {
+  emojiData?: EmojiData;
+};
 
-  // Get localized mood from emojiData, fallback to base default
+function withResolvedEmojiData(config: PickerConfig): ResolvedUserConfig {
+  return (
+    typeof config.emojiData === 'function'
+      ? { ...config, emojiData: undefined }
+      : config
+  ) as ResolvedUserConfig;
+}
+
+// Localized mood caption from emojiData is the default; an explicit
+// previewConfig.defaultCaption still wins.
+function mergePreviewConfig(
+  base: PreviewConfig,
+  userConfig: ResolvedUserConfig,
+): PreviewConfig {
   const localizedMood = (
     userConfig.emojiData?.categories as Record<
       string,
@@ -111,14 +116,23 @@ export function mergeConfig(
     >
   )?.preview_mood?.name;
 
-  const previewConfig = {
-    ...base.previewConfig,
-    // Localized mood is default, but user can override
+  return {
+    ...base,
     ...(localizedMood && !userConfig.previewConfig?.defaultCaption
       ? { defaultCaption: localizedMood }
       : {}),
     ...(userConfig.previewConfig ?? {}),
   };
+}
+
+export function mergeConfig(
+  rawUserConfig: PickerConfig = {},
+): PickerConfigInternal {
+  const base = basePickerConfig();
+  // Root resolves loaders before configuration is merged; a loader that
+  // reaches this point (direct internal use) is treated as "not loaded".
+  const userConfig = withResolvedEmojiData(rawUserConfig);
+  const previewConfig = mergePreviewConfig(base.previewConfig, userConfig);
 
   const config = Object.assign(base, userConfig) as PickerConfigInternal;
 

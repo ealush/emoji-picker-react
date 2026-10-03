@@ -14,15 +14,17 @@ export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 
 export {
   EmojiStyle,
-  EmojiStyleValue,
   SkinTones,
   Theme,
-  ThemeValue,
   Categories,
-  EmojiClickData,
   SuggestionMode,
-  SuggestionModeValue,
   SkinTonePickerLocation,
+} from './types/exposedTypes';
+export type {
+  EmojiStyleValue,
+  ThemeValue,
+  EmojiClickData,
+  SuggestionModeValue,
   CategoryIcons,
   CategoryConfig,
 } from './types/exposedTypes';

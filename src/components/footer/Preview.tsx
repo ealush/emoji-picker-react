@@ -56,13 +56,11 @@ export function PreviewBody() {
   const getEmojiUrl = useGetEmojiUrlConfig();
   const { emojiByUnified } = usePickerDataContext();
 
-  const emoji = emojiByUnified(
-    (previewEmoji?.unified ?? previewEmoji?.originalUnified) as
-      | string
-      | undefined,
-  );
+  const emoji = previewEmoji
+    ? emojiByUnified(previewEmoji.unified || previewEmoji.originalUnified)
+    : undefined;
 
-  const show = emoji != null && previewEmoji != null;
+  const show = emoji != null;
 
   // Rendered inline rather than as a nested component: a component defined
   // inside render gets a new identity every render, which remounted the

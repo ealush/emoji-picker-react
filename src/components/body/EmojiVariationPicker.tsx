@@ -36,7 +36,7 @@ enum Direction {
   Down,
 }
 
-// eslint-disable-next-line complexity
+
 export function EmojiVariationPicker() {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
@@ -106,7 +106,7 @@ export function EmojiVariationPicker() {
   );
 }
 
-function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
+function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement | null>) {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   return function getPointerStyle() {
     const style: React.CSSProperties = {};
@@ -132,7 +132,7 @@ function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement>) {
 }
 
 function useVariationPickerTop(
-  VariationPickerRef: React.RefObject<HTMLElement>,
+  VariationPickerRef: React.RefObject<HTMLElement | null>,
 ) {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const BodyRef = useBodyRef();

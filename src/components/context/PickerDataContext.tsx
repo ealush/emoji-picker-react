@@ -18,10 +18,10 @@ import {
   emojiNames,
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
-import type { FilterDict } from '../../hooks/useFilter';
 import { getSuggested } from '../../dataUtils/suggested';
 import { resolveSuggestedRenderIds } from '../../dataUtils/suggestedEmojis';
 import { useDataIdentityStabilityWarning } from '../../hooks/useDataIdentityStabilityWarning';
+import type { FilterDict } from '../../hooks/useFilter';
 import { useIsMounted } from '../../hooks/useIsMounted';
 import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 

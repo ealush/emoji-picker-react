@@ -1229,7 +1229,10 @@ describe('v5 primitive exports and managed-panel grammar', () => {
       // Child effects precede parent effects, so the second Viewport's
       // List trips the duplicate guard first; either way the invalid
       // composition fails fast naming a duplicate singleton.
-      expect(() =>
+      // React 19 aggregates several effect errors into one AggregateError
+      // (empty message); earlier versions rethrow the first error.
+      let thrown: unknown;
+      try {
         render(
           <Root emojiData={twoCategoryData}>
             <Viewport>
@@ -1239,8 +1242,16 @@ describe('v5 primitive exports and managed-panel grammar', () => {
               <List />
             </Viewport>
           </Root>,
-        ),
-      ).toThrow(/Duplicate </);
+        );
+      } catch (error) {
+        thrown = error;
+      }
+      const messages = (
+        (thrown as { errors?: unknown[] })?.errors ?? [thrown]
+      ).map((error) => String((error as Error)?.message ?? error));
+      expect(messages.some((message) => /Duplicate </.test(message))).toBe(
+        true,
+      );
     } finally {
       errors.mockRestore();
     }

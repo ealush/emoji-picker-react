@@ -9,8 +9,8 @@ import { useMutableConfig } from '../config/mutableConfig';
 import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
 import { activeVariationFromUnified } from '../dataUtils/emojiUtils';
 import { emojiClickOutput } from '../hooks/useMouseDownHandlers';
-import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 import { useAcceptedSearchValue } from '../hooks/useSearchController';
+import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 import { EmojiClickData, SkinTones } from '../types/exposedTypes';
 
 import { useRootScope } from './scope';

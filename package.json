@@ -109,20 +109,19 @@
     }
   },
   "scripts": {
-    "start": "tsdx watch",
-    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run build:entries && npm run docs:llms",
+    "start": "npm run storybook",
+    "build": "npm run clean && npm run build:data:src && npm run type-check && npm run build:data:dist && node ./scripts/build.js && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test",
-    "lint": "eslint ./src --ext .ts,.tsx",
-    "prepare": "npm run build",
+    "lint": "eslint src",
+    "prepare": "husky && npm run build",
     "size": "size-limit",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
     "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js && node ./scripts/buildDataTwins.js",
     "build:data": "npm run build:data:src && npm run build:data:dist",
-    "build:entries": "node ./scripts/build-entries.js",
     "storybook": "npm run build:data && storybook dev -p 6006",
     "build-storybook": "storybook build",
     "docs:llms": "node ./scripts/generateLlmsTxt.js",
@@ -130,15 +129,11 @@
     "check:react16": "node ./scripts/react16-fixture/run.js",
     "check:package": "node ./scripts/package-check/run.js",
     "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
-    "check:perf": "node ./bench/run.js"
+    "check:perf": "node ./bench/run.js",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\""
   },
   "peerDependencies": {
     "react": ">=16.8"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
   },
   "prettier": {
     "printWidth": 80,
@@ -150,77 +145,65 @@
   "module": "dist/esm/index.mjs",
   "size-limit": [
     {
-      "path": "dist/emoji-picker-react.cjs.production.min.js",
-      "limit": "95 KB"
+      "path": "dist/index.js",
+      "limit": "75 KB"
     },
     {
       "path": "dist/esm/index.mjs",
-      "limit": "95 KB"
+      "limit": "75 KB"
     },
     {
       "path": "dist/esm/primitives/index.mjs",
-      "limit": "90 KB"
+      "limit": "75 KB"
     },
     {
       "path": "dist/esm/data.mjs",
-      "limit": "55 KB"
+      "limit": "42 KB"
     }
   ],
   "devDependencies": {
-    "@babel/core": "^7.18.10",
-    "@babel/preset-react": "^7.24.1",
-    "@babel/preset-typescript": "^7.24.1",
+    "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.63.0",
     "@semantic-release/changelog": "^7.0.0",
     "@semantic-release/git": "^11.0.1",
     "@semantic-release/github": "^12.0.9",
     "@semantic-release/npm": "^13.1.5",
-    "@size-limit/preset-small-lib": "^8.0.1",
-    "@storybook/addon-essentials": "^8.6.15",
-    "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "^8.6.15",
-    "@storybook/addon-webpack5-compiler-swc": "1.0.5",
-    "@storybook/react": "^8.6.15",
-    "@storybook/react-webpack5": "8.6.15",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.4.8",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.36.2",
-    "autoprefixer": "^10.4.8",
-    "babel-loader": "^8.2.5",
+    "@size-limit/preset-small-lib": "^14.1.0",
+    "@storybook/addon-docs": "^10.6.1",
+    "@storybook/addon-links": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^24.19.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "conventional-changelog-conventionalcommits": "^9.3.1",
-    "cssnano": "^5.1.13",
     "emoji-datasource": "^16.0.0",
     "emojibase-data": "^17.0.0",
-    "esbuild": "0.25.12",
-    "eslint-import-resolver-typescript": "^3.3.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "fs-extra": "^10.1.0",
-    "glob": "^8.0.3",
-    "husky": "^8.0.1",
-    "jsdom": "^24.1.0",
-    "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^18.2.0",
-    "rollup": "2.80.0",
-    "rollup-plugin-dts": "^4.2.3",
-    "rollup-plugin-svg": "^2.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "jsdom": "^30.1.1",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "rollup": "^4.64.0",
+    "rollup-plugin-dts": "^6.5.1",
     "semantic-release": "^25.0.9",
-    "size-limit": "^8.0.1",
-    "storybook": "8.6.15",
-    "tiny-invariant": "^1.2.0",
-    "tsdx": "^0.14.1",
+    "size-limit": "^14.1.0",
+    "storybook": "^10.6.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4",
-    "vitest": "^4.1.11"
+    "typescript": "5.9",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3"
   },
   "dependencies": {
     "shipstyles": "1.0.0"

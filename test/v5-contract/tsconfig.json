@@ -15,7 +15,15 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node", "@testing-library/jest-dom"]
+    "types": ["node"]
   },
-  "include": ["./*.test.ts", "./*.test.tsx", "../../src/**/*"]
+  "include": [
+    "./*.test.ts",
+    "./*.test.tsx",
+    "../setupTests.ts",
+    "../../src/**/*"
+  ],
+  // Node types provide `process` here; src/env.d.ts is the library's
+  // minimal stand-in for builds without them.
+  "exclude": ["../../src/env.d.ts"]
 }

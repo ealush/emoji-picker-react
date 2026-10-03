@@ -12,9 +12,9 @@ import {
 } from '../../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFilter } from '../../../hooks/useFilter';
-import { useVisibleSearchResultCount } from '../../../hooks/useSearchResults';
 import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
 import { useSearchInputController } from '../../../hooks/useSearchController';
+import { useVisibleSearchResultCount } from '../../../hooks/useSearchResults';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
 import { composeHandlers, mergeRefs } from '../../../primitives/nativeProps';
 import type { SearchProps } from '../../../primitives/types';

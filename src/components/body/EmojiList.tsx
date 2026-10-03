@@ -56,7 +56,7 @@ export function EmojiList({
   // The list markup is kept for a backwards-compatible DOM structure;
   // the grid role override is intentional.
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+
     <ul
       {...nativeProps}
       className={cx(styles.emojiList, className)}

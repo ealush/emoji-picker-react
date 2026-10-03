@@ -7,9 +7,9 @@ import {
   DEFAULT_PICKER_HEIGHT,
   DEFAULT_PICKER_WIDTH,
 } from '../../config/config';
+import { defaultPickerTokens } from '../../primitives/tokens';
 import { Theme, ThemeValue } from '../../types/exposedTypes';
 
-import { defaultPickerTokens } from '../../primitives/tokens';
 
 // Official default appearance (docs/v5/STYLING.md §1,
 // docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: classes are merged

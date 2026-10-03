@@ -106,10 +106,7 @@ function main() {
 //
 // New v5 entries must be fully clean under node16 (CJS + ESM) and
 // bundler; node10 (legacy, exports-unaware) may only report NoResolution
-// for them. The tsdx-era main entry carries pre-existing findings
-// (default-export interop, .esm.js module kind) that Phase 10 owns;
-// anything else there — especially resolution failures introduced by the
-// exports map — fails the gate.
+// for them. The main entry must be clean in every mode.
 // size-limit inlines dynamic imports, so it reports the primitives entry
 // with its lazily loaded dataset. This budget measures what a consumer
 // bundle actually loads up front: the entry plus its static chunks,
@@ -209,12 +206,10 @@ function gateAttw(tarball, cwd) {
     }
   }
 
-  const mainAllowed = new Set(['FalseExportDefault', 'UnexpectedModuleSyntax']);
+  // The main entry supports every resolution mode, node10 included.
   for (const resolution of ['node10', 'node16-cjs', 'node16-esm', 'bundler']) {
     for (const kind of kindsOf('.', resolution)) {
-      if (!mainAllowed.has(kind)) {
-        failures.push(`main entry ${resolution}: ${kind}`);
-      }
+      failures.push(`main entry ${resolution}: ${kind}`);
     }
   }
 
@@ -223,7 +218,7 @@ function gateAttw(tarball, cwd) {
       'attw gate failed:\n  - ' + failures.join('\n  - '),
     );
   }
-  console.log('ok: attw gate (new entries clean; main limited to pre-existing)');
+  console.log('ok: attw gate (all entries clean)');
 }
 
 main();

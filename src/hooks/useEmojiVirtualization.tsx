@@ -1,12 +1,12 @@
 import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
 
-import { useBodyRef } from '../components/context/ElementRefContext';
-import { useActiveSkinToneState } from '../components/context/PickerContext';
 import {
   ListEmoji,
   useListComponents,
 } from '../components/body/listComponents';
+import { useBodyRef } from '../components/context/ElementRefContext';
+import { useActiveSkinToneState } from '../components/context/PickerContext';
 import { ClickableEmoji } from '../components/emoji/Emoji';
 import {
   useEmojiStyleConfig,

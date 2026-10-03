@@ -47,7 +47,7 @@ export function useCategoryHeight(emojiCount: number):
   const EmojiListRef = useEmojiListRef();
   const [isReactionsMode] = useReactionsModeState();
   const PickerMainRef = usePickerMainRef();
-  const emojiSizeRef = React.useRef<number | undefined>();
+  const emojiSizeRef = React.useRef<number | undefined>(undefined);
   const [visibleCategories] = useVisibleCategoriesState();
   const [emojiSizeFromContext] = useEmojiSizeState();
   const [dimensions, setDimensions] = React.useState<{

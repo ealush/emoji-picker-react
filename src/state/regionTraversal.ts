@@ -66,11 +66,11 @@ export function getActiveRegionsInDomOrder(
 
   active.sort((a, b) => {
     const position = a.element.compareDocumentPosition(b.element);
-    // eslint-disable-next-line no-bitwise
+
     if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
       return -1;
     }
-    // eslint-disable-next-line no-bitwise
+
     if (position & Node.DOCUMENT_POSITION_PRECEDING) {
       return 1;
     }
