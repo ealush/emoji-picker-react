@@ -48,12 +48,6 @@
   background: #232428;
   overflow-y: auto;
 }
-.discord-rail [data-epr-part='category-nav'] > * {
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 0;
-}
 .discord-main {
   display: flex;
   flex-direction: column;

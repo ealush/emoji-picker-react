@@ -78,7 +78,13 @@ export function useVisibleCategoryConfigs() {
   });
 }
 
-export function CategoryNavigation() {
+export type NavOrientation = 'horizontal' | 'vertical';
+
+export function CategoryNavigation({
+  orientation = 'horizontal',
+}: {
+  orientation?: NavOrientation;
+} = {}) {
   const { activeCategory, setActiveCategory } = useActiveCategory();
   const scrollCategoryIntoView = useScrollCategoryIntoView();
   const isSearchMode = useIsSearchMode();
@@ -103,9 +109,11 @@ export function CategoryNavigation() {
 
   return (
     <div
-      className={cx(styles.nav)}
+      className={cx(styles.nav, orientation === 'vertical' && styles.vertical)}
       role="tablist"
       aria-label={labels.categoryNavigation}
+      // Read by the keyboard handler: arrow keys follow the tab axis.
+      aria-orientation={orientation}
       ref={CategoryNavigationRef}
     >
       {visibleCategories.map((categoryConfig) => {
@@ -143,6 +151,14 @@ const styles = stylesheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 'var(--epr-header-padding)',
+  },
+  vertical: {
+    '.': 'epr-category-nav-vertical',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 'var(--epr-horizontal-padding)',
+    padding: 'var(--epr-horizontal-padding) 0',
   },
   '.epr-search-active': {
     nav: {

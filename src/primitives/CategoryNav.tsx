@@ -17,8 +17,9 @@ export const CategoryNav = React.forwardRef<HTMLDivElement, CategoryNavProps>(
   function CategoryNav(props, forwardedRef) {
     const inScope = useRootScope('CategoryNav');
     const visibleCategories = useVisibleCategoryConfigs();
+    const { orientation = 'horizontal', ...rest } = props;
     const nativeProps = filterPrimitiveProps(
-      props as Record<string, unknown>,
+      rest as Record<string, unknown>,
       ['role'],
     );
 
@@ -32,7 +33,7 @@ export const CategoryNav = React.forwardRef<HTMLDivElement, CategoryNavProps>(
         ref={forwardedRef}
         data-epr-part="category-nav"
       >
-        <CategoryNavigation />
+        <CategoryNavigation orientation={orientation} />
       </div>
     );
   },

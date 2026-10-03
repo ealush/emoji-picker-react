@@ -23,7 +23,7 @@ describe('SkinTone primitive', () => {
           <Picker.List />
         </Picker.Viewport>
         <footer>
-          <Picker.SkinTone direction="vertical" className="mine" />
+          <Picker.SkinTone orientation="vertical" className="mine" />
         </footer>
       </Picker.Root>,
     );

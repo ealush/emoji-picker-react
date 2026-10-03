@@ -310,29 +310,35 @@ function useCategoryNavigationKeyboardEvents() {
   const onKeyDown = useMemo(
     () =>
       function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
+        // Arrows along the tab axis move between tabs; arrows across it
+        // leave for the previous/next region. A vertical tablist (e.g. a
+        // side rail) therefore uses Up/Down for tabs, per the ARIA tabs
+        // pattern, and Left/Right to leave.
+        const vertical =
+          (event.currentTarget as Element | null)?.getAttribute(
+            'aria-orientation',
+          ) === 'vertical';
+        const intent = categoryKeyIntent(event.key, vertical);
 
-        switch (key) {
-          case KeyboardEvents.ArrowUp:
-            event.preventDefault();
-            focusPrevRegionFromCategories(() => focusSearchInput());
-            break;
-          case KeyboardEvents.ArrowRight:
-            event.preventDefault();
-            focusNextElementSibling(getActiveElement());
-            break;
-          case KeyboardEvents.ArrowLeft:
-            event.preventDefault();
+        if (!intent) {
+          onType(event);
+          return;
+        }
+        event.preventDefault();
+        switch (intent) {
+          case 'prev-tab':
             focusPrevElementSibling(getActiveElement());
             break;
-        case KeyboardEvents.ArrowDown:
-            event.preventDefault();
+          case 'next-tab':
+            focusNextElementSibling(getActiveElement());
+            break;
+          case 'prev-region':
+            focusPrevRegionFromCategories(() => focusSearchInput());
+            break;
+          case 'next-region':
             focusNextRegionFromCategories(() =>
               focusFirstVisibleEmoji(BodyRef.current),
             );
-            break;
-          default:
-            onType(event);
             break;
         }
       },
@@ -698,4 +704,27 @@ function hasModifier(event: KeyboardEvent): boolean {
   const { metaKey, ctrlKey, altKey } = event;
 
   return metaKey || ctrlKey || altKey;
+}
+
+type CategoryKeyIntent = 'prev-tab' | 'next-tab' | 'prev-region' | 'next-region';
+
+const HORIZONTAL_CATEGORY_KEYS: Record<string, CategoryKeyIntent> = {
+  [KeyboardEvents.ArrowLeft]: 'prev-tab',
+  [KeyboardEvents.ArrowRight]: 'next-tab',
+  [KeyboardEvents.ArrowUp]: 'prev-region',
+  [KeyboardEvents.ArrowDown]: 'next-region',
+};
+
+const VERTICAL_CATEGORY_KEYS: Record<string, CategoryKeyIntent> = {
+  [KeyboardEvents.ArrowUp]: 'prev-tab',
+  [KeyboardEvents.ArrowDown]: 'next-tab',
+  [KeyboardEvents.ArrowLeft]: 'prev-region',
+  [KeyboardEvents.ArrowRight]: 'next-region',
+};
+
+function categoryKeyIntent(
+  key: string,
+  vertical: boolean,
+): CategoryKeyIntent | undefined {
+  return (vertical ? VERTICAL_CATEGORY_KEYS : HORIZONTAL_CATEGORY_KEYS)[key];
 }

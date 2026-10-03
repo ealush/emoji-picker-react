@@ -374,7 +374,7 @@ Renders only while an applied search shows no emojis (counting exactly what the 
     <EmojiPicker.List />
   </EmojiPicker.Viewport>
   <footer>
-    <EmojiPicker.SkinTone direction="vertical" />
+    <EmojiPicker.SkinTone orientation="vertical" />
   </footer>
 </EmojiPicker.Root>
 ```

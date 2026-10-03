@@ -26,13 +26,13 @@ import type { SkinToneProps } from './types';
 // only one may exist per Root: set `skinTonePickerLocation="NONE"` to turn
 // the built-in placement off. Renders nothing when skin tones are disabled.
 //
-// `direction` sets the axis the tones fan out along: horizontal expands to
+// `orientation` sets the axis the tones fan out along: horizontal expands to
 // the start side (fits a trailing slot in a toolbar), vertical expands
 // upward (fits a footer).
 export const SkinTone = React.forwardRef<HTMLDivElement, SkinToneProps>(
   function SkinTone(props, forwardedRef) {
     const inScope = useRootScope('SkinTone');
-    const { direction = 'horizontal', className, ...rest } = props;
+    const { orientation = 'horizontal', className, ...rest } = props;
     const nativeProps = filterPrimitiveProps(
       rest as Record<string, unknown>,
       ['role'],
@@ -53,7 +53,7 @@ export const SkinTone = React.forwardRef<HTMLDivElement, SkinToneProps>(
       return null;
     }
 
-    const vertical = direction === 'vertical';
+    const vertical = orientation === 'vertical';
 
     return (
       <div

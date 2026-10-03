@@ -76,7 +76,23 @@ async function checkReactionsKeyboard(page: Page) {
 // One test walks every tagged story; give it room.
 test.describe.configure({ timeout: 10 * 60 * 1000 });
 
-test('every recipe renders as designed, passes axe and keyboard checks', async ({
+// Tabs: the arrow along the tablist's aria-orientation moves to the next tab.
+async function checkTabsKeyboard(page: Page) {
+  const tablist = page.locator('[role="tablist"]:visible');
+  if (!(await tablist.count())) {
+    return;
+  }
+  const vertical =
+    (await tablist.getAttribute('aria-orientation')) === 'vertical';
+  const tabs = tablist.locator('[role="tab"], [data-epr-part="category-tab"]');
+  await tabs.first().focus();
+  await page.keyboard.press(vertical ? 'ArrowDown' : 'ArrowRight');
+  await pollFocused(page, 'aria-label').toBe(
+    await tabs.nth(1).getAttribute('aria-label'),
+  );
+}
+
+test('every recipe and integration renders as designed, passes axe and keyboard checks', async ({
   page,
   request,
 }) => {
@@ -86,9 +102,13 @@ test('every recipe renders as designed, passes axe and keyboard checks', async (
     entries: Record<string, IndexEntry>;
   };
   const recipes = Object.values(entries).filter(
-    (entry) => entry.type === 'story' && entry.tags?.includes('recipe'),
+    (entry) =>
+      entry.type === 'story' &&
+      (entry.tags?.includes('recipe') || entry.tags?.includes('integration')),
   );
-  expect(recipes.length).toBeGreaterThanOrEqual(15);
+  expect(
+    recipes.filter((entry) => entry.tags?.includes('recipe')).length,
+  ).toBeGreaterThanOrEqual(15);
 
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
@@ -102,6 +122,7 @@ test('every recipe renders as designed, passes axe and keyboard checks', async (
     expect.soft(await axeViolations(page), `${recipe.id}: axe`).toEqual([]);
 
     if (await page.locator('[role="gridcell"]:visible').count()) {
+      await checkTabsKeyboard(page);
       await checkGridKeyboard(page, recipe.id);
     } else {
       await checkReactionsKeyboard(page);

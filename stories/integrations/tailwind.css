@@ -1,0 +1,8 @@
+/* Declare the picker's layer first so Tailwind utilities override it. */
+@layer epr, theme, base, components, utilities;
+
+/* Theme + utilities only (no preflight), scanning just these stories. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+@source './Tailwind.stories.tsx';
+@source './Shadcn.stories.tsx';

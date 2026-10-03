@@ -56,7 +56,14 @@ export type SearchProps = Omit<
 export type CategoryNavProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'role' | 'children'
->;
+> & {
+  /**
+   * Tab axis. `vertical` stacks the tabs (e.g. a side rail) and switches
+   * keyboard navigation to Up/Down between tabs and Left/Right to leave,
+   * announced through aria-orientation. Default: 'horizontal'.
+   */
+  orientation?: 'horizontal' | 'vertical';
+};
 
 export type PreviewProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -87,7 +94,7 @@ export type SkinToneProps = Omit<
   'role' | 'children'
 > & {
   /** Axis the tones fan out along. Default: 'horizontal'. */
-  direction?: 'horizontal' | 'vertical';
+  orientation?: 'horizontal' | 'vertical';
 };
 
 export type LoadingProps = Omit<

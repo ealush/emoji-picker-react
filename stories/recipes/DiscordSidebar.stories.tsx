@@ -13,14 +13,15 @@ const meta = {
 
 export default meta;
 
-// Primitives let the category nav become a vertical rail: it is placed in
-// its own column and laid out with ordinary flexbox.
+// A vertical category rail: CategoryNav is placed in its own column and
+// orientation="vertical" stacks the tabs and moves keyboard navigation to
+// Up/Down (announced through aria-orientation).
 export function DiscordSidebar() {
   return (
     <Picker.Root className="discord-picker" searchPlaceholder="Find the perfect emoji">
       <div className="discord-layout">
         <div className="discord-rail">
-          <Picker.CategoryNav />
+          <Picker.CategoryNav orientation="vertical" />
         </div>
         <div className="discord-main">
           <Picker.Search />
