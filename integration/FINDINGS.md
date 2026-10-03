@@ -4,8 +4,9 @@
 
 All 12 runnable consumer fixtures pass against the new picker source,
 behaviorally and visually:
-`npx vitest run integration` → 12/12, full `npm test` → 505/505 across
-65 files, `npx playwright test consumer-integrations` → 12/12 against
+`npx vitest run integration` → 60/60, full `npm test` → 553/553 across
+66 files (incl. 48 per-candidate coverage tests driven from the
+manifest), `npx playwright test consumer-integrations` → 12/12 against
 36 committed baselines (clean re-run, no updates). `tsc --noEmit` clean.
 No picker source changes were needed; `src/` is untouched.
 

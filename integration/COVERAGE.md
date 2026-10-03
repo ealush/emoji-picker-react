@@ -4,6 +4,13 @@ Rows: runnable fixtures. Columns: the six required scenarios (R render+open,
 V visible/positioned, S search+select, C callback+payload+host state, X
 close/retain, P reopen/persistence) plus consumer-specific risks.
 
+Beyond this matrix, `candidate-coverage.test.tsx` executes one test per
+manifest candidate (46 runnable/covered entries across the 12 fixtures,
+driven from `manifest.json` so mapping drift fails the build) plus
+manifest-accounting tests enforcing that every entry has a disposition,
+every testable entry maps to a real fixture export, and every
+non-testable entry records its blocker.
+
 | Fixture | R | V | S | C | X | P | Extra risks covered |
 |---|---|---|---|---|---|---|---|
 | NextChatComposer | x | x | x | x (count=1, payload, cursor insert) | close-on-select | reopen, no replay | duplicate-callback guard |
