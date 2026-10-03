@@ -4,38 +4,104 @@ import { UserCategoryConfig } from './categoryConfig';
 import { PickerConfig } from './config';
 import { CustomEmoji } from './customEmojiConfig';
 
-// eslint-disable-next-line complexity
+// Callbacks are read through the mutable config ref, so a new function
+// identity must never rebuild configuration or rerender the memoized tree.
+const CALLBACK_KEYS: ReadonlySet<string> = new Set([
+  'onEmojiClick',
+  'onReactionClick',
+  'onSkinToneChange',
+  'onSearchChange',
+  'onReactionsModeChange',
+]);
+
+/**
+ * Content equality over every config key. Iterating the union of keys
+ * (rather than a hand-maintained list) means a prop added later is
+ * compared by default instead of being silently ignored after mount —
+ * which is how `reactions`, `previewConfig`, `hiddenEmojis`,
+ * `allowExpandReactions`, `categoryIcons`, `getEmojiUrl` and `nonce`
+ * updates used to be dropped.
+ */
 export function compareConfig(prev: PickerConfig, next: PickerConfig) {
-  const prevCustomEmojis = prev.customEmojis ?? [];
-  const nextCustomEmojis = next.customEmojis ?? [];
+  const prevRecord = prev as Record<string, unknown>;
+  const nextRecord = next as Record<string, unknown>;
+  const keys = Object.keys(prevRecord).concat(
+    Object.keys(nextRecord).filter((key) => !(key in prevRecord)),
+  );
+
+  for (const key of keys) {
+    if (CALLBACK_KEYS.has(key)) {
+      continue;
+    }
+    if (!configValueEqual(key, prevRecord[key], nextRecord[key])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function configValueEqual(key: string, prev: unknown, next: unknown): boolean {
+  if (prev === next) {
+    return true;
+  }
+  switch (key) {
+    case 'customEmojis':
+      return customEmojisEqual(
+        (prev as CustomEmoji[] | undefined) ?? [],
+        (next as CustomEmoji[] | undefined) ?? [],
+      );
+    case 'categories':
+      return categoriesEqual(
+        prev as UserCategoryConfig | undefined,
+        next as UserCategoryConfig | undefined,
+      );
+    case 'suggestedEmojis':
+      return suggestedEmojisEqual(
+        prev as string[] | undefined,
+        next as string[] | undefined,
+      );
+    // Identity-only: datasets are large (identity is the contract, see
+    // useDataIdentityStabilityWarning) and style objects feed the DOM.
+    case 'emojiData':
+    case 'style':
+      return false;
+  }
+  if (Array.isArray(prev) && Array.isArray(next)) {
+    return shallowArrayEqual(prev, next);
+  }
+  if (isPlainObject(prev) && isPlainObject(next)) {
+    return shallowObjectEqual(prev, next);
+  }
+  return false;
+}
+
+function shallowArrayEqual(prev: unknown[], next: unknown[]): boolean {
   return (
-    prev.open === next.open &&
-    prev.emojiVersion === next.emojiVersion &&
-    prev.reactionsDefaultOpen === next.reactionsDefaultOpen &&
-    prev.searchPlaceHolder === next.searchPlaceHolder &&
-    prev.searchPlaceholder === next.searchPlaceholder &&
-    prev.searchClearButtonLabel === next.searchClearButtonLabel &&
-    prev.defaultSkinTone === next.defaultSkinTone &&
-    prev.skinTonesDisabled === next.skinTonesDisabled &&
-    prev.autoFocusSearch === next.autoFocusSearch &&
-    prev.emojiStyle === next.emojiStyle &&
-    prev.theme === next.theme &&
-    prev.suggestedEmojisMode === next.suggestedEmojisMode &&
-    prev.lazyLoadEmojis === next.lazyLoadEmojis &&
-    prev.className === next.className &&
-    prev.height === next.height &&
-    prev.width === next.width &&
-    prev.style === next.style &&
-    prev.searchDisabled === next.searchDisabled &&
-    prev.skinTonePickerLocation === next.skinTonePickerLocation &&
-    prev.searchValue === next.searchValue &&
-    prev.defaultSearchValue === next.defaultSearchValue &&
-    prev.searchLabel === next.searchLabel &&
-    suggestedEmojisEqual(prev.suggestedEmojis, next.suggestedEmojis) &&
-    prevCustomEmojis.length === nextCustomEmojis.length &&
-    customEmojisEqual(prevCustomEmojis, nextCustomEmojis) &&
-    categoriesEqual(prev.categories, next.categories) &&
-    prev.emojiData === next.emojiData
+    prev.length === next.length &&
+    prev.every((entry, index) => entry === next[index])
+  );
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+function shallowObjectEqual(
+  prev: Record<string, unknown>,
+  next: Record<string, unknown>,
+): boolean {
+  const prevKeys = Object.keys(prev);
+  if (prevKeys.length !== Object.keys(next).length) {
+    return false;
+  }
+  return prevKeys.every(
+    (key) =>
+      Object.prototype.hasOwnProperty.call(next, key) &&
+      prev[key] === next[key],
   );
 }
 
@@ -63,10 +129,7 @@ function suggestedEmojisEqual(
  * sections stale. Fields are compared element-wise (never serialized
  * with delimiters) so user-controlled values cannot collide.
  */
-function customEmojisEqual(
-  prev: CustomEmoji[],
-  next: CustomEmoji[],
-): boolean {
+function customEmojisEqual(prev: CustomEmoji[], next: CustomEmoji[]): boolean {
   if (prev.length !== next.length) {
     return false;
   }
