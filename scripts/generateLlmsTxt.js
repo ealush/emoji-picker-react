@@ -11,7 +11,7 @@ const { join } = require('path');
 const root = join(__dirname, '..');
 const RAW = 'https://raw.githubusercontent.com/ealush/emoji-picker-react/master';
 
-const SUMMARY = `Emoji picker for React that works plug-and-play — \`<EmojiPicker />\` is a complete, accessible, themed picker with no CSS import, configuration or design work — and is equally ready to go unstyled: pass \`unstyled\`, or compose your own layout from \`emoji-picker-react/primitives\`, and style it with any solution (Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI, plain CSS).`;
+const SUMMARY = `Emoji picker for React that is plug and play out of the box — \`<EmojiPicker />\` is a complete, accessible, themed picker with no CSS import, configuration or design work — or bring your own style system: pass \`unstyled\`, or compose your own layout from \`emoji-picker-react/primitives\`, and style it with any solution (Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI, plain CSS).`;
 
 const KEY_FACTS = `Key facts:
 

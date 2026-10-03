@@ -1,14 +1,16 @@
 # Emoji Picker React
 
-**The emoji picker for React that works out of the box — and gets out of your way when you want your own design.**
+**Plug and play out of the box. Or bring your own style system.**
+
+The emoji picker for React that works the moment you render it — and gets out of your way when it has to match your design system.
 
 > **Plug and play:** `npm install emoji-picker-react`, render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
 >
-> **Unstyled and composable when you need it:** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
+> **Bring your own style system:** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[Styling](#styling-with-any-solution)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
+**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[Bring your own styles](#bring-your-own-style-system)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
@@ -17,8 +19,7 @@
 ## Features
 
 - **Plug and play** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
-- **Unstyled on demand** — `unstyled` drops the chrome; composable primitives let you build any layout.
-- **Works with any styling solution** — plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components, MUI.
+- **Bring your own style system** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
 - **Accessible** — WCAG 2.1 AA (axe-tested), full keyboard navigation, screen-reader grid semantics, localizable labels.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 25+ emoji datasets plus a `labels` prop for every UI string.
@@ -62,7 +63,9 @@ See [PROPS.md](PROPS.md) for every prop.
 
 Every path keeps the same behavior: keyboard navigation, focus management, ARIA semantics, virtualization, skin tones, variations, recents and search.
 
-## Styling with any solution
+## Bring your own style system
+
+The default look is a starting point, not a constraint: keep it, theme it, or replace it entirely with your own design system's styles.
 
 The picker needs no stylesheet import — its CSS is injected automatically and scoped with hashed class names, so it never leaks into your app.
 

@@ -1,5 +1,7 @@
 # v5 Styling Contract
 
+The picker is plug and play out of the box, and equally built for teams that bring their own style system: every mode below keeps the same behavior, accessibility and virtualization, and only changes who owns the appearance.
+
 ## 1. Two styling modes
 
 ### Default picker
