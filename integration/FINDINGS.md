@@ -50,6 +50,14 @@ No picker source changes were needed; `src/` is untouched.
 
 ## Visual baselines (added second pass)
 
+Review the contact sheets (montages of the committed baselines):
+
+![open states](sheets/open.png)
+![search / expanded states](sheets/search.png)
+![post-select host results](sheets/selected.png)
+
+Individual baselines: `playwright/consumer-integrations.spec.ts-snapshots/`.
+
 - Gallery `stories/consumers/ConsumerFixtures.stories.tsx`: 11 fixture
   stories + browsable `Index` (deep links to each story). Stories are
   deliberately not tagged `visual` so the load-only storybook-visual sweep
