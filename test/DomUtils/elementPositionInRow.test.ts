@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { elementCountInRow } from '../../src/DomUtils/elementPositionInRow';
+import {
+  elementCountInRow,
+  getLabelHeight,
+} from '../../src/DomUtils/elementPositionInRow';
 
 function mockRect(element: HTMLElement, width: number) {
   vi.spyOn(element, 'getBoundingClientRect').mockReturnValue({
@@ -48,5 +51,28 @@ describe('elementCountInRow', () => {
     const element = document.createElement('button');
     expect(elementCountInRow(null, element)).toBe(0);
     expect(elementCountInRow(document.createElement('div'), null)).toBe(0);
+  });
+});
+
+describe('getLabelHeight', () => {
+  function categoryWithLabel(style = '') {
+    const list = document.createElement('ul');
+    list.innerHTML = `<li><h2 class="epr-emoji-category-label" style="${style}">Smileys</h2></li>`;
+    document.body.appendChild(list);
+    return list;
+  }
+
+  it('is 0 when the design hides category titles', () => {
+    // Falling back to the default would add a phantom 40px per category to
+    // every virtualization offset.
+    const list = categoryWithLabel('display: none');
+    expect(getLabelHeight(list)).toBe(0);
+    list.remove();
+  });
+
+  it('falls back to the documented default before layout', () => {
+    const list = categoryWithLabel();
+    expect(getLabelHeight(list)).toBe(40);
+    list.remove();
   });
 });
