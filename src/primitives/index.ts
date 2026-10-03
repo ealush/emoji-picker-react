@@ -6,6 +6,7 @@ export {
   darkPickerTokens,
 } from './tokens';
 export { Empty } from './Empty';
+export { Loading } from './Loading';
 export { SkinTone } from './SkinTone';
 export { useActiveEmoji, useSkinTone, useSearchState } from './hooks';
 export type { SearchState } from './hooks';
@@ -18,6 +19,7 @@ export { Preview } from './Preview';
 export type {
   CategoryNavProps,
   EmptyProps,
+  LoadingProps,
   SkinToneProps,
   ListProps,
   PickerAppearanceProps,
@@ -32,3 +34,7 @@ export type {
   ListComponents,
   ListEmoji,
 } from '../components/body/listComponents';
+export type {
+  EmojiDataInput,
+  EmojiDataLoader,
+} from '../hooks/useResolvedEmojiData';

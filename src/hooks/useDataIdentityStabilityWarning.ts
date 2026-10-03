@@ -2,7 +2,7 @@
 import * as React from 'react';
 
 import type { CustomEmoji } from '../config/customEmojiConfig';
-import defaultEmojiData from '../data/emojis';
+import { defaultEmojiDataOrEmpty } from '../data/defaultEmojiData';
 import type { EmojiData } from '../types/exposedTypes';
 
 interface IdentityTracker {
@@ -63,7 +63,7 @@ export function useDataIdentityStabilityWarning(
     trackIdentity(
       emojiState.current,
       emojiData,
-      !emojiData || emojiData === (defaultEmojiData as unknown as EmojiData),
+      !emojiData || emojiData === defaultEmojiDataOrEmpty(),
       '[emoji-picker-react] `emojiData` changed identity on three consecutive renders. ' +
         'Memoize/reuse the dataset object so the prepared-data cache can be shared. ' +
         'Behavior remains correct; caching is only defeated by identity churn.',

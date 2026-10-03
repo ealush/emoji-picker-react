@@ -1,3 +1,5 @@
+import './data/registerDefaultEmojiData';
+
 import * as React from 'react';
 
 import EmojiPickerReact from './EmojiPickerReact';

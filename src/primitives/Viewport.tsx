@@ -24,6 +24,7 @@ import { useSingletonClaim } from '../hooks/useRegisterRegion';
 
 import { Empty } from './Empty';
 import { List } from './List';
+import { Loading } from './Loading';
 import { filterPrimitiveProps, mergeRefs } from './nativeProps';
 import {
   useRootScope,
@@ -41,7 +42,7 @@ export type ViewportProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'role' | 'children'
 > & {
-  /** Exactly one `<List>`, optionally accompanied by `<Empty>`. */
+  /** Exactly one `<List>`, optionally with `<Empty>` and `<Loading>`. */
   children: React.ReactElement | React.ReactElement[];
 };
 
@@ -54,7 +55,7 @@ function assertSingleListChild(children: React.ReactNode): void {
     elements.every(
       (child) =>
         React.isValidElement(child) &&
-        (child.type === List || child.type === Empty),
+        (child.type === List || child.type === Empty || child.type === Loading),
     ) &&
     elements.filter(
       (child) => React.isValidElement(child) && child.type === List,
@@ -68,14 +69,14 @@ function assertSingleListChild(children: React.ReactNode): void {
       // eslint-disable-next-line no-console
       console.warn(
         '[emoji-picker-react] <Viewport> requires exactly one direct ' +
-          '<List> child (plus optional <Empty>); rendering children as-is.',
+          '<List> child (plus optional <Empty>/<Loading>); rendering children as-is.',
       );
     }
     return;
   }
   throw new Error(
     '[emoji-picker-react] <Viewport> requires exactly one direct <List> ' +
-      'child (plus optional <Empty>). See docs/v5/PRIMITIVES.md ' +
+      'child (plus optional <Empty>/<Loading>). See docs/v5/PRIMITIVES.md ' +
       'composition grammar.',
   );
 }

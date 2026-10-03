@@ -2,6 +2,7 @@ import { fireEvent, render } from '@testing-library/react';
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
+import en from '../src/data/emojis-en';
 import * as Picker from '../src/primitives';
 
 function BrandEmoji({
@@ -32,7 +33,9 @@ const components = { Emoji: BrandEmoji, CategoryHeader: BrandHeader };
 
 function Composition(props: Partial<React.ComponentProps<typeof Picker.Root>>) {
   return (
-    <Picker.Root {...props}>
+    // Synchronous data: a primitives-only bundle otherwise loads the
+    // dataset lazily (see the lazy data tests).
+    <Picker.Root emojiData={en} {...props}>
       <Picker.Viewport>
         <Picker.List components={components} />
       </Picker.Viewport>

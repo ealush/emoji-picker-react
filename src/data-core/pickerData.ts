@@ -12,7 +12,7 @@
 // - no React / ShipStyles imports in this module graph.
 
 import type { CustomEmoji } from '../config/customEmojiConfig';
-import defaultEmojiData from '../data/emojis';
+import { defaultEmojiDataOrEmpty } from '../data/defaultEmojiData';
 import {
   DataEmoji,
   DataEmojis,
@@ -88,7 +88,7 @@ export function getPickerDataSnapshot(
   customEmojis?: CustomEmoji[],
 ): PickerDataSnapshot {
   const source = (genericEmojiData ??
-    (defaultEmojiData as unknown as EmojiData)) as EmojiData;
+    defaultEmojiDataOrEmpty()) as EmojiData;
 
   // Warm the shared prepared core the picker actually searches through
   // (queryFilterDict in PickerDataContext). One construction per dataset
@@ -163,7 +163,7 @@ export function __isSnapshotCached(
   customEmojis?: CustomEmoji[],
 ): boolean {
   const source = (genericEmojiData ??
-    (defaultEmojiData as unknown as EmojiData)) as EmojiData;
+    defaultEmojiDataOrEmpty()) as EmojiData;
   const inner = snapshotCache.get(source);
   if (!inner) {
     return false;

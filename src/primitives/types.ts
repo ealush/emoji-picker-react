@@ -89,3 +89,10 @@ export type SkinToneProps = Omit<
   /** Axis the tones fan out along. Default: 'horizontal'. */
   direction?: 'horizontal' | 'vertical';
 };
+
+export type LoadingProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'role' | 'children'
+> & {
+  children?: React.ReactNode;
+};

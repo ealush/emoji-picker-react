@@ -31,6 +31,11 @@ import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../hooks/useOnFocus';
 import { useReactionsFocusManager } from '../hooks/useReactionsFocus';
+import {
+  DataLoadingProvider,
+  EmojiDataInput,
+  useResolvedEmojiData,
+} from '../hooks/useResolvedEmojiData';
 import { Theme, ThemeValue } from '../types/exposedTypes';
 
 import { mergeRefs } from './nativeProps';
@@ -80,7 +85,12 @@ function splitRootProps(props: Omit<RootProps, 'children'>): {
   const behaviorProps: Record<string, unknown> = {};
   const asideProps: Record<string, unknown> = {};
   for (const key of Object.keys(props)) {
-    assignRootProp(key, (props as Record<string, unknown>)[key], behaviorProps, asideProps);
+    assignRootProp(
+      key,
+      (props as Record<string, unknown>)[key],
+      behaviorProps,
+      asideProps,
+    );
   }
   return { behaviorProps, asideProps };
 }
@@ -112,52 +122,63 @@ function assignRootProp(
   asideProps[key] = value;
 }
 
-export const Root = React.forwardRef<HTMLElement, RootProps>(function Root(
-  props,
-  forwardedRef,
-) {
-  const { children, ...rest } = props;
-  const { behaviorProps, asideProps } = splitRootProps(rest);
-  const parentMutableRef = useMutableConfig();
-  const ownedMutableRef = useDefineMutableConfig({
-    onEmojiClick: behaviorProps.onEmojiClick as never,
-    onReactionClick: behaviorProps.onReactionClick as never,
-    onSkinToneChange: behaviorProps.onSkinToneChange as never,
-    onSearchChange: behaviorProps.onSearchChange as never,
-    onReactionsModeChange: behaviorProps.onReactionsModeChange as never,
-  });
-  // Adopt the nearest provided mutable config when nested (the default
-  // picker provides one above its memoized tree, so callback-only parent
-  // updates stay fresh without rerendering through the memo). A bare
-  // Root owns its own. The owned hooks stay unconditional; their effects
-  // update an unread ref while nested, which is harmless.
-  const mutableRef =
-    parentMutableRef !== NO_MUTABLE_PROVIDER
-      ? parentMutableRef
-      : ownedMutableRef;
+export const Root = React.forwardRef<HTMLElement, RootProps>(
+  function Root(props, forwardedRef) {
+    const { children, ...rest } = props;
+    const { behaviorProps: rawBehaviorProps, asideProps } =
+      splitRootProps(rest);
+    // emojiData may be an object, a loader, or absent; everything below
+    // Root only ever sees a synchronous dataset.
+    const { data: resolvedEmojiData, loading } = useResolvedEmojiData(
+      rawBehaviorProps.emojiData as EmojiDataInput | undefined,
+    );
+    const behaviorProps =
+      resolvedEmojiData === rawBehaviorProps.emojiData
+        ? rawBehaviorProps
+        : { ...rawBehaviorProps, emojiData: resolvedEmojiData };
+    const parentMutableRef = useMutableConfig();
+    const ownedMutableRef = useDefineMutableConfig({
+      onEmojiClick: behaviorProps.onEmojiClick as never,
+      onReactionClick: behaviorProps.onReactionClick as never,
+      onSkinToneChange: behaviorProps.onSkinToneChange as never,
+      onSearchChange: behaviorProps.onSearchChange as never,
+      onReactionsModeChange: behaviorProps.onReactionsModeChange as never,
+    });
+    // Adopt the nearest provided mutable config when nested (the default
+    // picker provides one above its memoized tree, so callback-only parent
+    // updates stay fresh without rerendering through the memo). A bare
+    // Root owns its own. The owned hooks stay unconditional; their effects
+    // update an unread ref while nested, which is harmless.
+    const mutableRef =
+      parentMutableRef !== NO_MUTABLE_PROVIDER
+        ? parentMutableRef
+        : ownedMutableRef;
 
-  return (
-    <ElementRefContextProvider>
-      <PickerConfigProvider {...behaviorProps}>
-        <MutableConfigContext.Provider value={mutableRef}>
-          <PickerDataProvider>
-            <PickerContextProvider>
-              <RootScopeProvider>
-                <RootAside
-                  ref={forwardedRef}
-                  asideProps={asideProps}
-                  behaviorNonce={behaviorProps.nonce as string | undefined}
-                >
-                  {children}
-                </RootAside>
-              </RootScopeProvider>
-            </PickerContextProvider>
-          </PickerDataProvider>
-        </MutableConfigContext.Provider>
-      </PickerConfigProvider>
-    </ElementRefContextProvider>
-  );
-});
+    return (
+      <ElementRefContextProvider>
+        <DataLoadingProvider value={loading}>
+          <PickerConfigProvider {...behaviorProps}>
+            <MutableConfigContext.Provider value={mutableRef}>
+              <PickerDataProvider>
+                <PickerContextProvider>
+                  <RootScopeProvider>
+                    <RootAside
+                      ref={forwardedRef}
+                      asideProps={asideProps}
+                      behaviorNonce={behaviorProps.nonce as string | undefined}
+                    >
+                      {children}
+                    </RootAside>
+                  </RootScopeProvider>
+                </PickerContextProvider>
+              </PickerDataProvider>
+            </MutableConfigContext.Provider>
+          </PickerConfigProvider>
+        </DataLoadingProvider>
+      </ElementRefContextProvider>
+    );
+  },
+);
 
 const RootAside = React.forwardRef<
   HTMLElement,

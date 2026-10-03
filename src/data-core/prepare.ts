@@ -9,7 +9,7 @@
 // - no JSON stringify/parse of the full dataset per Root;
 // - no React / ShipStyles imports in this module graph.
 
-import defaultEmojiData from '../data/emojis';
+import { defaultEmojiDataOrEmpty } from '../data/defaultEmojiData';
 import type { EmojiData } from '../types/exposedTypes';
 
 import type { EmojiInfo } from './types';
@@ -137,7 +137,7 @@ function indexCharBucket(
 }
 
 export function getPreparedCore(emojiData?: EmojiData): PreparedCore {
-  const source = (emojiData ?? defaultEmojiData) as EmojiData;
+  const source = (emojiData ?? defaultEmojiDataOrEmpty()) as EmojiData;
   const cached = coreCache.get(source);
   if (cached) {
     return cached;

@@ -1,3 +1,6 @@
+// The data entry registers the bundled dataset as the default; these
+// tests exercise the core with that registration in place.
+import '../src/data/registerDefaultEmojiData';
 import { describe, expect, it, vi } from 'vitest';
 import * as React from 'react';
 import { render } from '@testing-library/react';

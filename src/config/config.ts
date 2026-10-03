@@ -3,6 +3,7 @@ import * as React from 'react';
 import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
+import type { EmojiDataInput } from '../hooks/useResolvedEmojiData';
 import {
   CategoryIcons,
   EmojiClickData,
@@ -59,6 +60,8 @@ export type PickerLabels = {
   categoryNavigation: string;
   reactions: string;
   expandReactions: string;
+  /** Shown by the Loading part while the dataset loads. */
+  loading: string;
   skinToneNeutral: string;
   skinToneLight: string;
   skinToneMediumLight: string;
@@ -79,6 +82,7 @@ export const DEFAULT_LABELS: PickerLabels = {
   categoryNavigation: 'Category navigation',
   reactions: 'Reactions',
   expandReactions: 'Show all Emojis',
+  loading: 'Loading…',
   skinToneNeutral: 'Skin tone NEUTRAL',
   skinToneLight: 'Skin tone LIGHT',
   skinToneMediumLight: 'Skin tone MEDIUM_LIGHT',
@@ -88,9 +92,16 @@ export const DEFAULT_LABELS: PickerLabels = {
 };
 
 export function mergeConfig(
-  userConfig: PickerConfig = {},
+  rawUserConfig: PickerConfig = {},
 ): PickerConfigInternal {
   const base = basePickerConfig();
+  // Root resolves loaders before configuration is merged; a loader that
+  // reaches this point (direct internal use) is treated as "not loaded".
+  const userConfig = (
+    typeof rawUserConfig.emojiData === 'function'
+      ? { ...rawUserConfig, emojiData: undefined }
+      : rawUserConfig
+  ) as Omit<PickerConfig, 'emojiData'> & { emojiData?: EmojiData };
 
   // Get localized mood from emojiData, fallback to base default
   const localizedMood = (
@@ -109,7 +120,7 @@ export function mergeConfig(
     ...(userConfig.previewConfig ?? {}),
   };
 
-  const config = Object.assign(base, userConfig);
+  const config = Object.assign(base, userConfig) as PickerConfigInternal;
 
   const categories = mergeCategoriesConfig(
     userConfig.categories,
@@ -270,9 +281,15 @@ type ConfigExternal = {
    * own tests); the merged internal representation stays `CategoriesConfig`.
    */
   categories: UserCategoryConfig;
+  /**
+   * Dataset: an object (synchronous, SSR-safe), or a loader such as
+   * `() => import('emoji-picker-react/data/emojis-fr')` to code-split it.
+   * Omitted: the bundled English dataset.
+   */
+  emojiData: EmojiDataInput;
 } & Omit<
   PickerConfigInternal,
-  'previewConfig' | 'unicodeToHide' | 'categories'
+  'previewConfig' | 'unicodeToHide' | 'categories' | 'emojiData'
 >;
 
 export type PickerConfig = Partial<ConfigExternal>;

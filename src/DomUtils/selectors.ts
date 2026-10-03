@@ -1,8 +1,4 @@
-import { DataEmoji } from '../dataUtils/DataTypes';
-import {
-  emojiByUnified,
-  unifiedWithoutSkinTone,
-} from '../dataUtils/emojiSelectors';
+import { unifiedWithoutSkinTone } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
 import { firstVisibleElementInContainer } from './elementPositionInRow';
@@ -28,25 +24,6 @@ export function isEmojiButton(element: NullableElement): boolean {
   }
 
   return element.matches(EmojiButtonSelector);
-}
-
-export function emojiFromElement(
-  element: NullableElement,
-): [DataEmoji, string] | [] {
-  const originalUnified = originalUnifiedFromEmojiElement(element);
-  const unified = unifiedFromEmojiElement(element);
-
-  if (!originalUnified) {
-    return [];
-  }
-
-  const emoji = emojiByUnified(unified ?? originalUnified);
-
-  if (!emoji) {
-    return [];
-  }
-
-  return [emoji, unified as string];
 }
 
 // Any element inside an emoji button counts: custom List cells may nest

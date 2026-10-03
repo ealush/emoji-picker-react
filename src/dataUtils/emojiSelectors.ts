@@ -2,17 +2,14 @@
 // imports no React components, hooks, or context providers so it can never
 // form an import cycle with them. Context-aware lookups live in
 // components/context/PickerDataContext instead.
-import { Categories } from '../config/categoryConfig';
 import { cdnUrl } from '../config/cdnUrls';
-import { CustomEmoji } from '../config/customEmojiConfig';
-import emojis from '../data/emojis';
+import { getRegisteredDefaultEmojiData } from '../data/defaultEmojiData';
 import skinToneVariations, {
   skinTonesMapped,
 } from '../data/skinToneVariations';
-import { EmojiStyleValue, SkinTones } from '../types/exposedTypes';
+import { EmojiData, EmojiStyleValue, SkinTones } from '../types/exposedTypes';
 
-import { DataEmoji, DataEmojis, EmojiProperties, WithName } from './DataTypes';
-import { indexEmoji } from './alphaNumericEmojiIndex';
+import { DataEmoji, EmojiProperties, WithName } from './DataTypes';
 
 export function emojiNames(emoji: WithName): string[] {
   return emoji[EmojiProperties.name] ?? [];
@@ -77,63 +74,45 @@ export function emojiVariationUnified(
     : emojiUnified(emoji);
 }
 
+// Legacy global lookup (the public top-level `emojiByUnified` export) over
+// the registered default dataset. Indexed lazily on first use and again
+// only if the registered dataset changes, so importing this module costs
+// nothing and does not pull the dataset into a bundle.
+let indexedSource: EmojiData | null = null;
+let allEmojisByUnified: Record<string, DataEmoji> = Object.create(null);
+
+function registryIndex(): Record<string, DataEmoji> {
+  const source = getRegisteredDefaultEmojiData();
+  if (source === indexedSource) {
+    return allEmojisByUnified;
+  }
+  indexedSource = source;
+  allEmojisByUnified = Object.create(null);
+  const groups = source?.emojis ?? {};
+  for (const group of Object.keys(groups)) {
+    for (const emoji of groups[group]) {
+      allEmojisByUnified[emojiUnified(emoji)] = emoji;
+      emojiVariations(emoji).forEach((variation) => {
+        allEmojisByUnified[variation] = emoji;
+      });
+    }
+  }
+  return allEmojisByUnified;
+}
+
 export function emojiByUnified(unified?: string): DataEmoji | undefined {
   if (!unified) {
     return;
   }
 
-  if (allEmojisByUnified[unified]) {
-    return allEmojisByUnified[unified];
+  const index = registryIndex();
+  if (index[unified]) {
+    return index[unified];
   }
 
   const withoutSkinTone = unifiedWithoutSkinTone(unified);
-  return allEmojisByUnified[withoutSkinTone];
+  return index[withoutSkinTone];
 }
-
-export const allEmojis: DataEmojis = Object.values(emojis.emojis).flat();
-
-export function setCustomEmojis(customEmojis: CustomEmoji[]): void {
-  emojis.emojis[Categories.CUSTOM].length = 0;
-
-  customEmojis.forEach((emoji) => {
-    const emojiData = customToRegularEmoji(emoji);
-
-    emojis.emojis[Categories.CUSTOM].push(emojiData as never);
-
-    if (allEmojisByUnified[emojiData[EmojiProperties.unified]]) {
-      return;
-    }
-
-    allEmojis.push(emojiData);
-    allEmojisByUnified[emojiData[EmojiProperties.unified]] = emojiData;
-    indexEmoji(emojiData);
-  });
-}
-
-function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
-  return {
-    [EmojiProperties.name]: emoji.names.map((name) => name.toLowerCase()),
-    [EmojiProperties.unified]: emoji.id.toLowerCase(),
-    [EmojiProperties.added_in]: '0',
-    [EmojiProperties.imgUrl]: emoji.imgUrl,
-  };
-}
-
-const allEmojisByUnified: {
-  [unified: string]: DataEmoji;
-} = {};
-
-allEmojis.reduce((allEmojis, Emoji) => {
-  allEmojis[emojiUnified(Emoji)] = Emoji;
-
-  if (emojiHasVariations(Emoji)) {
-    emojiVariations(Emoji).forEach((variation) => {
-      allEmojis[variation] = Emoji;
-    });
-  }
-
-  return allEmojis;
-}, allEmojisByUnified);
 
 export function activeVariationFromUnified(unified: string): SkinTones | null {
   const [, suspectedSkinTone] = unified.split('-') as [string, SkinTones];
