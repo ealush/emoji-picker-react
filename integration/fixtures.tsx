@@ -413,6 +413,96 @@ export function ClassDojoPicker({
 }
 
 /**
+ * 12. Slate editor composer (@prezly/slate-editor, prezly/slate).
+ * Pattern: rich-text editor where picking inserts at the cursor and the
+ * editor keeps focus -- the same boundary as Slate's
+ * `Transforms.insertText(editor, emoji.emoji)`. The real Slate package is
+ * not installed here (unrelated dependency); this reproduces its
+ * integration boundary with a contenteditable host: insert the picked
+ * character at the live selection, collapse after it, refocus the editor,
+ * and close the picker. Substitution limit: Slate node normalization and
+ * history (undo) are not exercised.
+ */
+export function SlateComposer({
+  onSelect,
+}: {
+  onSelect?: (emoji: EmojiClickData) => void;
+}) {
+  const [open, setOpen] = React.useState(false);
+  const editorRef = React.useRef<HTMLDivElement>(null);
+  const savedRange = React.useRef<Range | null>(null);
+
+  // Real Slate wrappers save the editor selection as the picker opens
+  // (here on mousedown, before the toggle steals focus) and restore it on
+  // select -- the live selection is inside the search input by then.
+  const captureSelection = () => {
+    const editor = editorRef.current;
+    const selection = window.getSelection();
+    if (editor && selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      if (editor.contains(range.commonAncestorContainer)) {
+        savedRange.current = range.cloneRange();
+        return;
+      }
+    }
+    savedRange.current = null;
+  };
+
+  const handleSelect = (emoji: EmojiClickData) => {
+    const editor = editorRef.current;
+    const selection = window.getSelection();
+    const target =
+      savedRange.current ??
+      (selection && selection.rangeCount > 0
+        ? selection.getRangeAt(0)
+        : null);
+    if (editor && target && editor.contains(target.commonAncestorContainer)) {
+      target.deleteContents();
+      const text = document.createTextNode(emoji.emoji);
+      target.insertNode(text);
+      target.setStartAfter(text);
+      target.collapse(true);
+      selection?.removeAllRanges();
+      selection?.addRange(target);
+      editor.focus();
+    } else if (editor) {
+      editor.appendChild(document.createTextNode(emoji.emoji));
+      editor.focus();
+    }
+    savedRange.current = null;
+    onSelect?.(emoji);
+    setOpen(false);
+  };
+
+  return (
+    <div data-testid="slate-composer">
+      <div
+        data-testid="slate-editor"
+        ref={editorRef}
+        contentEditable
+        suppressContentEditableWarning
+      />
+      <button
+        data-testid="slate-toggle"
+        onMouseDown={captureSelection}
+        onClick={() => setOpen((o) => !o)}
+      >
+        emoji
+      </button>
+      {open && (
+        <div data-testid="slate-popover">
+          <EmojiPicker
+            emojiData={fixtureEmojiData}
+            categories={baseCategories}
+            onEmojiClick={handleSelect}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
  * 11. Signal sticker-creator sprite sheet (signalapp/Signal-Desktop via
  * @indutny/emoji-picker-react fork; sheetX/sheetY work from PR #323).
  * Pattern: sprite-sheet style with a custom getEmojiUrl; asserts the

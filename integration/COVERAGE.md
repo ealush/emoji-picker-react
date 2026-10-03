@@ -15,6 +15,7 @@ close/retain, P reopen/persistence) plus consumer-specific risks.
 | JsonJoyInputChar | x (toggle) | x | x | x (NATIVE insert) | retain | n/a | type-contract usage |
 | MedusaNotesPicker | x (dropdown) | x (placeholder) | x | x (note value) | close-on-select | n/a | legacy v4 prop set on v5 |
 | PushChatTypebar | x | x (style applied) | n/a (direct click) | x | n/a | n/a | `pickerStyle` inert, `style` migration |
+| SlateComposer | x (toggle) | x | x | x (count=1, cursor insert, focus) | close-on-select | reopen, no replay | selection save/restore, seeded draft |
 | ClassDojoPicker | x | x | x (custom "Panda") | x (isCustom, host label) | n/a | n/a | custom emoji search+select |
 | SignalStickerPicker | x | x | n/a (direct click) | x (getImageUrl contract) | n/a | n/a | sprite-sheet URL contract |
 
@@ -41,6 +42,7 @@ on the `consumer-shot-<key>` region by
 | JsonJoyInputChar | toggle-mounted picker | `grin` results | editor 😀, stays open |
 | MedusaNotesPicker | dropdown panel | `cat` result | note 🐱, dropdown closed |
 | PushChatTypebar | styled panel | `grin` results | draft 😀, stays open |
+| SlateComposer | toggle-mounted picker | `grin` results | editor Hello😀, popover closed |
 | ClassDojoPicker | full panel | `Panda` custom result | readout `custom:panda` |
 | SignalStickerPicker | sprite grid (deterministic data-URI) | `cat` result | readout `1f431` |
 

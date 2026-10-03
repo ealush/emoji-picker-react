@@ -255,6 +255,31 @@ test('classdojo custom emoji flow', async ({ page }) => {
   await expect(region).toHaveScreenshot('classdojo-selected.png');
 });
 
+test('slate editor flow', async ({ page }) => {
+  await page.goto(storyUrl('consumers-fixtures--slate'));
+  const region = page.locator(shot('slate'));
+  const editor = region.getByTestId('slate-editor');
+  // Seed a draft and park the cursor after it, like editor content.
+  await editor.click();
+  await editor.fill('Hello');
+  await page.getByTestId('slate-toggle').click();
+  await expect(region.getByLabel(searchLabel)).toBeVisible();
+  await waitForEmojisToLoad(page);
+  await expect(region).toHaveScreenshot('slate-open.png');
+
+  await region.getByLabel(searchLabel).fill('grin');
+  await expect(
+    region.getByLabel('grinning face', { exact: true }).first(),
+  ).toBeVisible();
+  await waitForEmojisToLoad(page);
+  await expect(region).toHaveScreenshot('slate-search.png');
+
+  await page.locator(cell('slate', '1f600')).first().click();
+  await expect(editor).toHaveText('Hello😀');
+  await expect(page.getByTestId('slate-popover')).toHaveCount(0);
+  await expect(region).toHaveScreenshot('slate-selected.png');
+});
+
 test('signal sticker creator flow', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--signal'));
   const region = page.locator(shot('signal'));

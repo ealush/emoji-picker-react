@@ -69,3 +69,4 @@ Never bulk-update baselines to erase failures. CI job `consumer-visual`
 | FileverseEmojiPicker | direct wrapper, no ds build | re-export chain verified by prop forwarding |
 | SignalStickerPicker | example.com sheet URL | sheet tile geometry is host-side; URL contract asserted |
 | PushChatTypebar | `style` for removed `pickerStyle` | intentional migration, documented in FINDINGS |
+| SlateComposer | contenteditable + Selection API for the real Slate package | insertion boundary identical; Slate node normalization/history not exercised |

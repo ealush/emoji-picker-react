@@ -2,11 +2,11 @@
 
 ## Headline
 
-All 11 runnable consumer fixtures pass against the new picker source,
+All 12 runnable consumer fixtures pass against the new picker source,
 behaviorally and visually:
-`npx vitest run integration` → 11/11, full `npm test` → 504/504 across
-65 files, `npx playwright test consumer-integrations` → 11/11 against
-33 committed baselines (clean re-run, no updates). `tsc --noEmit` clean.
+`npx vitest run integration` → 12/12, full `npm test` → 505/505 across
+65 files, `npx playwright test consumer-integrations` → 12/12 against
+36 committed baselines (clean re-run, no updates). `tsc --noEmit` clean.
 No picker source changes were needed; `src/` is untouched.
 
 ## Failures investigated (all resolved as fixture/test defects)
@@ -76,17 +76,49 @@ data-URI artwork (`deterministicCustomImageUrl`,
 `deterministicSpriteUrl`); production-shaped URLs remain only in the
 behavioral URL-contract test, which doesn't render images.
 
+## Second consumer-list drop (weekly downloads + dependents-ranked repos)
+
+Folded in 40 new candidates (manifest now 89). Almost all are on v4
+(latest 4.22.3); the single v3 consumer is `react-comments-section`
+(+ its repo `RiyaNegi/react-comments-section`) -- recorded as a
+documented-only v3->v5 migration gap, no fixture. Corrections from the
+fresh check: `plane` is back to documented-only (still listed via pnpm
+catalog, surface unverified -- the frimousse-migration claim is
+withdrawn); `medusa` root no longer lists the picker but the published
+`@medusajs/admin-ui` still does, so the Medusa fixture stays via the
+package; `EmbeddedChat` updated to ^4.4.9; `memos` (63k stars) excluded
+as removed; `million` is example-only.
+- New runnable fixture: `SlateComposer` (`@prezly/slate-editor`,
+  `prezly/slate`, plus `asma-ui-richeditor` on the shared editor
+  boundary). Real Slate wrappers save the editor selection on open and
+  restore it on select; the fixture does the same with the Selection API
+  (capture on toggle mousedown). 3 baselines, inspected, clean re-run
+  green. Limit: Slate normalization/history not exercised; Slate package
+  itself not installed (unrelated dependency, boundary reproduced).
+- Design systems (`@edifice.io/react`, `@selfcommunity/react-ui`,
+  `fabri-pix`, `impact-ui`, `tedooo-web-design-system`, `@aircall/ds`,
+  `@cgi-learning-hub/edifice-react`, framework) and chat/live-chat
+  surfaces (`@open-slide/core`, `@realtimexsco/live-chat`, `postiz-app`,
+  `coai`, `ChatAny`, `blinko`, `OpenGpt`, `ChatGPT-On-CS`, `openagent`,
+  `jan`, `penx`, `useSend`, `unstract`, `open-slide`) map to the existing
+  Fileverse / NextChat / Cherry / Botonic fixtures by identical boundary.
+- Left explicit gaps: `wini-web-components` (React-in-custom-element
+  boundary not reproduced), `orca` (dev-only dep), `plasmic`/`argent-x`/
+  `meshery`/`lightdash`/`vanguard`/`@autono/*` (surface unknown).
+
 ## Coverage and gaps
 
-- Runnable: 11 fixtures (NextChat, Cherry, Wire, LangWatch, Botonic,
-  Fileverse, json-joy, Medusa, Push, ClassDojo, Signal). Indirect consumers
+- Runnable: 12 fixtures (NextChat, Cherry, Wire, LangWatch, Botonic,
+  Fileverse, json-joy, Medusa, Push, ClassDojo, Slate, Signal). Indirect consumers
   (`@jsonjoy.com/collaborative-*`, `@fileverse-dev/ddoc/dsheet`,
   `@medusajs/admin`, `@botonic/plugin-flow-builder`,
-  `@fileverse-dev/fortune-react`) share these fixtures; see `manifest.json`.
-- Documented-only with reasons: 29 entries in `manifest.json` (no public
-  source, unverified graph-only, stale, historical, or unknown surface),
-  plus 7 indirect covered by shared fixtures.
-  Excluded: `makeplane/plane` (migrated to frimousse).
+  `@fileverse-dev/fortune-react`, `@open-slide/core` chain,
+  `@jsonjoy.com/ui` chain) share these fixtures; see `manifest.json`.
+- Documented-only with reasons: 42 entries in `manifest.json`
+  (no public source, unverified graph-only, stale, historical, dev-only,
+  example-only, v3 gap, or unknown surface),
+  plus 31 indirect covered by shared fixtures.
+  Excluded: `usememos/memos` (removed).
 - Not done: full upstream app clones, reference-vs-target (4.22.2)
   differential run, SSR/hydration per consumer (covered by repo suite
   instead).

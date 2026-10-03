@@ -37,6 +37,7 @@ import {
   NextChatComposer,
   PushChatTypebar,
   SignalStickerPicker,
+  SlateComposer,
   WireReactions,
   fixtureEmojiData,
 } from './fixtures';
@@ -276,6 +277,42 @@ describe('consumer integrations (new picker)', () => {
     expect(screen.getByTestId('classdojo-picked')).toHaveTextContent(
       'custom:panda',
     );
+  });
+
+  it('Slate editor: select inserts at the saved cursor and refocuses the editor', async () => {
+    const onSelect = vi.fn();
+    render(<SlateComposer onSelect={onSelect} />);
+    const editor = screen.getByTestId('slate-editor');
+
+    // Seed content and park the cursor after it, like an editor draft.
+    editor.textContent = 'Hello';
+    const range = document.createRange();
+    range.selectNodeContents(editor);
+    range.collapse(false);
+    const selection = window.getSelection();
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+
+    // Opening the picker moves focus away; the saved range must survive.
+    await openPickerByLabel('slate-toggle');
+    expect(screen.getByTestId('slate-popover')).toBeInTheDocument();
+
+    await userEvent.type(searchInput(), 'grinning face');
+    await userEvent.click(await findVisibleEmojiButton('grinning face'));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    const payload = onSelect.mock.calls[0][0] as EmojiClickData;
+    expectEmojiPayload(payload);
+    // Inserted at the cursor (after "Hello"), not appended elsewhere.
+    expect(editor.textContent).toBe(`Hello${payload.emoji}`);
+    expect(document.activeElement).toBe(editor);
+    // Close-on-select contract.
+    expect(screen.queryByTestId('slate-popover')).not.toBeInTheDocument();
+
+    // Reopen works and does not replay the callback.
+    await openPickerByLabel('slate-toggle');
+    expect(screen.getByTestId('slate-popover')).toBeInTheDocument();
+    expect(onSelect).toHaveBeenCalledTimes(1);
   });
 
   it('Signal sticker creator: sprite-sheet URL contract via getEmojiUrl', async () => {

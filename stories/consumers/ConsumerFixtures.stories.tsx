@@ -26,6 +26,7 @@ import {
   NextChatComposer,
   PushChatTypebar,
   SignalStickerPicker,
+  SlateComposer,
   WireReactions,
   deterministicSpriteUrl,
 } from '../../integration/fixtures';
@@ -117,6 +118,12 @@ export const ClassDojo = () => (
   </Shot>
 );
 
+export const Slate = () => (
+  <Shot shotKey="slate">
+    <SlateComposer />
+  </Shot>
+);
+
 export const Signal = () => {
   const [last, setLast] = React.useState('');
   const sprite = React.useMemo(() => deterministicSpriteUrl(), []);
@@ -142,6 +149,7 @@ const indexEntries: Array<{ story: string; label: string; blurb: string }> = [
   { story: 'medusa', label: 'Medusa', blurb: 'Legacy admin dropdown wrapper, NATIVE + NEUTRAL.' },
   { story: 'push-chat', label: 'Push Chat', blurb: 'Typebar composer on the migrated style contract.' },
   { story: 'class-dojo', label: 'ClassDojo', blurb: 'Team custom emoji list with search-result UI.' },
+  { story: 'slate', label: 'Slate', blurb: 'Rich-text editor inserting at the saved cursor.' },
   { story: 'signal', label: 'Signal', blurb: 'Sticker-creator sprite-sheet URL contract.' },
 ];
 
