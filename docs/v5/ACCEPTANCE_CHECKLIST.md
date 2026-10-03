@@ -170,18 +170,20 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [x] region registry is Root-scoped.
 - [x] generic region ordering uses DOM document order, not registration order.
-- [ ] consumer non-region controls are skipped by picker arrow navigation but remain tabbable.
+- [x] consumer non-region controls are skipped by picker arrow navigation but remain tabbable.
 - [x] active-search Search↔Grid exception works.
 - [x] category tab horizontal navigation works.
 - [x] grid logical Left/Right/Up/Down works.
-- [ ] omitted regions create no dead destinations.
+- [x] omitted regions create no dead destinations.
 - [x] offscreen logical destination is materialized, scrolled and focused.
 - [x] focus remains on real emoji controls.
 - [x] stale materialize/focus requests are canceled after query change.
-- [ ] stale requests are canceled after resize/column change.
-- [ ] stale requests are canceled after data/category change.
-- [ ] stale requests are canceled after reactions transition/unmount.
+- [x] stale requests are canceled after resize/column change.
+- [x] stale requests are canceled after data/category change.
+- [x] stale requests are canceled after reactions transition/unmount.
 - [x] multiple Roots never focus/mutate one another.
+
+Evidence: `playwright/v5-acceptance.spec.ts` — "skips consumer UI" (arrow skip + Tab reachability), "omitted Search/CategoryNav leaves no dead destination", and "stale navigation is canceled after a resize / categories / data / unmount change / reactions transition" with a positive control. Resize needed a fix: column count only recomputed on CSS transitions, so a fluid-width picker kept stale row math; a `ResizeObserver` now recomputes it and a column-count change invalidates pending navigation.
 
 ## 14. Accessibility and IDs
 

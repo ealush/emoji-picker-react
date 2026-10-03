@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { useMutableConfig } from '../../config/mutableConfig';
 import {
+  useCategoriesConfig,
   useDefaultSearchValueConfig,
   useSearchValueConfig,
 } from '../../config/useConfig';
@@ -109,31 +110,38 @@ export const ReactionsModeObserver = React.memo(function ReactionsModeObserver()
 });
 
 // Root-scoped navigation generation (STATE.md §10 / PERFORMANCE.md §7).
-// Reactions transitions, dataset identity changes, and measured geometry
-// changes each obsolete pending materialize/scroll/focus completions.
-// Search intent invalidates from useApplySearch, unmount from registry
-// disposal, so those are not duplicated here.
+// Reactions transitions, dataset identity changes (custom emojis included),
+// category order/membership changes, and measured geometry changes each
+// obsolete pending materialize/scroll/focus completions. Column-count
+// changes invalidate from useCategoryHeight, search intent from
+// useApplySearch, unmount from registry disposal.
 export const NavigationInvalidation = React.memo(function NavigationInvalidation() {
   const registry = useNavigationRegistry();
   const [reactionsMode] = useReactionsModeState();
   const { emojiData } = usePickerDataContext();
   const [emojiSize] = useEmojiSizeState();
+  // Keyed by order/membership, not identity: the merged config is rebuilt
+  // for unrelated prop changes, which must not cancel navigation.
+  const categoriesKey = useCategoriesConfig()
+    .map((config) => config.category)
+    .join('|');
   const prevSnapshot = React.useRef<
-    [boolean, unknown, number | null]
-  >([reactionsMode, emojiData, emojiSize]);
+    [boolean, unknown, number | null, string]
+  >([reactionsMode, emojiData, emojiSize, categoriesKey]);
 
   React.useEffect(() => {
     const prev = prevSnapshot.current;
     if (
       prev[0] === reactionsMode &&
       prev[1] === emojiData &&
-      prev[2] === emojiSize
+      prev[2] === emojiSize &&
+      prev[3] === categoriesKey
     ) {
       return;
     }
-    prevSnapshot.current = [reactionsMode, emojiData, emojiSize];
+    prevSnapshot.current = [reactionsMode, emojiData, emojiSize, categoriesKey];
     registry.invalidate();
-  }, [registry, reactionsMode, emojiData, emojiSize]);
+  }, [registry, reactionsMode, emojiData, emojiSize, categoriesKey]);
 
   return null;
 });

@@ -350,6 +350,88 @@ export function StaleNavigation() {
   );
 }
 
+// Each scenario changes one input the navigation generation must track
+// (NAVIGATION.md §11) between beginning and resolving a deferred move.
+type StaleScenario = 'none' | 'resize' | 'categories' | 'data' | 'unmount';
+
+export function StaleNavigationScenarios() {
+  const [scenario, setScenario] = useState<StaleScenario>('none');
+  const [dataset, setDataset] = useState<EmojiData>(acceptanceData);
+  // Driven by a window event, not a captured setter: Storybook may mount
+  // more than one instance, and only the one in the document must react.
+  useEffect(() => {
+    const hooks = window as typeof window & {
+      __eprStaleScenario?: (next: StaleScenario) => void;
+    };
+    hooks.__eprStaleScenario = (next) => {
+      window.dispatchEvent(
+        new CustomEvent('epr-stale-scenario', { detail: next }),
+      );
+    };
+    const onScenario = (event: Event) => {
+      const next = (event as CustomEvent<StaleScenario>).detail;
+      setScenario(next);
+      if (next === 'data') {
+        // Same content, new identity: the dataset changed.
+        setDataset({ ...acceptanceData });
+      }
+    };
+    window.addEventListener('epr-stale-scenario', onScenario);
+    return () => {
+      window.removeEventListener('epr-stale-scenario', onScenario);
+    };
+  }, []);
+  return (
+    <div data-stale-scenario={scenario}>
+      {scenario === 'unmount' ? null : (
+        <Root
+          emojiData={dataset}
+          style={{ width: scenario === 'resize' ? 220 : 350 }}
+          categories={
+            scenario === 'categories'
+              ? [Categories.ANIMALS_NATURE, Categories.SMILEYS_PEOPLE]
+              : undefined
+          }
+        >
+          <Search />
+          <CategoryNav />
+          <Viewport>
+            <List />
+          </Viewport>
+          <DeferredNavigationHarness />
+        </Root>
+      )}
+      <MarkUnifiedTarget
+        unified="1f603"
+        attribute="data-v5-stale-navigation-target"
+      />
+    </div>
+  );
+}
+
+export function StaleNavigationReactions() {
+  return (
+    <div>
+      <Root
+        emojiData={acceptanceData}
+        reactionsDefaultOpen
+        reactions={['1f600', '1f603']}
+      >
+        <Search />
+        <CategoryNav />
+        <Viewport>
+          <List />
+        </Viewport>
+        <DeferredNavigationHarness />
+      </Root>
+      <MarkUnifiedTarget
+        unified="1f603"
+        attribute="data-v5-stale-navigation-target"
+      />
+    </div>
+  );
+}
+
 export function ReactionsExpand() {
   const [mode, setMode] = useState<boolean | null>(null);
   return (

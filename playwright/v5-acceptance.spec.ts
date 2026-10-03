@@ -114,6 +114,51 @@ test.describe('v5 acceptance', () => {
     expect(buttonFocused).toBe(true);
   });
 
+  // NAVIGATION.md §6: omitted regions are absent from the graph, so every
+  // arrow move at their former boundary lands on a real control.
+  const focusedPart = (page: import('@playwright/test').Page) =>
+    page.evaluate(() =>
+      document.activeElement?.closest('[data-epr-part]')?.getAttribute('data-epr-part') ??
+      document.activeElement?.tagName,
+    );
+
+  test('omitted Search leaves no dead destination above CategoryNav or Grid', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--without-search'));
+    const firstTab = page
+      .getByRole('tablist', { name: 'Category navigation' })
+      .getByRole('tab')
+      .first();
+    await firstTab.focus();
+    await page.keyboard.press('ArrowUp');
+    // Nothing above CategoryNav: focus stays on a real tab.
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
+
+    await firstTab.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(
+      page.locator('[data-epr-part="category-content"] [data-epr-part="emoji"]:focus'),
+    ).toBeVisible();
+    await page.keyboard.press('ArrowUp');
+    // Grid top edge goes to the previous rendered region, CategoryNav.
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  });
+
+  test('omitted CategoryNav leaves no dead destination between Grid and Search', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--without-category-nav'));
+    const search = page.getByLabel('Type to search for an emoji');
+    await search.focus();
+    await page.keyboard.press('ArrowDown');
+    await expect(
+      page.locator('[data-epr-part="category-content"] [data-epr-part="emoji"]:focus'),
+    ).toBeVisible();
+    await page.keyboard.press('ArrowUp');
+    await expect(search).toBeFocused();
+  });
+
   test('omitting CategoryNav keeps Search to Grid navigation usable', async ({
     page,
   }) => {
@@ -494,6 +539,101 @@ test.describe('v5 acceptance', () => {
       page.locator('[data-v5-stale-navigation-target="true"]'),
     ).not.toBeFocused();
     await expect(page.getByLabel('Type to search for an emoji')).toBeFocused();
+  });
+
+  // NAVIGATION.md §11: every generation input, plus a control proving the
+  // harness does complete when nothing changed.
+  const deferred = {
+    begin: (page: import('@playwright/test').Page) =>
+      page.evaluate(() =>
+        (
+          window as typeof window & { __eprBeginDeferredNavigation?: () => void }
+        ).__eprBeginDeferredNavigation?.(),
+      ),
+    resolve: (page: import('@playwright/test').Page) =>
+      page.evaluate(() =>
+        (
+          window as typeof window & {
+            __eprResolveDeferredNavigation?: () => void;
+          }
+        ).__eprResolveDeferredNavigation?.(),
+      ),
+    // Let effects, layout and ResizeObserver callbacks settle.
+    settle: (page: import('@playwright/test').Page) =>
+      page.evaluate(
+        () =>
+          new Promise<void>((resolve) =>
+            requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+          ),
+      ),
+  };
+  const staleTarget = (page: import('@playwright/test').Page) =>
+    page.locator('[data-v5-stale-navigation-target="true"]');
+
+  test('deferred navigation completes when nothing invalidates it (control)', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--stale-navigation-scenarios'));
+    await expect(staleTarget(page)).toHaveCount(1);
+    await deferred.begin(page);
+    await deferred.settle(page);
+    await deferred.resolve(page);
+    await expect(staleTarget(page)).toBeFocused();
+  });
+
+  for (const scenario of ['resize', 'categories', 'data', 'unmount'] as const) {
+    test(`stale navigation is canceled after a ${scenario} change`, async ({
+      page,
+    }) => {
+      await page.goto(storyUrl('v5-acceptance--stale-navigation-scenarios'));
+      await expect(staleTarget(page)).toHaveCount(1);
+      const perRow = page.locator('[data-epr-emojis-per-row]').first();
+      const columnsBefore = Number(
+        await perRow.getAttribute('data-epr-emojis-per-row'),
+      );
+      await deferred.begin(page);
+      await page.evaluate(
+        (next) =>
+          (
+            window as typeof window & {
+              __eprStaleScenario?: (value: string) => void;
+            }
+          ).__eprStaleScenario?.(next),
+        scenario,
+      );
+      await deferred.settle(page);
+      if (scenario === 'resize') {
+        // A plain width change (no CSS transition) really reflowed columns.
+        await expect
+          .poll(async () =>
+            Number(await perRow.getAttribute('data-epr-emojis-per-row')),
+          )
+          .toBeLessThan(columnsBefore);
+      }
+      await deferred.resolve(page);
+      if (scenario === 'unmount') {
+        // The Root is gone: nothing of it may be focused or throw.
+        await expect(page.locator('aside')).toHaveCount(0);
+        expect(
+          await page.evaluate(() => document.activeElement?.tagName),
+        ).toBe('BODY');
+      } else {
+        await expect(staleTarget(page)).not.toBeFocused();
+      }
+    });
+  }
+
+  test('stale navigation is canceled after a reactions transition', async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('v5-acceptance--stale-navigation-reactions'));
+    await deferred.begin(page);
+    await page.getByLabel('Show all Emojis').click();
+    await expect(page.getByRole('grid')).toBeVisible();
+    await expect(staleTarget(page)).toHaveCount(1);
+    await deferred.settle(page);
+    await deferred.resolve(page);
+    await expect(staleTarget(page)).not.toBeFocused();
   });
 
   test('reaction expansion emits observer and transfers focus into the managed panel', async ({
