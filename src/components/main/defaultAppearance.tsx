@@ -170,14 +170,18 @@ const styles = stylesheet.create({
     // primitives bundle keeps its separation marker scan clean.
     '--': { ...defaultPickerTokens, ...darkThemeBaseVariables },
   },
+  // color-scheme makes native parts (scrollbars, the search field's
+  // controls) render dark too; without it they stay light on a dark picker.
   autoThemeDark: {
     '.': ClassNames.autoTheme,
     '@media (prefers-color-scheme: dark)': {
       '--': DarkTheme,
+      colorScheme: 'dark',
     },
   },
   darkTheme: {
     '.': ClassNames.darkTheme,
     '--': DarkTheme,
+    colorScheme: 'dark',
   },
 });

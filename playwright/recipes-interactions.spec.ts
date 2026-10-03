@@ -12,6 +12,7 @@
  *
  * Recipes are discovered from Storybook's index by the `recipe` tag.
  */
+import { AxeBuilder } from '@axe-core/playwright';
 import {
   expect,
   test,
@@ -302,7 +303,10 @@ test('every recipe looks right in each interaction state', async ({
       await expect
         .soft(animalsTab, `${id}: category nav`)
         .toHaveAttribute('aria-selected', 'true');
-      // The jump is a smooth scroll: wait for the section to arrive.
+      // The jump is a smooth scroll, and a jump made right after clearing
+      // the search waits for the debounced commit to restore the full list
+      // (useScrollCategoryIntoView): under parallel load that can take a
+      // few seconds. The position assertion is unchanged.
       await expect
         .poll(
           () =>
@@ -317,7 +321,7 @@ test('every recipe looks right in each interaction state', async ({
                   body.getBoundingClientRect().top,
               );
             }),
-          { message: `${id}: scrolled to section`, timeout: 5000 },
+          { message: `${id}: scrolled to section`, timeout: 10000 },
         )
         .toBeLessThan(2);
       await shot(page, group, 'category-navigation');
@@ -350,6 +354,24 @@ test('every recipe looks right in each interaction state', async ({
         )
         .toBeVisible();
       await shot(page, group, 'reactions-expanded');
+      // Reactions-first designs are axe-checked collapsed by recipes.spec;
+      // the expanded picker is a different surface and must pass too.
+      const { violations } = await new AxeBuilder({ page })
+        .include('#storybook-root')
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze();
+      expect
+        .soft(
+          violations.map(
+            (violation) =>
+              `${violation.id}: ${violation.nodes
+                .slice(0, 3)
+                .map((node) => node.target.join(' '))
+                .join(' | ')}`,
+          ),
+          `${id}: axe (reactions expanded)`,
+        )
+        .toEqual([]);
       covered[group] += 1;
     }
   }

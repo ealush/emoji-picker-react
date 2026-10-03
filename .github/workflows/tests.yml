@@ -40,6 +40,15 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npm run test:visual
+      # Actual/diff images let environment drift be adjudicated from the CI
+      # image itself (docs/v5/VISUAL_COMPATIBILITY.md).
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-evidence
+          path: test-results/
+          retention-days: 14
 
   # Real-consumer visual integrations: drives every runnable fixture in
   # stories/consumers/ through open/search/select flows and compares the

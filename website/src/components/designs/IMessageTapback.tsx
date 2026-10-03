@@ -16,6 +16,7 @@ export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellPro
   return (
     <div className="imessage-stage">
       <RootComponent         className={className}
+        colorScheme="dark"
         reactionsDefaultOpen
         reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}
       />
