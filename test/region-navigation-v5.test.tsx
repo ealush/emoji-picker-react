@@ -351,7 +351,7 @@ describe('cross-region keyboard regression (NAVIGATION.md §4)', () => {
 describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
   it('aborts a pending arrow-key focus after the filter changes', async () => {
     renderPicker();
-    const buttons = await screen.findAllByRole('button', {
+    const buttons = await screen.findAllByRole('gridcell', {
       name: /grinning face|cat face|dog face|bird/i,
     });
     expect(buttons.length).toBeGreaterThan(1);
@@ -375,7 +375,7 @@ describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
 
   it('completes the pending focus when nothing invalidates it', async () => {
     renderPicker();
-    const buttons = await screen.findAllByRole('button', {
+    const buttons = await screen.findAllByRole('gridcell', {
       name: /grinning face|cat face|dog face|bird/i,
     });
     const [first, second] = buttons;

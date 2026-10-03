@@ -499,7 +499,7 @@ describe('v5 reaction-mode observation (STATE.md §7)', () => {
     expect(onModeChange).toHaveBeenCalledTimes(1);
     expect(onModeChange).toHaveBeenLastCalledWith(false);
 
-    const emoji = await screen.findByRole('button', { name: 'grinning face' });
+    const emoji = await screen.findByRole('gridcell', { name: 'grinning face' });
     fireEvent.mouseDown(emoji);
     fireEvent.click(emoji);
     expect(onModeChange).toHaveBeenCalledTimes(2);

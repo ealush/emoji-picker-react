@@ -35,6 +35,7 @@ export function EmojiCategory({
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
   const categoryId = categoryIdFromCategoryConfig(categoryConfig);
   const { CategoryHeader } = useListComponents();
+  const hasCells = React.Children.count(children) > 0;
 
   return (
     <li
@@ -51,20 +52,29 @@ export function EmojiCategory({
       {CategoryHeader ? (
         <CategoryHeader
           className={cx(styles.label)}
+          aria-hidden
           data-epr-part="category-label"
           category={{ id: categoryId, name: categoryName }}
         >
           {categoryName}
         </CategoryHeader>
       ) : (
-        <h2 className={cx(styles.label)} data-epr-part="category-label">
+        // Visual only: the rowgroup already carries the category name, and
+        // a heading is not an allowed child of a grid rowgroup.
+        <h2
+          className={cx(styles.label)}
+          aria-hidden
+          data-epr-part="category-label"
+        >
           {categoryName}
         </h2>
       )}
       <div
         className={cx(styles.categoryContent)}
         style={{ height }}
-        role="row"
+        // A row must own cells: while virtualization renders none, the
+        // container is presentational.
+        role={hasCells ? 'row' : 'none'}
         data-epr-part="category-content"
         data-epr-emojis-per-row={emojisPerRow}
       >

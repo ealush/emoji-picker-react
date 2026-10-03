@@ -21,6 +21,7 @@ type ClickableEmojiProps = Readonly<
     tabIndex?: number;
     as?: React.ComponentType<EmojiRenderProps>;
     emojiInfo?: ListEmoji;
+    role?: 'gridcell';
   }
 >;
 
@@ -41,6 +42,7 @@ export function ClickableEmoji({
   tabIndex,
   as,
   emojiInfo,
+  role,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -58,6 +60,7 @@ export function ClickableEmoji({
       className={buttonClassName}
       as={as}
       emojiInfo={emojiInfo}
+      role={role}
     >
       <ViewOnlyEmoji
         unified={unified}

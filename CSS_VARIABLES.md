@@ -24,7 +24,7 @@ aside.EmojiPickerReact {
 | `--epr-emoji-padding`        | Padding around each emoji.                         | `5px`     |
 | `--epr-emoji-gap`            | **Deprecated**. Use `--epr-emoji-padding` instead. | -         |
 | `--epr-bg-color`             | Background color of the picker.                    | `#fff`    |
-| `--epr-text-color`           | Main text color.                                   | `#858585` |
+| `--epr-text-color`           | Main text color.                                   | `#6b6b6b` |
 | `--epr-picker-border-color`  | Border color of the picker container.              | `#e7e7e7` |
 | `--epr-picker-border-radius` | Border radius of the picker.                       | `8px`     |
 | `--epr-horizontal-padding`   | Horizontal padding for various elements.           | `10px`    |

@@ -82,7 +82,7 @@ export function PreviewBody() {
             unified={previewEmoji?.unified as string}
             emoji={emoji}
             emojiStyle={emojiStyle}
-            size={45}
+            size={PREVIEW_EMOJI_SIZE}
             getEmojiUrl={getEmojiUrl}
             className={cx(styles.emoji)}
           />
@@ -91,7 +91,7 @@ export function PreviewBody() {
             unified={emojiUnified(defaultEmoji)}
             emoji={defaultEmoji}
             emojiStyle={emojiStyle}
-            size={45}
+            size={PREVIEW_EMOJI_SIZE}
             getEmojiUrl={getEmojiUrl}
             className={cx(styles.emoji)}
           />
@@ -105,6 +105,9 @@ export function PreviewBody() {
 }
 
 export type PreviewEmoji = ActiveEmojiState;
+
+// Tokenized so compact previews can shrink the emoji (default 45px).
+const PREVIEW_EMOJI_SIZE = 'var(--epr-preview-emoji-size)';
 
 const styles = stylesheet.create({
   preview: {

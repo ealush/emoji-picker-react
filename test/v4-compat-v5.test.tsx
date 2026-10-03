@@ -74,7 +74,7 @@ describe('v5 literal acceptance (V4_API_MATRIX.md)', () => {
         />,
       );
       // Seeded suggestion renders in Suggested *and* in its grid category.
-      const matches = await screen.findAllByRole('button', {
+      const matches = await screen.findAllByRole('gridcell', {
         name: 'grinning face',
       });
       expect(matches.length).toBeGreaterThanOrEqual(2);
@@ -111,7 +111,7 @@ describe('v5 literal acceptance (V4_API_MATRIX.md)', () => {
           autoFocusSearch={false}
         />,
       );
-      const matches = await screen.findAllByRole('button', {
+      const matches = await screen.findAllByRole('gridcell', {
         name: 'grinning face',
       });
       expect(matches.length).toBeGreaterThanOrEqual(2);

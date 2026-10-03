@@ -35,6 +35,7 @@ export const structuralPickerTokens: Record<string, string> = {
 
   /*  Preview */
   '--epr-preview-height': '70px',
+  '--epr-preview-emoji-size': '45px',
   '--epr-preview-text-size': '14px',
   '--epr-preview-text-padding': '0 var(--epr-horizontal-padding)',
 
@@ -65,7 +66,9 @@ export const lightPickerTokens: Record<string, string> = {
   '--epr-hover-bg-color': '#e5f0fa',
   '--epr-hover-bg-color-reduced-opacity': '#e5f0fa80',
   '--epr-focus-bg-color': '#e0f0ff',
-  '--epr-text-color': '#858585',
+  // WCAG AA: #858585 measured 3.4–3.7:1 on the light surfaces; #6b6b6b
+  // is ~5:1 on both the background and the search field.
+  '--epr-text-color': '#6b6b6b',
   '--epr-search-input-bg-color': '#f6f6f6',
   '--epr-picker-border-color': '#e7e7e7',
   '--epr-bg-color': '#fff',

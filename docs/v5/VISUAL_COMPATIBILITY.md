@@ -51,6 +51,7 @@ A major version does not automatically authorize visual redesign.
 | Snapshot | Change | Reason |
 | --- | --- | --- |
 | `a11y-reactions-focus/reactions-keyboard-focus.png` | reactions row 49px → 50px tall | In v4 the collapsed pill still laid out the hidden full-picker regions, so the preview's 1px top border consumed a pixel of the 50px pill. v5 removes the hidden panel from layout (`display: none` + `inert`), so the row fills the pill. Glyphs, spacing and focus treatment are unchanged; verified against a v4 master build (ul 49px, aside 52px) and the v5 build (ul 50px, aside 52px). |
+| default light theme (all light fixtures) | `--epr-text-color` `#858585` → `#6b6b6b` | Accessibility: axe (WCAG 2.1 AA) measured 3.4–3.7:1 for category titles, the search placeholder and preview text on the light surfaces; `#6b6b6b` is ≈5:1 on both. Dark theme unchanged. Existing light fixtures stay within the suite's pixel tolerance, so their baselines were not regenerated. |
 
 ## Animation
 

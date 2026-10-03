@@ -570,7 +570,11 @@ test.describe('v5 acceptance', () => {
       '[data-epr-part="category-content"] [data-epr-part="emoji"]:focus',
     );
     await expect(focused).toBeVisible();
-    expect(await focused.getAttribute('data-epr-unified')).not.toBe(firstUnified);
+    // Focus moves one frame after the keypress (navigation is paced on
+    // real focus movement), so poll rather than read it immediately.
+    await expect
+      .poll(() => focused.getAttribute('data-epr-unified'))
+      .not.toBe(firstUnified);
   });
 
   test('multiple Roots isolate search navigation and generate no library IDs', async ({

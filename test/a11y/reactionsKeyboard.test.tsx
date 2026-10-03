@@ -109,7 +109,7 @@ describe('reactions keyboard support (a11y)', () => {
     );
 
     await userEvent.click(
-      screen.getByRole('button', { name: 'grinning face' }),
+      screen.getByRole('gridcell', { name: 'grinning face' }),
     );
 
     // The collapse mounted the bar; keyboard users tab into it.

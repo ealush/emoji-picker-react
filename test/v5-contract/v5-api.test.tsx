@@ -303,7 +303,7 @@ describe('v5 main-entry compatibility', () => {
       name: 'Show all Emojis',
     });
     fireEvent.click(expand);
-    const emoji = await screen.findByRole('button', { name: 'grinning face' });
+    const emoji = await screen.findByRole('gridcell', { name: 'grinning face' });
     fireEvent.mouseDown(emoji);
     fireEvent.click(emoji);
     await vi.waitFor(() => {
@@ -935,7 +935,7 @@ describe('v5 reaction observation', () => {
       await screen.findByRole('button', { name: 'Show all Emojis' }),
     );
     expect(onModeChange).toHaveBeenCalledTimes(1);
-    const emoji = await screen.findByRole('button', { name: 'grinning face' });
+    const emoji = await screen.findByRole('gridcell', { name: 'grinning face' });
     fireEvent.mouseDown(emoji);
     fireEvent.click(emoji);
     expect(onModeChange).toHaveBeenCalledTimes(2);

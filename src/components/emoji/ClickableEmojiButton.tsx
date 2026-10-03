@@ -25,6 +25,8 @@ type ClickableEmojiButtonProps = Readonly<{
   /** Consumer cell (List `components.Emoji`) replacing the default button. */
   as?: React.ComponentType<EmojiRenderProps>;
   emojiInfo?: ListEmoji;
+  /** `gridcell` inside the emoji grid; native button role elsewhere. */
+  role?: 'gridcell';
 }>;
 
 export function ClickableEmojiButton({
@@ -41,6 +43,7 @@ export function ClickableEmojiButton({
   tabIndex,
   as: Custom,
   emojiInfo,
+  role,
 }: ClickableEmojiButtonProps) {
   const cellClassName = emojiCellClassName({
     hidden,
@@ -54,6 +57,7 @@ export function ClickableEmojiButton({
   if (Custom && emojiInfo) {
     const managedProps = {
       type: 'button' as const,
+      role,
       tabIndex,
       className: cx(buttonStyles.button, cellClassName),
       'data-epr-part': 'emoji',
@@ -72,6 +76,7 @@ export function ClickableEmojiButton({
   return (
     <Button
       tabIndex={tabIndex}
+      role={role}
       className={cellClassName}
       data-epr-part="emoji"
       data-epr-unified={unified}

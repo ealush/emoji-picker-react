@@ -8,6 +8,7 @@
  */
 
 import { expect, Page, test } from '@playwright/test';
+import { categoryLabel } from './helpers/categoryLabel';
 
 /** Constructs a Storybook iframe URL for a given story ID */
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
@@ -193,6 +194,6 @@ test('clicking custom icon category navigates correctly', async ({ page }) => {
 
   // Verify the category heading is visible (scroll happened)
   await expect(
-    page.getByRole('heading', { name: 'Animals & Nature' }),
+    categoryLabel(page, 'Animals & Nature'),
   ).toBeVisible();
 });

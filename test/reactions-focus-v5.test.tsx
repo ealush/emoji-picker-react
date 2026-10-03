@@ -101,7 +101,7 @@ describe('v5 reactions focus management (STATE.md §8)', () => {
     fireEvent.click(expand);
     await waitForFocus('Type to search for an emoji');
 
-    const emoji = await screen.findByRole('button', { name: 'grinning face' });
+    const emoji = await screen.findByRole('gridcell', { name: 'grinning face' });
     fireEvent.mouseDown(emoji);
     fireEvent.click(emoji);
     await waitForFocus('grinning face');

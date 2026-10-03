@@ -87,7 +87,7 @@ const renderPicker = (props: Partial<Props> = {}) => {
 };
 
 const emojisIn = (name: string) =>
-  within(screen.getByRole('rowgroup', { name })).queryAllByRole('button');
+  within(screen.getByRole('rowgroup', { name })).queryAllByRole('gridcell');
 
 describe('first-paint render gating', () => {
   const realIO = globalThis.IntersectionObserver;

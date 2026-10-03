@@ -24,7 +24,10 @@ export function ViewOnlyEmoji({
 
   const style = {} as React.CSSProperties;
   if (size) {
-    style.width = style.height = style.fontSize = `${size}px`;
+    style.width =
+      style.height =
+      style.fontSize =
+        typeof size === 'number' ? `${size}px` : size;
   }
 
   const emojiToRender = emoji ? emoji : emojiByUnified(unified);
