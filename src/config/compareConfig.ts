@@ -40,32 +40,45 @@ export function compareConfig(prev: PickerConfig, next: PickerConfig) {
   return true;
 }
 
+type ValueComparator = (prev: unknown, next: unknown) => boolean;
+
+const identityOnly: ValueComparator = () => false;
+
+// Keys with dedicated structural comparisons. `emojiData` and `style` are
+// identity-only: datasets are large (identity is the contract, see
+// useDataIdentityStabilityWarning) and style objects feed the DOM.
+const KEY_COMPARATORS: Record<string, ValueComparator> = {
+  customEmojis: (prev, next) =>
+    customEmojisEqual(
+      (prev as CustomEmoji[] | undefined) ?? [],
+      (next as CustomEmoji[] | undefined) ?? [],
+    ),
+  categories: (prev, next) =>
+    categoriesEqual(
+      prev as UserCategoryConfig | undefined,
+      next as UserCategoryConfig | undefined,
+    ),
+  suggestedEmojis: (prev, next) =>
+    suggestedEmojisEqual(
+      prev as string[] | undefined,
+      next as string[] | undefined,
+    ),
+  emojiData: identityOnly,
+  style: identityOnly,
+};
+
 function configValueEqual(key: string, prev: unknown, next: unknown): boolean {
   if (prev === next) {
     return true;
   }
-  switch (key) {
-    case 'customEmojis':
-      return customEmojisEqual(
-        (prev as CustomEmoji[] | undefined) ?? [],
-        (next as CustomEmoji[] | undefined) ?? [],
-      );
-    case 'categories':
-      return categoriesEqual(
-        prev as UserCategoryConfig | undefined,
-        next as UserCategoryConfig | undefined,
-      );
-    case 'suggestedEmojis':
-      return suggestedEmojisEqual(
-        prev as string[] | undefined,
-        next as string[] | undefined,
-      );
-    // Identity-only: datasets are large (identity is the contract, see
-    // useDataIdentityStabilityWarning) and style objects feed the DOM.
-    case 'emojiData':
-    case 'style':
-      return false;
+  const comparator = KEY_COMPARATORS[key];
+  if (comparator) {
+    return comparator(prev, next);
   }
+  return genericValueEqual(prev, next);
+}
+
+function genericValueEqual(prev: unknown, next: unknown): boolean {
   if (Array.isArray(prev) && Array.isArray(next)) {
     return shallowArrayEqual(prev, next);
   }

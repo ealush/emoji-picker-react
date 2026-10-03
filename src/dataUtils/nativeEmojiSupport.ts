@@ -69,24 +69,11 @@ export function __resetNativeEmojiSupportForTest(): void {
 const CANVAS_SIZE = 32;
 
 function probe(fontFamily: string): NativeEmojiSupport {
-  if (typeof document === 'undefined' || isJsdom()) {
-    return UNKNOWN_SUPPORT;
-  }
-  let context: CanvasRenderingContext2D | null = null;
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = CANVAS_SIZE;
-    context = canvas.getContext('2d', {
-      willReadFrequently: true,
-    } as CanvasRenderingContext2DSettings) as CanvasRenderingContext2D | null;
-  } catch {
-    context = null;
-  }
-  if (!context || typeof context.getImageData !== 'function') {
+  const ctx = createProbeContext();
+  if (!ctx) {
     return UNKNOWN_SUPPORT;
   }
 
-  const ctx = context;
   ctx.font = `${CANVAS_SIZE * 0.75}px ${fontFamily}`;
   ctx.textBaseline = 'top';
 
@@ -100,18 +87,30 @@ function probe(fontFamily: string): NativeEmojiSupport {
   const isSupported = (emoji: string) =>
     rendersInColor(ctx, emoji) && measure(ctx, emoji) < baselineWidth * 1.5;
 
-  let maxVersion = FLOOR_VERSION;
-  for (const [version, sample] of VERSION_SAMPLES) {
-    if (isSupported(sample)) {
-      maxVersion = version;
-      break;
-    }
-  }
+  const newest = VERSION_SAMPLES.find(([, sample]) => isSupported(sample));
 
   return {
-    maxVersion,
+    maxVersion: newest ? newest[0] : FLOOR_VERSION,
     countryFlags: isSupported(FLAG_SAMPLE),
   };
+}
+
+function createProbeContext(): CanvasRenderingContext2D | null {
+  if (typeof document === 'undefined' || isJsdom()) {
+    return null;
+  }
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = CANVAS_SIZE;
+    const context = canvas.getContext('2d', {
+      willReadFrequently: true,
+    }) as CanvasRenderingContext2D | null;
+    return context && typeof context.getImageData === 'function'
+      ? context
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 // jsdom has no canvas and reports every getContext call as an error,
