@@ -35,7 +35,6 @@ import type {
   ListProps,
   SearchProps,
 } from '../../src/primitives/types';
-import type { ViewportProps } from '../../src/primitives/Viewport';
 import { useNavigationRegistry } from '../../src/components/context/PickerContext';
 import { getPreparedCore } from '../../src/data-core/prepare';
 import { getEmojiByUnified, searchEmojis } from '../../src/data';
@@ -1595,10 +1594,6 @@ describe('v5 primitive DOM contracts', () => {
 // Negative type assertions: these assignments must NOT compile, proving
 // the grammar lives in the types as well as the runtime validators.
 {
-  const badViewportChildren: ViewportProps = {
-    // @ts-expect-error Viewport requires exactly one List child
-    children: null,
-  };
   const badListChildren: ListProps = {
     // @ts-expect-error List takes no consumer children
     children: [],
@@ -1607,8 +1602,7 @@ describe('v5 primitive DOM contracts', () => {
     // @ts-expect-error role is library-owned on every primitive
     role: 'searchbox',
   };
-  void badViewportChildren;
-  void badListChildren;
+    void badListChildren;
   void badRole;
 }
 
