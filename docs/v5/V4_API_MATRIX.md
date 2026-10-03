@@ -9,7 +9,7 @@ Default rule: **preserve unless the v5 architecture requires a strategic break**
 | v4 public export | v5 disposition | Notes |
 | --- | --- | --- |
 | default `EmojiPicker` | **Keep** | Remains primary API. Built from public primitives internally. |
-| `Emoji` | **Keep** | Existing standalone rendered-emoji component remains. Existing props/behavior remain source-compatible. Literal `emojiStyle` values become accepted alongside enum values. |
+| `Emoji` | **Keep** | Existing standalone rendered-emoji component remains. Existing props/behavior remain source-compatible. Literal `emojiStyle` values become accepted alongside enum values. Default style follows the picker: `native`, or Apple when `getEmojiUrl`/`emojiUrl` is supplied. |
 | `emojiByUnified` | **Keep exactly** | Existing top-level helper remains source-compatible. It is **not** replaced by the new `/data` API. |
 | `PickerProps` | **Keep + extend** | Existing props remain; v5 additions are included. |
 | `Props` | **Keep alias** | Remains an alias of `PickerProps`. |
@@ -31,7 +31,7 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | --- | --- | --- |
 | `open` | **Keep** | Same visibility behavior. |
 | `theme` | **Keep; improve typing** | Enum + literal values. `colorScheme` is the v5 name (CSS-in-JS wrappers reserve `theme`); `theme` stays as an alias. |
-| `emojiStyle` | **Keep; improve typing** | Enum + literal values. |
+| `emojiStyle` | **Keep; improve typing; default changed** | Enum + literal values. The default is `native` (was Apple); a caller image source (`getEmojiUrl`) without an explicit style keeps the Apple image default. |
 | `emojiVersion` | **Keep** | Same meaning/default. |
 | `lazyLoadEmojis` | **Keep** | Image lazy loading is distinct from row virtualization. |
 | `autoFocusSearch` | **Keep** | Same default/semantics. |
@@ -70,7 +70,7 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | `defaultSearchValue` | Initial uncontrolled search value. |
 | `onSearchChange` | Immediate ordinary user-driven raw search callback; IME commits once at composition end. |
 | `searchLabel` | Localizable accessible label for the built-in search input. |
-| `suggestedEmojis` | Ordered caller-defined Suggested-category unified IDs. |
+| `suggestedEmojis` | Ordered caller-defined Suggested-category entries: unified IDs, custom emoji IDs, or the emoji characters themselves. |
 | `onReactionsModeChange` | Observe compact reactions ↔ Root-managed full-picker panel state changes. |
 
 Initial v5 intentionally does **not** add `skinTone`, `mode`, `defaultMode`, or `onModeChange`.
@@ -117,7 +117,8 @@ v5 policy:
 - all existing main-entry exports above receive explicit package compatibility;
 - current documented locale imports under `dist/data/emojis-*` remain supported in v5 through deprecated compatibility export aliases;
 - `emoji-picker-react/data/emojis-*` is the canonical v5 locale path and migration target;
-- arbitrary undocumented `dist/*` / `src/*` imports are unsupported and may be blocked by the v5 exports map;
+- the raw datasets at `src/data/*.json` stay importable through a deprecated alias (real consumers import `emoji-picker-react/src/data/emojis.json`);
+- other arbitrary undocumented `dist/*` / `src/*` imports are unsupported and may be blocked by the v5 exports map;
 - package consumer fixtures must verify the supported paths against the packed artifact before merge.
 
 The deep-import boundary is an intentional v5 package break, not permission to remove documented APIs.

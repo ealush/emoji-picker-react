@@ -1197,7 +1197,7 @@ v5 canonicalizes:
 import es from 'emoji-picker-react/data/emojis-es';
 ```
 
-The documented v4 `dist/data/emojis-*` paths remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
+The documented v4 `dist/data/emojis-*` paths, and the raw `src/data/*.json` datasets, remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
 
 ## 13a. React Server Components
 
