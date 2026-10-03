@@ -1257,23 +1257,6 @@ describe('v5 primitive exports and managed-panel grammar', () => {
     }
   });
 
-  it('requires exactly one direct List child when Viewport is rendered', () => {
-    const errors = silenceConsole();
-    try {
-      expect(() =>
-        render(
-          <Root emojiData={twoCategoryData}>
-            <Viewport>
-              <div />
-            </Viewport>
-          </Root>,
-        ),
-      ).toThrow(/exactly one direct <List> child/);
-    } finally {
-      errors.mockRestore();
-    }
-  });
-
   it('rejects List outside Viewport', () => {
     const errors = silenceConsole();
     try {
@@ -1283,34 +1266,34 @@ describe('v5 primitive exports and managed-panel grammar', () => {
             <List />
           </Root>,
         ),
-      ).toThrow(/single direct child/);
+      ).toThrow(/inside <Viewport>/);
     } finally {
       errors.mockRestore();
     }
   });
 
-  it('rejects empty multiple-child or non-List Viewport content', () => {
+  it('rejects two Lists in one Root (grid singleton)', () => {
     const errors = silenceConsole();
     try {
-      expect(() =>
+      let thrown: unknown;
+      try {
         render(
           <Root emojiData={twoCategoryData}>
             <Viewport>
-              {[
-                <List key="first" />,
-                <List key="second" />,
-              ] as never}
+              <List />
+              <List />
             </Viewport>
           </Root>,
-        ),
-      ).toThrow(/exactly one direct <List> child/);
-      expect(() =>
-        render(
-          <Root emojiData={twoCategoryData}>
-            <Viewport>{null as never}</Viewport>
-          </Root>,
-        ),
-      ).toThrow(/exactly one direct <List> child/);
+        );
+      } catch (error) {
+        thrown = error;
+      }
+      const messages = (
+        (thrown as { errors?: unknown[] })?.errors ?? [thrown]
+      ).map((error) => String((error as Error)?.message ?? error));
+      expect(messages.some((message) => /Duplicate </.test(message))).toBe(
+        true,
+      );
     } finally {
       errors.mockRestore();
     }

@@ -7,6 +7,7 @@ import { EmojiVariationPicker } from '../components/body/EmojiVariationPicker';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import {
   useActiveEmojiState,
+  useNavigationRegistry,
   useVisibleCategoriesState,
 } from '../components/context/PickerContext';
 import { useActiveCategory } from '../components/navigation/CategoryNavigation';
@@ -22,9 +23,6 @@ import { useMouseDownHandlers } from '../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../hooks/useOnScroll';
 import { useSingletonClaim } from '../hooks/useRegisterRegion';
 
-import { Empty } from './Empty';
-import { List } from './List';
-import { Loading } from './Loading';
 import { filterPrimitiveProps, mergeRefs } from './nativeProps';
 import {
   useRootScope,
@@ -42,43 +40,37 @@ export type ViewportProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'role' | 'children'
 > & {
-  /** Exactly one `<List>`, optionally with `<Empty>` and `<Loading>`. */
-  children: React.ReactElement | React.ReactElement[];
+  /**
+   * The scrolled content: one `<List>` (it may be wrapped, e.g. by a
+   * styling library), optionally with `<Empty>` and `<Loading>`.
+   */
+  children: React.ReactNode;
 };
 
 const warnedViewportChildren = new Set<string>();
 
-function assertSingleListChild(children: React.ReactNode): void {
-  const elements = React.Children.toArray(children);
-  const valid =
-    elements.length > 0 &&
-    elements.every(
-      (child) =>
-        React.isValidElement(child) &&
-        (child.type === List || child.type === Empty || child.type === Loading),
-    ) &&
-    elements.filter(
-      (child) => React.isValidElement(child) && child.type === List,
-    ).length === 1;
-  if (valid) {
-    return;
-  }
-  if (process.env.NODE_ENV === 'production') {
-    if (!warnedViewportChildren.has('viewport')) {
-      warnedViewportChildren.add('viewport');
+// Composition is validated by behavior, not element identity: List
+// enforces being inside a Viewport (context) and being unique (grid
+// region singleton). Matching `child.type === List` broke under anything
+// that wraps elements — Emotion's css prop, styled(List), memo/HOCs.
+// What remains is a development hint when a Viewport mounts without a
+// List.
+function useWarnWithoutList(): void {
+  const registry = useNavigationRegistry();
+  React.useEffect(() => {
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      registry.getRegionsByKind('grid').length === 0 &&
+      !warnedViewportChildren.has('missing-list')
+    ) {
+      warnedViewportChildren.add('missing-list');
       // eslint-disable-next-line no-console
       console.warn(
-        '[emoji-picker-react] <Viewport> requires exactly one direct ' +
-          '<List> child (plus optional <Empty>/<Loading>); rendering children as-is.',
+        '[emoji-picker-react] <Viewport> mounted without a <List>; it ' +
+          'renders no emoji grid. See docs/v5/PRIMITIVES.md.',
       );
     }
-    return;
-  }
-  throw new Error(
-    '[emoji-picker-react] <Viewport> requires exactly one direct <List> ' +
-      'child (plus optional <Empty>/<Loading>). See docs/v5/PRIMITIVES.md ' +
-      'composition grammar.',
-  );
+  }, [registry]);
 }
 
 /** Test-only: reset warn-once sets between cases. */
@@ -100,7 +92,7 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
     const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
       'role',
     ]);
-    assertSingleListChild(children);
+    useWarnWithoutList();
 
     const BodyRef = useBodyRef();
     const scrollTop = useOnScroll(BodyRef);

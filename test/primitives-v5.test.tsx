@@ -198,19 +198,24 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
     return vi.spyOn(console, 'error').mockImplementation(() => {});
   }
 
-  it('rejects Viewport without exactly one List child', () => {
+  it('validates Viewport content by behavior, not element identity', () => {
     const errors = silenceErrors();
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     try {
-      expect(() =>
-        render(
-          <Root emojiData={twoCategoryData}>
-            <Viewport>
-              <div />
-            </Viewport>
-          </Root>,
-        ),
-      ).toThrow(/exactly one direct <List> child/);
-      expect(() =>
+      // No List: renders, with a development hint.
+      render(
+        <Root emojiData={twoCategoryData}>
+          <Viewport>
+            <div />
+          </Viewport>
+        </Root>,
+      );
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('mounted without a <List>'),
+      );
+      // Two Lists: the grid region is a singleton.
+      let thrown: unknown;
+      try {
         render(
           <Root emojiData={twoCategoryData}>
             <Viewport>
@@ -218,11 +223,38 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
               <List />
             </Viewport>
           </Root>,
-        ),
-      ).toThrow(/exactly one direct <List> child/);
+        );
+      } catch (error) {
+        thrown = error;
+      }
+      const messages = (
+        (thrown as { errors?: unknown[] })?.errors ?? [thrown]
+      ).map((error) => String((error as Error)?.message ?? error));
+      expect(messages.some((message) => /Duplicate </.test(message))).toBe(
+        true,
+      );
     } finally {
       errors.mockRestore();
+      warn.mockRestore();
     }
+  });
+
+  it('accepts a wrapped List (styling libraries, HOCs)', () => {
+    // Emotion's css prop and styled(List) wrap the element in another
+    // component; identity checks rejected them.
+    const Wrapped = (props: React.ComponentProps<typeof List>) => (
+      <List {...props} />
+    );
+    const { container } = render(
+      <Root emojiData={twoCategoryData}>
+        <Viewport>
+          <div className="wrapper">
+            <Wrapped />
+          </div>
+        </Viewport>
+      </Root>,
+    );
+    expect(container.querySelector('[role="grid"]')).not.toBeNull();
   });
 
   it('rejects List outside Viewport', () => {
@@ -234,7 +266,7 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
             <List />
           </Root>,
         ),
-      ).toThrow(/single direct child/);
+      ).toThrow(/inside <Viewport>/);
     } finally {
       errors.mockRestore();
     }

@@ -89,14 +89,14 @@ export function useViewportScope(primitive: string): boolean {
       // eslint-disable-next-line no-console
       console.warn(
         `[emoji-picker-react] <${primitive}> rendered outside <Viewport>; ` +
-          `it must be the single direct child of <Viewport>.`,
+          `it must be rendered inside <Viewport>.`,
       );
     }
     return false;
   }
   throw new Error(
-    `[emoji-picker-react] <${primitive}> must be the single direct child ` +
-      `of <Viewport>. See docs/v5/PRIMITIVES.md composition grammar.`,
+    `[emoji-picker-react] <${primitive}> must be rendered inside ` +
+      `<Viewport>. See docs/v5/PRIMITIVES.md composition grammar.`,
   );
 }
 
