@@ -9,6 +9,7 @@ import {
 import { compareConfig } from './config/compareConfig';
 import { useOpenConfig } from './config/useConfig';
 import { Empty, List, Loading, Preview, Root, Viewport } from './primitives';
+import { isPickerBehaviorProp } from './primitives/Root';
 import type { RootBehaviorProps } from './primitives/types';
 
 import { PickerProps } from './index';
@@ -26,9 +27,11 @@ function EmojiPicker(props: PickerProps) {
     className,
     style,
     unstyled,
-    ...behaviorProps
+    ...rest
   } = props;
   const theme = colorScheme ?? legacyTheme;
+  const { behaviorProps, unknownProps } = pickBehaviorProps(rest);
+  useUnknownPropsWarning(unknownProps);
   // Static composition element: no props flow into it, so its identity
   // stays stable across parent rerenders and the memoized managed panel
   // can skip the whole full-picker subtree per keystroke.
@@ -54,6 +57,53 @@ function EmojiPicker(props: PickerProps) {
       )}
     </>
   );
+}
+
+const NATIVE_ATTRIBUTES: ReadonlySet<string> = new Set([
+  'id',
+  'title',
+  'lang',
+  'dir',
+]);
+
+function isNativeAttribute(key: string): boolean {
+  return (
+    NATIVE_ATTRIBUTES.has(key) ||
+    key.startsWith('aria-') ||
+    key.startsWith('data-')
+  );
+}
+
+// Picker props and plain identifying attributes (id, aria-*, data-*) reach
+// Root; anything else is dropped, as in v4. Forwarding every prop would
+// leak removed v3/v4 props such as `pickerStyle` onto the aside as invalid
+// attributes, or turn stray handlers live.
+function pickBehaviorProps(props: Record<string, unknown>): {
+  behaviorProps: Record<string, unknown>;
+  unknownProps: string;
+} {
+  const behaviorProps: Record<string, unknown> = {};
+  const unknown: string[] = [];
+  for (const key of Object.keys(props)) {
+    if (isPickerBehaviorProp(key) || isNativeAttribute(key)) {
+      behaviorProps[key] = props[key];
+    } else {
+      unknown.push(key);
+    }
+  }
+  return { behaviorProps, unknownProps: unknown.join(', ') };
+}
+
+function useUnknownPropsWarning(unknownProps: string) {
+  React.useEffect(() => {
+    if (unknownProps && process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `[emoji-picker-react] Ignoring unknown prop(s): ${unknownProps}. ` +
+          'See docs/v5/MIGRATION.md for removed props.',
+      );
+    }
+  }, [unknownProps]);
 }
 
 function ContentControl() {

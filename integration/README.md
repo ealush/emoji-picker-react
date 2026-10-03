@@ -1,7 +1,7 @@
 # Consumer integration suite (v5)
 
-Real-consumer integration and regression coverage for the new picker, on branch
-`v5-consumer-integration` (based on `v5-implementation`).
+Real-consumer integration and regression coverage for the new picker
+(PR #554, branch `v5-consumer-integration`, based on `v5-implementation`).
 
 ## What this is
 
@@ -22,9 +22,8 @@ emoji dataset instead of the full bundle. Every substitution is documented in
 
 - Full upstream apps are not cloned here (accounts, infra, unrelated deps).
   Coverage is at the integration-boundary level.
-- Snapshots: this pass uses behavioral assertions plus small semantic DOM
-  checks, not image baselines. Add Playwright screenshots per fixture before
-  release if visual baselines are required.
+- Snapshots: behavioral assertions plus semantic DOM checks here; image
+  baselines live in the Playwright spec (see Visual baselines below).
 - No reference-vs-target run: the reference (4.22.2) line is API-compatible
   for every prop used here except `pickerStyle` (removed in later v4; the
   Push fixture pins the `style` migration). Source-grounded assertions are
@@ -41,11 +40,11 @@ npm run check:compat                   # v4-usage + v5-contract type checks
 
 ## Visual baselines (Playwright + Storybook)
 
-Gallery: `stories/consumers/ConsumerFixtures.stories.tsx` (11 fixture
+Gallery: `stories/consumers/ConsumerFixtures.stories.tsx` (12 fixture
 stories + `Index`). Spec: `playwright/consumer-integrations.spec.ts`
 (open / search-or-expand / selected shots per fixture on the
 `consumer-shot-<key>` region). Baselines live in
-`playwright/consumer-integrations.spec.ts-snapshots/` (33 images).
+`playwright/consumer-integrations.spec.ts-snapshots/` (36 images).
 
 ```sh
 npm run storybook &                                  # or let the spec boot it

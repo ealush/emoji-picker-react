@@ -253,7 +253,9 @@ describe('consumer integrations (new picker)', () => {
         {...({ pickerStyle: { display: 'none' } } as object)}
       />,
     );
-    expect(container.innerHTML).not.toContain('pickerStyle');
+    // React lowercases unknown attributes, so check case-insensitively.
+    expect(container.innerHTML.toLowerCase()).not.toContain('pickerstyle');
+    expect(container.querySelector('aside')).toBeVisible();
 
     await userEvent.click(await findVisibleEmojiButton('grinning face'));
     expect(onSelect).toHaveBeenCalledTimes(1);

@@ -30,19 +30,24 @@ No picker source changes were needed; `src/` is untouched.
    regression test now pins the real contract: any-case query finds the
    custom, payload carries `isCustom: true`.
 
-## Intentional migration breakage (for release notes)
+## Regression found and fixed: unknown props leaked to the DOM
 
-- **Push Chat `pickerStyle`:** the removed v4 prop does not crash, but it
-  spreads onto the DOM (lowercased `pickerstyle` attribute) with a React
-  "unrecognized prop" warning. The documented migration is `style`, which
-  the fixture verifies applies. Consider stripping unknown props or
-  documenting the warning; left unchanged as out of scope.
+- **Push Chat `pickerStyle`:** the default picker forwarded every prop it
+  did not define to the `<aside>` (lowercased `pickerstyle` attribute, React
+  "unrecognized prop" warning; a stray `onClick` even went live). v4 dropped
+  unknown props. The original assertion checked `pickerStyle` against
+  `innerHTML` case-sensitively, so it passed while the attribute leaked.
+  Fixed in `src/EmojiPickerReact.tsx` (only picker props reach Root; one dev
+  warning names the rest), pinned by `test/v4-compat-v5.test.tsx` and the
+  now case-insensitive fixture assertion. The documented migration remains
+  `style`, which the fixture verifies applies.
 
 ## Contract notes for consumers
 
 - Custom emoji `unified`/`names` in `EmojiClickData` are the folded
-  (lowercased) forms, not the declared capitalization. Relevant to
-  ClassDojo-style custom search-result UIs that echo names back.
+  (lowercased) forms, not the declared capitalization. Unchanged from v4
+  (v4 folded the same way in `emojiSelectors.ts`), so not a migration item;
+  relevant to ClassDojo-style UIs that echo names back.
 - Legacy v4 prop set used by Medusa (`theme`, `EmojiStyle.NATIVE`,
   `SkinTones.NEUTRAL`, `searchPlaceholder`) works unchanged on v5.
 - Reactions path (`reactionsDefaultOpen`, `onReactionClick`) is isolated
@@ -58,13 +63,13 @@ Review the contact sheets (montages of the committed baselines):
 
 Individual baselines: `playwright/consumer-integrations.spec.ts-snapshots/`.
 
-- Gallery `stories/consumers/ConsumerFixtures.stories.tsx`: 11 fixture
+- Gallery `stories/consumers/ConsumerFixtures.stories.tsx`: 12 fixture
   stories + browsable `Index` (deep links to each story). Stories are
   deliberately not tagged `visual` so the load-only storybook-visual sweep
   ignores them; `playwright/consumer-integrations.spec.ts` owns them.
-- 33 baselines (open / search-or-expand / selected per fixture) on the
-  `consumer-shot-<key>` region, all 33 inspected via contact sheets before
-  acceptance, clean re-run 11/11 without updates.
+- 36 baselines (open / search-or-expand / selected per fixture) on the
+  `consumer-shot-<key>` region, all inspected via contact sheets before
+  acceptance, clean local re-run 12/12 without updates.
 - CI job `consumer-visual` in `.github/workflows/tests.yml` runs the spec
   and uploads `test-results/` + actual/diff PNGs on failure (14-day
   retention). YAML validated.

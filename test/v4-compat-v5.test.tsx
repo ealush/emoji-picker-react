@@ -120,3 +120,43 @@ describe('v5 literal acceptance (V4_API_MATRIX.md)', () => {
     }
   });
 });
+
+// v4 dropped props it did not know; v5 must not forward them to the DOM
+// (removed props like v3's `pickerStyle` would otherwise become invalid
+// attributes, and stray handlers would go live on the aside).
+describe('unknown props on the default picker', () => {
+  it('are dropped (not forwarded) and warned once in development', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const onClick = vi.fn();
+    const legacyProps = {
+      pickerStyle: { width: '100%' },
+      groupNames: {},
+      onClick,
+      id: 'picker',
+      'data-testid': 'host-picker',
+      'aria-describedby': 'hint',
+    } as Record<string, unknown>;
+    const { container } = render(
+      <EmojiPicker emojiData={minimalEmojiData} {...legacyProps} />,
+    );
+    const aside = container.querySelector('aside') as HTMLElement;
+
+    expect(aside.hasAttribute('pickerstyle')).toBe(false);
+    expect(aside.hasAttribute('groupnames')).toBe(false);
+    // Identifying native attributes still reach the root element.
+    expect(aside.id).toBe('picker');
+    expect(aside.getAttribute('data-testid')).toBe('host-picker');
+    expect(aside.getAttribute('aria-describedby')).toBe('hint');
+    aside.click();
+    expect(onClick).not.toHaveBeenCalled();
+    expect(error).not.toHaveBeenCalled();
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0][0])).toContain(
+      'Ignoring unknown prop(s): pickerStyle, groupNames, onClick.',
+    );
+
+    warn.mockRestore();
+    error.mockRestore();
+  });
+});
