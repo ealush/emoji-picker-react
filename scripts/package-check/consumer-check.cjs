@@ -163,6 +163,16 @@ check('primitives load the dataset on demand', () => {
   assert.ok(staticClosure('dist/esm/index.mjs').includes(DATASET_MARKER), 'main ESM is missing the dataset');
 });
 
+// Icons: every CSS url() data URI must be base64 (raw-text SVG data URLs
+// are invalid inside an unquoted url() and rendered blank icons).
+check('icon data URIs are valid CSS', () => {
+  for (const file of ['dist/index.js', 'dist/primitives/index.js']) {
+    const content = read(file);
+    assert.ok(!/url\(\\?["']?data:image\/svg\+xml,/.test(content), `${file} has a raw-text SVG data URL`);
+    assert.ok(/data:image\/svg\+xml;base64,/.test(content), `${file} has no base64 icons`);
+  }
+});
+
 // RSC: client entries are marked, the data entry is not.
 check('client entries carry "use client"', () => {
   for (const file of ['dist/index.js', 'dist/esm/index.mjs', 'dist/primitives/index.js', 'dist/esm/primitives/index.mjs']) {

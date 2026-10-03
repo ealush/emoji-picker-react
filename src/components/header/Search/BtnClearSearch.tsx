@@ -9,8 +9,7 @@ import {
 import { useSearchClearButtonLabelConfig } from '../../../config/useConfig';
 import { useClearSearchValue } from '../../../hooks/useSearchController';
 import { Button } from '../../atoms/Button';
-
-import SVGTimes from './svg/times.svg';
+import { TIMES_ICON as SVGTimes } from '../../icons/svgIcons';
 
 export function BtnClearSearch() {
   const clearSearch = useClearSearchValue();
@@ -68,7 +67,7 @@ const styles = stylesheet.create({
     backgroundSize: '20px',
     height: '20px',
     width: '20px',
-    backgroundImage: `url(${SVGTimes})`,
+    backgroundImage: `url("${SVGTimes}")`,
     ':hover': {
       backgroundPositionY: '-20px',
     },

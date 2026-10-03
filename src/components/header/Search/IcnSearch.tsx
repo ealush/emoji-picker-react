@@ -2,8 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
-
-import SVGMagnifier from './svg/magnifier.svg';
+import { MAGNIFIER_ICON as SVGMagnifier } from '../../icons/svgIcons';
 
 export function IcnSearch() {
   return <div className={cx(styles.icnSearch)} />;
@@ -22,7 +21,7 @@ const styles = stylesheet.create({
     backgroundRepeat: 'no-repeat',
     backgroundPosition: '0 0',
     backgroundSize: '20px',
-    backgroundImage: `url(${SVGMagnifier})`,
+    backgroundImage: `url("${SVGMagnifier}")`,
   },
   ...darkMode('icnSearch', {
     backgroundPositionY: '-20px',

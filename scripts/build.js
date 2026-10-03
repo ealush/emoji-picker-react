@@ -44,7 +44,7 @@ const EXTERNALS = [
   '--external:shipstyles',
 ];
 
-const COMMON = [...EXTERNALS, '--bundle', '--loader:.svg=dataurl', '--log-level=warning'];
+const COMMON = [...EXTERNALS, '--bundle', '--log-level=warning'];
 
 function buildCjs(src, outfile) {
   sh(bin('esbuild'), [

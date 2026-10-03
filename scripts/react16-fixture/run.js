@@ -51,7 +51,6 @@ function main() {
       '--platform=node',
       '--external:react',
       '--external:react-dom',
-      '--loader:.svg=text',
       `--outfile=${bundle}`,
       '--log-level=warning',
     ],

@@ -25,15 +25,20 @@ export const structuralStyles = structuralSheet.create({
     position: 'relative',
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
     // The root is never a scroll container (the Viewport owns scrolling):
-    // overflow-x: clip forbids focus-reveal and programmatic horizontal
-    // scrolling that overflow-x: hidden still permits. A transient
-    // horizontal overflow during load (unmeasured content, font swaps)
-    // combined with autofocus would otherwise leave the whole picker
-    // permanently shifted. The hidden fallback covers browsers without
-    // overflow: clip support.
+    // clip forbids focus-reveal and programmatic scrolling, which `hidden`
+    // still permits. Both axes must clip: per spec, clip on one axis
+    // computes to hidden when the other axis is hidden, which is how a
+    // transient overflow plus autofocus used to leave the whole panel
+    // shifted sideways. `hidden` is the fallback for browsers without clip.
+    overflow: 'hidden',
     overflowX: 'clip',
+    overflowY: 'clip',
+    // Padded full-width controls must not overflow the root; bare
+    // compositions previously had to bring this reset themselves.
+    '*': {
+      boxSizing: 'border-box',
+    },
     // Every geometry token, so a bare Root lays out and measures
     // correctly with no appearance tokens at all.
     '--': structuralPickerTokens,

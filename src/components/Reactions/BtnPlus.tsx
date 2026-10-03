@@ -5,8 +5,7 @@ import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import { useLabels } from '../../config/useConfig';
 import { Button } from '../atoms/Button';
 import { useReactionsModeState } from '../context/PickerContext';
-
-import Plus from './svg/plus.svg';
+import { PLUS_ICON as Plus } from '../icons/svgIcons';
 
 export function BtnPlus() {
   const [, setReactionsMode] = useReactionsModeState();
@@ -41,7 +40,7 @@ const styles = stylesheet.create({
       content: '',
       minWidth: '20px',
       minHeight: '20px',
-      backgroundImage: `url(${Plus})`,
+      backgroundImage: `url("${Plus}")`,
       backgroundColor: 'transparent',
       backgroundRepeat: 'no-repeat',
       backgroundSize: '20px',

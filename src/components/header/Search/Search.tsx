@@ -21,11 +21,11 @@ import type { SearchProps } from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
 import { useSearchInputRef } from '../../context/ElementRefContext';
+import { TIMES_ICON as SVGTimes } from '../../icons/svgIcons';
 import { SkinTonePicker } from '../SkinTonePicker/SkinTonePicker';
 
 import { BtnClearSearch } from './BtnClearSearch';
 import { IcnSearch } from './IcnSearch';
-import SVGTimes from './svg/times.svg';
 
 export function SearchContainer({
   inputProps,
@@ -212,7 +212,7 @@ const styles = stylesheet.create({
     backgroundSize: '20px',
     height: '20px',
     width: '20px',
-    backgroundImage: `url(${SVGTimes})`,
+    backgroundImage: `url("${SVGTimes}")`,
     ':hover': {
       backgroundPositionY: '-20px',
     },

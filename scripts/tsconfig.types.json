@@ -13,7 +13,6 @@
     "../src/index.tsx",
     "../src/primitives/index.ts",
     "../src/data.ts",
-    "../src/svg.d.ts",
     "../src/env.d.ts"
   ]
 }

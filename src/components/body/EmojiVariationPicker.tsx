@@ -28,8 +28,7 @@ import {
 } from '../context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
-
-import SVGTriangle from './svg/triangle.svg';
+import { TRIANGLE_ICON as SVGTriangle } from '../icons/svgIcons';
 
 enum Direction {
   Up,
@@ -228,7 +227,7 @@ const styles = stylesheet.create({
     backgroundSize: '50px 15px',
     top: '100%',
     transform: 'translateX(-18px)',
-    backgroundImage: `url(${SVGTriangle})`,
+    backgroundImage: `url("${SVGTriangle}")`,
   },
   ...darkMode('pointer', {
     backgroundPosition: '-25px 0',

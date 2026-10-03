@@ -88,7 +88,6 @@ function bundleProbe(probe, checkoutDir) {
       '--external:react-dom',
       '--external:jsdom',
       '--external:shipstyles',
-      '--loader:.svg=text',
       `--alias:@c=${join(checkoutDir, 'src')}`,
       `--outfile=${outFile}`,
       '--log-level=warning',
