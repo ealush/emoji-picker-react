@@ -15,14 +15,14 @@ export function Button(props: Props) {
     <button
       type="button"
       {...props}
-      className={cx(styles.button, props.className)}
+      className={cx(buttonStyles.button, props.className)}
     >
       {props.children}
     </button>
   );
 }
 
-const styles = stylesheet.create({
+export const buttonStyles = stylesheet.create({
   button: {
     '.': 'epr-btn',
     cursor: 'pointer',

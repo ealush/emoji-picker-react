@@ -13,6 +13,8 @@ import {
 } from '../../config/categoryConfig';
 import { CategoryConfig } from '../../types/exposedTypes';
 
+import { useListComponents } from './listComponents';
+
 type Props = Readonly<{
   categoryConfig: CategoryConfig;
   children?: React.ReactNode;
@@ -31,6 +33,8 @@ export function EmojiCategory({
   emojisPerRow,
 }: Props) {
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
+  const categoryId = categoryIdFromCategoryConfig(categoryConfig);
+  const { CategoryHeader } = useListComponents();
 
   return (
     <li
@@ -40,13 +44,23 @@ export function EmojiCategory({
         hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
       )}
       data-epr-part="category"
-      data-epr-category={categoryIdFromCategoryConfig(categoryConfig)}
+      data-epr-category={categoryId}
       role="rowgroup"
       aria-label={categoryName}
     >
-      <h2 className={cx(styles.label)} data-epr-part="category-label">
-        {categoryName}
-      </h2>
+      {CategoryHeader ? (
+        <CategoryHeader
+          className={cx(styles.label)}
+          data-epr-part="category-label"
+          category={{ id: categoryId, name: categoryName }}
+        >
+          {categoryName}
+        </CategoryHeader>
+      ) : (
+        <h2 className={cx(styles.label)} data-epr-part="category-label">
+          {categoryName}
+        </h2>
+      )}
       <div
         className={cx(styles.categoryContent)}
         style={{ height }}

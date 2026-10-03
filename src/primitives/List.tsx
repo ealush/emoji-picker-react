@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { EmojiList } from '../components/body/EmojiList';
+import { ListComponentsContext } from '../components/body/listComponents';
 import { useEmojiListRef } from '../components/context/ElementRefContext';
 
 import { filterPrimitiveProps, mergeRefs } from './nativeProps';
@@ -12,15 +13,17 @@ import type { ListProps } from './types';
 //
 // Managed grid region: owns category rows/groups, managed emoji buttons
 // and virtualization. Accepts no consumer children; when rendered it must
-// be the single direct child of Viewport.
+// be the single List child of Viewport. `components` swaps the markup of
+// emoji cells and category headers while the library keeps owning their
+// behavior (consumers spread the provided props).
 export const List = React.forwardRef<HTMLUListElement, ListProps>(
   function List(props, forwardedRef) {
     const inRoot = useRootScope('List');
     const inViewport = useViewportScope('List');
-    const nativeProps = filterPrimitiveProps(
-      props as Record<string, unknown>,
-      ['role'],
-    );
+    const { components, ...rest } = props;
+    const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+      'role',
+    ]);
     const { className, ...restNative } = nativeProps as Omit<
       React.HTMLAttributes<HTMLUListElement>,
       'role' | 'children'
@@ -33,13 +36,20 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
       return null;
     }
 
-    return (
+    const list = (
       <EmojiList
         scrollTop={scrollTop}
         outerRef={mergeRefs(EmojiListRef, forwardedRef)}
         className={cx(className)}
         nativeProps={restNative}
       />
+    );
+    return components ? (
+      <ListComponentsContext.Provider value={components}>
+        {list}
+      </ListComponentsContext.Provider>
+    ) : (
+      list
     );
   },
 );

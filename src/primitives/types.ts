@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import type { ListComponents } from '../components/body/listComponents';
 import type { PickerConfig } from '../config/config';
 import type { ThemeValue } from '../types/exposedTypes';
 
@@ -65,7 +66,14 @@ export type PreviewProps = Omit<
 export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
   'role' | 'children'
->;
+> & {
+  /**
+   * Custom markup for emoji cells and category headers. Each receives the
+   * library-owned props to spread onto its element (see EmojiRenderProps /
+   * CategoryHeaderRenderProps).
+   */
+  components?: ListComponents;
+};
 
 export type EmptyProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,

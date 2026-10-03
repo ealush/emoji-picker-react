@@ -3,6 +3,8 @@ import * as React from 'react';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiHasVariations, emojiNames } from '../../dataUtils/emojiUtils';
 
+import { EmojiRenderProps, ListEmoji } from '../body/listComponents';
+
 import { BaseEmojiProps } from './BaseEmojiProps';
 import { ClickableEmojiButton } from './ClickableEmojiButton';
 import { ViewOnlyEmoji } from './ViewOnlyEmoji';
@@ -18,6 +20,8 @@ type ClickableEmojiProps = Readonly<
     noBackground?: boolean;
     style?: React.CSSProperties;
     tabIndex?: number;
+    as?: React.ComponentType<EmojiRenderProps>;
+    emojiInfo?: ListEmoji;
   }
 >;
 
@@ -36,6 +40,8 @@ export function ClickableEmoji({
   noBackground = false,
   style,
   tabIndex,
+  as,
+  emojiInfo,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -51,6 +57,8 @@ export function ClickableEmoji({
       noBackground={noBackground}
       style={style}
       className={buttonClassName}
+      as={as}
+      emojiInfo={emojiInfo}
     >
       <ViewOnlyEmoji
         unified={unified}

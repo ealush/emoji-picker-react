@@ -49,11 +49,10 @@ export function emojiFromElement(
   return [emoji, unified as string];
 }
 
+// Any element inside an emoji button counts: custom List cells may nest
+// their content arbitrarily deep.
 export function isEmojiElement(element: NullableElement): boolean {
-  return Boolean(
-    element?.matches(EmojiButtonSelector) ||
-    element?.parentElement?.matches(EmojiButtonSelector),
-  );
+  return buttonFromTarget(element) !== null;
 }
 
 export function categoryLabelFromCategory(

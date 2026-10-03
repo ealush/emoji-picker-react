@@ -26,3 +26,9 @@ export type {
   RootProps,
   SearchProps,
 } from './types';
+export type {
+  CategoryHeaderRenderProps,
+  EmojiRenderProps,
+  ListComponents,
+  ListEmoji,
+} from '../components/body/listComponents';

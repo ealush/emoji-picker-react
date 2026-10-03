@@ -3,6 +3,10 @@ import * as React from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { useActiveSkinToneState } from '../components/context/PickerContext';
+import {
+  ListEmoji,
+  useListComponents,
+} from '../components/body/listComponents';
 import { ClickableEmoji } from '../components/emoji/Emoji';
 import {
   useEmojiStyleConfig,
@@ -10,8 +14,15 @@ import {
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig,
 } from '../config/useConfig';
-import { DataEmojis } from '../dataUtils/DataTypes';
-import { emojiUnified } from '../dataUtils/emojiUtils';
+import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
+import {
+  emojiHasVariations,
+  emojiNames,
+  emojiUnified,
+} from '../dataUtils/emojiUtils';
+import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
+import { isCustomEmoji } from '../typeRefinements/typeRefinements';
+import { EmojiStyleValue } from '../types/exposedTypes';
 import {
   getEmojiPositionStyle,
   shouldVirtualize,
@@ -43,6 +54,7 @@ export function useEmojiVirtualization({
   const getEmojiUrl = useGetEmojiUrlConfig();
   const showVariations = !useSkinTonesDisabledConfig();
   const BodyRef = useBodyRef();
+  const { Emoji: CustomEmojiCell } = useListComponents();
 
   let virtualizedCounter = 0;
 
@@ -109,6 +121,12 @@ export function useEmojiVirtualization({
           ...style,
           position: 'absolute',
         }}
+        as={CustomEmojiCell}
+        emojiInfo={
+          CustomEmojiCell
+            ? listEmoji(emoji, unified, emojiStyle, getEmojiUrl)
+            : undefined
+        }
       />,
     );
     return accumulator;
@@ -118,5 +136,24 @@ export function useEmojiVirtualization({
     virtualizedCounter,
     emojis,
     dimensions,
+  };
+}
+
+function listEmoji(
+  emoji: DataEmoji,
+  unified: string,
+  emojiStyle: EmojiStyleValue,
+  getEmojiUrl: (unified: string, style: EmojiStyleValue) => string,
+): ListEmoji {
+  const isCustom = isCustomEmoji(emoji);
+  return {
+    unified,
+    names: emojiNames(emoji),
+    emoji: isCustom ? unified : parseNativeEmoji(unified),
+    isCustom,
+    imageUrl: isCustom
+      ? (emoji.imgUrl as string)
+      : getEmojiUrl(unified, emojiStyle),
+    hasVariations: emojiHasVariations(emoji),
   };
 }

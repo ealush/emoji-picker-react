@@ -7,7 +7,8 @@ import {
   commonStyles,
   stylesheet,
 } from '../../Stylesheet/stylesheet';
-import { Button } from '../atoms/Button';
+import { Button, buttonStyles } from '../atoms/Button';
+import { EmojiRenderProps, ListEmoji } from '../body/listComponents';
 
 type ClickableEmojiButtonProps = Readonly<{
   hidden?: boolean;
@@ -21,6 +22,9 @@ type ClickableEmojiButtonProps = Readonly<{
   className?: string;
   style?: React.CSSProperties;
   tabIndex?: number;
+  /** Consumer cell (List `components.Emoji`) replacing the default button. */
+  as?: React.ComponentType<EmojiRenderProps>;
+  emojiInfo?: ListEmoji;
 }>;
 
 export function ClickableEmojiButton({
@@ -35,21 +39,40 @@ export function ClickableEmojiButton({
   noBackground = false,
   style,
   tabIndex,
+  as: Custom,
+  emojiInfo,
 }: ClickableEmojiButtonProps) {
+  const cellClassName = emojiCellClassName({
+    hidden,
+    hiddenOnSearch,
+    hasVariations,
+    showVariations,
+    noBackground,
+    className,
+  });
+
+  if (Custom && emojiInfo) {
+    const managedProps = {
+      type: 'button' as const,
+      tabIndex,
+      className: cx(buttonStyles.button, cellClassName),
+      'data-epr-part': 'emoji',
+      'data-epr-unified': unified,
+      'aria-label': getAriaLabel(emojiNames),
+      'data-epr-full-name': emojiNames.join(','),
+      style,
+    };
+    return (
+      <Custom {...managedProps} emoji={emojiInfo}>
+        {children}
+      </Custom>
+    );
+  }
+
   return (
     <Button
       tabIndex={tabIndex}
-      className={cx(
-        styles.emoji,
-        hidden && commonStyles.hidden,
-        hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
-        {
-          [ClassNames.visible]: !hidden && !hiddenOnSearch,
-        },
-        !!(hasVariations && showVariations) && styles.hasVariations,
-        noBackground && styles.noBackground,
-        className,
-      )}
+      className={cellClassName}
       data-epr-part="emoji"
       data-epr-unified={unified}
       aria-label={getAriaLabel(emojiNames)}
@@ -58,6 +81,34 @@ export function ClickableEmojiButton({
     >
       {children}
     </Button>
+  );
+}
+
+function emojiCellClassName({
+  hidden,
+  hiddenOnSearch,
+  hasVariations,
+  showVariations,
+  noBackground,
+  className,
+}: {
+  hidden?: boolean;
+  hiddenOnSearch?: boolean;
+  hasVariations: boolean;
+  showVariations: boolean;
+  noBackground: boolean;
+  className?: string;
+}): string {
+  return cx(
+    styles.emoji,
+    hidden && commonStyles.hidden,
+    hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
+    {
+      [ClassNames.visible]: !hidden && !hiddenOnSearch,
+    },
+    !!(hasVariations && showVariations) && styles.hasVariations,
+    noBackground && styles.noBackground,
+    className,
   );
 }
 
