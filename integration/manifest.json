@@ -11,7 +11,8 @@
       "evidence": "declared",
       "via": "@jsonjoy.com/ui",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "JsonJoyInputChar"
+      "fixture": "JsonJoyInputChar",
+      "surface": "via @jsonjoy.com/ui"
     },
     {
       "name": "@fileverse-dev/ddoc",
@@ -20,17 +21,19 @@
       "evidence": "declared",
       "via": "@fileverse/ui",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "FileverseAvatarSelector",
+      "surface": "via @fileverse/ui"
     },
     {
       "name": "@jsonjoy.com/ui",
       "kind": "npm-direct",
       "downloadsMo": 9089,
       "version": "^4.19.1",
-      "evidence": "declared",
-      "surface": "re-exports EmojiPicker, EmojiStyle, EmojiClickData; mutxt.com editor InputChar",
+      "evidence": "source",
+      "surface": "published @jsonjoy.com/ui ArgChar",
       "disposition": "runnable",
-      "fixture": "JsonJoyInputChar"
+      "fixture": "JsonJoyInputChar",
+      "source": "same as streamich/json-joy packages/ui"
     },
     {
       "name": "@medusajs/admin-ui",
@@ -38,9 +41,10 @@
       "downloadsMo": 8857,
       "version": "^4.4.3",
       "evidence": "source",
-      "surface": "legacy v1 admin themed wrapper in dropdown; EmojiStyle.NATIVE, SkinTones.NEUTRAL, custom placeholder; notes/textareas",
+      "surface": "Radix dropdown: native, NEUTRAL, skinTonesDisabled, legacy searchPlaceHolder; appends emoji to the note",
       "disposition": "runnable",
-      "fixture": "MedusaNotesPicker"
+      "fixture": "MedusaNotesPicker",
+      "source": "ui/src/components/molecules/emoji-picker/index.tsx (published package)"
     },
     {
       "name": "@medusajs/admin",
@@ -49,7 +53,8 @@
       "evidence": "declared",
       "via": "@medusajs/admin-ui legacy chain",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "MedusaNotesPicker"
+      "fixture": "MedusaNotesPicker",
+      "surface": "via @medusajs/admin-ui"
     },
     {
       "name": "intraactive-sdk-ui",
@@ -67,9 +72,10 @@
       "downloadsMo": 7972,
       "version": "^4.12.0",
       "evidence": "source",
-      "surface": "Botonic chat webchat composer picker",
+      "surface": "webchat composer: width 100%, height 19rem, no preview, lazyLoadEmojis, autoFocusSearch false, click outside closes, optional shadow DOM",
       "disposition": "runnable",
-      "fixture": "BotonicComposer"
+      "fixture": "BotonicComposer",
+      "source": "packages/botonic-react/src/webchat/input-panel/opened-emoji-picker.tsx"
     },
     {
       "name": "@jsonjoy.com/collaborative-peritext",
@@ -78,7 +84,8 @@
       "evidence": "declared",
       "via": "@jsonjoy.com/ui",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "JsonJoyInputChar"
+      "fixture": "JsonJoyInputChar",
+      "surface": "via @jsonjoy.com/ui"
     },
     {
       "name": "@fileverse-dev/dsheet",
@@ -87,7 +94,8 @@
       "evidence": "declared",
       "via": "@fileverse/ui",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "FileverseAvatarSelector",
+      "surface": "via @fileverse/ui"
     },
     {
       "name": "eddyter",
@@ -115,7 +123,8 @@
       "evidence": "declared",
       "via": "@botonic/react",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "BotonicComposer"
+      "fixture": "BotonicComposer",
+      "surface": "via @botonic/react"
     },
     {
       "name": "@allbluecn/web-app",
@@ -160,29 +169,30 @@
       "downloadsMo": 3044,
       "version": "^4.11.1",
       "evidence": "source",
-      "surface": "design system; picker is re-exported public API (covers dDocs + dSheets)",
+      "surface": "AvatarSelector tabs (Emoji/Upload): native, height 340, no preview, root utility classes; passes EmojiClickData; ships the picker inside its dist, so upgrades need a Fileverse rebuild",
       "disposition": "runnable",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "FileverseAvatarSelector",
+      "source": "dist/index.es.js (bundles its own copy of the picker)"
     },
     {
       "name": "@iclips/ui",
       "kind": "npm-direct",
       "downloadsMo": 1825,
       "version": "^4.18.0",
-      "evidence": "declared",
-      "surface": "Radix + Tailwind design system; re-export pattern",
+      "evidence": "source",
+      "surface": "Tiptap comment editor popover 300x350, insertContent(emoji)",
       "disposition": "covered-by-shared-fixture",
-      "blocker": "no public source located; design-system pattern covered by FileverseEmojiPicker",
       "downloadsWk": 588,
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "EdificeEditorToolbar",
+      "source": "dist/components/ui/data/comment-thread.js"
     },
     {
       "name": "@fileverse-dev/fortune-react",
       "kind": "npm-indirect",
       "downloadsMo": 1474,
       "evidence": "declared",
-      "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "disposition": "documented-only",
+      "blocker": "published files do not reference emoji-picker-react (2026-10-04)"
     },
     {
       "name": "@allbluecn/admin-app",
@@ -199,9 +209,10 @@
       "forks": 58930,
       "version": "^4.9.2",
       "evidence": "source",
-      "surface": "chat composer picker; most forked consumer",
+      "surface": "mask avatar picker (width 100%, lazyLoadEmojis, theme AUTO, own getEmojiUrl CDN, stores e.unified) + <Emoji unified getEmojiUrl> avatar; no emojiStyle",
       "disposition": "runnable",
-      "fixture": "NextChatComposer"
+      "fixture": "NextChatAvatarSettings",
+      "source": "app/components/emoji.tsx"
     },
     {
       "name": "CherryHQ/cherry-studio",
@@ -210,9 +221,10 @@
       "forks": 5034,
       "version": "^4.19.1",
       "evidence": "source",
-      "surface": "desktop AI studio chat input, agent UI; chose EPR over emoji-picker-element in PR #16988",
+      "surface": "chat input popover: own dataset, native, emojiVersion, hiddenEmojis, translated categories, CSS vars via style, 100% size, recents passed as characters via suggestedEmojis (its v4 patch API), RECENT mode",
       "disposition": "runnable",
-      "fixture": "CherryStudioInput"
+      "fixture": "CherryStudioPicker",
+      "source": "src/renderer/components/EmojiPicker/EmojiPickerContent.tsx"
     },
     {
       "name": "medusajs/medusa",
@@ -221,20 +233,21 @@
       "forks": 5331,
       "evidence": "declared",
       "via": "@medusajs/admin-ui ^4.4.3 on npm; root package.json no longer lists it (fresh check)",
-      "surface": "legacy v1 admin notes/textareas via the published package",
+      "surface": "via the published @medusajs/admin-ui",
       "disposition": "runnable",
       "fixture": "MedusaNotesPicker"
     },
     {
       "name": "signalapp/Signal-Desktop",
-      "kind": "repo",
+      "kind": "fork-consumer",
       "stars": 16567,
       "forks": 3127,
       "version": "@indutny/emoji-picker-react 4.10.1 fork in sticker-creator workspace",
       "evidence": "source",
-      "surface": "sticker creator sprite-sheet rendering (sheetX/sheetY, PR #323)",
+      "surface": "sticker creator picker via the fork @indutny/emoji-picker-react (not this package); fixture runs the same usage against upstream as its migration path",
       "disposition": "runnable",
-      "fixture": "SignalStickerPicker"
+      "fixture": "SignalStickerEmojiPicker",
+      "source": "sticker-creator/src/components/EmojiPicker.tsx"
     },
     {
       "name": "langwatch/langwatch",
@@ -242,9 +255,10 @@
       "stars": 4911,
       "forks": 405,
       "evidence": "source",
-      "surface": "EmojiPickerModal.tsx; deferred import after prod boot crash on emoji-picker-react.esm (PR #3751); lazy/modal, ESM, SSR safety",
+      "surface": "workflow icon modal: next/dynamic default import (ssr:false), enum values as string casts, skin tone in preview, set icon + close",
       "disposition": "runnable",
-      "fixture": "LangWatchModal"
+      "fixture": "LangWatchModal",
+      "source": "platform/app/src/optimization_studio/components/properties/modals/EmojiPickerModal.tsx"
     },
     {
       "name": "arhamkhnz/next-shadcn-admin-dashboard",
@@ -273,9 +287,13 @@
       "forks": 308,
       "version": "pinned 4.16.1",
       "evidence": "source",
-      "surface": "secure messenger emoji autocomplete + reactions; explicit upgrade caution (PR #22004)",
+      "surface": "message reactions adapter (native, searchPlaceHolder, defaultSkinTone, reads activeSkinTone); calling reactions bar reads the picker's epr_suggested localStorage; autocomplete imports emoji-picker-react/src/data/emojis.json (asserted by check:package)",
       "disposition": "runnable",
-      "fixture": "WireReactions"
+      "fixture": "WireMessageReactions",
+      "alsoFixtures": [
+        "WireCallReactionsBar"
+      ],
+      "source": "components/emojiPicker/emojiPickerAdapter.tsx; calling/VideoControls/EmojisBar/EmojisBar.tsx; inputBar/.../emojiPickerPlugin.tsx"
     },
     {
       "name": "streamich/json-joy",
@@ -284,9 +302,10 @@
       "forks": 26,
       "evidence": "source",
       "via": "@jsonjoy.com/ui ^4.19.1",
-      "surface": "mutxt editor InputChar; design-system re-export",
+      "surface": "ArgChar popup: theme LIGHT/DARK, 400x420, skin tone in preview, ClickAway stopping pointer events, set char + close",
       "disposition": "runnable",
-      "fixture": "JsonJoyInputChar"
+      "fixture": "JsonJoyInputChar",
+      "source": "packages/ui/src/4-card/Fields/components/ArgChar.tsx"
     },
     {
       "name": "AppImage/appimage.github.io",
@@ -453,7 +472,7 @@
       "name": "ClassDojo fork",
       "kind": "private",
       "evidence": "source",
-      "surface": "company fork 18 commits ahead; @classdojo/emoji-picker-react (2.3M+ GH Packages downloads); custom emoji list + search-result UI",
+      "surface": "private fork with custom emoji list + search UI; source not public, fixture exercises the upstream capability it would migrate to",
       "disposition": "runnable",
       "fixture": "ClassDojoPicker"
     },
@@ -462,7 +481,7 @@
       "kind": "private",
       "evidence": "observed",
       "version": "pinned 4.9.3",
-      "surface": "Typebar.tsx composer; live app.push.org bundle has --epr-bg-color; uses old pickerStyle prop removed in later v4",
+      "surface": "private; live bundle shows the composer picker with the removed pickerStyle prop",
       "disposition": "runnable",
       "fixture": "PushChatTypebar"
     },
@@ -488,31 +507,34 @@
       "kind": "npm-direct",
       "downloadsWk": 12062,
       "version": "^4.19.1",
-      "evidence": "declared",
-      "surface": "open-source slide editor; chat/composer pattern",
+      "evidence": "source",
+      "surface": "published core package",
       "disposition": "covered-by-shared-fixture",
       "repo": "open-slide/open-slide",
-      "fixture": "NextChatComposer"
+      "fixture": "SignalStickerEmojiPicker",
+      "source": "same as open-slide/open-slide"
     },
     {
       "name": "@edifice.io/react",
       "kind": "npm-direct",
       "downloadsWk": 5879,
       "version": "pinned 4.17.4",
-      "evidence": "declared",
-      "surface": "education design system; re-export pattern",
-      "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "evidence": "source",
+      "surface": "Tiptap toolbar dropdown: 316x400, no preview, search disabled, translated categories with Recently used first; insert at selection",
+      "disposition": "runnable",
+      "fixture": "EdificeEditorToolbar",
+      "source": "dist/modules/editor/components/EditorToolbar/EditorToolbar.Emoji.js"
     },
     {
       "name": "@selfcommunity/react-ui",
       "kind": "npm-direct",
       "downloadsWk": 3877,
       "version": "pinned 4.5.16",
-      "evidence": "declared",
-      "surface": "community UI kit; re-export pattern",
+      "evidence": "source",
+      "surface": "client-only dynamic import of the default export (SSR guard), like LangWatch",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "LangWatchModal",
+      "source": "lib/esm/shared/EmojiPicker/EmojiPicker.js"
     },
     {
       "name": "fabri-pix",
@@ -521,28 +543,30 @@
       "version": "^4.12.0",
       "evidence": "declared",
       "surface": "frontend library with design-system surface",
-      "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "disposition": "documented-only",
+      "blocker": "published files do not reference emoji-picker-react (2026-10-04)"
     },
     {
       "name": "@realtimexsco/live-chat",
       "kind": "npm-direct",
       "downloadsWk": 1240,
       "version": "^4.18.0",
-      "evidence": "declared",
-      "surface": "live-chat widget; webchat composer pattern",
-      "disposition": "covered-by-shared-fixture",
-      "fixture": "BotonicComposer"
+      "evidence": "source",
+      "surface": "message reactions popover: reactionsDefaultOpen + allowExpandReactions, reaction clicks via onEmojiClick fallback, close on pick; also composer pickers (lazy, no preview, no skin tones)",
+      "disposition": "runnable",
+      "fixture": "LiveChatReactionPicker",
+      "source": "dist/index.mjs"
     },
     {
       "name": "impact-ui",
       "kind": "npm-direct",
       "downloadsWk": 1214,
       "version": "^4.14.0",
-      "evidence": "declared",
-      "surface": "UI kit; re-export pattern",
+      "evidence": "source",
+      "surface": "MUI popover around the picker, emits emoji string",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "MedusaNotesPicker",
+      "source": "dist/components/TableChat/.../EmojiPicker/EmojiPicker.js"
     },
     {
       "name": "wini-web-components",
@@ -581,31 +605,34 @@
       "kind": "npm-direct",
       "downloadsWk": 666,
       "version": "^4.4.7",
-      "evidence": "declared",
-      "surface": "design system; re-export pattern",
+      "evidence": "source",
+      "surface": "antd popover: searchDisabled, no preview, square size, emits emoji string",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "EdificeEditorToolbar",
+      "source": "ui/index.js"
     },
     {
       "name": "@prezly/slate-editor",
       "kind": "npm-direct",
       "downloadsWk": 652,
       "version": "^4.10.0",
-      "evidence": "declared",
-      "surface": "Slate editor integration; Transforms.insertText boundary",
+      "evidence": "source",
+      "surface": "callout icon popper: APPLE, RECENT, no preview, no skin tones, 275x350, \"No icon\" option; set icon + close on pick or outside click",
       "disposition": "runnable",
       "repo": "prezly/slate",
-      "fixture": "SlateComposer"
+      "fixture": "PrezlyCalloutIcon",
+      "source": "packages/slate-editor/src/extensions/callout/components/CalloutElement.tsx"
     },
     {
       "name": "@aircall/ds",
       "kind": "npm-direct",
       "downloadsWk": 564,
       "version": "pinned 4.4.9",
-      "evidence": "declared",
-      "surface": "design system; re-export pattern",
+      "evidence": "source",
+      "surface": "popover: lazy, native, suggestedEmojisMode, no preview, searchPlaceHolder, translated categories, theme",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "CherryStudioPicker",
+      "source": "dist/index.js"
     },
     {
       "name": "@autono/open-pages",
@@ -622,10 +649,11 @@
       "kind": "npm-direct",
       "downloadsWk": 493,
       "version": "4.17.4",
-      "evidence": "declared",
-      "surface": "education react kit; re-export pattern",
+      "evidence": "source",
+      "surface": "same toolbar as @edifice.io/react",
       "disposition": "covered-by-shared-fixture",
-      "fixture": "FileverseEmojiPicker"
+      "fixture": "EdificeEditorToolbar",
+      "source": "dist/modules/editor/components/EditorToolbar/EditorToolbar.Emoji.js"
     },
     {
       "name": "asma-ui-richeditor",
@@ -634,8 +662,8 @@
       "version": "^4.13.2",
       "evidence": "declared",
       "surface": "rich-text editor; editor insertion-boundary pattern",
-      "disposition": "covered-by-shared-fixture",
-      "fixture": "SlateComposer"
+      "disposition": "documented-only",
+      "blocker": "published files do not reference emoji-picker-react (2026-10-04)"
     },
     {
       "name": "aidenybai/million",
@@ -690,62 +718,65 @@
     {
       "name": "penxio/penx",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "notes app; surface unverified",
+      "evidence": "source",
+      "surface": "struct icon: stores v.unified, renders <Emoji unified size> (no getEmojiUrl: native in v5, Apple images in v4); searchDisabled, 100% x 60vh, close on pick",
       "disposition": "covered-by-shared-fixture",
       "repoDependents": 22,
       "version": "^4.12.0",
-      "fixture": "NextChatComposer"
+      "fixture": "NextChatAvatarSettings",
+      "source": "apps/mobile/src/pages/PageStructInfo/EmojiPicker.tsx"
     },
     {
       "name": "usesend/useSend",
       "kind": "repo",
       "evidence": "declared",
       "surface": "messaging; surface unverified",
-      "disposition": "covered-by-shared-fixture",
+      "disposition": "documented-only",
       "repoDependents": 21,
       "version": "^4.12.2",
-      "fixture": "NextChatComposer"
+      "blocker": "no import of emoji-picker-react found in the default branch (2026-10-04)"
     },
     {
       "name": "edificeio/edifice-frontend-framework",
       "kind": "repo",
       "evidence": "declared",
       "surface": "framework + @edifice.io/react",
-      "disposition": "covered-by-shared-fixture",
+      "disposition": "documented-only",
       "repoDependents": 20,
       "version": "4.17.4",
-      "fixture": "FileverseEmojiPicker"
+      "blocker": "no direct import found; consumes it through @edifice.io/react (covered)"
     },
     {
       "name": "open-slide/open-slide",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "via @open-slide/core",
+      "evidence": "source",
+      "surface": "slide icon picker: native, AUTO, 100% x 360, no preview, no skin tones",
       "disposition": "covered-by-shared-fixture",
       "repoDependents": 12,
       "version": "^4.19.1",
-      "fixture": "NextChatComposer"
+      "fixture": "SignalStickerEmojiPicker",
+      "source": "packages/core/src/app/components/sidebar/icon-picker.tsx"
     },
     {
       "name": "Zipstack/unstract",
       "kind": "repo",
       "evidence": "declared",
       "surface": "AI app; surface unverified",
-      "disposition": "covered-by-shared-fixture",
+      "disposition": "documented-only",
       "repoDependents": 12,
       "version": "^4.8.0",
-      "fixture": "NextChatComposer"
+      "blocker": "no import of emoji-picker-react found in the default branch (2026-10-04)"
     },
     {
       "name": "blinkospace/blinko",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "notes app",
+      "evidence": "source",
+      "surface": "tag icon dialog: native, theme by app mode, store e.emoji + close",
       "disposition": "covered-by-shared-fixture",
       "repoDependents": 10,
       "version": "^4.12.2",
-      "fixture": "NextChatComposer"
+      "fixture": "LangWatchModal",
+      "source": "app/src/components/Common/TagListPanel.tsx"
     },
     {
       "name": "lightdash/lightdash",
@@ -760,12 +791,13 @@
     {
       "name": "prezly/slate",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "via @prezly/slate-editor",
+      "evidence": "source",
+      "surface": "callout icon picker",
       "disposition": "runnable",
       "repoDependents": 8,
       "version": "^4.10.0",
-      "fixture": "SlateComposer"
+      "fixture": "PrezlyCalloutIcon",
+      "source": "via @prezly/slate-editor"
     },
     {
       "name": "getsentry/vanguard",
@@ -801,63 +833,68 @@
       "kind": "repo",
       "evidence": "declared",
       "surface": "desktop AI chat",
-      "disposition": "covered-by-shared-fixture",
+      "disposition": "documented-only",
       "version": "4.12.2",
-      "fixture": "CherryStudioInput"
+      "blocker": "no import of emoji-picker-react found in the default branch (2026-10-04)"
     },
     {
       "name": "gitroomhq/postiz-app",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "social composer",
-      "disposition": "covered-by-shared-fixture",
+      "evidence": "source",
+      "surface": "post composer: picker always mounted, shown via the open prop; theme from stored mode string (fallback DARK); insert + close",
+      "disposition": "runnable",
       "version": "^4.12.0",
-      "fixture": "NextChatComposer"
+      "fixture": "PostizComposer",
+      "source": "apps/frontend/src/components/new-launch/editor.tsx"
     },
     {
       "name": "coaidev/coai",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "AI chat",
+      "evidence": "source",
+      "surface": "mask avatar picker with own getEmojiUrl, lazyLoadEmojis, skinTonesDisabled, searchPlaceHolder, open",
       "disposition": "covered-by-shared-fixture",
       "version": "^4.7.18",
-      "fixture": "NextChatComposer"
+      "fixture": "NextChatAvatarSettings",
+      "source": "app/src/components/home/MaskEditor.tsx"
     },
     {
       "name": "ChatAnyTeam/ChatAny",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "AI chat",
+      "evidence": "source",
+      "surface": "avatar picker + <Emoji> with own CDN",
       "disposition": "covered-by-shared-fixture",
       "version": "^4.9.2",
-      "fixture": "NextChatComposer"
+      "fixture": "NextChatAvatarSettings",
+      "source": "app/components/emoji.tsx (NextChat fork, identical)"
     },
     {
       "name": "the-open-agent/openagent",
       "kind": "repo",
       "evidence": "declared",
       "surface": "agent UI",
-      "disposition": "covered-by-shared-fixture",
+      "disposition": "documented-only",
       "version": "^4.19.1",
-      "fixture": "CherryStudioInput"
+      "blocker": "no import of emoji-picker-react found in the default branch (2026-10-04)"
     },
     {
       "name": "cs-lazy-tools/ChatGPT-On-CS",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "chat UI",
+      "evidence": "source",
+      "surface": "plugin icon field: native, default props",
       "disposition": "covered-by-shared-fixture",
       "version": "^4.10.0",
-      "fixture": "NextChatComposer"
+      "fixture": "LangWatchModal",
+      "source": "src/renderer/settings-window/pages/PluginEdit/PluginBasicInfo.tsx"
     },
     {
       "name": "futantan/OpenGpt",
       "kind": "repo",
-      "evidence": "declared",
-      "surface": "chat UI",
+      "evidence": "source",
+      "surface": "form emoji field: default props (Apple images in v4, native in v5), onChange(emoji)",
       "disposition": "covered-by-shared-fixture",
       "version": "^4.4.7",
-      "fixture": "NextChatComposer"
+      "fixture": "LangWatchModal",
+      "source": "src/components/EmojiField.tsx"
     },
     {
       "name": "usememos/memos",
@@ -869,5 +906,6 @@
     }
   ],
   "runnableFixtures": 12,
-  "coverage": "First consumer map (monthly downloads, starred/forked repos, private consumers) + second drop (top-20 weekly-download npm packages, dependents-ranked repos incl. corrections for plane/medusa/memos/EmbeddedChat)"
+  "coverage": "First consumer map (monthly downloads, starred/forked repos, private consumers) + second drop (top-20 weekly-download npm packages, dependents-ranked repos incl. corrections for plane/medusa/memos/EmbeddedChat)",
+  "verified": "2026-10-04"
 }

@@ -15,20 +15,25 @@
 import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
+import { createPortal } from 'react-dom';
+
 import {
   BotonicComposer,
-  CherryStudioInput,
+  CherryStudioPicker,
   ClassDojoPicker,
-  FileverseEmojiPicker,
+  EdificeEditorToolbar,
+  FileverseAvatarSelector,
   JsonJoyInputChar,
   LangWatchModal,
+  LiveChatReactionPicker,
   MedusaNotesPicker,
-  NextChatComposer,
+  NextChatAvatarSettings,
+  PostizComposer,
+  PrezlyCalloutIcon,
   PushChatTypebar,
-  SignalStickerPicker,
-  SlateComposer,
-  WireReactions,
-  deterministicSpriteUrl,
+  SignalStickerEmojiPicker,
+  WireCallReactionsBar,
+  WireMessageReactions,
 } from '../../integration/fixtures';
 
 const meta = {
@@ -81,19 +86,25 @@ function Shot({
 
 export const NextChat = () => (
   <Shot shotKey="nextchat">
-    <NextChatComposer />
+    <NextChatAvatarSettings />
   </Shot>
 );
 
 export const CherryStudio = () => (
   <Shot shotKey="cherry">
-    <CherryStudioInput />
+    <CherryStudioPicker />
   </Shot>
 );
 
-export const Wire = () => (
+export const WireMessage = () => (
   <Shot shotKey="wire">
-    <WireReactions />
+    <WireMessageReactions />
+  </Shot>
+);
+
+export const WireCall = () => (
+  <Shot shotKey="wirecall">
+    <WireCallReactionsBar />
   </Shot>
 );
 
@@ -109,15 +120,34 @@ export const Botonic = () => (
   </Shot>
 );
 
-export const Fileverse = () => {
-  const [last, setLast] = React.useState('');
+/** Botonic's shadowDOM mode: the whole webchat renders in a shadow root. */
+export const BotonicShadowDom = () => {
+  const [root, setRoot] = React.useState<ShadowRoot | null>(null);
+  const hostRef = React.useCallback((host: HTMLDivElement | null) => {
+    if (host && !host.shadowRoot) {
+      setRoot(host.attachShadow({ mode: 'open' }));
+    }
+  }, []);
   return (
-    <Shot shotKey="fileverse">
-      <FileverseEmojiPicker onEmojiClick={(e) => setLast(e.unified)} />
-      <div data-testid="fileverse-picked">{last}</div>
+    <Shot shotKey="botonicshadow">
+      <div ref={hostRef} data-testid="botonic-shadow-host" />
+      {root &&
+        createPortal(
+          <div data-consumer-shot="">
+            <style>{HOST_CONTROL_RESET}</style>
+            <BotonicComposer />
+          </div>,
+          root as unknown as Element,
+        )}
     </Shot>
   );
 };
+
+export const Fileverse = () => (
+  <Shot shotKey="fileverse">
+    <FileverseAvatarSelector />
+  </Shot>
+);
 
 export const JsonJoy = () => (
   <Shot shotKey="jsonjoy">
@@ -143,48 +173,63 @@ export const ClassDojo = () => (
   </Shot>
 );
 
-export const Slate = () => (
-  <Shot shotKey="slate">
-    <SlateComposer />
+export const Prezly = () => (
+  <Shot shotKey="prezly">
+    <PrezlyCalloutIcon />
   </Shot>
 );
 
-export const Signal = () => {
-  const [last, setLast] = React.useState('');
-  const sprite = React.useMemo(() => deterministicSpriteUrl(), []);
-  return (
-    <Shot shotKey="signal">
-      <SignalStickerPicker
-        getEmojiUrl={() => sprite}
-        onSelect={(e) => setLast(e.unified)}
-      />
-      <div data-testid="signal-picked">{last}</div>
-    </Shot>
-  );
-};
+export const Signal = () => (
+  <Shot shotKey="signal">
+    <SignalStickerEmojiPicker />
+  </Shot>
+);
+
+export const Postiz = () => (
+  <Shot shotKey="postiz">
+    <PostizComposer mode="light" />
+  </Shot>
+);
+
+export const Edifice = () => (
+  <Shot shotKey="edifice">
+    <EdificeEditorToolbar />
+  </Shot>
+);
+
+export const LiveChat = () => (
+  <Shot shotKey="livechat">
+    <LiveChatReactionPicker />
+  </Shot>
+);
 
 const indexEntries: Array<{ story: string; label: string; blurb: string }> = [
-  { story: 'next-chat', label: 'NextChat', blurb: 'Chat composer picker, toggle-mounted, close on select.' },
-  { story: 'cherry-studio', label: 'Cherry Studio', blurb: 'Desktop AI studio chat input beside a mounted panel.' },
-  { story: 'wire', label: 'Wire', blurb: 'Compact reactions row, expandable to the full picker.' },
-  { story: 'lang-watch', label: 'LangWatch', blurb: 'Lazily imported picker inside a modal dialog.' },
-  { story: 'botonic', label: 'Botonic', blurb: 'Dark themed webchat composer, stays open for repeats.' },
-  { story: 'fileverse', label: 'Fileverse', blurb: 'Design-system re-export; props pass straight through.' },
-  { story: 'json-joy', label: 'json-joy', blurb: 'mutxt editor InputChar with NATIVE style.' },
-  { story: 'medusa', label: 'Medusa', blurb: 'Legacy admin dropdown wrapper, NATIVE + NEUTRAL.' },
-  { story: 'push-chat', label: 'Push Chat', blurb: 'Typebar composer on the migrated style contract.' },
-  { story: 'class-dojo', label: 'ClassDojo', blurb: 'Team custom emoji list with search-result UI.' },
-  { story: 'slate', label: 'Slate', blurb: 'Rich-text editor inserting at the saved cursor.' },
-  { story: 'signal', label: 'Signal', blurb: 'Sticker-creator sprite-sheet URL contract.' },
+  { story: 'next-chat', label: 'NextChat', blurb: 'Avatar picker and <Emoji> avatar on its own CDN.' },
+  { story: 'cherry-studio', label: 'Cherry Studio', blurb: 'Chat input popover; app-owned recents passed as characters.' },
+  { story: 'wire-message', label: 'Wire (reactions)', blurb: 'Adapter: legacy searchPlaceHolder, default skin tone, activeSkinTone.' },
+  { story: 'wire-call', label: 'Wire (calling)', blurb: "Reactions bar that reads the picker's localStorage recents." },
+  { story: 'lang-watch', label: 'LangWatch', blurb: 'Deferred default import in a modal; string-cast enum props.' },
+  { story: 'botonic', label: 'Botonic', blurb: 'Webchat composer: full width, no focus steal, close on outside click.' },
+  { story: 'botonic-shadow-dom', label: 'Botonic (shadow DOM)', blurb: 'The same composer inside a shadow root.' },
+  { story: 'fileverse', label: 'Fileverse', blurb: 'AvatarSelector tabs; full EmojiClickData.' },
+  { story: 'json-joy', label: 'json-joy', blurb: 'ArgChar popup: theme flag, closes on pick.' },
+  { story: 'medusa', label: 'Medusa', blurb: 'Notes dropdown with the legacy placeholder prop.' },
+  { story: 'push-chat', label: 'Push Chat', blurb: 'Composer on the migrated style contract.' },
+  { story: 'class-dojo', label: 'ClassDojo', blurb: 'Custom emojis in search and selection.' },
+  { story: 'prezly', label: 'Prezly', blurb: 'Callout icon picker with Apple images.' },
+  { story: 'signal', label: 'Signal', blurb: "The fork's usage run against upstream." },
+  { story: 'postiz', label: 'Postiz', blurb: 'Composer toggled through the open prop.' },
+  { story: 'edifice', label: 'Edifice', blurb: 'Editor toolbar insertion, search disabled.' },
+  { story: 'live-chat', label: 'RealtimeX live chat', blurb: 'Reactions mode handled by onEmojiClick.' },
 ];
 
 export const Index = () => (
   <div style={{ padding: 24, fontFamily: 'sans-serif' }}>
     <h1>Consumer fixtures</h1>
     <p>
-      One story per runnable real-consumer integration. Open a story to
-      inspect its trigger, picker, and host result; the Playwright spec
-      drives all three screenshot states per fixture.
+      One story per real-consumer integration, each reproducing the
+      consumer's actual code (see integration/manifest.json for sources).
+      The Playwright spec drives each through its real flow.
     </p>
     <ul>
       {indexEntries.map((entry) => (

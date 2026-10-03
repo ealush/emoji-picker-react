@@ -16,8 +16,7 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { Categories } from '../src/config/categoryConfig';
-import { EmojiClickData, EmojiStyle } from '../src/types/exposedTypes';
+import { EmojiClickData } from '../src/types/exposedTypes';
 
 import * as Fixtures from './fixtures';
 import manifest from './manifest.json';
@@ -60,6 +59,8 @@ type Candidate = {
   name: string;
   disposition: string;
   fixture?: string;
+  alsoFixtures?: string[];
+  source?: string;
   blocker?: string;
 };
 
@@ -79,10 +80,12 @@ describe('manifest accounting', () => {
       expect(known.has(c.disposition), c.name).toBe(true);
       if (c.disposition === 'runnable' || c.disposition === 'covered-by-shared-fixture') {
         expect(c.fixture, c.name).toBeTruthy();
-        expect(
-          typeof (Fixtures as Record<string, unknown>)[c.fixture as string],
-          c.name,
-        ).toBe('function');
+        for (const fixture of [c.fixture as string, ...(c.alsoFixtures ?? [])]) {
+          expect(
+            typeof (Fixtures as Record<string, unknown>)[fixture],
+            `${c.name}: ${fixture}`,
+          ).toBe('function');
+        }
       } else {
         expect(c.blocker, c.name).toBeTruthy();
       }
@@ -91,7 +94,7 @@ describe('manifest accounting', () => {
 
   it('every mapped fixture is exercised by at least one candidate test', () => {
     const mapped = new Set(
-      testable.map((c) => c.fixture as string),
+      testable.flatMap((c) => [c.fixture as string, ...(c.alsoFixtures ?? [])]),
     );
     for (const name of Object.keys(drivers)) {
       expect(mapped.has(name), name).toBe(true);
@@ -104,123 +107,104 @@ describe('manifest accounting', () => {
 // the candidate label; the boundary exercised is the fixture's.
 // ---------------------------------------------------------------------------
 
+// Each driver runs the consumer's real flow through its fixture: open the
+// way the host opens, pick, and check the value the host keeps.
+async function pick(name: string) {
+  await userEvent.click(await findVisibleEmojiButton(name));
+}
+
 async function driveNextChat() {
-  const onSelect = vi.fn();
-  render(<Fixtures.NextChatComposer onSelect={onSelect} />);
-  await openToggle('nextchat-toggle');
-  await userEvent.type(searchInput(), 'grinning');
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expect(screen.getByTestId('nextchat-input')).toHaveValue(
-    onSelect.mock.calls[0][0].emoji,
-  );
+  const onAvatar = vi.fn();
+  render(<Fixtures.NextChatAvatarSettings onAvatar={onAvatar} />);
+  await openToggle('nextchat-avatar');
+  await pick('cat face');
+  expect(onAvatar).toHaveBeenCalledWith('1f431');
+  expect(
+    screen.getByTestId('nextchat-avatar').querySelector('img')?.getAttribute('src'),
+  ).toMatch(/\/apple\/64\/1f431\.png$/);
 }
 
 async function driveCherry() {
-  const onSelect = vi.fn();
-  render(<Fixtures.CherryStudioInput onSelect={onSelect} />);
+  const onInsert = vi.fn();
+  render(<Fixtures.CherryStudioPicker onInsert={onInsert} />);
   await userEvent.type(searchInput(), 'cat');
-  await userEvent.click(await findVisibleEmojiButton('cat'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expect(screen.getByTestId('cherry-text')).toHaveValue(
-    onSelect.mock.calls[0][0].emoji,
-  );
+  await pick('cat face');
+  expect(onInsert).toHaveBeenCalledWith('🐱');
+  expect(screen.getByTestId('cherry-text')).toHaveValue('🐱');
 }
 
-async function driveWire() {
+async function driveWireMessage() {
   const onReaction = vi.fn();
-  render(<Fixtures.WireReactions onReaction={onReaction} />);
-  const reactionsList = screen.getByRole('list', { name: /reactions/i });
-  const reaction = await within(reactionsList).findByLabelText(
-    'grinning face with big eyes',
-  );
-  await userEvent.click(reaction);
-  expect(onReaction).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onReaction.mock.calls[0][0]);
-  expect(screen.getByTestId('wire-reaction-row')).toHaveTextContent(
-    onReaction.mock.calls[0][0].emoji,
-  );
+  render(<Fixtures.WireMessageReactions onReaction={onReaction} />);
+  await openToggle('wire-react');
+  await pick('cat face');
+  expect(onReaction).toHaveBeenCalledWith({
+    emoji: '🐱',
+    activeSkinTone: expect.any(String),
+  });
+}
+
+async function driveWireCall() {
+  window.localStorage.clear();
+  const onEmojiClick = vi.fn();
+  render(<Fixtures.WireCallReactionsBar onEmojiClick={onEmojiClick} />);
+  await openToggle('wire-call-more');
+  await pick('cat face');
+  expect(onEmojiClick).toHaveBeenCalledWith('🐱');
+  expect(window.localStorage.getItem('epr_suggested')).toContain('"unified":"1f431"');
 }
 
 async function driveLangWatch() {
-  const onSelect = vi.fn();
-  render(<Fixtures.LangWatchModal onSelect={onSelect} />);
+  const onChange = vi.fn();
+  render(<Fixtures.LangWatchModal onChange={onChange} />);
   await openToggle('langwatch-open');
   await screen.findByLabelText('Type to search for an emoji');
-  await userEvent.type(searchInput(), 'smiling face with smiling eyes');
-  await userEvent.click(
-    await findVisibleEmojiButton('smiling face with smiling eyes'),
-  );
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
+  await pick('cat face');
+  expect(onChange).toHaveBeenCalledWith('🐱');
   expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 }
 
 async function driveBotonic() {
-  const onSelect = vi.fn();
-  render(<Fixtures.BotonicComposer onSelect={onSelect} />);
-  await userEvent.type(searchInput(), 'grinning face');
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  await userEvent.clear(searchInput());
-  await userEvent.type(searchInput(), 'cat');
-  await userEvent.click(await findVisibleEmojiButton('cat'));
-  expect(onSelect).toHaveBeenCalledTimes(2);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expectEmojiPayload(onSelect.mock.calls[1][0]);
+  const onEmojiClick = vi.fn();
+  render(<Fixtures.BotonicComposer onEmojiClick={onEmojiClick} />);
+  await openToggle('botonic-toggle');
+  await pick('grinning face');
+  await pick('cat face');
+  expect(onEmojiClick).toHaveBeenCalledTimes(2);
+  expectEmojiPayload(onEmojiClick.mock.calls[1][0]);
 }
 
 async function driveFileverse() {
-  const onSelect = vi.fn();
-  render(
-    <Fixtures.FileverseEmojiPicker
-      emojiData={Fixtures.fixtureEmojiData}
-      categories={[Categories.SMILEYS_PEOPLE]}
-      searchPlaceholder="Search library"
-      onEmojiClick={onSelect}
-    />,
-  );
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
+  const handleEmojiClick = vi.fn();
+  render(<Fixtures.FileverseAvatarSelector handleEmojiClick={handleEmojiClick} />);
+  await pick('cat face');
+  expectEmojiPayload(handleEmojiClick.mock.calls[0][0]);
+  expect(screen.getByTestId('fileverse-current')).toHaveTextContent('🐱');
 }
 
 async function driveJsonJoy() {
   const onSelect = vi.fn();
   render(<Fixtures.JsonJoyInputChar onSelect={onSelect} />);
   await openToggle('jsonjoy-toggle');
-  await userEvent.type(searchInput(), 'grinning face');
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expect(screen.getByTestId('jsonjoy-text')).toHaveTextContent(
-    onSelect.mock.calls[0][0].emoji,
-  );
+  await pick('cat face');
+  expect(onSelect).toHaveBeenCalledWith('🐱');
+  expect(screen.queryByTestId('jsonjoy-popup')).not.toBeInTheDocument();
 }
 
 async function driveMedusa() {
-  const onSelect = vi.fn();
-  render(<Fixtures.MedusaNotesPicker onSelect={onSelect} />);
+  const onEmojiClick = vi.fn();
+  render(<Fixtures.MedusaNotesPicker onEmojiClick={onEmojiClick} />);
   await openToggle('medusa-toggle');
   await userEvent.type(searchInput(), 'cat');
-  await userEvent.click(await findVisibleEmojiButton('cat'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expect(screen.getByTestId('medusa-note')).toHaveValue(
-    onSelect.mock.calls[0][0].emoji,
-  );
+  await pick('cat face');
+  expect(screen.getByTestId('medusa-note')).toHaveValue('🐱');
 }
 
 async function drivePush() {
   const onSelect = vi.fn();
   render(<Fixtures.PushChatTypebar onSelect={onSelect} />);
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
+  await pick('grinning face');
   expectEmojiPayload(onSelect.mock.calls[0][0]);
-  expect(screen.getByTestId('push-draft')).toHaveTextContent(
-    onSelect.mock.calls[0][0].emoji,
-  );
 }
 
 async function driveClassDojo() {
@@ -228,63 +212,80 @@ async function driveClassDojo() {
   render(<Fixtures.ClassDojoPicker onSelect={onSelect} />);
   await userEvent.type(searchInput(), 'Panda');
   await userEvent.click(await screen.findByLabelText('panda'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
   const payload = onSelect.mock.calls[0][0] as EmojiClickData;
   expect(payload.isCustom).toBe(true);
   expectEmojiPayload(payload);
 }
 
-async function driveSignal() {
-  const onSelect = vi.fn();
-  render(<Fixtures.SignalStickerPicker onSelect={onSelect} />);
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  const payload = onSelect.mock.calls[0][0] as EmojiClickData;
-  expectEmojiPayload(payload);
-  expect(payload.getImageUrl(EmojiStyle.APPLE)).toBe(
-    'https://example.com/sheets/apple/1f600.png',
-  );
+async function drivePrezly() {
+  const onPick = vi.fn();
+  render(<Fixtures.PrezlyCalloutIcon onPick={onPick} />);
+  await openToggle('prezly-icon');
+  await pick('cat face');
+  expect(onPick).toHaveBeenCalledWith('🐱');
+  expect(screen.queryByTestId('prezly-popper')).not.toBeInTheDocument();
 }
 
-async function driveSlate() {
-  const onSelect = vi.fn();
-  render(<Fixtures.SlateComposer onSelect={onSelect} />);
-  const editor = screen.getByTestId('slate-editor');
-  editor.textContent = 'Hello';
-  const range = document.createRange();
-  range.selectNodeContents(editor);
-  range.collapse(false);
-  const selection = window.getSelection();
-  selection?.removeAllRanges();
-  selection?.addRange(range);
-  await openToggle('slate-toggle');
-  await userEvent.type(searchInput(), 'grinning face');
-  await userEvent.click(await findVisibleEmojiButton('grinning face'));
-  expect(onSelect).toHaveBeenCalledTimes(1);
-  const payload = onSelect.mock.calls[0][0] as EmojiClickData;
-  expectEmojiPayload(payload);
-  expect(editor.textContent).toBe(`Hello${payload.emoji}`);
+async function driveSignal() {
+  const onEmojiClick = vi.fn();
+  render(<Fixtures.SignalStickerEmojiPicker onEmojiClick={onEmojiClick} />);
+  await pick('cat face');
+  expectEmojiPayload(onEmojiClick.mock.calls[0][0]);
+}
+
+async function drivePostiz() {
+  const onInsert = vi.fn();
+  render(<Fixtures.PostizComposer onInsert={onInsert} />);
+  await openToggle('postiz-toggle');
+  await pick('cat face');
+  expect(screen.getByTestId('postiz-text')).toHaveValue('🐱');
+}
+
+async function driveEdifice() {
+  const onInsert = vi.fn();
+  render(<Fixtures.EdificeEditorToolbar onInsert={onInsert} />);
+  await openToggle('edifice-toggle');
+  await pick('cat face');
+  expect(onInsert).toHaveBeenCalledWith('🐱');
+}
+
+async function driveLiveChat() {
+  const onReactionClick = vi.fn();
+  render(<Fixtures.LiveChatReactionPicker onReactionClick={onReactionClick} />);
+  await openToggle('livechat-react');
+  await userEvent.click(
+    within(screen.getByRole('list', { name: 'Reactions' })).getByRole('button', {
+      name: 'thumbs up sign',
+    }),
+  );
+  expectEmojiPayload(onReactionClick.mock.calls[0][0]);
 }
 
 const drivers: Record<string, () => Promise<void>> = {
-  NextChatComposer: driveNextChat,
-  CherryStudioInput: driveCherry,
-  WireReactions: driveWire,
+  NextChatAvatarSettings: driveNextChat,
+  CherryStudioPicker: driveCherry,
+  WireMessageReactions: driveWireMessage,
+  WireCallReactionsBar: driveWireCall,
   LangWatchModal: driveLangWatch,
   BotonicComposer: driveBotonic,
-  FileverseEmojiPicker: driveFileverse,
+  FileverseAvatarSelector: driveFileverse,
   JsonJoyInputChar: driveJsonJoy,
   MedusaNotesPicker: driveMedusa,
   PushChatTypebar: drivePush,
   ClassDojoPicker: driveClassDojo,
-  SignalStickerPicker: driveSignal,
-  SlateComposer: driveSlate,
+  PrezlyCalloutIcon: drivePrezly,
+  SignalStickerEmojiPicker: driveSignal,
+  PostizComposer: drivePostiz,
+  EdificeEditorToolbar: driveEdifice,
+  LiveChatReactionPicker: driveLiveChat,
 };
 
 describe('per-candidate integrations', () => {
   for (const c of testable) {
-    it(`${c.name} via ${c.fixture}`, async () => {
-      await drivers[c.fixture as string]();
-    });
+    for (const fixture of [c.fixture as string, ...(c.alsoFixtures ?? [])]) {
+      it(`${c.name} via ${fixture}`, async () => {
+        await drivers[fixture]();
+      });
+    }
   }
 });

@@ -1,59 +1,34 @@
 # Coverage matrix
 
-Rows: runnable fixtures. Columns: the six required scenarios (R render+open,
-V visible/positioned, S search+select, C callback+payload+host state, X
-close/retain, P reopen/persistence) plus consumer-specific risks.
+One row per fixture. Every fixture reproduces a consumer's real code (source
+in `manifest.json`). Columns: R render/open through the host's real trigger,
+S search, P pick, C contract asserted, X close behavior. "Covers" lists the
+manifest candidates mapped to the fixture.
 
-Beyond this matrix, `candidate-coverage.test.tsx` executes one test per
-manifest candidate (46 runnable/covered entries across the 12 fixtures,
-driven from `manifest.json` so mapping drift fails the build) plus
-manifest-accounting tests enforcing that every entry has a disposition,
-every testable entry maps to a real fixture export, and every
-non-testable entry records its blocker.
-
-| Fixture | R | V | S | C | X | P | Extra risks covered |
-|---|---|---|---|---|---|---|---|
-| NextChatComposer | x | x | x | x (count=1, payload, cursor insert) | close-on-select | reopen, no replay | duplicate-callback guard |
-| CherryStudioInput | x | x | x | x (unified=1f431) | n/a (panel) | n/a | payload literal |
-| WireReactions | x | x | n/a (reactions row) | x (reaction only, no onEmoji leak) | retain | n/a | reaction/full-picker separation |
-| LangWatchModal | x (lazy+dialog) | x | x | x (count=1) | close-on-select | reopen, no replay | Suspense fallback, lazy ESM |
-| BotonicComposer | x | x (dark, placeholder) | x twice | x (count=2, both in host) | retain-open | n/a | repeated picks |
-| FileverseEmojiPicker | x | x (placeholder) | n/a (direct click) | x (forwarded) | n/a | n/a | prop forwarding (theme/placeholder/callback) |
-| JsonJoyInputChar | x (toggle) | x | x | x (NATIVE insert) | retain | n/a | type-contract usage |
-| MedusaNotesPicker | x (dropdown) | x (placeholder) | x | x (note value) | close-on-select | n/a | legacy v4 prop set on v5 |
-| PushChatTypebar | x | x (style applied) | n/a (direct click) | x | n/a | n/a | `pickerStyle` dropped (no DOM leak), `style` migration |
-| SlateComposer | x (toggle) | x | x | x (count=1, cursor insert, focus) | close-on-select | reopen, no replay | selection save/restore, seeded draft |
-| ClassDojoPicker | x | x | x (custom "Panda") | x (isCustom, host label) | n/a | n/a | custom emoji search+select |
-| SignalStickerPicker | x | x | n/a (direct click) | x (getImageUrl contract) | n/a | n/a | sprite-sheet URL contract |
-
-Inapplicable marks: S=n/a where the consumer surface clicks without search;
-X/P=n/a where the consumer keeps the picker mounted (no close contract).
-Deliberately not multiplied by theme/RTL/SSR per consumer; those are covered
-by the repo's existing suites.
+| Fixture | R | S | P | Contract asserted | X | Covers |
+| --- | --- | --- | --- | --- | --- | --- |
+| NextChatAvatarSettings | popover | x | x | `getEmojiUrl` CDN used with no `emojiStyle` (picker and `<Emoji>`), stores `e.unified` | close on pick | NextChat, ChatAny, coai, penx |
+| CherryStudioPicker | mounted | x | x | recents passed as characters render and update; `hiddenEmojis`; CSS vars via `style`; 100% size; autofocus | stays open | Cherry Studio, @aircall/ds |
+| WireMessageReactions | toggle | x | x | legacy `searchPlaceHolder`, `defaultSkinTone`, `activeSkinTone` in payload | close on pick | wire-webapp |
+| WireCallReactionsBar | toggle | - | x | picks persist to `epr_suggested` as `{unified, original, count}`; bar re-reads them | close on pick / outside mousedown | wire-webapp |
+| LangWatchModal | lazy in dialog | x | x | deferred default import; string-cast enum props; skin tone in preview | close on pick | LangWatch, blinko, ChatGPT-On-CS, OpenGpt, @selfcommunity/react-ui |
+| BotonicComposer | toggle | x | x | no focus steal; no preview; repeated picks; outside click closes; shadow DOM styled | stays open | @botonic/react, plugin-flow-builder |
+| FileverseAvatarSelector | tab | x | x | full `EmojiClickData`; remount across tabs | stays open | @fileverse/ui, ddoc, dsheet |
+| JsonJoyInputChar | popup | x | x | theme from app flag; ClickAway stopping pointer events | close on pick | json-joy, @jsonjoy.com/ui, collaborative-* |
+| MedusaNotesPicker | dropdown | x | x | legacy `searchPlaceHolder`; no skin tones | close on pick | @medusajs/admin-ui, medusa, @medusajs/admin, impact-ui |
+| PushChatTypebar | mounted | x | x | `style` applies; removed `pickerStyle` dropped, never leaked | stays open | Push Chat (private) |
+| ClassDojoPicker | mounted | x | x | custom emoji searchable, `isCustom` payload | stays open | ClassDojo fork (private) |
+| PrezlyCalloutIcon | popper | x | x | Apple images; 275px; "No icon" | close on pick / outside click | @prezly/slate-editor, prezly/slate |
+| SignalStickerEmojiPicker | mounted | x | x | fork-era props on upstream; translated categories; no preview/skin tones | stays open | Signal (fork), open-slide, @open-slide/core |
+| PostizComposer | `open` prop | x | x | mount via `open`; theme from stored mode string | close on pick | postiz-app |
+| EdificeEditorToolbar | dropdown | - | x | search disabled; translated recents first; insert at selection | stays open | @edifice.io/react, @cgi-learning-hub/edifice-react, @iclips/ui, tedooo |
+| LiveChatReactionPicker | popover | - | x | reactions mode; reaction clicks reach `onEmojiClick` with no `onReactionClick`; expand | close on pick | @realtimexsco/live-chat |
 
 ## Visual baselines
 
-Every runnable fixture has three committed baselines in
-`playwright/consumer-integrations.spec.ts-snapshots/` (36 total), captured
-on the `consumer-shot-<key>` region by
-`playwright/consumer-integrations.spec.ts`:
-
-| Fixture | open | changed | selected |
-|---|---|---|---|
-| NextChatComposer | toggle-mounted picker | `grin` results | textarea 😀, popover closed |
-| CherryStudioInput | mounted panel | `grin` results | input 😀, stays open |
-| WireReactions | reactions row | expanded full picker | reaction row 😃 |
-| LangWatchModal | lazy picker in dialog | `smiling` result | result 😊, dialog closed |
-| BotonicComposer | dark panel | `grin` results | messages 😀, stays open |
-| FileverseEmojiPicker | wrapper panel | `grin` results | readout `1f600`, stays open |
-| JsonJoyInputChar | toggle-mounted picker | `grin` results | editor 😀, stays open |
-| MedusaNotesPicker | dropdown panel | `cat` result | note 🐱, dropdown closed |
-| PushChatTypebar | styled panel | `grin` results | draft 😀, stays open |
-| SlateComposer | toggle-mounted picker | `grin` results | editor Hello😀, popover closed |
-| ClassDojoPicker | full panel | `Panda` custom result | readout `custom:panda` |
-| SignalStickerPicker | sprite grid (deterministic data-URI) | `cat` result | readout `1f431` |
-
-Inspected 2026-10-03 via contact sheets (all 36 viewed): regions include
-trigger + picker + host result; no clipping of picker chrome; selected shots
-show the post-click preview caption (deterministic focus-after-click).
-Re-ran without `--update-snapshots`: 12/12 pass.
+`playwright/consumer-integrations.spec.ts` captures open / changed / selected
+for each of the 17 stories (51 images). The changed state is search results,
+or the consumer's own state where it has no search: Wire's calling picker,
+Edifice's category jump, live chat's expanded picker. Botonic's shadow-root
+story also asserts the picker's styles apply inside the shadow root.
+Reviewed 2026-10-04 via `sheets/`; two clean re-runs without updates.
