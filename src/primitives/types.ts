@@ -73,3 +73,11 @@ export type EmptyProps = Omit<
 > & {
   children?: React.ReactNode | ((state: { search: string }) => React.ReactNode);
 };
+
+export type SkinToneProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'role' | 'children'
+> & {
+  /** Axis the tones fan out along. Default: 'horizontal'. */
+  direction?: 'horizontal' | 'vertical';
+};

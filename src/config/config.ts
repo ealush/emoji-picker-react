@@ -124,9 +124,13 @@ export function mergeConfig(
     config.unicodeToHide.add(emoji);
   });
 
-  const skinTonePickerLocation = config.searchDisabled
-    ? SkinTonePickerLocation.PREVIEW
-    : config.skinTonePickerLocation;
+  // Without Search, a search-located control moves to the preview; an
+  // explicit NONE (or PREVIEW) placement is kept as-is.
+  const skinTonePickerLocation =
+    config.searchDisabled &&
+    config.skinTonePickerLocation === SkinTonePickerLocation.SEARCH
+      ? SkinTonePickerLocation.PREVIEW
+      : config.skinTonePickerLocation;
 
   return {
     ...config,

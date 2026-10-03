@@ -6,6 +6,7 @@ export {
   darkPickerTokens,
 } from './tokens';
 export { Empty } from './Empty';
+export { SkinTone } from './SkinTone';
 export { useActiveEmoji, useSkinTone, useSearchState } from './hooks';
 export type { SearchState } from './hooks';
 export { Search } from './Search';
@@ -17,6 +18,7 @@ export { Preview } from './Preview';
 export type {
   CategoryNavProps,
   EmptyProps,
+  SkinToneProps,
   ListProps,
   PickerAppearanceProps,
   PreviewProps,

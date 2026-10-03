@@ -212,8 +212,17 @@ function useSkinTonePickerKeyboardEvents() {
       // eslint-disable-next-line complexity
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
+        // The fan axis decides the arrow keys: the search placement and a
+        // horizontal SkinTone primitive move left/right, the preview
+        // placement and a vertical primitive move up/down.
+        const vertical =
+          isSkinToneInPreview ||
+          (!isSkinToneInSearch &&
+            (event.currentTarget as Element | null)?.getAttribute(
+              'data-epr-direction',
+            ) === 'vertical');
 
-        if (isSkinToneInSearch) {
+        if (!vertical) {
           switch (key) {
             case KeyboardEvents.ArrowLeft:
               event.preventDefault();
@@ -242,7 +251,7 @@ function useSkinTonePickerKeyboardEvents() {
           }
         }
 
-        if (isSkinToneInPreview) {
+        if (vertical) {
           switch (key) {
             case KeyboardEvents.ArrowUp:
               event.preventDefault();

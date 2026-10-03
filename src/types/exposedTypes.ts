@@ -93,4 +93,9 @@ export enum Categories {
 export enum SkinTonePickerLocation {
   SEARCH = 'SEARCH',
   PREVIEW = 'PREVIEW',
+  /**
+   * No built-in placement: render the `SkinTone` primitive wherever you
+   * want it, or drive the tone through `skinTone` / `useSkinTone()`.
+   */
+  NONE = 'NONE',
 }

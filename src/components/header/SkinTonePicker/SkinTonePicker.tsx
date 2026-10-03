@@ -81,6 +81,9 @@ export function SkinTonePicker({
         className={cx(styles.select)}
         ref={SkinTonePickerRef}
         data-epr-part="skin-tone"
+        // Read by the keyboard handler: arrow keys follow the fan axis
+        // wherever the control is placed.
+        data-epr-direction={vertical ? 'vertical' : 'horizontal'}
       >
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
