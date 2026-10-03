@@ -86,6 +86,8 @@ This narrowly addresses application-defined suggested emojis without replacing t
 
 - **Native support detection.** With the (new default) native style and no `emojiVersion`, emojis the platform cannot render — and country flags where the platform has no flag glyphs, e.g. Windows — are hidden after mount. Pin `emojiVersion` to opt out.
 - **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
+- **Emoji columns fill the row.** Leftover row width is now shared between columns instead of collecting as a gap on the right edge, so a few pixels of horizontal emoji position change (equal left/right insets). Screenshot tests that include the grid may need a refresh.
+- **Fluid widths reflow.** The column count follows the picker's width when its container resizes (it was only recomputed on CSS transitions).
 - **Default text contrast.** The light theme's `--epr-text-color` is `#6b6b6b` (was `#858585`) to meet WCAG AA.
 - **Easier overrides.** `--epr-*` tokens are declared at zero specificity, so `.my-picker { --epr-bg-color: … }` wins without `aside.EmojiPickerReact`-style specificity. Tailwind v4 users: pass `cssLayer="epr"` and declare `@layer epr, theme, base, components, utilities;` before importing Tailwind.
 - **`colorScheme` prop.** Prefer `colorScheme` over `theme` (still supported as an alias); CSS-in-JS wrappers such as Emotion, styled-components and MUI reserve `theme`.

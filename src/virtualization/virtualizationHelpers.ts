@@ -25,13 +25,23 @@ export function shouldVirtualize({
   return !isVisible;
 }
 
+// Columns spread across the row like the category grid's own
+// `justify-content: space-between`: first column flush left, last flush
+// right, leftover width shared evenly between columns. Packing from the
+// left instead pushed the whole remainder (up to one emoji wide) into a
+// gap on the right edge. Whole pixels keep image emojis crisp.
 export function getEmojiPositionStyle(dimensions: Dimensions, index: number) {
-  return dimensions
-    ? {
-        top: Math.floor(index / dimensions.emojisPerRow) * dimensions.emojiSize,
-        left: (index % dimensions.emojisPerRow) * dimensions.emojiSize,
-      }
-    : undefined;
+  if (!dimensions) {
+    return undefined;
+  }
+  const { emojiSize, emojisPerRow, rowWidth } = dimensions;
+  const column = index % emojisPerRow;
+  const remainder = Math.max(0, (rowWidth ?? 0) - emojisPerRow * emojiSize);
+  const gap = emojisPerRow > 1 ? remainder / (emojisPerRow - 1) : 0;
+  return {
+    top: Math.floor(index / emojisPerRow) * emojiSize,
+    left: Math.round(column * (emojiSize + gap)),
+  };
 }
 
 // preload emoji if it is one row below viewport
@@ -41,5 +51,7 @@ export type Dimensions =
       emojiSize: number;
       emojisPerRow: number;
       categoryHeight: number;
+      /** Usable row width the columns are distributed across. */
+      rowWidth?: number;
     }
   | undefined;

@@ -59,6 +59,7 @@ export function useCategoryHeight(emojiCount: number):
       categoryHeight: number;
       emojisPerRow: number;
       emojiSize: number;
+      rowWidth: number;
     }
   | undefined {
   const EmojiListRef = useEmojiListRef();
@@ -73,6 +74,7 @@ export function useCategoryHeight(emojiCount: number):
     categoryHeight: number;
     emojisPerRow: number;
     emojiSize: number;
+    rowWidth: number;
   }>();
 
   // Helper to compute and store dimensions based on current DOM
@@ -103,7 +105,7 @@ export function useCategoryHeight(emojiCount: number):
     const categoryHeight = rowCount * emojiSize;
 
     trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
-    setDimensions({ categoryHeight, emojisPerRow, emojiSize });
+    setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
   }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry]);
 
   // Recompute on data-count changes and when reactions mode toggles

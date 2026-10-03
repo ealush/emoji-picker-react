@@ -247,8 +247,10 @@ Evidence (2026-10-03, `npm run check:perf`, baseline re-recorded from `master` i
 - [x] all documented v4 CSS variables remain supported unless explicitly deprecated.
 - [x] public part list matches STYLING.md exactly, including `skin-tone` and `category-content`.
 - [x] protected structural properties are documented.
-- [ ] supported emoji size/padding changes update measurement/row math.
-- [ ] cosmetic overrides do not break virtualization.
+- [x] supported emoji size/padding changes update measurement/row math.
+- [x] cosmetic overrides do not break virtualization.
+
+Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all 25 designs (each with its own emoji size, padding and spacing): column count equals floor(content width / emoji size), left and right insets match within 1px, and no emoji overflows its content box; `recipes.spec.ts` / `recipes-interactions.spec.ts` keyboard-walk every design's virtualized grid. The geometry spec found and now guards the right-edge gap fixed in `getEmojiPositionStyle`.
 - [x] variation picker remains visible/keyboard-operable in custom composition.
 - [x] bare primitives do not silently apply full branded appearance.
 - [x] default picker remains visually compatible.

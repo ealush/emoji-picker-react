@@ -52,6 +52,13 @@ A major version does not automatically authorize visual redesign.
 | --- | --- | --- |
 | `a11y-reactions-focus/reactions-keyboard-focus.png` | reactions row 49px → 50px tall | In v4 the collapsed pill still laid out the hidden full-picker regions, so the preview's 1px top border consumed a pixel of the 50px pill. v5 removes the hidden panel from layout (`display: none` + `inert`), so the row fills the pill. Glyphs, spacing and focus treatment are unchanged; verified against a v4 master build (ul 49px, aside 52px) and the v5 build (ul 50px, aside 52px). |
 | default light theme (all light fixtures) | `--epr-text-color` `#858585` → `#6b6b6b` | Accessibility: axe (WCAG 2.1 AA) measured 3.4–3.7:1 for category titles, the search placeholder and preview text on the light surfaces; `#6b6b6b` is ≈5:1 on both. Dark theme unchanged. Existing light fixtures stay within the suite's pixel tolerance, so their baselines were not regenerated. |
+| every fixture showing the emoji grid | columns spread across the row instead of packing left | The category grid's CSS has always declared `justify-content: space-between`, but virtualization positions emojis absolutely at `column × size`, so the whole row remainder (up to one emoji wide: 10px in the default picker, 24–33px in several designs) collected as a gap on the right edge, beside the scrollbar. Columns now share the remainder (first flush left, last flush right, whole pixels), giving equal left/right insets. Guarded by `playwright/grid-geometry.spec.ts` across the default picker and every design; v4 had the same left packing. |
+
+### Environment drift adjudicated
+
+| Snapshots | Drift | Resolution |
+| --- | --- | --- |
+| `consumer-integrations/*` (host textarea/input/button), `recipes-examples-community-custom-emojis*` | Region screenshots were 2–6px taller or shorter on Ubuntu CI than on the machine that captured them: unstyled host controls and a `line-height: normal` shell take platform font metrics. The picker inside was pixel-identical. | Host-control metrics and the forum shell's line-height were pinned in the fixtures (not the picker), baselines regenerated in a separate snapshot-maintenance commit, CI green on Ubuntu. |
 
 ## Animation
 
