@@ -31,13 +31,12 @@ const REQUIRED = [
   'dist/index.js',
   'dist/index.d.ts',
   'dist/index.d.mts',
-  'dist/emoji-picker-react.esm.js',
-  'dist/emoji-picker-react.esm.mjs',
+  'dist/esm/index.mjs',
+  'dist/esm/primitives/index.mjs',
+  'dist/esm/data.mjs',
   'dist/primitives/index.js',
-  'dist/primitives/index.mjs',
   'dist/primitives/index.d.ts',
   'dist/data/index.js',
-  'dist/data/index.mjs',
   'dist/data.d.ts',
   'dist/data/emojis-es.js',
   'dist/data/emojis-es.mjs',
@@ -55,6 +54,8 @@ function main() {
         `Missing: ${missing.join(', ')}`,
     );
   }
+
+  checkPrimitivesInitialBudget();
 
   const scratch = mkdtempSync(join(tmpdir(), 'epr-package-check-'));
   console.log(`package check scratch dir: ${scratch}`);
@@ -109,6 +110,54 @@ function main() {
 // (default-export interop, .esm.js module kind) that Phase 10 owns;
 // anything else there — especially resolution failures introduced by the
 // exports map — fails the gate.
+// size-limit inlines dynamic imports, so it reports the primitives entry
+// with its lazily loaded dataset. This budget measures what a consumer
+// bundle actually loads up front: the entry plus its static chunks,
+// minified and gzipped, with the dataset left in its own lazy chunk.
+const PRIMITIVES_INITIAL_BUDGET_BYTES = 40 * 1024;
+
+function checkPrimitivesInitialBudget() {
+  const { gzipSync } = require('zlib');
+  const { readFileSync, readdirSync } = require('fs');
+  const out = mkdtempSync(join(tmpdir(), 'epr-primitives-budget-'));
+  sh(join(repoRoot, 'node_modules', '.bin', 'esbuild'), [
+    join(repoRoot, 'dist', 'esm', 'primitives', 'index.mjs'),
+    '--bundle',
+    '--splitting',
+    '--format=esm',
+    '--minify',
+    '--external:react',
+    '--external:react-dom',
+    '--external:shipstyles',
+    '--entry-names=entry',
+    `--outdir=${out}`,
+    '--log-level=error',
+  ]);
+  const files = new Map(
+    readdirSync(out).map((name) => [name, readFileSync(join(out, name), 'utf8')]),
+  );
+  const initial = new Set();
+  const visit = (name) => {
+    if (initial.has(name) || !files.has(name)) return;
+    initial.add(name);
+    const staticImport = /(?:import|from)\s*["']\.\/([^"']+)["']/g;
+    let match;
+    while ((match = staticImport.exec(files.get(name)))) visit(match[1]);
+  };
+  visit('entry.js');
+  const bytes = [...initial].reduce(
+    (sum, name) => sum + gzipSync(files.get(name)).length,
+    0,
+  );
+  const kb = (bytes / 1024).toFixed(1);
+  if (bytes > PRIMITIVES_INITIAL_BUDGET_BYTES) {
+    throw new Error(
+      `primitives initial load ${kb} KB exceeds ${PRIMITIVES_INITIAL_BUDGET_BYTES / 1024} KB (min+gz)`,
+    );
+  }
+  console.log(`ok: primitives initial load ${kb} KB min+gz (dataset lazy)`);
+}
+
 function gateAttw(tarball, cwd) {
   // attw shells out to npm internally; it must run from the repository
   // checkout, not the scratch install dir. Its JSON report is redirected

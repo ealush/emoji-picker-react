@@ -44,13 +44,14 @@ async function main() {
     );
   }
 
-  const entries = [
+  // CommonJS: one self-contained bundle per subpath entry (CJS cannot
+  // share chunks). The main CJS entry comes from tsdx.
+  const cjsEntries = [
     { src: 'src/primitives/index.ts', outdir: 'dist/primitives' },
     { src: 'src/data.ts', outdir: 'dist/data' },
   ];
 
-  for (const { src, outdir } of entries) {
-    // CJS for require() consumers.
+  for (const { src, outdir } of cjsEntries) {
     sh(esbuildBin, [
       join(repoRoot, src),
       '--bundle',
@@ -64,26 +65,34 @@ async function main() {
       `--outfile=${join(repoRoot, outdir, 'index.js')}`,
       '--log-level=warning',
     ]);
-    // ESM (.mjs, unambiguous in a CommonJS-typed package) for importers.
-    sh(esbuildBin, [
-      join(repoRoot, src),
-      '--bundle',
-      '--format=esm',
-      '--platform=neutral',
-      '--target=es2019',
-      '--external:react',
-      '--external:react-dom',
-      '--external:shipstyles',
-      '--loader:.svg=dataurl',
-      `--outfile=${join(repoRoot, outdir, 'index.mjs')}`,
-      '--log-level=warning',
-    ]);
   }
 
-  // Declarations for both entries (and only their closure). The emit is
-  // expected to be clean (third-party private-name noise like TS4058 is
-  // fixed at the source, not tolerated), so a tsc failure aborts the
-  // build rather than shipping declarations of unknown quality.
+  // ESM: every public entry in one code-split build. The entries share
+  // chunks, so an app importing both the default picker and primitives
+  // ships the implementation once (and one set of module-level state),
+  // and the default dataset is its own chunk: the primitives entry loads
+  // it on demand instead of shipping it up front.
+  sh(esbuildBin, [
+    join(repoRoot, 'src/index.tsx'),
+    join(repoRoot, 'src/primitives/index.ts'),
+    join(repoRoot, 'src/data.ts'),
+    '--bundle',
+    '--splitting',
+    '--format=esm',
+    '--platform=neutral',
+    '--target=es2019',
+    '--external:react',
+    '--external:react-dom',
+    '--external:shipstyles',
+    '--loader:.svg=dataurl',
+    `--outbase=${join(repoRoot, 'src')}`,
+    `--outdir=${join(repoRoot, 'dist', 'esm')}`,
+    '--entry-names=[dir]/[name]',
+    '--chunk-names=chunks/[name]-[hash]',
+    '--out-extension:.js=.mjs',
+    '--log-level=warning',
+  ]);
+
   const tsc = spawnSync(
     'npx',
     ['tsc', '--project', join(repoRoot, 'scripts', 'tsconfig.entries.json')],
@@ -134,10 +143,6 @@ async function main() {
   // unambiguous, matching the primitives/data dual-entry convention.
   // The exports map points the import condition at the twin; the .js
   // original stays for bundlers and size-limit.
-  const mainEsm = join(repoRoot, 'dist', 'emoji-picker-react.esm.js');
-  if (existsSync(mainEsm)) {
-    copyFileSync(mainEsm, join(repoRoot, 'dist', 'emoji-picker-react.esm.mjs'));
-  }
   // ESM-typed twin for the main declarations: index.d.ts resolves as
   // CommonJS under the package type, so the ESM condition needs ESM-typed
   // declarations to agree with its .mjs implementation (same trick as the
@@ -149,7 +154,7 @@ async function main() {
     await bundleDeclarations(mainDts);
     copyFileSync(mainDts, join(repoRoot, 'dist', 'index.d.mts'));
   }
-  console.log('entry builds complete: dist/primitives, dist/data');
+  console.log('entry builds complete: dist/esm (split), dist/primitives, dist/data');
 }
 
 main().catch((error) => {

@@ -7,7 +7,7 @@
     ".": {
       "import": {
         "types": "./dist/index.d.mts",
-        "default": "./dist/emoji-picker-react.esm.mjs"
+        "default": "./dist/esm/index.mjs"
       },
       "require": {
         "types": "./dist/index.d.ts",
@@ -18,7 +18,7 @@
     "./primitives": {
       "import": {
         "types": "./dist/primitives/index.d.mts",
-        "default": "./dist/primitives/index.mjs"
+        "default": "./dist/esm/primitives/index.mjs"
       },
       "require": {
         "types": "./dist/primitives/index.d.ts",
@@ -29,7 +29,7 @@
     "./data": {
       "import": {
         "types": "./dist/data.d.mts",
-        "default": "./dist/data/index.mjs"
+        "default": "./dist/esm/data.mjs"
       },
       "require": {
         "types": "./dist/data.d.ts",
@@ -147,22 +147,22 @@
   },
   "name": "emoji-picker-react",
   "author": "ealush",
-  "module": "dist/emoji-picker-react.esm.js",
+  "module": "dist/esm/index.mjs",
   "size-limit": [
     {
       "path": "dist/emoji-picker-react.cjs.production.min.js",
       "limit": "95 KB"
     },
     {
-      "path": "dist/emoji-picker-react.esm.js",
+      "path": "dist/esm/index.mjs",
       "limit": "95 KB"
     },
     {
-      "path": "dist/primitives/index.mjs",
+      "path": "dist/esm/primitives/index.mjs",
       "limit": "90 KB"
     },
     {
-      "path": "dist/data/index.mjs",
+      "path": "dist/esm/data.mjs",
       "limit": "55 KB"
     }
   ],

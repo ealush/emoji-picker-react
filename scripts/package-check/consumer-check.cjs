@@ -6,6 +6,28 @@ const { createRequire } = require('module');
 const requireFromScratch = createRequire(__filename);
 const pkgDir = requireFromScratch.resolve('emoji-picker-react/package.json').replace(/package\.json$/, '');
 const read = (subpath) => readFileSync(pkgDir + subpath, 'utf8');
+const path = require('path');
+
+// The ESM entries are code-split: an entry file re-exports from shared
+// chunks. Scans therefore cover an entry's whole static import closure
+// (what loads up front), not just the entry file.
+function staticClosure(subpath) {
+  const seen = new Set();
+  const contents = [];
+  const visit = (file) => {
+    if (seen.has(file)) return;
+    seen.add(file);
+    const content = read(file);
+    contents.push(content);
+    const staticImport = /(?:^|[;\n}])\s*(?:import|export)\s*(?:[^'"()]*?\sfrom\s*)?["'](\.{1,2}\/[^"']+)["']/g;
+    let match;
+    while ((match = staticImport.exec(content))) {
+      visit(path.posix.join(path.posix.dirname(file), match[1]));
+    }
+  };
+  visit(subpath);
+  return contents.join('\n');
+}
 
 const pending = [];
 
@@ -107,8 +129,10 @@ check('data entry imports no framework', () => {
   } finally {
     Module._resolveFilename = original;
   }
-  for (const file of ['dist/data/index.js', 'dist/data/index.mjs']) {
-    const content = read(file);
+  for (const [file, content] of [
+    ['dist/data/index.js', read('dist/data/index.js')],
+    ['dist/esm/data.mjs', staticClosure('dist/esm/data.mjs')],
+  ]) {
     assert.ok(!/from\s+['"]react['"]|require\(['"]react['"]\)/.test(content), `${file} imports react`);
     assert.ok(!/shipstyles/.test(content), `${file} imports shipstyles`);
   }
@@ -116,15 +140,35 @@ check('data entry imports no framework', () => {
 
 // Primitives must not drag in the default appearance wrapper.
 check('primitives exclude default appearance', () => {
-  for (const file of ['dist/primitives/index.js', 'dist/primitives/index.mjs']) {
-    const content = read(file);
+  for (const [file, content] of [
+    ['dist/primitives/index.js', read('dist/primitives/index.js')],
+    ['dist/esm/primitives/index.mjs', staticClosure('dist/esm/primitives/index.mjs')],
+  ]) {
     for (const marker of ['ErrorBoundary', 'baseVariables', '--epr-dark-hover-bg-color']) {
       assert.ok(!content.includes(marker), `${file} contains ${marker}`);
     }
   }
   // Sanity: the markers exist in the main bundle, so the scan is meaningful.
-  const main = read('dist/emoji-picker-react.esm.js');
+  const main = staticClosure('dist/esm/index.mjs');
   assert.ok(main.includes('ErrorBoundary'), 'main bundle sanity marker missing');
+});
+
+// Lean primitives: the dataset is not loaded up front by the ESM
+// primitives entry, but is reachable on demand; the main entry ships it.
+check('primitives load the dataset on demand', () => {
+  const DATASET_MARKER = 'grinning face with big eyes';
+  const primitives = staticClosure('dist/esm/primitives/index.mjs');
+  assert.ok(!primitives.includes(DATASET_MARKER), 'primitives ESM eagerly includes the dataset');
+  assert.ok(/import\(\s*["']\.{1,2}\/[^"']+["']\s*\)/.test(primitives), 'primitives ESM has no lazy dataset import');
+  assert.ok(staticClosure('dist/esm/index.mjs').includes(DATASET_MARKER), 'main ESM is missing the dataset');
+});
+
+// One implementation across ESM entries: main and primitives share chunks.
+check('ESM entries share their implementation', () => {
+  const chunksOf = (file) => new Set((read(file).match(/\.\/(?:\.\.\/)?chunks\/[^"']+/g) || []).map((c) => c.replace(/^.*chunks\//, '')));
+  const main = chunksOf('dist/esm/index.mjs');
+  const primitives = chunksOf('dist/esm/primitives/index.mjs');
+  assert.ok([...primitives].some((chunk) => main.has(chunk)), 'main and primitives ESM share no chunk');
 });
 
 // Declarations ship for every entry.
