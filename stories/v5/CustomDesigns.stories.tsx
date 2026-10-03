@@ -21,9 +21,9 @@ import type { EmojiClickData } from '../../src/types/exposedTypes';
 // CategoryNav, Viewport and Preview are optional singletons in any order;
 // ordinary consumer wrappers/controls land inside the managed panel.
 //
-// Bare Roots do not inherit the default token sheet, so each design
-// supplies the documented --epr-* tokens it consumes (STYLING.md §3):
-// shared v4 defaults via designTokens() plus a small per-design delta.
+// Each Root opts into the default color tokens with theme="light"
+// (geometry tokens are always present) and overrides a small per-design
+// delta.
 // Custom CSS targets documented data-epr-part hooks and stays within
 // appearance-safe declarations (STYLING.md §2): colors, backgrounds,
 // borders, radii, typography, shadows and padding tokens. Structural
@@ -49,69 +49,6 @@ function useLastPick() {
   };
 }
 
-// Documented default token values (see defaultAppearance baseVariables
-// and CSS_VARIABLES.md). A custom design starts from these and overrides
-// only what its theme changes; without them, token-driven functional
-// styles (input heights, tab sizes, preview height) have no value.
-function designTokens(scope: string): string {
-  return `
-${scope} {
-  --epr-highlight-color: #007aeb;
-  --epr-hover-bg-color: #e5f0fa;
-  --epr-hover-bg-color-reduced-opacity: #e5f0fa80;
-  --epr-focus-bg-color: #e0f0ff;
-  --epr-text-color: #858585;
-  --epr-search-input-bg-color: #f6f6f6;
-  --epr-picker-border-color: #e7e7e7;
-  --epr-bg-color: #fff;
-  --epr-reactions-bg-color: #ffffff90;
-  --epr-category-icon-active-color: #3371B7;
-  --epr-category-icon-inactive-color: #868686;
-  --epr-skin-tone-picker-menu-color: #ffffff95;
-  --epr-skin-tone-outer-border-color: #555555;
-  --epr-skin-tone-inner-border-color: var(--epr-bg-color);
-  --epr-horizontal-padding: 10px;
-  --epr-picker-border-radius: 8px;
-  --epr-header-padding: 15px var(--epr-horizontal-padding);
-  --epr-active-skin-tone-indicator-border-color: var(--epr-highlight-color);
-  --epr-active-skin-hover-color: var(--epr-hover-bg-color);
-  --epr-search-input-bg-color-active: var(--epr-search-input-bg-color);
-  --epr-search-input-padding: 0 30px;
-  --epr-search-input-border-radius: 8px;
-  --epr-search-input-height: 40px;
-  --epr-search-input-text-color: var(--epr-text-color);
-  --epr-search-input-placeholder-color: var(--epr-text-color);
-  --epr-search-bar-inner-padding: var(--epr-horizontal-padding);
-  --epr-search-border-color: var(--epr-search-input-bg-color);
-  --epr-search-border-color-active: var(--epr-highlight-color);
-  --epr-category-navigation-button-size: 30px;
-  --epr-emoji-variation-picker-height: 45px;
-  --epr-emoji-variation-picker-bg-color: var(--epr-bg-color);
-  --epr-preview-height: 70px;
-  --epr-preview-text-size: 14px;
-  --epr-preview-text-padding: 0 var(--epr-horizontal-padding);
-  --epr-preview-border-color: var(--epr-picker-border-color);
-  --epr-preview-text-color: var(--epr-text-color);
-  --epr-category-padding: 0 var(--epr-horizontal-padding);
-  --epr-category-label-bg-color: #ffffffe6;
-  --epr-category-label-text-color: var(--epr-text-color);
-  --epr-category-label-padding: 0 var(--epr-horizontal-padding);
-  --epr-category-label-height: 40px;
-  --epr-emoji-size: 30px;
-  --epr-emoji-padding: 5px;
-  --epr-emoji-fullsize: calc(var(--epr-emoji-size) + var(--epr-emoji-padding) * 2);
-  --epr-emoji-hover-color: var(--epr-hover-bg-color);
-  --epr-emoji-variation-indicator-color: var(--epr-picker-border-color);
-  --epr-emoji-variation-indicator-color-hover: var(--epr-text-color);
-  --epr-header-overlay-z-index: 3;
-  --epr-emoji-variations-indictator-z-index: 1;
-  --epr-category-label-z-index: 2;
-  --epr-skin-variation-picker-z-index: 5;
-  --epr-preview-z-index: 6;
-}
-`;
-}
-
 // ---------------------------------------------------------------------------
 // 1. Midnight command palette: dark glass card, status Preview on top,
 //    bottom search bar, custom status footer. Regions run in a fully
@@ -123,7 +60,7 @@ export function MidnightPalette() {
   const scope = '.midnight-palette-story .midnight-palette';
   return (
     <div className="midnight-palette-story">
-      <style>{`${designTokens(scope)}
+      <style>{`
 ${scope} {
   --epr-text-color: #e8eaf2;
   --epr-bg-color: #101424;
@@ -143,6 +80,7 @@ ${scope} {
 }`}</style>
       <style>{MIDNIGHT_CSS}</style>
       <Root
+        theme="light"
         emojiStyle={EmojiStyle.NATIVE}
         reactions={['1f600', '1f603', '1f60d', '1f622', '1f44d', '2764-fe0f']}
         previewConfig={{
@@ -249,7 +187,7 @@ export function SlimComposerBar() {
   const scope = '.slim-bar-story .slim-bar';
   return (
     <div className="slim-bar-story">
-      <style>{`${designTokens(scope)}
+      <style>{`
 ${scope} {
   --epr-text-color: #1f2937;
   --epr-bg-color: #fffdf8;
@@ -265,6 +203,7 @@ ${scope} {
 }`}</style>
       <style>{SLIM_CSS}</style>
       <Root
+        theme="light"
         emojiStyle={EmojiStyle.NATIVE}
         onEmojiClick={onEmojiClick}
         className="slim-bar"
@@ -361,7 +300,7 @@ export function SidebarExplorer() {
   const scope = '.sidebar-story .sidebar-explorer';
   return (
     <div className="sidebar-story">
-      <style>{`${designTokens(scope)}
+      <style>{`
 ${scope} {
   --epr-text-color: #232946;
   --epr-bg-color: rgba(255, 255, 255, 0.9);
@@ -380,6 +319,7 @@ ${scope} {
 }`}</style>
       <style>{SIDEBAR_CSS}</style>
       <Root
+        theme="light"
         emojiStyle={EmojiStyle.NATIVE}
         onEmojiClick={onEmojiClick}
         className="sidebar-explorer"
@@ -394,7 +334,7 @@ ${scope} {
         <div className="sidebar-body">
           <div className="sidebar-rail">
             <div className="sidebar-railhead">Browse</div>
-            <CategoryNav aria-label="Categories" />
+            <CategoryNav aria-label="Categories" orientation="vertical" />
           </div>
           <div className="sidebar-main">
             <Search />
@@ -460,15 +400,9 @@ const SIDEBAR_CSS = `
   min-height: 0;
   overflow-y: auto;
 }
-/* The primitive shell only positions; the inner tablist view owns the
-   tab layout, so the vertical stacking goes here, not on the part.
-   Tabs distribute evenly across the rail height instead of bunching
-   at the top; per-row grid math is unaffected (it uses the declared
-   per-row count, not tab geometry). */
+/* orientation="vertical" stacks the tabs (and switches keyboard
+   navigation to Up/Down); this only spreads them across the rail. */
 .sidebar-story [data-epr-part="category-nav"] > div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: space-evenly;
   height: 100%;
   min-height: min-content;

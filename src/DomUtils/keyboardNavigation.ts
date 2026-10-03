@@ -141,7 +141,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
   const lastIndexInRow = (allPrevEmojis.length % countInRow) - 1;
 
   if (indexInRow > lastIndexInRow) {
-    return allPrevEmojis.at(-1);
+    return allPrevEmojis[allPrevEmojis.length - 1];
   }
 
   // otherwise, return the last emoji that shares the same indexInRow
@@ -152,7 +152,7 @@ function visibleEmojiOneRowUp(element: HTMLElement) {
     }
   }
 
-  return allPrevEmojis.at(-1);
+  return allPrevEmojis[allPrevEmojis.length - 1];
 }
 
 function visibleEmojiOneRowDown(element: HTMLElement) {
@@ -193,5 +193,5 @@ function visibleEmojiOneRowDown(element: HTMLElement) {
     return emojisInNextCategory[indexInRow];
   }
 
-  return emojisInNextCategory.at(0) ?? null;
+  return emojisInNextCategory[0] ?? null;
 }
