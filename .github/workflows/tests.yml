@@ -41,6 +41,24 @@ jobs:
       - run: npx playwright install --with-deps
       - run: npm run test:visual
 
+  # Packaging gates: the build (including the entries build with its
+  # fail-hard declaration emit), the type-compatibility fixtures (v4
+  # usage, v5 contract, exports-map resolution), the size budgets for
+  # every entry, and the packed-consumer checks (publint + attw).
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check:compat
+      - run: npm run size
+      - run: npm run check:package
+
   # llms.txt is generated from committed docs; fail if it drifts.
   docs:
     runs-on: ubuntu-latest

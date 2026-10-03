@@ -19,7 +19,10 @@ import { ClickableEmoji } from '../emoji/Emoji';
 
 import { BtnPlus } from './BtnPlus';
 
-export function Reactions() {
+// Memoized: a direct child of the per-keystroke-rerendering Root aside.
+// Props never change (none); context slices resubscribe on real changes,
+// so typing never rerenders the bar while reactions state is untouched.
+export const Reactions = React.memo(function Reactions() {
   const [reactionsOpen] = useReactionsModeState();
   const ReactionsRef = useReactionsRef();
   const reactions = useReactionsConfig();
@@ -77,7 +80,7 @@ export function Reactions() {
       ) : null}
     </ul>
   );
-}
+});
 
 const styles = stylesheet.create({
   list: {

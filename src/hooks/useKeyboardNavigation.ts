@@ -660,12 +660,20 @@ function focusPrevSkinTone() {
 function useOnType() {
   const typeToSearch = useTypeToSearchKey();
   const searchDisabled = useSearchDisabledConfig();
+  const SearchInputRef = useSearchInputRef();
   const closeAllOpenToggles = useCloseAllOpenToggles();
 
   return function onType(event: KeyboardEvent) {
     const { key } = event;
 
     if (hasModifier(event) || searchDisabled) {
+      return;
+    }
+
+    // No search input mounted (a bare Root without Search): the
+    // transition would no-op, so the key is left unclaimed — no
+    // preventDefault, no toggle closing — exactly like searchDisabled.
+    if (!SearchInputRef.current) {
       return;
     }
 

@@ -7,6 +7,10 @@ import * as React from 'react';
 // Render-time context validation fails immediately in development:
 // - any primitive outside Root;
 // - List outside Viewport.
+// In production the validators warn once and report out-of-scope so the
+// primitive renders null: production avoids the hard crash, and a null is
+// diagnosable whereas continuing would die later with a confusing
+// TypeError deep inside provider-dependent behavior.
 // Registration-time singleton validation lives in the navigation registry.
 // Server rendering performs only render-time context validation; there is
 // no post-mount validation during SSR. Exact development error text is not
@@ -29,10 +33,10 @@ export function RootScopeProvider({ children }: { children: React.ReactNode }) {
 
 const warnedOutsideRoot = new Set<string>();
 
-export function useRootScope(primitive: string): void {
+export function useRootScope(primitive: string): boolean {
   const scope = React.useContext(RootScopeContext);
   if (scope) {
-    return;
+    return true;
   }
   if (process.env.NODE_ENV === 'production') {
     if (!warnedOutsideRoot.has(primitive)) {
@@ -43,7 +47,7 @@ export function useRootScope(primitive: string): void {
           `picker behavior is unavailable.`,
       );
     }
-    return;
+    return false;
   }
   throw new Error(
     `[emoji-picker-react] <${primitive}> must be rendered inside <Root>. ` +
@@ -72,10 +76,10 @@ export function ViewportScopeProvider({
 
 const warnedOutsideViewport = new Set<string>();
 
-export function useViewportScope(primitive: string): void {
+export function useViewportScope(primitive: string): boolean {
   const inside = React.useContext(ViewportScopeContext);
   if (inside) {
-    return;
+    return true;
   }
   if (process.env.NODE_ENV === 'production') {
     if (!warnedOutsideViewport.has(primitive)) {
@@ -86,7 +90,7 @@ export function useViewportScope(primitive: string): void {
           `it must be the single direct child of <Viewport>.`,
       );
     }
-    return;
+    return false;
   }
   throw new Error(
     `[emoji-picker-react] <${primitive}> must be the single direct child ` +

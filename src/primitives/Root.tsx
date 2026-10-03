@@ -23,7 +23,9 @@ import { ActiveCategoryProvider } from '../components/navigation/CategoryNavigat
 import { basePickerConfig } from '../config/config';
 import {
   MutableConfigContext,
+  NO_MUTABLE_PROVIDER,
   useDefineMutableConfig,
+  useMutableConfig,
 } from '../config/mutableConfig';
 import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
@@ -109,13 +111,23 @@ export const Root = React.forwardRef<HTMLElement, RootProps>(function Root(
 ) {
   const { children, ...rest } = props;
   const { behaviorProps, asideProps } = splitRootProps(rest);
-  const mutableRef = useDefineMutableConfig({
+  const parentMutableRef = useMutableConfig();
+  const ownedMutableRef = useDefineMutableConfig({
     onEmojiClick: behaviorProps.onEmojiClick as never,
     onReactionClick: behaviorProps.onReactionClick as never,
     onSkinToneChange: behaviorProps.onSkinToneChange as never,
     onSearchChange: behaviorProps.onSearchChange as never,
     onReactionsModeChange: behaviorProps.onReactionsModeChange as never,
   });
+  // Adopt the nearest provided mutable config when nested (the default
+  // picker provides one above its memoized tree, so callback-only parent
+  // updates stay fresh without rerendering through the memo). A bare
+  // Root owns its own. The owned hooks stay unconditional; their effects
+  // update an unread ref while nested, which is harmless.
+  const mutableRef =
+    parentMutableRef !== NO_MUTABLE_PROVIDER
+      ? parentMutableRef
+      : ownedMutableRef;
 
   return (
     <ElementRefContextProvider>
@@ -194,11 +206,15 @@ const RootAside = React.forwardRef<
             [ClassNames.searchActive]: searchModeActive,
             [ClassNames.reactions]: reactionsOpen,
           },
-          // Collapsed presentation is cx-referenced (not just the marker
-          // class) so the stylesheet emits it: shipstyles only emits
-          // class-mapped rules for style objects that reach cx.
-          reactionsOpen && structuralStyles.collapsed,
           className,
+          // Collapsed presentation comes last deliberately: cx resolves
+          // atomic conflicts last-wins, and the pill (50px radius,
+          // translucent background) must beat the default appearance's
+          // 8px radius and opaque background in reactions mode. It is
+          // cx-referenced (not just the marker class) so the stylesheet
+          // emits it: shipstyles only emits class-mapped rules for style
+          // objects that reach cx.
+          reactionsOpen && structuralStyles.collapsed,
         )}
         style={{
           ...styleProps,
@@ -221,7 +237,10 @@ const RootAside = React.forwardRef<
 // declaratively; `inert` is applied imperatively because the supported
 // React versions do not all render it as a DOM attribute. Ref callbacks
 // do not participate in hydration comparison, so SSR output stays clean.
-function ManagedPanel({
+// Memoized: the aside rerenders per keystroke, and a skipped panel skips
+// the entire full-picker subtree with it (consumers with inline children
+// elements still update, as with any memo boundary).
+const ManagedPanel = React.memo(function ManagedPanel({
   hidden,
   children,
 }: {
@@ -256,4 +275,4 @@ function ManagedPanel({
       {children}
     </div>
   );
-}
+});

@@ -1,6 +1,9 @@
 import * as React from 'react';
 
-import { usePickerConfig } from '../components/context/PickerConfigContext';
+import {
+  usePickerConfig,
+  useSearchSliceConfig,
+} from '../components/context/PickerConfigContext';
 import { useReactionsModeState } from '../components/context/PickerContext';
 import {
   EmojiClickData,
@@ -91,23 +94,36 @@ export function useOpenConfig(): boolean {
 export function useOnEmojiClickConfig(
   mouseEventSource: MOUSE_EVENT_SOURCE,
 ): (emoji: EmojiClickData, event: MouseEvent) => void {
+  // The ref object is stable; callbacks are read at call time so a
+  // subscribed listener always invokes the latest parent callback even
+  // when the memoized tree skips rerendering on callback-only updates.
+  // Reading them during render would freeze the first-render callback
+  // into every listener closure.
   const { current } = useMutableConfig();
   const [, setReactionsOpen] = useReactionsModeState();
 
-  const handler = current.onEmojiClick || (() => {});
-  const { onReactionClick } = current;
-
-  if (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS && onReactionClick) {
-    return (...args) =>
-      onReactionClick(...args, {
+  if (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS) {
+    return (...args) => {
+      const onReactionClick = current.onReactionClick;
+      if (onReactionClick) {
+        return onReactionClick(...args, {
+          collapseToReactions: () => {
+            setReactionsOpen((o) => o);
+          },
+        });
+      }
+      const onEmojiClick = current.onEmojiClick || noop;
+      return onEmojiClick(...args, {
         collapseToReactions: () => {
-          setReactionsOpen((o) => o);
+          setReactionsOpen(true);
         },
       });
+    };
   }
 
   return (...args) => {
-    handler(...args, {
+    const onEmojiClick = current.onEmojiClick || noop;
+    return onEmojiClick(...args, {
       collapseToReactions: () => {
         setReactionsOpen(true);
       },
@@ -118,7 +134,9 @@ export function useOnEmojiClickConfig(
 export function useOnSkinToneChangeConfig(): (skinTone: SkinTones) => void {
   const { current } = useMutableConfig();
 
-  return current.onSkinToneChange || (() => {});
+  return (skinTone: SkinTones) => {
+    current.onSkinToneChange?.(skinTone);
+  };
 }
 
 export function usePreviewConfig(): PreviewConfig {
@@ -191,12 +209,12 @@ export function useGetEmojiUrlConfig(): (
 }
 
 export function useSearchValueConfig(): string | undefined {
-  const { searchValue } = usePickerConfig();
+  const { searchValue } = useSearchSliceConfig();
   return searchValue;
 }
 
 export function useDefaultSearchValueConfig(): string | undefined {
-  const { defaultSearchValue } = usePickerConfig();
+  const { defaultSearchValue } = useSearchSliceConfig();
   return defaultSearchValue;
 }
 
@@ -210,12 +228,7 @@ export function useSuggestedEmojisConfig(): string[] | undefined {
   return suggestedEmojis;
 }
 
-export function useOnReactionsModeChangeConfig():
-  | ((reactionsOpen: boolean) => void)
-  | undefined {
-  const { onReactionsModeChange } = usePickerConfig();
-  return onReactionsModeChange;
-}
+function noop() {}
 
 function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
   return typeof dimensionConfig === 'number'

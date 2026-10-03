@@ -16,61 +16,72 @@ type Props = PickerConfig &
 const ConfigContext =
   React.createContext<PickerConfigInternal>(basePickerConfig());
 
+type SearchSlice = {
+  searchValue: string | undefined;
+  defaultSearchValue: string | undefined;
+};
+
+const SearchConfigContext = React.createContext<SearchSlice>({
+  searchValue: undefined,
+  defaultSearchValue: undefined,
+});
+
 export function PickerConfigProvider({ children, ...config }: Props) {
   const mergedConfig = useSetConfig(config);
+  // Hot per-keystroke values bypass the merged config: their identity
+  // changes only when the values change, so typing never rebuilds or
+  // rebroadcasts the merged configuration.
+  const searchSlice = React.useMemo<SearchSlice>(
+    () => ({
+      searchValue: config.searchValue,
+      defaultSearchValue: config.defaultSearchValue,
+    }),
+    [config.searchValue, config.defaultSearchValue],
+  );
 
   return (
     <ConfigContext.Provider value={mergedConfig}>
-      {children}
+      <SearchConfigContext.Provider value={searchSlice}>
+        {children}
+      </SearchConfigContext.Provider>
     </ConfigContext.Provider>
   );
 }
 
+export function useSearchSliceConfig(): SearchSlice {
+  return React.useContext(SearchConfigContext);
+}
+
 export function useSetConfig(config: PickerConfig) {
-  const [mergedConfig, setMergedConfig] = React.useState(() =>
-    mergeConfig(config),
-  );
+  const cache = React.useRef<{
+    inputs: PickerConfig;
+    merged: PickerConfigInternal;
+  } | null>(null);
 
-  React.useEffect(() => {
-    if (compareConfig(mergedConfig, config)) {
-      return;
-    }
-    setMergedConfig(mergeConfig(config));
-    // not gonna...
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    // New references rebuild merged categories and data even at equal
-    // length; compareConfig above still gates no-op updates so inline
-    // literals don't loop.
-    config.categories,
-    config.customEmojis,
-    config.open,
-    config.emojiVersion,
-    config.reactionsDefaultOpen,
-    config.searchPlaceHolder,
-    config.searchPlaceholder,
-    config.searchClearButtonLabel,
-    config.defaultSkinTone,
-    config.skinTonesDisabled,
-    config.autoFocusSearch,
-    config.emojiStyle,
-    config.theme,
-    config.suggestedEmojisMode,
-    config.lazyLoadEmojis,
-    config.className,
-    config.height,
-    config.width,
-    config.searchDisabled,
-    config.skinTonePickerLocation,
-    config.allowExpandReactions,
-    config.emojiData,
-    config.searchValue,
-    config.defaultSearchValue,
-    config.searchLabel,
-    config.suggestedEmojis,
-  ]);
+  // The search slice travels separately (see above); the merged config
+  // must not rebuild when only it changes.
+  const {
+    searchValue: _searchValue,
+    defaultSearchValue: _defaultSearchValue,
+    ...mainInputs
+  } = config;
+  void _searchValue;
+  void _defaultSearchValue;
 
-  return mergedConfig;
+  // Derived during render with a content comparison, not settled in a
+  // trailing effect: consumers observe prop changes in the same commit,
+  // with no extra render pass and no cycle of lag. The derivation is
+  // idempotent (same inputs always rebuild identically), so a discarded
+  // concurrent render simply recomputes on the next pass. Inline
+  // literals with equal contents still reuse the cached merge via the
+  // structural comparison, as before.
+  const cached = cache.current;
+  if (!cached || !compareConfig(cached.inputs, mainInputs)) {
+    const merged = mergeConfig(mainInputs);
+    cache.current = { inputs: mainInputs, merged };
+    return merged;
+  }
+  return cached.merged;
 }
 
 export function usePickerConfig() {

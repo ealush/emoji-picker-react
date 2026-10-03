@@ -1,4 +1,5 @@
 export { Root } from './Root';
+export { defaultPickerTokens } from './tokens';
 export { Search } from './Search';
 export { CategoryNav } from './CategoryNav';
 export { Viewport } from './Viewport';

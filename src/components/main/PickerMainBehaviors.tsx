@@ -31,7 +31,6 @@ export function SearchSync() {
   const searchValue = useSearchValueConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
   const { onChange: commitFilter } = useFilter();
-  const mounted = React.useRef(false);
   const prevMode = React.useRef<'controlled' | 'uncontrolled' | null>(null);
 
   const mode = searchValue !== undefined ? 'controlled' : 'uncontrolled';
@@ -50,64 +49,91 @@ export function SearchSync() {
     prevMode.current = mode;
   }, [mode]);
 
+  // Initial commit only. The stamp (not a first-run flag) makes this
+  // StrictMode-safe: the double-invoked mount effect commits once, since
+  // the second run observes the stamp. A genuine remount creates a new
+  // ref and commits its own initial value again, as it should.
+  // commitFilter closes over stable refs/setters only, so the captured
+  // first-render instance stays valid for this mount-only effect.
+  const initialStamp = React.useRef<string | null | undefined>(undefined);
   React.useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
-      if (mode === 'uncontrolled' && defaultSearchValue) {
-        commitFilter(defaultSearchValue);
-      } else if (mode === 'controlled' && searchValue) {
-        commitFilter(searchValue);
-      }
+    if (initialStamp.current !== undefined) {
       return;
     }
-    if (mode === 'controlled' && searchValue !== undefined) {
+    const initial = mode === 'controlled' ? searchValue : defaultSearchValue;
+    initialStamp.current = initial ?? null;
+    if (initial) {
+      commitFilter(initial);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Controlled updates only. Previous-value comparison keeps the mount
+  // (and the StrictMode double-invoke) silent; uncontrolled commits
+  // schedule through the input transition, and the default value is read
+  // once, so later prop changes are ignored here.
+  const prevAccepted = React.useRef(searchValue);
+  React.useEffect(() => {
+    if (
+      mode === 'controlled' &&
+      searchValue !== undefined &&
+      searchValue !== prevAccepted.current
+    ) {
+      prevAccepted.current = searchValue;
       commitFilter(searchValue);
     }
-    // Uncontrolled commits schedule through the input transition; the
-    // default value is read once, so later prop changes are ignored here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue]);
+  }, [mode, searchValue]);
 
   return null;
 }
 
 // Reaction-mode observation (docs/v5/STATE.md §7). Emits only after an
-// actual state change; initial mount never emits.
-export function ReactionsModeObserver() {
+// actual state change; initial mount never emits. A previous-value ref
+// (not a first-run flag) makes this StrictMode-safe: the double-invoked
+// mount effect observes an unchanged value both times and stays silent.
+export const ReactionsModeObserver = React.memo(function ReactionsModeObserver() {
   const [reactionsOpen] = useReactionsModeState();
   const { current } = useMutableConfig();
-  const mounted = React.useRef(false);
+  const prevReactionsOpen = React.useRef(reactionsOpen);
 
   React.useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
+    if (prevReactionsOpen.current === reactionsOpen) {
       return;
     }
+    prevReactionsOpen.current = reactionsOpen;
     current.onReactionsModeChange?.(reactionsOpen);
   }, [reactionsOpen, current]);
 
   return null;
-}
+});
 
 // Root-scoped navigation generation (STATE.md §10 / PERFORMANCE.md §7).
 // Reactions transitions, dataset identity changes, and measured geometry
 // changes each obsolete pending materialize/scroll/focus completions.
 // Search intent invalidates from useApplySearch, unmount from registry
 // disposal, so those are not duplicated here.
-export function NavigationInvalidation() {
+export const NavigationInvalidation = React.memo(function NavigationInvalidation() {
   const registry = useNavigationRegistry();
   const [reactionsMode] = useReactionsModeState();
   const { emojiData } = usePickerDataContext();
   const [emojiSize] = useEmojiSizeState();
-  const mounted = React.useRef(false);
+  const prevSnapshot = React.useRef<
+    [boolean, unknown, number | null]
+  >([reactionsMode, emojiData, emojiSize]);
 
   React.useEffect(() => {
-    if (!mounted.current) {
-      mounted.current = true;
+    const prev = prevSnapshot.current;
+    if (
+      prev[0] === reactionsMode &&
+      prev[1] === emojiData &&
+      prev[2] === emojiSize
+    ) {
       return;
     }
+    prevSnapshot.current = [reactionsMode, emojiData, emojiSize];
     registry.invalidate();
   }, [registry, reactionsMode, emojiData, emojiSize]);
 
   return null;
-}
+});

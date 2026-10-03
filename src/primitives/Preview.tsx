@@ -14,7 +14,7 @@ import type { PreviewProps } from './types';
 // control. Renders nothing when preview is disabled.
 export const Preview = React.forwardRef<HTMLDivElement, PreviewProps>(
   function Preview(props, forwardedRef) {
-    useRootScope('Preview');
+    const inScope = useRootScope('Preview');
     useSingletonClaim('preview');
     const previewConfig = usePreviewConfig();
     const nativeProps = filterPrimitiveProps(
@@ -22,7 +22,7 @@ export const Preview = React.forwardRef<HTMLDivElement, PreviewProps>(
       ['role'],
     );
 
-    if (!previewConfig.showPreview) {
+    if (!inScope || !previewConfig.showPreview) {
       return null;
     }
 

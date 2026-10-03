@@ -38,15 +38,25 @@
       "default": "./dist/data/index.js"
     },
     "./data/emojis-*": {
-      "types": "./dist/data/emojis-*.d.ts",
-      "import": "./dist/data/emojis-*.mjs",
-      "require": "./dist/data/emojis-*.js",
+      "import": {
+        "types": "./dist/data/emojis-*.d.mts",
+        "default": "./dist/data/emojis-*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/emojis-*.d.ts",
+        "default": "./dist/data/emojis-*.js"
+      },
       "default": "./dist/data/emojis-*.js"
     },
     "./dist/data/emojis-*": {
-      "types": "./dist/data/emojis-*.d.ts",
-      "import": "./dist/data/emojis-*.mjs",
-      "require": "./dist/data/emojis-*.js",
+      "import": {
+        "types": "./dist/data/emojis-*.d.mts",
+        "default": "./dist/data/emojis-*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/emojis-*.d.ts",
+        "default": "./dist/data/emojis-*.js"
+      },
       "default": "./dist/data/emojis-*.js"
     },
     "./package.json": "./package.json"
@@ -119,7 +129,7 @@
     "check:react-floor": "node ./scripts/checkReactApiFloor.js",
     "check:react16": "node ./scripts/react16-fixture/run.js",
     "check:package": "node ./scripts/package-check/run.js",
-    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit",
+    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
     "check:perf": "node ./bench/run.js"
   },
   "peerDependencies": {
@@ -146,6 +156,14 @@
     {
       "path": "dist/emoji-picker-react.esm.js",
       "limit": "95 KB"
+    },
+    {
+      "path": "dist/primitives/index.mjs",
+      "limit": "90 KB"
+    },
+    {
+      "path": "dist/data/index.mjs",
+      "limit": "55 KB"
     }
   ],
   "devDependencies": {
@@ -178,6 +196,7 @@
     "cssnano": "^5.1.13",
     "emoji-datasource": "^16.0.0",
     "emojibase-data": "^17.0.0",
+    "esbuild": "0.25.12",
     "eslint-import-resolver-typescript": "^3.3.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
@@ -191,6 +210,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
+    "rollup": "2.80.0",
     "rollup-plugin-dts": "^4.2.3",
     "rollup-plugin-svg": "^2.0.0",
     "semantic-release": "^25.0.9",

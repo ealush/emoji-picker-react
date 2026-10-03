@@ -24,6 +24,17 @@ import { PickerProps } from './index';
 // all behavior lives in the shared primitives below.
 function EmojiPicker(props: PickerProps) {
   const { theme, width, height, className, style, ...behaviorProps } = props;
+  // Static composition element: no props flow into it, so its identity
+  // stays stable across parent rerenders and the memoized managed panel
+  // can skip the whole full-picker subtree per keystroke.
+  const content = React.useMemo(
+    () => (
+      <DefaultAppearance>
+        <ContentControl />
+      </DefaultAppearance>
+    ),
+    [],
+  );
 
   return (
     <>
@@ -33,9 +44,7 @@ function EmojiPicker(props: PickerProps) {
           className={defaultRootClassName(theme, className)}
           style={defaultRootStyle({ width, height, style })}
         >
-          <DefaultAppearance>
-            <ContentControl />
-          </DefaultAppearance>
+          {content}
         </Root>
       )}
     </>

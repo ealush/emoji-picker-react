@@ -457,6 +457,36 @@ describe('v5 primitive handler composition and error ownership', () => {
     expect(order).toEqual(['library', 'consumer']);
   });
 
+  it('propagates consumer handler exceptions after running the library handler', () => {
+    const order: string[] = [];
+    const composed = composeHandlers(
+      () => {
+        order.push('library');
+      },
+      () => {
+        order.push('consumer');
+        throw new Error('consumer boom');
+      },
+    ) as (event: object) => void;
+    expect(() => composed?.({})).toThrow('consumer boom');
+    expect(order).toEqual(['library', 'consumer']);
+  });
+
+  it('propagates library handler exceptions without running the consumer handler', () => {
+    const order: string[] = [];
+    const composed = composeHandlers(
+      () => {
+        order.push('library');
+        throw new Error('library boom');
+      },
+      () => {
+        order.push('consumer');
+      },
+    ) as (event: object) => void;
+    expect(() => composed?.({})).toThrow('library boom');
+    expect(order).toEqual(['library']);
+  });
+
   it('lets render errors propagate: no ErrorBoundary inside Root', () => {
     const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
     function Exploding() {

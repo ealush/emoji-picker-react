@@ -138,6 +138,45 @@ describe('v5 uncontrolled search (STATE.md §1–§3)', () => {
       expect(gridUnified(U.cat)).not.toBeNull();
     });
   });
+
+  it('unmounting before the scheduled search frame drops the pending search', async () => {
+    const setSpy = vi.spyOn(globalThis, 'setTimeout');
+    try {
+      const { unmount } = renderPicker({});
+      const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+      fireEvent.change(input, { target: { value: 'dog' } });
+      // Unmount while the animation frame is still pending; when the
+      // frame fires it must schedule nothing (no debounce timer).
+      unmount();
+      const callsAtUnmount = setSpy.mock.calls.length;
+      await act(async () => {
+        await new Promise(requestAnimationFrame);
+      });
+      expect(setSpy.mock.calls.length).toBe(callsAtUnmount);
+    } finally {
+      setSpy.mockRestore();
+    }
+  });
+
+  it('unmounting mid-debounce clears the pending trailing edge', async () => {
+    const clearSpy = vi.spyOn(globalThis, 'clearTimeout');
+    try {
+      const { unmount } = renderPicker({});
+      const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+      fireEvent.change(input, { target: { value: 'dog' } });
+      // Let the frame schedule the debounce timer first...
+      await act(async () => {
+        await new Promise(requestAnimationFrame);
+      });
+      // ...then unmount before the 100ms trailing edge; the timer must
+      // die with the Root instead of firing a post-unmount update.
+      const callsBefore = clearSpy.mock.calls.length;
+      unmount();
+      expect(clearSpy.mock.calls.length).toBeGreaterThan(callsBefore);
+    } finally {
+      clearSpy.mockRestore();
+    }
+  });
 });
 
 function AcceptingPicker({

@@ -10,9 +10,17 @@ export type MutableConfig = {
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 };
 
+/**
+ * Sentinel default: marks the absence of a provider. Root adopts the
+ * nearest provided ref when one exists (default picker) and owns one
+ * otherwise (bare primitive), so callbacks stay fresh without depending
+ * on the memoized default tree rerendering.
+ */
+export const NO_MUTABLE_PROVIDER = {} as React.MutableRefObject<MutableConfig>;
+
 export const MutableConfigContext = React.createContext<
   React.MutableRefObject<MutableConfig>
->({} as React.MutableRefObject<MutableConfig>);
+>(NO_MUTABLE_PROVIDER);
 
 export function useMutableConfig(): React.MutableRefObject<MutableConfig> {
   const mutableConfig = React.useContext(MutableConfigContext);

@@ -81,6 +81,7 @@ export function Search({
   // JavaScript callers that bypass the types.
   const {
     'aria-label': consumerAriaLabel,
+    className: consumerClassName,
     onFocus: consumerOnFocus,
     onBlur: consumerOnBlur,
     onCompositionStart: consumerOnCompositionStart,
@@ -116,7 +117,9 @@ export function Search({
         }
         onFocus={composeHandlers(closeAllOpenToggles, consumerOnFocus as never)}
         onBlur={consumerOnBlur as never}
-        className={cx(styles.search)}
+        // Consumer classes merge with (never replace) the library class:
+        // spreading inputProps after className would drop it.
+        className={cx(styles.search, consumerClassName as string | undefined)}
         type="text"
         placeholder={placeholder}
         value={value}

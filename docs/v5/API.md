@@ -328,7 +328,7 @@ The primitives Root does not install one. Render/lifecycle errors from consumer 
 
 The validation model is intentionally narrow:
 
-- render/context checks catch primitive-outside-Root, List-outside-Viewport, invalid Viewport children, and nested Reactions where detectable;
+- render/context checks catch primitive-outside-Root, List-outside-Viewport, and invalid Viewport children (there is no `Reactions` primitive element — reactions mode is driven by props);
 - singleton duplicates are detected by Root registration after mount;
 - development throws on a second singleton registration;
 - production keeps the first registration authoritative and warns once;

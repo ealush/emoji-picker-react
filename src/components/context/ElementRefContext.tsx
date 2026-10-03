@@ -18,20 +18,26 @@ export function ElementRefContextProvider({
   const VariationPickerRef = React.useRef<HTMLDivElement>(null);
   const ReactionsRef = React.useRef<HTMLUListElement>(null);
 
+  // Stable value identity: provider rerenders must not rerender ref
+  // consumers (all members are stable refs).
+  const value = React.useMemo(
+    () => ({
+      AnchoredEmojiRef,
+      BodyRef,
+      EmojiListRef,
+      CategoryNavigationRef,
+      PickerMainRef,
+      SearchInputRef,
+      SkinTonePickerRef,
+      VariationPickerRef,
+      ReactionsRef,
+    }),
+    // Refs are stable; this value never changes identity.
+    [],
+  );
+
   return (
-    <ElementRefContext.Provider
-      value={{
-        AnchoredEmojiRef,
-        BodyRef,
-        EmojiListRef,
-        CategoryNavigationRef,
-        PickerMainRef,
-        SearchInputRef,
-        SkinTonePickerRef,
-        VariationPickerRef,
-        ReactionsRef,
-      }}
-    >
+    <ElementRefContext.Provider value={value}>
       {children}
     </ElementRefContext.Provider>
   );

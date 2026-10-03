@@ -9,8 +9,15 @@
 //
 // react/react-dom/shipstyles stay external (peer/dependency). SVG assets
 // bundle as data URIs, matching the main build's base64 behavior.
+//
+// Each entry bundles the default dataset standalone: there are no
+// cross-entry chunks (CJS cannot code-split, and standalone files load on
+// every resolver without chunk-path fragility). The duplication is
+// deliberate and bounded — every entry carries a size-limit budget, so
+// growth fails the gate instead of shipping silently.
 // Run: npm run build:entries (after the main build, so dist/ exists).
-// Requires network access only if esbuild is not already installed.
+// esbuild and rollup are declared devDependencies (this script bundles
+// with the former and bundles declarations with the latter).
 const { spawnSync } = require('child_process');
 const { copyFileSync, existsSync } = require('fs');
 const { join } = require('path');
@@ -25,21 +32,9 @@ function sh(command, args, options) {
   }
 }
 
-// Bundle an entry's declaration closure into a single self-contained
-// .d.ts. Extensionless relative imports fail strictly under node16-ESM
-// resolution, so multi-file declarations cannot ship as-is.
-async function bundleDeclarations(entryDts) {
-  const { rollup } = require('rollup');
-  const dts = require('rollup-plugin-dts').default;
-  const { writeFileSync } = require('fs');
-  const bundle = await rollup({
-    input: entryDts,
-    plugins: [dts()],
-    onwarn() {},
-  });
-  const { output } = await bundle.generate({ format: 'es' });
-  writeFileSync(entryDts, output[0].code);
-}
+// Declaration bundling lives in the shared helper (also used for the
+// locale .d.mts twins in buildDataTwins.js).
+const { bundleDeclarations } = require('./bundleDeclarations');
 
 async function main() {
   if (!existsSync(esbuildBin)) {
@@ -85,11 +80,10 @@ async function main() {
     ]);
   }
 
-  // Declarations for both entries (and only their closure). tsc emits
-  // .d.ts even when it reports environmental errors (missing svg shims
-  // are included above; third-party private-name noise like TS4058 does
-  // not affect output). Strict type safety is gated separately by
-  // `npm run type-check`, so here we verify the expected outputs exist.
+  // Declarations for both entries (and only their closure). The emit is
+  // expected to be clean (third-party private-name noise like TS4058 is
+  // fixed at the source, not tolerated), so a tsc failure aborts the
+  // build rather than shipping declarations of unknown quality.
   const tsc = spawnSync(
     'npx',
     ['tsc', '--project', join(repoRoot, 'scripts', 'tsconfig.entries.json')],
@@ -107,10 +101,9 @@ async function main() {
   const missing = expected
     .map((file) => join(repoRoot, 'dist', file))
     .filter((path) => !existsSync(path));
-  if (missing.length > 0 || tsc.status !== 0) {
-    console.warn(
-      `declaration emit finished with tsc status ${tsc.status}; ` +
-        `missing: ${missing.join(', ') || 'none'}`,
+  if (tsc.status !== 0) {
+    throw new Error(
+      `entry declaration emit failed with tsc status ${tsc.status}`,
     );
   }
   if (missing.length > 0) {

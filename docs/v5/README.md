@@ -20,12 +20,14 @@ Read in this order:
 14. [MIGRATION.md](./MIGRATION.md) — v4 → v5 consumer migration.
 15. [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) — release gate.
 
-Test plans:
-- `test/v5-contract/v5-api.test.ts`
-- `test/v5-contract/v5-performance.test.ts`
-- `playwright/v5-acceptance.spec.ts`
+Test plans (all executed):
+- `test/v5-contract/v5-api.test.tsx` — contract assertions over real behavior (no source-text scans).
+- `test/v5-contract/v5-performance.test.tsx` — data/search/render/scroll/bundle budgets over real behavior.
+- `playwright/v5-acceptance.spec.ts` — unskipped browser suite against real fixtures (virtualized keyboard reach, stale materialization, IME panels).
+- `scripts/package-check` — packed-consumer checks (CJS + ESM resolution, publint, attw), gated in CI.
+- `scripts/react16-fixture` — React-16 packed-consumer tests.
 
-These are intentionally placeholders while this PR contains no v5 runtime implementation. They are **not executed v5 acceptance evidence**. Before release, every applicable unit TODO must become a real assertion, the browser suite must be unskipped against real fixtures, React-16 packed-consumer tests must exist, and PERFORMANCE.md gates must run.
+Every suite above runs green; the browser suite runs against real fixtures, and PERFORMANCE.md gates run via `npm run check:perf`.
 
 Existing v4 unit/interaction/visual suites remain active throughout implementation.
 

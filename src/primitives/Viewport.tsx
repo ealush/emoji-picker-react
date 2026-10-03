@@ -76,7 +76,7 @@ export function __resetViewportWarningsForTest(): void {
 // the grid; no consumer children are accepted anywhere else.
 export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
   function Viewport(props, forwardedRef) {
-    useRootScope('Viewport');
+    const inScope = useRootScope('Viewport');
     useSingletonClaim('viewport');
     const { children, ...rest } = props;
     const nativeProps = filterPrimitiveProps(
@@ -91,6 +91,10 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
     useOnMouseMove();
 
     const { className, style, ...restNative } = nativeProps as React.HTMLAttributes<HTMLDivElement>;
+
+    if (!inScope) {
+      return null;
+    }
 
     return (
       <div

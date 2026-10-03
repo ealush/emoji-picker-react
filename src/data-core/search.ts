@@ -9,6 +9,32 @@ export type { EmojiDataOptions, EmojiInfo };
 const EMPTY_RESULTS: readonly EmojiInfo[] = Object.freeze([]);
 
 /**
+ * Bound on distinct memoized queries per prepared core. The memo is shared
+ * process-wide per dataset identity (including server use), so unbounded
+ * growth is a leak: evict the least recently used entry past this size.
+ * 500 distinct recent queries is generous for interactive sessions while
+ * keeping worst-case memory proportional to one result window.
+ */
+const MAX_QUERY_MEMO_SIZE = 500;
+
+function memoizeQuery(
+  core: ReturnType<typeof getPreparedCore>,
+  normalized: string,
+  results: readonly EmojiInfo[],
+): void {
+  const memo = core.queryMemo;
+  if (memo.has(normalized)) {
+    memo.delete(normalized);
+  } else if (memo.size >= MAX_QUERY_MEMO_SIZE) {
+    const oldest = memo.keys().next();
+    if (!oldest.done) {
+      memo.delete(oldest.value);
+    }
+  }
+  memo.set(normalized, results);
+}
+
+/**
  * Lookup by base or variation unified code.
  * Trims/lowercases input, returns the canonical base record or undefined.
  */
@@ -44,6 +70,7 @@ export function searchEmojis(
   const core = getPreparedCore(options?.emojiData);
   const memoized = core.queryMemo.get(normalized);
   if (memoized) {
+    memoizeQuery(core, normalized, memoized);
     return Object.freeze([...memoized]) as readonly EmojiInfo[];
   }
 
@@ -51,7 +78,7 @@ export function searchEmojis(
   // a full scan: joined names contain the char iff some name includes it).
   if (normalized.length === 1) {
     const bucket = core.byChar.get(normalized) ?? EMPTY_RESULTS;
-    core.queryMemo.set(normalized, bucket);
+    memoizeQuery(core, normalized, bucket);
     return Object.freeze([...bucket]) as readonly EmojiInfo[];
   }
 
@@ -66,6 +93,6 @@ export function searchEmojis(
     }
   }
 
-  core.queryMemo.set(normalized, matches);
+  memoizeQuery(core, normalized, matches);
   return Object.freeze([...matches]) as readonly EmojiInfo[];
 }

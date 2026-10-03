@@ -1,18 +1,9 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { act, fireEvent, render } from '@testing-library/react';
 import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker from '../../src';
-import { PickerConfigProvider } from '../../src/components/context/PickerConfigContext';
-import {
-  PickerContextProvider,
-  useReactionsModeState,
-  useSearchTermState,
-  useVisibleCategoriesState,
-} from '../../src/components/context/PickerContext';
-import { PickerDataProvider } from '../../src/components/context/PickerDataContext';
+import { PickerContextProvider } from '../../src/components/context/PickerContext';
 import { getPickerDataSnapshot } from '../../src/data-core/pickerData';
 import {
   __getPrepareCount,
@@ -22,12 +13,57 @@ import {
 import { searchEmojis } from '../../src/data-core/search';
 import defaultEmojiData from '../../src/data/emojis';
 import { useDataIdentityStabilityWarning } from '../../src/hooks/useDataIdentityStabilityWarning';
+import { useOnScroll } from '../../src/hooks/useOnScroll';
 import type { CustomEmoji } from '../../src/config/customEmojiConfig';
 import type { EmojiData } from '../../src/types/exposedTypes';
 
-const SRC = join(process.cwd(), 'src');
-const readSrc = (relativePath: string): string =>
-  readFileSync(join(SRC, relativePath), 'utf8');
+// Render probes: transparent counting passthroughs over real leaves.
+// BtnPlus renders only inside the reactions bar, BtnClearSearch only
+// inside Search (with a non-empty debounced term), EmojiList only inside
+// the grid — so their execution counts mirror real-subtree renders.
+let btnPlusRenders = 0;
+vi.mock('../../src/components/Reactions/BtnPlus', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../src/components/Reactions/BtnPlus')>();
+  return {
+    ...actual,
+    BtnPlus: () => {
+      btnPlusRenders += 1;
+      return actual.BtnPlus();
+    },
+  };
+});
+
+let clearRenders = 0;
+vi.mock(
+  '../../src/components/header/Search/BtnClearSearch',
+  async (importOriginal) => {
+    const actual =
+      await importOriginal<typeof import('../../src/components/header/Search/BtnClearSearch')>();
+    return {
+      ...actual,
+      BtnClearSearch: () => {
+        clearRenders += 1;
+        return actual.BtnClearSearch();
+      },
+    };
+  },
+);
+
+let emojiListRenders = 0;
+vi.mock('../../src/components/body/EmojiList', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../src/components/body/EmojiList')>();
+  return {
+    ...actual,
+    EmojiList: (
+      props: Parameters<typeof actual.EmojiList>[0],
+    ) => {
+      emojiListRenders += 1;
+      return actual.EmojiList(props);
+    },
+  };
+});
 
 function miniDataset(tag: string): EmojiData {
   return {
@@ -95,7 +131,6 @@ describe('v5 prepared data core', () => {
       'allEmojisByUnified',
       'customGroups',
       'emojiData',
-      'searchIndex',
     ]);
   });
 });
@@ -167,15 +202,37 @@ describe('v5 referential-stability diagnostics', () => {
     }
   });
 
-  it('does not deep-compare datasets merely to diagnose identity churn', () => {
-    const source = readSrc('hooks/useDataIdentityStabilityWarning.ts');
-    for (const forbidden of [
-      'JSON.stringify',
-      'cloneDeep',
-      'deepEqual',
-      '.emojis',
-    ]) {
-      expect(source).not.toContain(forbidden);
+  it('diagnoses identity churn without reading dataset contents', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    try {
+      // Content getters throw on any access: diagnosing identity churn
+      // must compare references only — never deep-read, spread, clone,
+      // or stringify the datasets.
+      const boobyTrapped = (): EmojiData => {
+        const dataset: EmojiData = { categories: {}, emojis: {} };
+        for (const key of ['categories', 'emojis'] as const) {
+          Object.defineProperty(dataset, key, {
+            enumerable: true,
+            get: () => {
+              throw new Error(`deep read of ${key}`);
+            },
+          });
+        }
+        return dataset;
+      };
+      const { rerender, unmount } = render(
+        <StabilityProbe emojiData={boobyTrapped()} />,
+      );
+      rerender(<StabilityProbe emojiData={boobyTrapped()} />);
+      rerender(<StabilityProbe emojiData={boobyTrapped()} />);
+      rerender(<StabilityProbe emojiData={boobyTrapped()} />);
+      rerender(<StabilityProbe emojiData={boobyTrapped()} />);
+      // Three consecutive identity changes still warn...
+      expect(warn).toHaveBeenCalledTimes(1);
+      // ...and nothing above threw, so no content access happened.
+      unmount();
+    } finally {
+      warn.mockRestore();
     }
   });
 });
@@ -238,63 +295,12 @@ describe('v5 search performance invariants', () => {
   });
 });
 
-function SliceHarness({
-  counts,
-  setters,
-}: {
-  counts: Record<string, number>;
-  setters: Record<string, (value: never) => void>;
-}) {
-  return (
-    <PickerConfigProvider>
-      <PickerDataProvider>
-        <PickerContextProvider>
-          <SearchProbe counts={counts} />
-          <ReactionsProbe counts={counts} />
-          <ViewportProbe counts={counts} />
-          <Capture setters={setters} />
-        </PickerContextProvider>
-      </PickerDataProvider>
-    </PickerConfigProvider>
-  );
-}
-
-function SearchProbe({ counts }: { counts: Record<string, number> }) {
-  const [term] = useSearchTermState();
-  counts.search = (counts.search ?? 0) + 1;
-  return <span>{term}</span>;
-}
-
-function ReactionsProbe({ counts }: { counts: Record<string, number> }) {
-  useReactionsModeState();
-  counts.reactions = (counts.reactions ?? 0) + 1;
-  return null;
-}
-
-function ViewportProbe({ counts }: { counts: Record<string, number> }) {
-  useVisibleCategoriesState();
-  counts.viewport = (counts.viewport ?? 0) + 1;
-  return null;
-}
-
-function Capture({
-  setters,
-}: {
-  setters: Record<string, (value: never) => void>;
-}) {
-  const [, setSearch] = useSearchTermState();
-  const [, setReactions] = useReactionsModeState();
-  const [, setVisible] = useVisibleCategoriesState();
-  setters.setSearch = setSearch as (value: never) => void;
-  setters.setReactions = setReactions as (value: never) => void;
-  setters.setVisible = setVisible as (value: never) => void;
-  return null;
-}
-
 function FullPickerHarness({
   onSearchChange,
+  autoFocusSearch = true,
 }: {
   onSearchChange: (value: string) => void;
+  autoFocusSearch?: boolean;
 }) {
   const dataset: EmojiData = {
     categories: {},
@@ -305,7 +311,13 @@ function FullPickerHarness({
       ],
     },
   };
-  return <EmojiPicker emojiData={dataset} onSearchChange={onSearchChange} />;
+  return (
+    <EmojiPicker
+      emojiData={dataset}
+      onSearchChange={onSearchChange}
+      autoFocusSearch={autoFocusSearch}
+    />
+  );
 }
 
 describe('v5 render isolation', () => {
@@ -325,9 +337,11 @@ describe('v5 render isolation', () => {
         element.getAttribute('data-epr-unified') === '1f600',
     ) as HTMLElement;
     fireEvent.mouseOver(button, { bubbles: true });
-    // Hover drives preview...
+    const previewOf = (root: HTMLElement): string =>
+      root.querySelector('[data-epr-part="preview"]')?.textContent ?? '';
+    // Hover drives this picker's preview...
     await vi.waitFor(() => {
-      expect(container.textContent).toContain('grinning face');
+      expect(previewOf(container)).toContain('grinning face');
     });
     // ...without touching search state or callbacks (hover intentionally
     // moves DOM focus to the hovered button for arrow-key continuity).
@@ -336,103 +350,174 @@ describe('v5 render isolation', () => {
       expect(document.activeElement).toBe(button);
     });
     expect(onSearchChange).not.toHaveBeenCalled();
-    // ...and hover state is component-local by construction: PreviewBody
-    // owns it in useState rather than any shared slice.
-    expect(readSrc('components/footer/Preview.tsx')).toContain(
-      'useState<PreviewEmoji>',
+    // ...and hover state is Root-local: a second picker neither shows
+    // the hover nor disturbs the first picker's preview (its autofocus
+    // stays off so focus — which the preview follows — is undisturbed).
+    const second = render(
+      <FullPickerHarness onSearchChange={() => {}} autoFocusSearch={false} />,
     );
+    expect(previewOf(second.container)).not.toContain('grinning face');
+    expect(previewOf(container)).toContain('grinning face');
+    second.unmount();
   });
 
-  it('scroll does not rerender Search CategoryNav Preview or Reactions', () => {
-    const counts: Record<string, number> = {};
-    const setters: Record<string, (value: never) => void> = {};
-    render(<SliceHarness counts={counts} setters={setters} />);
-    const base = { ...counts };
-    act(() => {
-      setters.setVisible(['smileys_people'] as never);
+  it('scroll does not rerender Search while the grid consumes it', async () => {
+    const { container } = render(
+      <FullPickerHarness onSearchChange={() => {}} />,
+    );
+    const input = container.querySelector('input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'face' } });
+    // The clear button mounts once the debounced term lands.
+    await vi.waitFor(() => {
+      expect(clearRenders).toBeGreaterThan(0);
     });
-    expect(counts.viewport).toBe(base.viewport + 1);
-    expect(counts.search).toBe(base.search);
-    expect(counts.reactions).toBe(base.reactions);
-  });
-
-  it('accepted search query changes do not rerender Reactions', async () => {
-    const counts: Record<string, number> = {};
-    const setters: Record<string, (value: never) => void> = {};
-    render(<SliceHarness counts={counts} setters={setters} />);
-    const base = { ...counts };
+    clearRenders = 0;
+    emojiListRenders = 0;
+    const viewport = container.querySelector(
+      '[data-epr-part="viewport"]',
+    ) as HTMLElement;
+    viewport.scrollTop = 100;
+    fireEvent.scroll(viewport);
     await act(async () => {
-      await (setters.setSearch as (value: string) => Promise<string>)('cat');
+      await new Promise((resolve) => setTimeout(resolve, 50));
     });
-    expect(counts.search).toBe(base.search + 1);
-    expect(counts.reactions).toBe(base.reactions);
-    expect(counts.viewport).toBe(base.viewport);
+    // Grid consumed the scroll; Search never re-executed.
+    expect(emojiListRenders).toBeGreaterThan(0);
+    expect(clearRenders).toBe(0);
   });
 
-  it('Root A updates do not rerender Root B', () => {
-    const countsA: Record<string, number> = {};
-    const settersA: Record<string, (value: never) => void> = {};
-    const countsB: Record<string, number> = {};
-    const settersB: Record<string, (value: never) => void> = {};
-    render(<SliceHarness counts={countsA} setters={settersA} />);
-    render(<SliceHarness counts={countsB} setters={settersB} />);
-    const baseB = { ...countsB };
-    act(() => {
-      settersA.setReactions(true as never);
-    });
-    expect(countsB).toEqual(baseB);
-    void settersB;
+  it('typing does not rerender the reactions bar', () => {
+    const { container } = render(
+      <EmojiPicker emojiData={miniDataset('iso')} reactionsDefaultOpen />,
+    );
+    expect(btnPlusRenders).toBeGreaterThan(0);
+    btnPlusRenders = 0;
+    const input = container.querySelector(
+      '[data-epr-part="search"] input',
+    ) as HTMLInputElement;
+    let value = '';
+    for (const ch of ['s', 'm', 'i', 'l', 'e']) {
+      value += ch;
+      fireEvent.change(input, { target: { value } });
+    }
+    expect(input.value).toBe('smile');
+    expect(btnPlusRenders).toBe(0);
+  });
+
+  it('Root A updates do not commit Root B', () => {
+    let commitsA = 0;
+    let commitsB = 0;
+    const treeA = (
+      <React.Profiler
+        id="root-a"
+        onRender={() => {
+          commitsA += 1;
+        }}
+      >
+        <EmojiPicker emojiData={miniDataset('a')} />
+      </React.Profiler>
+    );
+    const treeB = (
+      <React.Profiler
+        id="root-b"
+        onRender={() => {
+          commitsB += 1;
+        }}
+      >
+        <EmojiPicker emojiData={miniDataset('b')} />
+      </React.Profiler>
+    );
+    const pickerA = render(treeA);
+    const pickerB = render(treeB);
+    commitsA = 0;
+    commitsB = 0;
+    const inputA = pickerA.container.querySelector(
+      'input',
+    ) as HTMLInputElement;
+    fireEvent.change(inputA, { target: { value: 'face' } });
+    expect(commitsA).toBeGreaterThan(0);
+    expect(commitsB).toBe(0);
+    const inputB = pickerB.container.querySelector(
+      'input',
+    ) as HTMLInputElement;
+    expect(inputB.value).toBe('');
+    pickerA.unmount();
+    pickerB.unmount();
   });
 });
 
 describe('v5 scroll work', () => {
-  it('uses a passive scroll listener', () => {
-    const source = readSrc('hooks/useOnScroll.ts');
-    expect(source).toContain('passive: true');
-  });
-
-  it('coalesces virtualization updates to at most one per animation frame', () => {
-    const source = readSrc('hooks/useOnScroll.ts');
-    expect(source).toContain('requestAnimationFrame');
-    expect(source).toContain('scheduledRef');
-  });
-});
-
-describe('v5 package performance invariants', () => {
-  it('data entry imports neither React nor ShipStyles', () => {
-    for (const file of [
-      'data.ts',
-      'data-core/prepare.ts',
-      'data-core/search.ts',
-      'data-core/types.ts',
-    ]) {
-      const source = readSrc(file);
-      expect(source).not.toMatch(/^import .* from ['"]react['"]/m);
-      expect(source).not.toMatch(/require\(['"]react['"]\)/);
-      expect(source).not.toMatch(/^import .*shipstyles.*/m);
-      expect(source).not.toMatch(/require\(['"]shipstyles['"]\)/);
+  it('attaches the scroll listener as passive', () => {
+    const seen: Array<{
+      type: string;
+      options: unknown;
+      element: HTMLElement;
+    }> = [];
+    const original = window.HTMLDivElement.prototype.addEventListener;
+    window.HTMLDivElement.prototype.addEventListener = function (
+      this: HTMLElement,
+      type: string,
+      listener: EventListenerOrEventListenerObject,
+      options?: AddEventListenerOptions | boolean,
+    ) {
+      seen.push({ type, options, element: this });
+      return original.call(this, type, listener, options as never);
+    } as never;
+    try {
+      render(<FullPickerHarness onSearchChange={() => {}} />);
+      // Only the viewport's own listener counts: React also attaches a
+      // capture-phase root scroll listener, which is not ours.
+      const scrolls = seen.filter(
+        (entry) =>
+          entry.type === 'scroll' &&
+          entry.element.dataset.eprPart === 'viewport',
+      );
+      expect(scrolls.length).toBe(1);
+      expect(scrolls[0].options).toMatchObject({ passive: true });
+    } finally {
+      window.HTMLDivElement.prototype.addEventListener = original;
     }
   });
 
-  it('primitives-only consumer excludes default appearance wrapper', () => {
-    const source = readSrc('primitives/Root.tsx');
-    expect(source).not.toMatch(/^import .*ErrorBoundary.*$/m);
-    const offenders = ['primitives/Root.tsx']
-      .map((file) => readSrc(file))
-      .filter((content) => /main\/defaultAppearance/.test(content));
-    expect(offenders).toEqual([]);
-  });
-
-  it('single locale consumer does not include every locale', () => {
-    // Locale modules are pure data: the only permitted import is the
-    // erased EmojiData type. No runtime dependency can drag in siblings.
-    for (const entry of ['emojis-es', 'emojis-de', 'emojis-fr']) {
-      const source = readSrc(`data/${entry}.ts`);
-      const imports = source.match(/^\s*import .*$/gm) ?? [];
-      expect(imports.length).toBeGreaterThan(0);
-      for (const statement of imports) {
-        expect(statement).toMatch(/import\s+(type\s+)?\{\s*EmojiData\s*\}/);
-      }
-    }
+  it('coalesces a scroll burst into one update carrying the latest value', async () => {
+    const seen: number[] = [];
+    const { container, unmount } = render(
+      <PickerContextProvider>
+        <ScrollProbe onTop={(top) => seen.push(top)} />
+      </PickerContextProvider>,
+    );
+    const baseline = seen.length;
+    const scroller = container.firstChild as HTMLElement;
+    // One frame, three positions, dispatched synchronously.
+    scroller.scrollTop = 10;
+    fireEvent.scroll(scroller);
+    scroller.scrollTop = 20;
+    fireEvent.scroll(scroller);
+    scroller.scrollTop = 30;
+    fireEvent.scroll(scroller);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    // Exactly one scheduled update, with the latest position — three
+    // uncoalesced updates would render [10, 20, 30].
+    expect(seen.slice(baseline)).toEqual([30]);
+    unmount();
   });
 });
+
+function ScrollProbe({ onTop }: { onTop: (top: number) => void }) {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const top = useOnScroll(ref);
+  onTop(top);
+  return (
+    <div ref={ref} style={{ overflow: 'auto', height: '100px' }}>
+      <div style={{ height: '1000px' }} />
+    </div>
+  );
+}
+
+// Packaging invariants (data entry framework-free, primitives bundle
+// excluding the default appearance wrapper, locale isolation) are
+// enforced on the shipped bundles by `npm run check:package` — load
+// tests plus marker scans of the real artifacts — which subsumes the
+// source-import scans that lived here.

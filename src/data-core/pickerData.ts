@@ -27,7 +27,6 @@ export interface PickerDataSnapshot {
   emojiData: EmojiData;
   allEmojis: DataEmojis;
   allEmojisByUnified: Record<string, DataEmoji>;
-  searchIndex: Record<string, Record<string, DataEmoji>>;
   customGroups: Record<string, DataEmojis>;
 }
 
@@ -91,9 +90,10 @@ export function getPickerDataSnapshot(
   const source = (genericEmojiData ??
     (defaultEmojiData as unknown as EmojiData)) as EmojiData;
 
-  // Share the pure prepared base core across Roots on the same dataset
-  // identity. This also backs the PERFORMANCE.md "one base index
-  // construction for 10 same-dataset Roots" invariant via its counter.
+  // Warm the shared prepared core the picker actually searches through
+  // (queryFilterDict in PickerDataContext). One construction per dataset
+  // identity backs the PERFORMANCE.md "one base index for 10
+  // same-dataset Roots" invariant; there is no second per-snapshot index.
   getPreparedCore(source);
 
   const hasCustoms = !!customEmojis && customEmojis.length > 0;
@@ -135,8 +135,6 @@ export function getPickerDataSnapshot(
     .flat();
 
   const allEmojisByUnified: Record<string, DataEmoji> = Object.create(null);
-  const searchIndex: Record<string, Record<string, DataEmoji>> =
-    Object.create(null);
 
   allEmojis.forEach((emoji) => {
     const unified = emoji[Keys.unified];
@@ -147,24 +145,12 @@ export function getPickerDataSnapshot(
         allEmojisByUnified[variation] = emoji;
       });
     }
-
-    // Preserve the exact v4 PickerDataContext search-index semantics.
-    const joinedNameString = (emoji[Keys.name] || [])
-      .join('')
-      .toLowerCase()
-      .split('');
-
-    joinedNameString.forEach((char: string) => {
-      searchIndex[char] = searchIndex[char] ?? Object.create(null);
-      searchIndex[char][unified] = emoji;
-    });
   });
 
   const snapshot: PickerDataSnapshot = {
     emojiData,
     allEmojis,
     allEmojisByUnified,
-    searchIndex,
     customGroups,
   };
   inner.set(customKey, snapshot);

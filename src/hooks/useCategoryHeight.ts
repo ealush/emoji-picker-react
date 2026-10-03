@@ -14,6 +14,29 @@ import {
 
 const EMOJI_SIZE_DEFAULT = 40;
 
+// Rows live inside the category content box, not the full list:
+// category margins/padding shrink the usable width, and dividing
+// the raw list width would overcount columns so the last emoji in
+// every row spills past the content edge (into the scrollbar).
+// Measure a rendered, visible content box when one exists; fall back
+// to the list width (identical when categories carry no horizontal
+// inset). Hidden categories report zero width and are skipped.
+function firstVisibleContentWidth(
+  listEl: HTMLElement,
+  fallbackWidth: number,
+): number {
+  const contentBoxes = listEl.querySelectorAll(
+    asSelectors(ClassNames.categoryContent),
+  );
+  for (const box of Array.from(contentBoxes)) {
+    const width = (box as HTMLElement).clientWidth;
+    if (width > 0) {
+      return width;
+    }
+  }
+  return fallbackWidth;
+}
+
 export function useCategoryHeight(emojiCount: number):
   | {
       categoryHeight: number;
@@ -55,24 +78,7 @@ export function useCategoryHeight(emojiCount: number):
 
     if (pickerWidth === 0 || emojiSize === 0) return;
 
-    // Rows live inside the category content box, not the full list:
-    // category margins/padding shrink the usable width, and dividing
-    // the raw list width would overcount columns so the last emoji in
-    // every row spills past the content edge (into the scrollbar).
-    // Measure a rendered, visible content box when one exists; fall back
-    // to the list width (identical when categories carry no horizontal
-    // inset). Hidden categories report zero width and are skipped.
-    const contentBoxes = listEl.querySelectorAll(
-      asSelectors(ClassNames.categoryContent),
-    );
-    let rowWidth = pickerWidth;
-    for (const box of Array.from(contentBoxes)) {
-      const width = (box as HTMLElement).clientWidth;
-      if (width > 0) {
-        rowWidth = width;
-        break;
-      }
-    }
+    const rowWidth = firstVisibleContentWidth(listEl, pickerWidth);
     const emojisPerRow = Math.max(1, Math.floor(rowWidth / emojiSize));
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;

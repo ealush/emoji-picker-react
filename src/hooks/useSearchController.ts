@@ -112,9 +112,9 @@ function usePendingProposal() {
 }
 
 function useControlledReconcile() {
-  const SearchInputRef = useSearchInputRef();
   const searchValue = useSearchValueConfig();
   const [composing] = useSearchComposingState();
+  const [, setDisplay] = useSearchDisplayState();
   const acceptedRef = React.useRef(searchValue ?? '');
   acceptedRef.current = searchValue ?? '';
   const composingRef = React.useRef(composing);
@@ -139,21 +139,22 @@ function useControlledReconcile() {
       timerRef.current = null;
       const pending = pendingFor(registry).current;
       pendingFor(registry).current = null;
-      const element = SearchInputRef.current;
-      if (!element || composingRef.current) {
+      if (composingRef.current) {
         return;
       }
       // Wipe only a still-outstanding proposal: if the parent moved on
-      // (accepted/transformed), display sync already owns the DOM.
+      // (accepted/transformed), display sync already owns the value.
+      // Reconcile through React state, never by writing the DOM
+      // directly: a DOM-only write desyncs state from the input, and the
+      // dead proposal resurfaces on the next Search rerender.
       if (
         pending !== null &&
-        pending.accepted === acceptedRef.current &&
-        element.value !== acceptedRef.current
+        pending.accepted === acceptedRef.current
       ) {
-        element.value = acceptedRef.current;
+        setDisplay(acceptedRef.current);
       }
     }, RECONCILE_AFTER_QUIET_MS);
-  }, [SearchInputRef, registry]);
+  }, [registry, setDisplay]);
 }
 function useCommitSearch(): (raw: string) => void {
   const [, setCommitted] = useSearchCommittedState();
@@ -195,11 +196,14 @@ export function useSearchInputController() {
 
   // Reconcile display with the accepted value whenever it changes
   // externally — but never while an IME composition owns the DOM value.
+  // The equality guard matters: an unconditional setDisplay schedules a
+  // second commit per keystroke (the update bails out, but Profiler and
+  // cascading-effect checks still observe it), doubling render work.
   React.useEffect(() => {
-    if (!composing) {
+    if (!composing && accepted !== display) {
       setDisplay(accepted);
     }
-  }, [accepted, composing, setDisplay]);
+  }, [accepted, composing, display, setDisplay]);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const raw = event.target.value;

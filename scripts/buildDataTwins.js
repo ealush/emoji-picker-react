@@ -8,13 +8,18 @@
 // - .js:  esbuild CJS conversion, unambiguous for require() consumers
 //         (whose `canonical.default ?? canonical` access resolves the
 //         single default export).
-// The exports map points each condition at its twin; declarations stay
-// shared (.d.ts), which the flat types condition resolves for both.
+// The exports map points each condition at its twin. Declarations are
+// twinned too (.d.mts alongside .d.ts): a shared CJS-flavored .d.ts binds
+// ESM default-imports to the module namespace instead of the dataset, so
+// each condition resolves its own declarations (bundled self-contained,
+// like the main/primitives/data entries).
 // Run: node ./scripts/buildDataTwins.js (after build:data:dist emits the
 // tsc ESM files, before packing).
 const { spawnSync } = require('child_process');
 const { copyFileSync, existsSync, readdirSync } = require('fs');
 const { join } = require('path');
+
+const { bundleDeclarations } = require('./bundleDeclarations');
 
 const repoRoot = join(__dirname, '..');
 const esbuildBin = join(repoRoot, 'node_modules', '.bin', 'esbuild');
@@ -26,7 +31,7 @@ function sh(command, args) {
   }
 }
 
-function main() {
+async function main() {
   if (!existsSync(esbuildBin)) {
     throw new Error(
       'esbuild binary not found at node_modules/.bin/esbuild. ' +
@@ -36,7 +41,10 @@ function main() {
 
   const dataDir = join(repoRoot, 'dist', 'data');
   const locales = readdirSync(dataDir).filter(
-    (file) => file.startsWith('emojis-') && file.endsWith('.js'),
+    (file) =>
+      file.startsWith('emojis-') &&
+      file.endsWith('.js') &&
+      !file.endsWith('.mjs'),
   );
   if (locales.length === 0) {
     throw new Error(
@@ -57,8 +65,20 @@ function main() {
       `--outfile=${esm}`,
       '--log-level=warning',
     ]);
+    // ESM-typed declarations twin: bundle the .d.ts self-contained
+    // first (inlining the extensionless relative type import, which is
+    // illegal in .d.mts), then mint the twin as a copy. The dts plugin
+    // only accepts .d.ts inputs, hence this order; bundling also makes
+    // the CJS-side declarations robust.
+    const dts = esm.replace(/\.js$/, '.d.ts');
+    const dmts = esm.replace(/\.js$/, '.d.mts');
+    await bundleDeclarations(dts);
+    copyFileSync(dts, dmts);
   }
   console.log(`locale twins complete: ${locales.length} datasets dualized`);
 }
 
-main();
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

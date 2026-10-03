@@ -15,8 +15,8 @@ import type { ListProps } from './types';
 // be the single direct child of Viewport.
 export const List = React.forwardRef<HTMLUListElement, ListProps>(
   function List(props, forwardedRef) {
-    useRootScope('List');
-    useViewportScope('List');
+    const inRoot = useRootScope('List');
+    const inViewport = useViewportScope('List');
     const nativeProps = filterPrimitiveProps(
       props as Record<string, unknown>,
       ['role'],
@@ -28,6 +28,10 @@ export const List = React.forwardRef<HTMLUListElement, ListProps>(
 
     const EmojiListRef = useEmojiListRef();
     const scrollTop = useViewportScrollTop();
+
+    if (!inRoot || !inViewport) {
+      return null;
+    }
 
     return (
       <EmojiList

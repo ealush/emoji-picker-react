@@ -55,6 +55,61 @@ function App() {
 
 See [PROPS.md](PROPS.md) for the complete props reference.
 
+## Controlled search
+
+The search input works like an ordinary controlled input. Pass `searchValue` with `onSearchChange` to accept, transform, or reject each keystroke; omit it for uncontrolled mode with an optional `defaultSearchValue`:
+
+```jsx
+function App() {
+  const [search, setSearch] = React.useState('');
+  return <EmojiPicker searchValue={search} onSearchChange={setSearch} />;
+}
+```
+
+## Structural primitives
+
+Advanced layouts can compose the picker skeleton from `emoji-picker-react/primitives` without reimplementing emoji buttons, keyboard navigation, or virtualization:
+
+```jsx
+import { CategoryNav, List, Preview, Root, Search, Viewport } from 'emoji-picker-react/primitives';
+
+function App() {
+  return (
+    <Root emojiData={data}>
+      <Search />
+      <CategoryNav />
+      <Viewport>
+        <List />
+      </Viewport>
+      <Preview />
+    </Root>
+  );
+}
+```
+
+Regions can be omitted or reordered (reactions mode is driven by props, not by an element). A bare `Root` carries no branded appearance; spread the documented design-token defaults with `defaultPickerTokens` from the same entry:
+
+```jsx
+import { Root, defaultPickerTokens } from 'emoji-picker-react/primitives';
+
+<Root emojiData={data} style={defaultPickerTokens}>
+  {/* regions */}
+</Root>;
+```
+
+## Data API
+
+Headless emoji lookup and search (no React) lives in `emoji-picker-react/data`, sharing the picker's prepared index:
+
+```jsx
+import { getEmojiByUnified, searchEmojis } from 'emoji-picker-react/data';
+import fr from 'emoji-picker-react/data/emojis-fr';
+
+searchEmojis('smile'); // default dataset
+searchEmojis('sourire', { emojiData: fr }); // locale dataset
+getEmojiByUnified('1f600');
+```
+
 ## Styling
 
 No stylesheet import needed. All styles are scoped via [ShipStyles](https://github.com/ealush/shipstyles) — generated class names are hashed, so the picker's CSS won't leak into or clash with your app's styles.

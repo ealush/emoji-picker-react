@@ -8,7 +8,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | ----------------- | ------------ | ------------------ | -------------------------------------------------------------------------------------------- |
 | `open`            | `boolean`    | `true`             | Controls the visibility of the picker.                                                       |
 | `theme`           | `Theme`      | `Theme.LIGHT`      | The visual theme. Options: `'light'`, `'dark'`, `'auto'`.                                    |
-| `emojiStyle`      | `EmojiStyle` | `EmojiStyle.APPLE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
+| `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
 | `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`).                                 |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
@@ -27,11 +27,13 @@ Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
 
 ## Events & Interaction
 
-| Prop               | Type                                                     | Description                                                          |
-| ------------------ | -------------------------------------------------------- | -------------------------------------------------------------------- |
-| `onEmojiClick`     | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks an emoji.                      |
-| `onReactionClick`  | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks a reaction (in reaction mode). |
-| `onSkinToneChange` | `(skinTone: SkinTones) => void`                          | Callback triggered when the user selects a new skin tone.            |
+| Prop                    | Type                                                     | Description                                                                        |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `onEmojiClick`          | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks an emoji.                                    |
+| `onReactionClick`       | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks a reaction (in reaction mode).               |
+| `onSkinToneChange`      | `(skinTone: SkinTones) => void`                          | Callback triggered when the user selects a new skin tone.                          |
+| `onSearchChange`        | `(value: string) => void`                                | Emitted synchronously with each user search edit (committed, or proposed when `searchValue` is controlled). |
+| `onReactionsModeChange` | `(reactionsOpen: boolean) => void`                       | Callback triggered when the picker transitions between reactions mode and the full picker. |
 
 ## Search & Categories
 
@@ -39,9 +41,13 @@ Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
 | ------------------------ | ------------------------ | ------------------------- | -------------------------------------------------------------------- |
 | `searchDisabled`         | `boolean`                | `false`                   | If true, the search bar is completely removed.                       |
 | `searchPlaceholder`      | `string`                 | `"Search"`                | Placeholder text for the search input.                               |
+| `searchLabel`            | `string`                 | _(English default)_       | Accessible label for the search input.                               |
 | `searchClearButtonLabel` | `string`                 | `"Clear"`                 | Aria label for the search clear button.                              |
+| `searchValue`            | `string`                 | `undefined`               | Controlled search value (raw text). User edits emit `onSearchChange` proposals; the parent decides what is accepted. |
+| `defaultSearchValue`     | `string`                 | `undefined`               | Uncontrolled initial search value, read once per mounted lifetime.   |
 | `categories`             | `CategoryConfig[]`       | _(All)_                   | Array of category objects to customize order or visibility.          |
 | `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
+| `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order (unified or custom IDs). While present, `suggestedEmojisMode` is ignored for contents. |
 | `defaultSkinTone`        | `SkinTones`              | `SkinTones.NEUTRAL`       | The initial skin tone.                                               |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
 | `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`. |

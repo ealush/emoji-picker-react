@@ -15,7 +15,7 @@ import type { SearchProps } from './types';
 // wrapper; `inputRef` addresses the input itself.
 export const Search = React.forwardRef<HTMLDivElement, SearchProps>(
   function Search(props, forwardedRef) {
-    useRootScope('Search');
+    const inScope = useRootScope('Search');
     const searchDisabled = useSearchDisabledConfig();
     const { inputProps, inputRef, ...rest } = props;
     const nativeProps = filterPrimitiveProps(
@@ -23,7 +23,9 @@ export const Search = React.forwardRef<HTMLDivElement, SearchProps>(
       ['role'],
     );
 
-    if (searchDisabled) {
+    // Out-of-scope (production only; development throws above) renders
+    // null after a warn-once: continuing would crash with a TypeError.
+    if (!inScope || searchDisabled) {
       return null;
     }
 

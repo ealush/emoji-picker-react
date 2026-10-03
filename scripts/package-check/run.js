@@ -42,6 +42,7 @@ const REQUIRED = [
   'dist/data/emojis-es.js',
   'dist/data/emojis-es.mjs',
   'dist/data/emojis-es.d.ts',
+  'dist/data/emojis-es.d.mts',
 ];
 
 function main() {

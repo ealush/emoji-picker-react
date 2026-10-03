@@ -13,8 +13,8 @@ import {
 import { useAutoFocusSearchConfig } from '../config/useConfig';
 import { getActiveRegionsInDomOrder } from '../state/regionTraversal';
 
-import { useFocusRegion } from './useKeyboardNavigation';
 import { useFocusSearchInput } from './useFocus';
+import { useFocusRegion } from './useKeyboardNavigation';
 
 // Reactions ↔ full-picker focus management (docs/v5/STATE.md §8).
 //
@@ -38,7 +38,10 @@ export function useReactionsFocusManager() {
   const focusRegion = useFocusRegion();
   const registry = useNavigationRegistry();
   const lastControlRef = React.useRef<HTMLElement | null>(null);
-  const mountedRef = React.useRef(false);
+  // Previous-value ref (not a first-run flag): StrictMode double-invokes
+  // this effect on mount, and a flag would treat the second run as a
+  // transition and steal focus. Comparing values keeps both runs silent.
+  const prevReactionsOpen = React.useRef(reactionsOpen);
 
   // Remember the initiating control: the last focused element inside Root.
   React.useEffect(() => {
@@ -58,10 +61,10 @@ export function useReactionsFocusManager() {
   }, [PickerMainRef]);
 
   React.useEffect(() => {
-    if (!mountedRef.current) {
-      mountedRef.current = true;
+    if (prevReactionsOpen.current === reactionsOpen) {
       return;
     }
+    prevReactionsOpen.current = reactionsOpen;
     if (!reactionsOpen) {
       focusAfterExpansion();
     } else {

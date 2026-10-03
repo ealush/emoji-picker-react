@@ -15,14 +15,14 @@ import type { CategoryNavProps } from './types';
 // be visible (mirroring the internal single-tab rule).
 export const CategoryNav = React.forwardRef<HTMLDivElement, CategoryNavProps>(
   function CategoryNav(props, forwardedRef) {
-    useRootScope('CategoryNav');
+    const inScope = useRootScope('CategoryNav');
     const visibleCategories = useVisibleCategoryConfigs();
     const nativeProps = filterPrimitiveProps(
       props as Record<string, unknown>,
       ['role'],
     );
 
-    if (visibleCategories.length <= 1) {
+    if (!inScope || visibleCategories.length <= 1) {
       return null;
     }
 

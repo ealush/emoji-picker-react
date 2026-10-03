@@ -5,6 +5,7 @@ import {
   useDefaultSkinToneConfig,
   useDefaultSearchValueConfig,
   useReactionsOpenConfig,
+  useSearchValueConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
@@ -13,8 +14,6 @@ import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { NavigationRegistry } from '../../state/navigationRegistry';
 import { SkinTones } from '../../types/exposedTypes';
-
-import { usePickerDataContext } from './PickerDataContext';
 
 // v5 Phase 3 — one Root-scoped controller, narrowly sliced.
 //
@@ -60,6 +59,7 @@ function useDebouncedSliceValue<T>(
 
 export interface PickerServices {
   filterRef: React.MutableRefObject<FilterState>;
+  filterQueryOrderRef: React.MutableRefObject<string[]>;
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
   disallowedEmojisRef: React.MutableRefObject<Record<string, boolean>>;
@@ -68,6 +68,7 @@ export interface PickerServices {
 
 const PickerServicesContext = React.createContext<PickerServices>({
   filterRef: { current: {} },
+  filterQueryOrderRef: { current: [] },
   disallowClickRef: { current: false },
   disallowMouseRef: { current: false },
   disallowedEmojisRef: { current: {} },
@@ -135,14 +136,12 @@ export function PickerContextProvider({ children }: Props) {
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
-  const { searchIndex } = usePickerDataContext();
 
-  // Initialize the filter with the inititial dictionary
-  const filterRef = React.useRef<FilterState>(searchIndex);
-
-  React.useEffect(() => {
-    filterRef.current = searchIndex;
-  }, [searchIndex]);
+  // Per-Root query-result cache only. It never aliases shared snapshot
+  // state: query dicts are computed through the shared prepared core and
+  // stored here, bounded, so unmounting leaves nothing behind.
+  const filterRef = React.useRef<FilterState>({});
+  const filterQueryOrderRef = React.useRef<string[]>([]);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
   const disallowedEmojisRef =
@@ -168,6 +167,7 @@ export function PickerContextProvider({ children }: Props) {
   const servicesValue = React.useMemo<PickerServices>(
     () => ({
       filterRef,
+      filterQueryOrderRef,
       disallowClickRef,
       disallowMouseRef,
       disallowedEmojisRef,
@@ -187,10 +187,15 @@ export function PickerContextProvider({ children }: Props) {
     [searchTerm[0], suggestedUpdateState[0]],
   );
 
-  // Uncontrolled accepted/display state. `defaultSearchValue` is read once
-  // per mounted lifetime via the state initializer.
-  const displayState = useState<string>(defaultSearchValue ?? '');
-  const committedState = useState<string>(defaultSearchValue ?? '');
+  // Accepted/display state. A controlled `searchValue` is the visible
+  // source of truth from the first paint (including SSR, where effects
+  // never run); `defaultSearchValue` is read once per mounted lifetime
+  // via the state initializer.
+  const searchValueConfig = useSearchValueConfig();
+  const initialAccepted =
+    searchValueConfig ?? defaultSearchValue ?? '';
+  const displayState = useState<string>(initialAccepted);
+  const committedState = useState<string>(initialAccepted);
   const composingState = useState<boolean>(false);
   const searchInputValue = React.useMemo(
     () => ({
@@ -275,6 +280,11 @@ type Props = Readonly<{
 export function useFilterRef() {
   const { filterRef } = React.useContext(PickerServicesContext);
   return filterRef;
+}
+
+export function useFilterQueryOrderRef() {
+  const { filterQueryOrderRef } = React.useContext(PickerServicesContext);
+  return filterQueryOrderRef;
 }
 
 export function useDisallowClickRef() {

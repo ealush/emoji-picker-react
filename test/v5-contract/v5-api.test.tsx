@@ -36,6 +36,7 @@ import type {
   SearchProps,
 } from '../../src/primitives/types';
 import type { ViewportProps } from '../../src/primitives/Viewport';
+import { useNavigationRegistry } from '../../src/components/context/PickerContext';
 import { getPreparedCore } from '../../src/data-core/prepare';
 import { getEmojiByUnified, searchEmojis } from '../../src/data';
 import { resolveSuggestedRenderIds } from '../../src/dataUtils/suggestedEmojis';
@@ -53,10 +54,6 @@ import type { EmojiData } from '../../src/types/exposedTypes';
  * jsdom cannot faithfully exercise. Anything else marked inapplicable
  * would require a spec amendment, not a silent deletion.
  */
-
-const SRC = join(process.cwd(), 'src');
-const readSrc = (relativePath: string): string =>
-  readFileSync(join(SRC, relativePath), 'utf8');
 
 const twoCategoryData: EmojiData = {
   categories: {},
@@ -85,6 +82,18 @@ const renderPicker = (props: Partial<PickerProps> = {}) =>
       {...props}
     />,
   );
+
+// Read-only observer handle: exposes the Root's navigation registry so
+// invalidation tests can assert generation movement caused by real user
+// and lifecycle transitions through the real observers.
+function RegistryCapture({
+  box,
+}: {
+  box: { registry?: NavigationRegistry };
+}) {
+  box.registry = useNavigationRegistry();
+  return null;
+}
 
 async function settle(ms = 250) {
   await act(async () => {
@@ -1610,14 +1619,11 @@ describe('v5 primitive DOM contracts', () => {
 }
 
 describe('v5 error ownership', () => {
-  it('keeps ErrorBoundary around the default picker', () => {
-    expect(readSrc('EmojiPickerReact.tsx')).not.toContain('<ErrorBoundary');
-    expect(readSrc('index.tsx')).toContain('<ErrorBoundary');
-  });
-
-  it('does not install ErrorBoundary inside primitive Root', () => {
-    expect(readSrc('primitives/Root.tsx')).not.toContain('<ErrorBoundary');
-  });
+  // Boundary placement (default picker catches, bare Root propagates) is
+  // covered behaviorally in test/error-boundary-v5.test.tsx, which needs
+  // a file-scoped throwing-leaf mock that cannot live in this file.
+  // Event-handler exception propagation is covered by the composeHandlers
+  // unit tests in test/primitives-v5.test.tsx.
 
   it('lets consumer-child render errors propagate from Root managed-panel content', () => {
     const errors = silenceConsole();
@@ -1637,11 +1643,6 @@ describe('v5 error ownership', () => {
     }
   });
 
-  it('does not claim React ErrorBoundary catches consumer event-handler exceptions', () => {
-    expect(readSrc('primitives/nativeProps.ts')).not.toMatch(
-      /try\s*\{[\s\S]{0,200}consumer/i,
-    );
-  });
 });
 
 describe('v5 default root ownership', () => {
@@ -1693,8 +1694,23 @@ describe('v5 default root ownership', () => {
 });
 
 describe('v5 one implementation', () => {
-  it('assembles default picker from the exported primitive modules', () => {
-    expect(readSrc('EmojiPickerReact.tsx')).toMatch(/from '\.\/primitives'/);
+  it('assembles the default picker from the same managed parts as primitives', () => {
+    // The default tree composes the exported primitives: its aside
+    // carries the same part markers a hand composition would, in the
+    // same DOM order (search, nav, viewport grid, preview).
+    const { container } = renderPicker({});
+    const aside = container.querySelector(
+      'aside[data-epr-part="root"]',
+    ) as HTMLElement;
+    expect(aside).not.toBeNull();
+    const parts = Array.from(
+      aside.querySelectorAll('[data-epr-part]'),
+    ).map((element) => element.getAttribute('data-epr-part'));
+    for (const part of ['search', 'category-nav', 'viewport', 'preview']) {
+      expect(parts).toContain(part);
+    }
+    expect(parts.indexOf('search')).toBeLessThan(parts.indexOf('viewport'));
+    expect(parts.indexOf('viewport')).toBeLessThan(parts.indexOf('preview'));
   });
 
   it('uses one navigation engine for default and primitive compositions', async () => {
@@ -1730,9 +1746,9 @@ describe('v5 one implementation', () => {
     });
   });
 
-  it('uses one normalization/search core for UI and data entry', () => {
-    expect(readSrc('data-core/search.ts')).toContain('getPreparedCore');
-    expect(readSrc('hooks/useFilter.ts')).toContain('getNormalizedSearchTerm');
+  it('shares one prepared core between UI and data entry', () => {
+    // Delegation and result equivalence are asserted behaviorally in
+    // test/search-unification-v5.test.tsx; here only the shared memo shape.
     const core = getPreparedCore();
     expect(core.queryMemo instanceof Map).toBe(true);
   });
@@ -1903,44 +1919,142 @@ describe('v5 navigation', () => {
     });
   });
 
-  it('navigates logical grid independently of materialized DOM', () => {
-    // Offscreen materialization needs real layout and is covered by the
-    // unskipped virtualized-keyboard browser test; here the traversal
-    // contract behind it is asserted structurally.
-    expect(readSrc('state/regionTraversal.ts')).toContain(
-      'compareDocumentPosition',
+  // Offscreen materialization needs real layout: covered by the
+  // unskipped virtualized-keyboard browser tests in
+  // playwright/v5-acceptance.spec.ts (keyboard reach, stale
+  // materialization). The cancellation half of the contract is asserted
+  // behaviorally below through the navigation generation.
+
+  it('invalidates pending focus after accepted search changes', async () => {
+    const box: { registry?: NavigationRegistry } = {};
+    render(
+      <Root emojiData={twoCategoryData} emojiStyle={EmojiStyle.NATIVE}>
+        <RegistryCapture box={box} />
+        <Search />
+        <Viewport>
+          <List />
+        </Viewport>
+      </Root>,
     );
-  });
-
-  it('materializes scrolls and focuses an offscreen target', () => {
-    // Browser-only: covered by the virtualized-keyboard browser test.
-    // The cancellation half of the contract is asserted below.
-    expect(
-      readSrc('hooks/useKeyboardNavigation.ts'),
-    ).toContain('focusGuard');
-  });
-
-  it('invalidates pending focus after accepted search changes', () => {
-    expect(readSrc('hooks/useFilter.ts')).toContain('registry.invalidate()');
+    const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+    const before = box.registry?.currentGeneration() ?? -1;
+    fireEvent.change(input, { target: { value: 'cat' } });
+    expect(box.registry?.currentGeneration() ?? -1).toBeGreaterThan(before);
   });
 
   it('invalidates pending focus after geometry changes', () => {
-    expect(readSrc('components/main/PickerMainBehaviors.tsx')).toContain(
-      'emojiSize',
+    const categorized: EmojiData = {
+      categories: {
+        smileys_people: {
+          category: 'smileys_people',
+          name: 'Smileys & People',
+        } as never,
+      },
+      emojis: {
+        smileys_people: [
+          { n: ['face', 'grinning face'], u: '1f600', a: '1' } as never,
+        ],
+      },
+    };
+    const box: { registry?: NavigationRegistry } = {};
+    // Explicit categories: the default first category is Suggested
+    // (empty here), which leaves the measurer without a dummy emoji.
+    const tree = () => (
+      <Root
+        emojiData={categorized}
+        emojiStyle={EmojiStyle.NATIVE}
+        categories={[Categories.SMILEYS_PEOPLE]}
+      >
+        <RegistryCapture box={box} />
+        <Viewport>
+          <List />
+        </Viewport>
+      </Root>
     );
+    const { rerender } = render(tree());
+    // jsdom reports zero heights, so the measurer stays mounted with
+    // emojiSize 0; a later real measurement (font load, layout) changes
+    // the state and must obsolete pending focus work.
+    const before = box.registry?.currentGeneration() ?? -1;
+    const descriptor = Object.getOwnPropertyDescriptor(
+      window.HTMLElement.prototype,
+      'clientHeight',
+    );
+    Object.defineProperty(window.HTMLElement.prototype, 'clientHeight', {
+      configurable: true,
+      get: () => 40,
+    });
+    try {
+      rerender(tree());
+      expect(box.registry?.currentGeneration() ?? -1).toBeGreaterThan(before);
+    } finally {
+      if (descriptor) {
+        Object.defineProperty(
+          window.HTMLElement.prototype,
+          'clientHeight',
+          descriptor,
+        );
+      } else {
+        // No own descriptor existed (inherited from Element): remove
+        // the mock so later tests observe real (zero) heights again.
+        delete (window.HTMLElement.prototype as Record<string, unknown>)
+          .clientHeight;
+      }
+    }
   });
 
-  it('invalidates pending focus after dataset/category changes', () => {
-    const source = readSrc('components/main/PickerMainBehaviors.tsx');
-    expect(source).toContain('emojiData');
+  it('invalidates pending focus after dataset changes', () => {
+    const box: { registry?: NavigationRegistry } = {};
+    const tree = (emojiData: EmojiData) => (
+      <Root emojiData={emojiData} emojiStyle={EmojiStyle.NATIVE}>
+        <RegistryCapture box={box} />
+        <Viewport>
+          <List />
+        </Viewport>
+      </Root>
+    );
+    const { rerender } = render(tree(twoCategoryData));
+    const before = box.registry?.currentGeneration() ?? -1;
+    rerender(tree({ ...twoCategoryData }));
+    expect(box.registry?.currentGeneration() ?? -1).toBeGreaterThan(before);
   });
 
-  it('invalidates pending focus after reactions transition and unmount', () => {
-    const source = readSrc('components/main/PickerMainBehaviors.tsx');
-    expect(source).toContain('reactionsMode');
-    expect(readSrc('components/context/PickerContext.tsx')).toContain(
-      'registry.dispose()',
+  it('invalidates pending focus after a reactions transition', async () => {
+    const box: { registry?: NavigationRegistry } = {};
+    render(
+      <Root
+        emojiData={twoCategoryData}
+        emojiStyle={EmojiStyle.NATIVE}
+        reactionsDefaultOpen
+      >
+        <RegistryCapture box={box} />
+        <Viewport>
+          <List />
+        </Viewport>
+      </Root>,
     );
+    const expand = await screen.findByRole('button', {
+      name: 'Show all Emojis',
+    });
+    const before = box.registry?.currentGeneration() ?? -1;
+    fireEvent.click(expand);
+    expect(box.registry?.currentGeneration() ?? -1).toBeGreaterThan(before);
+  });
+
+  it('invalidates pending focus on unmount', () => {
+    const box: { registry?: NavigationRegistry } = {};
+    const { unmount } = render(
+      <Root emojiData={twoCategoryData} emojiStyle={EmojiStyle.NATIVE}>
+        <RegistryCapture box={box} />
+        <Viewport>
+          <List />
+        </Viewport>
+      </Root>,
+    );
+    const token = box.registry?.currentGeneration() ?? -1;
+    expect(box.registry?.isCurrent(token)).toBe(true);
+    unmount();
+    expect(box.registry?.isCurrent(token)).toBe(false);
   });
 
   it('isolates navigation between Roots', async () => {
@@ -1963,17 +2077,11 @@ describe('v5 identity and accessibility', () => {
   it('removes fixed epr-search-id', () => {
     const { container } = renderPicker({});
     expect(container.querySelector('#epr-search-id')).toBeNull();
-    expect(readSrc('components/header/Search/Search.tsx')).not.toContain(
-      'epr-search-id',
-    );
   });
 
   it('removes fixed epr-category-nav-id', () => {
     const { container } = renderPicker({});
     expect(container.querySelector('#epr-category-nav-id')).toBeNull();
-    expect(
-      readSrc('components/navigation/CategoryNavigation.tsx'),
-    ).not.toContain('epr-category-nav-id');
   });
 
   it('generates no library-owned DOM IDs in initial v5', () => {
@@ -2088,17 +2196,21 @@ describe('v5 data API', () => {
     expect(searchEmojis('   ')).toEqual([]);
   });
 
-  it('does not import React or ShipStyles', () => {
-    for (const file of ['data.ts', 'data-core/search.ts']) {
-      const source = readSrc(file);
-      expect(source).not.toMatch(/^import .* from ['"]react['"]/m);
-      expect(source).not.toMatch(/^import .*shipstyles.*/m);
-      expect(source).not.toMatch(/require\(['"]shipstyles['"]\)/);
-    }
-  });
+  // Framework independence of the data entry (no React/ShipStyles) is
+  // enforced on the shipped bundle by `npm run check:package` (load
+  // test with framework resolution blocked plus a static scan), which
+  // is stronger than scanning source imports.
 
-  it('does not promise Slack shortcode conversion', () => {
-    expect(readSrc('data.ts')).not.toMatch(/shortcode/i);
+  it('exposes exactly the documented data entry surface', async () => {
+    // No shortcode conversion (or anything else undocumented) rides
+    // along: the runtime export set is the contract.
+    const entry = (await import('../../src/data')) as Record<string, unknown>;
+    expect(Object.keys(entry).sort()).toEqual([
+      'getEmojiByUnified',
+      'searchEmojis',
+    ]);
+    expect(typeof entry.searchEmojis).toBe('function');
+    expect(typeof entry.getEmojiByUnified).toBe('function');
   });
 });
 
@@ -2350,8 +2462,11 @@ describe('v5 package contract', () => {
     }
   });
 
-  it('preserves every current main-entry export', () => {
-    expect(readSrc('index.tsx')).toContain('emojiByUnified');
+  it('preserves the main-entry emojiByUnified lookup', () => {
+    expect(typeof emojiByUnified).toBe('function');
+    const found = emojiByUnified('1f600');
+    expect(found?.n).toContain('grinning face');
+    expect(emojiByUnified('not-an-emoji')).toBeUndefined();
   });
 
   it('keeps documented v4 locale deep paths as deprecated compatibility aliases', () => {
@@ -2381,19 +2496,7 @@ describe('v5 package contract', () => {
     expect(pkg.peerDependencies.react).toBe('>=16.8');
   });
 
-  it('passes packed ESM consumer', () => {
-    expect(readSrc('../scripts/package-check/consumer-check.mjs')).toContain(
-      'packed ESM consumer',
-    );
-  });
-
-  it('passes packed CJS consumer', () => {
-    expect(readSrc('../scripts/package-check/consumer-check.cjs')).toContain(
-      'packed CJS consumer',
-    );
-  });
-
-  it('passes package-shape validation', () => {
-    expect(readSrc('../scripts/package-check/run.js')).toContain('publint');
-  });
+  // Packed-consumer checks (CJS + ESM resolution, publint, attw) run
+  // as `npm run check:package`, gated in CI by the packaging job —
+  // executing them here would pack and install on every unit run.
 });
