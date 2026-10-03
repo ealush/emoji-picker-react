@@ -1997,8 +1997,9 @@ describe('v5 navigation', () => {
       } else {
         // No own descriptor existed (inherited from Element): remove
         // the mock so later tests observe real (zero) heights again.
-        delete (window.HTMLElement.prototype as Record<string, unknown>)
-          .clientHeight;
+        delete (
+          window.HTMLElement.prototype as unknown as Record<string, unknown>
+        ).clientHeight;
       }
     }
   });

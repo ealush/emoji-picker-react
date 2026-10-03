@@ -3,6 +3,8 @@ import { cx } from 'shipstyles';
 
 import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
 import {
+  formatSearchResultsLabel,
+  useLabels,
   useAutoFocusSearchConfig,
   useSearchDisabledConfig,
   useSearchLabelConfig,
@@ -10,6 +12,7 @@ import {
 } from '../../../config/useConfig';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFilter } from '../../../hooks/useFilter';
+import { useVisibleSearchResultCount } from '../../../hooks/useSearchResults';
 import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
 import { useSearchInputController } from '../../../hooks/useSearchController';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
@@ -60,7 +63,11 @@ export function Search({
   const placeholder = useSearchPlaceHolderConfig();
   const autoFocus = useAutoFocusSearchConfig();
   const searchLabel = useSearchLabelConfig();
-  const { statusSearchResults, searchTerm } = useFilter();
+  const { searchTerm } = useFilter();
+  const labels = useLabels();
+  const resultCount = useVisibleSearchResultCount();
+  const statusSearchResults =
+    resultCount === null ? '' : formatSearchResultsLabel(labels, resultCount);
   const { value, handleChange, handleCompositionStart, handleCompositionEnd } =
     useSearchInputController();
   useRegisterRegion('search', SearchInputRef);

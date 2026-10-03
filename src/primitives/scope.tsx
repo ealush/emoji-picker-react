@@ -50,7 +50,9 @@ export function useRootScope(primitive: string): boolean {
     return false;
   }
   throw new Error(
-    `[emoji-picker-react] <${primitive}> must be rendered inside <Root>. ` +
+    (primitive.startsWith('use')
+      ? `[emoji-picker-react] ${primitive}() must be called inside <Root>. `
+      : `[emoji-picker-react] <${primitive}> must be rendered inside <Root>. `) +
       `See docs/v5/PRIMITIVES.md composition grammar.`,
   );
 }

@@ -16,7 +16,8 @@ export type PickerAppearanceProps =
   | 'width'
   | 'height'
   | 'className'
-  | 'style';
+  | 'style'
+  | 'unstyled';
 
 export type RootBehaviorProps = Omit<PickerConfig, PickerAppearanceProps>;
 
@@ -65,3 +66,10 @@ export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
   'role' | 'children'
 >;
+
+export type EmptyProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'role' | 'children'
+> & {
+  children?: React.ReactNode | ((state: { search: string }) => React.ReactNode);
+};

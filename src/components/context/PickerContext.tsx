@@ -111,6 +111,18 @@ const ReactionsSliceContext = React.createContext<ReactState<boolean>>([
   () => {},
 ]);
 
+// Hovered/focused emoji (unified + original unified), written by the
+// Viewport's pointer/focus listeners and read by Preview and the public
+// useActiveEmoji hook. Its own slice: hover rerenders only its readers.
+export type ActiveEmojiState = null | {
+  unified: string;
+  originalUnified: string;
+};
+
+const ActiveEmojiSliceContext = React.createContext<
+  ReactState<ActiveEmojiState>
+>([null, () => {}]);
+
 const VariationSliceContext = React.createContext<ReactState<DataEmoji | null>>(
   [null, () => {}],
 );
@@ -257,6 +269,9 @@ export function PickerContextProvider({ children }: Props) {
   const reactionsModeState = useState(reactionsDefaultOpen);
   const reactionsValue = useSliceValue(reactionsModeState);
 
+  const activeEmojiState = useState<ActiveEmojiState>(null);
+  const activeEmojiValue = useSliceValue(activeEmojiState);
+
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const variationValue = useSliceValue(emojiVariationPickerState);
 
@@ -322,7 +337,11 @@ export function PickerContextProvider({ children }: Props) {
                 <SkinToneSliceContext.Provider value={skinToneValue}>
                   <ViewportSliceContext.Provider value={viewportValue}>
                     <LoadSliceContext.Provider value={loadValue}>
-                      {children}
+                      <ActiveEmojiSliceContext.Provider
+                        value={activeEmojiValue}
+                      >
+                        {children}
+                      </ActiveEmojiSliceContext.Provider>
                     </LoadSliceContext.Provider>
                   </ViewportSliceContext.Provider>
                 </SkinToneSliceContext.Provider>
@@ -362,6 +381,10 @@ export function useDisallowMouseRef() {
 export function useNavigationRegistry(): NavigationRegistry {
   const { navigationRegistry } = React.useContext(PickerServicesContext);
   return navigationRegistry;
+}
+
+export function useActiveEmojiState(): ReactState<ActiveEmojiState> {
+  return React.useContext(ActiveEmojiSliceContext);
 }
 
 export function useReactionsModeState() {

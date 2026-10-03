@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { cx } from 'shipstyles';
 
 import {
@@ -12,11 +11,12 @@ import {
   usePreviewConfig,
 } from '../../config/useConfig';
 import { emojiName, emojiUnified } from '../../dataUtils/emojiUtils';
-import { useEmojiPreviewEvents } from '../../hooks/useEmojiPreviewEvents';
 import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import {
+  ActiveEmojiState,
+  useActiveEmojiState,
   useEmojiVariationPickerState,
   useReactionsModeState,
 } from '../context/PickerContext';
@@ -50,13 +50,11 @@ export function Preview() {
 
 export function PreviewBody() {
   const previewConfig = usePreviewConfig();
-  const [previewEmoji, setPreviewEmoji] = useState<PreviewEmoji>(null);
+  const [previewEmoji] = useActiveEmojiState();
   const emojiStyle = useEmojiStyleConfig();
   const [variationPickerEmoji] = useEmojiVariationPickerState();
   const getEmojiUrl = useGetEmojiUrlConfig();
   const { emojiByUnified } = usePickerDataContext();
-
-  useEmojiPreviewEvents(previewConfig.showPreview, setPreviewEmoji);
 
   const emoji = emojiByUnified(
     (previewEmoji?.unified ?? previewEmoji?.originalUnified) as
@@ -108,10 +106,7 @@ export function PreviewBody() {
   );
 }
 
-export type PreviewEmoji = null | {
-  unified: string;
-  originalUnified: string;
-};
+export type PreviewEmoji = ActiveEmojiState;
 
 const styles = stylesheet.create({
   preview: {

@@ -182,7 +182,7 @@ function emojiFromEvent(
   return [emoji, unified ?? resolvedUnified];
 }
 
-function emojiClickOutput(
+export function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
   activeEmojiStyle: EmojiStyleValue,

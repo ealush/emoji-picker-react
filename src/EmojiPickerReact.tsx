@@ -8,7 +8,7 @@ import {
 } from './components/main/defaultAppearance';
 import { compareConfig } from './config/compareConfig';
 import { useOpenConfig } from './config/useConfig';
-import { List, Preview, Root, Viewport } from './primitives';
+import { Empty, List, Preview, Root, Viewport } from './primitives';
 import type { RootBehaviorProps } from './primitives/types';
 
 import { PickerProps } from './index';
@@ -59,6 +59,7 @@ function ContentControl() {
       <Header />
       <Viewport>
         <List />
+        <Empty />
       </Viewport>
       <Preview />
     </>

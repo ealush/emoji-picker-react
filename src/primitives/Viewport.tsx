@@ -5,15 +5,24 @@ import { ClassNames } from '../DomUtils/classNames';
 import { stylesheet } from '../Stylesheet/stylesheet';
 import { EmojiVariationPicker } from '../components/body/EmojiVariationPicker';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { useVisibleCategoriesState } from '../components/context/PickerContext';
+import {
+  useActiveEmojiState,
+  useVisibleCategoriesState,
+} from '../components/context/PickerContext';
 import { useActiveCategory } from '../components/navigation/CategoryNavigation';
-import { MOUSE_EVENT_SOURCE, useCategoriesConfig } from '../config/useConfig';
+import {
+  MOUSE_EVENT_SOURCE,
+  useCategoriesConfig,
+  usePreviewConfig,
+} from '../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../hooks/useActiveCategoryScrollDetection';
 import { useOnMouseMove } from '../hooks/useDisallowMouseMove';
+import { useEmojiPreviewEvents } from '../hooks/useEmojiPreviewEvents';
 import { useMouseDownHandlers } from '../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../hooks/useOnScroll';
 import { useSingletonClaim } from '../hooks/useRegisterRegion';
 
+import { Empty } from './Empty';
 import { List } from './List';
 import { filterPrimitiveProps, mergeRefs } from './nativeProps';
 import {
@@ -22,7 +31,6 @@ import {
   ViewportScrollContext,
   __resetPrimitiveWarningsForTest,
 } from './scope';
-import type { ListProps } from './types';
 
 // Re-exported for tests.
 export { __resetPrimitiveWarningsForTest };
@@ -33,16 +41,24 @@ export type ViewportProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'role' | 'children'
 > & {
-  children: React.ReactElement<ListProps, typeof List>;
+  /** Exactly one `<List>`, optionally accompanied by `<Empty>`. */
+  children: React.ReactElement | React.ReactElement[];
 };
 
 const warnedViewportChildren = new Set<string>();
 
 function assertSingleListChild(children: React.ReactNode): void {
+  const elements = React.Children.toArray(children);
   const valid =
-    React.Children.count(children) === 1 &&
-    React.isValidElement(children) &&
-    (children as React.ReactElement).type === List;
+    elements.length > 0 &&
+    elements.every(
+      (child) =>
+        React.isValidElement(child) &&
+        (child.type === List || child.type === Empty),
+    ) &&
+    elements.filter(
+      (child) => React.isValidElement(child) && child.type === List,
+    ).length === 1;
   if (valid) {
     return;
   }
@@ -52,14 +68,15 @@ function assertSingleListChild(children: React.ReactNode): void {
       // eslint-disable-next-line no-console
       console.warn(
         '[emoji-picker-react] <Viewport> requires exactly one direct ' +
-          '<List> child; rendering children as-is.',
+          '<List> child (plus optional <Empty>); rendering children as-is.',
       );
     }
     return;
   }
   throw new Error(
     '[emoji-picker-react] <Viewport> requires exactly one direct <List> ' +
-      'child. See docs/v5/PRIMITIVES.md composition grammar.',
+      'child (plus optional <Empty>). See docs/v5/PRIMITIVES.md ' +
+      'composition grammar.',
   );
 }
 
@@ -79,10 +96,9 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
     const inScope = useRootScope('Viewport');
     useSingletonClaim('viewport');
     const { children, ...rest } = props;
-    const nativeProps = filterPrimitiveProps(
-      rest as Record<string, unknown>,
-      ['role'],
-    );
+    const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+      'role',
+    ]);
     assertSingleListChild(children);
 
     const BodyRef = useBodyRef();
@@ -90,7 +106,8 @@ export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
     useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
     useOnMouseMove();
 
-    const { className, style, ...restNative } = nativeProps as React.HTMLAttributes<HTMLDivElement>;
+    const { className, style, ...restNative } =
+      nativeProps as React.HTMLAttributes<HTMLDivElement>;
 
     if (!inScope) {
       return null;
@@ -121,6 +138,10 @@ function ViewportObservers() {
   // tracking must continue when CategoryNav unmounts (single tab) or is
   // omitted from a composition entirely.
   const { setActiveCategory } = useActiveCategory();
+  const [, setActiveEmoji] = useActiveEmojiState();
+  // Hover/focus tracking for Preview and useActiveEmoji lives with the
+  // scroll container too, so it works whether or not Preview is rendered.
+  useEmojiPreviewEvents(usePreviewConfig().showPreview, setActiveEmoji);
   const [, setVisibleCategories] = useVisibleCategoriesState();
   const categoriesConfig = useCategoriesConfig();
   // The observer re-subscribes when the merged categories reference

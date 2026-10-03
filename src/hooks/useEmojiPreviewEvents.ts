@@ -11,16 +11,19 @@ import {
   useBodyRef,
   usePickerMainRef,
 } from '../components/context/ElementRefContext';
-import { PreviewEmoji } from '../components/footer/Preview';
+import { ActiveEmojiState } from '../components/context/PickerContext';
 
 import {
   useAllowMouseMove,
   useIsMouseDisallowed,
 } from './useDisallowMouseMove';
 
+// Tracks the hovered/focused emoji. `focusOnHover` additionally moves
+// focus to the hovered emoji so arrow keys continue from it (enabled
+// together with the preview, as in v4).
 export function useEmojiPreviewEvents(
-  allow: boolean,
-  setPreviewEmoji: React.Dispatch<React.SetStateAction<PreviewEmoji>>,
+  focusOnHover: boolean,
+  setPreviewEmoji: React.Dispatch<React.SetStateAction<ActiveEmojiState>>,
 ) {
   const BodyRef = useBodyRef();
   const PickerMainRef = usePickerMainRef();
@@ -28,9 +31,6 @@ export function useEmojiPreviewEvents(
   const allowMouseMove = useAllowMouseMove();
 
   useEffect(() => {
-    if (!allow) {
-      return;
-    }
     const bodyRef = BodyRef.current;
 
     bodyRef?.addEventListener('keydown', onEscape, {
@@ -112,6 +112,7 @@ export function useEmojiPreviewEvents(
       // the browser scroll them into view, yanking the scroll position
       // while the user is browsing (see also PR #509).
       if (
+        focusOnHover &&
         !isExternalElementFocused() &&
         !isPartiallyBelowFold(button, bodyRef)
       ) {
@@ -130,7 +131,11 @@ export function useEmojiPreviewEvents(
     function isExternalElementFocused(): boolean {
       const active = document.activeElement as HTMLElement | null;
 
-      if (!active || active === document.body || active === document.documentElement) {
+      if (
+        !active ||
+        active === document.body ||
+        active === document.documentElement
+      ) {
         return false;
       }
 
@@ -144,5 +149,12 @@ export function useEmojiPreviewEvents(
       bodyRef?.removeEventListener('blur', onLeave, true);
       bodyRef?.removeEventListener('keydown', onEscape);
     };
-  }, [BodyRef, PickerMainRef, allow, setPreviewEmoji, isMouseDisallowed, allowMouseMove]);
+  }, [
+    BodyRef,
+    PickerMainRef,
+    focusOnHover,
+    setPreviewEmoji,
+    isMouseDisallowed,
+    allowMouseMove,
+  ]);
 }

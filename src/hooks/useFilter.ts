@@ -13,8 +13,6 @@ import {
   useSearchTermState,
 } from '../components/context/PickerContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
-import { PickerLabels } from '../config/config';
-import { formatSearchResultsLabel, useLabels } from '../config/useConfig';
 import { normalizeQuery } from '../data-core/prepare';
 import { DataEmoji } from '../dataUtils/DataTypes';
 
@@ -54,18 +52,11 @@ export function useFilter() {
   const { queryFilterDict } = usePickerDataContext();
 
   const [searchTerm] = useSearchTermState();
-  const labels = useLabels();
-  const statusSearchResults = getStatusSearchResults(
-    filterRef.current,
-    searchTerm,
-    labels,
-  );
 
   return {
     onChange,
     searchTerm,
     SearchInputRef,
-    statusSearchResults,
   };
 
   function onChange(inputValue: string) {
@@ -144,16 +135,3 @@ export function isEmojiFilteredBySearchTerm(
 
 export type FilterDict = Record<string, DataEmoji>;
 
-// Pure: the labels are resolved by the caller. (This used to call a hook
-// behind an early return, violating the rules of hooks.)
-function getStatusSearchResults(
-  filterState: FilterState,
-  searchTerm: string,
-  labels: PickerLabels,
-): string {
-  if (!filterState?.[searchTerm]) return '';
-
-  const searchResultsCount =
-    Object.entries(filterState?.[searchTerm])?.length || 0;
-  return formatSearchResultsLabel(labels, searchResultsCount);
-}
