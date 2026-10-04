@@ -46,6 +46,8 @@ function EmojiPicker(props: PickerProps) {
 }
 ```
 
+`behaviorProps(props)` passes the picker's configuration and callbacks plus identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`). Any other prop is dropped (as in v4) with one development warning, so removed props such as `pickerStyle` never reach the DOM.
+
 Root renders the actual DOM shape conceptually as:
 
 ```tsx

@@ -6,7 +6,8 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [x] There is exactly one normative v4 compatibility matrix: `V4_API_MATRIX.md`.
 - [x] There is exactly one normative styling contract: `STYLING.md`.
-- [ ] `SPEC.md`, `API.md`, `PRIMITIVES.md`, `DEFAULT_COMPOSITION.md`, `STATE.md`, `NAVIGATION.md`, `PERFORMANCE.md`, `REACT_COMPATIBILITY.md`, and `DATA_API.md` do not contradict one another.
+- [x] `SPEC.md`, `API.md`, `PRIMITIVES.md`, `DEFAULT_COMPOSITION.md`, `STATE.md`, `NAVIGATION.md`, `PERFORMANCE.md`, `REACT_COMPATIBILITY.md`, and `DATA_API.md` do not contradict one another.
+  Evidence (2026-10-04): cross-checked the shared normative facts (React floor, data API names, `emojiByUnified` retention, `colorScheme`/`theme`, prop forwarding, default style, `suggestedEmojis` entries, deep-import aliases, size cap); the stale ones were reconciled in `0d25b9d5` and this commit.
 - [x] Any implementation deviation is first captured as an explicit spec amendment rather than silently changing tests.
 
 ## 2. Plug-and-play compatibility
