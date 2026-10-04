@@ -60,6 +60,7 @@ A major version does not automatically authorize visual redesign.
 | Snapshots | Drift | Resolution |
 | --- | --- | --- |
 | `consumer-integrations/*` (host textarea/input/button), `recipes-examples-community-custom-emojis*` | Region screenshots were 2–6px taller or shorter on Ubuntu CI than on the machine that captured them: unstyled host controls and a `line-height: normal` shell take platform font metrics. The picker inside was pixel-identical. | Host-control metrics and the forum shell's line-height were pinned in the fixtures (not the picker), baselines regenerated in a separate snapshot-maintenance commit, CI green on Ubuntu. |
+| `recipes-examples-habit-tracker-mobile` (all stacks, hover, keyboard-focus), `article-comments--reactions-expanded`, `doc-editor-insert-panel--category-navigation`, `team-chat-composer--category-navigation` / `--skin-tone-open` | 6–7% of pixels over the 5% tolerance on Ubuntu CI after the column-distribution refresh: these screens are dense with large native emoji, and the CI image's Noto Color Emoji glyph versions and text antialiasing differ from the capturing machine's. Layout, spacing and text are identical (compared side by side from CI run 37163573717's actual images). | CI's actual images adopted as the baselines in a separate snapshot-maintenance commit. CI (Ubuntu + Playwright's bundled fonts) is the reference environment for these; machines with other emoji font versions may exceed tolerance on them. |
 
 ## Animation
 
