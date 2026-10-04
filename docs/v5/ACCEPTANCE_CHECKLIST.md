@@ -294,10 +294,10 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 
 ## 21. Visual compatibility
 
-- [ ] existing visual tests pass in the same environment.
+- [x] existing visual tests pass in the same environment.
 - [x] screenshots are not refreshed to hide a v5 regression.
 - [x] tolerance is not loosened to hide a v5 regression.
-- [ ] environment drift is adjudicated using VISUAL_COMPATIBILITY.md.
+- [x] environment drift is adjudicated using VISUAL_COMPATIBILITY.md.
 - [x] reaction motion changes receive behavioral tests and manual visual review.
 
 ## 22. Test conversion / docs
@@ -311,4 +311,5 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] migration links full export/prop matrix.
 - [x] invalid-composition errors explain cause and remediation.
 - [x] `llms.txt` is regenerated from distributable docs.
-- [ ] all unit, visual, docs, React-floor, package and performance checks pass.
+- [x] all unit, visual, docs, React-floor, package and performance checks pass.
+  Evidence (2026-10-04): CI run on `4d058373` green across unit, api-floor, visual, consumer-visual, docs and packaging; `check:perf` passes locally against a same-session v4 baseline (the perf gate needs a quiet machine and is not a CI job). Drift adjudications are recorded in VISUAL_COMPATIBILITY.md.
