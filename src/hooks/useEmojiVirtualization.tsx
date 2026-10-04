@@ -147,7 +147,7 @@ function listEmoji(
   unified: string,
   emojiStyle: EmojiStyleValue,
   getEmojiUrl: (unified: string, style: EmojiStyleValue) => string,
-): ListEmoji {
+): Omit<ListEmoji, 'isActive'> {
   const isCustom = isCustomEmoji(emoji);
   return {
     unified,

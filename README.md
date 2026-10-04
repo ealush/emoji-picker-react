@@ -20,12 +20,12 @@ The emoji picker for React that works the moment you render it — and gets out 
 
 - **Plug and play** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
 - **Bring your own style system** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — WCAG 2.1 AA (axe-tested), full keyboard navigation, screen-reader grid semantics, localizable labels.
+- **Accessible** — WCAG 2.1 AA checks (axe-tested fixtures), full keyboard navigation, screen-reader grid semantics, localizable labels.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
-- **Localized** — 25+ emoji datasets plus a `labels` prop for every UI string.
+- **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (about 32 KB min+gz up front); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (about 40 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 ## Quick start (plug and play)
@@ -102,7 +102,7 @@ All variables: [CSS_VARIABLES.md](CSS_VARIABLES.md).
 
 ### Unstyled
 
-`unstyled` keeps layout and behavior and drops every color, border, radius and font, ready for your design system:
+`unstyled` removes Root’s branded border, background, radius and typography. Managed parts retain their functional styles and some cosmetic defaults; override them with tokens, part selectors or custom cell components:
 
 ```jsx
 <EmojiPicker unstyled className="my-picker" />
@@ -270,6 +270,12 @@ Custom emojis and groups, category icons, preview configuration and CSP nonces: 
 ## Server-side rendering
 
 The picker renders on the server with its styles inlined — no setup. The main and primitives entries are marked `"use client"`, so React Server Components can render them directly; `emoji-picker-react/data` stays server-usable.
+
+## Ready-to-adapt starters
+
+Use the [live gallery](https://ealush.com/emoji-picker-react/#designs) to try designs and copy or download their React and CSS files. The v5 candidate adds working [caret autocomplete](stories/recipes/shortcode-typeahead), [custom-image replies](stories/recipes/community-forum) and [chat insertion](stories/recipes/team-chat).
+
+The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Its generated registry item is `website/public/r/emoji-picker.json`; serve that file and install it with `npx shadcn@latest add <registry-item-url>`. It requires this v5 candidate until v5 is published. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
 
 ## Design examples
 

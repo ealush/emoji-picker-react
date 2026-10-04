@@ -7,3 +7,13 @@
 @source './Tailwind.stories.tsx';
 @source './Shadcn.stories.tsx';
 @source '../recipes';
+
+@source '../../registry';
+
+@theme inline {
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}

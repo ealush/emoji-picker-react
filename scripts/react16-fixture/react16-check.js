@@ -187,6 +187,28 @@ async function main() {
     container.remove();
   });
 
+  await check('packed primitives native input and custom active cell', async () => {
+    const Picker = require('emoji-picker-react/primitives');
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const Cell = ({ emoji, ...props }) => React.createElement('button', {
+      ...props, 'data-custom-active': String(emoji.isActive),
+    });
+    ReactDOM.render(React.createElement(Picker.Root, { emojiData: minimalData },
+      React.createElement(Picker.SearchInput),
+      React.createElement(Picker.Viewport, null,
+        React.createElement(Picker.List, { components: { Emoji: Cell } }))), container);
+    await new Promise(resolve => setTimeout(resolve, 80));
+    const input = container.querySelector('[data-epr-part="search-input"]');
+    if (!input) throw new Error('native SearchInput missing');
+    const cell = container.querySelector('[role="gridcell"]');
+    cell.focus();
+    await new Promise(resolve => setTimeout(resolve, 30));
+    if (cell.getAttribute('data-custom-active') !== 'true') throw new Error('active state missing');
+    ReactDOM.unmountComponentAtNode(container);
+    container.remove();
+  });
+
   await check('SSR render with react-dom/server', () => {
     const html = ReactDOMServer.renderToString(
       React.createElement(EmojiPicker, { emojiData: minimalData }),

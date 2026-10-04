@@ -1,8 +1,8 @@
 // Generated from stories/recipes/linear-palette by scripts/portDesigns.mjs.
 // Do not edit; change the recipe and run `npm run designs`.
-import React from 'react';
+import React, { useState } from 'react';
 
-import { SkinTonePickerLocation } from 'emoji-picker-react';
+import { SkinTonePickerLocation } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 
@@ -15,8 +15,13 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+  const [open, setOpen] = useState(true);
+  if (!open) return <button type="button" onClick={() => setOpen(true)}>Open emoji picker</button>;
   return (
     <RootComponent       className={className}
+      onKeyDown={(event: React.KeyboardEvent) => {
+        if (event.key === 'Escape') setOpen(false);
+      }}
       searchPlaceholder="Search emoji…"
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >

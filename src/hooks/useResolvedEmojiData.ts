@@ -13,11 +13,19 @@ import type { EmojiData } from '../types/exposedTypes';
  * Hoist it (module scope or useCallback): a new function identity loads
  * again.
  */
-export type EmojiDataLoader = () => Promise<EmojiData | { default: EmojiData }>;
+export type EmojiDataLoaderOptions = { signal?: AbortSignal };
+export type EmojiDataLoader = (
+  options: EmojiDataLoaderOptions,
+) => Promise<EmojiData | { default: EmojiData }>;
 
 export type EmojiDataInput = EmojiData | EmojiDataLoader;
 
-type Resolved = { data: EmojiData | undefined; loading: boolean };
+export type EmojiDataState = {
+  loading: boolean;
+  error: Error | null;
+  retry: () => void;
+};
+type Resolved = EmojiDataState & { data: EmojiData | undefined };
 
 function normalize(result: EmojiData | { default: EmojiData }): EmojiData {
   return 'default' in result && result.default
@@ -42,52 +50,85 @@ export function useResolvedEmojiData(input?: EmojiDataInput): Resolved {
   const [loaded, setLoaded] = React.useState<{
     source: EmojiDataInput | undefined;
     data: EmojiData;
+    error: Error | null;
+    attempt: number;
   } | null>(null);
+  const [attempt, setAttempt] = React.useState(0);
+  const retry = React.useCallback(() => setAttempt((value) => value + 1), []);
 
   React.useEffect(() => {
     if (!needsLoad) {
       return;
     }
     let cancelled = false;
-    const load =
-      typeof input === 'function'
-        ? input().then(normalize)
-        : loadDefaultEmojiData();
+    const controller =
+      typeof AbortController === 'undefined'
+        ? undefined
+        : new AbortController();
+    // Invoke immediately, preserving the loader contract, and convert
+    // synchronous exceptions into the same recoverable failure state.
+    let load: Promise<EmojiData>;
+    try {
+      load =
+        typeof input === 'function'
+          ? Promise.resolve(input({ signal: controller?.signal })).then(
+              normalize,
+            )
+          : loadDefaultEmojiData();
+    } catch (error) {
+      load = Promise.reject(error);
+    }
     load.then(
       (data) => {
         if (!cancelled) {
-          setLoaded({ source: input, data });
+          setLoaded({ source: input, data, error: null, attempt });
         }
       },
       (error) => {
         if (!cancelled) {
-          // eslint-disable-next-line no-console
-          console.error('[emoji-picker-react] emojiData failed to load', error);
-          setLoaded({ source: input, data: EMPTY_EMOJI_DATA });
+          setLoaded({
+            source: input,
+            data: EMPTY_EMOJI_DATA,
+            attempt,
+            error: error instanceof Error ? error : new Error(String(error)),
+          });
         }
       },
     );
     return () => {
       cancelled = true;
+      controller?.abort();
     };
-  }, [input, needsLoad]);
+  }, [input, needsLoad, attempt]);
 
-  if (!needsLoad) {
-    return { data: input as EmojiData | undefined, loading: false };
-  }
-  if (loaded && loaded.source === input) {
-    return {
-      data: typeof input === 'function' ? loaded.data : undefined,
-      loading: false,
-    };
-  }
-  return { data: EMPTY_EMOJI_DATA, loading: true };
+  return React.useMemo(() => {
+    if (!needsLoad) {
+      return {
+        data: input as EmojiData | undefined,
+        loading: false,
+        error: null,
+        retry,
+      };
+    }
+    if (loaded && loaded.source === input && loaded.attempt === attempt) {
+      return { data: loaded.data, loading: false, error: loaded.error, retry };
+    }
+    return { data: EMPTY_EMOJI_DATA, loading: true, error: null, retry };
+  }, [input, needsLoad, loaded, attempt, retry]);
 }
 
-const DataLoadingContext = React.createContext(false);
+const DataLoadingContext = React.createContext<EmojiDataState>({
+  loading: false,
+  error: null,
+  retry: () => {},
+});
 
 export const DataLoadingProvider = DataLoadingContext.Provider;
 
 export function useIsEmojiDataLoading(): boolean {
+  return React.useContext(DataLoadingContext).loading;
+}
+
+export function useEmojiDataState(): EmojiDataState {
   return React.useContext(DataLoadingContext);
 }

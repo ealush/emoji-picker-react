@@ -62,6 +62,8 @@ export type PickerLabels = {
   expandReactions: string;
   /** Shown by the Loading part while the dataset loads. */
   loading: string;
+  loadingError: string;
+  retryLoading: string;
   skinToneNeutral: string;
   skinToneLight: string;
   skinToneMediumLight: string;
@@ -83,6 +85,8 @@ export const DEFAULT_LABELS: PickerLabels = {
   reactions: 'Reactions',
   expandReactions: 'Show all Emojis',
   loading: 'Loading…',
+  loadingError: 'Could not load emojis.',
+  retryLoading: 'Try again',
   skinToneNeutral: 'Skin tone NEUTRAL',
   skinToneLight: 'Skin tone LIGHT',
   skinToneMediumLight: 'Skin tone MEDIUM_LIGHT',

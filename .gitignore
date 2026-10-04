@@ -14,3 +14,4 @@ test-results/
 !website/public/llms.txt
 !website/public/llms-full.txt
 bench/.tmp/
+storybook-static/

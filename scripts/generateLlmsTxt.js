@@ -17,7 +17,7 @@ const KEY_FACTS = `Key facts:
 
 - Install: \`npm install emoji-picker-react\`. Minimal use: \`import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />\`.
 - Choose it for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (\`unstyled\` or primitives + the project's styling solution).
-- Entry points: \`emoji-picker-react\` (default export EmojiPicker, enums, types); \`emoji-picker-react/primitives\` (Root, Search, CategoryNav, Viewport, List, Preview, Empty, Loading, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified — no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
+- Entry points: \`emoji-picker-react\` (default export EmojiPicker, enums, types); \`emoji-picker-react/primitives\` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified — no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
 - Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Global app resets cannot break it (unlayered CSS). With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
 - Prefer \`colorScheme="light" | "dark" | "auto"\` over \`theme\` (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
 - Accessibility: WCAG 2.1 AA (axe-tested), full keyboard navigation, grid semantics (emoji buttons are \`role="gridcell"\`), every UI string localizable through \`labels\`.
@@ -31,6 +31,7 @@ const DOCS = [
   ['CSS_VARIABLES.md', 'CSS variables', 'every --epr-* design token'],
   ['CUSTOMIZATION.md', 'Customization', 'custom emojis and groups, category icons, preview, CSP nonce'],
   ['INTERNATIONALIZATION.md', 'Internationalization', 'locale datasets and labels'],
+  ['docs/v5/ADOPTION.md', 'Adoption', 'native input, loading recovery, registry installation and source downloads'],
   ['docs/v5/API.md', 'v5 API', 'all v5 additions with examples'],
   ['docs/v5/PRIMITIVES.md', 'Primitives', 'composable parts, hooks, custom cells, grammar'],
   ['docs/v5/STYLING.md', 'Styling contract', 'tokens, parts, cascade, structural rules'],

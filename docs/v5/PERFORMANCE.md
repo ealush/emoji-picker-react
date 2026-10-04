@@ -217,3 +217,9 @@ Performance tests are split into:
 - cold-query and warm/incremental wall-clock benchmark comparison in the benchmark job using the frozen Phase-0 baselines.
 
 A benchmark failure cannot be waived merely because functional tests pass.
+
+## Complete runtime measurement amendment (2026-10-04)
+
+The packed configured minimal ESM fixture imports runtime constants from `/primitives`, uses native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload currently measures about 40 KiB; the complete-runtime cap is 41 KiB. The old cap excluded ShipStyles. The default dataset remains a deferred chunk, and main/data-helper mixed consumers intentionally register it eagerly. A 25 KiB runtime is a proposed profiling target, not a met release gate.
+
+The original frozen Phase 0 timing artifact is unavailable. `check:perf` currently compares against the reconstructed same-session v4 baseline; timing is a local quiet-machine gate, not a CI job. Deterministic behavior and packaging gates run in CI.

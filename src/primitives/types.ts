@@ -29,6 +29,11 @@ export type RootProps = Omit<
 > &
   RootBehaviorProps & {
     children: React.ReactNode;
+    /** Styles/attributes for the managed content wrapper. Presence stays library-owned. */
+    panelProps?: Omit<
+      React.HTMLAttributes<HTMLDivElement>,
+      'children' | 'role' | 'hidden' | 'inert' | 'dangerouslySetInnerHTML'
+    >;
     /**
      * Opt-in color scheme: applies the default light/dark color tokens as
      * CSS variables on Root (no border, background or typography).
@@ -53,6 +58,20 @@ export type SearchProps = Omit<
     | 'aria-controls'
   >;
   inputRef?: React.Ref<HTMLInputElement>;
+};
+
+export type SearchInputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  | 'type'
+  | 'value'
+  | 'defaultValue'
+  | 'role'
+  | 'aria-controls'
+  | 'children'
+  | 'dangerouslySetInnerHTML'
+> & {
+  /** Must forward its ref and supplied props to an actual input element. */
+  as?: React.ElementType;
 };
 
 export type CategoryNavProps = Omit<
@@ -104,4 +123,13 @@ export type LoadingProps = Omit<
   'role' | 'children'
 > & {
   children?: React.ReactNode;
+};
+
+export type LoadErrorProps = Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  'role' | 'children'
+> & {
+  children?:
+    | React.ReactNode
+    | ((state: { error: Error; retry: () => void }) => React.ReactNode);
 };

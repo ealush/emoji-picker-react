@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
-import { Categories } from '../../../src';
+import { Categories } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -34,6 +34,8 @@ const community = [
 }));
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+  const [reply, setReply] = useState('Huge release, congrats team');
+  const input = useRef<HTMLTextAreaElement>(null);
   return (
     <div className="forum-thread">
       <div className="forum-post">
@@ -43,12 +45,20 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
       </div>
       <div className="forum-reply">
         <span className="forum-reply-label">Your reply</span>
-        <div className="forum-editor" role="textbox" aria-label="Reply">
-          Huge release, congrats team
-        </div>
+        <textarea ref={input} className="forum-editor" aria-label="Reply" rows={1}
+          value={reply} onChange={(event) => setReply(event.target.value)} />
         <RootComponent
           className={className}
           customEmojis={community}
+          onEmojiClick={(emoji: Picker.EmojiClickData) => {
+            const start = input.current?.selectionStart ?? reply.length;
+            const end = input.current?.selectionEnd ?? start;
+            const insertion = emoji.isCustom ? `:${emoji.unified}:` : emoji.emoji;
+            setReply(reply.slice(0, start) + insertion + reply.slice(end));
+            requestAnimationFrame(() => {
+              input.current?.focus(); input.current?.setSelectionRange(start + insertion.length, start + insertion.length);
+            });
+          }}
           categories={[
             { category: Categories.CUSTOM, group: 'community', name: 'Community' },
             Categories.SUGGESTED,

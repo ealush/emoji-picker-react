@@ -143,7 +143,7 @@ export function useEmojiPreviewEvents(
     }
 
     return () => {
-      bodyRef?.removeEventListener('mouseover', onMouseOver);
+      bodyRef?.removeEventListener('mouseover', onMouseOver, true);
       bodyRef?.removeEventListener('mouseout', onLeave);
       bodyRef?.removeEventListener('focus', onEnter, true);
       bodyRef?.removeEventListener('blur', onLeave, true);

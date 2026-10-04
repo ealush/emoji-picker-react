@@ -6,6 +6,7 @@
   // `npm run check:compat`.
   "compilerOptions": {
     "target": "ES2019",
+    "jsx": "react",
     "module": "Node16",
     "moduleResolution": "node16",
     "lib": ["dom", "esnext"],
@@ -16,5 +17,5 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["react"]
   },
-  "include": ["./cjs-check.ts", "./esm-check.mts"]
+  "include": ["./cjs-check.ts", "./esm-check.mts", "../../registry/emoji-picker.tsx"]
 }

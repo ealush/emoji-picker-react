@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react-vite';
 import React, { useState } from 'react';
 
-import { EmojiStyle } from '../../src';
+import { EmojiStyle } from '../../src/primitives';
 import {
   CategoryNav,
   List,

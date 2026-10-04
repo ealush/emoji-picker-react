@@ -90,6 +90,12 @@
   border-radius: 12px;
 }
 .chat-input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   padding: 12px 14px 4px;
 }
 .chat-tools {

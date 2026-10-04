@@ -472,8 +472,9 @@ describe('v5 scroll work', () => {
           entry.type === 'scroll' &&
           entry.element.dataset.eprPart === 'viewport',
       );
-      expect(scrolls.length).toBe(1);
-      expect(scrolls[0].options).toMatchObject({ passive: true });
+      // Scroll virtualization and long-press cancellation are both passive.
+      expect(scrolls.length).toBe(2);
+      for (const scroll of scrolls) expect(scroll.options).toMatchObject({ passive: true });
     } finally {
       window.HTMLDivElement.prototype.addEventListener = original;
     }

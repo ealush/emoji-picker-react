@@ -8,7 +8,7 @@ Key facts:
 
 - Install: `npm install emoji-picker-react`. Minimal use: `import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />`.
 - Choose it for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (`unstyled` or primitives + the project's styling solution).
-- Entry points: `emoji-picker-react` (default export EmojiPicker, enums, types); `emoji-picker-react/primitives` (Root, Search, CategoryNav, Viewport, List, Preview, Empty, Loading, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState); `emoji-picker-react/data` (searchEmojis, getEmojiByUnified — no React); `emoji-picker-react/data/emojis-<locale>` (28 datasets).
+- Entry points: `emoji-picker-react` (default export EmojiPicker, enums, types); `emoji-picker-react/primitives` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); `emoji-picker-react/data` (searchEmojis, getEmojiByUnified — no React); `emoji-picker-react/data/emojis-<locale>` (28 datasets).
 - Styling: `--epr-*` CSS variables (they always yield to consumer CSS), `[data-epr-part="…"]` selectors, `className`/`style`. Global app resets cannot break it (unlayered CSS). With Tailwind v4 or other @layer setups pass `cssLayer="epr"` and declare `@layer epr, theme, base, components, utilities;` first.
 - Prefer `colorScheme="light" | "dark" | "auto"` over `theme` (CSS-in-JS wrappers reserve `theme`). Props accept string literals or enums.
 - Accessibility: WCAG 2.1 AA (axe-tested), full keyboard navigation, grid semantics (emoji buttons are `role="gridcell"`), every UI string localizable through `labels`.
@@ -39,12 +39,12 @@ The emoji picker for React that works the moment you render it — and gets out 
 
 - **Plug and play** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
 - **Bring your own style system** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — WCAG 2.1 AA (axe-tested), full keyboard navigation, screen-reader grid semantics, localizable labels.
+- **Accessible** — WCAG 2.1 AA checks (axe-tested fixtures), full keyboard navigation, screen-reader grid semantics, localizable labels.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
-- **Localized** — 25+ emoji datasets plus a `labels` prop for every UI string.
+- **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (about 32 KB min+gz up front); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (about 40 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 ## Quick start (plug and play)
@@ -121,7 +121,7 @@ All variables: [CSS_VARIABLES.md](CSS_VARIABLES.md).
 
 ### Unstyled
 
-`unstyled` keeps layout and behavior and drops every color, border, radius and font, ready for your design system:
+`unstyled` removes Root’s branded border, background, radius and typography. Managed parts retain their functional styles and some cosmetic defaults; override them with tokens, part selectors or custom cell components:
 
 ```jsx
 <EmojiPicker unstyled className="my-picker" />
@@ -290,6 +290,12 @@ Custom emojis and groups, category icons, preview configuration and CSP nonces: 
 
 The picker renders on the server with its styles inlined — no setup. The main and primitives entries are marked `"use client"`, so React Server Components can render them directly; `emoji-picker-react/data` stays server-usable.
 
+## Ready-to-adapt starters
+
+Use the [live gallery](https://ealush.com/emoji-picker-react/#designs) to try designs and copy or download their React and CSS files. The v5 candidate adds working [caret autocomplete](stories/recipes/shortcode-typeahead), [custom-image replies](stories/recipes/community-forum) and [chat insertion](stories/recipes/team-chat).
+
+The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Its generated registry item is `website/public/r/emoji-picker.json`; serve that file and install it with `npx shadcn@latest add <registry-item-url>`. It requires this v5 candidate until v5 is published. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
+
 ## Design examples
 
 [`stories/recipes`](stories/recipes) holds 25 production-style designs — ten in-context examples (team chat composer, article comments, status dialog, `:shortcode` typeahead, livestream chat, project icon picker, doc editor panel, community custom emojis, video call reactions, mobile bottom sheet) and fifteen product-inspired builds (Slack, GitHub, Discord, Linear, Notion, Material 3, Teams, WhatsApp, iOS, X, …). Each is available in plain CSS, CSS Modules, Emotion, styled-components, MUI, Tailwind and shadcn/ui, and is screenshot-, axe- and keyboard-tested in every interaction state. All 25 are playable in the [live demo](https://ealush.com/emoji-picker-react/#designs).
@@ -359,7 +365,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
-| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading). |
+| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). |
 
 ## Dimensions & Styling
 
@@ -694,7 +700,7 @@ const loadSpanish = () => import('emoji-picker-react/data/emojis-es');
 <EmojiPicker emojiData={loadSpanish} />;
 ```
 
-Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
+Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones, loading, loadingError and retryLoading) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
 
 ## Supported Languages
 
@@ -726,6 +732,92 @@ Category names follow the dataset; translate the remaining UI strings (search la
 - `emojis-vi` (Vietnamese)
 - `emojis-zh-hant` (Traditional Chinese)
 - `emojis-zh` (Simplified Chinese)
+
+<!-- source: docs/v5/ADOPTION.md -->
+
+# Adopting the v5 candidate
+
+EPR’s product promise is one picker from a one-line default to a composed design system, with custom image emoji, custom groups, reactions, localization and the same keyboard engine in both modes.
+
+## Native search in your design system
+
+```tsx
+import * as Picker from 'emoji-picker-react/primitives';
+
+<Picker.Root panelProps={{ className: 'flex flex-col gap-2' }}>
+  <Picker.SearchInput as={Input} placeholder="Search emoji" />
+  <Picker.Viewport>
+    <Picker.List />
+    <Picker.Empty />
+    <Picker.Loading />
+    <Picker.LoadError />
+  </Picker.Viewport>
+</Picker.Root>
+```
+
+`Input` must forward its ref and native input props to one `<input>`. Root controls search; use Root’s `searchValue` / `onSearchChange` for controlled state. SearchInput’s ref/className/placeholder address the input directly. Use Search for the managed input/icon/clear-button region instead. They register the same single search region and share IME, filtering and keyboard behavior.
+
+Use Root’s `panelProps` for layout between parts. Root owns collapsed-panel hidden/inert behavior. Custom emoji cells receive `emoji.isActive` and `data-epr-active`; preserve all managed button props and position styles.
+
+## Dataset recovery and full localization
+
+```tsx
+const loadFrench = ({ signal }: Picker.EmojiDataLoaderOptions) =>
+  fetch('/emoji-fr.json', { signal }).then(response => {
+    if (!response.ok) throw new Error('Dataset request failed');
+    return response.json();
+  });
+
+<Picker.Root emojiData={loadFrench} labels={{
+  searchLabel: 'Rechercher un emoji', searchPlaceholder: 'Rechercher',
+  loading: 'Chargement…', loadingError: 'Chargement impossible.',
+  retryLoading: 'Réessayer',
+}}>{/* SearchInput, Viewport, List, Loading and LoadError */}</Picker.Root>
+```
+
+Hoist the loader. Retry starts a new attempt; source changes and unmount abort the old attempt. Late successes or failures cannot overwrite a newer source. `useEmojiDataState()` exposes `{ loading, error, retry }` inside Root when an application owns recovery UI.
+
+Emoji names/categories come from any of the 28 bundled datasets or your own data. Translate the remaining visible and announced strings through `labels`, category names through `categories`, and the preview caption through `previewConfig.defaultCaption`. This includes loading failure and retry text.
+
+## shadcn registry
+
+`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json`. Serve that item, then install using:
+
+```sh
+npx shadcn@latest add <registry-item-url>
+```
+
+The registry dependency requires v5 and its public CLI install becomes usable after v5 is published. Before release, copy the registry component into a project with the built candidate tarball installed. The registry maps EPR colors to your shadcn theme variables, uses a native input, and preserves cell geometry when styling custom cells. Wrap it in your existing Popover:
+
+```tsx
+<Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger aria-label="Insert emoji">😊</PopoverTrigger>
+  <PopoverContent aria-label="Choose an emoji">
+    <EmojiPicker onEmojiClick={emoji => {
+      insertAtCaret(emoji);
+      setOpen(false);
+    }} />
+  </PopoverContent>
+</Popover>
+```
+
+The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
+
+## Working starter sources
+
+The website gallery’s “Get the code” control fetches React/CSS/CSS Modules source only when requested. Copy or download the composition and styles, then adapt the host callback:
+
+- Shortcode typeahead: editable textarea, query at the caret, token replacement, suffix preservation, ArrowDown/Enter acceptance and Escape dismissal. This is name autocomplete; canonical Slack alias conversion is not promised.
+- Community reply: custom images select a host-owned `:id:` token at the textarea selection.
+- Team chat: inserts at the input selection and closes the picker.
+
+All 25 designs share a source generator. Their seven styling-stack variants remain covered by visual equivalence tests.
+
+## Startup accounting
+
+Import runtime constants from `/primitives`. Runtime imports from the main or `/data` entry register the synchronous default dataset, so those mixed graphs intentionally have a larger initial payload.
+
+The configured minimal packed ESM consumer currently measures about 40 KiB initial gzip including ShipStyles, with the dataset deferred. The complete-runtime regression cap is 41 KiB; the previous 40 KiB gate excluded ShipStyles and is not comparable. Reducing the runtime toward 25 KiB remains profiling work. Do not present this candidate as smaller than Frimousse or compare fetched data traffic to JavaScript-only numbers.
 
 <!-- source: docs/v5/API.md -->
 
@@ -864,6 +956,8 @@ Primitive consumers may also supply a consumer `aria-label` through Search `inpu
     reactions: 'Reacciones',
     expandReactions: 'Ver todos',
     loading: 'Cargando…',
+    loadingError: 'No se pudieron cargar los emojis.',
+    retryLoading: 'Reintentar',
     skinToneNeutral: 'Tono neutro',
     // skinToneLight, skinToneMediumLight, skinToneMedium,
     // skinToneMediumDark, skinToneDark
@@ -976,6 +1070,8 @@ Parts:
 
 - `Root`
 - `Search`
+- `SearchInput` — native input / ref-forwarding design-system input
+- `LoadError` — localized recoverable loader failure
 - `CategoryNav`
 - `Viewport`
 - `List`
@@ -1178,10 +1274,12 @@ const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
 ```
 
 - The default `emoji-picker-react` entry bundles the English dataset and is always synchronous.
-- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; about 32 KB min+gz up front instead of about 85 KB), rendering `<Loading>` meanwhile. Pass an object for server rendering.
+- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; the configured minimal consumer currently measures about 40 KiB min+gz up front including ShipStyles), rendering `<Loading>` meanwhile. Pass an object for server rendering.
 - ESM entries share their implementation chunks, so using the default picker and primitives together ships the implementation once.
 
-Hoist loaders (module scope or `useCallback`): a new function identity loads again.
+Hoist loaders (module scope or `useCallback`): a new function identity loads again. Loaders receive `{ signal?: AbortSignal }`; source changes, retries and unmount abort the previous attempt. Zero-argument import loaders remain valid. Rejection and synchronous throws become recoverable state, not an empty successful result. The default picker displays localized error/retry UI. Primitive consumers compose `<LoadError />` next to List/Loading or read `useEmojiDataState()` (`{ loading, error, retry }`). A custom `LoadError` child can be a function receiving `{ error, retry }`.
+
+Import runtime `Categories`, `EmojiStyle`, `SkinTones`, `SkinTonePickerLocation`, `SuggestionMode`, and `Theme` from `/primitives` in a lean composition. Importing runtime values from the main or `/data` entry registers its eager default dataset.
 
 ## 13. Locale imports
 
@@ -1222,6 +1320,14 @@ The validation model is intentionally narrow:
 
 Exact error text is not semver API.
 
+## Native search, panel styling and active custom cells
+
+`SearchInput` forwards its ref and native input props directly to an input. Root owns `searchValue`, `defaultSearchValue` and `onSearchChange`; input `onChange` is an observer. Supply `as={Input}` for a design-system component that forwards its ref and native input props to one real input. Placeholder, autofocus and accessible label can be supplied directly. Use either Search or SearchInput per Root; they share IME handling, region registration and results announcements.
+
+Root’s `panelProps` accepts className, style, native attributes and handlers for the managed panel. Root still owns its hidden/inert presence and children. This is where flex/grid/gap classes arrange Root’s parts.
+
+Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
+
 <!-- source: docs/v5/PRIMITIVES.md -->
 
 # v5 Primitive API Contract
@@ -1236,15 +1342,17 @@ v5 exports:
 
 - `Root`
 - `Search`
+- `SearchInput` — forwards native input props/ref; shares Search behavior
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 - `Empty` — renders while an applied search shows no emojis
 - `Loading` — renders while the dataset loads
+- `LoadError` — localized error and retry; custom render function supported
 - `SkinTone` — the managed skin tone control, placed anywhere
 
-and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
+and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), `useEmojiDataState`, plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
 
 There is intentionally **no public `Panel` primitive and no public `Reactions` primitive**.
 
@@ -1306,9 +1414,9 @@ Rules:
 - `Root` is required.
 - Every direct Root child becomes panel content, in caller order.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
-- `Search`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
+- `Search` or `SearchInput`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
-- If `List` is rendered, it MUST be inside Viewport (ideally its direct child; wrappers added by styling libraries — Emotion's `css` prop, `styled(List)` — are fine). `Empty` and `Loading` go inside Viewport next to List.
+- If `List` is rendered, it MUST be inside Viewport (ideally its direct child; wrappers added by styling libraries — Emotion's `css` prop, `styled(List)` — are fine). `Empty`, `Loading` and `LoadError` go inside Viewport next to List.
 - `SkinTone` requires `skinTonePickerLocation={SkinTonePickerLocation.NONE}` so only one skin tone control exists (development warns otherwise).
 - A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
 - Registered primitives rendered through a portal outside Root are unsupported.
@@ -1343,7 +1451,7 @@ Viewport content is validated by behavior, not element identity: a second List f
 
 ### Registration-time singleton validation
 
-Search, CategoryNav, Viewport and Preview register with the Root-scoped registry.
+Search/SearchInput, CategoryNav, Viewport and Preview register with the Root-scoped registry.
 
 When a second singleton of the same kind registers:
 
@@ -1419,17 +1527,19 @@ Every public structural primitive uses `React.forwardRef`.
 | --- | --- | --- |
 | Root | `aside` | `React.Ref<HTMLElement>` |
 | Search | `div` region wrapper | `React.Ref<HTMLDivElement>` |
+| SearchInput | native `input` (or ref-forwarding input component) | `React.Ref<HTMLInputElement>` |
 | CategoryNav | `div role="tablist"` | `React.Ref<HTMLDivElement>` |
 | Viewport | `div` | `React.Ref<HTMLDivElement>` |
 | List | `ul role="grid"` | `React.Ref<HTMLUListElement>` |
 | Preview | `div` | `React.Ref<HTMLDivElement>` |
 | Empty | `div` | `React.Ref<HTMLDivElement>` |
 | Loading | `div role="status"` | `React.Ref<HTMLDivElement>` |
+| LoadError | `div role="alert"` | `React.Ref<HTMLDivElement>` |
 | SkinTone | `div` | `React.Ref<HTMLDivElement>` |
 
-The internal panel and the compact reactions UI are not ref-addressable in initial v5. Consumers style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
+The internal panel and the compact reactions UI are not ref-addressable in initial v5. Root accepts `panelProps` for panel classes, styles and native handlers; presence attributes remain reserved. Consumers also style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
 
-v5 does not add `as` or `asChild` polymorphism.
+SearchInput supports `as` solely for a ref-forwarding native input component. Other primitives do not add general `as`/`asChild` polymorphism.
 
 ## 7. Native prop forwarding
 
@@ -1615,6 +1725,10 @@ useSearchState(): { search: string; resultCount: number | null };
 
 They read the same Root-scoped state the managed parts use, so a hand-built preview, skin tone control or status line stays in sync with the grid and callbacks.
 
+## Adoption additions
+
+See [ADOPTION.md](./ADOPTION.md) for native SearchInput, recoverable data loading and installation. `ListEmoji.isActive` and `data-epr-active` identify hover/keyboard focus; spread managed props onto the custom button. Root’s `panelProps` targets the automatic panel rather than requiring an extra wrapper. Runtime configuration constants and their types are also available from the data-free primitives entry.
+
 <!-- source: docs/v5/STYLING.md -->
 
 # v5 Styling Contract
@@ -1629,7 +1743,7 @@ The picker is plug and play out of the box, and equally built for teams that bri
 
 It continues to support the documented v4 CSS custom properties.
 
-`<EmojiPicker unstyled />` keeps the same composition and behavior but drops the branded chrome (border, background, radius, typography) and color tokens.
+`<EmojiPicker unstyled />` keeps the same composition and behavior but drops Root’s branded chrome (border, background, radius, typography) and color tokens. Managed components retain functional styles and some cosmetic defaults, including cell rounding and header typography; customize them through tokens, part selectors or List components.
 
 ### Structural primitives
 
@@ -2310,7 +2424,7 @@ Every integration is covered by the screenshot, axe and keyboard checks in
 `stories/recipes/team-chat/shell.tsx`
 
 ```tsx
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 import * as Picker from '../../../src/primitives';
 
@@ -2326,6 +2440,10 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+  const [message, setMessage] = useState('Love the new onboarding flow');
+  const [open, setOpen] = useState(true);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   return (
     <div className="chat-window">
       <header className="chat-header">
@@ -2352,8 +2470,16 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </div>
         </li>
       </ul>
-      <div className="chat-popover">
-        <RootComponent className={className}>
+      {open && <div className="chat-popover" onKeyDown={(event) => {
+        if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); }
+      }}>
+        <RootComponent className={className} onEmojiClick={(emoji: Picker.EmojiClickData) => {
+          const start = input.current?.selectionStart ?? message.length;
+          const end = input.current?.selectionEnd ?? start;
+          setMessage(message.slice(0, start) + emoji.emoji + message.slice(end));
+          setOpen(false);
+          requestAnimationFrame(() => { input.current?.focus(); input.current?.setSelectionRange(start + emoji.emoji.length, start + emoji.emoji.length); });
+        }}>
           <Picker.Search />
           <Picker.CategoryNav />
           <Picker.Viewport>
@@ -2362,14 +2488,13 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </Picker.Viewport>
           <Picker.Preview />
         </RootComponent>
-      </div>
+      </div>}
       <div className="chat-composer">
-        <div className="chat-input" role="textbox" aria-label="Message #design-crit">
-          Love the new onboarding flow
-        </div>
+        <input ref={input} className="chat-input" aria-label="Message #design-crit"
+          value={message} onChange={(event) => setMessage(event.target.value)} />
         <div className="chat-tools">
           <button type="button" aria-label="Attach file">＋</button>
-          <button type="button" aria-label="Emoji" aria-pressed="true" className="chat-emoji-button">
+          <button ref={trigger} type="button" aria-label="Emoji" aria-expanded={open} className="chat-emoji-button" onClick={() => setOpen(!open)}>
             ☺
           </button>
           <button type="button" className="chat-send">Send</button>

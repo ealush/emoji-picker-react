@@ -40,8 +40,8 @@ export interface PickerProps extends PickerConfig {
    */
   colorScheme?: ThemeValue;
   /**
-   * Render without the default appearance: no border, background, colors
-   * or typography — only layout and behavior. Style it with `className`,
+   * Render without Root’s branded border, background, colors or typography.
+   * Managed parts retain their functional styles and cosmetic defaults. Style it with `className`,
    * `--epr-*` variables and `[data-epr-part]` selectors.
    */
   unstyled?: boolean;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Categories, SkinTonePickerLocation } from '../../../src';
+import { Categories, SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';

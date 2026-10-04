@@ -8,7 +8,7 @@ import {
 } from './components/main/defaultAppearance';
 import { compareConfig } from './config/compareConfig';
 import { useOpenConfig } from './config/useConfig';
-import { Empty, List, Loading, Preview, Root, Viewport } from './primitives';
+import { Empty, List, Loading, LoadError, Preview, Root, Viewport } from './primitives';
 import { isPickerBehaviorProp } from './primitives/Root';
 import type { RootBehaviorProps } from './primitives/types';
 
@@ -120,6 +120,7 @@ function ContentControl() {
         <List />
         <Empty />
         <Loading />
+        <LoadError />
       </Viewport>
       <Preview />
     </>

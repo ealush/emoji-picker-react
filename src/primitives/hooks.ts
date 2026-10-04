@@ -9,6 +9,10 @@ import { useMutableConfig } from '../config/mutableConfig';
 import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
 import { activeVariationFromUnified } from '../dataUtils/emojiUtils';
 import { emojiClickOutput } from '../hooks/useMouseDownHandlers';
+import {
+  useEmojiDataState as useDataState,
+  EmojiDataState,
+} from '../hooks/useResolvedEmojiData';
 import { useAcceptedSearchValue } from '../hooks/useSearchController';
 import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 import { EmojiClickData, SkinTones } from '../types/exposedTypes';
@@ -85,8 +89,11 @@ export function useSearchState(): SearchState {
   useRootScope('useSearchState');
   const search = useAcceptedSearchValue();
   const resultCount = useVisibleSearchResultCount();
-  return React.useMemo(
-    () => ({ search, resultCount }),
-    [search, resultCount],
-  );
+  return React.useMemo(() => ({ search, resultCount }), [search, resultCount]);
+}
+
+/** Dataset loading, recoverable failure and retry for this Root. */
+export function useEmojiDataState(): EmojiDataState {
+  useRootScope('useEmojiDataState');
+  return useDataState();
 }

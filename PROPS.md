@@ -14,7 +14,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
-| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading). |
+| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). |
 
 ## Dimensions & Styling
 

@@ -2,6 +2,8 @@ import * as React from 'react';
 
 /** The emoji a custom `Emoji` cell renders. */
 export type ListEmoji = {
+  /** True while hovered or keyboard-focused. */
+  isActive: boolean;
   /** Unified code including the active skin tone, e.g. `1f44d-1f3fd`. */
   unified: string;
   names: string[];

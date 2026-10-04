@@ -40,6 +40,9 @@ export function loadDefaultEmojiData(): Promise<EmojiData> {
       const data = (module.default ?? module) as unknown as EmojiData;
       registered = registered ?? data;
       return registered;
+    }).catch((error) => {
+      pending = null;
+      throw error;
     });
   }
   return pending;

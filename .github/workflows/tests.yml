@@ -92,6 +92,7 @@ jobs:
       - run: npm run check:compat
       - run: npm run size
       - run: npm run check:package
+      - run: npm run check:react16
 
   # llms.txt is generated from committed docs; fail if it drifts.
   docs:
@@ -105,5 +106,46 @@ jobs:
       - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
       # The website gallery, README screenshots and gallery are generated
       # from stories/recipes; fail if a recipe changed without `npm run designs`.
+      - run: npm ci --ignore-scripts
+      - run: npm run recipes
+      - run: npm run registry
       - run: npm run designs
-      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs docs/designs README.md
+      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/r stories/recipes docs/designs README.md
+
+  browser-behavior:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright test --config playwright.behavior.config.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-behavior-evidence
+          path: test-results/
+
+  website-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: website
+      - run: npm run build
+        working-directory: website
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website-candidate
+          path: website/out

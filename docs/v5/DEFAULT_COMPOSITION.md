@@ -2,7 +2,7 @@
 
 The default picker MUST be implemented using the same exported primitive component modules available from `emoji-picker-react/primitives`.
 
-Private wrappers may provide appearance/layout only. Search, reactions, grid/list, preview and navigation behavior may not be reimplemented in a parallel "classic" tree.
+Private wrappers may provide appearance/layout only. Search (backed by SearchInput), reactions, grid/list, preview and navigation behavior may not be reimplemented in a parallel "classic" tree.
 
 ## Canonical tree
 
@@ -36,6 +36,9 @@ function EmojiPicker(props: PickerProps) {
 
           <Viewport>
             <List />
+            <Empty />
+            <Loading />
+            <LoadError />
           </Viewport>
 
           <Preview />
@@ -62,6 +65,9 @@ Root renders the actual DOM shape conceptually as:
 
     <Viewport>
       <List />
+      <Empty />
+      <Loading />
+      <LoadError />
     </Viewport>
 
     <Preview />

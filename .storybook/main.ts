@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url';
+
 import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
@@ -13,6 +15,14 @@ const config: StorybookConfig = {
   // Tailwind v4 for the integration stories (stories/integrations).
   async viteFinal(viteConfig) {
     const { default: tailwindcss } = await import('@tailwindcss/vite');
+    viteConfig.resolve = {
+      ...viteConfig.resolve,
+      alias: {
+        'emoji-picker-react/primitives': fileURLToPath(
+          new URL('../src/primitives/index.ts', import.meta.url),
+        ),
+      },
+    };
     viteConfig.plugins = [...(viteConfig.plugins ?? []), tailwindcss()];
     return viteConfig;
   },

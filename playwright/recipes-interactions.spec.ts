@@ -28,6 +28,14 @@ const groupOf = (id: string) => id.replace(/--[a-z0-9-]+$/, '');
 async function openStory(page: Page, id: string) {
   await page.goto(`/iframe.html?id=${id}&viewMode=story`);
   await page.locator('#storybook-root aside').first().waitFor();
+  // Data-free recipes may still be loading after Root mounts.
+  await expect(
+    page
+      .locator(
+        '[role="gridcell"]:visible, [data-epr-part="reaction"] button:visible',
+      )
+      .first(),
+  ).toBeVisible();
   // Let virtualization measure and fonts settle.
   await page.waitForTimeout(600);
 }
@@ -164,7 +172,12 @@ test('every recipe looks right in each interaction state', async ({
     if (hasGrid) {
       await cells.first().focus();
       expect
-        .soft(await page.evaluate(() => document.activeElement?.getAttribute('role')), `${id}: focus`)
+        .soft(
+          await page.evaluate(() =>
+            document.activeElement?.getAttribute('role'),
+          ),
+          `${id}: focus`,
+        )
         .toBe('gridcell');
       await shot(page, group, 'keyboard-focus');
       covered[group] += 1;
@@ -239,8 +252,8 @@ test('every recipe looks right in each interaction state', async ({
         // lands without scrolling (a scroll reshuffles the virtualized
         // window and can drop focus before Space lands).
         await varied.focus();
-        const focused = await page.evaluate(
-          () => document.activeElement?.getAttribute('data-epr-part'),
+        const focused = await page.evaluate(() =>
+          document.activeElement?.getAttribute('data-epr-part'),
         );
         if (focused !== 'emoji') {
           return false;

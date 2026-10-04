@@ -19,10 +19,12 @@ import {
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
+import { createActiveEmojiStore } from '../../state/activeEmojiStore';
 import { NavigationRegistry } from '../../state/navigationRegistry';
 import { EmojiStyle, SkinTones } from '../../types/exposedTypes';
 
 import { usePickerMainRef } from './ElementRefContext';
+import { usePickerDataContext } from './PickerDataContext';
 
 // v5 Phase 3 — one Root-scoped controller, narrowly sliced.
 //
@@ -35,8 +37,8 @@ import { usePickerMainRef } from './ElementRefContext';
 // scroll/geometry work never rerenders search/category/preview/reactions
 // subscribers, and each Root instance is isolated by construction.
 //
-// Preview hover state is intentionally NOT lifted here: it already lives in
-// `PreviewBody` local state, which is stronger isolation than any shared
+// Active hover/focus subscriptions are keyed by cell so only the previous
+// and next active cells rerender, while custom previews subscribe to the shared
 // slice could provide.
 //
 // Only React-16.8-compatible runtime APIs are used here; the React floor
@@ -71,6 +73,7 @@ function useDebouncedSliceValue<T>(
 }
 
 export interface PickerServices {
+  activeEmojiStore: ReturnType<typeof createActiveEmojiStore>;
   filterRef: React.MutableRefObject<FilterState>;
   filterQueryOrderRef: React.MutableRefObject<string[]>;
   disallowClickRef: React.MutableRefObject<boolean>;
@@ -79,6 +82,7 @@ export interface PickerServices {
 }
 
 const PickerServicesContext = React.createContext<PickerServices>({
+  activeEmojiStore: createActiveEmojiStore(),
   filterRef: { current: {} },
   filterQueryOrderRef: { current: [] },
   disallowClickRef: { current: false },
@@ -119,10 +123,6 @@ export type ActiveEmojiState = null | {
   unified: string;
   originalUnified: string;
 };
-
-const ActiveEmojiSliceContext = React.createContext<
-  ReactState<ActiveEmojiState>
->([null, () => {}]);
 
 const VariationSliceContext = React.createContext<ReactState<DataEmoji | null>>(
   [null, () => {}],
@@ -206,8 +206,26 @@ export function PickerContextProvider({ children }: Props) {
   // stored here, bounded, so unmounting leaves nothing behind.
   const filterRef = React.useRef<FilterState>({});
   const filterQueryOrderRef = React.useRef<string[]>([]);
+  const { queryFilterDict } = usePickerDataContext();
+  const previousQueryBuilder = React.useRef(queryFilterDict);
+  if (previousQueryBuilder.current !== queryFilterDict) {
+    // Data can arrive after a user starts searching. Cached empty results
+    // must be rebuilt before descendants render the new dataset.
+    previousQueryBuilder.current = queryFilterDict;
+    filterRef.current = Object.fromEntries(
+      Object.keys(filterRef.current).map((query) => [
+        query,
+        queryFilterDict(query),
+      ]),
+    );
+  }
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
+  const activeStoreRef = React.useRef<ReturnType<
+    typeof createActiveEmojiStore
+  > | null>(null);
+  if (!activeStoreRef.current)
+    activeStoreRef.current = createActiveEmojiStore();
 
   const registryRef = React.useRef<NavigationRegistry | null>(null);
   if (registryRef.current === null) {
@@ -228,6 +246,9 @@ export function PickerContextProvider({ children }: Props) {
 
   const servicesValue = React.useMemo<PickerServices>(
     () => ({
+      activeEmojiStore: activeStoreRef.current as ReturnType<
+        typeof createActiveEmojiStore
+      >,
       filterRef,
       filterQueryOrderRef,
       disallowClickRef,
@@ -269,9 +290,6 @@ export function PickerContextProvider({ children }: Props) {
 
   const reactionsModeState = useState(reactionsDefaultOpen);
   const reactionsValue = useSliceValue(reactionsModeState);
-
-  const activeEmojiState = useState<ActiveEmojiState>(null);
-  const activeEmojiValue = useSliceValue(activeEmojiState);
 
   const emojiVariationPickerState = useState<DataEmoji | null>(null);
   const variationValue = useSliceValue(emojiVariationPickerState);
@@ -338,11 +356,7 @@ export function PickerContextProvider({ children }: Props) {
                 <SkinToneSliceContext.Provider value={skinToneValue}>
                   <ViewportSliceContext.Provider value={viewportValue}>
                     <LoadSliceContext.Provider value={loadValue}>
-                      <ActiveEmojiSliceContext.Provider
-                        value={activeEmojiValue}
-                      >
-                        {children}
-                      </ActiveEmojiSliceContext.Provider>
+                      {children}
                     </LoadSliceContext.Provider>
                   </ViewportSliceContext.Provider>
                 </SkinToneSliceContext.Provider>
@@ -385,7 +399,32 @@ export function useNavigationRegistry(): NavigationRegistry {
 }
 
 export function useActiveEmojiState(): ReactState<ActiveEmojiState> {
-  return React.useContext(ActiveEmojiSliceContext);
+  const { activeEmojiStore: store } = React.useContext(PickerServicesContext);
+  const [value, setValue] = React.useState(store.get);
+  React.useEffect(() => {
+    const read = () => setValue(store.get());
+    const unsubscribe = store.subscribe(read);
+    read();
+    return unsubscribe;
+  }, [store]);
+  return [value, store.set];
+}
+
+export function useIsActiveEmoji(unified?: string): boolean {
+  const { activeEmojiStore: store } = React.useContext(PickerServicesContext);
+  const read = React.useCallback(
+    () => !!unified && store.get()?.unified === unified,
+    [store, unified],
+  );
+  const [active, setActive] = React.useState(read);
+  React.useEffect(() => {
+    const update = () => setActive(read());
+    const unsubscribe = store.subscribe(update, unified);
+    update();
+    return unsubscribe;
+  }, [store, unified, read]);
+  // The identity can change during virtualization before effects run.
+  return active && read();
 }
 
 export function useReactionsModeState() {

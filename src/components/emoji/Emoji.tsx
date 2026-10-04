@@ -20,7 +20,7 @@ type ClickableEmojiProps = Readonly<
     style?: React.CSSProperties;
     tabIndex?: number;
     as?: React.ComponentType<EmojiRenderProps>;
-    emojiInfo?: ListEmoji;
+    emojiInfo?: Omit<ListEmoji, 'isActive'>;
     role?: 'gridcell';
   }
 >;

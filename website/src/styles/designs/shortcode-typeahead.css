@@ -17,6 +17,13 @@
   font-weight: 600;
 }
 .typeahead-box {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  font: inherit;
+  color: inherit;
+  background: #fff;
   padding: 12px 14px;
   border: 2px solid #2563eb;
   border-radius: 10px;

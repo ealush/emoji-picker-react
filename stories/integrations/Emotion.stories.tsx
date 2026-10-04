@@ -3,7 +3,7 @@ import { css, ThemeProvider, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import type { Meta } from '@storybook/react-vite';
 
-import { SkinTonePickerLocation } from '../../src';
+import { SkinTonePickerLocation } from '../../src/primitives';
 import * as Picker from '../../src/primitives';
 
 const meta = {

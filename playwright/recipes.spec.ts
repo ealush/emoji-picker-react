@@ -30,6 +30,14 @@ const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
 async function openStory(page: Page, id: string) {
   await page.goto(`/iframe.html?id=${id}&viewMode=story`);
   await page.locator('#storybook-root aside').first().waitFor();
+  // Data-free recipes may still be loading after Root mounts.
+  await expect(
+    page
+      .locator(
+        '[role="gridcell"]:visible, [data-epr-part="reaction"] button:visible',
+      )
+      .first(),
+  ).toBeVisible();
   // Let virtualization measure and fonts settle.
   await page.waitForTimeout(600);
 }
@@ -67,14 +75,14 @@ async function checkGridKeyboard(page: Page, id: string) {
   await page.keyboard.press('ArrowRight');
   await pollFocused(page, 'data-epr-unified').not.toBe(start);
   const right = await focusedAttr(page, 'data-epr-unified');
-  expect.soft(await focusedAttr(page, 'role'), `${id}: ArrowRight`).toBe(
-    'gridcell',
-  );
+  expect
+    .soft(await focusedAttr(page, 'role'), `${id}: ArrowRight`)
+    .toBe('gridcell');
   await page.keyboard.press('ArrowDown');
   await pollFocused(page, 'data-epr-unified').not.toBe(right);
-  expect.soft(await focusedAttr(page, 'role'), `${id}: ArrowDown`).toBe(
-    'gridcell',
-  );
+  expect
+    .soft(await focusedAttr(page, 'role'), `${id}: ArrowDown`)
+    .toBe('gridcell');
   await page.keyboard.press('Enter');
 }
 
@@ -117,10 +125,7 @@ async function storyGroups(request: APIRequestContext): Promise<{
   };
   const byTag = (tag: string) => {
     const ids = Object.values(entries)
-      .filter(
-        (entry) =>
-          entry.type === 'story' && entry.tags?.includes(tag),
-      )
+      .filter((entry) => entry.type === 'story' && entry.tags?.includes(tag))
       .map((entry) => entry.id)
       .sort();
     const groups = new Map<string, string[]>();
@@ -172,11 +177,17 @@ test('every recipe renders identically in all stacks, passes axe and keyboard ch
 
       expect.soft(await axeViolations(page), `${id}: axe`).toEqual([]);
 
-      if (await page.locator('[role="gridcell"]:visible').count()) {
+      if (
+        await page.locator('[data-epr-part="reaction"] button:visible').count()
+      ) {
+        await checkReactionsKeyboard(page);
+      } else {
+        await expect(
+          page.locator('[role="gridcell"]:visible').first(),
+          id,
+        ).toBeVisible();
         await checkTabsKeyboard(page);
         await checkGridKeyboard(page, id);
-      } else {
-        await checkReactionsKeyboard(page);
       }
     }
   }
@@ -203,11 +214,17 @@ test('every styling integration renders as designed, passes axe and keyboard che
 
       expect.soft(await axeViolations(page), `${id}: axe`).toEqual([]);
 
-      if (await page.locator('[role="gridcell"]:visible').count()) {
+      if (
+        await page.locator('[data-epr-part="reaction"] button:visible').count()
+      ) {
+        await checkReactionsKeyboard(page);
+      } else {
+        await expect(
+          page.locator('[role="gridcell"]:visible').first(),
+          id,
+        ).toBeVisible();
         await checkTabsKeyboard(page);
         await checkGridKeyboard(page, id);
-      } else {
-        await checkReactionsKeyboard(page);
       }
     }
   }

@@ -224,13 +224,13 @@ Evidence: `playwright/v5-acceptance.spec.ts` — "skips consumer UI" (arrow skip
 - [x] `emojiVersion` and `hiddenEmojis` remain per-Root filters and do not rebuild the shared base index.
 - [x] dev warns once after three consecutive identity-changing renders for `emojiData` and independently for `customEmojis`.
 - [x] data cache does not strongly retain unmounted Root controllers.
-- [x] cold preparation benchmark is <=110% of frozen v4 median.
+- [x] cold preparation benchmark is <=110% of reconstructed same-session v4 median.
 - [x] same-dataset multi-Root benchmark proves cache reuse.
 
 ## 17. Performance: rendering/search/scroll
 
-- [x] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
-- [x] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
+- [x] cold-query benchmark is <=110% of the reconstructed same-session v4 cold-query baseline.
+- [x] warm/incremental typing benchmark is <=110% of the reconstructed same-session v4 incremental baseline.
 - [x] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
 - [x] v5 preserves an allowed Root-scoped query memo on top of the shared pure data core.
 - [x] preview hover does not rerender Search/CategoryNav/Reactions.
@@ -239,7 +239,7 @@ Evidence: `playwright/v5-acceptance.spec.ts` — "skips consumer UI" (arrow skip
 - [x] Root A updates do not rerender Root B.
 - [x] scroll listener remains passive.
 - [x] virtualization work is coalesced to at most one scheduled update per animation frame per Root.
-- [x] single-picker initialization median is <=110% of frozen v4 baseline.
+- [x] single-picker initialization median is <=110% of reconstructed same-session v4 baseline.
 
 Evidence (2026-10-03, `npm run check:perf`, baseline re-recorded from `master` in the same session; three consecutive passing runs): cold queries 70–75% of v4 (multi-char search scans the smallest character bucket instead of every record), incremental totals ≤72%, cold data preparation ~80%, one-picker mount ~82%, ten-picker mount 97–99%, zero extra base builds for ten same-dataset mounts. The harness now enforces the spec's hard 110% per cold query (it previously failed only above 125%), takes 50 samples per query, and measures cold preparation.
 
@@ -313,3 +313,17 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] `llms.txt` is regenerated from distributable docs.
 - [x] all unit, visual, docs, React-floor, package and performance checks pass.
   Evidence (2026-10-04): CI run on `4d058373` green across unit, api-floor, visual, consumer-visual, docs and packaging; `check:perf` passes locally against a same-session v4 baseline (the perf gate needs a quiet machine and is not a CI job). Drift adjudications are recorded in VISUAL_COMPATIBILITY.md.
+
+## Adoption candidate follow-up (2026-10-04)
+
+- [x] Primitives export runtime constants without eager dataset registration; complete-runtime budget includes ShipStyles.
+- [x] Native SearchInput shares managed Search/IME/navigation behavior; panelProps styles the managed layout boundary.
+- [x] Custom cells expose active state with scoped subscriptions and unrelated-cell render isolation.
+- [x] Dataset failures, retry, abort, stale-source suppression, StrictMode/unmount and search typed before loading are exercised in unit tests.
+- [x] Registry component and gallery React/CSS/CSS Modules source are generated from consumer files.
+- [x] CI now runs actual packed React 16.8 and React 19 consumers, a candidate website build, and a separate cross-browser/touch behavior job.
+- [ ] All newly added CI jobs have passed on the final pushed candidate.
+- [ ] Release PR is reconciled with master and final release candidate checks pass.
+- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is about 40 KiB; this is not a Frimousse size win.
+
+Browser evidence belongs to the candidate report, with any local platform dependency failure stated explicitly. Performance baseline is reconstructed from v4 in a quiet session; no original Phase 0 artifact is available. Human assistive-technology verification remains required before an absolute accessibility claim.

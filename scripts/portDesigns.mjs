@@ -20,6 +20,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const recipesDir = path.join(root, 'stories/recipes');
 const componentsDir = path.join(root, 'website/src/components/designs');
 const stylesDir = path.join(root, 'website/src/styles/designs');
+const sourcesDir = path.join(root, 'website/public/recipes');
 const screenshotsDir = path.join(root, 'docs/designs');
 const baselinesDir = path.join(root, 'playwright/recipes.spec.ts-snapshots');
 const readmePath = path.join(root, 'README.md');
@@ -66,6 +67,7 @@ fs.rmSync(stylesDir, { recursive: true, force: true });
 fs.mkdirSync(componentsDir, { recursive: true });
 fs.mkdirSync(stylesDir, { recursive: true });
 
+fs.mkdirSync(sourcesDir, { recursive: true });
 for (const recipe of recipes) {
   const from = (file) =>
     fs.readFileSync(path.join(recipesDir, recipe.dir, file), 'utf8');
@@ -73,6 +75,17 @@ for (const recipe of recipes) {
     path.join(componentsDir, `${recipe.name}.tsx`),
     portShell(from('shell.tsx'), recipe.dir),
   );
+  const composition = portShell(from('shell.tsx'), recipe.dir)
+    .replace(/^\/\/ Generated[^\n]*\n\/\/ Do not edit[^\n]*\n/, '')
+    .replace("import './app.css';\n", '');
+  const files = [
+    { name: 'emoji-picker.tsx', content: "'use client';\n" + composition },
+    { name: 'app.css', content: from('app.css') },
+    { name: 'picker.css', content: from('picker.css') },
+    { name: 'picker.module.css', content: from('picker.module.css') },
+    { name: 'README.md', content: `# ${recipe.title}\n\n${recipe.description}\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className="${recipe.rootClass}" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n` },
+  ];
+  fs.writeFileSync(path.join(sourcesDir, `${recipe.dir}.json`), JSON.stringify({ files }, null, 2) + '\n');
   fs.writeFileSync(
     path.join(stylesDir, `${recipe.dir}.css`),
     `/* Generated from stories/recipes/${recipe.dir} by scripts/portDesigns.mjs. */\n` +

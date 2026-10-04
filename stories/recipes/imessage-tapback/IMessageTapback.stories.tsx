@@ -39,6 +39,14 @@ const EmotionRoot = styledEmotion(EmojiPicker)`
   --epr-hover-bg-color: rgb(255 255 255 / 12%);
   --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 12%);
   --epr-text-color: #ebebf5;
+  --epr-category-label-bg-color: rgb(28 28 30 / 94%);
+  --epr-category-label-text-color: #ebebf5;
+  --epr-search-input-bg-color: rgb(118 118 128 / 24%);
+  --epr-search-input-bg-color-active: rgb(118 118 128 / 32%);
+  --epr-search-input-text-color: #ebebf5;
+  --epr-search-input-placeholder-color: rgb(235 235 245 / 60%);
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: #0a84ff;
   --epr-emoji-size: 34px;
   margin-left: auto;
   box-shadow: 0 10px 30px rgb(0 0 0 / 50%);
@@ -68,6 +76,14 @@ const StyledComponentsRoot = styledComponents(EmojiPicker)`
   --epr-hover-bg-color: rgb(255 255 255 / 12%);
   --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 12%);
   --epr-text-color: #ebebf5;
+  --epr-category-label-bg-color: rgb(28 28 30 / 94%);
+  --epr-category-label-text-color: #ebebf5;
+  --epr-search-input-bg-color: rgb(118 118 128 / 24%);
+  --epr-search-input-bg-color-active: rgb(118 118 128 / 32%);
+  --epr-search-input-text-color: #ebebf5;
+  --epr-search-input-placeholder-color: rgb(235 235 245 / 60%);
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: #0a84ff;
   --epr-emoji-size: 34px;
   margin-left: auto;
   box-shadow: 0 10px 30px rgb(0 0 0 / 50%);
@@ -97,6 +113,14 @@ const MuiRoot = styledMui(EmojiPicker)({
   "--epr-hover-bg-color": "rgb(255 255 255 / 12%)",
   "--epr-hover-bg-color-reduced-opacity": "rgb(255 255 255 / 12%)",
   "--epr-text-color": "#ebebf5",
+  "--epr-category-label-bg-color": "rgb(28 28 30 / 94%)",
+  "--epr-category-label-text-color": "#ebebf5",
+  "--epr-search-input-bg-color": "rgb(118 118 128 / 24%)",
+  "--epr-search-input-bg-color-active": "rgb(118 118 128 / 32%)",
+  "--epr-search-input-text-color": "#ebebf5",
+  "--epr-search-input-placeholder-color": "rgb(235 235 245 / 60%)",
+  "--epr-search-border-color": "transparent",
+  "--epr-search-border-color-active": "#0a84ff",
   "--epr-emoji-size": "34px",
   marginLeft: "auto",
   boxShadow: "0 10px 30px rgb(0 0 0 / 50%)",
@@ -132,6 +156,14 @@ const tailwind = [
   '[--epr-hover-bg-color:rgb(255_255_255_/_12%)]',
   '[--epr-hover-bg-color-reduced-opacity:rgb(255_255_255_/_12%)]',
   '[--epr-text-color:#ebebf5]',
+  '[--epr-category-label-bg-color:rgb(28_28_30_/_94%)]',
+  '[--epr-category-label-text-color:#ebebf5]',
+  '[--epr-search-input-bg-color:rgb(118_118_128_/_24%)]',
+  '[--epr-search-input-bg-color-active:rgb(118_118_128_/_32%)]',
+  '[--epr-search-input-text-color:#ebebf5]',
+  '[--epr-search-input-placeholder-color:rgb(235_235_245_/_60%)]',
+  '[--epr-search-border-color:transparent]',
+  '[--epr-search-border-color-active:#0a84ff]',
   '[--epr-emoji-size:34px]',
   '[margin-left:auto]',
   '[box-shadow:0_10px_30px_rgb(0_0_0_/_50%)]',
@@ -152,7 +184,10 @@ const shadcnTheme = {
   "--popover": "#1c1c1e",
   "--border": "transparent",
   "--accent": "rgb(255 255 255 / 12%)",
-  "--muted-foreground": "#ebebf5"
+  "--muted-foreground": "#ebebf5",
+  "--popover-foreground": "#ebebf5",
+  "--input": "transparent",
+  "--ring": "#0a84ff"
 } as React.CSSProperties;
 
 const shadcn = [
@@ -162,6 +197,14 @@ const shadcn = [
   '[--epr-hover-bg-color:var(--accent)]',
   '[--epr-hover-bg-color-reduced-opacity:rgb(255_255_255_/_12%)]',
   '[--epr-text-color:var(--muted-foreground)]',
+  '[--epr-category-label-bg-color:rgb(28_28_30_/_94%)]',
+  '[--epr-category-label-text-color:#ebebf5]',
+  '[--epr-search-input-bg-color:rgb(118_118_128_/_24%)]',
+  '[--epr-search-input-bg-color-active:rgb(118_118_128_/_32%)]',
+  '[--epr-search-input-text-color:var(--popover-foreground)]',
+  '[--epr-search-input-placeholder-color:rgb(235_235_245_/_60%)]',
+  '[--epr-search-border-color:var(--input)]',
+  '[--epr-search-border-color-active:var(--ring)]',
   '[--epr-emoji-size:34px]',
   '[margin-left:auto]',
   '[box-shadow:0_10px_30px_rgb(0_0_0_/_50%)]',

@@ -64,7 +64,7 @@ export const DESIGN_EXAMPLES = [
   {
     id: "shortcode-typeahead",
     title: "Shortcode typeahead",
-    description: "A `:shortcode` autocomplete: the app's own text drives searchValue, no search box.",
+    description: "Editable :name autocomplete: type a query, press Down then Enter to replace the token, or Escape to dismiss.",
     rootClass: "typeahead-picker",
     Example: ShortcodeTypeahead,
   },

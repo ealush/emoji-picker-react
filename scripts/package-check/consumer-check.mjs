@@ -5,7 +5,7 @@ import { createRequire } from 'node:module';
 const requireFromScratch = createRequire(import.meta.url);
 
 const primitives = await import('emoji-picker-react/primitives');
-for (const key of ['Root', 'Search', 'CategoryNav', 'Viewport', 'List', 'Preview']) {
+for (const key of ['Root', 'Search', 'SearchInput', 'LoadError', 'CategoryNav', 'Viewport', 'List', 'Preview']) {
   assert.ok(
     primitives[key] && ['function', 'object'].includes(typeof primitives[key]),
     `missing primitive export: ${key}`,

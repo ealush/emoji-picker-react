@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-import { SkinTonePickerLocation } from '../../../src';
+import { SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -14,8 +14,13 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+  const [open, setOpen] = useState(true);
+  if (!open) return <button type="button" onClick={() => setOpen(true)}>Open emoji picker</button>;
   return (
     <RootComponent       className={className}
+      onKeyDown={(event: React.KeyboardEvent) => {
+        if (event.key === 'Escape') setOpen(false);
+      }}
       searchPlaceholder="Search emoji…"
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >

@@ -10,15 +10,17 @@ v5 exports:
 
 - `Root`
 - `Search`
+- `SearchInput` — forwards native input props/ref; shares Search behavior
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 - `Empty` — renders while an applied search shows no emojis
 - `Loading` — renders while the dataset loads
+- `LoadError` — localized error and retry; custom render function supported
 - `SkinTone` — the managed skin tone control, placed anywhere
 
-and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
+and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), `useEmojiDataState`, plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
 
 There is intentionally **no public `Panel` primitive and no public `Reactions` primitive**.
 
@@ -80,9 +82,9 @@ Rules:
 - `Root` is required.
 - Every direct Root child becomes panel content, in caller order.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
-- `Search`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
+- `Search` or `SearchInput`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
-- If `List` is rendered, it MUST be inside Viewport (ideally its direct child; wrappers added by styling libraries — Emotion's `css` prop, `styled(List)` — are fine). `Empty` and `Loading` go inside Viewport next to List.
+- If `List` is rendered, it MUST be inside Viewport (ideally its direct child; wrappers added by styling libraries — Emotion's `css` prop, `styled(List)` — are fine). `Empty`, `Loading` and `LoadError` go inside Viewport next to List.
 - `SkinTone` requires `skinTonePickerLocation={SkinTonePickerLocation.NONE}` so only one skin tone control exists (development warns otherwise).
 - A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
 - Registered primitives rendered through a portal outside Root are unsupported.
@@ -117,7 +119,7 @@ Viewport content is validated by behavior, not element identity: a second List f
 
 ### Registration-time singleton validation
 
-Search, CategoryNav, Viewport and Preview register with the Root-scoped registry.
+Search/SearchInput, CategoryNav, Viewport and Preview register with the Root-scoped registry.
 
 When a second singleton of the same kind registers:
 
@@ -193,17 +195,19 @@ Every public structural primitive uses `React.forwardRef`.
 | --- | --- | --- |
 | Root | `aside` | `React.Ref<HTMLElement>` |
 | Search | `div` region wrapper | `React.Ref<HTMLDivElement>` |
+| SearchInput | native `input` (or ref-forwarding input component) | `React.Ref<HTMLInputElement>` |
 | CategoryNav | `div role="tablist"` | `React.Ref<HTMLDivElement>` |
 | Viewport | `div` | `React.Ref<HTMLDivElement>` |
 | List | `ul role="grid"` | `React.Ref<HTMLUListElement>` |
 | Preview | `div` | `React.Ref<HTMLDivElement>` |
 | Empty | `div` | `React.Ref<HTMLDivElement>` |
 | Loading | `div role="status"` | `React.Ref<HTMLDivElement>` |
+| LoadError | `div role="alert"` | `React.Ref<HTMLDivElement>` |
 | SkinTone | `div` | `React.Ref<HTMLDivElement>` |
 
-The internal panel and the compact reactions UI are not ref-addressable in initial v5. Consumers style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
+The internal panel and the compact reactions UI are not ref-addressable in initial v5. Root accepts `panelProps` for panel classes, styles and native handlers; presence attributes remain reserved. Consumers also style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
 
-v5 does not add `as` or `asChild` polymorphism.
+SearchInput supports `as` solely for a ref-forwarding native input component. Other primitives do not add general `as`/`asChild` polymorphism.
 
 ## 7. Native prop forwarding
 
@@ -388,3 +392,7 @@ useSearchState(): { search: string; resultCount: number | null };
 ```
 
 They read the same Root-scoped state the managed parts use, so a hand-built preview, skin tone control or status line stays in sync with the grid and callbacks.
+
+## Adoption additions
+
+See [ADOPTION.md](./ADOPTION.md) for native SearchInput, recoverable data loading and installation. `ListEmoji.isActive` and `data-epr-active` identify hover/keyboard focus; spread managed props onto the custom button. Root’s `panelProps` targets the automatic panel rather than requiring an extra wrapper. Runtime configuration constants and their types are also available from the data-free primitives entry.

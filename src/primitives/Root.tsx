@@ -38,7 +38,7 @@ import {
 } from '../hooks/useResolvedEmojiData';
 import { Theme, ThemeValue } from '../types/exposedTypes';
 
-import { mergeRefs } from './nativeProps';
+import { filterPrimitiveProps, mergeRefs } from './nativeProps';
 import { RootScopeProvider } from './scope';
 import { StructuralStyleTag, structuralStyles } from './structuralStyles';
 import type { RootProps } from './types';
@@ -140,14 +140,15 @@ function assignRootProp(
 
 export const Root = React.forwardRef<HTMLElement, RootProps>(
   function Root(props, forwardedRef) {
-    const { children, ...rest } = props;
+    const { children, panelProps, ...rest } = props;
     const { behaviorProps: rawBehaviorProps, asideProps } =
       splitRootProps(rest);
     // emojiData may be an object, a loader, or absent; everything below
     // Root only ever sees a synchronous dataset.
-    const { data: resolvedEmojiData, loading } = useResolvedEmojiData(
+    const dataState = useResolvedEmojiData(
       rawBehaviorProps.emojiData as EmojiDataInput | undefined,
     );
+    const resolvedEmojiData = dataState.data;
     const behaviorProps =
       resolvedEmojiData === rawBehaviorProps.emojiData
         ? rawBehaviorProps
@@ -172,13 +173,14 @@ export const Root = React.forwardRef<HTMLElement, RootProps>(
 
     return (
       <ElementRefContextProvider>
-        <DataLoadingProvider value={loading}>
+        <DataLoadingProvider value={dataState}>
           <PickerConfigProvider {...behaviorProps}>
             <MutableConfigContext.Provider value={mutableRef}>
               <PickerDataProvider>
                 <PickerContextProvider>
                   <RootScopeProvider>
                     <RootAside
+                      panelProps={panelProps}
                       ref={forwardedRef}
                       asideProps={asideProps}
                       behaviorNonce={behaviorProps.nonce as string | undefined}
@@ -204,9 +206,10 @@ const RootAside = React.forwardRef<
     behaviorNonce: string | undefined;
     cssLayer: string | undefined;
     children: React.ReactNode;
+    panelProps?: RootProps['panelProps'];
   }
 >(function RootAside(
-  { asideProps, behaviorNonce, cssLayer, children },
+  { asideProps, behaviorNonce, cssLayer, children, panelProps },
   forwardedRef,
 ) {
   const PickerMainRef = usePickerMainRef();
@@ -280,7 +283,7 @@ const RootAside = React.forwardRef<
         }}
       >
         <Reactions />
-        <ManagedPanel hidden={reactionsOpen}>
+        <ManagedPanel hidden={reactionsOpen} panelProps={panelProps}>
           <ActiveCategoryProvider>{children}</ActiveCategoryProvider>
         </ManagedPanel>
         <SearchSync />
@@ -301,9 +304,11 @@ const RootAside = React.forwardRef<
 const ManagedPanel = React.memo(function ManagedPanel({
   hidden,
   children,
+  panelProps,
 }: {
   hidden: boolean;
   children: React.ReactNode;
+  panelProps?: RootProps['panelProps'];
 }) {
   const setInert = React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -320,14 +325,23 @@ const ManagedPanel = React.memo(function ManagedPanel({
   );
   return (
     <div
+      {...filterPrimitiveProps((panelProps ?? {}) as Record<string, unknown>, [
+        'role',
+        'hidden',
+        'inert',
+        'children',
+        'dangerouslySetInnerHTML',
+        'className',
+        'style',
+      ])}
       data-epr-part="panel"
-      className={cx(structuralStyles.panel)}
+      className={cx(structuralStyles.panel, panelProps?.className)}
       hidden={hidden}
       // Inline (not the hidden attribute alone): author display:flex from
       // the structural panel class would otherwise override the
       // user-agent [hidden] rule, leaving a visually expanded picker
       // with an inert grid when reactions mode collapses it.
-      style={hidden ? { display: 'none' } : undefined}
+      style={{ ...panelProps?.style, ...(hidden && { display: 'none' }) }}
       ref={setInert}
     >
       {children}

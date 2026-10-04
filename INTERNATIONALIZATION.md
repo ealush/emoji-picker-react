@@ -19,7 +19,7 @@ const loadSpanish = () => import('emoji-picker-react/data/emojis-es');
 <EmojiPicker emojiData={loadSpanish} />;
 ```
 
-Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
+Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones, loading, loadingError and retryLoading) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
 
 ## Supported Languages
 

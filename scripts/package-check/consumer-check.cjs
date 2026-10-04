@@ -54,7 +54,7 @@ check('main entry resolves', () => {
 // Primitives resolve with declarations and the exact export set.
 check('primitives entry resolves', () => {
   const primitives = requireFromScratch('emoji-picker-react/primitives');
-  for (const key of ['Root', 'Search', 'CategoryNav', 'Viewport', 'List', 'Preview']) {
+  for (const key of ['Root', 'Search', 'SearchInput', 'LoadError', 'CategoryNav', 'Viewport', 'List', 'Preview']) {
     // forwardRef components are objects; plain functions are functions.
     assert.ok(
       primitives[key] && ['function', 'object'].includes(typeof primitives[key]),
@@ -259,7 +259,7 @@ check('packed entries client-mount', async () => {
   const container = document.createElement('div');
   document.body.appendChild(container);
   const root = ReactDOMClient.createRoot(container);
-  const { act } = requireFromScratch('react-dom/test-utils');
+  const { act } = React;
   await act(async () => {
     root.render(
       React.createElement(

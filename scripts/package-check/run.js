@@ -62,7 +62,7 @@ function main() {
   console.log(`package check scratch dir: ${scratch}`);
 
   // Pack the real package (respects files[] + exports map).
-  sh('npm', ['pack', '--pack-destination', scratch], { cwd: repoRoot });
+  sh('npm', ['pack', '--pack-destination', scratch, '--ignore-scripts', '--quiet'], { cwd: repoRoot });
   const tarball = require('fs')
     .readdirSync(scratch)
     .map((entry) => join(scratch, entry))
@@ -83,8 +83,8 @@ function main() {
       '--no-fund',
       '--no-save',
       tarball,
-      'react@18',
-      'react-dom@18',
+      'react@19',
+      'react-dom@19',
       'jsdom@24',
     ],
     { cwd: scratch },
@@ -112,21 +112,28 @@ function main() {
 // with its lazily loaded dataset. This budget measures what a consumer
 // bundle actually loads up front: the entry plus its static chunks,
 // minified and gzipped, with the dataset left in its own lazy chunk.
-const PRIMITIVES_INITIAL_BUDGET_BYTES = 40 * 1024;
+// The former 40 KiB gate excluded ShipStyles. This 41 KiB cap measures
+// a configured consumer including that runtime (40.4 KiB at adoption v5).
+// Keep the complete measurement; startup reduction remains a separate target.
+const PRIMITIVES_INITIAL_BUDGET_BYTES = 41 * 1024;
 
 function checkPrimitivesInitialBudget() {
   const { gzipSync } = require('zlib');
   const { readFileSync, readdirSync } = require('fs');
   const out = mkdtempSync(join(tmpdir(), 'epr-primitives-budget-'));
+  const consumer = join(out, 'consumer.tsx');
+  writeFileSync(consumer, `import * as React from 'react';
+import { Root, SearchInput, Viewport, List, Loading, LoadError, Empty, SkinTonePickerLocation } from '${join(repoRoot, 'dist', 'esm', 'primitives', 'index.mjs')}';
+export const Picker = () => <Root skinTonePickerLocation={SkinTonePickerLocation.NONE}><SearchInput /><Viewport><List /><Loading /><LoadError /><Empty /></Viewport></Root>;`);
   sh(join(repoRoot, 'node_modules', '.bin', 'esbuild'), [
-    join(repoRoot, 'dist', 'esm', 'primitives', 'index.mjs'),
+    consumer,
+    '--define:process.env.NODE_ENV="production"',
     '--bundle',
     '--splitting',
     '--format=esm',
     '--minify',
     '--external:react',
     '--external:react-dom',
-    '--external:shipstyles',
     '--entry-names=entry',
     `--outdir=${out}`,
     '--log-level=error',
@@ -153,7 +160,9 @@ function checkPrimitivesInitialBudget() {
       `primitives initial load ${kb} KB exceeds ${PRIMITIVES_INITIAL_BUDGET_BYTES / 1024} KB (min+gz)`,
     );
   }
-  console.log(`ok: primitives initial load ${kb} KB min+gz (dataset lazy)`);
+  const eager = [...initial].some(name => files.get(name).includes('grinning face with big eyes'));
+  if (eager) throw new Error('primitives + runtime constants eagerly include the dataset');
+  console.log(`ok: primitives + constants initial load ${kb} KiB min+gz (ShipStyles included; dataset lazy)`);
 }
 
 function gateAttw(tarball, cwd) {

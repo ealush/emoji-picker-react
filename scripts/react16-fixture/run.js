@@ -1,6 +1,6 @@
 // React 16.8 fixture runner (docs/v5/REACT_COMPATIBILITY.md §2, Phase 4).
 //
-// Builds a CJS bundle of the current src with esbuild, installs
+// Installs the actual tarball with
 // react@16.8 + react-dom@16.8 + jsdom into a scratch directory under the
 // OS temp dir (never inside the repo), and runs react16-check.js against
 // it: mount/unmount, click selection, keyboard smoke path, SSR render,
@@ -29,33 +29,11 @@ function main() {
     join(scratch, 'package.json'),
     JSON.stringify({ name: 'epr-react16-fixture', private: true }),
   );
-  run('npm', [
-    'install',
-    '--no-audit',
-    '--no-fund',
-    '--no-save',
-    `react@${REACT16}`,
-    `react-dom@${REACT16}`,
-    'jsdom@24',
-  ], { cwd: scratch });
-
-  const bundle = join(scratch, 'picker.cjs');
-  run(
-    'npx',
-    [
-      '-y',
-      'esbuild',
-      join(repoRoot, 'src', 'index.tsx'),
-      '--bundle',
-      '--format=cjs',
-      '--platform=node',
-      '--external:react',
-      '--external:react-dom',
-      `--outfile=${bundle}`,
-      '--log-level=warning',
-    ],
-    { cwd: repoRoot },
-  );
+  // Install the actual publishable artifact, not a source-only bundle.
+  run('npm', ['pack', '--pack-destination', scratch, '--ignore-scripts', '--quiet'], { cwd: repoRoot });
+  const tarball = require('fs').readdirSync(scratch).find(file => file.endsWith('.tgz'));
+  run('npm', ['install', '--no-audit', '--no-fund', '--no-save',
+    join(scratch, tarball), `react@${REACT16}`, `react-dom@${REACT16}`, 'jsdom@24'], { cwd: scratch });
 
   // The check script must live inside the scratch dir so bare `react` /
   // `react-dom` / `jsdom` requires resolve to the fixture copies, never to
@@ -63,10 +41,10 @@ function main() {
   // script path, not cwd).
   const checkInScratch = join(scratch, 'react16-check.js');
   copyFileSync(join(__dirname, 'react16-check.js'), checkInScratch);
-  run('node', [checkInScratch, bundle], {
+  run('node', [checkInScratch, 'emoji-picker-react'], {
     cwd: scratch,
   });
-  console.log('react16 fixture: bundle + consumer checks passed');
+  console.log('react16 fixture: packed consumer checks passed');
 }
 
 main();

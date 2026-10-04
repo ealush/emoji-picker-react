@@ -9,6 +9,7 @@ import {
 } from '../../Stylesheet/stylesheet';
 import { Button, buttonStyles } from '../atoms/Button';
 import { EmojiRenderProps, ListEmoji } from '../body/listComponents';
+import { useIsActiveEmoji } from '../context/PickerContext';
 
 type ClickableEmojiButtonProps = Readonly<{
   hidden?: boolean;
@@ -24,7 +25,7 @@ type ClickableEmojiButtonProps = Readonly<{
   tabIndex?: number;
   /** Consumer cell (List `components.Emoji`) replacing the default button. */
   as?: React.ComponentType<EmojiRenderProps>;
-  emojiInfo?: ListEmoji;
+  emojiInfo?: Omit<ListEmoji, 'isActive'>;
   /** `gridcell` inside the emoji grid; native button role elsewhere. */
   role?: 'gridcell';
 }>;
@@ -45,6 +46,7 @@ export function ClickableEmojiButton({
   emojiInfo,
   role,
 }: ClickableEmojiButtonProps) {
+  const isActive = useIsActiveEmoji(unified);
   const cellClassName = emojiCellClassName({
     hidden,
     hiddenOnSearch,
@@ -61,13 +63,14 @@ export function ClickableEmojiButton({
       tabIndex,
       className: cx(buttonStyles.button, cellClassName),
       'data-epr-part': 'emoji',
+      'data-epr-active': isActive ? '' : undefined,
       'data-epr-unified': unified,
       'aria-label': getAriaLabel(emojiNames),
       'data-epr-full-name': emojiNames.join(','),
       style,
     };
     return (
-      <Custom {...managedProps} emoji={emojiInfo}>
+      <Custom {...managedProps} emoji={{ ...emojiInfo, isActive }}>
         {children}
       </Custom>
     );
@@ -79,6 +82,7 @@ export function ClickableEmojiButton({
       role={role}
       className={cellClassName}
       data-epr-part="emoji"
+      data-epr-active={isActive ? '' : undefined}
       data-epr-unified={unified}
       aria-label={getAriaLabel(emojiNames)}
       data-epr-full-name={emojiNames}

@@ -69,3 +69,8 @@
   padding: 12px 0 24px;
   text-align: left;
 }
+
+.sourcePanel { text-align: left; margin-top: 20px; }
+.sourceActions { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.sourcePanel pre { max-height: 420px; overflow: auto; padding: 20px; border-radius: 12px; background: #0f172a; color: #e2e8f0; }
+.sourcePanel button, .sourcePanel select { padding: 6px 10px; font: inherit; }

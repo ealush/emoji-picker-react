@@ -45,6 +45,12 @@
   font-weight: 600;
 }
 .forum-editor {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  color: inherit;
+  font: inherit;
   margin: 8px 0 10px;
   padding: 10px 12px;
   border: 1px solid #d4d4d8;

@@ -133,6 +133,8 @@ Primitive consumers may also supply a consumer `aria-label` through Search `inpu
     reactions: 'Reacciones',
     expandReactions: 'Ver todos',
     loading: 'Cargando…',
+    loadingError: 'No se pudieron cargar los emojis.',
+    retryLoading: 'Reintentar',
     skinToneNeutral: 'Tono neutro',
     // skinToneLight, skinToneMediumLight, skinToneMedium,
     // skinToneMediumDark, skinToneDark
@@ -245,6 +247,8 @@ Parts:
 
 - `Root`
 - `Search`
+- `SearchInput` — native input / ref-forwarding design-system input
+- `LoadError` — localized recoverable loader failure
 - `CategoryNav`
 - `Viewport`
 - `List`
@@ -447,10 +451,12 @@ const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
 ```
 
 - The default `emoji-picker-react` entry bundles the English dataset and is always synchronous.
-- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; about 32 KB min+gz up front instead of about 85 KB), rendering `<Loading>` meanwhile. Pass an object for server rendering.
+- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; the configured minimal consumer currently measures about 40 KiB min+gz up front including ShipStyles), rendering `<Loading>` meanwhile. Pass an object for server rendering.
 - ESM entries share their implementation chunks, so using the default picker and primitives together ships the implementation once.
 
-Hoist loaders (module scope or `useCallback`): a new function identity loads again.
+Hoist loaders (module scope or `useCallback`): a new function identity loads again. Loaders receive `{ signal?: AbortSignal }`; source changes, retries and unmount abort the previous attempt. Zero-argument import loaders remain valid. Rejection and synchronous throws become recoverable state, not an empty successful result. The default picker displays localized error/retry UI. Primitive consumers compose `<LoadError />` next to List/Loading or read `useEmojiDataState()` (`{ loading, error, retry }`). A custom `LoadError` child can be a function receiving `{ error, retry }`.
+
+Import runtime `Categories`, `EmojiStyle`, `SkinTones`, `SkinTonePickerLocation`, `SuggestionMode`, and `Theme` from `/primitives` in a lean composition. Importing runtime values from the main or `/data` entry registers its eager default dataset.
 
 ## 13. Locale imports
 
@@ -490,3 +496,11 @@ The validation model is intentionally narrow:
 - SSR performs only render-time/context validation.
 
 Exact error text is not semver API.
+
+## Native search, panel styling and active custom cells
+
+`SearchInput` forwards its ref and native input props directly to an input. Root owns `searchValue`, `defaultSearchValue` and `onSearchChange`; input `onChange` is an observer. Supply `as={Input}` for a design-system component that forwards its ref and native input props to one real input. Placeholder, autofocus and accessible label can be supplied directly. Use either Search or SearchInput per Root; they share IME handling, region registration and results announcements.
+
+Root’s `panelProps` accepts className, style, native attributes and handlers for the managed panel. Root still owns its hidden/inert presence and children. This is where flex/grid/gap classes arrange Root’s parts.
+
+Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.

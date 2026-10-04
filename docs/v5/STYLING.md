@@ -10,7 +10,7 @@ The picker is plug and play out of the box, and equally built for teams that bri
 
 It continues to support the documented v4 CSS custom properties.
 
-`<EmojiPicker unstyled />` keeps the same composition and behavior but drops the branded chrome (border, background, radius, typography) and color tokens.
+`<EmojiPicker unstyled />` keeps the same composition and behavior but drops Root’s branded chrome (border, background, radius, typography) and color tokens. Managed components retain functional styles and some cosmetic defaults, including cell rounding and header typography; customize them through tokens, part selectors or List components.
 
 ### Structural primitives
 

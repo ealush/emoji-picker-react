@@ -20,14 +20,14 @@ Read in this order:
 14. [MIGRATION.md](./MIGRATION.md) — v4 → v5 consumer migration.
 15. [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) — release gate.
 
-Test plans (all executed):
+Executable verification:
 - `test/v5-contract/v5-api.test.tsx` — contract assertions over real behavior (no source-text scans).
 - `test/v5-contract/v5-performance.test.tsx` — data/search/render/scroll/bundle budgets over real behavior.
 - `playwright/v5-acceptance.spec.ts` — unskipped browser suite against real fixtures (virtualized keyboard reach, stale materialization, IME panels).
 - `scripts/package-check` — packed-consumer checks (CJS + ESM resolution, publint, attw), gated in CI.
 - `scripts/react16-fixture` — React-16 packed-consumer tests.
 
-Every suite above runs green; the browser suite runs against real fixtures, and PERFORMANCE.md gates run via `npm run check:perf`.
+Run these gates against the final candidate. CI adds packed React 16.8 and React 19 consumers, Chromium/Firefox/WebKit behavior, mobile touch behavior and the candidate website build. Local WebKit execution requires its Linux dependencies. Performance timing remains a local quiet-machine check against a reconstructed same-session v4 baseline, not the original Phase 0 artifact.
 
 Existing v4 unit/interaction/visual suites remain active throughout implementation.
 
@@ -57,3 +57,5 @@ Avoid:
 - duplicate renderers/engines;
 - broad override APIs with unsafe semantics;
 - unverifiable claims such as "performant" or "SSR-safe".
+
+See [ADOPTION.md](./ADOPTION.md) for installable examples and the native input/error/active-cell additions.

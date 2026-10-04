@@ -92,11 +92,13 @@ function usePickerMainKeyboardEvents() {
 
         disallowMouseMove();
         switch (key) {
-
           case KeyboardEvents.Escape:
             event.preventDefault();
             if (hasOpenToggles()) {
               closeAllOpenToggles();
+              // A nested variation/tone menu consumes Escape before the
+              // host popover or autocomplete dismisses the whole picker.
+              event.stopPropagation();
               return;
             }
             clearSearch();
@@ -122,12 +124,27 @@ function usePickerMainKeyboardEvents() {
       return;
     }
 
+    // Hosts such as Radix dismiss at document capture. A Root-owned menu
+    // gets Escape at window capture first, scoped to this instance.
+    const onWindowEscape = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (
+        event.key === KeyboardEvents.Escape &&
+        hasOpenToggles() &&
+        target instanceof Element &&
+        target.closest('[data-epr-part="root"]') === current
+      ) {
+        onKeyDown(event);
+      }
+    };
+    window.addEventListener('keydown', onWindowEscape, true);
     current.addEventListener('keydown', onKeyDown);
 
     return () => {
+      window.removeEventListener('keydown', onWindowEscape, true);
       current.removeEventListener('keydown', onKeyDown);
     };
-  }, [PickerMainRef, SearchInputRef, scrollTo, onKeyDown]);
+  }, [PickerMainRef, SearchInputRef, scrollTo, onKeyDown, hasOpenToggles]);
 }
 
 function useSearchInputKeyboardEvents() {
@@ -428,9 +445,7 @@ function reactionFocusDelta(key: string): number {
 
 function focusReactionSibling(root: HTMLElement, delta: number): boolean {
   const buttons = Array.from(root.querySelectorAll('button'));
-  const activeIndex = buttons.indexOf(
-    getActiveElement() as HTMLButtonElement,
-  );
+  const activeIndex = buttons.indexOf(getActiveElement() as HTMLButtonElement);
   const sibling = activeIndex === -1 ? null : buttons[activeIndex + delta];
 
   if (!sibling) {
@@ -453,7 +468,6 @@ function useBodyKeyboardEvents() {
 
   const onKeyDown = useMemo(
     () =>
-
       function onKeyDown(event: KeyboardEvent) {
         const { key } = event;
 
@@ -596,8 +610,7 @@ export function useFocusRegion() {
           focusFirstVisibleEmoji(BodyRef.current, focusGuard);
           return true;
         case 'reactions': {
-          const firstButton =
-            ReactionsRef.current?.querySelector('button');
+          const firstButton = ReactionsRef.current?.querySelector('button');
           focusElement(firstButton ?? null, focusGuard);
           return true;
         }
@@ -707,7 +720,8 @@ function hasModifier(event: KeyboardEvent): boolean {
   return metaKey || ctrlKey || altKey;
 }
 
-type CategoryKeyIntent = 'prev-tab' | 'next-tab' | 'prev-region' | 'next-region';
+type CategoryKeyIntent =
+  'prev-tab' | 'next-tab' | 'prev-region' | 'next-region';
 
 const HORIZONTAL_CATEGORY_KEYS: Record<string, CategoryKeyIntent> = {
   [KeyboardEvents.ArrowLeft]: 'prev-tab',

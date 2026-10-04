@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 
 import * as Picker from '../../../src/primitives';
 
@@ -14,6 +14,10 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
+  const [message, setMessage] = useState('Love the new onboarding flow');
+  const [open, setOpen] = useState(true);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const input = useRef<HTMLInputElement>(null);
   return (
     <div className="chat-window">
       <header className="chat-header">
@@ -40,8 +44,16 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </div>
         </li>
       </ul>
-      <div className="chat-popover">
-        <RootComponent className={className}>
+      {open && <div className="chat-popover" onKeyDown={(event) => {
+        if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); }
+      }}>
+        <RootComponent className={className} onEmojiClick={(emoji: Picker.EmojiClickData) => {
+          const start = input.current?.selectionStart ?? message.length;
+          const end = input.current?.selectionEnd ?? start;
+          setMessage(message.slice(0, start) + emoji.emoji + message.slice(end));
+          setOpen(false);
+          requestAnimationFrame(() => { input.current?.focus(); input.current?.setSelectionRange(start + emoji.emoji.length, start + emoji.emoji.length); });
+        }}>
           <Picker.Search />
           <Picker.CategoryNav />
           <Picker.Viewport>
@@ -50,14 +62,13 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </Picker.Viewport>
           <Picker.Preview />
         </RootComponent>
-      </div>
+      </div>}
       <div className="chat-composer">
-        <div className="chat-input" role="textbox" aria-label="Message #design-crit">
-          Love the new onboarding flow
-        </div>
+        <input ref={input} className="chat-input" aria-label="Message #design-crit"
+          value={message} onChange={(event) => setMessage(event.target.value)} />
         <div className="chat-tools">
           <button type="button" aria-label="Attach file">＋</button>
-          <button type="button" aria-label="Emoji" aria-pressed="true" className="chat-emoji-button">
+          <button ref={trigger} type="button" aria-label="Emoji" aria-expanded={open} className="chat-emoji-button" onClick={() => setOpen(!open)}>
             ☺
           </button>
           <button type="button" className="chat-send">Send</button>

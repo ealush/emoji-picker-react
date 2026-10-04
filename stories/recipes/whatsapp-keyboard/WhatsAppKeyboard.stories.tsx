@@ -84,9 +84,15 @@ const EmotionRoot = styledEmotion(Picker.Root)`
     padding: 6px 40px;
   }
 
-  & [data-epr-part='category-tab'][aria-selected='true'] {
-    box-shadow: inset 0 -3px 0 #00a884;
-    border-radius: 0;
+  & [data-epr-part='category-tab'][aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: -6px;
+    left: -10px;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: #00a884;
   }
 `;
 
@@ -145,9 +151,15 @@ const StyledComponentsRoot = styledComponents(Picker.Root)`
     padding: 6px 40px;
   }
 
-  & [data-epr-part='category-tab'][aria-selected='true'] {
-    box-shadow: inset 0 -3px 0 #00a884;
-    border-radius: 0;
+  & [data-epr-part='category-tab'][aria-selected='true']::after {
+    content: '';
+    position: absolute;
+    right: -10px;
+    bottom: -6px;
+    left: -10px;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    background: #00a884;
   }
 `;
 
@@ -200,9 +212,15 @@ const MuiRoot = styledMui(Picker.Root)({
     justifyContent: "space-between",
     padding: "6px 40px",
   },
-  "& [data-epr-part='category-tab'][aria-selected='true']": {
-    boxShadow: "inset 0 -3px 0 #00a884",
-    borderRadius: "0",
+  "& [data-epr-part='category-tab'][aria-selected='true']::after": {
+    content: "''",
+    position: "absolute",
+    right: "-10px",
+    bottom: "-6px",
+    left: "-10px",
+    height: "3px",
+    borderRadius: "3px 3px 0 0",
+    background: "#00a884",
   },
 });
 
@@ -254,8 +272,14 @@ const tailwind = [
   '[&_[data-epr-part=category-nav]]:[border-top:1px_solid_#e9edef]',
   '[&_[data-epr-part=category-nav]_>_*]:[justify-content:space-between]',
   '[&_[data-epr-part=category-nav]_>_*]:[padding:6px_40px]',
-  '[&_[data-epr-part=category-tab][aria-selected=true]]:[box-shadow:inset_0_-3px_0_#00a884]',
-  '[&_[data-epr-part=category-tab][aria-selected=true]]:[border-radius:0]',
+  "[&_[data-epr-part=category-tab][aria-selected=true]::after]:[content:'']",
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[position:absolute]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[right:-10px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[bottom:-6px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[left:-10px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[height:3px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[border-radius:3px_3px_0_0]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[background:#00a884]',
 ].join(' ');
 
 export const Tailwind = () => <Shell Root={LayeredRoot} className={tailwind} />;
@@ -310,8 +334,14 @@ const shadcn = [
   '[&_[data-epr-part=category-nav]]:[border-top:1px_solid_#e9edef]',
   '[&_[data-epr-part=category-nav]_>_*]:[justify-content:space-between]',
   '[&_[data-epr-part=category-nav]_>_*]:[padding:6px_40px]',
-  '[&_[data-epr-part=category-tab][aria-selected=true]]:[box-shadow:inset_0_-3px_0_#00a884]',
-  '[&_[data-epr-part=category-tab][aria-selected=true]]:[border-radius:0]',
+  "[&_[data-epr-part=category-tab][aria-selected=true]::after]:[content:'']",
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[position:absolute]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[right:-10px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[bottom:-6px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[left:-10px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[height:3px]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[border-radius:3px_3px_0_0]',
+  '[&_[data-epr-part=category-tab][aria-selected=true]::after]:[background:#00a884]',
 ].join(' ');
 
 export const Shadcn = () => (

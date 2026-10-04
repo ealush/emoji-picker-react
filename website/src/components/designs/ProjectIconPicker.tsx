@@ -2,7 +2,7 @@
 // Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
-import { Categories, SkinTonePickerLocation } from 'emoji-picker-react';
+import { Categories, SkinTonePickerLocation } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 

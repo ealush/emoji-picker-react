@@ -3,6 +3,7 @@ import { cx } from 'shipstyles';
 
 import { stylesheet } from '../Stylesheet/stylesheet';
 import { useLabels } from '../config/useConfig';
+import { useEmojiDataState } from '../hooks/useResolvedEmojiData';
 import { useAcceptedSearchValue } from '../hooks/useSearchController';
 import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 
@@ -26,8 +27,9 @@ export const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
     const resultCount = useVisibleSearchResultCount();
     const search = useAcceptedSearchValue();
     const labels = useLabels();
+    const { loading, error } = useEmojiDataState();
 
-    if (!inScope || resultCount !== 0) {
+    if (!inScope || loading || error || resultCount !== 0) {
       return null;
     }
 
