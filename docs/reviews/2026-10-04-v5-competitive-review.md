@@ -1,6 +1,6 @@
 # v5 competitive review — 2026-10-04
 
-Review of `v5-consumer-integration` at `d8c7466b`, including the existing local recipe/style changes. This is an assessment and proposed work order, not a new API contract. No runtime changes were made for this review.
+Review of the v5 release candidate for [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), with the original assessment made at `d8c7466b` including the existing local recipe/style changes. The consumer-integration branch was a temporary verification branch; its tests and follow-ups have been migrated into `v5-implementation`. All ongoing work belongs to that release branch. The original findings below describe the pre-implementation candidate; the final section records the implemented follow-up.
 
 ## Assessment
 
@@ -20,13 +20,14 @@ My subjective scores, based on this review rather than a user study:
 
 Frimousse was examined at the current `v0.4.0` source, commit `5723fc1`, and its [official documentation](https://frimousse.liveblocks.io/). Its native Search props, custom Row/Emoji components, cell `isActive` / `data-active`, shadcn CLI installation, and lightweight startup form a coherent adoption experience. These are competitive strengths, not proof that every behavior is better. Its documentation explicitly limits custom datasets to Unicode text rather than image or sprite emoji.
 
-## PR and release state
+## PR and release state (updated 2026-10-05)
 
-- [PR #554](https://github.com/ealush/emoji-picker-react/pull/554) is open, not a draft, mergeable into `v5-implementation`, and has successful unit, api-floor, visual, consumer-visual, packaging and docs checks. No submitted reviews were returned by the reviews endpoint.
-- [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), the actual v5 release PR into `master`, is open and currently has conflicts (`mergeable: false`, `mergeable_state: dirty`). #554 being clean does not mean the release is mergeable.
-- The Vercel bot explicitly reports a skipped/ignored deployment. Its green status does not verify a newly built website preview.
-- The working tree already contained 16 changed files: WhatsApp/iMessage stories and CSS, generated website CSS, and eight snapshots. Published checks do not cover these local edits.
-- The release workflow publishes on pushes to `master`. Reconcile the stack with current `master`, commit the intended UI edits, and verify the final candidate before landing it.
+- [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), `v5-implementation` into `master`, is the only active release work stream. Consumer verification and the adoption improvements are included directly in its branch.
+- Master's 4.22.3 release-metadata changes have been reconciled without dropping v5 work. The migration merge has the same file tree as the locally verified adoption candidate; this report is updated separately.
+- The pre-existing WhatsApp/iMessage stories, CSS, generated website CSS and eight snapshots were preserved and committed with the improvements.
+- The candidate's unit, API-floor, packaging, generated-docs, browser-behavior (including WebKit) and website-build jobs passed. Final checks must also pass on PR #552's consolidated head before release.
+- The Vercel bot's skipped/ignored deployment does not verify a deployed preview. The candidate website is built in CI against the local package.
+- The release workflow publishes on pushes to `master`. This work updates the release candidate; publishing remains a separate release action.
 
 ## Measured bundle issue
 
@@ -123,4 +124,4 @@ My updated subjective API ergonomics score is **8.5/10**. This is a stronger uns
 
 Verified locally: 577 unit tests; build/type/compatibility/API-floor/lint/size; packed CJS/ESM consumers, publint and attw; actual React 16.8 interaction/SSR/hydration; Chromium/Firefox/mobile adoption flows and real touch. The website static export builds. The initial packed minimal consumer measures **40.5 KiB gzip including ShipStyles** (41 KiB regression cap); the data chunk remains deferred. Performance gates pass against the reconstructed v4 baseline (one mount 81.3%, ten mounts 96.6%, cold preparation 86.3%; no extra base builds for ten mounts).
 
-Outstanding competitive work: profile toward the proposed 25 KiB startup target; manual assistive-technology verification; WebKit evidence on Ubuntu CI (local host lacks required libraries). Published registry CLI installation is only usable after the v5 dependency exists. The release stack has only generated-doc and lockfile conflicts against master’s 4.22.3 metadata, so it can be reconciled without dropping v5 work.
+Outstanding competitive work: profile toward the proposed 25 KiB startup target and complete manual assistive-technology verification. WebKit behavior passed on Ubuntu CI; the local host lacks its required libraries. Published registry CLI installation is only usable after the v5 dependency exists. Master’s 4.22.3 metadata is reconciled, and all work now resides on `v5-implementation` for PR #552.
