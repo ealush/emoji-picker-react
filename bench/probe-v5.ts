@@ -19,6 +19,16 @@ export function prepareOnce(): void {
   getPreparedCore(dataset);
 }
 
+// Cold preparation: building the prepared core for a dataset identity not
+// seen before. The copy that supplies the fresh identity is made outside
+// the timer; v5 never clones the dataset itself.
+export function coldPrepare(): number {
+  const fresh = JSON.parse(JSON.stringify(dataset)) as EmojiData;
+  const start = now();
+  getPreparedCore(fresh);
+  return now() - start;
+}
+
 export function resetQueryMemo(): void {
   getPreparedCore(dataset).queryMemo.clear();
 }

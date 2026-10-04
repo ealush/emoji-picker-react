@@ -2,5 +2,7 @@
   "title": "Examples/Community custom emojis",
   "name": "CommunityForum",
   "rootClass": "forum-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "Community custom emojis as their own group, before the standard set.",
+  "order": 8
 }

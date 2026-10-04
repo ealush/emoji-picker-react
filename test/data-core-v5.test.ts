@@ -76,6 +76,20 @@ describe('v5 data core (Phase 2 slice)', () => {
     expect(Object.isFrozen(searchEmojis('￿'))).toBe(true);
   });
 
+  it('multi-char queries match the full scan via the smallest char bucket', () => {
+    const core = getPreparedCore();
+    const queries = ['sm', 'cat', 'SMILE', 'face with', 'flag', 'zz', 'qx', 'heart', ' a b ', 'no-match-zzz', 'ña', 'cat😀'];
+    for (const raw of queries) {
+      const query = raw.trim().toLowerCase();
+      const expected = core.records
+        .filter((record) => record.names.some((name) => name.includes(query)))
+        .map((record) => record.unified);
+      expect(searchEmojis(raw).map((record) => record.unified)).toEqual(
+        expected,
+      );
+    }
+  });
+
   it('uses supplied emojiData for lookup and search without mutating it', () => {
     const custom: EmojiData = {
       categories: {},

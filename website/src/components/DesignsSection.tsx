@@ -20,16 +20,21 @@ export function DesignsSection() {
   const { Example } = example;
 
   return (
-    <section className={styles.designsSection} aria-labelledby="designs-title">
+    <section
+      id="designs"
+      className={styles.designsSection}
+      aria-labelledby="designs-title"
+    >
       <div className={styles.designsContent}>
         <h2 id="designs-title" className={styles.sectionTitle}>
-          Fits any product, any design system
+          Bring your own style system
         </h2>
         <p className={styles.sectionSubtitle}>
-          Ship it as-is, theme it with <code>--epr-*</code> variables, or go{" "}
-          <code>unstyled</code> and compose the parts yourself. Style it with
-          whatever your app already uses — CSS, CSS Modules, Emotion,
-          styled-components, MUI, Tailwind or shadcn/ui.
+          Plug and play by default — or make it yours. Theme it with{" "}
+          <code>--epr-*</code> variables, or go <code>unstyled</code> and
+          compose the parts yourself, styled with whatever your app already
+          uses: CSS, CSS Modules, Emotion, styled-components, MUI, Tailwind or
+          shadcn/ui. Every design below is the same picker — try them.
         </p>
         <div
           className={styles.designTabs}

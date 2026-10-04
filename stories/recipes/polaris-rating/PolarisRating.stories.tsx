@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Polaris rating card',
+  title: 'Recipes/Examples/Polaris rating card',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

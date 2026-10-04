@@ -86,13 +86,16 @@ This narrowly addresses application-defined suggested emojis without replacing t
 
 - **Native support detection.** With the (new default) native style and no `emojiVersion`, emojis the platform cannot render — and country flags where the platform has no flag glyphs, e.g. Windows — are hidden after mount. Pin `emojiVersion` to opt out.
 - **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
+- **Emoji columns fill the row.** Leftover row width is now shared between columns instead of collecting as a gap on the right edge, so a few pixels of horizontal emoji position change (equal left/right insets). Screenshot tests that include the grid may need a refresh.
+- **Fluid widths reflow.** The column count follows the picker's width when its container resizes (it was only recomputed on CSS transitions).
 - **Default text contrast.** The light theme's `--epr-text-color` is `#6b6b6b` (was `#858585`) to meet WCAG AA.
 - **Easier overrides.** `--epr-*` tokens are declared at zero specificity, so `.my-picker { --epr-bg-color: … }` wins without `aside.EmojiPickerReact`-style specificity. Tailwind v4 users: pass `cssLayer="epr"` and declare `@layer epr, theme, base, components, utilities;` before importing Tailwind.
 - **`colorScheme` prop.** Prefer `colorScheme` over `theme` (still supported as an alias); CSS-in-JS wrappers such as Emotion, styled-components and MUI reserve `theme`.
 - **Widened prop types.** Enum props (`theme`, `emojiStyle`, `suggestedEmojisMode`, …) also accept their string literals. Code that reads these props back gets the union (e.g. `ThemeValue`), not the enum; compare against string values or the enum members.
+- **Unknown props are ignored.** As in v4, props the picker does not define (including removed v3 props such as `pickerStyle`; use `style`) never reach the DOM, and development builds log one `console.warn` naming them. Identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`) are forwarded to the root element; for event handlers, use a wrapper element or the primitives.
 - **Prop updates apply after mount.** `reactions`, `previewConfig`, `hiddenEmojis`, `allowExpandReactions`, `categoryIcons`, `getEmojiUrl` and `nonce` used to be ignored after the first render.
 - **Results announcement** counts what the list shows (hidden/disallowed emojis no longer counted).
-- **ESM build.** `import` resolves to `dist/esm/*.mjs` (code-split; the entries share one implementation). Deep imports into `dist` other than the documented locale paths are unsupported.
+- **ESM build.** `import` resolves to `dist/esm/*.mjs` (code-split; the entries share one implementation). Deep imports into `dist` other than the documented locale paths are unsupported; the raw datasets at `emoji-picker-react/src/data/*.json` remain importable (deprecated; prefer `emoji-picker-react/data`).
 - **React Server Components.** The main and primitives entries are marked `"use client"`; `emoji-picker-react/data` is server-usable.
 
 ## Structural composition is opt-in
@@ -192,6 +195,11 @@ supported; to keep the previous look, pass it explicitly:
 The same default applies to the standalone `Emoji` component. Click
 payloads still carry usable `imageUrl` values: URL resolution falls
 back to Apple CDN assets when the active style has no image set.
+
+If you supply your own images (`getEmojiUrl` on the picker or `Emoji`,
+or `emojiUrl` on `Emoji`) without an `emojiStyle`, nothing changes:
+a custom image source keeps v4's image default (Apple), so your resolver
+is still called with `"apple"` as the style.
 
 ## React peer requirement
 

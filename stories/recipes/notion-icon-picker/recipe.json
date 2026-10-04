@@ -1,6 +1,8 @@
 {
-  "title": "Notion icon picker",
+  "title": "Examples/Notion icon picker",
   "name": "NotionIconPicker",
   "rootClass": "notion-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A Notion page-icon popover with app tabs, Remove and Random inside the picker.",
+  "order": 16
 }

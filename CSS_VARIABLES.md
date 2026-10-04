@@ -1,6 +1,6 @@
 # 🎨 CSS Variables
 
-You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker declares its tokens at zero specificity (`:where()`), so any selector of yours wins — no specificity tricks or `!important`. Want the default look? Change nothing: these variables only fine-tune it. Want your own design? Combine them with the `unstyled` prop and the `[data-epr-part]` selectors (see the [README](README.md#styling-with-any-solution)).
+You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker declares its tokens at zero specificity (`:where()`), so any selector of yours wins — no specificity tricks or `!important`. Want the default look? Change nothing: these variables only fine-tune it. Want your own design? Combine them with the `unstyled` prop and the `[data-epr-part]` selectors (see the [README](README.md#bring-your-own-style-system)).
 
 ```css
 .EmojiPickerReact {

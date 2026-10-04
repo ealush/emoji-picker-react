@@ -1,6 +1,8 @@
 {
-  "title": "X composer",
+  "title": "Examples/X composer",
   "name": "XComposer",
   "rootClass": "x-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "An X post composer with the skin tone control beside the search field.",
+  "order": 15
 }

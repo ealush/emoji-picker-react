@@ -1,14 +1,16 @@
 # Emoji Picker React
 
-**The emoji picker for React that works out of the box — and gets out of your way when you want your own design.**
+**Plug and play out of the box. Or bring your own style system.**
+
+The emoji picker for React that works the moment you render it — and gets out of your way when it has to match your design system.
 
 > **Plug and play:** `npm install emoji-picker-react`, render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
 >
-> **Unstyled and composable when you need it:** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
+> **Bring your own style system:** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[Styling](#styling-with-any-solution)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
+**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[Bring your own styles](#bring-your-own-style-system)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
@@ -17,8 +19,7 @@
 ## Features
 
 - **Plug and play** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
-- **Unstyled on demand** — `unstyled` drops the chrome; composable primitives let you build any layout.
-- **Works with any styling solution** — plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components, MUI.
+- **Bring your own style system** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
 - **Accessible** — WCAG 2.1 AA (axe-tested), full keyboard navigation, screen-reader grid semantics, localizable labels.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 25+ emoji datasets plus a `labels` prop for every UI string.
@@ -62,7 +63,9 @@ See [PROPS.md](PROPS.md) for every prop.
 
 Every path keeps the same behavior: keyboard navigation, focus management, ARIA semantics, virtualization, skin tones, variations, recents and search.
 
-## Styling with any solution
+## Bring your own style system
+
+The default look is a starting point, not a constraint: keep it, theme it, or replace it entirely with your own design system's styles.
 
 The picker needs no stylesheet import — its CSS is injected automatically and scoped with hashed class names, so it never leaks into your app.
 
@@ -270,7 +273,23 @@ The picker renders on the server with its styles inlined — no setup. The main 
 
 ## Design examples
 
-[`stories/recipes`](stories/recipes) holds 25 production-style designs — ten in-context examples (team chat composer, article comments, status dialog, `:shortcode` typeahead, livestream chat, project icon picker, doc editor panel, community custom emojis, video call reactions, mobile bottom sheet) and fifteen product-inspired builds (Slack, GitHub, Discord, Linear, Notion, Material 3, Teams, WhatsApp, iOS, X, …). Each is available in plain CSS, CSS Modules, Emotion, styled-components, MUI, Tailwind and shadcn/ui, and is screenshot-, axe- and keyboard-tested in every interaction state. The [live demo](https://ealush.com/emoji-picker-react) shows the in-context examples.
+[`stories/recipes`](stories/recipes) holds 25 production-style designs — ten in-context examples (team chat composer, article comments, status dialog, `:shortcode` typeahead, livestream chat, project icon picker, doc editor panel, community custom emojis, video call reactions, mobile bottom sheet) and fifteen product-inspired builds (Slack, GitHub, Discord, Linear, Notion, Material 3, Teams, WhatsApp, iOS, X, …). Each is available in plain CSS, CSS Modules, Emotion, styled-components, MUI, Tailwind and shadcn/ui, and is screenshot-, axe- and keyboard-tested in every interaction state. All 25 are playable in the [live demo](https://ealush.com/emoji-picker-react/#designs).
+
+<!-- DESIGNS:START (generated by scripts/portDesigns.mjs; run `npm run designs`) -->
+Every design below is the same picker, recomposed and restyled. [Try them live](https://ealush.com/emoji-picker-react/#designs).
+
+<table>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/team-chat"><img src="docs/designs/team-chat.png" alt="Team chat composer design example" width="260"></a><br><sub><b>Team chat composer</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/article-comments"><img src="docs/designs/article-comments.png" alt="Article comments design example" width="260"></a><br><sub><b>Article comments</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/editor-insert-panel"><img src="docs/designs/editor-insert-panel.png" alt="Doc editor insert panel design example" width="260"></a><br><sub><b>Doc editor insert panel</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/livestream-chat"><img src="docs/designs/livestream-chat.png" alt="Livestream chat design example" width="260"></a><br><sub><b>Livestream chat</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/status-dialog"><img src="docs/designs/status-dialog.png" alt="Set a status dialog design example" width="260"></a><br><sub><b>Set a status dialog</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/shortcode-typeahead"><img src="docs/designs/shortcode-typeahead.png" alt="Shortcode typeahead design example" width="260"></a><br><sub><b>Shortcode typeahead</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/video-call-reactions"><img src="docs/designs/video-call-reactions.png" alt="Video call reactions design example" width="260"></a><br><sub><b>Video call reactions</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/community-forum"><img src="docs/designs/community-forum.png" alt="Community custom emojis design example" width="260"></a><br><sub><b>Community custom emojis</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/project-icon-picker"><img src="docs/designs/project-icon-picker.png" alt="Project icon picker design example" width="260"></a><br><sub><b>Project icon picker</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/habit-tracker-mobile"><img src="docs/designs/habit-tracker-mobile.png" alt="Habit tracker (mobile) design example" width="260"></a><br><sub><b>Habit tracker (mobile)</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/discord-sidebar"><img src="docs/designs/discord-sidebar.png" alt="Discord sidebar design example" width="260"></a><br><sub><b>Discord sidebar</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/slack-reactions"><img src="docs/designs/slack-reactions.png" alt="Slack reactions design example" width="260"></a><br><sub><b>Slack reactions</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/github-reactions"><img src="docs/designs/github-reactions.png" alt="GitHub reactions design example" width="260"></a><br><sub><b>GitHub reactions</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/imessage-tapback"><img src="docs/designs/imessage-tapback.png" alt="iMessage tapback design example" width="260"></a><br><sub><b>iMessage tapback</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/x-composer"><img src="docs/designs/x-composer.png" alt="X composer design example" width="260"></a><br><sub><b>X composer</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/notion-icon-picker"><img src="docs/designs/notion-icon-picker.png" alt="Notion icon picker design example" width="260"></a><br><sub><b>Notion icon picker</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/linear-palette"><img src="docs/designs/linear-palette.png" alt="Linear command palette design example" width="260"></a><br><sub><b>Linear command palette</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/teams-fluent"><img src="docs/designs/teams-fluent.png" alt="Teams (Fluent 2) design example" width="260"></a><br><sub><b>Teams (Fluent 2)</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/material-3"><img src="docs/designs/material-3.png" alt="Material 3 design example" width="260"></a><br><sub><b>Material 3</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/geist-minimal"><img src="docs/designs/geist-minimal.png" alt="Geist minimal design example" width="260"></a><br><sub><b>Geist minimal</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/polaris-rating"><img src="docs/designs/polaris-rating.png" alt="Polaris rating card design example" width="260"></a><br><sub><b>Polaris rating card</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/intercom-rating"><img src="docs/designs/intercom-rating.png" alt="Intercom rating design example" width="260"></a><br><sub><b>Intercom rating</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/ios-bottom-sheet"><img src="docs/designs/ios-bottom-sheet.png" alt="iOS bottom sheet design example" width="260"></a><br><sub><b>iOS bottom sheet</b></sub></td><td align="center" valign="top" width="33%"><a href="stories/recipes/whatsapp-keyboard"><img src="docs/designs/whatsapp-keyboard.png" alt="WhatsApp keyboard panel design example" width="260"></a><br><sub><b>WhatsApp keyboard panel</b></sub></td></tr>
+<tr><td align="center" valign="top" width="33%"><a href="stories/recipes/windows-95"><img src="docs/designs/windows-95.png" alt="Windows 95 design example" width="260"></a><br><sub><b>Windows 95</b></sub></td></tr>
+</table>
+<!-- DESIGNS:END -->
 
 ## Migrating from v4
 

@@ -8,6 +8,7 @@
 // - the data entry does not import React or ShipStyles (load test with
 //   framework resolution blocked + static scan);
 // - deprecated v4 `dist/data/emojis-*` deep paths keep working;
+// - the raw `src/data/*.json` datasets real consumers import stay reachable;
 // - publint and @arethetypeswrong pass on the tarball.
 //
 // Run: npm run check:package

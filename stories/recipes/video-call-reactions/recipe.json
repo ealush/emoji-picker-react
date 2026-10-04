@@ -2,5 +2,7 @@
   "title": "Examples/Video call reactions",
   "name": "VideoCallReactions",
   "rootClass": "call-picker",
-  "root": "EmojiPicker"
+  "root": "EmojiPicker",
+  "description": "A translucent reactions pill over video that expands to a dark picker.",
+  "order": 7
 }

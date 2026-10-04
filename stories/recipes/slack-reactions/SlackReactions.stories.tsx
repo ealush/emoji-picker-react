@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Slack reactions',
+  title: 'Recipes/Examples/Slack reactions',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

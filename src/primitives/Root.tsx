@@ -78,6 +78,15 @@ const CALLBACK_KEYS = new Set([
   'onSkinToneChange',
 ]);
 
+/**
+ * Whether `key` is a picker configuration prop or callback (as opposed to
+ * a native attribute). The default picker forwards only these to Root, so
+ * unknown props never reach the DOM, as in v4.
+ */
+export function isPickerBehaviorProp(key: string): boolean {
+  return CALLBACK_KEYS.has(key) || BEHAVIOR_KEYS.has(key);
+}
+
 function splitRootProps(props: Omit<RootProps, 'children'>): {
   behaviorProps: Record<string, unknown>;
   asideProps: Record<string, unknown>;

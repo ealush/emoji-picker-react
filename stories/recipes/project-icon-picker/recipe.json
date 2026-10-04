@@ -2,5 +2,7 @@
   "title": "Examples/Project icon picker",
   "name": "ProjectIconPicker",
   "rootClass": "project-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A settings form: picking sets the project icon; categories are narrowed.",
+  "order": 9
 }

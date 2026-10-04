@@ -52,12 +52,14 @@ export const structuralStyles = structuralSheet.create({
   themeDark: {
     '.': 'epr-theme-dark',
     '--': { ...lightPickerTokens, ...darkPickerTokens },
+    colorScheme: 'dark',
   },
   themeAuto: {
     '.': 'epr-theme-auto',
     '--': lightPickerTokens,
     '@media (prefers-color-scheme: dark)': {
       '--': darkPickerTokens,
+      colorScheme: 'dark',
     },
   },
   panel: {

@@ -42,14 +42,14 @@ export default function Home({ initialStats }: HomeProps) {
         <title>emoji-picker-react — The Emoji Picker for React</title>
         <meta
           name="description"
-          content="Plug-and-play emoji picker for React: complete and accessible out of the box, or unstyled and composable for any styling solution — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI."
+          content="Plug-and-play emoji picker for React that works out of the box — or bring your own style system: go unstyled and compose it with Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="./favicon.ico" />
         <meta property="og:title" content="emoji-picker-react" />
         <meta
           property="og:description"
-          content="The most popular emoji picker for React — plug-and-play, or unstyled and composable for any styling solution."
+          content="The most popular emoji picker for React — plug and play out of the box, or bring your own style system."
         />
         <meta property="og:type" content="website" />
         {/* Documentation for LLMs and AI assistants (https://llmstxt.org). */}
@@ -81,13 +81,18 @@ export default function Home({ initialStats }: HomeProps) {
             </h1>
 
             <p className={styles.heroSubtitle}>
-              Lightweight, customizable, and delightfully simple. Add emoji
-              picking to your app in seconds with full TypeScript support.
+              <strong>Plug and play</strong> out of the box: one component,
+              no CSS import, no setup. Or <strong>bring your own style
+              system</strong> — Tailwind, shadcn/ui, CSS Modules, Emotion,
+              styled-components, MUI or plain CSS.
             </p>
 
             <div className={styles.heroActions}>
               <a href="#playground" className={styles.primaryButton}>
                 Try it out ↓
+              </a>
+              <a href="#designs" className={styles.secondaryButton}>
+                See 25 designs ↓
               </a>
               <Link
                 href="https://github.com/ealush/emoji-picker-react"

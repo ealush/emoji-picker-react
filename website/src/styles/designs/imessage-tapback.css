@@ -1,0 +1,46 @@
+/* Generated from stories/recipes/imessage-tapback by scripts/portDesigns.mjs. */
+/* The surrounding mock app (shared by every stack variant). */
+.imessage-stage {
+  width: 420px;
+  padding: 40px 24px 24px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, #1c1c1e, #000);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
+    Arial, sans-serif;
+}
+.imessage-bubble {
+  max-width: 280px;
+  margin: 10px 0 0 auto;
+  padding: 9px 14px;
+  border-radius: 20px;
+  background: #0066d6;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+/* iMessage — tapback bar over a message bubble: dark translucent glass,
+   large glyphs, the six classic tapbacks plus "+" for any emoji. */
+/* Picker styles — the source of truth for every stack variant. */
+.imessage-picker {
+  --epr-reactions-bg-color: rgb(58 58 60 / 85%);
+  --epr-bg-color: #1c1c1e;
+  --epr-picker-border-color: transparent;
+  --epr-hover-bg-color: rgb(255 255 255 / 12%);
+  --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 12%);
+  --epr-text-color: #ebebf5;
+  --epr-emoji-size: 34px;
+  margin-left: auto;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 50%);
+}
+.imessage-picker[data-epr-part='root'] {
+  height: 56px;
+}
+.imessage-picker [data-epr-part='reactions'] {
+  gap: 2px;
+  padding: 0 8px;
+}
+.imessage-picker [data-epr-part='expand-reactions'] {
+  background-color: rgb(255 255 255 / 14%);
+  filter: invert(1) brightness(1.6);
+}

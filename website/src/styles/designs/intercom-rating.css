@@ -1,0 +1,65 @@
+/* Generated from stories/recipes/intercom-rating by scripts/portDesigns.mjs. */
+/* The surrounding mock app (shared by every stack variant). */
+.intercom-widget {
+  width: 360px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 5px 40px rgb(0 0 0 / 16%);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+}
+.intercom-header {
+  padding: 24px 24px 56px;
+  background: linear-gradient(135deg, #286efa 0%, #7b5cff 100%);
+  color: #fff;
+}
+.intercom-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  font-weight: 700;
+}
+.intercom-header p {
+  margin: 0;
+  opacity: 0.85;
+  font-size: 14px;
+}
+.intercom-card {
+  margin: -36px 16px 20px;
+  padding: 18px 16px 16px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 10%);
+  color: #1a1a1a;
+  text-align: center;
+  font-size: 14px;
+}
+.intercom-card strong {
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Intercom — conversation rating in a support messenger: brand gradient
+   header and a five-point emoji scale as a terminal reactions bar. */
+/* Picker styles — the source of truth for every stack variant. */
+.intercom-scale {
+  --epr-reactions-bg-color: #f4f6fb;
+  --epr-picker-border-color: transparent;
+  --epr-hover-bg-color: #e4e9f7;
+  --epr-hover-bg-color-reduced-opacity: #e4e9f7;
+  --epr-emoji-size: 32px;
+  margin: 0 auto;
+}
+.intercom-scale[data-epr-part='root'] {
+  width: 100%;
+  height: 60px;
+  border-radius: 14px;
+  backdrop-filter: none;
+}
+.intercom-scale [data-epr-part='reactions'] {
+  justify-content: space-around;
+  width: 100%;
+}
+.intercom-scale [data-epr-part='reaction'] {
+  border-radius: 12px;
+}

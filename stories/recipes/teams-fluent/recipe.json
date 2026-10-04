@@ -1,6 +1,8 @@
 {
-  "title": "Teams (Fluent 2)",
+  "title": "Examples/Teams (Fluent 2)",
   "name": "TeamsFluent",
   "rootClass": "teams-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "Microsoft Teams in Fluent 2: tabs first, then search.",
+  "order": 18
 }

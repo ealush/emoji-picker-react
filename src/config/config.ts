@@ -125,6 +125,21 @@ function mergePreviewConfig(
   };
 }
 
+/**
+ * The default style is native, but a caller-supplied image URL resolver is
+ * an explicit request for images: without an explicit `emojiStyle` it keeps
+ * v4's image default (Apple), so the resolver is actually used.
+ */
+export function resolveEmojiStyle(
+  emojiStyle: EmojiStyleValue | undefined,
+  customImageSource: unknown,
+): EmojiStyleValue {
+  if (emojiStyle !== undefined) {
+    return emojiStyle;
+  }
+  return customImageSource ? EmojiStyle.APPLE : EmojiStyle.NATIVE;
+}
+
 export function mergeConfig(
   rawUserConfig: PickerConfig = {},
 ): PickerConfigInternal {
@@ -135,6 +150,10 @@ export function mergeConfig(
   const previewConfig = mergePreviewConfig(base.previewConfig, userConfig);
 
   const config = Object.assign(base, userConfig) as PickerConfigInternal;
+  config.emojiStyle = resolveEmojiStyle(
+    userConfig.emojiStyle,
+    userConfig.getEmojiUrl,
+  );
 
   const categories = mergeCategoriesConfig(
     userConfig.categories,

@@ -3,13 +3,13 @@ import './data/registerDefaultEmojiData';
 import * as React from 'react';
 
 import EmojiPickerReact from './EmojiPickerReact';
-import type { ThemeValue } from './types/exposedTypes';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
 import {
   MutableConfigContext,
   useDefineMutableConfig,
 } from './config/mutableConfig';
+import type { ThemeValue } from './types/exposedTypes';
 
 export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 

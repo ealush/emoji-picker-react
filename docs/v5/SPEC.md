@@ -28,7 +28,7 @@ The design priorities, in order, are:
 
 The default v5 picker is not a redesign. Against the same test environment and fixtures, the v5 default composition MUST match the v4 baseline for existing visual tests.
 
-See [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md) for baseline adjudication. Snapshot refreshes are not a valid way to hide a product regression.
+Approved, documented exceptions (the native default style, AA text contrast, even column distribution) are listed in [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md#approved-changes), which also covers baseline adjudication. Snapshot refreshes are not a valid way to hide a product regression.
 
 ### 2.2 Behavioral compatibility
 
@@ -284,7 +284,7 @@ Required:
 
 The React peer floor remains `>=16.8` for v5 unless a separate, documented decision changes it. [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) defines the React-16-safe no-generated-ID strategy, real runtime compatibility fixtures and the prohibition on React-18-only runtime APIs such as `useId` and `useSyncExternalStore`.
 
-Adding an exports map intentionally blocks unspecified deep imports. That is a v5 package-boundary break. Existing documented v4 locale imports under `dist/data/emojis-*` MUST remain working in v5 through deprecated compatibility export aliases, while `emoji-picker-react/data/emojis-*` becomes the canonical path.
+Adding an exports map intentionally blocks unspecified deep imports. That is a v5 package-boundary break. Existing documented v4 locale imports under `dist/data/emojis-*`, and the raw datasets under `src/data/*.json` that real consumers import, MUST remain working in v5 through deprecated compatibility export aliases, while `emoji-picker-react/data/emojis-*` becomes the canonical path.
 
 See [V4_API_MATRIX.md](./V4_API_MATRIX.md).
 

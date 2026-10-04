@@ -64,7 +64,7 @@
 
 .designStage {
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
   overflow-x: auto;
   padding: 12px 0 24px;
   text-align: left;

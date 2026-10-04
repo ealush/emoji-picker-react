@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/iOS bottom sheet',
+  title: 'Recipes/Examples/iOS bottom sheet',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

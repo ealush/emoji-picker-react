@@ -1,5 +1,5 @@
-// Ported from stories/recipes/article-comments (scripts in the repo keep
-// the Storybook version as the source of truth).
+// Generated from stories/recipes/article-comments by scripts/portDesigns.mjs.
+// Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
 import EmojiPicker from 'emoji-picker-react';

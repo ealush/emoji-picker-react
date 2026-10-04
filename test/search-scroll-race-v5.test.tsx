@@ -10,7 +10,7 @@ afterEach(() => {
 });
 
 describe('post-search scroll vs. category navigation', () => {
-  it('a category jump right after clearing the search is not overridden', async () => {
+  it('a category jump right after clearing the search is not overridden', { timeout: 10000 }, async () => {
     const calls: number[] = [];
     vi.spyOn(scrollModule, 'scrollTo').mockImplementation((_root, top) => {
       calls.push(top as number);
@@ -28,6 +28,11 @@ describe('post-search scroll vs. category navigation', () => {
       '[data-epr-part="category-tab"][aria-label="Animals & Nature"]',
     ) as HTMLElement;
     fireEvent.click(animals);
+    // The jump waits for the cleared search to commit before measuring.
+    await vi.waitFor(() => expect(calls.length).toBeGreaterThan(0), {
+      timeout: 5000,
+      interval: 50,
+    });
     await act(() => new Promise((resolve) => setTimeout(resolve, 250)));
 
     // Exactly one scroll: the jump. (jsdom has no layout, so the jump's

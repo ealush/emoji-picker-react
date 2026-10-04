@@ -6,7 +6,8 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [x] There is exactly one normative v4 compatibility matrix: `V4_API_MATRIX.md`.
 - [x] There is exactly one normative styling contract: `STYLING.md`.
-- [ ] `SPEC.md`, `API.md`, `PRIMITIVES.md`, `DEFAULT_COMPOSITION.md`, `STATE.md`, `NAVIGATION.md`, `PERFORMANCE.md`, `REACT_COMPATIBILITY.md`, and `DATA_API.md` do not contradict one another.
+- [x] `SPEC.md`, `API.md`, `PRIMITIVES.md`, `DEFAULT_COMPOSITION.md`, `STATE.md`, `NAVIGATION.md`, `PERFORMANCE.md`, `REACT_COMPATIBILITY.md`, and `DATA_API.md` do not contradict one another.
+  Evidence (2026-10-04): cross-checked the shared normative facts (React floor, data API names, `emojiByUnified` retention, `colorScheme`/`theme`, prop forwarding, default style, `suggestedEmojis` entries, deep-import aliases, size cap); the stale ones were reconciled in `0d25b9d5` and this commit.
 - [x] Any implementation deviation is first captured as an explicit spec amendment rather than silently changing tests.
 
 ## 2. Plug-and-play compatibility
@@ -170,18 +171,20 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [x] region registry is Root-scoped.
 - [x] generic region ordering uses DOM document order, not registration order.
-- [ ] consumer non-region controls are skipped by picker arrow navigation but remain tabbable.
+- [x] consumer non-region controls are skipped by picker arrow navigation but remain tabbable.
 - [x] active-search Search↔Grid exception works.
 - [x] category tab horizontal navigation works.
 - [x] grid logical Left/Right/Up/Down works.
-- [ ] omitted regions create no dead destinations.
+- [x] omitted regions create no dead destinations.
 - [x] offscreen logical destination is materialized, scrolled and focused.
 - [x] focus remains on real emoji controls.
 - [x] stale materialize/focus requests are canceled after query change.
-- [ ] stale requests are canceled after resize/column change.
-- [ ] stale requests are canceled after data/category change.
-- [ ] stale requests are canceled after reactions transition/unmount.
+- [x] stale requests are canceled after resize/column change.
+- [x] stale requests are canceled after data/category change.
+- [x] stale requests are canceled after reactions transition/unmount.
 - [x] multiple Roots never focus/mutate one another.
+
+Evidence: `playwright/v5-acceptance.spec.ts` — "skips consumer UI" (arrow skip + Tab reachability), "omitted Search/CategoryNav leaves no dead destination", and "stale navigation is canceled after a resize / categories / data / unmount change / reactions transition" with a positive control. Resize needed a fix: column count only recomputed on CSS transitions, so a fluid-width picker kept stale row math; a `ResizeObserver` now recomputes it and a column-count change invalidates pending navigation.
 
 ## 14. Accessibility and IDs
 
@@ -221,14 +224,14 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] `emojiVersion` and `hiddenEmojis` remain per-Root filters and do not rebuild the shared base index.
 - [x] dev warns once after three consecutive identity-changing renders for `emojiData` and independently for `customEmojis`.
 - [x] data cache does not strongly retain unmounted Root controllers.
-- [ ] cold preparation benchmark is <=110% of frozen v4 median.
-- [ ] same-dataset multi-Root benchmark proves cache reuse.
+- [x] cold preparation benchmark is <=110% of frozen v4 median.
+- [x] same-dataset multi-Root benchmark proves cache reuse.
 
 ## 17. Performance: rendering/search/scroll
 
-- [ ] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
-- [ ] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
-- [ ] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
+- [x] cold-query benchmark is <=110% of the frozen v4 cold-query baseline.
+- [x] warm/incremental typing benchmark is <=110% of the frozen v4 incremental baseline.
+- [x] no representative cold query or incremental step regresses >25% without explicit amendment/profiling.
 - [x] v5 preserves an allowed Root-scoped query memo on top of the shared pure data core.
 - [x] preview hover does not rerender Search/CategoryNav/Reactions.
 - [x] scroll/virtualization does not rerender Search/CategoryNav/Preview/Reactions.
@@ -236,15 +239,19 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] Root A updates do not rerender Root B.
 - [x] scroll listener remains passive.
 - [x] virtualization work is coalesced to at most one scheduled update per animation frame per Root.
-- [ ] single-picker initialization median is <=110% of frozen v4 baseline.
+- [x] single-picker initialization median is <=110% of frozen v4 baseline.
+
+Evidence (2026-10-03, `npm run check:perf`, baseline re-recorded from `master` in the same session; three consecutive passing runs): cold queries 70–75% of v4 (multi-char search scans the smallest character bucket instead of every record), incremental totals ≤72%, cold data preparation ~80%, one-picker mount ~82%, ten-picker mount 97–99%, zero extra base builds for ten same-dataset mounts. The harness now enforces the spec's hard 110% per cold query (it previously failed only above 125%), takes 50 samples per query, and measures cold preparation.
 
 ## 18. Styling
 
 - [x] all documented v4 CSS variables remain supported unless explicitly deprecated.
 - [x] public part list matches STYLING.md exactly, including `skin-tone` and `category-content`.
 - [x] protected structural properties are documented.
-- [ ] supported emoji size/padding changes update measurement/row math.
-- [ ] cosmetic overrides do not break virtualization.
+- [x] supported emoji size/padding changes update measurement/row math.
+- [x] cosmetic overrides do not break virtualization.
+
+Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all 25 designs (each with its own emoji size, padding and spacing): column count equals floor(content width / emoji size), left and right insets match within 1px, and no emoji overflows its content box; `recipes.spec.ts` / `recipes-interactions.spec.ts` keyboard-walk every design's virtualized grid. The geometry spec found and now guards the right-edge gap fixed in `getEmojiPositionStyle`.
 - [x] variation picker remains visible/keyboard-operable in custom composition.
 - [x] bare primitives do not silently apply full branded appearance.
 - [x] default picker remains visually compatible.
@@ -287,10 +294,10 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 ## 21. Visual compatibility
 
-- [ ] existing visual tests pass in the same environment.
+- [x] existing visual tests pass in the same environment.
 - [x] screenshots are not refreshed to hide a v5 regression.
 - [x] tolerance is not loosened to hide a v5 regression.
-- [ ] environment drift is adjudicated using VISUAL_COMPATIBILITY.md.
+- [x] environment drift is adjudicated using VISUAL_COMPATIBILITY.md.
 - [x] reaction motion changes receive behavioral tests and manual visual review.
 
 ## 22. Test conversion / docs
@@ -304,4 +311,5 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] migration links full export/prop matrix.
 - [x] invalid-composition errors explain cause and remediation.
 - [x] `llms.txt` is regenerated from distributable docs.
-- [ ] all unit, visual, docs, React-floor, package and performance checks pass.
+- [x] all unit, visual, docs, React-floor, package and performance checks pass.
+  Evidence (2026-10-04): CI run on `4d058373` green across unit, api-floor, visual, consumer-visual, docs and packaging; `check:perf` passes locally against a same-session v4 baseline (the perf gate needs a quiet machine and is not a CI job). Drift adjudications are recorded in VISUAL_COMPATIBILITY.md.

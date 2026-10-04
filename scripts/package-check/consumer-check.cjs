@@ -92,6 +92,13 @@ check('locale subpaths resolve', () => {
   assert.ok((legacy.default ?? legacy).categories, 'legacy locale path shape');
 });
 
+// Real consumers read the raw dataset from the v4 source tree (wire-webapp:
+// `emoji-picker-react/src/data/emojis.json`); the exports map keeps it.
+check('v4 src dataset path resolves', () => {
+  const raw = requireFromScratch('emoji-picker-react/src/data/emojis.json');
+  assert.ok(raw.categories && raw.emojis, 'src dataset shape');
+});
+
 // Importing one locale must not pull every locale.
 check('locale isolation', () => {
   const es = read('dist/data/emojis-es.js');

@@ -50,6 +50,14 @@ export function prepareOnce(): void {
   base = { allByUnified, searchIndex };
 }
 
+// Cold preparation: v4 paid the full clone + index build per picker
+// instance, so all of prepareOnce() is the equivalent timed work.
+export function coldPrepare(): number {
+  const start = now();
+  prepareOnce();
+  return now() - start;
+}
+
 export function resetQueryMemo(): void {
   seqMemo = {};
 }

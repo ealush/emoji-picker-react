@@ -1,3 +1,4 @@
+/* Generated from stories/recipes/habit-tracker-mobile by scripts/portDesigns.mjs. */
 /* The host app around the picker (shared by every stack variant). */
 .habit-phone {
   position: relative;

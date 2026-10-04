@@ -199,6 +199,8 @@ For standard emoji IDs:
 
 Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
 
+Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
+
 When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
 See [STATE.md](./STATE.md).
@@ -464,7 +466,7 @@ v5 canonicalizes:
 import es from 'emoji-picker-react/data/emojis-es';
 ```
 
-The documented v4 `dist/data/emojis-*` paths remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
+The documented v4 `dist/data/emojis-*` paths, and the raw `src/data/*.json` datasets, remain working in v5 through deprecated compatibility export aliases. Arbitrary undocumented deep imports do not receive that guarantee.
 
 ## 13a. React Server Components
 

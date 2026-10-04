@@ -65,6 +65,7 @@ function useDebouncedSliceValue<T>(
 
   return React.useMemo(
     () => [state, setState] as [T, (value: T) => Promise<T>],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [state],
   );
 }

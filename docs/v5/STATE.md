@@ -212,7 +212,7 @@ For each entry:
 
 1. require a string and trim surrounding whitespace;
 2. lowercase it, which is the single normalization used for both custom and Unicode IDs;
-3. look it up through the same Root data lookup used by reactions and the picker;
+3. look it up through the same Root data lookup used by reactions and the picker; if it is unknown and contains non-ASCII characters, treat it as the emoji character itself and resolve its code points to a dataset ID (exact, then without U+FE0F, then with U+FE0F after the first code point);
 4. **preserve that normalized ID for rendering** rather than replacing a skin-tone variation with its neutral/base unified;
 5. ignore unknown entries;
 6. deduplicate by resolved render identity, first occurrence wins;
@@ -224,7 +224,8 @@ Examples:
 
 - `"1F601"` → render identity `"1f601"`;
 - `"1F44D-1F3FD"` → render identity `"1f44d-1f3fd"`, not neutral `"1f44d"`;
-- custom ID `"PartyParrot"` → render identity `"partyparrot"`, matching how `customEmojis` was indexed.
+- custom ID `"PartyParrot"` → render identity `"partyparrot"`, matching how `customEmojis` was indexed;
+- character `"🧠"` → `"1f9e0"`; `"©"` → `"00a9-fe0f"`; `"#️⃣"` → `"0023-fe0f-20e3"` (apps that store recents as inserted text pass them through unchanged).
 
 Supplying `suggestedEmojis` does not write those entries into localStorage by itself.
 

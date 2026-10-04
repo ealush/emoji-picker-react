@@ -6,8 +6,9 @@
 // mounts, suspect the environment, not the code, and re-run quiet.
 //
 // Compares the current checkout against a frozen v4 baseline across:
-// - cold-query search medians (≤110% of baseline each, no query >125%);
+// - cold-query search medians (≤110% of baseline for each query);
 // - warm/incremental typing sequences (whole-sequence ≤110%, no step >125%);
+// - cold data preparation for a fresh dataset identity (≤110%);
 // - one-picker and ten-picker initialization medians (≤110%);
 // - ten same-dataset mounts construct the base index exactly once
 //   (deterministic counter on the v5 side).
@@ -23,7 +24,7 @@
 //   npm run check:perf -- --record         # rebuild baseline from master
 //   npm run check:perf -- --record --ref <git-ref> --probe v4|v5
 //   Options: --runs <n> (default 5), --samples <n> cold-query samples
-//   (default 30), --mount-samples <n> (default 8).
+//   (default 50), --mount-samples <n> (default 8).
 const { execFileSync, spawnSync } = require('child_process');
 const {
   existsSync,
@@ -52,7 +53,7 @@ function parseArgs(argv) {
     ref: 'master',
     probe: null,
     runs: 5,
-    samples: 30,
+    samples: 50, // PERFORMANCE.md §4.1: at least 50 per query
     mountSamples: 8,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -88,6 +89,8 @@ function bundleProbe(probe, checkoutDir) {
       '--external:react-dom',
       '--external:jsdom',
       '--external:shipstyles',
+      // v4 sources import icons as SVG files (rollup-plugin-svg data URIs).
+      '--loader:.svg=dataurl',
       `--alias:@c=${join(checkoutDir, 'src')}`,
       `--outfile=${outFile}`,
       '--log-level=warning',
@@ -139,6 +142,7 @@ function measure({ probeModule, runs, samples, mountSamples }) {
   const sequenceSteps = INCREMENTAL_SEQUENCES.map((sequence) =>
     sequence.map(() => []),
   );
+  const prepareSamples = [];
   const mountOneSamples = [];
   const mountTenSamples = [];
 
@@ -168,6 +172,9 @@ function measure({ probeModule, runs, samples, mountSamples }) {
     });
 
     for (let i = 0; i < mountSamples; i += 1) {
+      prepareSamples.push(probeModule.coldPrepare());
+    }
+    for (let i = 0; i < mountSamples; i += 1) {
       mountOneSamples.push(probeModule.mountOne());
     }
     for (let i = 0; i < Math.max(1, Math.floor(mountSamples / 2)); i += 1) {
@@ -186,6 +193,7 @@ function measure({ probeModule, runs, samples, mountSamples }) {
       median: median(sequenceSteps[index][stepIndex]),
     })),
   }));
+  metrics.prepare = median(prepareSamples);
   metrics.mount = {
     one: median(mountOneSamples),
     ten: median(mountTenSamples),
@@ -262,8 +270,9 @@ function gate(current, baseline) {
       `cold query "${query}"`,
       baseline.cold[query],
       current.cold[query],
+      // PERFORMANCE.md §4.1: each fixture MUST be <=110% (hard gate).
       1.1,
-      1.25,
+      1.1,
     );
   }
   current.incremental.forEach((sequence, index) => {
@@ -284,6 +293,8 @@ function gate(current, baseline) {
       );
     });
   });
+  // PERFORMANCE.md §1 / ACCEPTANCE_CHECKLIST §16: cold preparation <=110%.
+  checkRow('cold data preparation', baseline.prepare, current.prepare, 1.1, 1.1);
   checkRow('mount one picker', baseline.mount.one, current.mount.one, 1.1, 1.1);
   checkRow('mount ten pickers', baseline.mount.ten, current.mount.ten, 1.1, 1.1);
 

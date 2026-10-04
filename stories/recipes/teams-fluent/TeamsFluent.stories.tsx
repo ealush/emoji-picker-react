@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/Teams (Fluent 2)',
+  title: 'Recipes/Examples/Teams (Fluent 2)',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

@@ -1,6 +1,8 @@
 {
-  "title": "iMessage tapback",
+  "title": "Examples/iMessage tapback",
   "name": "IMessageTapback",
   "rootClass": "imessage-picker",
-  "root": "EmojiPicker"
+  "root": "EmojiPicker",
+  "description": "An iMessage tapback bubble: love, like, dislike, laugh, emphasize, question.",
+  "order": 14
 }

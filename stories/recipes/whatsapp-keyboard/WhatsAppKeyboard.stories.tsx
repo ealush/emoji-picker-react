@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/WhatsApp keyboard panel',
+  title: 'Recipes/Examples/WhatsApp keyboard panel',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

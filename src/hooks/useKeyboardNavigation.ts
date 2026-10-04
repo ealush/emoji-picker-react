@@ -394,6 +394,7 @@ function useReactionsKeyboardEvents() {
       },
     // reactionsOpen: the bar mounts late on collapse, and the new
     // callback identity reinstalls the listener effect below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [ReactionsRef, reactionsOpen],
   );
 

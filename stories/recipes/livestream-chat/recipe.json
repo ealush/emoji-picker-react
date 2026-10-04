@@ -2,5 +2,7 @@
   "title": "Examples/Livestream chat",
   "name": "LivestreamChat",
   "rootClass": "stream-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "Docked under a dark chat column: tabs on top and a dense grid.",
+  "order": 4
 }

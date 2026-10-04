@@ -18,7 +18,7 @@ import '../../integrations/tailwind.css';
 import './picker.css';
 
 const meta = {
-  title: 'Recipes/iMessage tapback',
+  title: 'Recipes/Examples/iMessage tapback',
   tags: ['recipe'],
   parameters: { layout: 'centered' },
 } satisfies Meta;

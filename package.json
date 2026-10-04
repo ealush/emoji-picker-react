@@ -60,6 +60,7 @@
       },
       "default": "./dist/data/emojis-*.js"
     },
+    "./src/data/*.json": "./src/data/*.json",
     "./package.json": "./package.json"
   },
   "homepage": "https://ealush.com/emoji-picker-react",
@@ -69,7 +70,7 @@
     "llms.txt",
     "llms-full.txt"
   ],
-  "description": "Plug-and-play emoji picker for React — complete and accessible out of the box, or unstyled and composable for any styling solution (Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI).",
+  "description": "Plug-and-play emoji picker for React that works out of the box — or bring your own style system: go unstyled and compose it with Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS.",
   "keywords": [
     "emoji-picker",
     "react-emoji-picker",
@@ -80,6 +81,9 @@
     "emoji-reactions",
     "emoji picker",
     "react emoji picker",
+    "design-system",
+    "bring-your-own-styles",
+    "plug-and-play",
     "unstyled",
     "headless",
     "composable",
@@ -149,7 +153,8 @@
     "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
     "check:perf": "node ./bench/run.js",
     "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
-    "recipes": "node ./scripts/generateRecipes.mjs"
+    "recipes": "node ./scripts/generateRecipes.mjs",
+    "designs": "node ./scripts/portDesigns.mjs"
   },
   "peerDependencies": {
     "react": ">=16.8"

@@ -1,6 +1,8 @@
 {
-  "title": "Discord sidebar",
+  "title": "Examples/Discord sidebar",
   "name": "DiscordSidebar",
   "rootClass": "discord-picker",
-  "root": "Picker.Root"
+  "root": "Picker.Root",
+  "description": "A Discord-style picker with the category rail in its own vertical column.",
+  "order": 11
 }
