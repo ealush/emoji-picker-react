@@ -109,26 +109,27 @@ export type PreviewEmoji = ActiveEmojiState;
 // Tokenized so compact previews can shrink the emoji (default 45px).
 const PREVIEW_EMOJI_SIZE = 'var(--epr-preview-emoji-size)';
 
-const styles = stylesheet.create({
-  preview: {
-    alignItems: 'center',
-    borderTop: '1px solid var(--epr-preview-border-color)',
-    height: 'var(--epr-preview-height)',
-    padding: '0 var(--epr-horizontal-padding)',
-    position: 'relative',
-    zIndex: 'var(--epr-preview-z-index)',
-  },
-  label: {
-    color: 'var(--epr-preview-text-color)',
-    fontSize: 'var(--epr-preview-text-size)',
-    padding: 'var(--epr-preview-text-padding)',
-    textTransform: 'capitalize',
-  },
-  emoji: {
-    padding: '0',
-  },
-  hideOnReactions: {
-    opacity: '0',
-    transition: 'opacity 0.5s ease-in-out',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    preview: {
+      alignItems: 'center',
+      borderTop: '1px solid var(--epr-preview-border-color)',
+      height: 'var(--epr-preview-height)',
+      padding: '0 var(--epr-horizontal-padding)',
+      position: 'relative',
+      zIndex: 'var(--epr-preview-z-index)',
+    },
+    label: {
+      color: 'var(--epr-preview-text-color)',
+      fontSize: 'var(--epr-preview-text-size)',
+      padding: 'var(--epr-preview-text-padding)',
+      textTransform: 'capitalize',
+    },
+    emoji: {
+      padding: '0',
+    },
+    hideOnReactions: {
+      opacity: '0',
+      transition: 'opacity 0.5s ease-in-out',
+    },
+  }))();

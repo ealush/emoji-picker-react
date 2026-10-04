@@ -324,6 +324,9 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] CI now runs actual packed React 16.8 and React 19 consumers, a candidate website build, and a separate cross-browser/touch behavior job.
 - [ ] All newly added CI jobs have passed on the final pushed candidate.
 - [ ] Release PR is reconciled with master and final release candidate checks pass.
-- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is about 40 KiB; this is not a Frimousse size win.
+- [x] Unused primitive/component styles and icons can be removed without losing CSS, keyboard selection or search in the minified installed-tarball consumer. Default composition retains navigation, preview and skin-tone controls.
+- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 33.0 KiB (34 KiB regression cap).
 
 Browser evidence belongs to the candidate report, with any local platform dependency failure stated explicitly. Performance baseline is reconstructed from v4 in a quiet session; no original Phase 0 artifact is available. Human assistive-technology verification remains required before an absolute accessibility claim.
+
+The consolidated release head `52b7562c` passed all eight jobs in [CI run 37234367876](https://github.com/ealush/emoji-picker-react/actions/runs/37234367876), including WebKit, consumer visuals and candidate website build. The subsequent startup optimization must pass checks on its own final head. The manual screen-reader release protocol is in [ACCESSIBILITY_VERIFICATION.md](ACCESSIBILITY_VERIFICATION.md).

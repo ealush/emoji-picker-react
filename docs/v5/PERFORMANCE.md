@@ -220,6 +220,10 @@ A benchmark failure cannot be waived merely because functional tests pass.
 
 ## Complete runtime measurement amendment (2026-10-04)
 
-The packed configured minimal ESM fixture imports runtime constants from `/primitives`, uses native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload currently measures about 40 KiB; the complete-runtime cap is 41 KiB. The old cap excluded ShipStyles. The default dataset remains a deferred chunk, and main/data-helper mixed consumers intentionally register it eagerly. A 25 KiB runtime is a proposed profiling target, not a met release gate.
+The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.0 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
+
+Only unused component/context/style factories are eligible for removal. Style construction (including helper arguments and icons) stays inside an annotated factory, and rendered parts retain their referenced styles. Default dataset registration remains intentional; the package does not declare blanket `sideEffects: false`. Packaging checks execute minified minimal and default consumers and assert retained layout CSS, keyboard selection, controlled search and default navigation/preview/tone parts.
+
+The default dataset remains a deferred chunk for primitives; main/data-helper mixed consumers intentionally register it eagerly. A 25 KiB runtime remains a proposed profiling target rather than a met release gate. Account for initial JavaScript and dataset traffic separately.
 
 The original frozen Phase 0 timing artifact is unavailable. `check:perf` currently compares against the reconstructed same-session v4 baseline; timing is a local quiet-machine gate, not a CI job. Deterministic behavior and packaging gates run in CI.

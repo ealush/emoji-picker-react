@@ -10,7 +10,6 @@ import {
 import { defaultPickerTokens } from '../../primitives/tokens';
 import { Theme, ThemeValue } from '../../types/exposedTypes';
 
-
 // Official default appearance (docs/v5/STYLING.md §1,
 // docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: classes are merged
 // onto the actual Root `aside` via its native `className` prop, so consumer
@@ -143,45 +142,46 @@ const DarkTheme = {
   '--epr-dark-skin-tone-inner-border-color': '#00000000',
 };
 
-const styles = stylesheet.create({
-  main: {
-    '.': ['epr-main', ClassNames.emojiPicker],
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderRadius: 'var(--epr-picker-border-radius)',
-    borderColor: 'var(--epr-picker-border-color)',
-    backgroundColor: 'var(--epr-bg-color)',
-    overflow: 'hidden',
-    transition: 'height 0.3s ease-in-out, background-color 0.1s ease-in-out',
-    '*': {
-      boxSizing: 'border-box',
-      // Overridable without a specificity fight (v4 hard-coded sans-serif).
-      fontFamily: 'var(--epr-font-family, sans-serif)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    main: {
+      '.': ['epr-main', ClassNames.emojiPicker],
+      position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderRadius: 'var(--epr-picker-border-radius)',
+      borderColor: 'var(--epr-picker-border-color)',
+      backgroundColor: 'var(--epr-bg-color)',
+      overflow: 'hidden',
+      transition: 'height 0.3s ease-in-out, background-color 0.1s ease-in-out',
+      '*': {
+        boxSizing: 'border-box',
+        // Overridable without a specificity fight (v4 hard-coded sans-serif).
+        fontFamily: 'var(--epr-font-family, sans-serif)',
+      },
     },
-  },
-  baseVariables: {
-    // Single-sourced from the public token preset: the default tree and
-    // bare-Root consumers share the same documented defaults. The private
-    // dark-theme values ride along (referenced only by the DarkTheme
-    // overrides below); they stay out of the shared preset so the
-    // primitives bundle keeps its separation marker scan clean.
-    '--': { ...defaultPickerTokens, ...darkThemeBaseVariables },
-  },
-  // color-scheme makes native parts (scrollbars, the search field's
-  // controls) render dark too; without it they stay light on a dark picker.
-  autoThemeDark: {
-    '.': ClassNames.autoTheme,
-    '@media (prefers-color-scheme: dark)': {
+    baseVariables: {
+      // Single-sourced from the public token preset: the default tree and
+      // bare-Root consumers share the same documented defaults. The private
+      // dark-theme values ride along (referenced only by the DarkTheme
+      // overrides below); they stay out of the shared preset so the
+      // primitives bundle keeps its separation marker scan clean.
+      '--': { ...defaultPickerTokens, ...darkThemeBaseVariables },
+    },
+    // color-scheme makes native parts (scrollbars, the search field's
+    // controls) render dark too; without it they stay light on a dark picker.
+    autoThemeDark: {
+      '.': ClassNames.autoTheme,
+      '@media (prefers-color-scheme: dark)': {
+        '--': DarkTheme,
+        colorScheme: 'dark',
+      },
+    },
+    darkTheme: {
+      '.': ClassNames.darkTheme,
       '--': DarkTheme,
       colorScheme: 'dark',
     },
-  },
-  darkTheme: {
-    '.': ClassNames.darkTheme,
-    '--': DarkTheme,
-    colorScheme: 'dark',
-  },
-});
+  }))();

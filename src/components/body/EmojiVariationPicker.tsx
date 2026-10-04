@@ -35,7 +35,6 @@ enum Direction {
   Down,
 }
 
-
 export function EmojiVariationPicker() {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
@@ -105,7 +104,9 @@ export function EmojiVariationPicker() {
   );
 }
 
-function usePointerStyle(VariationPickerRef: React.RefObject<HTMLElement | null>) {
+function usePointerStyle(
+  VariationPickerRef: React.RefObject<HTMLElement | null>,
+) {
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   return function getPointerStyle() {
     const style: React.CSSProperties = {};
@@ -176,60 +177,61 @@ function useVariationPickerTop(
   }
 }
 
-const styles = stylesheet.create({
-  variationPicker: {
-    '.': ClassNames.variationPicker,
-    position: 'absolute',
-    right: '15px',
-    left: '15px',
-    padding: '5px',
-    boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
-    borderRadius: '3px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    opacity: '0',
-    visibility: 'hidden',
-    pointerEvents: 'none',
-    top: '-100%',
-    border: '1px solid var(--epr-picker-border-color)',
-    height: 'var(--epr-emoji-variation-picker-height)',
-    zIndex: 'var(--epr-skin-variation-picker-z-index)',
-    background: 'var(--epr-emoji-variation-picker-bg-color)',
-    transform: 'scale(0.9)',
-    transition: 'transform 0.1s ease-out, opacity 0.2s ease-out',
-  },
-  visible: {
-    opacity: '1',
-    visibility: 'visible',
-    pointerEvents: 'all',
-    transform: 'scale(1)',
-  },
-  pointingUp: {
-    '.': 'pointing-up',
-    transformOrigin: 'center 0%',
-    transform: 'scale(0.9)',
-  },
-  '.pointing-up': {
-    pointer: {
-      top: '0',
-      transform: 'rotate(180deg) translateY(100%) translateX(18px)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    variationPicker: {
+      '.': ClassNames.variationPicker,
+      position: 'absolute',
+      right: '15px',
+      left: '15px',
+      padding: '5px',
+      boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
+      borderRadius: '3px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      opacity: '0',
+      visibility: 'hidden',
+      pointerEvents: 'none',
+      top: '-100%',
+      border: '1px solid var(--epr-picker-border-color)',
+      height: 'var(--epr-emoji-variation-picker-height)',
+      zIndex: 'var(--epr-skin-variation-picker-z-index)',
+      background: 'var(--epr-emoji-variation-picker-bg-color)',
+      transform: 'scale(0.9)',
+      transition: 'transform 0.1s ease-out, opacity 0.2s ease-out',
     },
-  },
-  pointer: {
-    '.': 'epr-emoji-pointer',
-    content: '',
-    position: 'absolute',
-    width: '25px',
-    height: '15px',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: '0 0',
-    backgroundSize: '50px 15px',
-    top: '100%',
-    transform: 'translateX(-18px)',
-    backgroundImage: `url("${SVGTriangle}")`,
-  },
-  ...darkMode('pointer', {
-    backgroundPosition: '-25px 0',
-  }),
-});
+    visible: {
+      opacity: '1',
+      visibility: 'visible',
+      pointerEvents: 'all',
+      transform: 'scale(1)',
+    },
+    pointingUp: {
+      '.': 'pointing-up',
+      transformOrigin: 'center 0%',
+      transform: 'scale(0.9)',
+    },
+    '.pointing-up': {
+      pointer: {
+        top: '0',
+        transform: 'rotate(180deg) translateY(100%) translateX(18px)',
+      },
+    },
+    pointer: {
+      '.': 'epr-emoji-pointer',
+      content: '',
+      position: 'absolute',
+      width: '25px',
+      height: '15px',
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: '0 0',
+      backgroundSize: '50px 15px',
+      top: '100%',
+      transform: 'translateX(-18px)',
+      backgroundImage: `url("${SVGTriangle}")`,
+    },
+    ...darkMode('pointer', {
+      backgroundPosition: '-25px 0',
+    }),
+  }))();

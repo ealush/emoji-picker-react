@@ -84,47 +84,48 @@ export function __resetViewportWarningsForTest(): void {
 // transient toggles on scroll, and the managed variation-picker overlay.
 // At most one Viewport is supported per Root. The single List child owns
 // the grid; no consumer children are accepted anywhere else.
-export const Viewport = React.forwardRef<HTMLDivElement, ViewportProps>(
-  function Viewport(props, forwardedRef) {
-    const inScope = useRootScope('Viewport');
-    useSingletonClaim('viewport');
-    const { children, ...rest } = props;
-    const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
-      'role',
-    ]);
-    useWarnWithoutList();
+export const Viewport = /* @__PURE__ */ React.forwardRef<
+  HTMLDivElement,
+  ViewportProps
+>(function Viewport(props, forwardedRef) {
+  const inScope = useRootScope('Viewport');
+  useSingletonClaim('viewport');
+  const { children, ...rest } = props;
+  const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+    'role',
+  ]);
+  useWarnWithoutList();
 
-    const BodyRef = useBodyRef();
-    const scrollTop = useOnScroll(BodyRef);
-    useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
-    useOnMouseMove();
+  const BodyRef = useBodyRef();
+  const scrollTop = useOnScroll(BodyRef);
+  useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
+  useOnMouseMove();
 
-    const { className, style, ...restNative } =
-      nativeProps as React.HTMLAttributes<HTMLDivElement>;
+  const { className, style, ...restNative } =
+    nativeProps as React.HTMLAttributes<HTMLDivElement>;
 
-    if (!inScope) {
-      return null;
-    }
+  if (!inScope) {
+    return null;
+  }
 
-    return (
-      <div
-        {...restNative}
-        ref={mergeRefs(forwardedRef, BodyRef)}
-        data-epr-part="viewport"
-        className={cx(styles.viewport, className)}
-        style={style}
-      >
-        <ViewportScrollContext.Provider value={scrollTop}>
-          <ViewportScopeProvider>
-            <ViewportObservers />
-            <EmojiVariationPicker />
-            {children}
-          </ViewportScopeProvider>
-        </ViewportScrollContext.Provider>
-      </div>
-    );
-  },
-);
+  return (
+    <div
+      {...restNative}
+      ref={mergeRefs(forwardedRef, BodyRef)}
+      data-epr-part="viewport"
+      className={cx(styles.viewport, className)}
+      style={style}
+    >
+      <ViewportScrollContext.Provider value={scrollTop}>
+        <ViewportScopeProvider>
+          <ViewportObservers />
+          <EmojiVariationPicker />
+          {children}
+        </ViewportScopeProvider>
+      </ViewportScrollContext.Provider>
+    </div>
+  );
+});
 
 function ViewportObservers() {
   // Section observation lives with the scroll container, not the tab bar:
@@ -147,12 +148,13 @@ function ViewportObservers() {
   return null;
 }
 
-const styles = stylesheet.create({
-  viewport: {
-    '.': ClassNames.scrollBody,
-    flex: '1',
-    overflowY: 'scroll',
-    overflowX: 'hidden',
-    position: 'relative',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    viewport: {
+      '.': ClassNames.scrollBody,
+      flex: '1',
+      overflowY: 'scroll',
+      overflowX: 'hidden',
+      position: 'relative',
+    },
+  }))();

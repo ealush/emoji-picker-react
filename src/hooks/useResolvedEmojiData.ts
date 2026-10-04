@@ -117,7 +117,7 @@ export function useResolvedEmojiData(input?: EmojiDataInput): Resolved {
   }, [input, needsLoad, loaded, attempt, retry]);
 }
 
-const DataLoadingContext = React.createContext<EmojiDataState>({
+const DataLoadingContext = /* @__PURE__ */ React.createContext<EmojiDataState>({
   loading: false,
   error: null,
   retry: () => {},

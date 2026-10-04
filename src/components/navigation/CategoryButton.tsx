@@ -72,41 +72,42 @@ const DarkInactivePosition = {
   },
 };
 
-const styles = stylesheet.create({
-  catBtn: {
-    '.': 'epr-cat-btn',
-    display: 'inline-block',
-    transition: 'opacity 0.2s ease-in-out',
-    position: 'relative',
-    height: 'var(--epr-category-navigation-button-size)',
-    width: 'var(--epr-category-navigation-button-size)',
-    outline: 'none',
-    // Icon glyphs are inline SVGs painted with currentColor, so the fill
-    // follows the --epr-category-icon-*-color variables.
-    // https://github.com/ealush/emoji-picker-react/issues/399
-    color: 'var(--epr-category-icon-inactive-color, #868686)',
-    ':focus:before': {
-      content: '',
-      position: 'absolute',
-      top: '-2px',
-      left: '-2px',
-      right: '-2px',
-      bottom: '-2px',
-      border: '2px solid var(--epr-category-icon-active-color)',
-      borderRadius: '50%',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    catBtn: {
+      '.': 'epr-cat-btn',
+      display: 'inline-block',
+      transition: 'opacity 0.2s ease-in-out',
+      position: 'relative',
+      height: 'var(--epr-category-navigation-button-size)',
+      width: 'var(--epr-category-navigation-button-size)',
+      outline: 'none',
+      // Icon glyphs are inline SVGs painted with currentColor, so the fill
+      // follows the --epr-category-icon-*-color variables.
+      // https://github.com/ealush/emoji-picker-react/issues/399
+      color: 'var(--epr-category-icon-inactive-color, #868686)',
+      ':focus:before': {
+        content: '',
+        position: 'absolute',
+        top: '-2px',
+        left: '-2px',
+        right: '-2px',
+        bottom: '-2px',
+        border: '2px solid var(--epr-category-icon-active-color)',
+        borderRadius: '50%',
+      },
     },
-  },
-  customIcon: {
-    '.': 'epr-cat-btn-custom-icon',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ...darkMode('catBtn', DarkInactiveColor),
-  '.epr-dark-theme': {
-    ...DarkInactivePosition,
-  },
-  '.epr-auto-theme': {
-    ...DarkInactivePosition,
-  },
-});
+    customIcon: {
+      '.': 'epr-cat-btn-custom-icon',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ...darkMode('catBtn', DarkInactiveColor),
+    '.epr-dark-theme': {
+      ...DarkInactivePosition,
+    },
+    '.epr-auto-theme': {
+      ...DarkInactivePosition,
+    },
+  }))();

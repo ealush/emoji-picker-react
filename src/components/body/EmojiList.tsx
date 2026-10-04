@@ -56,7 +56,6 @@ export function EmojiList({
   // The list markup is kept for a backwards-compatible DOM structure;
   // the grid role override is intentional.
   return (
-
     <ul
       {...nativeProps}
       className={cx(styles.emojiList, className)}
@@ -125,9 +124,7 @@ function RenderCategory({
   // https://github.com/ealush/emoji-picker-react/issues/475
   const isCategoryVisible =
     isFirstCategory ||
-    visibleCategories.includes(
-      categoryIdFromCategoryConfig(categoryConfig),
-    );
+    visibleCategories.includes(categoryIdFromCategoryConfig(categoryConfig));
 
   const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
     categoryEmojis,
@@ -151,11 +148,12 @@ function RenderCategory({
   );
 }
 
-const styles = stylesheet.create({
-  emojiList: {
-    '.': ClassNames.emojiList,
-    listStyle: 'none',
-    margin: '0',
-    padding: '0',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    emojiList: {
+      '.': ClassNames.emojiList,
+      listStyle: 'none',
+      margin: '0',
+      padding: '0',
+    },
+  }))();

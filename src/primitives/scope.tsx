@@ -20,7 +20,9 @@ interface RootScope {
   readonly root: true;
 }
 
-const RootScopeContext = React.createContext<RootScope | null>(null);
+const RootScopeContext = /* @__PURE__ */ React.createContext<RootScope | null>(
+  null,
+);
 
 export function RootScopeProvider({ children }: { children: React.ReactNode }) {
   const value = React.useMemo<RootScope>(() => ({ root: true }), []);
@@ -57,9 +59,11 @@ export function useRootScope(primitive: string): boolean {
   );
 }
 
-const ViewportScopeContext = React.createContext<boolean>(false);
+const ViewportScopeContext =
+  /* @__PURE__ */ React.createContext<boolean>(false);
 
-export const ViewportScrollContext = React.createContext<number>(0);
+export const ViewportScrollContext =
+  /* @__PURE__ */ React.createContext<number>(0);
 
 export function useViewportScrollTop(): number {
   return React.useContext(ViewportScrollContext);

@@ -16,48 +16,49 @@ import type { EmptyProps } from './types';
 // search text; without children it shows `labels.searchResultsNone`.
 // It is purely visual — the Search live region already announces the
 // result count, so Empty carries no live-region role of its own.
-export const Empty = React.forwardRef<HTMLDivElement, EmptyProps>(
-  function Empty(props, forwardedRef) {
-    const inScope = useRootScope('Empty');
-    const { children, className, ...rest } = props;
-    const nativeProps = filterPrimitiveProps(
-      rest as Record<string, unknown>,
-      ['role'],
-    );
-    const resultCount = useVisibleSearchResultCount();
-    const search = useAcceptedSearchValue();
-    const labels = useLabels();
-    const { loading, error } = useEmojiDataState();
+export const Empty = /* @__PURE__ */ React.forwardRef<
+  HTMLDivElement,
+  EmptyProps
+>(function Empty(props, forwardedRef) {
+  const inScope = useRootScope('Empty');
+  const { children, className, ...rest } = props;
+  const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+    'role',
+  ]);
+  const resultCount = useVisibleSearchResultCount();
+  const search = useAcceptedSearchValue();
+  const labels = useLabels();
+  const { loading, error } = useEmojiDataState();
 
-    if (!inScope || loading || error || resultCount !== 0) {
-      return null;
-    }
+  if (!inScope || loading || error || resultCount !== 0) {
+    return null;
+  }
 
-    return (
-      <div
-        {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
-        ref={forwardedRef}
-        data-epr-part="empty"
-        className={cx(styles.empty, className)}
-      >
-        {typeof children === 'function'
-          ? children({ search })
-          : children ?? labels.searchResultsNone}
-      </div>
-    );
-  },
-);
-
-const styles = stylesheet.create({
-  empty: {
-    '.': 'epr-empty',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'var(--epr-horizontal-padding)',
-    minHeight: 'var(--epr-emoji-fullsize)',
-    color: 'var(--epr-text-color)',
-    fontSize: 'var(--epr-preview-text-size)',
-    textAlign: 'center',
-  },
+  return (
+    <div
+      {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
+      ref={forwardedRef}
+      data-epr-part="empty"
+      className={cx(styles.empty, className)}
+    >
+      {typeof children === 'function'
+        ? children({ search })
+        : (children ?? labels.searchResultsNone)}
+    </div>
+  );
 });
+
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    empty: {
+      '.': 'epr-empty',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 'var(--epr-horizontal-padding)',
+      minHeight: 'var(--epr-emoji-fullsize)',
+      color: 'var(--epr-text-color)',
+      fontSize: 'var(--epr-preview-text-size)',
+      textAlign: 'center',
+    },
+  }))();

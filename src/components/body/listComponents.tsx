@@ -45,7 +45,7 @@ export type ListComponents = {
 const NO_COMPONENTS: ListComponents = {};
 
 export const ListComponentsContext =
-  React.createContext<ListComponents>(NO_COMPONENTS);
+  /* @__PURE__ */ React.createContext<ListComponents>(NO_COMPONENTS);
 
 export function useListComponents(): ListComponents {
   return React.useContext(ListComponentsContext);

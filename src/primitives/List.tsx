@@ -16,40 +16,41 @@ import type { ListProps } from './types';
 // be the single List child of Viewport. `components` swaps the markup of
 // emoji cells and category headers while the library keeps owning their
 // behavior (consumers spread the provided props).
-export const List = React.forwardRef<HTMLUListElement, ListProps>(
-  function List(props, forwardedRef) {
-    const inRoot = useRootScope('List');
-    const inViewport = useViewportScope('List');
-    const { components, ...rest } = props;
-    const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
-      'role',
-    ]);
-    const { className, ...restNative } = nativeProps as Omit<
-      React.HTMLAttributes<HTMLUListElement>,
-      'role' | 'children'
-    >;
+export const List = /* @__PURE__ */ React.forwardRef<
+  HTMLUListElement,
+  ListProps
+>(function List(props, forwardedRef) {
+  const inRoot = useRootScope('List');
+  const inViewport = useViewportScope('List');
+  const { components, ...rest } = props;
+  const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+    'role',
+  ]);
+  const { className, ...restNative } = nativeProps as Omit<
+    React.HTMLAttributes<HTMLUListElement>,
+    'role' | 'children'
+  >;
 
-    const EmojiListRef = useEmojiListRef();
-    const scrollTop = useViewportScrollTop();
+  const EmojiListRef = useEmojiListRef();
+  const scrollTop = useViewportScrollTop();
 
-    if (!inRoot || !inViewport) {
-      return null;
-    }
+  if (!inRoot || !inViewport) {
+    return null;
+  }
 
-    const list = (
-      <EmojiList
-        scrollTop={scrollTop}
-        outerRef={mergeRefs(EmojiListRef, forwardedRef)}
-        className={cx(className)}
-        nativeProps={restNative}
-      />
-    );
-    return components ? (
-      <ListComponentsContext.Provider value={components}>
-        {list}
-      </ListComponentsContext.Provider>
-    ) : (
-      list
-    );
-  },
-);
+  const list = (
+    <EmojiList
+      scrollTop={scrollTop}
+      outerRef={mergeRefs(EmojiListRef, forwardedRef)}
+      className={cx(className)}
+      nativeProps={restNative}
+    />
+  );
+  return components ? (
+    <ListComponentsContext.Provider value={components}>
+      {list}
+    </ListComponentsContext.Provider>
+  ) : (
+    list
+  );
+});

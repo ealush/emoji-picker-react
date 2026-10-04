@@ -73,33 +73,34 @@ export function Search({
   );
 }
 
-const styles = stylesheet.create({
-  overlay: {
-    padding: 'var(--epr-header-padding)',
-    zIndex: 'var(--epr-header-overlay-z-index)',
-  },
-  searchContainer: {
-    '.': 'epr-search-container',
-    flex: '1',
-    display: 'block',
-    minWidth: '0',
-  },
-  search: {
-    outline: 'none',
-    transition: 'all 0.2s ease-in-out',
-    color: 'var(--epr-search-input-text-color)',
-    borderRadius: 'var(--epr-search-input-border-radius)',
-    padding: 'var(--epr-search-input-padding)',
-    height: 'var(--epr-search-input-height)',
-    backgroundColor: 'var(--epr-search-input-bg-color)',
-    border: '1px solid var(--epr-search-border-color)',
-    width: '100%',
-    ':focus': {
-      backgroundColor: 'var(--epr-search-input-bg-color-active)',
-      border: '1px solid var(--epr-search-border-color-active)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    overlay: {
+      padding: 'var(--epr-header-padding)',
+      zIndex: 'var(--epr-header-overlay-z-index)',
     },
-    '::placeholder': {
-      color: 'var(--epr-search-input-placeholder-color)',
+    searchContainer: {
+      '.': 'epr-search-container',
+      flex: '1',
+      display: 'block',
+      minWidth: '0',
     },
-  },
-});
+    search: {
+      outline: 'none',
+      transition: 'all 0.2s ease-in-out',
+      color: 'var(--epr-search-input-text-color)',
+      borderRadius: 'var(--epr-search-input-border-radius)',
+      padding: 'var(--epr-search-input-padding)',
+      height: 'var(--epr-search-input-height)',
+      backgroundColor: 'var(--epr-search-input-bg-color)',
+      border: '1px solid var(--epr-search-border-color)',
+      width: '100%',
+      ':focus': {
+        backgroundColor: 'var(--epr-search-input-bg-color-active)',
+        border: '1px solid var(--epr-search-border-color-active)',
+      },
+      '::placeholder': {
+        color: 'var(--epr-search-input-placeholder-color)',
+      },
+    },
+  }))();

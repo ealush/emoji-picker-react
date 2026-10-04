@@ -12,28 +12,28 @@ import type { PreviewProps } from './types';
 //
 // Managed preview region, including the preview-position skin-tone
 // control. Renders nothing when preview is disabled.
-export const Preview = React.forwardRef<HTMLDivElement, PreviewProps>(
-  function Preview(props, forwardedRef) {
-    const inScope = useRootScope('Preview');
-    useSingletonClaim('preview');
-    const previewConfig = usePreviewConfig();
-    const nativeProps = filterPrimitiveProps(
-      props as Record<string, unknown>,
-      ['role'],
-    );
+export const Preview = /* @__PURE__ */ React.forwardRef<
+  HTMLDivElement,
+  PreviewProps
+>(function Preview(props, forwardedRef) {
+  const inScope = useRootScope('Preview');
+  useSingletonClaim('preview');
+  const previewConfig = usePreviewConfig();
+  const nativeProps = filterPrimitiveProps(props as Record<string, unknown>, [
+    'role',
+  ]);
 
-    if (!inScope || !previewConfig.showPreview) {
-      return null;
-    }
+  if (!inScope || !previewConfig.showPreview) {
+    return null;
+  }
 
-    return (
-      <div
-        {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
-        ref={forwardedRef}
-        data-epr-part="preview"
-      >
-        <PreviewView />
-      </div>
-    );
-  },
-);
+  return (
+    <div
+      {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
+      ref={forwardedRef}
+      data-epr-part="preview"
+    >
+      <PreviewView />
+    </div>
+  );
+});

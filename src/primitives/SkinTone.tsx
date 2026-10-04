@@ -29,52 +29,52 @@ import type { SkinToneProps } from './types';
 // `orientation` sets the axis the tones fan out along: horizontal expands to
 // the start side (fits a trailing slot in a toolbar), vertical expands
 // upward (fits a footer).
-export const SkinTone = React.forwardRef<HTMLDivElement, SkinToneProps>(
-  function SkinTone(props, forwardedRef) {
-    const inScope = useRootScope('SkinTone');
-    const { orientation = 'horizontal', className, ...rest } = props;
-    const nativeProps = filterPrimitiveProps(
-      rest as Record<string, unknown>,
-      ['role'],
-    );
-    const disabled = useSkinTonesDisabledConfig();
-    const location = useSkinTonePickerLocationConfig();
-    const SkinTonePickerRef = useSkinTonePickerRef();
-    useRegisterRegion('preview-skin-tone', SkinTonePickerRef, [disabled]);
+export const SkinTone = /* @__PURE__ */ React.forwardRef<
+  HTMLDivElement,
+  SkinToneProps
+>(function SkinTone(props, forwardedRef) {
+  const inScope = useRootScope('SkinTone');
+  const { orientation = 'horizontal', className, ...rest } = props;
+  const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
+    'role',
+  ]);
+  const disabled = useSkinTonesDisabledConfig();
+  const location = useSkinTonePickerLocationConfig();
+  const SkinTonePickerRef = useSkinTonePickerRef();
+  useRegisterRegion('preview-skin-tone', SkinTonePickerRef, [disabled]);
 
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      location !== SkinTonePickerLocation.NONE
-    ) {
-      warnBuiltInPlacement();
-    }
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    location !== SkinTonePickerLocation.NONE
+  ) {
+    warnBuiltInPlacement();
+  }
 
-    if (!inScope || disabled) {
-      return null;
-    }
+  if (!inScope || disabled) {
+    return null;
+  }
 
-    const vertical = orientation === 'vertical';
+  const vertical = orientation === 'vertical';
 
-    return (
-      <div
-        {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
-        ref={forwardedRef}
-        className={cx(
-          vertical ? styles.verticalHost : styles.horizontalHost,
-          className,
-        )}
-      >
-        {vertical ? (
-          <div className={cx(styles.verticalAnchor)}>
-            <SkinTonePicker direction={SkinTonePickerDirection.VERTICAL} />
-          </div>
-        ) : (
-          <SkinTonePicker direction={SkinTonePickerDirection.HORIZONTAL} />
-        )}
-      </div>
-    );
-  },
-);
+  return (
+    <div
+      {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
+      ref={forwardedRef}
+      className={cx(
+        vertical ? styles.verticalHost : styles.horizontalHost,
+        className,
+      )}
+    >
+      {vertical ? (
+        <div className={cx(styles.verticalAnchor)}>
+          <SkinTonePicker direction={SkinTonePickerDirection.VERTICAL} />
+        </div>
+      ) : (
+        <SkinTonePicker direction={SkinTonePickerDirection.HORIZONTAL} />
+      )}
+    </div>
+  );
+});
 
 let warned = false;
 function warnBuiltInPlacement() {
@@ -92,23 +92,24 @@ function warnBuiltInPlacement() {
 
 const ITEM_SIZE = 28;
 
-const styles = stylesheet.create({
-  horizontalHost: {
-    '.': 'epr-skin-tone-host',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  verticalHost: {
-    '.': 'epr-skin-tone-host-vertical',
-    position: 'relative',
-    height: `${ITEM_SIZE}px`,
-    width: `${ITEM_SIZE}px`,
-  },
-  verticalAnchor: {
-    position: 'absolute',
-    bottom: '0',
-    right: '0',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    horizontalHost: {
+      '.': 'epr-skin-tone-host',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      position: 'relative',
+    },
+    verticalHost: {
+      '.': 'epr-skin-tone-host-vertical',
+      position: 'relative',
+      height: `${ITEM_SIZE}px`,
+      width: `${ITEM_SIZE}px`,
+    },
+    verticalAnchor: {
+      position: 'absolute',
+      bottom: '0',
+      right: '0',
+    },
+  }))();

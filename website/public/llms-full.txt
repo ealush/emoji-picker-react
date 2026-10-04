@@ -11,7 +11,7 @@ Key facts:
 - Entry points: `emoji-picker-react` (default export EmojiPicker, enums, types); `emoji-picker-react/primitives` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); `emoji-picker-react/data` (searchEmojis, getEmojiByUnified — no React); `emoji-picker-react/data/emojis-<locale>` (28 datasets).
 - Styling: `--epr-*` CSS variables (they always yield to consumer CSS), `[data-epr-part="…"]` selectors, `className`/`style`. Global app resets cannot break it (unlayered CSS). With Tailwind v4 or other @layer setups pass `cssLayer="epr"` and declare `@layer epr, theme, base, components, utilities;` first.
 - Prefer `colorScheme="light" | "dark" | "auto"` over `theme` (CSS-in-JS wrappers reserve `theme`). Props accept string literals or enums.
-- Accessibility: WCAG 2.1 AA (axe-tested), full keyboard navigation, grid semantics (emoji buttons are `role="gridcell"`), every UI string localizable through `labels`.
+- Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are `role="gridcell"`); every UI string localizable through `labels`. Manual screen-reader verification has a separate release protocol.
 - Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.
 
@@ -817,7 +817,7 @@ All 25 designs share a source generator. Their seven styling-stack variants rema
 
 Import runtime constants from `/primitives`. Runtime imports from the main or `/data` entry register the synchronous default dataset, so those mixed graphs intentionally have a larger initial payload.
 
-The configured minimal packed ESM consumer currently measures about 40 KiB initial gzip including ShipStyles, with the dataset deferred. The complete-runtime regression cap is 41 KiB; the previous 40 KiB gate excluded ShipStyles and is not comparable. Reducing the runtime toward 25 KiB remains profiling work. Do not present this candidate as smaller than Frimousse or compare fetched data traffic to JavaScript-only numbers.
+The configured minimal consumer, bundled from an installed package tarball, measures **33.0 KiB initial gzip including ShipStyles**, with the dataset deferred. Unused parts, icons and styles can be removed by the consumer bundler; the default picker retains its complete composition. The complete-runtime regression cap is **34 KiB**, down from 41 KiB after the original 40.5 KiB adoption candidate. Earlier gates that excluded ShipStyles are not comparable. Reducing the runtime toward 25 KiB remains profiling work. Account for initial JavaScript and dataset traffic separately.
 
 <!-- source: docs/v5/API.md -->
 
@@ -1950,6 +1950,46 @@ Before v5 ships, executable coverage must prove:
 - changing supported emoji size/padding variables updates measurement and keyboard row math correctly;
 - cosmetic overrides do not break virtualization;
 - the variation picker remains visible and keyboard-operable in a custom primitive composition.
+
+<!-- source: docs/v5/ACCESSIBILITY_VERIFICATION.md -->
+
+# Manual accessibility release verification
+
+Automated axe, keyboard, focus, localization and browser checks are regression evidence. Complete this protocol on the release candidate before claiming verified screen-reader coverage. No manual screen-reader pass is recorded here yet.
+
+## Environments
+
+Record the candidate commit, OS, browser and assistive-technology versions for each run.
+
+| Environment | Required compositions |
+| --- | --- |
+| NVDA with Chrome on Windows | Default picker; registry popover; custom-cell picker |
+| VoiceOver with Safari on macOS | Default picker; registry popover; typeahead textarea |
+| VoiceOver with Safari on iOS | Mobile picker; touch variations; scrolling |
+
+Repeat the desktop core flow with localized emoji data and UI labels, and with an RTL host. Record actual announcements and focus destinations, not just whether the picker opens.
+
+## Core keyboard and announcements
+
+1. Open the picker from its host trigger. Confirm an accessible name, predictable initial focus and no focus in the hidden reactions panel.
+2. Navigate Search, category tabs, grid and skin-tone regions using their documented keys. Confirm visible focus, category context and emoji names. Verify arrow movement after scrolling the virtualized list.
+3. Search for a known term, a nonexistent term and an IME-composed term. Confirm one final composed search, correct result/empty announcements and no stale empty announcement during data loading.
+4. Select with Enter/Space. Confirm the callback inserts at the host caret, retains the suffix and restores focus as the host example specifies.
+5. Open variations or the skin-tone fan. The first Escape closes that menu; the next Escape dismisses the host popover. Focus returns to its trigger. Confirm the closed fan's hidden options are outside Tab order.
+6. Collapse to reactions and expand again. Confirm hidden/inert content is unreachable, reaction names and the expansion button are announced, and focus lands in the visible region.
+7. Repeat with a custom image cell. Confirm its accessible name, keyboard selection and active focus indication survive consumer markup replacement.
+
+## Localization, loading and presentation
+
+1. Use localized data, categories, preview caption and all `labels` fields. Confirm search, results, loading/error/retry, reaction controls and tone names have no unexpected English fallback. Omitted labels intentionally use English defaults.
+2. Force an async dataset failure. Confirm the alert and retry control are announced and reachable. Retry, then replace the source during loading; confirm recovery without duplicate or stale announcements.
+3. At 200% zoom and a narrow viewport, verify search, tabs, grid, tones and host dismissal remain reachable. Repeat in RTL and confirm focus order matches the documented region order.
+4. On iOS, scroll without selecting an emoji or opening variations. Long press a variation-enabled emoji, release without selecting accidentally, then choose a variation and verify the announced name.
+5. Check default and custom light/dark compositions for text contrast and visible focus. A consumer's custom styling requires its own review.
+
+## Result record
+
+For each flow, record pass/fail, the environment, exact announcement/focus mismatch and a reproducible story or consumer. File any blocker as a release issue with reproduction steps; do not mark this protocol passed based on automated axe alone.
 
 <!-- source: docs/v5/DATA_API.md -->
 

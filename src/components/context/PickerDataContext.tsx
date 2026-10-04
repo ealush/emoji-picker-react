@@ -43,15 +43,16 @@ export interface PickerDataContextValue {
   queryFilterDict: (query: string) => FilterDict;
 }
 
-const PickerDataContext = React.createContext<PickerDataContextValue>({
-  emojiData: {} as EmojiData,
-  allEmojis: [],
-  allEmojisByUnified: Object.create(null),
-  customGroups: Object.create(null),
-  emojiByUnified,
-  activeVariationFromUnified: () => null,
-  queryFilterDict: () => ({}),
-});
+const PickerDataContext =
+  /* @__PURE__ */ React.createContext<PickerDataContextValue>({
+    emojiData: {} as EmojiData,
+    allEmojis: [],
+    allEmojisByUnified: Object.create(null),
+    customGroups: Object.create(null),
+    emojiByUnified,
+    activeVariationFromUnified: () => null,
+    queryFilterDict: () => ({}),
+  });
 
 export function PickerDataProvider({
   children,
@@ -114,9 +115,7 @@ export function PickerDataProvider({
         }
       }
       for (const custom of allCustomEmojis) {
-        if (
-          emojiNames(custom).some((name) => name.includes(normalized))
-        ) {
+        if (emojiNames(custom).some((name) => name.includes(normalized))) {
           dict[custom[Keys.unified]] = custom;
         }
       }

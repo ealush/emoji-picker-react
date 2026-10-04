@@ -4,7 +4,13 @@ import { Styles, createSheet } from 'shipstyles';
 import { ClassNames } from '../DomUtils/classNames';
 import { isJsdom } from '../DomUtils/isJsdom';
 
-export const stylesheet = createSheet('epr', null);
+// No DOM root: allocating this sheet has no observable effect when its
+// consumers are unused. Keep component style construction in annotated,
+// argument-free factories so bundlers can drop an unused part together
+// with its styles/icons (including darkMode argument construction).
+// A rendered part references its style handles and retains its factory.
+// Default emoji-data registration is intentionally NOT marked pure.
+export const stylesheet = /* @__PURE__ */ createSheet('epr', null);
 
 /**
  * Library CSS is unlayered by default, like v4: library classes win over
@@ -50,83 +56,87 @@ const hidden = {
   overflow: 'hidden',
 };
 
-export const commonStyles = stylesheet.create({
-  hidden: {
-    '.': ClassNames.hidden,
-    ...hidden,
-  },
-});
+export const commonStyles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    hidden: {
+      '.': ClassNames.hidden,
+      ...hidden,
+    },
+  }))();
 
-export const PickerStyleTag = React.memo(function PickerStyleTag({
-  nonce,
-  cssLayer,
-}: {
-  nonce?: string;
-  cssLayer?: string;
-}) {
-  return (
-    <style
-      nonce={nonce}
-      suppressHydrationWarning
-      dangerouslySetInnerHTML={{
-        __html: finalizeCss(stylesheet.getStyle(), cssLayer),
-      }}
-    />
-  );
-});
+export const PickerStyleTag = /* @__PURE__ */ React.memo(
+  function PickerStyleTag({
+    nonce,
+    cssLayer,
+  }: {
+    nonce?: string;
+    cssLayer?: string;
+  }) {
+    return (
+      <style
+        nonce={nonce}
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: finalizeCss(stylesheet.getStyle(), cssLayer),
+        }}
+      />
+    );
+  },
+);
 
 // Behavioral state selectors are scoped to the structural root class that
 // every Root carries (default picker and bare primitives alike). Scoping
 // them to the default appearance's classes (epr-main / EmojiPickerReact)
 // left bare compositions with an always-visible clear button, no active
 // category tab state, and search-hidden items that never hid.
-export const commonInteractionStyles = stylesheet.create({
-  '.epr-structural-root': {
-    ':has(input:not(:placeholder-shown))': {
+export const commonInteractionStyles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    '.epr-structural-root': {
+      ':has(input:not(:placeholder-shown))': {
+        categoryBtn: {
+          ':hover': {
+            opacity: '1',
+            color: 'var(--epr-category-icon-active-color, #3371B7)',
+          },
+        },
+        hiddenOnSearch: {
+          '.': ClassNames.hiddenOnSearch,
+          ...hidden,
+        },
+      },
+      ':has(input:placeholder-shown)': {
+        visibleOnSearchOnly: hidden,
+      },
+    },
+    hiddenOnReactions: {
+      transition: 'all 0.5s ease-in-out',
+    },
+    '.epr-reactions': {
+      hiddenOnReactions: {
+        height: '0px',
+        width: '0px',
+        opacity: '0',
+        pointerEvents: 'none',
+        overflow: 'hidden',
+      },
+    },
+    '.epr-structural-root:not(.epr-search-active)': {
       categoryBtn: {
         ':hover': {
           opacity: '1',
           color: 'var(--epr-category-icon-active-color, #3371B7)',
         },
+        '&.epr-active': {
+          opacity: '1',
+          color: 'var(--epr-category-icon-active-color, #3371B7)',
+        },
       },
-      hiddenOnSearch: {
-        '.': ClassNames.hiddenOnSearch,
+      visibleOnSearchOnly: {
+        '.': 'epr-visible-on-search-only',
         ...hidden,
       },
     },
-    ':has(input:placeholder-shown)': {
-      visibleOnSearchOnly: hidden,
-    },
-  },
-  hiddenOnReactions: {
-    transition: 'all 0.5s ease-in-out',
-  },
-  '.epr-reactions': {
-    hiddenOnReactions: {
-      height: '0px',
-      width: '0px',
-      opacity: '0',
-      pointerEvents: 'none',
-      overflow: 'hidden',
-    },
-  },
-  '.epr-structural-root:not(.epr-search-active)': {
-    categoryBtn: {
-      ':hover': {
-        opacity: '1',
-        color: 'var(--epr-category-icon-active-color, #3371B7)',
-      },
-      '&.epr-active': {
-        opacity: '1',
-        color: 'var(--epr-category-icon-active-color, #3371B7)',
-      },
-    },
-    visibleOnSearchOnly: {
-      '.': 'epr-visible-on-search-only',
-      ...hidden,
-    },
-  },
-});
+  }))();
 
 // Explicit return type: the inferred shape references shipstyles'
 // private PostConditionStyles, which declaration emit cannot name

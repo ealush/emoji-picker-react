@@ -22,47 +22,48 @@ export function BtnPlus() {
   );
 }
 
-const styles = stylesheet.create({
-  plusSign: {
-    fontSize: '20px',
-    padding: '17px',
-    color: 'var(--epr-text-color)',
-    borderRadius: '50%',
-    textAlign: 'center',
-    lineHeight: '100%',
-    width: '20px',
-    height: '20px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    transition: 'background-color 0.2s ease-in-out',
-    ':after': {
-      content: '',
-      minWidth: '20px',
-      minHeight: '20px',
-      backgroundImage: `url("${Plus}")`,
-      backgroundColor: 'transparent',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: '20px',
-      backgroundPositionY: '0',
-    },
-    ':hover': {
-      color: 'var(--epr-highlight-color)',
-      backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    plusSign: {
+      fontSize: '20px',
+      padding: '17px',
+      color: 'var(--epr-text-color)',
+      borderRadius: '50%',
+      textAlign: 'center',
+      lineHeight: '100%',
+      width: '20px',
+      height: '20px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      transition: 'background-color 0.2s ease-in-out',
       ':after': {
-        backgroundPositionY: '-20px',
+        content: '',
+        minWidth: '20px',
+        minHeight: '20px',
+        backgroundImage: `url("${Plus}")`,
+        backgroundColor: 'transparent',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '20px',
+        backgroundPositionY: '0',
+      },
+      ':hover': {
+        color: 'var(--epr-highlight-color)',
+        backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
+        ':after': {
+          backgroundPositionY: '-20px',
+        },
+      },
+      ':focus': {
+        color: 'var(--epr-highlight-color)',
+        backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
+        ':after': {
+          backgroundPositionY: '-40px',
+        },
       },
     },
-    ':focus': {
-      color: 'var(--epr-highlight-color)',
-      backgroundColor: 'var(--epr-hover-bg-color-reduced-opacity)',
-      ':after': {
-        backgroundPositionY: '-40px',
-      },
-    },
-  },
-  ...darkMode('plusSign', {
-    ':after': { backgroundPositionY: '-40px' },
-    ':hover:after': { backgroundPositionY: '-60px' },
-  }),
-});
+    ...darkMode('plusSign', {
+      ':after': { backgroundPositionY: '-40px' },
+      ':hover:after': { backgroundPositionY: '-60px' },
+    }),
+  }))();

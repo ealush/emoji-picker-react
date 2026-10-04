@@ -138,7 +138,7 @@ function assignRootProp(
   asideProps[key] = value;
 }
 
-export const Root = React.forwardRef<HTMLElement, RootProps>(
+export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
   function Root(props, forwardedRef) {
     const { children, panelProps, ...rest } = props;
     const { behaviorProps: rawBehaviorProps, asideProps } =
@@ -199,7 +199,7 @@ export const Root = React.forwardRef<HTMLElement, RootProps>(
   },
 );
 
-const RootAside = React.forwardRef<
+const RootAside = /* @__PURE__ */ React.forwardRef<
   HTMLElement,
   {
     asideProps: Record<string, unknown>;
@@ -301,7 +301,7 @@ const RootAside = React.forwardRef<
 // Memoized: the aside rerenders per keystroke, and a skipped panel skips
 // the entire full-picker subtree with it (consumers with inline children
 // elements still update, as with any memo boundary).
-const ManagedPanel = React.memo(function ManagedPanel({
+const ManagedPanel = /* @__PURE__ */ React.memo(function ManagedPanel({
   hidden,
   children,
   panelProps,

@@ -18,9 +18,10 @@ export type MutableConfig = {
  */
 export const NO_MUTABLE_PROVIDER = {} as React.MutableRefObject<MutableConfig>;
 
-export const MutableConfigContext = React.createContext<
-  React.MutableRefObject<MutableConfig>
->(NO_MUTABLE_PROVIDER);
+export const MutableConfigContext =
+  /* @__PURE__ */ React.createContext<React.MutableRefObject<MutableConfig>>(
+    NO_MUTABLE_PROVIDER,
+  );
 
 export function useMutableConfig(): React.MutableRefObject<MutableConfig> {
   const mutableConfig = React.useContext(MutableConfigContext);

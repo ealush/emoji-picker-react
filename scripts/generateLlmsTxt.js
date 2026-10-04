@@ -20,7 +20,7 @@ const KEY_FACTS = `Key facts:
 - Entry points: \`emoji-picker-react\` (default export EmojiPicker, enums, types); \`emoji-picker-react/primitives\` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified — no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
 - Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Global app resets cannot break it (unlayered CSS). With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
 - Prefer \`colorScheme="light" | "dark" | "auto"\` over \`theme\` (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
-- Accessibility: WCAG 2.1 AA (axe-tested), full keyboard navigation, grid semantics (emoji buttons are \`role="gridcell"\`), every UI string localizable through \`labels\`.
+- Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are \`role="gridcell"\`); every UI string localizable through \`labels\`. Manual screen-reader verification has a separate release protocol.
 - Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.`;
 
@@ -35,6 +35,7 @@ const DOCS = [
   ['docs/v5/API.md', 'v5 API', 'all v5 additions with examples'],
   ['docs/v5/PRIMITIVES.md', 'Primitives', 'composable parts, hooks, custom cells, grammar'],
   ['docs/v5/STYLING.md', 'Styling contract', 'tokens, parts, cascade, structural rules'],
+  ['docs/v5/ACCESSIBILITY_VERIFICATION.md', 'Accessibility verification', 'keyboard, screen-reader, localization and host focus release protocol'],
   ['docs/v5/DATA_API.md', 'Data API', 'framework-free search and lookup'],
   ['docs/v5/MIGRATION.md', 'Migrating from v4', 'what changed and how to upgrade'],
 ];

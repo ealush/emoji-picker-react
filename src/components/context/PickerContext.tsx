@@ -81,16 +81,17 @@ export interface PickerServices {
   navigationRegistry: NavigationRegistry;
 }
 
-const PickerServicesContext = React.createContext<PickerServices>({
-  activeEmojiStore: createActiveEmojiStore(),
-  filterRef: { current: {} },
-  filterQueryOrderRef: { current: [] },
-  disallowClickRef: { current: false },
-  disallowMouseRef: { current: false },
-  navigationRegistry: new NavigationRegistry(),
-});
+const PickerServicesContext =
+  /* @__PURE__ */ React.createContext<PickerServices>({
+    activeEmojiStore: createActiveEmojiStore(),
+    filterRef: { current: {} },
+    filterQueryOrderRef: { current: [] },
+    disallowClickRef: { current: false },
+    disallowMouseRef: { current: false },
+    navigationRegistry: new NavigationRegistry(),
+  });
 
-const SearchSliceContext = React.createContext<{
+const SearchSliceContext = /* @__PURE__ */ React.createContext<{
   searchTerm: [string, (term: string) => Promise<string>];
   suggestedUpdateState: [number, (term: number) => void];
 }>({
@@ -101,7 +102,7 @@ const SearchSliceContext = React.createContext<{
 // Raw input/display state for the search transition (docs/v5/STATE.md).
 // Kept separate from the debounced accepted query above so keystrokes only
 // rerender input subscribers, while commits flow through the query slice.
-const SearchInputSliceContext = React.createContext<{
+const SearchInputSliceContext = /* @__PURE__ */ React.createContext<{
   displayValue: ReactState<string>;
   committedValue: ReactState<string>;
   composing: ReactState<boolean>;
@@ -111,10 +112,9 @@ const SearchInputSliceContext = React.createContext<{
   composing: [false, () => {}],
 });
 
-const ReactionsSliceContext = React.createContext<ReactState<boolean>>([
-  false,
-  () => {},
-]);
+const ReactionsSliceContext = /* @__PURE__ */ React.createContext<
+  ReactState<boolean>
+>([false, () => {}]);
 
 // Hovered/focused emoji (unified + original unified), written by the
 // Viewport's pointer/focus listeners and read by Preview and the public
@@ -124,11 +124,11 @@ export type ActiveEmojiState = null | {
   originalUnified: string;
 };
 
-const VariationSliceContext = React.createContext<ReactState<DataEmoji | null>>(
-  [null, () => {}],
-);
+const VariationSliceContext = /* @__PURE__ */ React.createContext<
+  ReactState<DataEmoji | null>
+>([null, () => {}]);
 
-const SkinToneSliceContext = React.createContext<{
+const SkinToneSliceContext = /* @__PURE__ */ React.createContext<{
   activeSkinTone: ReactState<SkinTones>;
   skinToneFanOpenState: ReactState<boolean>;
 }>({
@@ -136,7 +136,7 @@ const SkinToneSliceContext = React.createContext<{
   skinToneFanOpenState: [false, () => {}],
 });
 
-const ViewportSliceContext = React.createContext<{
+const ViewportSliceContext = /* @__PURE__ */ React.createContext<{
   activeCategoryState: ReactState<ActiveCategoryState>;
   visibleCategoriesState: ReactState<Array<string>>;
   emojiSizeState: ReactState<number | null>;
@@ -146,7 +146,7 @@ const ViewportSliceContext = React.createContext<{
   emojiSizeState: [null, () => {}],
 });
 
-const LoadSliceContext = React.createContext<{
+const LoadSliceContext = /* @__PURE__ */ React.createContext<{
   emojisThatFailedToLoadState: ReactState<Set<string>>;
   isPastInitialLoad: boolean;
 }>({
@@ -157,9 +157,8 @@ const LoadSliceContext = React.createContext<{
 // Platform emoji support, probed once per Root after mount. `null` means
 // "no filtering": before mount (SSR and the hydration render), for image
 // emoji styles, and whenever the consumer pins `emojiVersion`.
-const NativeSupportContext = React.createContext<NativeEmojiSupport | null>(
-  null,
-);
+const NativeSupportContext =
+  /* @__PURE__ */ React.createContext<NativeEmojiSupport | null>(null);
 
 function useNativeEmojiSupportState(): NativeEmojiSupport | null {
   const emojiStyle = useEmojiStyleConfig();

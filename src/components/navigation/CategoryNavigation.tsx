@@ -28,7 +28,7 @@ import { CategoryButton } from './CategoryButton';
 // owns section observation. The tablist only highlights and scrolls.
 // Keeping observation in the tablist would stop section tracking whenever
 // the bar unmounts (single tab) or is omitted from a composition.
-const ActiveCategoryContext = React.createContext<{
+const ActiveCategoryContext = /* @__PURE__ */ React.createContext<{
   activeCategory: string | null;
   setActiveCategory: (category: string | null) => void;
 }>({
@@ -144,34 +144,35 @@ export function CategoryNavigation({
   );
 }
 
-const styles = stylesheet.create({
-  nav: {
-    '.': 'epr-category-nav',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 'var(--epr-header-padding)',
-  },
-  vertical: {
-    '.': 'epr-category-nav-vertical',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    gap: 'var(--epr-horizontal-padding)',
-    padding: 'var(--epr-horizontal-padding) 0',
-  },
-  '.epr-search-active': {
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
     nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none',
+      '.': 'epr-category-nav',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 'var(--epr-header-padding)',
     },
-  },
-  '.epr-structural-root:has(input:not(:placeholder-shown))': {
-    nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none',
+    vertical: {
+      '.': 'epr-category-nav-vertical',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      gap: 'var(--epr-horizontal-padding)',
+      padding: 'var(--epr-horizontal-padding) 0',
     },
-  },
-});
+    '.epr-search-active': {
+      nav: {
+        opacity: '0.3',
+        cursor: 'default',
+        pointerEvents: 'none',
+      },
+    },
+    '.epr-structural-root:has(input:not(:placeholder-shown))': {
+      nav: {
+        opacity: '0.3',
+        cursor: 'default',
+        pointerEvents: 'none',
+      },
+    },
+  }))();

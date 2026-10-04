@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { cx } from 'shipstyles';
 
@@ -131,40 +130,41 @@ export enum SkinTonePickerDirection {
   HORIZONTAL = ClassNames.horizontal,
 }
 
-const styles = stylesheet.create({
-  skinTones: {
-    '.': 'epr-skin-tones',
-    '--': {
-      '--epr-skin-tone-size': '15px',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    skinTones: {
+      '.': 'epr-skin-tones',
+      '--': {
+        '--epr-skin-tone-size': '15px',
+      },
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      transition: 'all 0.3s ease-in-out',
+      padding: '10px 0',
     },
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    transition: 'all 0.3s ease-in-out',
-    padding: '10px 0',
-  },
-  vertical: {
-    padding: '9px',
-    alignItems: 'flex-end',
-    flexDirection: 'column',
-    borderRadius: '6px',
-    border: '1px solid var(--epr-bg-color)',
-  },
-  verticalShadow: {
-    boxShadow: '0px 0 7px var(--epr-picker-border-color)',
-  },
-  open: {
-    // @ts-ignore - backdropFilter is not recognized.
-    backdropFilter: 'blur(5px)',
-    background: 'var(--epr-skin-tone-picker-menu-color)',
-    '.epr-active': {
-      border: '1px solid var(--epr-active-skin-tone-indicator-border-color)',
+    vertical: {
+      padding: '9px',
+      alignItems: 'flex-end',
+      flexDirection: 'column',
+      borderRadius: '6px',
+      border: '1px solid var(--epr-bg-color)',
     },
-  },
-  select: {
-    '.': 'epr-skin-tone-select',
-    position: 'relative',
-    width: 'var(--epr-skin-tone-size)',
-    height: 'var(--epr-skin-tone-size)',
-  },
-});
+    verticalShadow: {
+      boxShadow: '0px 0 7px var(--epr-picker-border-color)',
+    },
+    open: {
+      // @ts-ignore - backdropFilter is not recognized.
+      backdropFilter: 'blur(5px)',
+      background: 'var(--epr-skin-tone-picker-menu-color)',
+      '.epr-active': {
+        border: '1px solid var(--epr-active-skin-tone-indicator-border-color)',
+      },
+    },
+    select: {
+      '.': 'epr-skin-tone-select',
+      position: 'relative',
+      width: 'var(--epr-skin-tone-size)',
+      height: 'var(--epr-skin-tone-size)',
+    },
+  }))();

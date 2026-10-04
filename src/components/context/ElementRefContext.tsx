@@ -58,7 +58,7 @@ type ElementRefs = {
   ReactionsRef: ElementRef<HTMLUListElement>;
 };
 
-const ElementRefContext = React.createContext<ElementRefs>({
+const ElementRefContext = /* @__PURE__ */ React.createContext<ElementRefs>({
   AnchoredEmojiRef: React.createRef(),
   BodyRef: React.createRef(),
   CategoryNavigationRef: React.createRef(),

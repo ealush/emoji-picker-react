@@ -56,8 +56,6 @@ function main() {
     );
   }
 
-  checkPrimitivesInitialBudget();
-
   const scratch = mkdtempSync(join(tmpdir(), 'epr-package-check-'));
   console.log(`package check scratch dir: ${scratch}`);
 
@@ -90,6 +88,12 @@ function main() {
     { cwd: scratch },
   );
 
+  const bundleDir = checkPrimitivesInitialBudget(scratch);
+  const mainBundleDir = bundleDefaultConsumer(scratch);
+  copyFileSync(join(__dirname, 'primitives-bundle-check.mjs'), join(scratch, 'primitives-bundle-check.mjs'));
+  sh('node', [join(scratch, 'primitives-bundle-check.mjs'), join(bundleDir, 'entry.mjs')], { cwd: scratch });
+  sh('node', [join(scratch, 'primitives-bundle-check.mjs'), join(mainBundleDir, 'entry.mjs'), 'default'], { cwd: scratch });
+
   for (const file of ['consumer-check.cjs', 'consumer-check.mjs']) {
     copyFileSync(join(__dirname, file), join(scratch, file));
   }
@@ -112,19 +116,19 @@ function main() {
 // with its lazily loaded dataset. This budget measures what a consumer
 // bundle actually loads up front: the entry plus its static chunks,
 // minified and gzipped, with the dataset left in its own lazy chunk.
-// The former 40 KiB gate excluded ShipStyles. This 41 KiB cap measures
-// a configured consumer including that runtime (40.4 KiB at adoption v5).
-// Keep the complete measurement; startup reduction remains a separate target.
-const PRIMITIVES_INITIAL_BUDGET_BYTES = 41 * 1024;
+// The original adoption consumer was 40.5 KiB including ShipStyles.
+// Unused part/style factories now tree-shake: keep the complete measurement
+// and enforce a 34 KiB cap against the installed tarball's public entry.
+const PRIMITIVES_INITIAL_BUDGET_BYTES = 34 * 1024;
 
-function checkPrimitivesInitialBudget() {
+function checkPrimitivesInitialBudget(scratch) {
   const { gzipSync } = require('zlib');
   const { readFileSync, readdirSync } = require('fs');
-  const out = mkdtempSync(join(tmpdir(), 'epr-primitives-budget-'));
+  const out = mkdtempSync(join(scratch, 'primitives-budget-'));
   const consumer = join(out, 'consumer.tsx');
   writeFileSync(consumer, `import * as React from 'react';
-import { Root, SearchInput, Viewport, List, Loading, LoadError, Empty, SkinTonePickerLocation } from '${join(repoRoot, 'dist', 'esm', 'primitives', 'index.mjs')}';
-export const Picker = () => <Root skinTonePickerLocation={SkinTonePickerLocation.NONE}><SearchInput /><Viewport><List /><Loading /><LoadError /><Empty /></Viewport></Root>;`);
+import { Root, SearchInput, Viewport, List, Loading, LoadError, Empty, SkinTonePickerLocation } from 'emoji-picker-react/primitives';
+export const Picker = props => <Root skinTonePickerLocation={SkinTonePickerLocation.NONE} {...props}><SearchInput /><Viewport><List /><Loading /><LoadError /><Empty /></Viewport></Root>;`);
   sh(join(repoRoot, 'node_modules', '.bin', 'esbuild'), [
     consumer,
     '--define:process.env.NODE_ENV="production"',
@@ -135,6 +139,7 @@ export const Picker = () => <Root skinTonePickerLocation={SkinTonePickerLocation
     '--external:react',
     '--external:react-dom',
     '--entry-names=entry',
+    '--out-extension:.js=.mjs',
     `--outdir=${out}`,
     '--log-level=error',
   ]);
@@ -149,7 +154,7 @@ export const Picker = () => <Root skinTonePickerLocation={SkinTonePickerLocation
     let match;
     while ((match = staticImport.exec(files.get(name)))) visit(match[1]);
   };
-  visit('entry.js');
+  visit('entry.mjs');
   const bytes = [...initial].reduce(
     (sum, name) => sum + gzipSync(files.get(name)).length,
     0,
@@ -162,7 +167,27 @@ export const Picker = () => <Root skinTonePickerLocation={SkinTonePickerLocation
   }
   const eager = [...initial].some(name => files.get(name).includes('grinning face with big eyes'));
   if (eager) throw new Error('primitives + runtime constants eagerly include the dataset');
+  const runtime = [...initial].map(name => files.get(name)).join('\n');
+  for (const marker of ['M12.8,9.5c0.6', 'epr-btn-clear-search', 'epr-preview-default-emoji']) {
+    if (runtime.includes(marker)) throw new Error(`minimal consumer retains unused presentation: ${marker}`);
+  }
   console.log(`ok: primitives + constants initial load ${kb} KiB min+gz (ShipStyles included; dataset lazy)`);
+  return out;
+}
+
+function bundleDefaultConsumer(scratch) {
+  const out = mkdtempSync(join(scratch, 'default-bundle-'));
+  const consumer = join(out, 'consumer.tsx');
+  writeFileSync(consumer, `import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+export const Picker = props => <EmojiPicker {...props} />;`);
+  sh(join(repoRoot, 'node_modules', '.bin', 'esbuild'), [
+    consumer, '--define:process.env.NODE_ENV="production"', '--bundle',
+    '--splitting', '--format=esm', '--minify', '--external:react',
+    '--external:react-dom', '--entry-names=entry', '--out-extension:.js=.mjs',
+    `--outdir=${out}`, '--log-level=error',
+  ]);
+  return out;
 }
 
 function gateAttw(tarball, cwd) {

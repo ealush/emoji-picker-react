@@ -14,14 +14,14 @@ type Props = PickerConfig &
   }>;
 
 const ConfigContext =
-  React.createContext<PickerConfigInternal>(basePickerConfig());
+  /* @__PURE__ */ React.createContext<PickerConfigInternal>(basePickerConfig());
 
 type SearchSlice = {
   searchValue: string | undefined;
   defaultSearchValue: string | undefined;
 };
 
-const SearchConfigContext = React.createContext<SearchSlice>({
+const SearchConfigContext = /* @__PURE__ */ React.createContext<SearchSlice>({
   searchValue: undefined,
   defaultSearchValue: undefined,
 });

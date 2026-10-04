@@ -93,21 +93,23 @@ export function SearchSync() {
 // actual state change; initial mount never emits. A previous-value ref
 // (not a first-run flag) makes this StrictMode-safe: the double-invoked
 // mount effect observes an unchanged value both times and stays silent.
-export const ReactionsModeObserver = React.memo(function ReactionsModeObserver() {
-  const [reactionsOpen] = useReactionsModeState();
-  const { current } = useMutableConfig();
-  const prevReactionsOpen = React.useRef(reactionsOpen);
+export const ReactionsModeObserver = /* @__PURE__ */ React.memo(
+  function ReactionsModeObserver() {
+    const [reactionsOpen] = useReactionsModeState();
+    const { current } = useMutableConfig();
+    const prevReactionsOpen = React.useRef(reactionsOpen);
 
-  React.useEffect(() => {
-    if (prevReactionsOpen.current === reactionsOpen) {
-      return;
-    }
-    prevReactionsOpen.current = reactionsOpen;
-    current.onReactionsModeChange?.(reactionsOpen);
-  }, [reactionsOpen, current]);
+    React.useEffect(() => {
+      if (prevReactionsOpen.current === reactionsOpen) {
+        return;
+      }
+      prevReactionsOpen.current = reactionsOpen;
+      current.onReactionsModeChange?.(reactionsOpen);
+    }, [reactionsOpen, current]);
 
-  return null;
-});
+    return null;
+  },
+);
 
 // Root-scoped navigation generation (STATE.md §10 / PERFORMANCE.md §7).
 // Reactions transitions, dataset identity changes (custom emojis included),
@@ -115,33 +117,40 @@ export const ReactionsModeObserver = React.memo(function ReactionsModeObserver()
 // obsolete pending materialize/scroll/focus completions. Column-count
 // changes invalidate from useCategoryHeight, search intent from
 // useApplySearch, unmount from registry disposal.
-export const NavigationInvalidation = React.memo(function NavigationInvalidation() {
-  const registry = useNavigationRegistry();
-  const [reactionsMode] = useReactionsModeState();
-  const { emojiData } = usePickerDataContext();
-  const [emojiSize] = useEmojiSizeState();
-  // Keyed by order/membership, not identity: the merged config is rebuilt
-  // for unrelated prop changes, which must not cancel navigation.
-  const categoriesKey = useCategoriesConfig()
-    .map((config) => config.category)
-    .join('|');
-  const prevSnapshot = React.useRef<
-    [boolean, unknown, number | null, string]
-  >([reactionsMode, emojiData, emojiSize, categoriesKey]);
+export const NavigationInvalidation = /* @__PURE__ */ React.memo(
+  function NavigationInvalidation() {
+    const registry = useNavigationRegistry();
+    const [reactionsMode] = useReactionsModeState();
+    const { emojiData } = usePickerDataContext();
+    const [emojiSize] = useEmojiSizeState();
+    // Keyed by order/membership, not identity: the merged config is rebuilt
+    // for unrelated prop changes, which must not cancel navigation.
+    const categoriesKey = useCategoriesConfig()
+      .map((config) => config.category)
+      .join('|');
+    const prevSnapshot = React.useRef<
+      [boolean, unknown, number | null, string]
+    >([reactionsMode, emojiData, emojiSize, categoriesKey]);
 
-  React.useEffect(() => {
-    const prev = prevSnapshot.current;
-    if (
-      prev[0] === reactionsMode &&
-      prev[1] === emojiData &&
-      prev[2] === emojiSize &&
-      prev[3] === categoriesKey
-    ) {
-      return;
-    }
-    prevSnapshot.current = [reactionsMode, emojiData, emojiSize, categoriesKey];
-    registry.invalidate();
-  }, [registry, reactionsMode, emojiData, emojiSize, categoriesKey]);
+    React.useEffect(() => {
+      const prev = prevSnapshot.current;
+      if (
+        prev[0] === reactionsMode &&
+        prev[1] === emojiData &&
+        prev[2] === emojiSize &&
+        prev[3] === categoriesKey
+      ) {
+        return;
+      }
+      prevSnapshot.current = [
+        reactionsMode,
+        emojiData,
+        emojiSize,
+        categoriesKey,
+      ];
+      registry.invalidate();
+    }, [registry, reactionsMode, emojiData, emojiSize, categoriesKey]);
 
-  return null;
-});
+    return null;
+  },
+);

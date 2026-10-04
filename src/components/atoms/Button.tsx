@@ -22,17 +22,18 @@ export function Button(props: Props) {
   );
 }
 
-export const buttonStyles = stylesheet.create({
-  button: {
-    '.': 'epr-btn',
-    cursor: 'pointer',
-    border: '0',
-    // Longhand, not `background: 'none'`: a shorthand reset shares its
-    // conflict keys with every background longhand, so cx() would drop
-    // this whole class wherever a later class sets background-image
-    // (e.g. the category nav sprite) and the native button face would
-    // show through.
-    backgroundColor: 'transparent',
-    outline: 'none',
-  },
-});
+export const buttonStyles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    button: {
+      '.': 'epr-btn',
+      cursor: 'pointer',
+      border: '0',
+      // Longhand, not `background: 'none'`: a shorthand reset shares its
+      // conflict keys with every background longhand, so cx() would drop
+      // this whole class wherever a later class sets background-image
+      // (e.g. the category nav sprite) and the native button face would
+      // show through.
+      backgroundColor: 'transparent',
+      outline: 'none',
+    },
+  }))();
