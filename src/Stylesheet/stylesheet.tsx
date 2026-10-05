@@ -4,6 +4,8 @@ import { Styles, createSheet } from 'shipstyles';
 import { ClassNames } from '../DomUtils/classNames';
 import { isJsdom } from '../DomUtils/isJsdom';
 
+import { DedupedStyle } from './DedupedStyle';
+
 // No DOM root: allocating this sheet has no observable effect when its
 // consumers are unused. Keep component style construction in annotated,
 // argument-free factories so bundlers can drop an unused part together
@@ -73,12 +75,9 @@ export const PickerStyleTag = /* @__PURE__ */ React.memo(
     cssLayer?: string;
   }) {
     return (
-      <style
+      <DedupedStyle
         nonce={nonce}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: finalizeCss(stylesheet.getStyle(), cssLayer),
-        }}
+        css={finalizeCss(stylesheet.getStyle(), cssLayer)}
       />
     );
   },

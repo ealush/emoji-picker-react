@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createSheet } from 'shipstyles';
 
+import { DedupedStyle } from '../Stylesheet/DedupedStyle';
 import { finalizeCss } from '../Stylesheet/stylesheet';
 
 import {
@@ -98,15 +99,12 @@ export const StructuralStyleTag = /* @__PURE__ */ React.memo(
     cssLayer?: string;
   }) {
     return (
-      <style
+      <DedupedStyle
         nonce={nonce}
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: finalizeCss(
-            structuralSheet.getStyle() + '\n' + boxSizingReset,
-            cssLayer,
-          ),
-        }}
+        css={finalizeCss(
+          structuralSheet.getStyle() + '\n' + boxSizingReset,
+          cssLayer,
+        )}
       />
     );
   },
