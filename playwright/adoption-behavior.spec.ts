@@ -327,7 +327,9 @@ test('dir="rtl" mirrors the grid and arrows follow the visual direction', async 
   const tabs = page.getByRole('tab');
   await tabs.nth(1).focus();
   await page.keyboard.press('ArrowLeft');
-  await expect.poll(focusedName).toBe(await tabs.nth(2).getAttribute('aria-label'));
+  await expect
+    .poll(focusedName)
+    .toBe(await tabs.nth(2).getAttribute('aria-label'));
 
   // The tone fan opens inward, staying inside the picker.
   await page.locator('[data-epr-part="skin-tone"] button').first().click();
@@ -343,3 +345,43 @@ test('dir="rtl" mirrors the grid and arrows follow the visual direction', async 
     })
     .toBe(true);
 });
+
+for (const [id, expected] of [
+  ['picker-columns--six-columns', 6],
+  ['picker-columns--narrow-container', 'fewer'],
+] as const) {
+  test(`columns: ${id} lays out ${expected} columns without clipping`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    await page.getByRole('gridcell').first().waitFor();
+    const layout = await page.evaluate(() => {
+      const viewport = document.querySelector('[data-epr-part="viewport"]')!;
+      const content = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          '[data-epr-part="category-content"]',
+        ),
+      ).find((box) => box.clientWidth > 0)!;
+      const cells = Array.from(content.querySelectorAll('[role="gridcell"]'));
+      const firstTop = cells[0].getBoundingClientRect().top;
+      const right =
+        viewport.getBoundingClientRect().left + viewport.clientWidth + 0.5;
+      return {
+        perRow: Number(content.dataset.eprEmojisPerRow),
+        firstRow: cells.filter(
+          (cell) => cell.getBoundingClientRect().top === firstTop,
+        ).length,
+        clipped: cells.some(
+          (cell) => cell.getBoundingClientRect().right > right,
+        ),
+      };
+    });
+    expect(layout.firstRow).toBe(layout.perRow);
+    expect(layout.clipped).toBe(false);
+    if (expected === 'fewer') {
+      expect(layout.perRow).toBeLessThan(9);
+    } else {
+      expect(layout.perRow).toBe(expected);
+    }
+  });
+}

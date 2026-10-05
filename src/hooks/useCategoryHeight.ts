@@ -15,6 +15,7 @@ import {
   useVisibleCategoriesState,
   useEmojiSizeState,
 } from '../components/context/PickerContext';
+import { useColumnsConfig } from '../config/useConfig';
 
 import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
@@ -75,6 +76,7 @@ export function useCategoryHeight(emojiCount: number):
   const registry = useNavigationRegistry();
   const [visibleCategories] = useVisibleCategoriesState();
   const [emojiSizeFromContext] = useEmojiSizeState();
+  const columns = useColumnsConfig();
   const [dimensions, setDimensions] = React.useState<{
     categoryHeight: number;
     emojisPerRow: number;
@@ -106,13 +108,14 @@ export function useCategoryHeight(emojiCount: number):
     if (pickerWidth === 0 || emojiSize === 0) return;
 
     const rowWidth = firstVisibleContentWidth(listEl, pickerWidth);
-    const emojisPerRow = Math.max(1, Math.floor(rowWidth / emojiSize));
+    const fit = Math.max(1, Math.floor(rowWidth / emojiSize));
+    const emojisPerRow = columns ? Math.min(columns, fit) : fit;
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;
 
     trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
     setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
-  }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry]);
+  }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry, columns]);
 
   // Restore measured row heights in the same commit as the filtered
   // contents. A passive effect leaves one frame of stale offsets that

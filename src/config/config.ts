@@ -231,6 +231,7 @@ export function basePickerConfig(): PickerConfigInternal {
     labels: undefined,
     skinTone: undefined,
     cssLayer: undefined,
+    columns: undefined,
   };
 }
 
@@ -301,6 +302,12 @@ export type PickerConfigInternal = {
    * `@layer epr, theme, base, components, utilities;`. Default: unlayered.
    */
   cssLayer?: string;
+  /**
+   * Emojis per row. The picker then sizes its width to fit those columns
+   * unless you set a width; a narrower container shows fewer columns.
+   * Default: as many as the width fits.
+   */
+  columns?: number;
 };
 
 export type PreviewConfig = {

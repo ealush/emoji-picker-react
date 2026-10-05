@@ -7,7 +7,7 @@ import {
   DefaultAppearance,
 } from './components/main/defaultAppearance';
 import { compareConfig } from './config/compareConfig';
-import { useOpenConfig } from './config/useConfig';
+import { useOpenConfig, validColumns } from './config/useConfig';
 import {
   Empty,
   List,
@@ -61,7 +61,12 @@ function EmojiPicker(props: PickerProps) {
           components={components}
           {...(behaviorProps as RootBehaviorProps)}
           className={defaultRootClassName(theme, className, unstyled)}
-          style={defaultRootStyle({ width, height, style })}
+          style={defaultRootStyle({
+            width,
+            height,
+            style,
+            columns: validColumns(props.columns),
+          })}
         >
           {content}
         </Root>

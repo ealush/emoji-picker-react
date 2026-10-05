@@ -26,6 +26,7 @@ import {
   useDefineMutableConfig,
   useInheritedMutableConfig,
 } from '../config/mutableConfig';
+import { validColumns } from '../config/useConfig';
 import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
 import { useOnFocus } from '../hooks/useOnFocus';
@@ -214,6 +215,7 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
                             cssLayer={
                               behaviorProps.cssLayer as string | undefined
                             }
+                            columns={validColumns(behaviorProps.columns)}
                           >
                             {children}
                           </RootAside>
@@ -241,6 +243,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     panelProps?: RootProps['panelProps'];
     composition: 'managed' | 'explicit';
     appearance: 'none' | 'default';
+    columns: number | undefined;
   }
 >(function RootAside(
   {
@@ -251,6 +254,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     panelProps,
     composition,
     appearance,
+    columns,
   },
   forwardedRef,
 ) {
@@ -301,6 +305,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
         {...(nativeAside as React.HTMLAttributes<HTMLElement>)}
         ref={mergedRef}
         data-epr-part="root"
+        data-epr-columns={columns}
         className={cx(
           structuralStyles.root,
           theme === Theme.LIGHT && structuralStyles.themeLight,
@@ -314,6 +319,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
           collapsedClassName(composition, appearance, reactionsOpen),
         )}
         style={{
+          ...(columns && ({ '--epr-columns': columns } as React.CSSProperties)),
           ...styleProps,
           ...((!reactionsOpen || composition === 'explicit') && {
             height,

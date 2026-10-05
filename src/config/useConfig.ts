@@ -216,6 +216,17 @@ export function useReactionsOpenConfig(): boolean {
   return reactionsDefaultOpen;
 }
 
+export function useColumnsConfig(): number | undefined {
+  const { columns } = usePickerConfig();
+  return validColumns(columns);
+}
+
+export function validColumns(columns: unknown): number | undefined {
+  return typeof columns === 'number' && Number.isInteger(columns) && columns > 0
+    ? columns
+    : undefined;
+}
+
 export function useEmojiVersionConfig(): string | null {
   const { emojiVersion } = usePickerConfig();
   return emojiVersion;

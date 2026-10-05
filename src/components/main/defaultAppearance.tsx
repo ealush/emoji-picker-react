@@ -49,15 +49,18 @@ export function defaultRootStyle({
   width,
   height,
   style,
+  columns,
 }: {
   width: string | number | undefined;
   height: string | number | undefined;
   style: React.CSSProperties | undefined;
+  columns?: number;
 }): React.CSSProperties {
   return {
     // v4-compatible default dimensions; consumer style and explicit
-    // width/height props both override them.
-    width: getDimension(DEFAULT_PICKER_WIDTH),
+    // width/height props both override them. With `columns`, the width
+    // fits the columns instead.
+    ...(columns === undefined && { width: getDimension(DEFAULT_PICKER_WIDTH) }),
     height: getDimension(DEFAULT_PICKER_HEIGHT),
     ...style,
     ...(width !== undefined ? { width: getDimension(width) } : {}),

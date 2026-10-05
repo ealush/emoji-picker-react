@@ -24,7 +24,15 @@ const structuralSheet = /* @__PURE__ */ createSheet('epr-structural', null);
 // content-box heights plus padding; a Root-class universal reset otherwise
 // overrides that rule and clips their text. Managed cells own their sizing
 // separately. Keep this inside the same nonce/layer boundary as the sheet.
-const boxSizingReset = ':where(.epr-structural-root *){box-sizing:border-box;}';
+const boxSizingReset =
+  ':where(.epr-structural-root *){box-sizing:border-box;}' +
+  // `columns`: the picker hugs that many emoji columns (plus the stable
+  // scrollbar gutter) unless the consumer sizes it; any width rule wins.
+  // In layout the content box spans the row (columns spread evenly); a
+  // narrower container caps it, so fewer columns render.
+  ':where(.epr-structural-root[data-epr-columns]){width:fit-content;max-width:100%;}' +
+  ':where(.epr-structural-root[data-epr-columns] [data-epr-part="viewport"]){scrollbar-gutter:stable;}' +
+  ':where(.epr-structural-root[data-epr-columns] [data-epr-part="category-content"]){width:calc(var(--epr-columns) * var(--epr-emoji-fullsize));min-width:calc(100% - 2 * var(--epr-horizontal-padding));max-width:calc(100% - 2 * var(--epr-horizontal-padding));}';
 
 export const structuralStyles = /* @__PURE__ */ (() =>
   structuralSheet.create({
