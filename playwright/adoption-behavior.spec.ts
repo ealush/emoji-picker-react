@@ -404,3 +404,25 @@ for (const [id, expected] of [
     }
   });
 }
+
+test('reduced motion: the picker drops transitions and still expands from reactions', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto(story('picker-reactions--reactions-menu'));
+  const root = page.locator('[data-epr-part="root"]');
+  await page.locator('[data-epr-part="reactions"] button').last().click();
+  await expect(page.getByRole('gridcell').first()).toBeVisible();
+  expect(
+    await root.evaluate(
+      (element) => getComputedStyle(element).transitionDuration,
+    ),
+  ).toMatch(/^0s(, 0s)*$/);
+  const cells = await page
+    .locator('[data-epr-part="category-content"]')
+    .first()
+    .evaluate((content) =>
+      Number(content.getAttribute('data-epr-emojis-per-row')),
+    );
+  expect(cells).toBeGreaterThan(1);
+});
