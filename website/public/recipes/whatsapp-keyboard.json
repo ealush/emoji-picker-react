@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/WhatsApp keyboard panel\n\nA full-width, short WhatsApp keyboard panel whose grid reflows its columns.\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className=\"wa-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/WhatsApp keyboard panel\n\nA full-width, short WhatsApp keyboard panel whose grid reflows its columns.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"wa-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
     }
   ]
 }

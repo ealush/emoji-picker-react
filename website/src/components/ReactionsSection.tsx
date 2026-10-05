@@ -1,6 +1,6 @@
 "use client";
 
-import Picker, { Theme } from "emoji-picker-react";
+import Picker from "emoji-picker-react";
 import { useState } from "react";
 import styles from "@/styles/Home.module.css";
 
@@ -44,7 +44,7 @@ export function ReactionsSection() {
               reactionsDefaultOpen={true}
               autoFocusSearch={false}
               onEmojiClick={(emoji) => setSelectedEmoji(emoji.emoji)}
-              theme={Theme.LIGHT}
+              colorScheme="light"
             />
           </div>
         </div>

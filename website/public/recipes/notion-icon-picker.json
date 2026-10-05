@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Notion icon picker\n\nA Notion page-icon popover with app tabs, Remove and Random inside the picker.\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className=\"notion-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Notion icon picker\n\nA Notion page-icon popover with app tabs, Remove and Random inside the picker.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"notion-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
     }
   ]
 }

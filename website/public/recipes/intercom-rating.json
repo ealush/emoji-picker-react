@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Intercom rating\n\nAn Intercom-style satisfaction scale built from a stretched reactions bar.\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className=\"intercom-scale\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Intercom rating\n\nAn Intercom-style satisfaction scale built from a stretched reactions bar.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"intercom-scale\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
     }
   ]
 }

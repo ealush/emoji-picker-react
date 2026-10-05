@@ -724,7 +724,12 @@ function useOnType() {
       return;
     }
 
-    if (key.match(/(^[a-zA-Z0-9]$){1}/)) {
+    // One printable letter or digit in any script (not only ASCII): the
+    // localized datasets are searched in their own languages, so a Hebrew,
+    // Cyrillic or Japanese keystroke on the grid starts a search like a
+    // Latin one. Named keys ("Enter", "Tab") are longer than one code
+    // point; space and punctuation stay unclaimed for the grid's own keys.
+    if (/^[\p{L}\p{N}]$/u.test(key)) {
       event.preventDefault();
       closeAllOpenToggles();
       typeToSearch(key);

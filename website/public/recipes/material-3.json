@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Material 3\n\nMaterial 3 with a bottom navigation bar and the M3 pill indicator.\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className=\"m3-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Material 3\n\nMaterial 3 with a bottom navigation bar and the M3 pill indicator.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"m3-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
     }
   ]
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import Picker, { Theme } from "emoji-picker-react";
+import Picker from "emoji-picker-react";
 import React, { useEffect, useMemo, useState } from "react";
 import styles from "@/styles/PickerCustomizer.module.css";
 
@@ -8,6 +8,11 @@ const variableSections = [
   {
     title: "General",
     items: [
+      {
+        label: "Font family",
+        variable: "--epr-font-family",
+        defaultValue: "sans-serif",
+      },
       {
         label: "Emoji size",
         variable: "--epr-emoji-size",
@@ -26,7 +31,7 @@ const variableSections = [
       {
         label: "Text color",
         variable: "--epr-text-color",
-        defaultValue: "#858585",
+        defaultValue: "#6b6b6b",
       },
       {
         label: "Picker border color",
@@ -121,7 +126,12 @@ const variableSections = [
       {
         label: "Active category icon color",
         variable: "--epr-category-icon-active-color",
-        defaultValue: "#6aa8de",
+        defaultValue: "#3371b7",
+      },
+      {
+        label: "Inactive category icon color",
+        variable: "--epr-category-icon-inactive-color",
+        defaultValue: "#868686",
       },
     ],
   },
@@ -154,6 +164,11 @@ const variableSections = [
         defaultValue: "70px",
       },
       {
+        label: "Preview emoji size",
+        variable: "--epr-preview-emoji-size",
+        defaultValue: "45px",
+      },
+      {
         label: "Preview text size",
         variable: "--epr-preview-text-size",
         defaultValue: "14px",
@@ -176,7 +191,7 @@ const variableSections = [
       {
         label: "Skin tone size",
         variable: "--epr-skin-tone-size",
-        defaultValue: "20px",
+        defaultValue: "15px",
       },
     ],
   },
@@ -233,6 +248,10 @@ const initialState: VariableStateMap = variableSections
 
 const colorValueRegex = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
+// The class the generated CSS targets. Tokens are declared by the library
+// at zero specificity, so one class on `className` is all an override needs.
+const PICKER_CLASS = "my-picker";
+
 export function PickerCustomizer() {
   const [variableValues, setVariableValues] = useState<VariableStateMap>(
     () => ({ ...initialState }),
@@ -259,29 +278,19 @@ export function PickerCustomizer() {
       .map(([variable, state]) => [variable, state.value]);
   }, [variableValues]);
 
-  const pickerStyle = useMemo(() => {
-    return enabledEntries.reduce<Record<string, string>>(
-      (acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      },
-      {},
-    );
-  }, [enabledEntries]);
-
   const cssSnippet = useMemo(() => {
     return enabledEntries;
   }, [enabledEntries]);
 
   const cssOutputString = useMemo(() => {
     if (!enabledEntries.length) {
-      return "aside.EmojiPickerReact {\n  /* Toggle variables to output CSS */\n}\n";
+      return `.${PICKER_CLASS} {\n  /* Toggle variables to output CSS */\n}\n`;
     }
 
     const lines = enabledEntries.map(
       ([variable, value]) => `  ${variable}: ${value};`,
     );
-    return ["aside.EmojiPickerReact {", ...lines, "}", ""].join("\n");
+    return [`.${PICKER_CLASS} {`, ...lines, "}", ""].join("\n");
   }, [enabledEntries]);
 
   // Force picker re-render when variables change
@@ -299,7 +308,10 @@ export function PickerCustomizer() {
             Customize how the picker looks
           </div>
           <div className={styles.customizerSummaryHint}>
-            Toggle the variables you want to override.
+            Toggle the variables you want to override, then pass the class to{" "}
+            <code>className</code>. Variables theme the built-in look; with{" "}
+            <code>unstyled</code> or a bare primitives <code>Root</code> you
+            style the parts directly.
           </div>
         </div>
         <button
@@ -358,7 +370,8 @@ export function PickerCustomizer() {
             <div className={styles.previewWrapper}>
               <Picker
                 key={pickerKey}
-                theme={Theme.AUTO}
+                className={PICKER_CLASS}
+                colorScheme="auto"
                 height={360}
                 width={320}
                 searchDisabled={false}
@@ -384,7 +397,7 @@ export function PickerCustomizer() {
               <pre className={styles.outputCode}>
                 <code>
                   <span className={styles.codeBrace}>
-                    aside.EmojiPickerReact {"{"}
+                    .{PICKER_CLASS} {"{"}
                   </span>
                   {cssSnippet.length === 0 ? (
                     <span className={styles.codeComment}>

@@ -14,6 +14,7 @@ Read in this order:
 8. [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) — React 16.8, SSR, hydration and ID strategy.
 9. [PERFORMANCE.md](./PERFORMANCE.md) — measurable data/search/render/scroll/bundle budgets.
 10. [STYLING.md](./STYLING.md) — structural CSS versus supported appearance customization.
+    [STYLING_RECIPES.md](./STYLING_RECIPES.md) — copyable snippets per styling library for the theme, unstyled and composed paths.
 11. [DATA_API.md](./DATA_API.md) — exact `emoji-picker-react/data` surface and return types.
 12. [VISUAL_COMPATIBILITY.md](./VISUAL_COMPATIBILITY.md) — screenshot baseline and environment-drift adjudication.
 13. [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) — phased implementation order.
@@ -27,7 +28,7 @@ Executable verification:
 - `scripts/package-check` — packed-consumer checks (CJS + ESM resolution, publint, attw), gated in CI.
 - `scripts/react16-fixture` — React-16 packed-consumer tests.
 
-Run these gates against the final candidate. CI adds packed React 16.8 and React 19 consumers, Chromium/Firefox/WebKit behavior, mobile touch behavior and the candidate website build. Local WebKit execution requires its Linux dependencies. Performance timing remains a local quiet-machine check against a reconstructed same-session v4 baseline, not the original Phase 0 artifact.
+Run these gates before every release. CI adds packed React 16.8 and React 19 consumers, Chromium/Firefox/WebKit behavior, mobile touch behavior and the candidate website build. Local WebKit execution requires its Linux dependencies. Performance timing remains a local quiet-machine check against a reconstructed same-session v4 baseline, not the original Phase 0 artifact.
 
 Existing v4 unit/interaction/visual suites remain active throughout implementation.
 
@@ -62,4 +63,4 @@ See [ADOPTION.md](./ADOPTION.md) for installable examples and the native input/e
 
 ## Integration references
 
-Choose batteries included or BYOD (bring your own design, design language and design library). Start with [AGENT_GUIDE.md](./AGENT_GUIDE.md) for installed API discovery and design-library contracts, or [ADOPTION.md](./ADOPTION.md) for runnable examples. Both are bundled in `llms-full.txt`. The candidate llms index links to `v5-implementation`; change its source ref to the release branch when promoting these docs after merge.
+Choose batteries included or BYOD (bring your own design, design language and design library). Start with [AGENT_GUIDE.md](./AGENT_GUIDE.md) for installed API discovery and design-library contracts, [STYLING_RECIPES.md](./STYLING_RECIPES.md) for per-library snippets, or [ADOPTION.md](./ADOPTION.md) for runnable examples. All are bundled in `llms-full.txt`, whose index links to the `master` branch (`scripts/generateLlmsTxt.js`).

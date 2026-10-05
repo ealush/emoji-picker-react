@@ -1,0 +1,163 @@
+:root {
+  color-scheme: light dark;
+  font: 15px/1.5 system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: Canvas;
+  color: CanvasText;
+}
+
+.app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  grid-template-areas:
+    'header header'
+    'stage log';
+  gap: 24px;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+@media (max-width: 860px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'header'
+      'stage'
+      'log';
+  }
+}
+
+.app-header {
+  grid-area: header;
+}
+
+.app-header h1 {
+  margin: 0 0 4px;
+  font-size: 28px;
+}
+
+.app-header p {
+  margin: 0 0 12px;
+  color: #888;
+}
+
+.app-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.app-tabs button {
+  padding: 8px 14px;
+  border: 1px solid #8886;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.app-tabs button[aria-pressed='true'] {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.app-tabs button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.app-summary {
+  max-width: 64ch;
+}
+
+.app-stage {
+  grid-area: stage;
+  min-width: 0;
+}
+
+.example {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.example-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.app-log {
+  grid-area: log;
+  align-self: start;
+  padding: 16px;
+  border: 1px solid #8884;
+  border-radius: 12px;
+}
+
+.app-log h2 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.app-log ol {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.app-log code {
+  font-size: 13px;
+}
+
+.data-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: ui-monospace, monospace;
+}
+
+.data-search input {
+  padding: 6px 10px;
+  border: 1px solid #8886;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.data-results {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.data-results button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #8884;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.data-results button span {
+  font-size: 22px;
+}

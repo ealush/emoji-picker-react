@@ -28,6 +28,25 @@ v5 additionally accepts literal values:
 
 You do **not** need to migrate to primitives to upgrade to v5.
 
+## At a glance
+
+| Area | v4 | v5 |
+| --- | --- | --- |
+| Default emoji style | Apple images | Native glyphs (`emojiStyle="apple"` restores v4) |
+| Theming | `theme` + `--epr-*` variables on `aside.EmojiPickerReact` | `colorScheme` (alias `theme`) + the same variables on any class, zero specificity |
+| Own design | Override library classes | `unstyled` + `[data-epr-part]` selectors, or `emoji-picker-react/primitives` |
+| Own components | Not possible | `components={{ Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton, ExpandButton }}` |
+| Layout | Fixed | Compose `Root`, `Search`/`SearchInput`, `CategoryNav`, `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError` |
+| Width | `width` | `width`, or `columns` to fit a number of emojis per row |
+| Search | Uncontrolled | `searchValue` / `onSearchChange`, `defaultSearchValue`, `searchLabel` |
+| Localization | Datasets only | Datasets, `labels` for every UI string, loader `emojiData` for code-splitting |
+| Skin tone | `defaultSkinTone` | `defaultSkinTone` or controlled `skinTone`, `skinTonePickerLocation="NONE"` |
+| Suggestions | Recent / frequent | Plus `suggestedEmojis` |
+| Reactions | `reactionsDefaultOpen` … | Plus `onReactionsModeChange` and `usePickerMode()` |
+| Data without UI | `emojiByUnified` | Plus `emoji-picker-react/data` (`searchEmojis`, `getEmojiByUnified`) |
+| Layered CSS | Specificity fights | `cssLayer="epr"` |
+| Locale imports | `emoji-picker-react/dist/data/emojis-es` | `emoji-picker-react/data/emojis-es` (old path still resolves) |
+
 ## What v5 adds
 
 ### Controlled search

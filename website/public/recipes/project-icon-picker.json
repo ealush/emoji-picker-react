@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Project icon picker\n\nA settings form: picking sets the project icon; categories are narrowed.\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className=\"project-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Project icon picker\n\nA settings form: picking sets the project icon; categories are narrowed.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"project-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
     }
   ]
 }

@@ -352,6 +352,42 @@ describe('v5 type-to-search (STATE.md §4)', () => {
     expect(gridUnified(U.cat)).not.toBeNull();
   });
 
+  it('grid keys in non-Latin scripts start a search too', async () => {
+    const onSearchChange = vi.fn();
+    renderPicker({ onSearchChange });
+    const first = gridButton('grinning face');
+    const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+
+    act(() => {
+      first.focus();
+    });
+    // Hebrew letter shin: one printable character, outside [a-zA-Z0-9].
+    fireEvent.keyDown(first, { key: 'ש' });
+
+    expect(onSearchChange).toHaveBeenCalledWith('ש');
+    await vi.waitFor(() => {
+      expect(document.activeElement).toBe(input);
+    });
+    expect(input.value).toBe('ש');
+  });
+
+  it('named keys and punctuation on the grid never start a search', async () => {
+    const onSearchChange = vi.fn();
+    renderPicker({ onSearchChange });
+    const first = gridButton('grinning face');
+
+    act(() => {
+      first.focus();
+    });
+    for (const key of ['Tab', 'Enter', 'Home', '.', '-', 'F5']) {
+      fireEvent.keyDown(first, { key });
+    }
+    await settle(150);
+
+    expect(onSearchChange).not.toHaveBeenCalled();
+    expect(document.activeElement).toBe(first);
+  });
+
   it('searchDisabled: grid typing is a no-op for search and focus', async () => {
     const onSearchChange = vi.fn();
     renderPicker({ searchDisabled: true, onSearchChange });

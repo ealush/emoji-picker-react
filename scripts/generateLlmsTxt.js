@@ -9,8 +9,9 @@ const { copyFileSync, existsSync, readFileSync, writeFileSync } = require('fs');
 const { join } = require('path');
 
 const root = join(__dirname, '..');
-// Candidate index must link to the same API as its bundled full reference.
-const RAW = 'https://raw.githubusercontent.com/ealush/emoji-picker-react/v5-implementation';
+// The index links to the branch releases are cut from; llms-full.txt inlines
+// the same documents so the installed package never depends on the links.
+const RAW = 'https://raw.githubusercontent.com/ealush/emoji-picker-react/master';
 
 const SUMMARY = `Emoji picker for React: batteries included with \`<EmojiPicker />\`, or BYOD (bring your own design, design language and design library) with \`unstyled\` and \`emoji-picker-react/primitives\`. Both paths share search, keyboard navigation, localization and virtualization. Use your existing Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS design.`;
 
@@ -18,13 +19,13 @@ const KEY_FACTS = `Key facts:
 
 - Install: \`npm install emoji-picker-react\`. Minimal use: \`import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />\`.
 - Choose batteries included or BYOD for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (\`unstyled\` or primitives + the project's styling solution).
-- Entry points: \`emoji-picker-react\` (default export EmojiPicker, enums, types); \`emoji-picker-react/primitives\` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified — no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
+- Entry points: \`emoji-picker-react\` (default export EmojiPicker; Emoji; emojiByUnified; enums Categories, EmojiStyle, SkinTones, SkinTonePickerLocation, SuggestionMode, Theme; types PickerProps, EmojiClickData, PickerComponents); \`emoji-picker-react/primitives\` (parts Root, Panel, Reactions, Search, SearchInput, CategoryNav, Viewport, List, Preview, SkinTone, Empty, Loading, LoadError; hooks useActiveEmoji, useSkinTone, useSearchState, useSearchActions, useCategoryNavigation, usePickerMode, useEmojiDataState; tokens structuralPickerTokens, lightPickerTokens, darkPickerTokens, defaultPickerTokens; the same enums, data-free); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified; no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
 - Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Ordinary resets are handled by library classes; more specific rules and !important can still override structural geometry. With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
 - Use \`colorScheme="light" | "dark" | "auto"\` on Root, or prefer it over \`theme\` on EmojiPicker (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
 - Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are \`role="gridcell"\`); every UI string localizable through \`labels\`. Manual screen-reader verification has a separate release protocol.
 - Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
 - Composition keeps a managed grid. Root defaults to managed Panel/Reactions; composition="explicit" lets you place one Panel and optional Reactions within Root. Use SearchInput as={Input} with an input-forwarding adapter. Root/EmojiPicker components replace Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton and ExpandButton; List components override grid slots. Use useSearchActions, useCategoryNavigation and usePickerMode for custom controls. Bare Root and unstyled remove all managed decoration; geometry and presence remain. Do not invent asChild, onEmojiSelect or a renderer-independent UI engine.
-- Read the installed package llms-full.txt first. These are v5 candidate docs; verify exports/version before using new APIs with a published v4 installation.
+- Read the installed package llms-full.txt first; it matches the installed version. The primitives entry, \`unstyled\`, \`columns\`, \`components\`, \`labels\` and loader \`emojiData\` exist from 5.0.0; a 4.x installation has only the v4 props.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.`;
 
 // [path, title, description] — the index links; llms-full.txt inlines them.
@@ -39,6 +40,7 @@ const DOCS = [
   ['docs/v5/API.md', 'v5 API', 'all v5 additions with examples'],
   ['docs/v5/PRIMITIVES.md', 'Primitives', 'composable parts, hooks, custom cells, grammar'],
   ['docs/v5/STYLING.md', 'Styling contract', 'tokens, parts, cascade, structural rules'],
+  ['docs/v5/STYLING_RECIPES.md', 'Styling recipes by library', 'theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI'],
   ['docs/v5/ACCESSIBILITY_VERIFICATION.md', 'Accessibility verification', 'keyboard, screen-reader, localization and host focus release protocol'],
   ['docs/v5/DATA_API.md', 'Data API', 'framework-free search and lookup'],
   ['docs/v5/MIGRATION.md', 'Migrating from v4', 'what changed and how to upgrade'],
@@ -47,6 +49,7 @@ const DOCS = [
 const EXAMPLES = [
   ['stories/recipes/README.md', 'Design recipes', '25 designs, each in seven styling stacks'],
   ['stories/integrations/README.md', 'Styling integrations', 'shadcn/ui, Tailwind, Emotion, styled-components, CSS Modules, CSS, MUI'],
+  ['example/README.md', 'Example app', 'Vite + React 19 app running the batteries-included, unstyled, composed and data-API paths'],
 ];
 
 // One complete worked example inlined into llms-full.txt.

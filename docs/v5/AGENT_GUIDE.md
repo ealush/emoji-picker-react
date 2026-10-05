@@ -4,11 +4,11 @@ A decision-first guide for coding agents and the people reviewing their output. 
 
 ## 1. Check the installed version first
 
-These documents describe the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), developed on `v5-implementation`. Until v5 is published, the APIs below need a tarball built from that branch; the latest published v4 package does not have them.
+Everything below exists from `emoji-picker-react@5.0.0`. A 4.x installation has the same default `<EmojiPicker />` but none of the v5 additions.
 
 1. Read the app's `package.json`, lockfile, and `node_modules/emoji-picker-react/package.json` (`version`, `exports`).
 2. Read `node_modules/emoji-picker-react/llms-full.txt`: the full reference for that exact version, usable offline. `llms.txt` is a short index.
-3. If the installed version is 4.x, use only v4 APIs (no `/primitives`, `unstyled`, `columns`, `components`, `labels` or loader `emojiData`).
+3. If the installed version is 4.x, use only v4 APIs (no `/primitives`, `unstyled`, `columns`, `components`, `labels` or loader `emojiData`), or upgrade: [MIGRATION.md](MIGRATION.md) lists every behavior change.
 
 ## 2. Pick a path
 
@@ -127,7 +127,9 @@ The main entry and `/data` register the English dataset synchronously. A compose
 
 ## 8. Styling details
 
-- Target parts with `[data-epr-part]`: `root`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `emoji`, `preview`, `reactions`, `reaction`. State: `[data-epr-active]` (hovered or focused emoji, active tab or tone), `aria-selected`, `aria-pressed`.
+Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components, MUI) for the theme, unstyled and composed paths: [STYLING_RECIPES.md](STYLING_RECIPES.md).
+
+- Target parts with `[data-epr-part]`: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State: `[data-epr-active]` (hovered or focused emoji, active tab or tone), `aria-selected`, `aria-pressed`.
 - Variables yield to any consumer selector (zero specificity). For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and pass `cssLayer="epr"`.
 - Under `unstyled` or a bare Root, give `[data-epr-part='variation-picker']` and sticky `category-label`s a background; they are transparent overlays otherwise.
 - Do not override Viewport overflow, cell dimensions, category positioning or the inline cell positions. Change size variables or `columns` instead.

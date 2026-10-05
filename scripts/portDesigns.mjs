@@ -83,7 +83,7 @@ for (const recipe of recipes) {
     { name: 'app.css', content: from('app.css') },
     { name: 'picker.css', content: from('picker.css') },
     { name: 'picker.module.css', content: from('picker.module.css') },
-    { name: 'README.md', content: `# ${recipe.title}\n\n${recipe.description}\n\nInstall the v5 emoji-picker-react candidate, import app.css and picker.css, then render <Shell className="${recipe.rootClass}" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n` },
+    { name: 'README.md', content: `# ${recipe.title}\n\n${recipe.description}\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className="${recipe.rootClass}" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n` },
   ];
   fs.writeFileSync(path.join(sourcesDir, `${recipe.dir}.json`), JSON.stringify({ files }, null, 2) + '\n');
   fs.writeFileSync(

@@ -141,6 +141,7 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             website/package-lock.json
+            example/package-lock.json
       - run: npm ci
       - run: npm ci
         working-directory: website
@@ -150,3 +151,9 @@ jobs:
         with:
           name: website-candidate
           path: website/out
+      # The example app consumes the same local package; it must keep
+      # type-checking and building against every usage path.
+      - run: npm ci
+        working-directory: example
+      - run: npm run build
+        working-directory: example

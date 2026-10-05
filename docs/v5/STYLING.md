@@ -140,13 +140,15 @@ Expose only parts needed for supported product styling.
 Initial required part API:
 
 - `root`
+- `panel`
 - `reactions`
 - `reaction`
 - `expand-reactions`
-- `panel`
 - `search`
+- `search-input` (the native input, whether rendered by `Search`, `SearchInput` or a design-library `as` component)
 - `search-clear`
 - `skin-tone`
+- `skin-tone-button`
 - `category-nav`
 - `category-tab`
 - `viewport`
@@ -159,6 +161,9 @@ Initial required part API:
 - `preview`
 - `empty` (v5, the `Empty` primitive)
 - `loading` (v5, the `Loading` primitive)
+- `load-error` (v5, the `LoadError` primitive)
+
+`test/parts-contract.test.ts` fails when this list and the `data-epr-part` values emitted by `src/` drift apart.
 
 Part names are public API once released. Renaming/removing one is semver-significant.
 

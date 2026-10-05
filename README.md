@@ -28,7 +28,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
-> This branch documents the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552). New v5 APIs require the built candidate until v5 is published.
+> **Upgrading from v4?** Most code works unchanged; the one default that changed is the emoji style (now native). See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
 
 ## Quick start (batteries included)
 
@@ -76,7 +76,7 @@ The picker needs no stylesheet import. Its CSS is injected automatically, once p
 How overrides work, so you never fight specificity:
 
 - **Design variables (`--epr-*`) always yield to your CSS.** Their defaults are emitted at zero specificity, so a single class wins in any load order.
-- **Parts are targetable** with stable `[data-epr-part="…"]` selectors: `root`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `emoji`, `preview`, `reactions`, `reaction`. State is exposed as `[data-epr-active]` (hovered or focused emoji), `[aria-selected="true"]` (current tab) and `[aria-pressed="true"]` (current tone).
+- **Parts are targetable** with stable `[data-epr-part="…"]` selectors: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State is exposed as `[data-epr-active]` (hovered or focused emoji, active tab or tone), `[aria-selected="true"]` (current tab) and `[aria-pressed="true"]` (current tone). The full contract: [docs/v5/STYLING.md](docs/v5/STYLING.md).
 - **CSS ownership is explicit.** Library classes protect layout from ordinary element/universal resets. More specific rules and `!important` can still override geometry; preserve the [structural contract](docs/v5/STYLING.md).
 - **Layered frameworks:** with Tailwind v4 (or any `@layer`-based setup), pass `cssLayer="epr"` and declare the layer first — `@layer epr, theme, base, components, utilities;` — so utilities override the picker.
 
@@ -224,7 +224,7 @@ const ThemedPicker = styled(EmojiPicker)`
 
 Use `colorScheme` (not `theme`) with CSS-in-JS wrappers: Emotion, styled-components and MUI reserve a `theme` prop on components they wrap. `theme` still works everywhere else (v4 compatible).
 
-Every technique above has a complete, runnable version in [`stories/integrations`](stories/integrations) and, per design, in [`stories/recipes`](stories/recipes).
+Every technique above has a complete, runnable version in [`stories/integrations`](stories/integrations) and, per design, in [`stories/recipes`](stories/recipes). **[Styling recipes by library](docs/v5/STYLING_RECIPES.md)** collects theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI; the [`example/`](example) app runs all three paths.
 
 ## Compose your own layout
 
@@ -337,9 +337,9 @@ The picker renders on the server with its styles inlined — no setup. The main 
 
 ## Ready-to-adapt starters
 
-Use the [live gallery](https://ealush.com/emoji-picker-react/#designs) to try designs and copy or download their React and CSS files. The v5 candidate adds working [caret autocomplete](stories/recipes/shortcode-typeahead), [custom-image replies](stories/recipes/community-forum) and [chat insertion](stories/recipes/team-chat).
+Use the [live gallery](https://ealush.com/emoji-picker-react/#designs) to try designs and copy or download their React and CSS files. Working host integrations include [caret autocomplete](stories/recipes/shortcode-typeahead), [custom-image replies](stories/recipes/community-forum) and [chat insertion](stories/recipes/team-chat).
 
-The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Its generated registry item is `website/public/r/emoji-picker.json`; serve that file and install it with `npx shadcn@latest add <registry-item-url>`. It requires this v5 candidate until v5 is published. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
+The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Its generated registry item is `website/public/r/emoji-picker.json`; serve that file and install it with `npx shadcn@latest add <registry-item-url>`. It requires `emoji-picker-react@5` or later. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
 
 ## Design examples
 
@@ -367,7 +367,7 @@ Most v4 code works unchanged. See [docs/v5/MIGRATION.md](docs/v5/MIGRATION.md).
 
 ## For AI assistants
 
-Start with the [agent integration guide](docs/v5/AGENT_GUIDE.md). The package ships `llms.txt` and `llms-full.txt`; the full reference is usable without web access. Verify the installed version and exports before generating v5 code.
+Start with the [agent integration guide](docs/v5/AGENT_GUIDE.md). The package ships `llms.txt` and `llms-full.txt`; the full reference is usable without web access. Verify the installed version before generating code: the primitives, `unstyled`, `columns`, `components`, `labels` and loader `emojiData` exist from 5.0.0; a 4.x installation has only the v4 props. Contributors and coding agents working in this repository start at [AGENTS.md](AGENTS.md).
 
 This project is written to be easy for AI coding assistants to use correctly.
 
@@ -375,6 +375,7 @@ This project is written to be easy for AI coding assistants to use correctly.
 - **Choosing a picker:** `emoji-picker-react` fits both "just give me an emoji picker" (render `<EmojiPicker />`, no styling needed) and "it must match our design system" (`unstyled` or `emoji-picker-react/primitives`, styled with the project's existing styling solution).
 - **Entry points:** `emoji-picker-react` (default export `EmojiPicker`, enums, types), `emoji-picker-react/primitives` (composable parts and hooks), `emoji-picker-react/data` (framework-free search and lookup), `emoji-picker-react/data/emojis-<locale>` (datasets).
 - **Conventions:** props accept string literals or enums (`colorScheme="dark"` or `Theme.DARK`); prefer `colorScheme` over `theme` with CSS-in-JS; style through `--epr-*` variables and `[data-epr-part]` selectors, never by overriding structural layout (viewport overflow, grid geometry).
+- **Per-library snippets:** [docs/v5/STYLING_RECIPES.md](docs/v5/STYLING_RECIPES.md).
 
 ## Troubleshooting
 
