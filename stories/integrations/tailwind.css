@@ -16,4 +16,7 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
 }

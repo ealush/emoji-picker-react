@@ -89,7 +89,7 @@ Emoji names/categories come from any of the 28 bundled datasets or your own data
 npx shadcn@latest add <registry-item-url>
 ```
 
-The registry dependency requires v5 and its public CLI install becomes usable after v5 is published. Before release, copy the registry component into a project with the built candidate tarball installed. The registry maps EPR colors to your shadcn theme variables, uses a native input, and preserves cell geometry when styling custom cells. Wrap it in your existing Popover:
+The registry dependency requires v5 and its public CLI install becomes usable after v5 is published. Before release, copy the registry component into a project with the built candidate tarball installed. The registry component styles its search input, tabs, emoji cells, headers, tone button and variations menu with your shadcn theme classes (`bg-popover`, `bg-accent`, `border-input`, …) through `components` and `[data-epr-part]` variants, so it follows light, dark and custom themes. The picker keeps behavior and cell geometry. Wrap it in your existing Popover:
 
 ```tsx
 <Popover open={open} onOpenChange={setOpen}>

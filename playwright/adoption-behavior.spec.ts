@@ -245,6 +245,25 @@ for (const mode of ['light', 'dark']) {
         .analyze()
     ).violations;
     expect(violations).toEqual([]);
+
+    // The component supplies its own controls and overlay surfaces: no
+    // native button chrome on tabs, an opaque variations menu.
+    expect(
+      await page
+        .locator('[data-epr-part="category-tab"]')
+        .first()
+        .evaluate((tab) => getComputedStyle(tab).borderTopWidth),
+    ).toBe('0px');
+    await search.fill('thumbs up');
+    await page.getByRole('gridcell', { name: 'thumbs up' }).first().focus();
+    await page.keyboard.press('Space');
+    await expect
+      .poll(() =>
+        page
+          .locator('[data-epr-part="variation-picker"]')
+          .evaluate((menu) => getComputedStyle(menu).backgroundColor),
+      )
+      .not.toBe('rgba(0, 0, 0, 0)');
   });
 }
 
