@@ -42,3 +42,30 @@ test('picker layout survives common app resets', async ({ page }) => {
     expect(styles.contentMarginLeft).toBeGreaterThan(0);
   }
 });
+
+test('another input inside Root does not put the picker into search mode', async ({
+  page,
+}) => {
+  // Design-library selects and host fields render inputs without a
+  // placeholder inside compositions; only the picker's own search input
+  // may drive search state.
+  await page.goto(
+    '/iframe.html?id=v5-global-reset-compatibility--under-app-resets&viewMode=story',
+  );
+  const root = page.locator('aside[data-epr-part="root"]').nth(1);
+  await expect(
+    root.locator('[data-epr-part="category-tab"]').first(),
+  ).toBeVisible();
+  await root.evaluate((aside) => {
+    const host = document.createElement('input');
+    host.setAttribute('aria-label', 'Host field');
+    host.value = 'typed by the host';
+    aside.prepend(host);
+  });
+
+  const tab = root.locator('[data-epr-part="category-tab"]').nth(3);
+  await expect(tab).toHaveCSS('pointer-events', 'auto');
+  await tab.click();
+  await expect(tab).toHaveAttribute('aria-selected', 'true');
+  await expect(root.locator('[data-epr-part="search-clear"]')).toBeHidden();
+});

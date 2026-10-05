@@ -83,6 +83,16 @@ export const PickerStyleTag = /* @__PURE__ */ React.memo(
   },
 );
 
+// Instant (pre-debounce) search state, read from the picker's own search
+// input only: any other input inside Root (a design-library select's
+// hidden input, a host field) must not toggle it. An input without a
+// placeholder cannot report `:placeholder-shown`, so it falls back to the
+// `.epr-search-active` class Root sets after the debounce.
+export const SEARCH_TYPED =
+  ':has(input[data-epr-part=search-input][placeholder]:not(:placeholder-shown))';
+const SEARCH_EMPTY =
+  ':has(input[data-epr-part=search-input]:placeholder-shown)';
+
 // Behavioral state selectors are scoped to the structural root class that
 // every Root carries (default picker and bare primitives alike). Scoping
 // them to the default appearance's classes (epr-main / EmojiPickerReact)
@@ -91,7 +101,7 @@ export const PickerStyleTag = /* @__PURE__ */ React.memo(
 export const commonInteractionStyles = /* @__PURE__ */ (() =>
   stylesheet.create({
     '.epr-structural-root': {
-      ':has(input:not(:placeholder-shown))': {
+      [SEARCH_TYPED]: {
         categoryBtn: {
           ':hover': {
             opacity: '1',
@@ -103,7 +113,7 @@ export const commonInteractionStyles = /* @__PURE__ */ (() =>
           ...hidden,
         },
       },
-      ':has(input:placeholder-shown)': {
+      [SEARCH_EMPTY]: {
         visibleOnSearchOnly: hidden,
       },
     },

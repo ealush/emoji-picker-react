@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { cx } from 'shipstyles';
 
-import { stylesheet } from '../../Stylesheet/stylesheet';
+import { SEARCH_TYPED, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   categoryFromCategoryConfig,
   categoryIdFromCategoryConfig,
@@ -176,7 +176,7 @@ const styles = /* @__PURE__ */ (() =>
         pointerEvents: 'none',
       },
     },
-    '.epr-structural-root:has(input:not(:placeholder-shown))': {
+    [`.epr-structural-root${SEARCH_TYPED}`]: {
       nav: { pointerEvents: 'none' },
       appearance: {
         opacity: '0.3',
