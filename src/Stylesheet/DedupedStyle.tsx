@@ -24,8 +24,9 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
   const [owner, setOwner] = React.useState(true);
 
   useIsomorphicLayoutEffect(() => {
+    const style = styleRef.current;
     const root = (rootRef.current =
-      rootRef.current || styleRef.current?.getRootNode());
+      rootRef.current || (style ? style.getRootNode() : undefined));
     if (!root) {
       return;
     }
@@ -35,7 +36,7 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
     const claims = (byKey[key] = byKey[key] || []);
     const claim: Claim = {
       update: () => setOwner(claims[0] === claim),
-      detached: () => styleRef.current?.isConnected === false,
+      detached: () => !!styleRef.current && !styleRef.current.isConnected,
     };
     // An owner whose element left the document without unmounting (its
     // container was removed by hand) cannot style anything: it yields.

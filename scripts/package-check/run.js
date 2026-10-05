@@ -168,7 +168,7 @@ export const Picker = props => <Root skinTonePickerLocation={SkinTonePickerLocat
   const eager = [...initial].some(name => files.get(name).includes('grinning face with big eyes'));
   if (eager) throw new Error('primitives + runtime constants eagerly include the dataset');
   const runtime = [...initial].map(name => files.get(name)).join('\n');
-  for (const marker of ['M12.8,9.5c0.6', 'epr-btn-clear-search', 'epr-preview-default-emoji']) {
+  for (const marker of ['M12.8,9.5c.6', 'epr-btn-clear-search', 'epr-preview-default-emoji']) {
     if (runtime.includes(marker)) throw new Error(`minimal consumer retains unused presentation: ${marker}`);
   }
   console.log(`ok: primitives + constants initial load ${kb} KiB min+gz (ShipStyles included; dataset lazy)`);

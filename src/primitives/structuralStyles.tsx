@@ -30,18 +30,18 @@ const boxSizingReset =
   // (expanding reactions, the tone fan, hover fades). Class-level and
   // emitted after the main sheet, so it beats library transitions while
   // a consumer's more specific rule still wins.
-  '@media (prefers-reduced-motion: reduce){.epr-structural-root,.epr-structural-root *{transition-duration:0s;animation-duration:0s;}}' +
+  '@media (prefers-reduced-motion:reduce){.epr-structural-root,.epr-structural-root *{transition-duration:0s;animation-duration:0s}}' +
   // appearance="default" paints the token surface behind the built-in
   // leaves, so colorScheme="dark" is not dark controls on a transparent
   // root. Zero specificity: any consumer background wins.
-  ':where(.epr-appearance-default){background-color:var(--epr-bg-color);}' +
+  ':where(.epr-appearance-default){background-color:var(--epr-bg-color)}' +
   // `columns`: the picker hugs that many emoji columns (plus the stable
   // scrollbar gutter) unless the consumer sizes it; any width rule wins.
   // In layout the content box spans the row (columns spread evenly); a
   // narrower container caps it, so fewer columns render.
-  ':where(.epr-structural-root[data-epr-columns]){width:fit-content;max-width:100%;}' +
-  ':where(.epr-structural-root[data-epr-columns] [data-epr-part="viewport"]){scrollbar-gutter:stable;}' +
-  ':where(.epr-structural-root[data-epr-columns] [data-epr-part="category-content"]){width:calc(var(--epr-columns) * var(--epr-emoji-fullsize));min-width:calc(100% - 2 * var(--epr-horizontal-padding));max-width:calc(100% - 2 * var(--epr-horizontal-padding));}';
+  ':where([data-epr-columns]){width:fit-content;max-width:100%}' +
+  ':where([data-epr-columns] [data-epr-part=viewport]){scrollbar-gutter:stable}' +
+  ':where([data-epr-columns] [data-epr-part=category-content]){width:calc(var(--epr-columns)*var(--epr-emoji-fullsize));min-width:calc(100% - 2*var(--epr-horizontal-padding));max-width:calc(100% - 2*var(--epr-horizontal-padding))}';
 
 export const structuralStyles = /* @__PURE__ */ (() =>
   structuralSheet.create({

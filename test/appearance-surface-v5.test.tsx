@@ -33,7 +33,7 @@ describe('Root appearance surface', () => {
       .map((style) => style.textContent)
       .join('\n');
     expect(css).toContain(
-      ':where(.epr-appearance-default){background-color:var(--epr-bg-color);}',
+      ':where(.epr-appearance-default){background-color:var(--epr-bg-color)}',
     );
   });
 
