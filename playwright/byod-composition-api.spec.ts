@@ -56,6 +56,7 @@ test('MUI owns interactive controls across reactions, grid, tones and custom act
   await expect(variation).toHaveClass(/MuiButton/);
   await thumbs.dispatchEvent('mouseup', { button: 0 });
   await variation.click();
+  await expect(page.getByLabel('Selected emoji')).toHaveText('👍');
   await expect(page.locator('[data-epr-part="variation-picker"]')).toBeHidden();
   await page
     .getByRole('button', { name: 'Show reactions', exact: true })

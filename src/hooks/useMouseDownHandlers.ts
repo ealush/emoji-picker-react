@@ -77,7 +77,8 @@ export function useMouseDownHandlers(
       }
 
       const skinToneToUse =
-        activeVariationFromUnified(unified) || activeSkinTone;
+        activeVariationFromUnified(unified) ??
+        (emojiHasVariations(emoji) ? SkinTones.NEUTRAL : activeSkinTone);
 
       updateSuggested();
       setSuggested(emoji, skinToneToUse);

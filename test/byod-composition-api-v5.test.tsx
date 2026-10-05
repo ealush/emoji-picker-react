@@ -157,6 +157,72 @@ describe('BYOD composition API', () => {
     expect(screen.getByRole('textbox')).toHaveFocus();
   });
 
+  it('selects the exact neutral variation and reaction even when the active tone is medium', async () => {
+    const selected = vi.fn();
+    const reaction = vi.fn();
+    const { container, rerender } = render(
+      <Picker.Root
+        emojiData={data}
+        categories={categories}
+        skinTone={Picker.SkinTones.MEDIUM}
+        components={components}
+        onEmojiClick={selected}
+      >
+        <Grid />
+      </Picker.Root>,
+    );
+    const medium = screen.getByRole('gridcell', { name: 'thumbs up' });
+    expect(medium).toHaveAttribute('data-epr-unified', '1f44d-1f3fd');
+    fireEvent.mouseDown(medium);
+    await vi.waitFor(() =>
+      expect(
+        container.querySelector(
+          '[data-epr-part="variation-picker"] [data-custom-emoji="1f44d"]',
+        ),
+      ).not.toBeNull(),
+    );
+    fireEvent.mouseUp(medium);
+    await act(
+      async () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => resolve(undefined)),
+        ),
+    );
+    fireEvent.click(
+      container.querySelector(
+        '[data-epr-part="variation-picker"] [data-custom-emoji="1f44d"]',
+      )!,
+    );
+    expect(selected.mock.calls[0][0]).toMatchObject({
+      unified: '1f44d',
+      emoji: '👍',
+      activeSkinTone: Picker.SkinTones.NEUTRAL,
+    });
+    rerender(
+      <Picker.Root
+        emojiData={data}
+        skinTone={Picker.SkinTones.MEDIUM}
+        components={components}
+        reactions={['1f44d']}
+        onReactionClick={reaction}
+      >
+        <Grid />
+        <Actions />
+      </Picker.Root>,
+    );
+    fireEvent.click(screen.getByText('Collapse'));
+    fireEvent.click(
+      container.querySelector(
+        '[data-epr-part="reactions"] [data-custom-emoji="1f44d"]',
+      )!,
+    );
+    expect(reaction.mock.calls[0][0]).toMatchObject({
+      unified: '1f44d',
+      emoji: '👍',
+      activeSkinTone: Picker.SkinTones.NEUTRAL,
+    });
+  });
+
   it('lets List override one slot while inheriting the remaining Root slots', () => {
     const { container } = render(
       <Picker.Root emojiData={data} components={components}>
