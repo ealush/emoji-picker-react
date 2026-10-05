@@ -78,6 +78,33 @@ describe('getSuggested', () => {
     expect(getSuggested()).toEqual([]);
   });
 
+  it.each([
+    ['null', 'null'],
+    ['an object', '{"unified":"1f600"}'],
+    ['a string', '"1f600"'],
+  ])('returns an empty list when storage holds %s', (_, raw) => {
+    mockLocalStorage({ [LS_KEY]: raw });
+
+    expect(getSuggested()).toEqual([]);
+    expect(getSuggested(SuggestionMode.RECENT)).toEqual([]);
+    expect(getSuggested(SuggestionMode.FREQUENT)).toEqual([]);
+  });
+
+  it('drops malformed entries and keeps well-formed ones', () => {
+    mockLocalStorage({
+      [LS_KEY]: JSON.stringify([
+        null,
+        1,
+        'x',
+        { unified: '1f600' },
+        { unified: 7, original: '1f600', count: 1 },
+        storedList[0],
+      ]),
+    });
+
+    expect(getSuggested()).toEqual([storedList[0]]);
+  });
+
   it('returns an empty list when storage throws', () => {
     const storage = mockLocalStorage();
     storage.getItem.mockImplementation(() => {
@@ -166,6 +193,15 @@ describe('setSuggested', () => {
     expect(next.map((item: { unified: string }) => item.unified)).not.toContain(
       '1f6013',
     );
+  });
+
+  it('replaces a corrupted stored value instead of throwing', () => {
+    const storage = mockLocalStorage({ [LS_KEY]: 'null' });
+
+    expect(() => setSuggested(grinning, SkinTones.NEUTRAL)).not.toThrow();
+    expect(JSON.parse(storage.setItem.mock.calls[0][1])).toEqual([
+      { unified: '1f600', original: '1f600', count: 1 },
+    ]);
   });
 
   it('ignores quota errors instead of throwing', () => {

@@ -1,4 +1,8 @@
-import { SkinTones, SuggestionMode, SuggestionModeValue } from '../types/exposedTypes';
+import {
+  SkinTones,
+  SuggestionMode,
+  SuggestionModeValue,
+} from '../types/exposedTypes';
 
 import { DataEmoji } from './DataTypes';
 import { emojiUnified } from './emojiUtils';
@@ -18,9 +22,9 @@ export function getSuggested(mode?: SuggestionModeValue): Suggested {
     if (typeof window === 'undefined' || !window.localStorage) {
       return [];
     }
-    const recent = JSON.parse(
-      window.localStorage.getItem(SUGGESTED_LS_KEY) ?? '[]',
-    ) as Suggested;
+    const recent = parseSuggested(
+      window.localStorage.getItem(SUGGESTED_LS_KEY),
+    );
 
     if (mode === SuggestionMode.FREQUENT) {
       return recent.sort((a, b) => b.count - a.count);
@@ -30,6 +34,25 @@ export function getSuggested(mode?: SuggestionModeValue): Suggested {
   } catch {
     return [];
   }
+}
+
+// Storage is shared by every script on the origin and outlives library
+// versions: keep only well-formed entries so a corrupted or foreign value
+// cannot crash rendering or selection.
+function parseSuggested(raw: string | null): Suggested {
+  const parsed: unknown = JSON.parse(raw ?? '[]');
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+  return parsed.filter(
+    (item): item is SuggestedItem =>
+      !!item &&
+      typeof item === 'object' &&
+      typeof item.unified === 'string' &&
+      typeof item.original === 'string' &&
+      typeof item.count === 'number' &&
+      Number.isFinite(item.count),
+  );
 }
 
 export function setSuggested(emoji: DataEmoji, skinTone: SkinTones) {
