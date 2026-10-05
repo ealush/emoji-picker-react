@@ -1,51 +1,57 @@
 # Integrating emoji-picker-react: agent guide
 
-## Discover the installed API first
+A decision-first guide for coding agents and the people reviewing their output. Every snippet here matches the shipped API.
 
-These documents describe the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), developed on `v5-implementation`. The release version is assigned when the release workflow publishes it. Before publication, use a tarball built from that branch to try these APIs; installing the latest published v4 package does not provide them.
+## 1. Check the installed version first
 
-Read the application's `package.json`, lockfile and the installed package's `exports`. Read `node_modules/emoji-picker-react/llms-full.txt` for the reference shipped with that exact package. `llms.txt` is a compact navigation index. When reviewing this candidate, use files from `v5-implementation`, rather than mixing candidate APIs with master documentation. An agent can consume the full text offline without visiting the website or inspecting screenshots.
+These documents describe the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), developed on `v5-implementation`. Until v5 is published, the APIs below need a tarball built from that branch; the latest published v4 package does not have them.
 
-## Choose the UI ownership
+1. Read the app's `package.json`, lockfile, and `node_modules/emoji-picker-react/package.json` (`version`, `exports`).
+2. Read `node_modules/emoji-picker-react/llms-full.txt`: the full reference for that exact version, usable offline. `llms.txt` is a short index.
+3. If the installed version is 4.x, use only v4 APIs (no `/primitives`, `unstyled`, `columns`, `components`, `labels` or loader `emojiData`).
 
-| Path | Entry | Application owns | Picker owns |
+## 2. Pick a path
+
+| The app needs | Use | The app styles | The picker owns |
 | --- | --- | --- | --- |
-| Batteries included | Default `EmojiPicker` | Selection callback, placement, optional tokens | Complete themed UI and behavior |
-| BYOD with the supplied layout | `EmojiPicker unstyled` | Chrome and part appearance | Supplied composition and managed parts |
-| BYOD composition | `/primitives` | Layout, design language, design library, custom input/cells/headers/preview/tone controls | Root state, managed geometry, grid, keyboard navigation, ARIA and virtualization |
-| Search/lookup without UI | `/data` | UI and interaction, if any | Framework-free dataset lookup and search |
+| An emoji picker, fast | `<EmojiPicker />` | Nothing | Complete UI and behavior |
+| The built-in look in brand colors | `<EmojiPicker />` + `colorScheme` + `--epr-*` color variables | Variables | Complete UI and behavior |
+| Its own design, supplied layout | `<EmojiPicker unstyled />` | Every part, via `[data-epr-part]` | Layout, geometry, behavior |
+| Its own layout or design-library components | `emoji-picker-react/primitives` | Layout and parts | State, grid, keyboard, ARIA, virtualization |
+| Search or lookup without UI | `emoji-picker-react/data` | Everything | Dataset search and lookup |
 
-BYOD means **bring your own design, design language and design library**. It works with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI. Headless composition retains the managed grid contract. There is no renderer-independent UI engine API.
+BYOD means **bring your own design, design language and design library**. It works with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI.
 
-## Batteries included
+**The styling rule.** Color variables (`--epr-bg-color`, `--epr-highlight-color`, …) theme the *built-in look*. `unstyled` and a bare `Root` remove the built-in look, so color variables do nothing there. Size variables (`--epr-emoji-size`, paddings, heights) work in every mode. To reuse the built-in look in a composition, pass `appearance="default"` to `Root`.
+
+## 3. Batteries included
 
 ```tsx
 import EmojiPicker from 'emoji-picker-react';
 
 <EmojiPicker
   colorScheme="auto"
+  columns={8}
   onEmojiClick={(data) => insertAtCaret(data.emoji)}
 />
 ```
 
-`insertAtCaret` is your application callback. The host owns insertion, trigger state, placement and popover/dialog dismissal. Preserve both the text selection and any suffix when inserting. For custom images, `data.emoji` is the custom id; map it to your application's token or attachment representation. Search and selection do not send messages.
+`insertAtCaret` is your application's function. The host owns insertion, trigger state, placement and popover/dialog dismissal. Preserve the text selection and any suffix when inserting. For custom image emojis, `data.emoji` is the custom id; map it to your token or attachment. Search and selection never send messages.
 
-## BYOD with design-library components
+## 4. BYOD with design-library components
 
 ```tsx
 import * as React from 'react';
 import * as Picker from 'emoji-picker-react/primitives';
 import { Input, Button } from './design-system';
 
-function Cell({ emoji, children, ...managed }: Picker.EmojiRenderProps) {
+function Cell({ emoji, ...managed }: Picker.EmojiRenderProps) {
   return (
-    <Button {...managed} variant={emoji.isActive ? 'highlighted' : 'quiet'}>
-      {children}
-    </Button>
+    <Button {...managed} variant={emoji.isActive ? 'highlighted' : 'quiet'} />
   );
 }
 
-const cells = { Emoji: Cell };
+const components = { Emoji: Cell };
 const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
 
 function ComposerPicker({ onSelect }: {
@@ -55,8 +61,10 @@ function ComposerPicker({ onSelect }: {
     <Picker.Root
       emojiData={loadFrench}
       onEmojiClick={onSelect}
+      components={components}
+      columns={8}
       className="composer-picker"
-      style={{ width: 320, height: 400 }}
+      style={{ height: 400 }}
       panelProps={{ className: 'composer-picker-panel' }}
       labels={{
         searchLabel: 'Rechercher un emoji',
@@ -68,7 +76,7 @@ function ComposerPicker({ onSelect }: {
     >
       <Picker.SearchInput as={Input} />
       <Picker.Viewport>
-        <Picker.List components={cells} />
+        <Picker.List />
         <Picker.Empty />
         <Picker.Loading />
         <Picker.LoadError />
@@ -78,42 +86,62 @@ function ComposerPicker({ onSelect }: {
 }
 ```
 
-Adapt `Input` and `Button` options to the actual installed design library. `Input` must forward the supplied props and ref to an `<input>`. Its own options, including required options, are inferred from `as`. Root owns the input value: use `searchValue` / `onSearchChange` on Root, rather than `value`, `defaultValue` or a competing controller on SearchInput. Its `onChange` observes the event after library behavior. The forwarded ref addresses the native input, not a wrapper. Disabled and read-only inputs reject type-to-search from the grid.
+Adapt `Input` and `Button` props to the installed design library.
 
-A custom cell must render a native button through its design-library component and spread **all** managed attributes, className and inline position style onto it. Nested spans/icons are supported. Preserve the default `children` or render `emoji.emoji` / `emoji.imageUrl` yourself. Cells expose `emoji.isActive` and `data-epr-active`; their default button reset and decoration are absent. Provide a visible focus treatment. Custom category headers preserve sticky measurement styles but own font, background and decoration.
+**Inputs.** `SearchInput as={Input}` infers `Input`'s own props, including required ones. `Input` must forward the supplied props and ref to a native `<input>`. Root owns the value: use `searchValue` / `onSearchChange` on Root, never `value`, `defaultValue` or a second controller on SearchInput. Libraries whose ref lands on a wrapper (MUI `TextField`) need an adapter: `inputRef` for the ref, `slotProps.htmlInput` for native props. See the copyable adapter in [ADOPTION.md](ADOPTION.md#inputs-with-a-wrapper-ref-including-mui).
 
-Inputs with wrapper refs need an adapter. MUI TextField uses `inputRef` for native focus and `slotProps.htmlInput` for native attributes and composition handlers; passing TextField directly to `as` is insufficient. Keep its value/onChange synchronized at the TextField level. See the copyable adapter and executable Button/Typography composition in [ADOPTION.md](ADOPTION.md#inputs-with-a-wrapper-ref-including-mui). Use `minWidth: 0` and compatible padding on design-library buttons so their minimum size does not exceed the managed cell.
+**Cells, headers and controls.** `components` on Root or EmojiPicker replaces `Emoji`, `CategoryHeader`, `CategoryButton`, `SkinToneButton`, `ClearButton` and `ExpandButton`. Each receives managed props plus metadata: `emoji` (with `isActive`), `category` (with `isActive` on buttons) or `tone`. Remove the metadata and spread **all** remaining props, including `className` and the inline position `style`, onto one native element. Keep component identities stable (define them at module scope). Add a visible focus style. Design-library buttons often need `minWidth: 0` and compatible padding to fit the managed cell.
 
-The partial French `labels` above demonstrates overrides; complete localization requires every visible/announced string used by your composition. See [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
+**Custom UI from hooks** (inside Root): `useActiveEmoji()` for previews, `useSkinTone()` for tone menus (respects controlled `skinTone`), `useSearchState()` (read-only) and `useSearchActions()` (`setValue`, `clear`) for search UI, `useCategoryNavigation()` (`categories`, `activeCategory`, `jumpToCategory`) for tabs, `usePickerMode()` (`reactionsOpen`, `expand`, `collapse`) for reactions, `useEmojiDataState()` (`loading`, `error`, `retry`) for loading UI.
 
-## Composition grammar and state
+## 5. Composition grammar
 
-- One Root per picker. To render a grid, use one Viewport containing one List. Styling wrappers, memo and HOCs are supported.
-- Search and SearchInput are alternatives for the same single search region. Search includes managed input, icon and clear control; SearchInput is your native or design-library input.
-- Optional parts include CategoryNav, Preview, SkinTone, Empty, Loading and LoadError. Managed Root supplies Panel and Reactions; use panelProps for panel layout. With composition="explicit", place expanded parts inside one Panel and Reactions outside it within Root.
-- Hooks run inside Root: `useActiveEmoji`, `useSkinTone`, `useSearchState`, `useEmojiDataState`. The tone setter obeys controlled `skinTone` / `onSkinToneChange`; search state is read-only.
-- Controlled search emits raw proposals; only the parent's accepted `searchValue` filters the grid. IME finalizes through the shared controller. Do not replace its composition handlers.
-- Stable ref identities stay attached across unrelated renders. Callback-ref cleanup is supported. Each bare Root owns its callbacks; callback-only updates remain fresh for the default picker too.
-- `open={false}` removes picker content and cancels pending data loading. Reopening mounts a new behavior subtree. Keep controlled state in the host when it must survive closing.
+- One `Root` per picker. One `Viewport` containing one `List`. Wrappers, memo and HOCs around parts are fine.
+- `Search` (input + icon + clear button) and `SearchInput` (only the input, or yours) are alternatives: use one.
+- Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. When rendering `SkinTone` yourself, pass `skinTonePickerLocation="NONE"` to Root.
+- Root wraps children in a managed `Panel` and adds a `Reactions` bar. Use `panelProps` to lay out the panel. With `composition="explicit"`, place one `Panel` (expanded parts) and `Reactions` yourself inside Root.
+- `open={false}` unmounts the picker and cancels loading; reopening starts fresh. Keep state that must survive closing in the host.
+- Portaling a whole Root (into a popover) works; portaling individual parts out of Root does not.
 
-Use exported Panel/Reactions only with composition="explicit". Use Root or EmojiPicker components for shared Emoji/CategoryHeader/CategoryButton/SkinToneButton/ClearButton/ExpandButton replacements. Use useSearchActions, useCategoryNavigation and usePickerMode for custom actions. Do not invent asChild, onEmojiSelect, direct List children, or useSearchState setters. Managed parts filter `dangerouslySetInnerHTML`, reserved roles and `data-epr-*` overrides. These boundaries preserve the actual managed elements.
+## 6. Mistakes to avoid
 
-## Data, loading and bundle boundaries
+| Don't | Do |
+| --- | --- |
+| `unstyled` + `--epr-bg-color` and expect a themed picker | Theme the default picker with variables, or style `[data-epr-part]` selectors under `unstyled` |
+| Bare `Root colorScheme="dark"` and expect dark controls | `Root appearance="default" colorScheme="dark"` |
+| `import { Categories } from 'emoji-picker-react'` in a primitives app | Import enums from `emoji-picker-react/primitives`; the main entry bundles the English dataset |
+| Invent `asChild`, `onEmojiSelect`, `render` props, children inside `List`, or setters on `useSearchState` | Use `components`, `onEmojiClick`, and the action hooks above |
+| `value` / `onChange` on `SearchInput` to control search | `searchValue` / `onSearchChange` on Root |
+| Drop `style` or `className` from a custom cell | Spread every managed prop onto the native button |
+| `stopPropagation` to block selection | `onEmojiClick` is the selection callback; filter there |
+| Query cells with `getByRole('button')` in tests | `getByRole('gridcell', { name: 'grinning face' })` |
+| A bare `Root` with no height | Give Root a height (`style={{ height: 400 }}` or a class); otherwise every emoji renders at once and development builds warn |
+| A new loader function on every render | Hoist the loader to module scope; a new identity means a new dataset |
+| Hide the default focus ring on custom controls without a replacement | Provide `:focus-visible` styles |
 
-Hoist an emoji loader at module scope or use a stable callback. New loader identity means a new source. Loaders receive `{ signal }`; pass it to fetch when appropriate. Rejection and malformed payloads appear through LoadError and `useEmojiDataState().error`. `retry()` starts another attempt. Source changes, closing and unmount abort old attempts; late results cannot replace newer data.
+## 7. Data, loading and bundle size
 
-Use runtime constants and types from `/primitives` in composed consumers. The main entry and `/data` register synchronous default English data. A mixed import graph intentionally loses the data-free startup boundary. A static locale import is synchronous and SSR-safe; a dynamic locale loader defers that dataset. Do not interpret the initial JavaScript budget as including deferred dataset traffic or React peer dependencies.
+Hoist an emoji loader at module scope or memoize it. Loaders receive `{ signal }`; pass it to `fetch`. Rejection and malformed payloads show `LoadError` and set `useEmojiDataState().error`; `retry()` starts another attempt. Source changes, closing and unmount abort old attempts.
 
-## Styles, localization and accessibility
+The main entry and `/data` register the English dataset synchronously. A composed app that wants the dataset deferred must import runtime values only from `/primitives`. A static locale import is synchronous and SSR-safe; a dynamic loader defers the dataset. The initial JavaScript budget excludes deferred dataset traffic and React.
 
-Use `className`, `style`, `--epr-*` tokens and `[data-epr-part]` selectors. Root's `colorScheme` opts into color tokens; `theme` belongs to EmojiPicker. `unstyled` and bare Root remove decorative styling from every managed part while retaining geometry and behavior. Root appearance="default" explicitly reuses built-in leaf appearance. Custom component slots receive managed props plus metadata; remove metadata and spread props onto a native button/header, preserving measured styles and visible focus. Input adapters must forward native props and ref to the input.
+## 8. Styling details
 
-Preserve Viewport overflow, grid/cell dimensions, category positioning, and supplied inline cell positions. Button border-box measurement includes your design-library borders. Change supported geometry tokens, not arbitrary measured layout. Root dimensions use native `style`; EmojiPicker also supports `width` and `height`. For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and use `cssLayer="epr"`.
+- Target parts with `[data-epr-part]`: `root`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `emoji`, `preview`, `reactions`, `reaction`. State: `[data-epr-active]` (hovered or focused emoji, active tab or tone), `aria-selected`, `aria-pressed`.
+- Variables yield to any consumer selector (zero specificity). For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and pass `cssLayer="epr"`.
+- Under `unstyled` or a bare Root, give `[data-epr-part='variation-picker']` and sticky `category-label`s a background; they are transparent overlays otherwise.
+- Do not override Viewport overflow, cell dimensions, category positioning or the inline cell positions. Change size variables or `columns` instead.
+- Root dimensions come from `style`/`className`; EmojiPicker also takes `width` and `height`. With `columns`, the width fits the columns unless set.
+- Use `colorScheme`, not `theme`, on components wrapped by Emotion, styled-components or MUI `styled()`.
+- `dir="rtl"` mirrors the grid, tabs and tone fan; arrow keys follow the visual direction. Custom cells receive their position as `top` and `insetInlineStart`; spread `style` rather than reading `left`.
+- `prefers-reduced-motion: reduce` turns off the library's own transitions.
 
-Locale datasets translate names and categories. `labels` translates controls and announcements; `categories` can override names and `previewConfig.defaultCaption` controls the preview caption. Preserve managed ARIA props. Test keyboard selection, search/IME, localization, focus restoration and nested Escape in the actual host popover/dialog. The grid cells are `role="gridcell"`, not queried as plain buttons. Custom duplicate entries can have the same accessible name; scope a query to the relevant category.
+## 9. Localization and accessibility
 
-Automated axe checks and keyboard regression tests provide bounded evidence. Follow [ACCESSIBILITY_VERIFICATION.md](./ACCESSIBILITY_VERIFICATION.md) for manual NVDA/VoiceOver release checks; automated checks do not establish a manual screen-reader pass.
+Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
-## Verification in this repository
+Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category. Automated axe checks do not replace the manual screen-reader checks in [ACCESSIBILITY_VERIFICATION.md](./ACCESSIBILITY_VERIFICATION.md).
 
-`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` exercise behavior, types and installed package consumers. Playwright covers behavior across browsers/touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. Run `npm run docs:llms` after source-document changes; commit both root and website generated text. See [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md) for the release gates and remaining evidence.
+## 10. Verifying changes in this repository
+
+`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` cover behavior, types and installed-package consumers. Playwright covers browsers and touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. After changing source documents, run `npm run docs:llms` and commit the generated root and website text. Release gates: [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).

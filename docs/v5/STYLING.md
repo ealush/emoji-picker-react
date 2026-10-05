@@ -10,14 +10,14 @@ Choose batteries included or BYOD (bring your own design, design language and de
 
 It continues to support the documented v4 CSS custom properties.
 
-`<EmojiPicker unstyled />` keeps the supplied composition and behavior while removing decorative appearance from every managed part: control colors/resets, rounding, typography, shadows, blur, motion and decorative icons. Browser native appearance remains. Geometry, positioning, scrolling and presence stay managed. A bare Root behaves the same; `Root appearance="default"` explicitly opts into built-in leaf appearance for token-based re-skins without adding Root chrome. `colorScheme` supplies variables only.
+`<EmojiPicker unstyled />` keeps the supplied composition and behavior while removing decorative appearance from every managed part: control colors/resets, rounding, typography, shadows, blur, motion and decorative icons. Browser native appearance remains. Geometry, positioning, scrolling and presence stay managed. A bare Root behaves the same. Color variables have no effect in these modes because no rule reads them; size variables still apply. `Root appearance="default"` explicitly opts into built-in leaf appearance for token-based re-skins and paints Root with `var(--epr-bg-color)` at zero specificity (no border, radius or shadow). `colorScheme` supplies variables only.
 
 ### Structural primitives
 
 `emoji-picker-react/primitives` exposes the same behavioral renderer, unbranded by default:
 
 - every Root applies the geometry tokens (sizes, spacing, stacking) and a zero-specificity `box-sizing: border-box` fallback, so a bare composition lays out and measures correctly with no appearance tokens; design-library classes retain their own box sizing (for example MUI's content-box inputs);
-- `<Root colorScheme="light" | "dark" | "auto">` opts into the default color tokens (variables only — no border, background or typography on Root);
+- `<Root colorScheme="light" | "dark" | "auto">` defines the default color tokens (variables only). They take effect with `appearance="default"` or in your own CSS (`background: var(--epr-bg-color)`);
 - token presets are exported as data: `structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`.
 
 With `List components`, custom emoji buttons receive geometry and behavior attributes without the default button reset, rounding, hover/focus colors or variation indicator decoration. Custom category headers receive sticky positioning and measurement without default background, blur, font styling or text transformation. Supply your own decoration and visible focus. Native `SearchInput` and its design-library `as` component receive no managed search appearance.

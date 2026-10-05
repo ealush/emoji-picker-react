@@ -172,6 +172,8 @@ Consequences:
 - `role` is library-owned and cannot override the Root landmark semantics.
 - `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `colorScheme` only applies color tokens (named so CSS-in-JS wrappers, which reserve `theme`, pass it through).
 - `emojiData` accepts an object (synchronous, SSR-safe) or a loader; without it, the primitives entry loads the bundled dataset on demand.
+- Root has no default height. Give it one (`style` or a class) so the Viewport scrolls and virtualizes; development builds warn when a Viewport grows to its whole content.
+- `columns` (positive integer) sets the emojis per row. Root gets `data-epr-columns` and `--epr-columns`; a zero-specificity rule fits Root's width to the columns plus a stable scrollbar gutter, so any consumer width wins. A narrower container renders fewer columns. Invalid values are ignored.
 - `autoFocusSearch` affects the managed Search descendant.
 - `nonce` covers library-owned style injection.
 - `children` is required.
@@ -403,7 +405,7 @@ Composition retains library-owned grid rendering, keyboard behavior and virtuali
 
 Bare Root defaults to `appearance="none"`: no managed button reset, authored outline suppression, color, rounding, shadow, blur, transition or decorative icons on its controls. Browser native control appearance remains. Measured dimensions, cell positioning, scroll overflow, sticky category geometry and hidden/inert presence remain owned by the picker. Native emoji font/size is glyph rendering, not a theme.
 
-`appearance="default"` opts into built-in leaf appearance without adding Root chrome. This is useful for token-based recipes that deliberately reuse those controls. The default EmojiPicker sets this mode; `EmojiPicker unstyled` selects none. `colorScheme` only supplies color variables and does not enable decorative rules. Nested Roots reset both appearance and component replacements.
+`appearance="default"` opts into built-in leaf appearance and paints Root with `var(--epr-bg-color)` at zero specificity, so `colorScheme="dark"` never shows dark controls on a transparent Root; any consumer background wins. It adds no border, radius or shadow. This is useful for token-based recipes that deliberately reuse those controls. The default EmojiPicker sets this mode; `EmojiPicker unstyled` selects none. `colorScheme` only supplies color variables and does not enable decorative rules. Nested Roots reset both appearance and component replacements.
 
 `Root components` and `EmojiPicker components` accept `PickerComponents`:
 
@@ -416,7 +418,7 @@ Bare Root defaults to `appearance="none"`: no managed button reset, authored out
 | ExpandButton | none | native button |
 | ClearButton | none | native button |
 
-All slots receive children, className, style, accessible names and behavioral attributes. Render one target element and spread the managed props intact. Merge className and style with your design-library props; retain supplied dimensions, positions and transforms. Keep slot component identities stable. A List components map overrides individual grid/header slots while inheriting the rest of Root's map; it does not change variations or reactions. Replacements carry geometry and behavior without their managed leaf decoration, even under appearance="default".
+All slots receive children, className, style, accessible names and behavioral attributes. Grid cell positions arrive as `top` and `insetInlineStart` (a logical inset, so `dir="rtl"` mirrors the grid). Render one target element and spread the managed props intact. Merge className and style with your design-library props; retain supplied dimensions, positions and transforms. Keep slot component identities stable. A List components map overrides individual grid/header slots while inheriting the rest of Root's map; it does not change variations or reactions. Replacements carry geometry and behavior without their managed leaf decoration, even under appearance="default".
 
 ```tsx
 const components: PickerComponents = {

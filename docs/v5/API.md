@@ -1,13 +1,5 @@
 # v5 Public API Design
 
-## BYOD hardening amendment (2026-10-05)
-
-Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. `open={false}` on a bare Root renders no picker content, cancels pending loading and starts no new load until reopened. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
-
-Managed markup cannot be replaced through `dangerouslySetInnerHTML`; structural children, roles and reserved picker attributes remain owned by the library. Stable forwarded refs are retained across unrelated renders, and callback-ref cleanup is supported while retaining the React 16.8 runtime floor. Malformed async loader output enters the same localized error/retry path as a rejected load.
-
-SearchInput infers design-library props from its `as` component, including required options, while protecting the Root-owned value and native input contract. Custom List cells and headers receive structural styles without managed decorative appearance. They own their visible focus and design-library styling. Grid row measurement uses the outer border box, so design-library borders do not shrink virtualized row spacing.
-
 Choose batteries included or BYOD (bring your own design, design language and design library). Both use the same behavior engine. The v5 public API is designed from the consumer inward:
 
 - `<EmojiPicker />` remains the primary path;
@@ -45,6 +37,8 @@ type EmojiPickerV5Additions = {
   labels?: Partial<PickerLabels>;   // §5a
   skinTone?: SkinTones;             // §5b, controlled
   unstyled?: boolean;               // §11
+  columns?: number;                 // §11a
+  components?: PickerComponents;    // PRIMITIVES.md §16
   emojiData?: EmojiData | EmojiDataLoader; // §12a, loader form is new
 };
 ```
@@ -430,6 +424,14 @@ Styling is opt-in in both directions:
 - **`colorScheme`, not `theme`.** Emotion, styled-components and MUI reserve a `theme` prop on the components they wrap, so `styled(Root)` / `styled(EmojiPicker)` would swallow it. The default picker accepts both (`colorScheme` wins); Root only takes `colorScheme`.
 - **The default picker is branded by default.** `<EmojiPicker unstyled />` keeps the batteries-included composition and behavior but drops the chrome and colors, for styling from scratch with `className`, `--epr-*` variables and `[data-epr-part]` selectors.
 
+## 11a. Columns
+
+```tsx
+<EmojiPicker columns={8} />
+```
+
+`columns` sets the emojis per row on EmojiPicker and Root. The picker's width then fits those columns plus a stable scrollbar gutter, unless the consumer sets a width (`width`, `style` or any class). A container narrower than the columns renders fewer columns instead of clipping. Without `columns`, the width decides the column count, as in v4.
+
 ## 12. Data API
 
 The exact initial data entry point is defined in [DATA_API.md](./DATA_API.md):
@@ -512,3 +514,11 @@ Exact error text is not semver API.
 Root’s `panelProps` accepts className, style, native attributes and handlers for the managed panel. Root still owns its hidden/inert presence and children. This is where flex/grid/gap classes arrange Root’s parts.
 
 Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
+
+## Amendment: BYOD hardening (2026-10-05)
+
+Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. `open={false}` on a bare Root renders no picker content, cancels pending loading and starts no new load until reopened. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
+
+Managed markup cannot be replaced through `dangerouslySetInnerHTML`; structural children, roles and reserved picker attributes remain owned by the library. Stable forwarded refs are retained across unrelated renders, and callback-ref cleanup is supported while retaining the React 16.8 runtime floor. Malformed async loader output enters the same localized error/retry path as a rejected load.
+
+SearchInput infers design-library props from its `as` component, including required options, while protecting the Root-owned value and native input contract. Custom List cells and headers receive structural styles without managed decorative appearance. They own their visible focus and design-library styling. Grid row measurement uses the outer border box, so design-library borders do not shrink virtualized row spacing.

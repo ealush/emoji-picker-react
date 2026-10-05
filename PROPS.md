@@ -22,12 +22,14 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | ----------- | -------------------- | ------- | ----------------------------------------------------- |
 | `width`     | `string \| number`   | `350`   | Picker width. Numbers are treated as pixels.          |
 | `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels.         |
+| `columns`   | `number`             | `undefined` | Emojis per row. The width then fits the columns unless you set `width`; a narrower container shows fewer columns. |
 | `style`     | `CSSProperties`      | `{}`    | Inline styles applied to the root element.            |
 | `className` | `string`             | `""`    | CSS class applied to the root element.                |
-| `unstyled`  | `boolean`            | `false` | Drop the default chrome and colors; keep layout and behavior. Use it to style the picker entirely with your own CSS, Tailwind, CSS Modules or CSS-in-JS. |
+| `unstyled`  | `boolean`            | `false` | Remove the built-in look from every part (colors, borders, rounding, button resets, typography); keep layout, geometry and behavior. Style the parts with `[data-epr-part]` selectors and your own CSS, Tailwind, CSS Modules or CSS-in-JS. Color variables have no effect in this mode; size variables still apply. |
 | `cssLayer`  | `string`             | `undefined` | Emit the picker's CSS inside this cascade layer (e.g. `"epr"`). Use with Tailwind v4 or other `@layer` setups and declare it first: `@layer epr, theme, base, components, utilities;`. |
+| `components` | `PickerComponents` | `undefined` | Your own components for `Emoji`, `CategoryHeader`, `CategoryButton`, `SkinToneButton`, `ClearButton` and `ExpandButton`. Each receives managed props plus metadata (`emoji`, `category` or `tone`); remove the metadata and spread the rest onto one native element. The picker keeps behavior, accessibility and geometry. See [PRIMITIVES.md §16](docs/v5/PRIMITIVES.md#16-appearance-ownership-and-shared-control-replacements). |
 
-Visual styling beyond size is done via [CSS variables](CSS_VARIABLES.md).
+Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, style the parts directly; see [the README](README.md#unstyled-your-design-the-supplied-layout).
 
 ## Events & Interaction
 

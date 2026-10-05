@@ -20,7 +20,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 
 - **Batteries included** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
 - **BYOD** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
+- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
@@ -56,38 +56,44 @@ See [PROPS.md](PROPS.md) for every prop.
 
 ## Choose your path
 
-| You want | Use | Design work |
+| You want | Use | You style |
 | --- | --- | --- |
-| A complete, good-looking picker now | `<EmojiPicker />` | None |
-| Your brand's colors and sizes | `<EmojiPicker />` + `--epr-*` CSS variables, `colorScheme` | A few variables |
-| Your design system from scratch | `<EmojiPicker unstyled />` | Your CSS / styling library |
-| Your own layout (rails, popovers, docks, sheets) | `emoji-picker-react/primitives` | Your layout + styles |
+| A complete picker now | `<EmojiPicker />` | Nothing |
+| The built-in look in your brand's colors and sizes | `<EmojiPicker />` + `colorScheme` and `--epr-*` variables | A few variables |
+| Your own design on the supplied layout | `<EmojiPicker unstyled />` | Every part, with your CSS or styling library |
+| Your own layout and components | `emoji-picker-react/primitives` | Layout and parts, or reuse the built-in look with `appearance="default"` |
 
-Every path keeps the same behavior: keyboard navigation, focus management, ARIA semantics, virtualization, skin tones, variations, recents and search.
+Every path keeps the same behavior: keyboard navigation, focus management, ARIA semantics, virtualization, skin tones, variations, recents, search and localization.
+
+**One rule decides how styling works:** color variables (`--epr-bg-color`, `--epr-highlight-color`, …) theme the *built-in look*. `unstyled` and a bare primitives `Root` remove the built-in look, so color variables have no effect there. You style the parts directly. Size variables (`--epr-emoji-size`, paddings, heights) apply in every mode.
 
 ## BYOD: bring your own design
 
 Bring your own design, design language and design library. Keep the supplied layout with `unstyled`, or compose the parts and use your own input, emoji buttons, category headers, preview and tone controls. Search, localization, keyboard navigation and virtualization share the same engine in both paths.
 
-The picker needs no stylesheet import — its CSS is injected automatically and scoped with hashed class names, so it never leaks into your app.
+The picker needs no stylesheet import. Its CSS is injected automatically, once per document or shadow root, and scoped so it never leaks into your app.
 
 How overrides work, so you never fight specificity:
 
-- **Design tokens (`--epr-*`) always yield to your CSS.** Token defaults are emitted at zero specificity, so a single class wins in any load order.
-- **Parts are targetable** with stable `[data-epr-part="…"]` selectors (`root`, `search`, `category-nav`, `category-tab`, `viewport`, `list`, `category-label`, `emoji`, `preview`, `reactions`, …) and ARIA state (`[aria-selected="true"]` on the active tab).
+- **Design variables (`--epr-*`) always yield to your CSS.** Their defaults are emitted at zero specificity, so a single class wins in any load order.
+- **Parts are targetable** with stable `[data-epr-part="…"]` selectors: `root`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `emoji`, `preview`, `reactions`, `reaction`. State is exposed as `[data-epr-active]` (hovered or focused emoji), `[aria-selected="true"]` (current tab) and `[aria-pressed="true"]` (current tone).
 - **CSS ownership is explicit.** Library classes protect layout from ordinary element/universal resets. More specific rules and `!important` can still override geometry; preserve the [structural contract](docs/v5/STYLING.md).
 - **Layered frameworks:** with Tailwind v4 (or any `@layer`-based setup), pass `cssLayer="epr"` and declare the layer first — `@layer epr, theme, base, components, utilities;` — so utilities override the picker.
 
-### Theme it with CSS variables
+### Theme the built-in look with CSS variables
 
 ```css
 .my-picker {
   --epr-bg-color: #0f172a;
+  --epr-category-label-bg-color: #0f172ae6;
+  --epr-search-input-bg-color: #1e293b;
+  --epr-search-input-bg-color-active: #1e293b;
+  --epr-picker-border-color: #1e293b;
   --epr-text-color: #cbd5e1;
   --epr-highlight-color: #22d3ee;
   --epr-hover-bg-color: #1e293b;
+  --epr-focus-bg-color: #334155;
   --epr-emoji-size: 28px;
-  --epr-font-family: Inter, sans-serif;
 }
 
 .my-picker [data-epr-part='category-label'] {
@@ -97,26 +103,65 @@ How overrides work, so you never fight specificity:
 ```
 
 ```jsx
-<EmojiPicker className="my-picker" />
+<EmojiPicker colorScheme="dark" className="my-picker" />
 ```
 
-All variables: [CSS_VARIABLES.md](CSS_VARIABLES.md).
+Sticky category labels and the search field have their own surfaces, so set their variables along with `--epr-bg-color`. All variables: [CSS_VARIABLES.md](CSS_VARIABLES.md).
 
-### Unstyled
+### Unstyled: your design, the supplied layout
 
-`unstyled` removes decorative styling from every managed part. Geometry, virtualization, keyboard behavior and presence remain managed; browser native controls retain their own appearance. Supply your design with CSS or component replacements:
+`unstyled` removes decorative styling from every part: colors, borders, rounding, button resets, typography and the search icon. Layout, geometry, virtualization, keyboard behavior and visibility stay managed. You start from plain browser controls and style the parts with your own CSS. This is a complete starting point:
+
+```css
+.my-picker {
+  background: Canvas;
+  color: CanvasText;
+  border: 1px solid #8884;
+  border-radius: 12px;
+  font: 14px system-ui, sans-serif;
+}
+.my-picker [data-epr-part='search-input'] {
+  padding-inline-start: 10px;
+  border: 1px solid #8886;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.my-picker :is([data-epr-part='emoji'], [data-epr-part='category-tab'],
+    [data-epr-part='search-clear'], [data-epr-part='skin-tone-button']) {
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.my-picker [data-epr-part='emoji'][data-epr-active],
+.my-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  background: #8882;
+}
+.my-picker :is(button, input):focus-visible {
+  outline: 2px solid Highlight;
+  outline-offset: -2px;
+}
+.my-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  background: Canvas;
+}
+.my-picker [data-epr-part='variation-picker'] {
+  background: Canvas;
+  border: 1px solid #8884;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px #0003;
+}
+```
 
 ```jsx
 <EmojiPicker unstyled className="my-picker" />
 ```
 
-### Plain CSS / CSS Modules
-
-```jsx
-import styles from './Picker.module.css';
-
-<EmojiPicker unstyled className={styles.picker} />;
-```
+It follows the page's light or dark `color-scheme`. Keep a visible focus style on buttons and the input. Overlays such as the skin-tone variation popover (`variation-picker`) are transparent until you give them a surface. The same selectors work from CSS Modules (`:global([data-epr-part='emoji'])` inside your module class), Emotion, styled-components, Tailwind arbitrary variants (`[&_[data-epr-part=emoji]]:rounded-lg`) and MUI's `styled`.
 
 ### Tailwind CSS (v4)
 
@@ -129,34 +174,38 @@ import styles from './Picker.module.css';
 ```jsx
 <EmojiPicker
   cssLayer="epr"
-  unstyled
-  width={352}
-  height={420}
-  className="rounded-2xl bg-white shadow-xl [--epr-highlight-color:var(--color-indigo-600)] [&_[data-epr-part=emoji]]:rounded-lg"
+  className="rounded-2xl shadow-xl [--epr-bg-color:var(--color-white)] [--epr-highlight-color:var(--color-indigo-600)] [--epr-hover-bg-color:var(--color-indigo-50)] [&_[data-epr-part=emoji]]:rounded-lg"
 />
 ```
 
+Utilities apply to the root; arbitrary properties set variables and arbitrary variants reach the parts. For a fully custom design, add `unstyled` and style the parts with utilities instead of variables.
+
 ### shadcn/ui
 
-Map the picker's tokens to shadcn's theme variables once; light, dark and custom themes then follow automatically:
+Map the picker's variables to shadcn's theme variables once; light, dark and custom themes then follow automatically:
 
 ```css
 .emoji-picker {
   --epr-bg-color: var(--popover);
+  --epr-category-label-bg-color: var(--popover);
   --epr-text-color: var(--muted-foreground);
   --epr-highlight-color: var(--primary);
   --epr-hover-bg-color: var(--accent);
+  --epr-focus-bg-color: var(--accent);
   --epr-picker-border-color: var(--border);
+  --epr-search-input-bg-color: transparent;
   --epr-search-border-color: var(--input);
   --epr-search-border-color-active: var(--ring);
 }
 ```
 
 ```jsx
-<PopoverContent className="p-0">
-  <EmojiPicker cssLayer="epr" unstyled className="emoji-picker" onEmojiClick={(e) => insert(e.emoji)} />
+<PopoverContent className="w-auto p-0">
+  <EmojiPicker cssLayer="epr" className="emoji-picker" onEmojiClick={(e) => insert(e.emoji)} />
 </PopoverContent>
 ```
+
+For a component that uses your shadcn input and buttons directly, install the [registry component](#ready-to-adapt-starters).
 
 ### Emotion, styled-components and MUI
 
@@ -165,11 +214,12 @@ import styled from '@emotion/styled'; // or 'styled-components', or '@mui/materi
 
 const ThemedPicker = styled(EmojiPicker)`
   --epr-bg-color: ${(p) => p.theme.colors.surface};
+  --epr-category-label-bg-color: ${(p) => p.theme.colors.surface};
   --epr-highlight-color: ${(p) => p.theme.colors.accent};
   border-radius: 16px;
 `;
 
-<ThemedPicker unstyled colorScheme="dark" />;
+<ThemedPicker colorScheme="dark" />;
 ```
 
 Use `colorScheme` (not `theme`) with CSS-in-JS wrappers: Emotion, styled-components and MUI reserve a `theme` prop on components they wrap. `theme` still works everywhere else (v4 compatible).
@@ -178,14 +228,20 @@ Every technique above has a complete, runnable version in [`stories/integrations
 
 ## Compose your own layout
 
-`emoji-picker-react/primitives` exposes the picker's parts. Arrange the parts in your layout. Root manages state and navigation; one Viewport owns one List. You can replace input and cell markup while preserving their managed props:
+`emoji-picker-react/primitives` exposes the picker's parts. Arrange them in your layout and use your design library's components for the input, emoji cells, category headers and controls. Root manages state and navigation; one Viewport owns one List.
 
 ```jsx
 import * as Picker from 'emoji-picker-react/primitives';
 
 function EmojiMenu() {
   return (
-    <Picker.Root colorScheme="light" style={{ width: 320, height: 400 }} onEmojiClick={(emoji) => insert(emoji.emoji)}>
+    <Picker.Root
+      appearance="default"
+      colorScheme="light"
+      columns={8}
+      style={{ height: 400 }}
+      onEmojiClick={(emoji) => insert(emoji.emoji)}
+    >
       <Picker.Search />
       <Picker.CategoryNav />
       <Picker.Viewport>
@@ -200,16 +256,17 @@ function EmojiMenu() {
 }
 ```
 
-- **Parts:** `Root`, `Search`, `SearchInput`, `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `Empty`, `Loading`, `LoadError`, `SkinTone`.
-- **Hooks:** `useActiveEmoji()` (hovered/focused emoji, for custom previews), `useSkinTone()`, `useSearchState()`, `useEmojiDataState()`.
-- **Your input:** `<Picker.SearchInput as={Input} variant="outlined" />` accepts your input component’s own props and forwards its ref. The component must pass native props and the ref to an actual input. Root owns its value.
-- **Custom markup:** `<Picker.List components={{ Emoji, CategoryHeader }} />` replaces emoji cells and section headers while the library keeps their behavior and measured geometry. Your components own their decorative styles and visible focus.
-- **Unbranded by default:** a bare `Root` is fully functional; `colorScheme="light" | "dark" | "auto"` opts into the default palette.
-- **Lean:** the primitives entry loads the emoji dataset on demand. Pass `emojiData` (an object, or a loader like `() => import('emoji-picker-react/data/emojis-fr')`) to control it.
+`appearance="default"` reuses the built-in look, so `colorScheme` and color variables apply. Leave it out to style every part yourself, exactly like `unstyled`. Root has no default height: set one so the list scrolls and virtualizes.
 
-The headless composition path retains managed grid geometry and ARIA behavior. It supports your design components through explicit input/cell contracts; it does not expose a renderer-independent DOM engine. For search without React or UI, use the [data API](#data-api).
+- **Parts:** `Root`, `Search` (input with icon and clear button), `SearchInput` (just the input, or yours), `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`; with `composition="explicit"`, also `Panel` and `Reactions`.
+- **Your components:** `<Picker.SearchInput as={Input} />` accepts your input component's props and forwards its ref to the native input; Root owns its value. `components={{ Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton, ExpandButton }}` on Root or EmojiPicker replaces those elements with yours while the library keeps their behavior and measured geometry. Spread the props you receive onto one native element, and give it a visible focus style.
+- **Hooks for custom UI:** `useActiveEmoji()` (custom previews), `useSkinTone()` (custom tone menus), `useSearchState()` / `useSearchActions()` (custom search UI), `useCategoryNavigation()` (custom tabs), `usePickerMode()` (reactions bar ↔ full picker), `useEmojiDataState()` (loading and retry).
+- **Size:** `columns` sets the emojis per row and fits the width to them; without it, set a width and the columns follow.
+- **Lean:** the primitives entry loads the emoji dataset on demand. Pass `emojiData` (an object, or a loader like `() => import('emoji-picker-react/data/emojis-fr')`) to control it. Import enums such as `Categories` from `emoji-picker-react/primitives`, not the main entry, to keep the dataset out of your initial bundle.
 
-Full reference: [docs/v5/PRIMITIVES.md](docs/v5/PRIMITIVES.md) and [docs/v5/API.md](docs/v5/API.md).
+The composition path keeps grid geometry, keyboard behavior and ARIA managed; there is no renderer-independent DOM engine. For search without React or UI, use the [data API](#data-api).
+
+Full reference: [docs/v5/PRIMITIVES.md](docs/v5/PRIMITIVES.md) and [docs/v5/API.md](docs/v5/API.md). A copyable design-library walkthrough (including MUI): [docs/v5/ADOPTION.md](docs/v5/ADOPTION.md).
 
 ## Common tasks
 
@@ -245,7 +302,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`.
 
-**Size** — `width` / `height` props, or `--epr-emoji-size` for the emojis themselves.
+**Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 
 **Next.js App Router** — import it in any component; the entry is marked `"use client"`. To keep it out of the initial bundle: `const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })`.
 
@@ -268,7 +325,7 @@ getEmojiByUnified('1f600');
 
 ## Internationalization
 
-25+ emoji datasets ship with the package. Import one and pass it as `emojiData`; translate the remaining UI strings with `labels`. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
+28 emoji datasets ship with the package. Import one and pass it as `emojiData`; translate the remaining UI strings with `labels`. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
 
 ## Customization
 
