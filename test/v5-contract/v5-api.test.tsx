@@ -876,16 +876,24 @@ describe('v5 search accessibility', () => {
   it('search status remains a polite live region', async () => {
     renderPicker({});
     const input = (await screen.findByRole('textbox')) as HTMLInputElement;
+    // The region exists, empty, before any search: screen readers only
+    // announce changes to regions that were already in the document.
+    const status = document.querySelector(
+      '.epr-status-search-results',
+    ) as HTMLElement;
+    expect(status).not.toBeNull();
+    expect(status.getAttribute('role')).toBe('status');
+    expect(status.getAttribute('aria-live')).toBe('polite');
+    expect(status.textContent).toBe('');
+
     fireEvent.change(input, { target: { value: 'dog' } });
-    // The status region renders with the debounced search state.
-    let status: HTMLElement | null = null;
     await vi.waitFor(() => {
-      status = document.querySelector('[role="status"]') as HTMLElement;
-      expect(status).not.toBeNull();
+      expect(status.textContent).not.toBe('');
     });
-    expect((status as unknown as HTMLElement).getAttribute('aria-live')).toBe(
-      'polite',
-    );
+    expect(status.isConnected).toBe(true);
+    expect(
+      document.querySelector('.epr-status-search-results'),
+    ).toBe(status);
   });
 });
 

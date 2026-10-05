@@ -96,17 +96,22 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
           onCompositionEnd,
         )}
       />
-      {!loading && !error && resultCount !== null && (
-        <span
-          className="epr-status-search-results"
-          role="status"
-          aria-live="polite"
-          aria-atomic="true"
-          style={hiddenStatus}
-        >
-          {formatSearchResultsLabel(labels, resultCount)}
-        </span>
-      )}
+      {/*
+        The live region stays mounted and only its text changes: screen
+        readers skip regions that are inserted already holding content,
+        which would silence the first result count of every search.
+      */}
+      <span
+        className="epr-status-search-results"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        style={hiddenStatus}
+      >
+        {!loading && !error && resultCount !== null
+          ? formatSearchResultsLabel(labels, resultCount)
+          : ''}
+      </span>
     </>
   );
 }) as SearchInputComponent;

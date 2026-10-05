@@ -153,3 +153,32 @@ describe('hooks', () => {
     );
   });
 });
+
+describe('hook result identity', () => {
+  it('keeps useCategoryNavigation and its members stable across unrelated renders', () => {
+    const seen: Picker.CategoryNavigation[] = [];
+    function Probe() {
+      seen.push(Picker.useCategoryNavigation());
+      return null;
+    }
+    function Host({ tick }: { tick: number }) {
+      return (
+        <Picker.Root style={{ height: 300 }} data-tick={tick}>
+          <Probe />
+          <Picker.Viewport>
+            <Picker.List />
+          </Picker.Viewport>
+        </Picker.Root>
+      );
+    }
+    const { rerender } = render(<Host tick={0} />);
+    const before = seen[seen.length - 1];
+    rerender(<Host tick={1} />);
+    const after = seen[seen.length - 1];
+
+    expect(before.categories.length).toBeGreaterThan(0);
+    expect(after.categories).toBe(before.categories);
+    expect(after.jumpToCategory).toBe(before.jumpToCategory);
+    expect(after).toBe(before);
+  });
+});

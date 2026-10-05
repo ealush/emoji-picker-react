@@ -117,29 +117,75 @@ export function useEmojiDataState(): EmojiDataState {
   return useDataState();
 }
 
+export type SearchActions = {
+  /** Propose raw text (controlled search) or commit it (uncontrolled). */
+  setValue: (value: string) => void;
+  /** Clear the search and restore focus to a mounted SearchInput. */
+  clear: () => void;
+};
+
 /** Propose/commit raw text. Clear also restores focus to a mounted SearchInput. */
-export function useSearchActions() {
+export function useSearchActions(): SearchActions {
   useRootScope('useSearchActions');
   const setValue = useSetSearchValue();
   const clear = useClearSearchValue();
   return React.useMemo(() => ({ setValue, clear }), [setValue, clear]);
 }
 
+export type CategoryNavigation = {
+  /** Visible sections in display order: category id or custom group name. */
+  categories: ReadonlyArray<{ id: string; name: string }>;
+  /** Id of the section currently scrolled into view, or null. */
+  activeCategory: string | null;
+  /** Scroll to a section by id, exactly like clicking its tab. */
+  jumpToCategory: (id: string) => void;
+};
+
 /** Public section identities and the same deferred jump used by CategoryNav. */
-export function useCategoryNavigation() {
+export function useCategoryNavigation(): CategoryNavigation {
   useRootScope('useCategoryNavigation');
   const { activeCategory } = useActiveCategory();
   const configs = useVisibleCategoryConfigs();
-  const jumpToCategory = useScrollCategoryIntoView();
-  const categories = configs.map((config) => ({
-    id: categoryIdFromCategoryConfig(config),
-    name: categoryNameFromCategoryConfig(config),
-  }));
-  return { categories, activeCategory, jumpToCategory };
+  // The underlying jump closes over per-render state; expose a stable
+  // function that always runs the latest one.
+  const jump = useScrollCategoryIntoView();
+  const latestJump = React.useRef(jump);
+  latestJump.current = jump;
+  const jumpToCategory = React.useCallback(
+    (id: string) => latestJump.current(id),
+    [],
+  );
+  // Section identity is a string per section, so a joined key keeps the
+  // returned array (and object) stable across unrelated renders.
+  const sections = configs.map((config) => [
+    categoryIdFromCategoryConfig(config),
+    categoryNameFromCategoryConfig(config),
+  ]);
+  const sectionsKey = JSON.stringify(sections);
+  const categories = React.useMemo(
+    () => sections.map(([id, name]) => ({ id, name })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sectionsKey],
+  );
+  return React.useMemo(
+    () => ({ categories, activeCategory, jumpToCategory }),
+    [categories, activeCategory, jumpToCategory],
+  );
 }
 
+export type PickerMode = {
+  /** True while the compact reactions bar is shown instead of the full picker. */
+  reactionsOpen: boolean;
+  /** False when `allowExpandReactions={false}`; `expand()` then does nothing. */
+  canExpand: boolean;
+  /** Show the full picker. */
+  expand: () => void;
+  /** Return to the reactions bar. */
+  collapse: () => void;
+};
+
 /** Expansion respects allowExpandReactions; collapse activates the reactions bar. */
-export function usePickerMode() {
+export function usePickerMode(): PickerMode {
   useRootScope('usePickerMode');
   const [reactionsOpen, setReactionsOpen] = useReactionsModeState();
   const canExpand = useAllowExpandReactions();

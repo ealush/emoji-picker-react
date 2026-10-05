@@ -47,7 +47,12 @@ export {
   useCategoryNavigation,
   usePickerMode,
 } from './hooks';
-export type { SearchState } from './hooks';
+export type {
+  CategoryNavigation,
+  PickerMode,
+  SearchActions,
+  SearchState,
+} from './hooks';
 export { Search } from './Search';
 export { SearchInput } from './SearchInput';
 export { CategoryNav } from './CategoryNav';
