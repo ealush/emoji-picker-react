@@ -92,8 +92,7 @@ export function useViewportScope(primitive: string): boolean {
       warnedOutsideViewport.add(primitive);
       // eslint-disable-next-line no-console
       console.warn(
-        `[emoji-picker-react] <${primitive}> rendered outside <Viewport>; ` +
-          `it must be rendered inside <Viewport>.`,
+        `[emoji-picker-react] <${primitive}> must be rendered inside <Viewport>.`,
       );
     }
     return false;

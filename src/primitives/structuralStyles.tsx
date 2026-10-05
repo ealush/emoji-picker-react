@@ -30,7 +30,7 @@ const boxSizingReset =
   // (expanding reactions, the tone fan, hover fades). Class-level and
   // emitted after the main sheet, so it beats library transitions while
   // a consumer's more specific rule still wins.
-  '@media (prefers-reduced-motion:reduce){.epr-structural-root,.epr-structural-root *{transition-duration:0s;animation-duration:0s}}' +
+  '@media (prefers-reduced-motion:reduce){.epr-structural-root,.epr-structural-root *{transition-duration:0s}}' +
   // appearance="default" paints the token surface behind the built-in
   // leaves, so colorScheme="dark" is not dark controls on a transparent
   // root. Zero specificity: any consumer background wins.

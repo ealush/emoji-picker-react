@@ -13,7 +13,7 @@ const claimsByRoot = new WeakMap<Node, Record<string, Claim[]>>();
 /**
  * Renders `css` once per document or shadow root. Every instance renders
  * the element during SSR and its first client render, so hydration matches
- * the server markup; duplicates drop in a layout effect, before paint.
+ * the server markup; duplicates drop right after the first paint.
  * When the owner unmounts, the next instance renders the element in the
  * same commit. A different nonce or layer gets its own element: a style
  * allowed by one nonce must not stand in for another under CSP.
@@ -23,6 +23,13 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
   const rootRef = React.useRef<Node | undefined>(undefined);
   const [owner, setOwner] = React.useState(true);
 
+  const syncRef = React.useRef<(() => void) | undefined>(undefined);
+
+  // Register in the commit that mounts the element, so ownership is known
+  // before any later picker mounts. A sibling's ownership changes only on
+  // unmount (below) and after paint: a state update during layout effects
+  // would flush every pending passive effect into the mount, delaying the
+  // first paint of the whole picker.
   useIsomorphicLayoutEffect(() => {
     const style = styleRef.current;
     const root = (rootRef.current =
@@ -40,21 +47,26 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
     };
     // An owner whose element left the document without unmounting (its
     // container was removed by hand) cannot style anything: it yields.
-    const sync = () => {
+    const sync = (syncRef.current = () => {
       claims.sort((a, b) => +a.detached() - +b.detached());
       claims.forEach((each) => each.update());
-    };
+    });
     claims.push(claim);
-    sync();
 
     return () => {
+      syncRef.current = undefined;
       claims.splice(claims.indexOf(claim), 1);
+      // The next picker takes over in this same commit: no unstyled frame.
       if (claims.length) {
         sync();
       } else {
         delete byKey[key];
       }
     };
+  }, [css, nonce]);
+
+  React.useEffect(() => {
+    if (syncRef.current) syncRef.current();
   }, [css, nonce]);
 
   return owner ? (
