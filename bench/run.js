@@ -244,7 +244,7 @@ function gate(current, baseline) {
   const NOISE_FLOOR_MS = 0.01;
   const ABSOLUTE_BUDGET_MS = 0.05;
 
-  function checkRow(name, base, value, limit, hardLimit) {
+  function checkRow(name, base, value, limit) {
     if (base < NOISE_FLOOR_MS) {
       const ok = value < ABSOLUTE_BUDGET_MS;
       lines.push(
@@ -260,8 +260,9 @@ function gate(current, baseline) {
     lines.push(
       `${name} | ${base.toFixed(3)} | ${value.toFixed(3)} | ${(ratio * 100).toFixed(1)}% | ${status}`,
     );
-    if (ratio > (hardLimit ?? limit)) {
-      failures.push(`${name}: ${(ratio * 100).toFixed(1)}% exceeds ${(hardLimit ?? limit) * 100}%`);
+    // The table's FAIL label and the exit status use the same limit.
+    if (ratio > limit) {
+      failures.push(`${name}: ${(ratio * 100).toFixed(1)}% exceeds ${limit * 100}%`);
     }
   }
 
@@ -272,7 +273,6 @@ function gate(current, baseline) {
       current.cold[query],
       // PERFORMANCE.md §4.1: each fixture MUST be <=110% (hard gate).
       1.1,
-      1.1,
     );
   }
   current.incremental.forEach((sequence, index) => {
@@ -281,7 +281,6 @@ function gate(current, baseline) {
       baseline.incremental[index].total,
       sequence.total,
       1.1,
-      1.1,
     );
     sequence.steps.forEach((step, stepIndex) => {
       checkRow(
@@ -289,14 +288,13 @@ function gate(current, baseline) {
         baseline.incremental[index].steps[stepIndex].median,
         step.median,
         1.25,
-        1.25,
       );
     });
   });
   // PERFORMANCE.md §1 / ACCEPTANCE_CHECKLIST §16: cold preparation <=110%.
-  checkRow('cold data preparation', baseline.prepare, current.prepare, 1.1, 1.1);
-  checkRow('mount one picker', baseline.mount.one, current.mount.one, 1.1, 1.1);
-  checkRow('mount ten pickers', baseline.mount.ten, current.mount.ten, 1.1, 1.1);
+  checkRow('cold data preparation', baseline.prepare, current.prepare, 1.1);
+  checkRow('mount one picker', baseline.mount.one, current.mount.one, 1.1);
+  checkRow('mount ten pickers', baseline.mount.ten, current.mount.ten, 1.1);
 
   if (
     current.baseBuildsForTenMounts !== null &&

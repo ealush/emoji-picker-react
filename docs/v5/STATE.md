@@ -218,7 +218,7 @@ For each entry:
 6. deduplicate by resolved render identity, first occurrence wins;
 7. preserve caller order otherwise.
 
-One case-insensitive rule covers both ID kinds, because custom emoji IDs are *already* lowercased when they enter the data layer — `customToRegularEmoji` does `emoji.id.toLowerCase()` in both `src/components/context/PickerDataContext.tsx` and `src/dataUtils/emojiSelectors.ts`. A custom emoji registered as `{ id: 'PartyParrot' }` is stored under `partyparrot`, so an exact-case lookup would miss it and the entry would be silently dropped. There is no separate exact-match pass and no casing carve-out.
+One case-insensitive rule covers both ID kinds, because custom emoji IDs are *already* lowercased when they enter the data layer — `customToRegularEmoji` (`src/data-core/pickerData.ts`) does `emoji.id.toLowerCase()`. A custom emoji registered as `{ id: 'PartyParrot' }` is stored under `partyparrot`, so an exact-case lookup would miss it and the entry would be silently dropped. There is no separate exact-match pass and no casing carve-out.
 
 Examples:
 
