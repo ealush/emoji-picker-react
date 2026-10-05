@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect } from 'react';
 
 import { detectEmojyPartiallyBelowFold } from '../DomUtils/detectEmojyPartiallyBelowFold';
+import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import { focusElement } from '../DomUtils/focusElement';
 import {
   allUnifiedFromEmojiElement,
@@ -47,6 +48,7 @@ export function useEmojiPreviewEvents(
     bodyRef?.addEventListener('blur', onLeave, true);
 
     function onEnter(e: FocusEvent) {
+      if (!eventBelongsToPicker(e, bodyRef)) return;
       const button = buttonFromTarget(e.target as HTMLElement);
 
       if (!button) {
@@ -65,6 +67,7 @@ export function useEmojiPreviewEvents(
       });
     }
     function onLeave(e?: FocusEvent | MouseEvent) {
+      if (e && !eventBelongsToPicker(e, bodyRef)) return;
       if (e) {
         const relatedTarget = e.relatedTarget as HTMLElement;
 
@@ -76,13 +79,14 @@ export function useEmojiPreviewEvents(
       setPreviewEmoji(null);
     }
     function onEscape(e: KeyboardEvent) {
+      if (!eventBelongsToPicker(e, bodyRef)) return;
       if (e.key === 'Escape') {
         setPreviewEmoji(null);
       }
     }
 
     function onMouseOver(e: MouseEvent) {
-      if (isMouseDisallowed()) {
+      if (!eventBelongsToPicker(e, bodyRef) || isMouseDisallowed()) {
         return;
       }
 

@@ -3,6 +3,157 @@ import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
+for (const id of [
+  'recipes-examples-geist-minimal--css',
+  'recipes-examples-discord-sidebar--css',
+]) {
+  test(`${id}: a category jump after clearing search uses restored geometry and highlights the destination`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    const search = page.getByRole('textbox', {
+      name: 'Type to search for an emoji',
+    });
+    await search.fill('waving hand');
+    await expect(page.locator('[data-epr-part="root"]')).toHaveClass(
+      /epr-search-active/,
+    );
+    await page
+      .getByRole('gridcell', { name: 'waving hand', exact: true })
+      .first()
+      .waitFor();
+    await page.locator('[data-epr-part="search-clear"]').click();
+    // Deliberately jump inside the filter debounce window.
+    await page
+      .getByRole('tab', { name: 'Animals & Nature' })
+      .evaluate((tab: HTMLElement) => tab.click());
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const viewport = document.querySelector(
+            '[data-epr-part="viewport"]',
+          )!;
+          const section = document.querySelector(
+            '[data-epr-category="animals_nature"]',
+          )!;
+          return Math.abs(
+            section.getBoundingClientRect().top -
+              viewport.getBoundingClientRect().top,
+          );
+        }),
+      )
+      .toBeLessThan(2);
+    await expect(
+      page.getByRole('tab', { name: 'Animals & Nature' }),
+    ).toHaveAttribute('aria-selected', 'true');
+  });
+}
+
+test('a picker inside an open shadow root navigates cells and consumes variation Escape', async ({
+  page,
+}) => {
+  await page.goto(story('consumers-fixtures--botonic-shadow-dom'));
+  await page.getByTestId('botonic-toggle').click();
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('thumbs up');
+  await expect(page.locator('[data-epr-part="root"]')).toHaveClass(
+    /epr-search-active/,
+  );
+  const cell = page
+    .getByRole('gridcell', { name: 'thumbs up sign', exact: true })
+    .first();
+  await expect(cell).toBeVisible();
+  await search.press('ArrowDown');
+  await expect(cell).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(
+    page.locator('[data-epr-part="variation-picker"]'),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(
+    page.locator('[data-epr-part="variation-picker"]'),
+  ).not.toBeVisible();
+  await expect(cell).toBeFocused();
+  await cell.dispatchEvent('mousedown', { bubbles: true, composed: true });
+  await expect(
+    page.locator('[data-epr-part="variation-picker"]'),
+  ).toBeVisible();
+  await cell.dispatchEvent('mouseup', { bubbles: true, composed: true });
+  await page.keyboard.press('Escape');
+  await expect(
+    page.locator('[data-epr-part="variation-picker"]'),
+  ).not.toBeVisible();
+  await page.keyboard.press('Enter');
+  await expect(page.getByTestId('botonic-message')).toHaveText('👍');
+});
+
+test('MUI composition routes native input props, preserves bordered grid geometry and selects by keyboard', async ({
+  page,
+}) => {
+  await page.goto(story('v5-design-library--mui-composition'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await expect(search).toHaveAttribute('data-epr-part', 'search-input');
+  await expect(search).toHaveCSS('box-sizing', 'content-box');
+  expect(
+    await search.evaluate((input) => input.getBoundingClientRect().height),
+  ).toBeGreaterThanOrEqual(39);
+  await search.fill('cat');
+  await expect(
+    page.getByRole('gridcell', { name: 'cat face', exact: true }),
+  ).toBeVisible();
+  await search.press('ArrowDown');
+  const focused = page.locator('[role="gridcell"]:focus');
+  await expect(focused).toHaveCount(1);
+  await expect(focused).toHaveAttribute('data-epr-active', '');
+  const geometry = await page
+    .locator('[role="gridcell"]:visible')
+    .evaluateAll((cells) => {
+      const boxes = cells.map((cell) => cell.getBoundingClientRect());
+      const first = cells[0] as HTMLElement;
+      const size = parseFloat(
+        getComputedStyle(first).getPropertyValue('--epr-emoji-fullsize'),
+      );
+      return {
+        width: boxes[0].width,
+        height: boxes[0].height,
+        size,
+        border: getComputedStyle(first).borderTopWidth,
+        overlaps: boxes.some((box, i) =>
+          boxes
+            .slice(i + 1)
+            .some(
+              (other) =>
+                Math.min(box.right, other.right) -
+                  Math.max(box.left, other.left) >
+                  0.5 &&
+                Math.min(box.bottom, other.bottom) -
+                  Math.max(box.top, other.top) >
+                  0.5,
+            ),
+        ),
+      };
+    });
+  expect(geometry.border).toBe('2px');
+  expect(geometry.width).toBeCloseTo(geometry.height, 1);
+  expect(geometry.overlaps).toBe(false);
+  await page.keyboard.press('Enter');
+  await expect(
+    page.getByRole('status', { name: 'Selected emoji' }),
+  ).not.toHaveText('Choose an emoji to insert');
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .include('#storybook-root')
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+});
+
 test('autocomplete replaces the token at the caret, preserves the suffix and restores focus', async ({
   page,
 }) => {

@@ -21,6 +21,7 @@
     "./*.test.ts",
     "./*.test.tsx",
     "../setupTests.ts",
+    "../../stories/v5/MuiComposition.tsx",
     "../../src/**/*"
   ],
   // Node types provide `process` here; src/env.d.ts is the library's

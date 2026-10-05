@@ -13,7 +13,7 @@ import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
-import { mergeRefs } from '../../primitives/nativeProps';
+import { useMergedRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
 import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
@@ -41,6 +41,7 @@ export function EmojiList({
     [key: string]: number;
   }>({});
   const EmojiListRef = useEmojiListRef();
+  const mergedRef = useMergedRefs(EmojiListRef, outerRef);
   const getEmojisByCategory = useGetEmojisByCategory();
   useRegisterRegion('grid', EmojiListRef);
 
@@ -59,7 +60,7 @@ export function EmojiList({
     <ul
       {...nativeProps}
       className={cx(styles.emojiList, className)}
-      ref={mergeRefs(EmojiListRef, outerRef)}
+      ref={mergedRef}
       // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
       role="grid"
       data-epr-part="list"

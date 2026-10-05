@@ -60,11 +60,16 @@ describe('library CSS cascade', () => {
     }
   });
 
-  it('stays plain under jsdom', () => {
+  it('leaves layers and token selectors plain under jsdom', () => {
     const { container } = render(<EmojiPicker cssLayer="epr" />);
     for (const style of Array.from(container.querySelectorAll('style'))) {
       expect(style.innerHTML.startsWith('@layer')).toBe(false);
-      expect(style.innerHTML.includes(':where(')).toBe(false);
+      const tokenRules = style.innerHTML
+        .split('\n')
+        .filter((line) => /\{--epr-[\w-]+:/.test(line));
+      expect(tokenRules.every((line) => !line.startsWith(':where('))).toBe(
+        true,
+      );
     }
   });
 });

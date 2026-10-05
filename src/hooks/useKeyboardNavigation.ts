@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
+import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import {
   focusElement,
   focusNextElementSibling,
@@ -127,22 +128,23 @@ function usePickerMainKeyboardEvents() {
     // Hosts such as Radix dismiss at document capture. A Root-owned menu
     // gets Escape at window capture first, scoped to this instance.
     const onWindowEscape = (event: KeyboardEvent) => {
-      const target = event.target;
       if (
         event.key === KeyboardEvents.Escape &&
         hasOpenToggles() &&
-        target instanceof Element &&
-        target.closest('[data-epr-part="root"]') === current
+        eventBelongsToPicker(event, current)
       ) {
         onKeyDown(event);
       }
     };
     window.addEventListener('keydown', onWindowEscape, true);
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
       window.removeEventListener('keydown', onWindowEscape, true);
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [PickerMainRef, SearchInputRef, scrollTo, onKeyDown, hasOpenToggles]);
 }
@@ -206,10 +208,13 @@ function useSearchInputKeyboardEvents() {
       return;
     }
 
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [PickerMainRef, SearchInputRef, onKeyDown]);
 }
@@ -308,10 +313,13 @@ function useSkinTonePickerKeyboardEvents() {
       return;
     }
 
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [SkinTonePickerRef, SearchInputRef, isOpen, onKeyDown]);
 }
@@ -375,10 +383,13 @@ function useCategoryNavigationKeyboardEvents() {
       return;
     }
 
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [CategoryNavigationRef, BodyRef, onKeyDown]);
 }
@@ -422,10 +433,13 @@ function useReactionsKeyboardEvents() {
       return;
     }
 
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [ReactionsRef, onKeyDown]);
 }
@@ -530,10 +544,13 @@ function useBodyKeyboardEvents() {
       return;
     }
 
-    current.addEventListener('keydown', onKeyDown);
+    const scopedKeyDown = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) onKeyDown(event);
+    };
+    current.addEventListener('keydown', scopedKeyDown);
 
     return () => {
-      current.removeEventListener('keydown', onKeyDown);
+      current.removeEventListener('keydown', scopedKeyDown);
     };
   }, [BodyRef, onKeyDown]);
 }

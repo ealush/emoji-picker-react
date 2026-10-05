@@ -18,10 +18,14 @@ import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 import {
   composeHandlers,
   filterPrimitiveProps,
-  mergeRefs,
+  useMergedRefs,
 } from './nativeProps';
 import { useRootScope } from './scope';
-import type { SearchInputProps } from './types';
+import type {
+  SearchInputComponent,
+  SearchInputElement,
+  SearchInputProps,
+} from './types';
 
 const hiddenStatus: React.CSSProperties = {
   clip: 'rect(0 0 0 0)',
@@ -36,11 +40,12 @@ const hiddenStatus: React.CSSProperties = {
 /** Native input, or a ref-forwarding design-system input. Root owns its value. */
 export const SearchInput = /* @__PURE__ */ React.forwardRef<
   HTMLInputElement,
-  SearchInputProps
+  SearchInputProps<SearchInputElement>
 >(function SearchInput(props, ref) {
   const inScope = useRootScope('SearchInput');
   const disabled = useSearchDisabledConfig();
   const inputRef = useSearchInputRef();
+  const mergedRef = useMergedRefs(inputRef, ref);
   const closeToggles = useCloseAllOpenToggles();
   const labels = useLabels();
   const label = useSearchLabelConfig();
@@ -79,7 +84,7 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
         type="text"
         value={controller.value}
         data-epr-part="search-input"
-        ref={mergeRefs(inputRef, ref)}
+        ref={mergedRef}
         onChange={composeHandlers(controller.handleChange, onChange)}
         onFocus={composeHandlers(closeToggles, onFocus)}
         onCompositionStart={composeHandlers(
@@ -104,4 +109,4 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
       )}
     </>
   );
-});
+}) as SearchInputComponent;

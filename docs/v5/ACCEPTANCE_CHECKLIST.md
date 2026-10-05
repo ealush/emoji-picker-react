@@ -290,7 +290,7 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] AreTheTypesWrong/equivalent passes.
 - [x] primitives-only consumer does not pull branded default appearance wrapper.
 - [x] one locale import does not eagerly include all locales.
-- [x] main size-limit remains <=95 KB unless separately amended with attribution.
+- [x] main size-limit remains below the original 95 KB hard cap; the current regression gate is tighter at 75 KB.
 
 ## 21. Visual compatibility
 
@@ -325,8 +325,30 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [ ] All newly added CI jobs have passed on the final pushed candidate.
 - [ ] Release PR is reconciled with master and final release candidate checks pass.
 - [x] Unused primitive/component styles and icons can be removed without losing CSS, keyboard selection or search in the minified installed-tarball consumer. Default composition retains navigation, preview and skin-tone controls.
-- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 33.0 KiB (34 KiB regression cap).
+- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 33.8 KiB (34 KiB regression cap).
 
 Browser evidence belongs to the candidate report, with any local platform dependency failure stated explicitly. Performance baseline is reconstructed from v4 in a quiet session; no original Phase 0 artifact is available. Human assistive-technology verification remains required before an absolute accessibility claim.
 
 The consolidated release head `52b7562c` passed all eight jobs in [CI run 37234367876](https://github.com/ealush/emoji-picker-react/actions/runs/37234367876), including WebKit, consumer visuals and candidate website build. The subsequent startup optimization must pass checks on its own final head. The manual screen-reader release protocol is in [ACCESSIBILITY_VERIFICATION.md](ACCESSIBILITY_VERIFICATION.md).
+
+
+## BYOD hardening verification (2026-10-05)
+
+- [x] Nested bare Roots isolate callbacks and Escape search changes; the default wrapper retains fresh callbacks across its memo boundary.
+- [x] Stable refs stay attached; callback-ref cleanup runs on unmount without newer React APIs.
+- [x] Native disabled/read-only inputs leave grid type-to-search inert.
+- [x] Managed DOM rejects innerHTML replacement in types and at runtime.
+- [x] Closed bare Roots render nothing, avoid new data loads and abort pending attempts.
+- [x] Malformed loader shapes and entries enter localized error/retry instead of crashing or rendering a blank picker.
+- [x] Custom cells and headers preserve geometry while design-library appearance is retained; row measurement includes button borders.
+- [x] SearchInput infers required/custom input options and excludes non-input native tags and competing value props; declaration-bundle fixtures enforce the same contract.
+- [x] README, website, npm description and generated agent references explain batteries included and BYOD through ownership and capabilities.
+- [x] The agent guide is bundled in full text, documents installed-version discovery and points to current candidate sources.
+- [x] MUI TextField retains content-box input sizing; native refs/ARIA reach the input through its adapter. Button cells preserve borders and square geometry.
+- [x] Category jumps read restored layout after clearing search and ignore subpixel remnants of preceding sections when highlighting the destination.
+- [x] Open shadow roots retain native active-element resolution and variation Escape ownership at window capture.
+
+Local evidence: 602 unit tests; build, compatibility types, lint, React API floor and size gates; minified packed default/primitives, CJS/ESM, publint and attw; actual packed React 16.8 interaction, SSR and hydration; website static export. Chromium/Firefox/mobile behavior covers MUI input sizing/cells, open-shadow-root keyboard handling and category jumps as well as insertion, dismissal, IME and touch. Final minimal initial bundle: 33.8 KiB gzip including ShipStyles, below the unchanged 34 KiB cap. The additional 0.8 KiB buys loader validation, callback/ref ownership and delegated-event isolation; the proposed 25 KiB target remains an optimization objective. The quiet-machine timing gate passes against the unchanged reconstructed v4 baseline: preparation 82.4%, one-picker mount 80.0%, ten-picker mount 97.5%; ten shared-dataset mounts add no base-index builds. Existing visual baselines and tolerances are unchanged. Final browser/CI results are recorded on PR #552.
+
+
+Dependency audit: Next.js is patched from 16.3.5 to 16.3.8; compatible root/website lockfile fixes are included. `npm audit --omit=dev` reports zero vulnerabilities for both the published picker runtime and website production dependencies. Full development audits still report the upstream `braces` deeply-nested-pattern advisory in release/lint tooling; the registry's latest braces is 3.0.3 and has no patch for that advisory. Avoid `npm audit fix --force`: its suggested release/lint downgrades do not supply a patched parser. This residual development-tool issue is recorded rather than claimed fixed.

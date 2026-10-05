@@ -1,16 +1,16 @@
 # Emoji Picker React
 
-**Plug and play out of the box. Or bring your own style system.**
+**Batteries included. Or BYOD — bring your own design.**
 
-The emoji picker for React that works the moment you render it — and gets out of your way when it has to match your design system.
+One emoji-picker engine, with two ways to build your UI: use the complete picker, or bring your own design, design language and design library.
 
-> **Plug and play:** `npm install emoji-picker-react`, render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
+> **Batteries included:** `npm install emoji-picker-react`, render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
 >
-> **Bring your own style system:** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
+> **BYOD (bring your own design):** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[Bring your own styles](#bring-your-own-style-system)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
+**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[BYOD](#byod-bring-your-own-design)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
@@ -18,17 +18,19 @@ The emoji picker for React that works the moment you render it — and gets out 
 
 ## Features
 
-- **Plug and play** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
-- **Bring your own style system** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — WCAG 2.1 AA checks (axe-tested fixtures), full keyboard navigation, screen-reader grid semantics, localizable labels.
+- **Batteries included** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
+- **BYOD** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
+- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (about 40 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (33.8 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
-## Quick start (plug and play)
+> This branch documents the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552). New v5 APIs require the built candidate until v5 is published.
+
+## Quick start (batteries included)
 
 ```bash
 npm install emoji-picker-react
@@ -63,9 +65,9 @@ See [PROPS.md](PROPS.md) for every prop.
 
 Every path keeps the same behavior: keyboard navigation, focus management, ARIA semantics, virtualization, skin tones, variations, recents and search.
 
-## Bring your own style system
+## BYOD: bring your own design
 
-The default look is a starting point, not a constraint: keep it, theme it, or replace it entirely with your own design system's styles.
+Bring your own design, design language and design library. Keep the supplied layout with `unstyled`, or compose the parts and use your own input, emoji buttons, category headers, preview and tone controls. Search, localization, keyboard navigation and virtualization share the same engine in both paths.
 
 The picker needs no stylesheet import — its CSS is injected automatically and scoped with hashed class names, so it never leaks into your app.
 
@@ -73,7 +75,7 @@ How overrides work, so you never fight specificity:
 
 - **Design tokens (`--epr-*`) always yield to your CSS.** Token defaults are emitted at zero specificity, so a single class wins in any load order.
 - **Parts are targetable** with stable `[data-epr-part="…"]` selectors (`root`, `search`, `category-nav`, `category-tab`, `viewport`, `list`, `category-label`, `emoji`, `preview`, `reactions`, …) and ARIA state (`[aria-selected="true"]` on the active tab).
-- **App resets don't break it.** The picker's CSS is unlayered by default, so global resets like `* { padding: 0 }` cannot strip its layout.
+- **CSS ownership is explicit.** Library classes protect layout from ordinary element/universal resets. More specific rules and `!important` can still override geometry; preserve the [structural contract](docs/v5/STYLING.md).
 - **Layered frameworks:** with Tailwind v4 (or any `@layer`-based setup), pass `cssLayer="epr"` and declare the layer first — `@layer epr, theme, base, components, utilities;` — so utilities override the picker.
 
 ### Theme it with CSS variables
@@ -176,19 +178,21 @@ Every technique above has a complete, runnable version in [`stories/integrations
 
 ## Compose your own layout
 
-`emoji-picker-react/primitives` exposes the picker's parts. Arrange them in any order and inside any markup; the library still owns emoji buttons, keyboard navigation, accessibility and virtualization:
+`emoji-picker-react/primitives` exposes the picker's parts. Arrange the parts in your layout. Root manages state and navigation; one Viewport owns one List. You can replace input and cell markup while preserving their managed props:
 
 ```jsx
 import * as Picker from 'emoji-picker-react/primitives';
 
 function EmojiMenu() {
   return (
-    <Picker.Root colorScheme="light" onEmojiClick={(emoji) => insert(emoji.emoji)}>
+    <Picker.Root colorScheme="light" style={{ width: 320, height: 400 }} onEmojiClick={(emoji) => insert(emoji.emoji)}>
       <Picker.Search />
       <Picker.CategoryNav />
       <Picker.Viewport>
         <Picker.List />
         <Picker.Empty />
+        <Picker.Loading />
+        <Picker.LoadError />
       </Picker.Viewport>
       <Picker.Preview />
     </Picker.Root>
@@ -196,11 +200,14 @@ function EmojiMenu() {
 }
 ```
 
-- **Parts:** `Root`, `Search`, `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `Empty`, `Loading`, `SkinTone`.
-- **Hooks:** `useActiveEmoji()` (hovered/focused emoji, for custom previews), `useSkinTone()`, `useSearchState()`.
-- **Custom markup:** `<Picker.List components={{ Emoji, CategoryHeader }} />` replaces emoji cells and section headers while the library keeps their behavior.
+- **Parts:** `Root`, `Search`, `SearchInput`, `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `Empty`, `Loading`, `LoadError`, `SkinTone`.
+- **Hooks:** `useActiveEmoji()` (hovered/focused emoji, for custom previews), `useSkinTone()`, `useSearchState()`, `useEmojiDataState()`.
+- **Your input:** `<Picker.SearchInput as={Input} variant="outlined" />` accepts your input component’s own props and forwards its ref. The component must pass native props and the ref to an actual input. Root owns its value.
+- **Custom markup:** `<Picker.List components={{ Emoji, CategoryHeader }} />` replaces emoji cells and section headers while the library keeps their behavior and measured geometry. Your components own their decorative styles and visible focus.
 - **Unbranded by default:** a bare `Root` is fully functional; `colorScheme="light" | "dark" | "auto"` opts into the default palette.
 - **Lean:** the primitives entry loads the emoji dataset on demand. Pass `emojiData` (an object, or a loader like `() => import('emoji-picker-react/data/emojis-fr')`) to control it.
+
+The headless composition path retains managed grid geometry and ARIA behavior. It supports your design components through explicit input/cell contracts; it does not expose a renderer-independent DOM engine. For search without React or UI, use the [data API](#data-api).
 
 Full reference: [docs/v5/PRIMITIVES.md](docs/v5/PRIMITIVES.md) and [docs/v5/API.md](docs/v5/API.md).
 
@@ -302,6 +309,8 @@ Every design below is the same picker, recomposed and restyled. [Try them live](
 Most v4 code works unchanged. See [docs/v5/MIGRATION.md](docs/v5/MIGRATION.md).
 
 ## For AI assistants
+
+Start with the [agent integration guide](docs/v5/AGENT_GUIDE.md). The package ships `llms.txt` and `llms-full.txt`; the full reference is usable without web access. Verify the installed version and exports before generating v5 code.
 
 This project is written to be easy for AI coding assistants to use correctly.
 

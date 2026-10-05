@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 
+import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import {
   allUnifiedFromEmojiElement,
   isEmojiElement,
@@ -60,7 +61,10 @@ export function useMouseDownHandlers(
 
   const onClick = React.useCallback(
     function onClick(event: MouseEvent) {
-      if (disallowClickRef.current) {
+      if (
+        !eventBelongsToPicker(event, ContainerRef.current) ||
+        disallowClickRef.current
+      ) {
         return;
       }
 
@@ -83,6 +87,7 @@ export function useMouseDownHandlers(
       );
     },
     [
+      ContainerRef,
       activeSkinTone,
       closeAllOpenToggles,
       disallowClickRef,
@@ -96,6 +101,7 @@ export function useMouseDownHandlers(
 
   const onMouseDown = React.useCallback(
     function onMouseDown(event: MouseEvent) {
+      if (!eventBelongsToPicker(event, ContainerRef.current)) return;
       if (mouseDownTimerRef.current) {
         clearTimeout(mouseDownTimerRef.current);
       }
@@ -106,15 +112,19 @@ export function useMouseDownHandlers(
         return;
       }
 
+      // Preserve the native target before dispatch ends. Shadow DOM events
+      // are retargeted to the host afterward, before the long-press timer.
+      const target = event.target as HTMLElement;
       mouseDownTimerRef.current = setTimeout(() => {
         disallowClickRef.current = true;
         mouseDownTimerRef.current = undefined;
         closeAllOpenToggles();
-        setVariationPicker(event.target as HTMLElement);
+        setVariationPicker(target);
         setEmojiVariationPicker(emoji);
       }, 500);
     },
     [
+      ContainerRef,
       disallowClickRef,
       emojiByUnified,
       closeAllOpenToggles,

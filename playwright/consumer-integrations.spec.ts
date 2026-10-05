@@ -33,26 +33,40 @@ test.beforeEach(async ({ page }) => {
 async function settle(page: Page) {
   // Color-emoji glyphs in host text paint only once their font is ready.
   await page.evaluate(() => document.fonts.ready.then(() => undefined));
-  await page
-    .waitForFunction(
+  // Locators pierce open shadow roots; document queries do not. Empty
+  // lists are ready too (selected states can dismiss the entire picker).
+  await expect
+    .poll(
       () =>
-        Array.from(document.querySelectorAll('.epr-emoji-img, .epr-emoji-native')).some(
-          (element) => window.getComputedStyle(element).opacity !== '0',
-        ),
+        page
+          .locator('.epr-emoji-img, .epr-emoji-native')
+          .evaluateAll((elements) =>
+            elements.every(
+              (element) => getComputedStyle(element).opacity !== '0',
+            ),
+          ),
       { timeout: 10000 },
     )
-    .catch(() => {});
-  await page
-    .waitForFunction(() => Array.from(document.images).every((image) => image.complete), {
-      timeout: 10000,
-    })
-    .catch(() => {});
+    .toBe(true);
+  await expect
+    .poll(
+      () =>
+        page
+          .locator('img')
+          .evaluateAll((elements) => elements.every((image) => image.complete)),
+      { timeout: 10000 },
+    )
+    .toBe(true);
   await page.waitForTimeout(500);
 }
 
 /** Visible grid cell for an emoji name inside a fixture's region. */
 const cell = (page: Page, key: string, name: string) =>
-  page.locator(shot(key)).getByRole('gridcell', { name, exact: true }).locator('visible=true').first();
+  page
+    .locator(shot(key))
+    .getByRole('gridcell', { name, exact: true })
+    .locator('visible=true')
+    .first();
 
 async function capture(page: Page, key: string, state: string) {
   await settle(page);
@@ -71,17 +85,18 @@ test('NextChat: avatar picker on its own CDN', async ({ page }) => {
   await searchFlow(page, 'nextchat', 'cat');
   await cell(page, 'nextchat', 'cat face').click();
   await expect(page.getByTestId('nextchat-popover')).toHaveCount(0);
-  await expect(page.getByTestId('nextchat-avatar').locator('img')).toHaveAttribute(
-    'src',
-    /\/apple\/64\/1f431\.png$/,
-  );
+  await expect(
+    page.getByTestId('nextchat-avatar').locator('img'),
+  ).toHaveAttribute('src', /\/apple\/64\/1f431\.png$/);
   await capture(page, 'nextchat', 'selected');
 });
 
 test('Cherry Studio: recents passed as characters', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--cherry-studio'));
   await expect(
-    page.locator(shot('cherry')).getByRole('rowgroup', { name: 'Recently used' }),
+    page
+      .locator(shot('cherry'))
+      .getByRole('rowgroup', { name: 'Recently used' }),
   ).toBeVisible();
   await capture(page, 'cherry', 'open');
   await searchFlow(page, 'cherry', 'cat');
@@ -94,10 +109,9 @@ test('Cherry Studio: recents passed as characters', async ({ page }) => {
 test('Wire: message reactions adapter', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--wire-message'));
   await page.getByTestId('wire-react').click();
-  await expect(page.locator(shot('wire')).getByLabel(searchLabel)).toHaveAttribute(
-    'placeholder',
-    'Search Emoji',
-  );
+  await expect(
+    page.locator(shot('wire')).getByLabel(searchLabel),
+  ).toHaveAttribute('placeholder', 'Search Emoji');
   await capture(page, 'wire', 'open');
   await searchFlow(page, 'wire', 'thumbs');
   await cell(page, 'wire', 'thumbs up sign').click();
@@ -114,7 +128,9 @@ test("Wire: calling bar reads the picker's recents", async ({ page }) => {
   await capture(page, 'wirecall', 'search');
   await cell(page, 'wirecall', 'cat face').click();
   // Back on the bar, which re-reads epr_suggested: the pick leads.
-  await expect(page.getByTestId('wire-call-bar').getByRole('button').first()).toHaveText('🐱');
+  await expect(
+    page.getByTestId('wire-call-bar').getByRole('button').first(),
+  ).toHaveText('🐱');
   await capture(page, 'wirecall', 'selected');
 });
 
@@ -133,17 +149,23 @@ test('LangWatch: deferred import in a modal', async ({ page }) => {
 test('Botonic: webchat composer', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--botonic'));
   await page.getByTestId('botonic-toggle').click();
-  await expect(page.locator(shot('botonic')).getByLabel(searchLabel)).not.toBeFocused();
+  await expect(
+    page.locator(shot('botonic')).getByLabel(searchLabel),
+  ).not.toBeFocused();
   await capture(page, 'botonic', 'open');
   await searchFlow(page, 'botonic', 'grin');
   await cell(page, 'botonic', 'grinning face').click();
   await expect(page.getByTestId('botonic-message')).toHaveText('😀');
   await capture(page, 'botonic', 'selected');
   await page.getByTestId('botonic-message').click();
-  await expect(page.getByRole('dialog', { name: 'Emoji picker' })).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Emoji picker' })).toHaveCount(
+    0,
+  );
 });
 
-test('Botonic: the composer inside a shadow root is styled and works', async ({ page }) => {
+test('Botonic: the composer inside a shadow root is styled and works', async ({
+  page,
+}) => {
   await page.goto(storyUrl('consumers-fixtures--botonic-shadow-dom'));
   // Locators pierce open shadow roots.
   await page.getByTestId('botonic-toggle').click();
@@ -153,7 +175,9 @@ test('Botonic: the composer inside a shadow root is styled and works', async ({ 
   // root without copying stylesheets out of document.head.
   const styled = await aside.evaluate((element) => {
     const style = getComputedStyle(element);
-    const emoji = element.querySelector('[data-epr-part="emoji"]') as HTMLElement;
+    const emoji = element.querySelector(
+      '[data-epr-part="emoji"]',
+    ) as HTMLElement;
     return {
       display: style.display,
       radius: style.borderTopLeftRadius,
@@ -192,7 +216,9 @@ test('json-joy: InputChar popup', async ({ page }) => {
 test('Medusa: notes dropdown', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--medusa'));
   await page.getByTestId('medusa-toggle').click();
-  await expect(page.locator(shot('medusa')).getByPlaceholder('Search Emoji...')).toBeVisible();
+  await expect(
+    page.locator(shot('medusa')).getByPlaceholder('Search Emoji...'),
+  ).toBeVisible();
   await capture(page, 'medusa', 'open');
   await searchFlow(page, 'medusa', 'cat');
   await cell(page, 'medusa', 'cat face').click();
@@ -214,7 +240,12 @@ test('ClassDojo: custom emoji', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--class-dojo'));
   await capture(page, 'classdojo', 'open');
   await searchFlow(page, 'classdojo', 'Panda');
-  await page.locator(shot('classdojo')).getByRole('gridcell', { name: 'panda' }).locator('visible=true').first().click();
+  await page
+    .locator(shot('classdojo'))
+    .getByRole('gridcell', { name: 'panda' })
+    .locator('visible=true')
+    .first()
+    .click();
   await expect(page.getByTestId('classdojo-picked')).toHaveText('custom:panda');
   await capture(page, 'classdojo', 'selected');
 });
@@ -253,11 +284,15 @@ test('Postiz: toggled through the open prop', async ({ page }) => {
 
 test('Edifice: editor toolbar insertion', async ({ page }) => {
   await page.goto(storyUrl('consumers-fixtures--edifice'));
-  await page.getByTestId('edifice-text').evaluate((element) =>
-    (element as HTMLTextAreaElement).setSelectionRange(5, 5),
-  );
+  await page
+    .getByTestId('edifice-text')
+    .evaluate((element) =>
+      (element as HTMLTextAreaElement).setSelectionRange(5, 5),
+    );
   await page.getByTestId('edifice-toggle').click();
-  await expect(page.locator(shot('edifice')).getByLabel(searchLabel)).toHaveCount(0);
+  await expect(
+    page.locator(shot('edifice')).getByLabel(searchLabel),
+  ).toHaveCount(0);
   await capture(page, 'edifice', 'open');
   await page
     .locator(shot('edifice'))

@@ -5,7 +5,7 @@ import { EmojiList } from '../components/body/EmojiList';
 import { ListComponentsContext } from '../components/body/listComponents';
 import { useEmojiListRef } from '../components/context/ElementRefContext';
 
-import { filterPrimitiveProps, mergeRefs } from './nativeProps';
+import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
 import { useRootScope, useViewportScope, useViewportScrollTop } from './scope';
 import type { ListProps } from './types';
 
@@ -32,6 +32,7 @@ export const List = /* @__PURE__ */ React.forwardRef<
   >;
 
   const EmojiListRef = useEmojiListRef();
+  const mergedRef = useMergedRefs(EmojiListRef, forwardedRef);
   const scrollTop = useViewportScrollTop();
 
   if (!inRoot || !inViewport) {
@@ -41,7 +42,7 @@ export const List = /* @__PURE__ */ React.forwardRef<
   const list = (
     <EmojiList
       scrollTop={scrollTop}
-      outerRef={mergeRefs(EmojiListRef, forwardedRef)}
+      outerRef={mergedRef}
       className={cx(className)}
       nativeProps={restNative}
     />

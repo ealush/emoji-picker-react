@@ -7,7 +7,7 @@ import {
   commonStyles,
   stylesheet,
 } from '../../Stylesheet/stylesheet';
-import { Button, buttonStyles } from '../atoms/Button';
+import { Button } from '../atoms/Button';
 import { EmojiRenderProps, ListEmoji } from '../body/listComponents';
 import { useIsActiveEmoji } from '../context/PickerContext';
 
@@ -54,6 +54,7 @@ export function ClickableEmojiButton({
     showVariations,
     noBackground,
     className,
+    custom: !!Custom,
   });
 
   if (Custom && emojiInfo) {
@@ -61,7 +62,7 @@ export function ClickableEmojiButton({
       type: 'button' as const,
       role,
       tabIndex,
-      className: cx(buttonStyles.button, cellClassName),
+      className: cellClassName,
       'data-epr-part': 'emoji',
       'data-epr-active': isActive ? '' : undefined,
       'data-epr-unified': unified,
@@ -100,6 +101,7 @@ function emojiCellClassName({
   showVariations,
   noBackground,
   className,
+  custom,
 }: {
   hidden?: boolean;
   hiddenOnSearch?: boolean;
@@ -107,17 +109,26 @@ function emojiCellClassName({
   showVariations: boolean;
   noBackground: boolean;
   className?: string;
+  custom: boolean;
 }): string {
   return cx(
     styles.emoji,
+    !custom && styles.appearance,
     hidden && commonStyles.hidden,
     hiddenOnSearch && commonInteractionStyles.hiddenOnSearch,
     {
       [ClassNames.visible]: !hidden && !hiddenOnSearch,
     },
-    !!(hasVariations && showVariations) && styles.hasVariations,
-    noBackground && styles.noBackground,
+    variationClassName(hasVariations && showVariations, custom),
+    !custom && noBackground && styles.noBackground,
     className,
+  );
+}
+
+function variationClassName(show: boolean, custom: boolean): string {
+  return cx(
+    show && ClassNames.emojiHasVariations,
+    show && !custom && styles.hasVariations,
   );
 }
 
@@ -138,8 +149,11 @@ const styles = /* @__PURE__ */ (() =>
       justifyContent: 'center',
       maxWidth: 'var(--epr-emoji-fullsize)',
       maxHeight: 'var(--epr-emoji-fullsize)',
-      borderRadius: '8px',
       overflow: 'hidden',
+    },
+    appearance: {
+      '.': 'epr-emoji-appearance',
+      borderRadius: '8px',
       transition: 'background-color 0.2s',
       ':hover': {
         backgroundColor: 'var(--epr-emoji-hover-color)',
@@ -160,7 +174,7 @@ const styles = /* @__PURE__ */ (() =>
       },
     },
     hasVariations: {
-      '.': ClassNames.emojiHasVariations,
+      '.': 'epr-emoji-variation-indicator',
       ':after': {
         content: '',
         display: 'block',

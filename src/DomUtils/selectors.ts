@@ -49,6 +49,11 @@ export function elementHeight(element: NullableElement): number {
   return element?.clientHeight ?? 0;
 }
 
+/** Layout size including host button borders (unaffected by transforms). */
+export function elementBorderBoxHeight(element: NullableElement): number {
+  return element?.offsetHeight || element?.clientHeight || 0;
+}
+
 export function emojiTrueOffsetTop(element: NullableElement): number {
   if (!element) {
     return 0;

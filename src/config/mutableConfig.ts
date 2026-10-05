@@ -12,20 +12,46 @@ export type MutableConfig = {
 
 /**
  * Sentinel default: marks the absence of a provider. Root adopts the
- * nearest provided ref when one exists (default picker) and owns one
- * otherwise (bare primitive), so callbacks stay fresh without depending
- * on the memoized default tree rerendering.
+ * wrapper-provided ref across the default picker memo boundary and
+ * owns one otherwise (including nested bare Roots). Callbacks stay fresh
+ * without depending on the memoized default tree rerendering.
  */
 export const NO_MUTABLE_PROVIDER = {} as React.MutableRefObject<MutableConfig>;
 
-export const MutableConfigContext =
-  /* @__PURE__ */ React.createContext<React.MutableRefObject<MutableConfig>>(
-    NO_MUTABLE_PROVIDER,
+const MutableConfigContext = /* @__PURE__ */ React.createContext({
+  ref: NO_MUTABLE_PROVIDER,
+  inheritToRoot: false,
+});
+
+export function MutableConfigProvider({
+  value,
+  inheritToRoot = false,
+  children,
+}: {
+  value: React.MutableRefObject<MutableConfig>;
+  inheritToRoot?: boolean;
+  children: React.ReactNode;
+}) {
+  const context = React.useMemo(
+    () => ({ ref: value, inheritToRoot }),
+    [value, inheritToRoot],
   );
+  return React.createElement(
+    MutableConfigContext.Provider,
+    { value: context },
+    children,
+  );
+}
 
 export function useMutableConfig(): React.MutableRefObject<MutableConfig> {
   const mutableConfig = React.useContext(MutableConfigContext);
-  return mutableConfig;
+  return mutableConfig.ref;
+}
+
+/** Only the default wrapper crosses its own memo boundary into Root. */
+export function useInheritedMutableConfig(): React.MutableRefObject<MutableConfig> {
+  const value = React.useContext(MutableConfigContext);
+  return value.inheritToRoot ? value.ref : NO_MUTABLE_PROVIDER;
 }
 
 export function useDefineMutableConfig(

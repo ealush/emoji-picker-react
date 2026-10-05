@@ -98,6 +98,10 @@
   letter-spacing: 0.04em;
 }
 .w95-picker .w95-cell {
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  outline: none;
   border-radius: 0;
 }
 .w95-picker .w95-cell:hover,

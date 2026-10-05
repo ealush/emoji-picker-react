@@ -25,7 +25,7 @@ export type RootBehaviorProps = Omit<PickerConfig, PickerAppearanceProps>;
 
 export type RootProps = Omit<
   React.HTMLAttributes<HTMLElement>,
-  keyof RootBehaviorProps | 'children' | 'role'
+  keyof RootBehaviorProps | 'children' | 'role' | 'dangerouslySetInnerHTML'
 > &
   RootBehaviorProps & {
     children: React.ReactNode;
@@ -45,7 +45,7 @@ export type RootProps = Omit<
 
 export type SearchProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   inputProps?: Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
@@ -56,11 +56,16 @@ export type SearchProps = Omit<
     | 'autoFocus'
     | 'placeholder'
     | 'aria-controls'
+    | 'role'
+    | 'children'
+    | 'dangerouslySetInnerHTML'
   >;
   inputRef?: React.Ref<HTMLInputElement>;
 };
 
-export type SearchInputProps = Omit<
+export type SearchInputElement = 'input' | React.ComponentType<any>;
+
+type ManagedInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   | 'type'
   | 'value'
@@ -69,14 +74,42 @@ export type SearchInputProps = Omit<
   | 'aria-controls'
   | 'children'
   | 'dangerouslySetInnerHTML'
-> & {
-  /** Must forward its ref and supplied props to an actual input element. */
-  as?: React.ElementType;
-};
+>;
+
+type ReservedInputProps =
+  | 'type'
+  | 'value'
+  | 'defaultValue'
+  | 'role'
+  | 'aria-controls'
+  | 'children'
+  | 'dangerouslySetInnerHTML'
+  | 'as';
+
+type InputBehaviorHandlers =
+  'onChange' | 'onFocus' | 'onCompositionStart' | 'onCompositionEnd';
+
+/** Native input props plus the selected design-system input's own props. */
+export type SearchInputProps<T extends SearchInputElement = 'input'> = Omit<
+  ManagedInputProps,
+  keyof React.ComponentPropsWithoutRef<T>
+> &
+  Pick<ManagedInputProps, InputBehaviorHandlers> &
+  Omit<
+    React.ComponentPropsWithoutRef<T>,
+    ReservedInputProps | InputBehaviorHandlers
+  > & {
+    /** Must forward its ref and supplied props to an actual input element. */
+    as?: T;
+  };
+
+export type SearchInputComponent = <T extends SearchInputElement = 'input'>(
+  props: SearchInputProps<T> & React.RefAttributes<HTMLInputElement>,
+) => React.ReactElement | null;
 
 export type CategoryNavProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   /**
    * Tab axis. `vertical` stacks the tabs (e.g. a side rail) and switches
@@ -88,12 +121,12 @@ export type CategoryNavProps = Omit<
 
 export type PreviewProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 >;
 
 export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   /**
    * Custom markup for emoji cells and category headers. Each receives the
@@ -105,14 +138,14 @@ export type ListProps = Omit<
 
 export type EmptyProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   children?: React.ReactNode | ((state: { search: string }) => React.ReactNode);
 };
 
 export type SkinToneProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   /** Axis the tones fan out along. Default: 'horizontal'. */
   orientation?: 'horizontal' | 'vertical';
@@ -120,14 +153,14 @@ export type SkinToneProps = Omit<
 
 export type LoadingProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   children?: React.ReactNode;
 };
 
 export type LoadErrorProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   children?:
     | React.ReactNode

@@ -83,6 +83,10 @@ const EmotionRoot = styledEmotion(Picker.Root)`
   }
 
   & .w95-cell {
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    outline: none;
     border-radius: 0;
   }
 
@@ -156,6 +160,10 @@ const StyledComponentsRoot = styledComponents(Picker.Root)`
   }
 
   & .w95-cell {
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    outline: none;
     border-radius: 0;
   }
 
@@ -223,6 +231,10 @@ const MuiRoot = styledMui(Picker.Root)({
     letterSpacing: "0.04em",
   },
   "& .w95-cell": {
+    cursor: "pointer",
+    border: "0",
+    backgroundColor: "transparent",
+    outline: "none",
     borderRadius: "0",
   },
   "& .w95-cell:hover, & .w95-cell:focus": {
@@ -285,6 +297,10 @@ const tailwind = [
   '[&_.w95-header]:[font-size:11px]',
   '[&_.w95-header]:[font-weight:700]',
   '[&_.w95-header]:[letter-spacing:0.04em]',
+  '[&_.w95-cell]:[cursor:pointer]',
+  '[&_.w95-cell]:[border:0]',
+  '[&_.w95-cell]:[background-color:transparent]',
+  '[&_.w95-cell]:[outline:none]',
   '[&_.w95-cell]:[border-radius:0]',
   '[&_.w95-cell:hover]:[background:#000080]',
   '[&_.w95-cell:focus]:[background:#000080]',
@@ -342,6 +358,10 @@ const shadcn = [
   '[&_.w95-header]:[font-size:11px]',
   '[&_.w95-header]:[font-weight:700]',
   '[&_.w95-header]:[letter-spacing:0.04em]',
+  '[&_.w95-cell]:[cursor:pointer]',
+  '[&_.w95-cell]:[border:0]',
+  '[&_.w95-cell]:[background-color:transparent]',
+  '[&_.w95-cell]:[outline:none]',
   '[&_.w95-cell]:[border-radius:0]',
   '[&_.w95-cell:hover]:[background:#000080]',
   '[&_.w95-cell:focus]:[background:#000080]',

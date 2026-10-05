@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { elementBorderBoxHeight } from '../../DomUtils/selectors';
 import {
   categoryFromCategoryConfig,
   customGroupFromCategoryConfig,
@@ -36,7 +37,7 @@ export function MeasureEmoji() {
       // report 0 forever and keep this measurer mounted (STATE.md §10
       // invalidation and stray-node costs on every render).
       const button = ref.current.querySelector('button');
-      setEmojiSize(button?.clientHeight || ref.current.clientHeight);
+      setEmojiSize(elementBorderBoxHeight(button) || ref.current.clientHeight);
     }
   });
 

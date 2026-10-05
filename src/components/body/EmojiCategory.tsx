@@ -62,7 +62,7 @@ export function EmojiCategory({
         // Visual only: the rowgroup already carries the category name, and
         // a heading is not an allowed child of a grid rowgroup.
         <h2
-          className={cx(styles.label)}
+          className={cx(styles.label, styles.labelAppearance)}
           aria-hidden
           data-epr-part="category-label"
         >
@@ -104,20 +104,23 @@ const styles = /* @__PURE__ */ (() =>
     label: {
       '.': ClassNames.label,
       alignItems: 'center',
-      // @ts-ignore - backdropFilter is not recognized.
-      backdropFilter: 'blur(3px)',
-      backgroundColor: 'var(--epr-category-label-bg-color)',
-      color: 'var(--epr-category-label-text-color)',
       display: 'flex',
-      fontSize: '16px',
-      fontWeight: 'bold',
       height: 'var(--epr-category-label-height)',
       margin: '0',
       padding: 'var(--epr-category-label-padding)',
       position: 'sticky',
-      textTransform: 'capitalize',
       top: '0',
       width: '100%',
       zIndex: 'var(--epr-category-label-z-index)',
+    },
+    labelAppearance: {
+      '.': 'epr-category-label-appearance',
+      // @ts-ignore - backdropFilter is not recognized.
+      backdropFilter: 'blur(3px)',
+      backgroundColor: 'var(--epr-category-label-bg-color)',
+      color: 'var(--epr-category-label-text-color)',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      textTransform: 'capitalize',
     },
   }))();

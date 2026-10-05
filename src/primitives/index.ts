@@ -52,6 +52,8 @@ export type {
   RootProps,
   SearchProps,
   SearchInputProps,
+  SearchInputElement,
+  SearchInputComponent,
 } from './types';
 export type {
   CategoryHeaderRenderProps,

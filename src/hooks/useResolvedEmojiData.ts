@@ -27,10 +27,73 @@ export type EmojiDataState = {
 };
 type Resolved = EmojiDataState & { data: EmojiData | undefined };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === 'string')
+  );
+}
+
+function isUnified(value: string): boolean {
+  return value
+    .split('-')
+    .every(
+      (hex) => /^[\da-f]{1,6}$/i.test(hex) && parseInt(hex, 16) <= 0x10ffff,
+    );
+}
+
+function hasValidEncoding(value: Record<string, unknown>): boolean {
+  if (value.imgUrl !== undefined) return typeof value.imgUrl === 'string';
+  return (
+    typeof value.u === 'string' &&
+    isUnified(value.u) &&
+    (value.v === undefined ||
+      (isStringArray(value.v) && value.v.every(isUnified)))
+  );
+}
+
+function isEmoji(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.u === 'string' &&
+    !!value.u &&
+    isStringArray(value.n) &&
+    value.n.length > 0 &&
+    typeof value.a === 'string' &&
+    hasValidEncoding(value)
+  );
+}
+
+function isEmojiGroup(value: unknown): boolean {
+  return Array.isArray(value) && value.every(isEmoji);
+}
+
+function isCategory(value: unknown): boolean {
+  return (
+    isRecord(value) &&
+    typeof value.category === 'string' &&
+    typeof value.name === 'string'
+  );
+}
+
 function normalize(result: EmojiData | { default: EmojiData }): EmojiData {
-  return 'default' in result && result.default
-    ? result.default
-    : (result as EmojiData);
+  const data =
+    isRecord(result) && 'default' in result ? result.default : result;
+  if (
+    !isRecord(data) ||
+    !isRecord(data.categories) ||
+    !isRecord(data.emojis) ||
+    !Object.values(data.emojis).every(isEmojiGroup) ||
+    !Object.values(data.categories).every(isCategory)
+  ) {
+    throw new Error(
+      '[emoji-picker-react] emojiData loader must resolve an EmojiData dataset or { default: EmojiData }.',
+    );
+  }
+  return data as EmojiData;
 }
 
 /**
@@ -42,7 +105,10 @@ function normalize(result: EmojiData | { default: EmojiData }): EmojiData {
  *   dataset is loaded on demand (a separate chunk in ESM builds).
  * `data: undefined` means "the registered default".
  */
-export function useResolvedEmojiData(input?: EmojiDataInput): Resolved {
+export function useResolvedEmojiData(
+  input?: EmojiDataInput,
+  enabled = true,
+): Resolved {
   const needsLoad =
     typeof input === 'function' ||
     (input === undefined && getRegisteredDefaultEmojiData() === null);
@@ -57,7 +123,7 @@ export function useResolvedEmojiData(input?: EmojiDataInput): Resolved {
   const retry = React.useCallback(() => setAttempt((value) => value + 1), []);
 
   React.useEffect(() => {
-    if (!needsLoad) {
+    if (!needsLoad || !enabled) {
       return;
     }
     let cancelled = false;
@@ -99,7 +165,7 @@ export function useResolvedEmojiData(input?: EmojiDataInput): Resolved {
       cancelled = true;
       controller?.abort();
     };
-  }, [input, needsLoad, attempt]);
+  }, [input, needsLoad, attempt, enabled]);
 
   return React.useMemo(() => {
     if (!needsLoad) {

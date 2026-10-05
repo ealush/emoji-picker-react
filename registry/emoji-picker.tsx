@@ -7,12 +7,24 @@ const components: Picker.ListComponents = {
   Emoji: ({ emoji, style, ...props }) => (
     <button
       {...props}
+      className={`${props.className ?? ''} cursor-pointer border-0 bg-transparent outline-none hover:bg-accent focus:bg-accent`}
       style={{ ...style, borderRadius: 'calc(var(--radius) - 2px)' }}
       data-active={emoji.isActive ? '' : undefined}
     />
   ),
   CategoryHeader: ({ category: _category, style, ...props }) => (
-    <div {...props} style={{ ...style, fontSize: 12, fontWeight: 500 }} />
+    <div
+      {...props}
+      style={{
+        ...style,
+        fontSize: 12,
+        fontWeight: 500,
+        backgroundColor: 'var(--popover)',
+        color: 'var(--muted-foreground)',
+        textTransform: 'capitalize',
+        backdropFilter: 'blur(3px)',
+      }}
+    />
   ),
 };
 

@@ -23,7 +23,7 @@ import { useMouseDownHandlers } from '../hooks/useMouseDownHandlers';
 import { useOnScroll } from '../hooks/useOnScroll';
 import { useSingletonClaim } from '../hooks/useRegisterRegion';
 
-import { filterPrimitiveProps, mergeRefs } from './nativeProps';
+import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
 import {
   useRootScope,
   ViewportScopeProvider,
@@ -38,7 +38,7 @@ export { __resetPrimitiveWarningsForTest };
 
 export type ViewportProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   /**
    * The scrolled content: one `<List>` (it may be wrapped, e.g. by a
@@ -97,6 +97,7 @@ export const Viewport = /* @__PURE__ */ React.forwardRef<
   useWarnWithoutList();
 
   const BodyRef = useBodyRef();
+  const mergedRef = useMergedRefs(forwardedRef, BodyRef);
   const scrollTop = useOnScroll(BodyRef);
   useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
   useOnMouseMove();
@@ -111,7 +112,7 @@ export const Viewport = /* @__PURE__ */ React.forwardRef<
   return (
     <div
       {...restNative}
-      ref={mergeRefs(forwardedRef, BodyRef)}
+      ref={mergedRef}
       data-epr-part="viewport"
       className={cx(styles.viewport, className)}
       style={style}

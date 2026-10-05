@@ -70,7 +70,7 @@
     "llms.txt",
     "llms-full.txt"
   ],
-  "description": "Plug-and-play emoji picker for React that works out of the box \u2014 or bring your own style system: go unstyled and compose it with Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS.",
+  "description": "React emoji picker: batteries included, or BYOD (bring your own design, design language and design library). Shared keyboard navigation, localization and virtualization across styled, unstyled and composed UIs.",
   "keywords": [
     "emoji-picker",
     "react-emoji-picker",

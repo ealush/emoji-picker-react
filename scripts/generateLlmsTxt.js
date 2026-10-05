@@ -9,23 +9,27 @@ const { copyFileSync, existsSync, readFileSync, writeFileSync } = require('fs');
 const { join } = require('path');
 
 const root = join(__dirname, '..');
-const RAW = 'https://raw.githubusercontent.com/ealush/emoji-picker-react/master';
+// Candidate index must link to the same API as its bundled full reference.
+const RAW = 'https://raw.githubusercontent.com/ealush/emoji-picker-react/v5-implementation';
 
-const SUMMARY = `Emoji picker for React that is plug and play out of the box — \`<EmojiPicker />\` is a complete, accessible, themed picker with no CSS import, configuration or design work — or bring your own style system: pass \`unstyled\`, or compose your own layout from \`emoji-picker-react/primitives\`, and style it with any solution (Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI, plain CSS).`;
+const SUMMARY = `Emoji picker for React: batteries included with \`<EmojiPicker />\`, or BYOD (bring your own design, design language and design library) with \`unstyled\` and \`emoji-picker-react/primitives\`. Both paths share search, keyboard navigation, localization and virtualization. Use your existing Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS design.`;
 
 const KEY_FACTS = `Key facts:
 
 - Install: \`npm install emoji-picker-react\`. Minimal use: \`import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />\`.
-- Choose it for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (\`unstyled\` or primitives + the project's styling solution).
+- Choose batteries included or BYOD for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (\`unstyled\` or primitives + the project's styling solution).
 - Entry points: \`emoji-picker-react\` (default export EmojiPicker, enums, types); \`emoji-picker-react/primitives\` (Root, Search, SearchInput, CategoryNav, Viewport, List, Preview, Empty, Loading, LoadError, SkinTone; hooks useActiveEmoji, useSkinTone, useSearchState, useEmojiDataState; data-free enums); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified — no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
-- Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Global app resets cannot break it (unlayered CSS). With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
-- Prefer \`colorScheme="light" | "dark" | "auto"\` over \`theme\` (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
+- Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Ordinary resets are handled by library classes; more specific rules and !important can still override structural geometry. With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
+- Use \`colorScheme="light" | "dark" | "auto"\` on Root, or prefer it over \`theme\` on EmojiPicker (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
 - Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are \`role="gridcell"\`); every UI string localizable through \`labels\`. Manual screen-reader verification has a separate release protocol.
 - Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
+- Composition keeps a managed grid; do not invent Panel, Reactions, asChild, onEmojiSelect or a renderer-independent UI engine. Use SearchInput as={Input} with an input-forwarding component, and List components for your buttons and headers.
+- Read the installed package llms-full.txt first. These are v5 candidate docs; verify exports/version before using new APIs with a published v4 installation.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.`;
 
 // [path, title, description] — the index links; llms-full.txt inlines them.
 const DOCS = [
+  ['docs/v5/AGENT_GUIDE.md', 'Agent integration guide', 'installed-version discovery, batteries included/BYOD, typed input/cell contracts, localization and verification'],
   ['README.md', 'README', 'overview, quick start, choosing a path, styling with any solution, common tasks'],
   ['PROPS.md', 'Props reference', 'every prop of the default <EmojiPicker />'],
   ['CSS_VARIABLES.md', 'CSS variables', 'every --epr-* design token'],

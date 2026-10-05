@@ -19,6 +19,12 @@ import {
 // which re-declares them — renders identically.
 const structuralSheet = /* @__PURE__ */ createSheet('epr-structural', null);
 
+// A fallback reset must yield to design-library classes. MUI inputs use
+// content-box heights plus padding; a Root-class universal reset otherwise
+// overrides that rule and clips their text. Managed cells own their sizing
+// separately. Keep this inside the same nonce/layer boundary as the sheet.
+const boxSizingReset = ':where(.epr-structural-root *){box-sizing:border-box;}';
+
 export const structuralStyles = /* @__PURE__ */ (() =>
   structuralSheet.create({
     root: {
@@ -35,11 +41,6 @@ export const structuralStyles = /* @__PURE__ */ (() =>
       overflow: 'hidden',
       overflowX: 'clip',
       overflowY: 'clip',
-      // Padded full-width controls must not overflow the root; bare
-      // compositions previously had to bring this reset themselves.
-      '*': {
-        boxSizing: 'border-box',
-      },
       // Every geometry token, so a bare Root lays out and measures
       // correctly with no appearance tokens at all.
       '--': structuralPickerTokens,
@@ -107,7 +108,10 @@ export const StructuralStyleTag = /* @__PURE__ */ React.memo(
         nonce={nonce}
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: finalizeCss(structuralSheet.getStyle(), cssLayer),
+          __html: finalizeCss(
+            structuralSheet.getStyle() + '\n' + boxSizingReset,
+            cssLayer,
+          ),
         }}
       />
     );

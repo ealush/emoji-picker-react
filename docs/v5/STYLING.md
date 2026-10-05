@@ -1,6 +1,6 @@
 # v5 Styling Contract
 
-The picker is plug and play out of the box, and equally built for teams that bring their own style system: every mode below keeps the same behavior, accessibility and virtualization, and only changes who owns the appearance.
+Choose batteries included or BYOD (bring your own design, design language and design library): every mode below keeps the same behavior, accessibility and virtualization, and only changes who owns the appearance.
 
 ## 1. Two styling modes
 
@@ -16,11 +16,13 @@ It continues to support the documented v4 CSS custom properties.
 
 `emoji-picker-react/primitives` exposes the same behavioral renderer, unbranded by default:
 
-- every Root applies the geometry tokens (sizes, spacing, stacking) and a `box-sizing: border-box` reset, so a bare composition lays out and measures correctly with no appearance tokens;
+- every Root applies the geometry tokens (sizes, spacing, stacking) and a zero-specificity `box-sizing: border-box` fallback, so a bare composition lays out and measures correctly with no appearance tokens; design-library classes retain their own box sizing (for example MUI's content-box inputs);
 - `<Root colorScheme="light" | "dark" | "auto">` opts into the default color tokens (variables only — no border, background or typography on Root);
 - token presets are exported as data: `structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`.
 
-This is not a promise that every CSS property may be arbitrarily overridden without affecting behavior.
+With `List components`, custom emoji buttons receive geometry and behavior attributes without the default button reset, rounding, hover/focus colors or variation indicator decoration. Custom category headers receive sticky positioning and measurement without default background, blur, font styling or text transformation. Supply your own decoration and visible focus. Native `SearchInput` and its design-library `as` component receive no managed search appearance.
+
+Headless composition uses this managed rendering contract; consumers retain the documented geometry while choosing their design components.
 
 ## 2. Structural CSS
 
@@ -37,7 +39,15 @@ The library guarantees correct behavior only while these structural responsibili
 | `emoji` | measured cell geometry used by logical row/column calculations |
 | `variation-picker` | overlay positioning that must not corrupt grid measurement |
 
-The implementation must document the exact declarations that carry these responsibilities once v5 lands.
+The current implementation reserves these declarations:
+
+- Root: `position: relative`, column flex layout, clipping; panel: flexible column with `min-height: 0` and hidden/inert presence controlled by Root.
+- Viewport: relative flex child with `overflow-y: scroll` and horizontal clipping.
+- List: zero list margin/padding; category content: relative grid using `--epr-emoji-fullsize` columns and `--epr-category-padding`.
+- Cells: measured width/height/max dimensions from `--epr-emoji-fullsize`; the supplied inline absolute position and offsets place virtualized cells.
+- Category labels: sticky top position, `--epr-category-label-height`, documented padding and stacking tokens.
+
+Change supported size tokens to alter dimensions; preserve the supplied position styles when wrapping design-library buttons.
 
 Consumers MUST NOT be told that every value of `display`, `position`, `overflow`, row height, or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container is outside the keyboard/virtualization guarantee.
 

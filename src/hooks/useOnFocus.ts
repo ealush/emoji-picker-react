@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import {
   allUnifiedFromEmojiElement,
   buttonFromTarget,
@@ -33,6 +34,7 @@ export function useOnFocus() {
     };
 
     function onFocus(event: FocusEvent) {
+      if (!eventBelongsToPicker(event, bodyRef)) return;
       const button = buttonFromTarget(event.target as HTMLElement);
 
       if (!button) {

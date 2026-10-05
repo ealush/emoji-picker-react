@@ -220,7 +220,7 @@ A benchmark failure cannot be waived merely because functional tests pass.
 
 ## Complete runtime measurement amendment (2026-10-04)
 
-The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.0 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
+The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.8 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
 
 Only unused component/context/style factories are eligible for removal. Style construction (including helper arguments and icons) stays inside an annotated factory, and rendered parts retain their referenced styles. Default dataset registration remains intentional; the package does not declare blanket `sideEffects: false`. Packaging checks execute minified minimal and default consumers and assert retained layout CSS, keyboard selection, controlled search and default navigation/preview/tone parts.
 

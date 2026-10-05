@@ -1,13 +1,21 @@
 # v5 Public API Design
 
-The v5 public API is designed from the consumer inward:
+## BYOD hardening amendment (2026-10-05)
+
+Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. `open={false}` on a bare Root renders no picker content, cancels pending loading and starts no new load until reopened. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
+
+Managed markup cannot be replaced through `dangerouslySetInnerHTML`; structural children, roles and reserved picker attributes remain owned by the library. Stable forwarded refs are retained across unrelated renders, and callback-ref cleanup is supported while retaining the React 16.8 runtime floor. Malformed async loader output enters the same localized error/retry path as a rejected load.
+
+SearchInput infers design-library props from its `as` component, including required options, while protecting the Root-owned value and native input contract. Custom List cells and headers receive structural styles without managed decorative appearance. They own their visible focus and design-library styling. Grid row measurement uses the outer border box, so design-library borders do not shrink virtualized row spacing.
+
+Choose batteries included or BYOD (bring your own design, design language and design library). Both use the same behavior engine. The v5 public API is designed from the consumer inward:
 
 - `<EmojiPicker />` remains the primary path;
 - v4 source compatibility is preserved wherever the architecture does not require a break;
 - new APIs are added only for demonstrated needs;
 - composition is layered: rearrange the macro structure, read picker state through hooks, and — when a brand needs it — replace the markup of emoji cells and category headers while the library keeps owning their behavior.
 
-## 1. Plug-and-play remains primary
+## 1. Batteries included
 
 ```tsx
 import EmojiPicker from 'emoji-picker-react';

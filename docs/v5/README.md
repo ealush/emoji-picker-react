@@ -59,3 +59,7 @@ Avoid:
 - unverifiable claims such as "performant" or "SSR-safe".
 
 See [ADOPTION.md](./ADOPTION.md) for installable examples and the native input/error/active-cell additions.
+
+## Integration references
+
+Choose batteries included or BYOD (bring your own design, design language and design library). Start with [AGENT_GUIDE.md](./AGENT_GUIDE.md) for installed API discovery and design-library contracts, or [ADOPTION.md](./ADOPTION.md) for runnable examples. Both are bundled in `llms-full.txt`. The candidate llms index links to `v5-implementation`; change its source ref to the release branch when promoting these docs after merge.

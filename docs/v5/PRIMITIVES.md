@@ -273,7 +273,7 @@ Search renders a managed search region containing the input, status live region,
 ```ts
 export type SearchProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   inputProps?: Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
@@ -310,7 +310,7 @@ List owns all grid descendants and does not accept consumer children.
 ```ts
 export type ListProps = Omit<
   React.HTMLAttributes<HTMLUListElement>,
-  'role' | 'children'
+  'role' | 'children' | 'dangerouslySetInnerHTML'
 > & {
   components?: {
     Emoji?: React.ComponentType<EmojiRenderProps>;
@@ -321,7 +321,7 @@ export type ListProps = Omit<
 export type ViewportProps =
   Omit<
     React.HTMLAttributes<HTMLDivElement>,
-    'role' | 'children'
+    'role' | 'children' | 'dangerouslySetInnerHTML'
   > & {
     children: React.ReactNode;
   };
@@ -339,7 +339,7 @@ These stay two primitives rather than one because they are two real elements wit
 export type CategoryNavProps =
   Omit<
     React.HTMLAttributes<HTMLDivElement>,
-    'role' | 'children'
+    'role' | 'children' | 'dangerouslySetInnerHTML'
   > & {
     /** Tab axis; vertical stacks tabs and uses Up/Down. Default 'horizontal'. */
     orientation?: 'horizontal' | 'vertical';
@@ -348,7 +348,7 @@ export type CategoryNavProps =
 export type PreviewProps =
   Omit<
     React.HTMLAttributes<HTMLDivElement>,
-    'role' | 'children'
+    'role' | 'children' | 'dangerouslySetInnerHTML'
   >;
 ```
 
@@ -396,3 +396,14 @@ They read the same Root-scoped state the managed parts use, so a hand-built prev
 ## Adoption additions
 
 See [ADOPTION.md](./ADOPTION.md) for native SearchInput, recoverable data loading and installation. `ListEmoji.isActive` and `data-epr-active` identify hover/keyboard focus; spread managed props onto the custom button. Root’s `panelProps` targets the automatic panel rather than requiring an extra wrapper. Runtime configuration constants and their types are also available from the data-free primitives entry.
+
+
+## BYOD ownership and hardening (2026-10-05)
+
+BYOD means bring your own design, design language and design library. `SearchInput as={Input}` accepts that input's own typed options; pass Root `searchValue` / `onSearchChange` to control search. An input component must forward supplied native props and its ref to a real `<input>`. `disabled` and `readOnly` prevent grid type-to-search.
+
+Custom List cells keep measured geometry, roles, names, tabIndex and reserved attributes, but no managed button reset, rounding, hover/focus colors or variation decoration. Custom category headers keep sticky measurement styles without default font, text transformation, blur or background. Supply design-library appearance and visible focus. Spread the supplied position `style` intact.
+
+`dangerouslySetInnerHTML` is excluded from managed native prop types and filtered at runtime. Stable forwarded refs do not detach on unrelated renders; callback-ref cleanup works alongside the React 16.8 floor. Bare Roots own their callbacks independently. `open={false}` renders no picker and aborts pending loading; reopened Roots can load again. Async loader shape failures are recoverable through LoadError and retry.
+
+Composition retains library-owned grid rendering, keyboard behavior and virtualization. The framework-free data API supports consumers that only need search/lookup; a renderer-independent UI engine is not part of this contract.

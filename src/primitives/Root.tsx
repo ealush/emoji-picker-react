@@ -22,10 +22,10 @@ import {
 import { ActiveCategoryProvider } from '../components/navigation/CategoryNavigation';
 import { basePickerConfig } from '../config/config';
 import {
-  MutableConfigContext,
+  MutableConfigProvider,
   NO_MUTABLE_PROVIDER,
   useDefineMutableConfig,
-  useMutableConfig,
+  useInheritedMutableConfig,
 } from '../config/mutableConfig';
 import useIsSearchMode from '../hooks/useIsSearchMode';
 import { useKeyboardNavigation } from '../hooks/useKeyboardNavigation';
@@ -38,7 +38,7 @@ import {
 } from '../hooks/useResolvedEmojiData';
 import { Theme, ThemeValue } from '../types/exposedTypes';
 
-import { filterPrimitiveProps, mergeRefs } from './nativeProps';
+import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
 import { RootScopeProvider } from './scope';
 import { StructuralStyleTag, structuralStyles } from './structuralStyles';
 import type { RootProps } from './types';
@@ -104,7 +104,12 @@ function splitRootProps(props: Omit<RootProps, 'children'>): {
   return { behaviorProps, asideProps };
 }
 
-const NON_BEHAVIOR_PROPS = new Set(['role', 'width', 'height']);
+const NON_BEHAVIOR_PROPS = new Set([
+  'role',
+  'width',
+  'height',
+  'dangerouslySetInnerHTML',
+]);
 
 function assignRootProp(
   key: string,
@@ -147,13 +152,14 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
     // Root only ever sees a synchronous dataset.
     const dataState = useResolvedEmojiData(
       rawBehaviorProps.emojiData as EmojiDataInput | undefined,
+      rawBehaviorProps.open !== false,
     );
     const resolvedEmojiData = dataState.data;
     const behaviorProps =
       resolvedEmojiData === rawBehaviorProps.emojiData
         ? rawBehaviorProps
         : { ...rawBehaviorProps, emojiData: resolvedEmojiData };
-    const parentMutableRef = useMutableConfig();
+    const parentMutableRef = useInheritedMutableConfig();
     const ownedMutableRef = useDefineMutableConfig({
       onEmojiClick: behaviorProps.onEmojiClick as never,
       onReactionClick: behaviorProps.onReactionClick as never,
@@ -161,21 +167,22 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
       onSearchChange: behaviorProps.onSearchChange as never,
       onReactionsModeChange: behaviorProps.onReactionsModeChange as never,
     });
-    // Adopt the nearest provided mutable config when nested (the default
-    // picker provides one above its memoized tree, so callback-only parent
-    // updates stay fresh without rerendering through the memo). A bare
-    // Root owns its own. The owned hooks stay unconditional; their effects
-    // update an unread ref while nested, which is harmless.
+    // Adopt callbacks supplied by the default wrapper across its memo
+    // boundary, so callback-only parent updates stay fresh. Root's
+    // provider does not pass ownership to nested Roots: each bare Root
+    // owns its callbacks. Hooks stay unconditional when closed.
     const mutableRef =
       parentMutableRef !== NO_MUTABLE_PROVIDER
         ? parentMutableRef
         : ownedMutableRef;
 
+    if (rawBehaviorProps.open === false) return null;
+
     return (
       <ElementRefContextProvider>
         <DataLoadingProvider value={dataState}>
           <PickerConfigProvider {...behaviorProps}>
-            <MutableConfigContext.Provider value={mutableRef}>
+            <MutableConfigProvider value={mutableRef}>
               <PickerDataProvider>
                 <PickerContextProvider>
                   <RootScopeProvider>
@@ -191,7 +198,7 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
                   </RootScopeProvider>
                 </PickerContextProvider>
               </PickerDataProvider>
-            </MutableConfigContext.Provider>
+            </MutableConfigProvider>
           </PickerConfigProvider>
         </DataLoadingProvider>
       </ElementRefContextProvider>
@@ -213,6 +220,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
   forwardedRef,
 ) {
   const PickerMainRef = usePickerMainRef();
+  const mergedRef = useMergedRefs<HTMLElement>(forwardedRef, PickerMainRef);
   const [reactionsOpen] = useReactionsModeState();
   const searchModeActive = useIsSearchMode();
   useKeyboardNavigation();
@@ -256,7 +264,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
       <StructuralStyleTag nonce={behaviorNonce} cssLayer={cssLayer} />
       <aside
         {...(nativeAside as React.HTMLAttributes<HTMLElement>)}
-        ref={mergeRefs<HTMLElement>(forwardedRef, PickerMainRef)}
+        ref={mergedRef}
         data-epr-part="root"
         className={cx(
           structuralStyles.root,

@@ -3,13 +3,18 @@ import * as React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker from '../src';
+import * as Picker from '../src/primitives';
 import { Categories } from '../src/config/categoryConfig';
 import { EmojiData } from '../src/types/exposedTypes';
 
 // Record, at the moment each scroll is applied, whether the Animals section
 // was still hidden by the previous search (jsdom has no layout, so the
 // offset itself cannot be asserted).
-const jumps: Array<{ top: number; animalsHidden: boolean }> = [];
+const jumps: Array<{
+  top: number;
+  animalsHidden: boolean;
+  searchActive: boolean;
+}> = [];
 vi.mock('../src/DomUtils/scrollTo', async (importOriginal) => {
   const actual =
     await importOriginal<typeof import('../src/DomUtils/scrollTo')>();
@@ -22,6 +27,7 @@ vi.mock('../src/DomUtils/scrollTo', async (importOriginal) => {
       jumps.push({
         top,
         animalsHidden: !!animals?.classList.contains('epr-hidden'),
+        searchActive: !!document.querySelector('.epr-search-active'),
       });
     },
   };
@@ -54,6 +60,33 @@ const wait = (ms: number) =>
   act(() => new Promise((resolve) => setTimeout(resolve, ms)));
 
 describe('category jump right after clearing the search', () => {
+  it('waits for a native BYOD input to clear even when the target section stays visible', async () => {
+    render(
+      <Picker.Root
+        emojiData={data}
+        categories={[Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE]}
+      >
+        <Picker.SearchInput />
+        <Picker.CategoryNav />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>,
+    );
+    const search = screen.getByRole('textbox');
+    fireEvent.change(search, { target: { value: 'face' } });
+    await wait(250);
+    expect(document.querySelector('.epr-search-active')).toBeTruthy();
+    expect(
+      document.querySelector('[data-epr-category="animals_nature"]'),
+    ).not.toHaveClass('epr-hidden');
+    fireEvent.change(search, { target: { value: '' } });
+    jumps.length = 0;
+    fireEvent.click(screen.getByRole('tab', { name: 'Animals & Nature' }));
+    await vi.waitFor(() => expect(jumps.length).toBeGreaterThan(0));
+    expect(jumps.every((jump) => !jump.searchActive)).toBe(true);
+  });
+
   it(
     'waits for the section the pending filter still hides, then jumps',
     { timeout: 10000 },

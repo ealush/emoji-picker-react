@@ -1,7 +1,10 @@
 import * as React from 'react';
 
 import { asSelectors, ClassNames } from '../DomUtils/classNames';
-import { EmojiButtonSelector } from '../DomUtils/selectors';
+import {
+  elementBorderBoxHeight,
+  EmojiButtonSelector,
+} from '../DomUtils/selectors';
 import {
   useEmojiListRef,
   usePickerMainRef,
@@ -12,6 +15,8 @@ import {
   useVisibleCategoriesState,
   useEmojiSizeState,
 } from '../components/context/PickerContext';
+
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 const EMOJI_SIZE_DEFAULT = 40;
 
@@ -86,7 +91,8 @@ export function useCategoryHeight(emojiCount: number):
       EmojiButtonSelector,
     ) as HTMLElement | null;
 
-    const measured = emojiElement?.clientHeight;
+    // Border-box geometry includes design-library button borders.
+    const measured = elementBorderBoxHeight(emojiElement);
     if (measured) {
       emojiSizeRef.current = measured;
     }
@@ -108,8 +114,10 @@ export function useCategoryHeight(emojiCount: number):
     setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
   }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry]);
 
-  // Recompute on data-count changes and when reactions mode toggles
-  React.useEffect(() => {
+  // Restore measured row heights in the same commit as the filtered
+  // contents. A passive effect leaves one frame of stale offsets that
+  // category navigation can observe immediately after clearing search.
+  useIsomorphicLayoutEffect(() => {
     computeAndSetDimensions();
   }, [
     emojiCount,

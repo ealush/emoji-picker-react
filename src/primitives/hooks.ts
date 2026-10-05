@@ -59,17 +59,18 @@ export function useActiveEmoji(): EmojiClickData | null {
  * fires and the parent decides).
  */
 export function useSkinTone(): [SkinTones, (skinTone: SkinTones) => void] {
-  useRootScope('useSkinTone');
+  const inScope = useRootScope('useSkinTone');
   const [skinTone, setActiveSkinTone] = useActiveSkinToneState();
   // The mutable config ref is stable and read at call time, so the setter
   // keeps a stable identity and always reaches the latest callback.
   const { current: callbacks } = useMutableConfig();
   const setSkinTone = React.useCallback(
     (next: SkinTones) => {
+      if (!inScope) return;
       setActiveSkinTone(next);
       callbacks.onSkinToneChange?.(next);
     },
-    [setActiveSkinTone, callbacks],
+    [setActiveSkinTone, callbacks, inScope],
   );
   return [skinTone, setSkinTone];
 }

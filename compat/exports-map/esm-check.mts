@@ -9,4 +9,33 @@ import esLegacy from 'emoji-picker-react/dist/data/emojis-es';
 const a: EmojiData = es;
 const b: EmojiData = fr;
 const c: EmojiData = esLegacy;
-void Picker; void Primitives; void searchEmojis; void a; void b; void c;
+void Picker;
+void Primitives;
+void searchEmojis;
+void a;
+void b;
+void c;
+
+// Design-system options survive the installed package declaration bundle.
+import * as React from 'react';
+const Input = React.forwardRef<
+  HTMLInputElement,
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {
+    variant: 'quiet';
+    size: 'sm';
+  }
+>(() => null);
+const customInput: Primitives.SearchInputProps<typeof Input> = {
+  as: Input,
+  variant: 'quiet',
+  size: 'sm',
+};
+const inputValue: Primitives.SearchInputProps<typeof Input> = {
+  as: Input,
+  variant: 'quiet',
+  size: 'sm',
+  // @ts-expect-error Root owns the search value, also for a custom input.
+  value: 'face',
+};
+void customInput;
+void inputValue;

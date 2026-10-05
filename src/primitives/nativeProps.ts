@@ -15,7 +15,11 @@ export function filterPrimitiveProps(
 ): Record<string, unknown> {
   const forwarded: Record<string, unknown> = {};
   for (const key of Object.keys(props)) {
-    if (reserved.includes(key)) {
+    if (
+      reserved.includes(key) ||
+      key === 'dangerouslySetInnerHTML' ||
+      key === 'children'
+    ) {
       continue;
     }
     if (key.startsWith('data-epr-')) {
@@ -53,16 +57,33 @@ export function composeHandlers<E>(
 export function mergeRefs<T>(
   ...refs: Array<React.Ref<T> | undefined>
 ): React.RefCallback<T> {
+  const cleanups = new Map<React.Ref<T>, () => void>();
   return (node: T | null) => {
     for (const ref of refs) {
       if (!ref) {
         continue;
       }
       if (typeof ref === 'function') {
-        ref(node);
+        const cleanup = cleanups.get(ref);
+        if (node === null && cleanup) {
+          cleanups.delete(ref);
+          cleanup();
+        } else {
+          const result = (ref as (node: T | null) => unknown)(node);
+          if (typeof result === 'function')
+            cleanups.set(ref, result as () => void);
+        }
       } else {
         (ref as React.MutableRefObject<T | null>).current = node;
       }
     }
   };
+}
+
+/** Keep callback refs attached while the refs themselves are unchanged. */
+export function useMergedRefs<T>(
+  first: React.Ref<T> | undefined,
+  second: React.Ref<T> | undefined,
+): React.RefCallback<T> {
+  return React.useMemo(() => mergeRefs(first, second), [first, second]);
 }

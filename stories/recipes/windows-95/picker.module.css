@@ -45,6 +45,10 @@
   letter-spacing: 0.04em;
 }
 .picker :global(.w95-cell) {
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  outline: none;
   border-radius: 0;
 }
 .picker :global(.w95-cell):hover,

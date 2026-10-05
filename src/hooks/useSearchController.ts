@@ -81,7 +81,10 @@ interface PendingProposal {
 // emit time. Lets a grid keystroke build on an in-flight proposal when
 // the parent commit lags behind machine-speed typing, while an
 // acceptance-stamp mismatch always falls back to the accepted value.
-const pendingProposals = new WeakMap<object, { current: PendingProposal | null }>();
+const pendingProposals = new WeakMap<
+  object,
+  { current: PendingProposal | null }
+>();
 
 function pendingFor(registry: object): { current: PendingProposal | null } {
   let ref = pendingProposals.get(registry);
@@ -98,9 +101,7 @@ function usePendingProposal() {
   const record = React.useCallback(
     (proposal: string | null) => {
       pendingFor(registry).current =
-        proposal === null
-          ? null
-          : { proposal, accepted: searchValue ?? '' };
+        proposal === null ? null : { proposal, accepted: searchValue ?? '' };
     },
     [registry, searchValue],
   );
@@ -147,10 +148,7 @@ function useControlledReconcile() {
       // Reconcile through React state, never by writing the DOM
       // directly: a DOM-only write desyncs state from the input, and the
       // dead proposal resurfaces on the next Search rerender.
-      if (
-        pending !== null &&
-        pending.accepted === acceptedRef.current
-      ) {
+      if (pending !== null && pending.accepted === acceptedRef.current) {
         setDisplay(acceptedRef.current);
       }
     }, RECONCILE_AFTER_QUIET_MS);
@@ -293,13 +291,12 @@ export function useTypeToSearchKey() {
   const emit = useEmitSearchChange();
   const reconcileControlled = useControlledReconcile();
   const [, setDisplay] = useSearchDisplayState();
-  const { record: recordProposal, read: readProposal } =
-    usePendingProposal();
+  const { record: recordProposal, read: readProposal } = usePendingProposal();
 
   return React.useCallback(
     (key: string) => {
       const input = SearchInputRef.current;
-      if (searchDisabled || !input) {
+      if (searchDisabled || !input || input.disabled || input.readOnly) {
         return;
       }
       // Focus transfers synchronously so the very next keystroke is
