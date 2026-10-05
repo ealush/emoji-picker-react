@@ -11,6 +11,7 @@ import skinToneVariations from '../../../data/skinToneVariations';
 import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
 import { useFocusSearchInput } from '../../../hooks/useFocus';
 import { useRegisterRegion } from '../../../hooks/useRegisterRegion';
+import { useDefaultAppearance } from '../../../primitives/appearance';
 import Absolute from '../../Layout/Absolute';
 import Relative from '../../Layout/Relative';
 import { useSkinTonePickerRef } from '../../context/ElementRefContext';
@@ -44,6 +45,7 @@ export function SkinTonePickerMenu() {
 export function SkinTonePicker({
   direction = SkinTonePickerDirection.HORIZONTAL,
 }: Props) {
+  const appearance = useDefaultAppearance();
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isDisabled = useSkinTonesDisabledConfig();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
@@ -64,12 +66,7 @@ export function SkinTonePicker({
 
   return (
     <Relative
-      className={cx(
-        styles.skinTones,
-        vertical && styles.vertical,
-        isOpen && styles.open,
-        vertical && isOpen && styles.verticalShadow,
-      )}
+      className={skinToneClassName(appearance, vertical, isOpen)}
       style={
         vertical
           ? { flexBasis: expandedSize, height: expandedSize }
@@ -103,7 +100,7 @@ export function SkinTonePicker({
                   vertical
                     ? `translateY(-${i * (isOpen ? ITEM_SIZE : 0)}px)`
                     : `translateX(-${i * (isOpen ? ITEM_SIZE : 0)}px)`,
-                  isOpen && active && 'scale(1.3)',
+                  appearance && isOpen && active && 'scale(1.3)',
                 ),
               }}
               isActive={active}
@@ -125,6 +122,21 @@ export function SkinTonePicker({
   );
 }
 
+function skinToneClassName(
+  appearance: boolean,
+  vertical: boolean,
+  open: boolean,
+) {
+  return cx(
+    styles.geometry,
+    appearance && styles.skinTones,
+    vertical && styles.verticalGeometry,
+    appearance && vertical && styles.vertical,
+    appearance && open && styles.open,
+    appearance && vertical && open && styles.verticalShadow,
+  );
+}
+
 export enum SkinTonePickerDirection {
   VERTICAL = ClassNames.vertical,
   HORIZONTAL = ClassNames.horizontal,
@@ -132,14 +144,20 @@ export enum SkinTonePickerDirection {
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
-    skinTones: {
-      '.': 'epr-skin-tones',
-      '--': {
-        '--epr-skin-tone-size': '15px',
-      },
+    geometry: {
+      '--': { '--epr-skin-tone-size': '15px' },
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-end',
+      padding: '10px 0',
+    },
+    verticalGeometry: {
+      padding: '9px',
+      alignItems: 'flex-end',
+      flexDirection: 'column',
+    },
+    skinTones: {
+      '.': 'epr-skin-tones',
       transition: 'all 0.3s ease-in-out',
       padding: '10px 0',
     },

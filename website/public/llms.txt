@@ -11,7 +11,7 @@ Key facts:
 - Use `colorScheme="light" | "dark" | "auto"` on Root, or prefer it over `theme` on EmojiPicker (CSS-in-JS wrappers reserve `theme`). Props accept string literals or enums.
 - Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are `role="gridcell"`); every UI string localizable through `labels`. Manual screen-reader verification has a separate release protocol.
 - Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
-- Composition keeps a managed grid; do not invent Panel, Reactions, asChild, onEmojiSelect or a renderer-independent UI engine. Use SearchInput as={Input} with an input-forwarding component, and List components for your buttons and headers.
+- Composition keeps a managed grid. Root defaults to managed Panel/Reactions; composition="explicit" lets you place one Panel and optional Reactions within Root. Use SearchInput as={Input} with an input-forwarding adapter. Root/EmojiPicker components replace Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton and ExpandButton; List components override grid slots. Use useSearchActions, useCategoryNavigation and usePickerMode for custom controls. Bare Root and unstyled remove all managed decoration; geometry and presence remain. Do not invent asChild, onEmojiSelect or a renderer-independent UI engine.
 - Read the installed package llms-full.txt first. These are v5 candidate docs; verify exports/version before using new APIs with a published v4 installation.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.
 

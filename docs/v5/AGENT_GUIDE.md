@@ -90,13 +90,13 @@ The partial French `labels` above demonstrates overrides; complete localization 
 
 - One Root per picker. To render a grid, use one Viewport containing one List. Styling wrappers, memo and HOCs are supported.
 - Search and SearchInput are alternatives for the same single search region. Search includes managed input, icon and clear control; SearchInput is your native or design-library input.
-- Optional parts include CategoryNav, Preview, SkinTone, Empty, Loading and LoadError. Root internally owns the expanded panel and compact reactions UI. Use `panelProps` for panel layout.
+- Optional parts include CategoryNav, Preview, SkinTone, Empty, Loading and LoadError. Managed Root supplies Panel and Reactions; use panelProps for panel layout. With composition="explicit", place expanded parts inside one Panel and Reactions outside it within Root.
 - Hooks run inside Root: `useActiveEmoji`, `useSkinTone`, `useSearchState`, `useEmojiDataState`. The tone setter obeys controlled `skinTone` / `onSkinToneChange`; search state is read-only.
 - Controlled search emits raw proposals; only the parent's accepted `searchValue` filters the grid. IME finalizes through the shared controller. Do not replace its composition handlers.
 - Stable ref identities stay attached across unrelated renders. Callback-ref cleanup is supported. Each bare Root owns its callbacks; callback-only updates remain fresh for the default picker too.
 - `open={false}` removes picker content and cancels pending data loading. Reopening mounts a new behavior subtree. Keep controlled state in the host when it must survive closing.
 
-Do not invent `Panel`, `Reactions`, `asChild`, `onEmojiSelect`, direct List children, or useSearchState setters. Managed parts filter `dangerouslySetInnerHTML`, reserved roles and `data-epr-*` overrides. These boundaries preserve the actual managed elements.
+Use exported Panel/Reactions only with composition="explicit". Use Root or EmojiPicker components for shared Emoji/CategoryHeader/CategoryButton/SkinToneButton/ClearButton/ExpandButton replacements. Use useSearchActions, useCategoryNavigation and usePickerMode for custom actions. Do not invent asChild, onEmojiSelect, direct List children, or useSearchState setters. Managed parts filter `dangerouslySetInnerHTML`, reserved roles and `data-epr-*` overrides. These boundaries preserve the actual managed elements.
 
 ## Data, loading and bundle boundaries
 
@@ -106,7 +106,7 @@ Use runtime constants and types from `/primitives` in composed consumers. The ma
 
 ## Styles, localization and accessibility
 
-Use `className`, `style`, `--epr-*` tokens and `[data-epr-part]` selectors. Root's `colorScheme` opts into color tokens; `theme` belongs to EmojiPicker. `unstyled` removes default Root chrome; managed parts still have functional rules and some cosmetic defaults. To use your own button and header appearance, supply List components.
+Use `className`, `style`, `--epr-*` tokens and `[data-epr-part]` selectors. Root's `colorScheme` opts into color tokens; `theme` belongs to EmojiPicker. `unstyled` and bare Root remove decorative styling from every managed part while retaining geometry and behavior. Root appearance="default" explicitly reuses built-in leaf appearance. Custom component slots receive managed props plus metadata; remove metadata and spread props onto a native button/header, preserving measured styles and visible focus. Input adapters must forward native props and ref to the input.
 
 Preserve Viewport overflow, grid/cell dimensions, category positioning, and supplied inline cell positions. Button border-box measurement includes your design-library borders. Change supported geometry tokens, not arbitrary measured layout. Root dimensions use native `style`; EmojiPicker also supports `width` and `height`. For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and use `cssLayer="epr"`.
 

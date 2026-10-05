@@ -18,7 +18,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
     <div className="polaris-card">
       <h2 className="polaris-title">How did your first sale feel?</h2>
       <p className="polaris-subdued">Pick an emoji — we will add it to your milestone.</p>
-      <RootComponent         className={className}
+      <RootComponent appearance="default"         className={className}
         categories={[Categories.SMILEYS_PEOPLE]}
         skinTonePickerLocation={SkinTonePickerLocation.NONE}
         autoFocusSearch={false}

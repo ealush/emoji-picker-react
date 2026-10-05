@@ -7,6 +7,7 @@ import { useEmojiDataState } from '../hooks/useResolvedEmojiData';
 import { useAcceptedSearchValue } from '../hooks/useSearchController';
 import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 
+import { useDefaultAppearance } from './appearance';
 import { filterPrimitiveProps } from './nativeProps';
 import { useRootScope } from './scope';
 import type { EmptyProps } from './types';
@@ -20,6 +21,7 @@ export const Empty = /* @__PURE__ */ React.forwardRef<
   HTMLDivElement,
   EmptyProps
 >(function Empty(props, forwardedRef) {
+  const appearance = useDefaultAppearance();
   const inScope = useRootScope('Empty');
   const { children, className, ...rest } = props;
   const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
@@ -39,7 +41,7 @@ export const Empty = /* @__PURE__ */ React.forwardRef<
       {...(nativeProps as React.HTMLAttributes<HTMLDivElement>)}
       ref={forwardedRef}
       data-epr-part="empty"
-      className={cx(styles.empty, className)}
+      className={cx(styles.geometry, appearance && styles.empty, className)}
     >
       {typeof children === 'function'
         ? children({ search })
@@ -50,13 +52,15 @@ export const Empty = /* @__PURE__ */ React.forwardRef<
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
-    empty: {
-      '.': 'epr-empty',
+    geometry: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: 'var(--epr-horizontal-padding)',
       minHeight: 'var(--epr-emoji-fullsize)',
+    },
+    empty: {
+      '.': 'epr-empty',
       color: 'var(--epr-text-color)',
       fontSize: 'var(--epr-preview-text-size)',
       textAlign: 'center',

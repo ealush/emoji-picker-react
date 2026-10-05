@@ -48,7 +48,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
       {open && <div className="chat-popover" onKeyDown={(event) => {
         if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); }
       }}>
-        <RootComponent className={className} onEmojiClick={(emoji: Picker.EmojiClickData) => {
+        <RootComponent appearance="default" className={className} onEmojiClick={(emoji: Picker.EmojiClickData) => {
           const start = input.current?.selectionStart ?? message.length;
           const end = input.current?.selectionEnd ?? start;
           setMessage(message.slice(0, start) + emoji.emoji + message.slice(end));

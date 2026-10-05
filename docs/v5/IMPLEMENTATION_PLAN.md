@@ -109,7 +109,7 @@ The default picker must render those same component modules.
 
 Required implementation checks:
 - Root creates exactly one internal managed full-picker panel around every child, plus the managed reactions region from props alone;
-- no public Panel or Reactions primitive is introduced;
+- managed composition remains automatic; explicit composition exposes the same Panel/Reactions implementation;
 - arbitrary consumer wrappers/controls remain legal Root children and land inside that managed panel;
 - Viewport/List grammar is validated;
 - every primitive forwards the documented ref/native props;

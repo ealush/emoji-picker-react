@@ -46,7 +46,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         <h1>Q3 planning notes</h1>
         <p>Kickoff went well. Next: finalize the roadmap and share it with</p>
         <div className="editor-menu">
-          <RootComponent
+          <RootComponent appearance="default"
             className={className}
             searchPlaceholder="Search emoji"
             skinTonePickerLocation={SkinTonePickerLocation.NONE}

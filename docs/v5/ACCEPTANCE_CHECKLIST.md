@@ -115,8 +115,8 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] Viewport exported.
 - [x] List exported.
 - [x] Preview exported.
-- [x] no public Panel primitive is exported.
-- [x] no public Reactions primitive is exported.
+- [x] explicit composition exposes Panel with native ref and managed hidden/inert presence.
+- [x] explicit composition exposes Reactions with native ref and shared selection/navigation.
 - [x] Root creates exactly one managed `data-epr-part="panel"` wrapper around all children.
 - [x] Root renders `data-epr-part="reactions"` from props alone, with no child element required.
 - [x] ordinary wrappers/headers/buttons are legal Root children and land inside that managed panel.

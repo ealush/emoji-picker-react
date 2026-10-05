@@ -62,6 +62,7 @@ function Picker2() {
   const t = useTheme();
   return (
     <ThemedRoot
+      appearance="default"
       skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
       searchPlaceholder="Find an emoji"
     >

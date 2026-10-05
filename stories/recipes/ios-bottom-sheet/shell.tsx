@@ -20,7 +20,7 @@ export function Shell({
   return (
     <div className="ios-phone">
       <div className="ios-sheet-host">
-        <RootComponent
+        <RootComponent appearance="default"
           className={className}
           skinTonePickerLocation={SkinTonePickerLocation.NONE}
         >

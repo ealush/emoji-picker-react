@@ -3,17 +3,35 @@ import * as React from 'react';
 import {
   useActiveEmojiState,
   useActiveSkinToneState,
+  useReactionsModeState,
 } from '../components/context/PickerContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
+import {
+  useActiveCategory,
+  useVisibleCategoryConfigs,
+} from '../components/navigation/CategoryNavigation';
+import {
+  categoryIdFromCategoryConfig,
+  categoryNameFromCategoryConfig,
+} from '../config/categoryConfig';
 import { useMutableConfig } from '../config/mutableConfig';
-import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
+  useAllowExpandReactions,
+} from '../config/useConfig';
 import { activeVariationFromUnified } from '../dataUtils/emojiUtils';
 import { emojiClickOutput } from '../hooks/useMouseDownHandlers';
 import {
   useEmojiDataState as useDataState,
   EmojiDataState,
 } from '../hooks/useResolvedEmojiData';
-import { useAcceptedSearchValue } from '../hooks/useSearchController';
+import { useScrollCategoryIntoView } from '../hooks/useScrollCategoryIntoView';
+import {
+  useAcceptedSearchValue,
+  useSetSearchValue,
+  useClearSearchValue,
+} from '../hooks/useSearchController';
 import { useVisibleSearchResultCount } from '../hooks/useSearchResults';
 import { EmojiClickData, SkinTones } from '../types/exposedTypes';
 
@@ -97,4 +115,43 @@ export function useSearchState(): SearchState {
 export function useEmojiDataState(): EmojiDataState {
   useRootScope('useEmojiDataState');
   return useDataState();
+}
+
+/** Propose/commit raw text. Clear also restores focus to a mounted SearchInput. */
+export function useSearchActions() {
+  useRootScope('useSearchActions');
+  const setValue = useSetSearchValue();
+  const clear = useClearSearchValue();
+  return React.useMemo(() => ({ setValue, clear }), [setValue, clear]);
+}
+
+/** Public section identities and the same deferred jump used by CategoryNav. */
+export function useCategoryNavigation() {
+  useRootScope('useCategoryNavigation');
+  const { activeCategory } = useActiveCategory();
+  const configs = useVisibleCategoryConfigs();
+  const jumpToCategory = useScrollCategoryIntoView();
+  const categories = configs.map((config) => ({
+    id: categoryIdFromCategoryConfig(config),
+    name: categoryNameFromCategoryConfig(config),
+  }));
+  return { categories, activeCategory, jumpToCategory };
+}
+
+/** Expansion respects allowExpandReactions; collapse activates the reactions bar. */
+export function usePickerMode() {
+  useRootScope('usePickerMode');
+  const [reactionsOpen, setReactionsOpen] = useReactionsModeState();
+  const canExpand = useAllowExpandReactions();
+  const expand = React.useCallback(() => {
+    if (canExpand) setReactionsOpen(false);
+  }, [canExpand, setReactionsOpen]);
+  const collapse = React.useCallback(
+    () => setReactionsOpen(true),
+    [setReactionsOpen],
+  );
+  return React.useMemo(
+    () => ({ reactionsOpen, canExpand, expand, collapse }),
+    [reactionsOpen, canExpand, expand, collapse],
+  );
 }

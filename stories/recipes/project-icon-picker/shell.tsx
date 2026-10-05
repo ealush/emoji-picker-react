@@ -29,7 +29,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         </div>
       </div>
       <p className="project-field-label">Icon</p>
-      <RootComponent
+      <RootComponent appearance="default"
         className={className}
         searchPlaceholder="Search icons"
         skinTonePickerLocation={SkinTonePickerLocation.NONE}

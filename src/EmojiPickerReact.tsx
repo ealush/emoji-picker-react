@@ -35,6 +35,7 @@ function EmojiPicker(props: PickerProps) {
     className,
     style,
     unstyled,
+    components,
     ...rest
   } = props;
   const theme = colorScheme ?? legacyTheme;
@@ -56,6 +57,8 @@ function EmojiPicker(props: PickerProps) {
     <>
       {props.open === false ? null : (
         <Root
+          appearance={unstyled ? 'none' : 'default'}
+          components={components}
           {...(behaviorProps as RootBehaviorProps)}
           className={defaultRootClassName(theme, className, unstyled)}
           style={defaultRootStyle({ width, height, style })}

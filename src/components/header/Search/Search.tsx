@@ -5,6 +5,7 @@ import { stylesheet } from '../../../Stylesheet/stylesheet';
 import { useSearchDisabledConfig } from '../../../config/useConfig';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
 import { SearchInput } from '../../../primitives/SearchInput';
+import { useDefaultAppearance } from '../../../primitives/appearance';
 import { filterPrimitiveProps } from '../../../primitives/nativeProps';
 import type { SearchProps } from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
@@ -45,6 +46,7 @@ export function Search({
   inputProps?: SearchProps['inputProps'];
   inputRef?: SearchProps['inputRef'];
 } = {}) {
+  const appearance = useDefaultAppearance();
   // The managed region and the standalone native-input primitive share
   // the same controller, registration and accessible announcements.
   const safe = filterPrimitiveProps(
@@ -64,10 +66,14 @@ export function Search({
     <Relative className={cx(styles.searchContainer)}>
       <SearchInput
         {...rest}
-        className={cx(styles.search, className as string | undefined)}
+        className={cx(
+          styles.inputGeometry,
+          appearance && styles.search,
+          className as string | undefined,
+        )}
         ref={inputRef}
       />
-      <IcnSearch />
+      {appearance && <IcnSearch />}
       <BtnClearSearch />
     </Relative>
   );
@@ -85,16 +91,18 @@ const styles = /* @__PURE__ */ (() =>
       display: 'block',
       minWidth: '0',
     },
+    inputGeometry: {
+      padding: 'var(--epr-search-input-padding)',
+      height: 'var(--epr-search-input-height)',
+      width: '100%',
+    },
     search: {
       outline: 'none',
       transition: 'all 0.2s ease-in-out',
       color: 'var(--epr-search-input-text-color)',
       borderRadius: 'var(--epr-search-input-border-radius)',
-      padding: 'var(--epr-search-input-padding)',
-      height: 'var(--epr-search-input-height)',
       backgroundColor: 'var(--epr-search-input-bg-color)',
       border: '1px solid var(--epr-search-border-color)',
-      width: '100%',
       ':focus': {
         backgroundColor: 'var(--epr-search-input-bg-color-active)',
         border: '1px solid var(--epr-search-border-color-active)',

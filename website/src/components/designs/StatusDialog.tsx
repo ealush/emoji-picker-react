@@ -28,7 +28,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </span>
           <span className="status-text">On vacation until Monday</span>
         </div>
-        <RootComponent
+        <RootComponent appearance="default"
           className={className}
           searchPlaceholder="Search for an emoji"
           skinTonePickerLocation={SkinTonePickerLocation.NONE}

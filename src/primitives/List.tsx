@@ -5,6 +5,7 @@ import { EmojiList } from '../components/body/EmojiList';
 import { ListComponentsContext } from '../components/body/listComponents';
 import { useEmojiListRef } from '../components/context/ElementRefContext';
 
+import { usePickerComponents } from './components';
 import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
 import { useRootScope, useViewportScope, useViewportScrollTop } from './scope';
 import type { ListProps } from './types';
@@ -21,8 +22,13 @@ export const List = /* @__PURE__ */ React.forwardRef<
   ListProps
 >(function List(props, forwardedRef) {
   const inRoot = useRootScope('List');
-  const inViewport = useViewportScope('List');
   const { components, ...rest } = props;
+  const inheritedComponents = usePickerComponents();
+  const resolvedComponents = React.useMemo(
+    () => ({ ...inheritedComponents, ...components }),
+    [inheritedComponents, components],
+  );
+  const inViewport = useViewportScope('List');
   const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
     'role',
   ]);
@@ -47,11 +53,9 @@ export const List = /* @__PURE__ */ React.forwardRef<
       nativeProps={restNative}
     />
   );
-  return components ? (
-    <ListComponentsContext.Provider value={components}>
+  return (
+    <ListComponentsContext.Provider value={resolvedComponents}>
       {list}
     </ListComponentsContext.Provider>
-  ) : (
-    list
   );
 });

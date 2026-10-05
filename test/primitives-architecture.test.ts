@@ -74,12 +74,12 @@ describe('v5 one-implementation architecture', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('introduces no public Panel or Reactions primitive', () => {    const dir = readdirSync(join(SRC, 'primitives'));
-    expect(dir).not.toContain('Panel.tsx');
-    expect(dir).not.toContain('Reactions.tsx');
+  it('exports explicit Panel and Reactions using the same managed parts', () => {
     const entry = read('primitives/index.ts');
-    expect(entry).not.toMatch(/\bPanel\b/);
-    expect(entry).not.toMatch(/Reactions/);
+    expect(entry).toContain("export { Panel }");
+    expect(entry).toContain("export { Reactions }");
+    expect(read('primitives/Panel.tsx')).toContain('data-epr-part="panel"');
+    expect(read('primitives/Root.tsx')).toContain("composition === 'explicit'");
   });
 
   it('keeps every library-owned data attribute in the data-epr namespace', () => {
@@ -97,7 +97,7 @@ describe('v5 one-implementation architecture', () => {
 
   it('renders the managed panel and reactions parts from Root alone', () => {
     const root = read('primitives/Root.tsx');
-    expect(root).toContain('data-epr-part="panel"');
+    expect(root).toContain('<Panel');
     expect(root).toContain('<Reactions />');
     // Root must not install an ErrorBoundary (error ownership stays with
     // the default wrapper / application).

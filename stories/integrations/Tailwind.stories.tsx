@@ -21,6 +21,7 @@ export default meta;
 export function TailwindCSS() {
   return (
     <Picker.Root
+      appearance="default"
       cssLayer="epr"
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
       searchPlaceholder="Search emoji"

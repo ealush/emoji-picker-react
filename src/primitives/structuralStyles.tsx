@@ -72,20 +72,14 @@ export const structuralStyles = /* @__PURE__ */ (() =>
       minHeight: '0',
       minWidth: '0',
     },
-    // Collapsed reactions-mode presentation (v4 visual compatibility).
-    // RootAside applies this when the managed panel hides: the collapsed
-    // geometry (50px pill) is owned here — not inferred from content —
-    // because every Root (default or bare primitive) needs a coherent
-    // collapsed containing block, and the aside already carries the
-    // epr-reactions marker class. Shrink-to-fit uses width (not display,
-    // which would tie with the root flex rule under atomic CSS and lose
-    // order-unstably). Colors resolve through overridable variables, so
-    // bare compositions degrade to a transparent pill rather than pulling
-    // in branded appearance (no branded markers).
+    // Convenience composition owns compact geometry. Explicit composition
+    // retains the host's dimensions. Pill decoration is separately opt-in.
     collapsed: {
       '.': 'epr-structural-collapsed',
       height: '50px',
       width: 'fit-content',
+    },
+    collapsedAppearance: {
       backgroundColor: 'var(--epr-reactions-bg-color, transparent)',
       // @ts-ignore - backdropFilter is not recognized.
       backdropFilter: 'blur(8px)',

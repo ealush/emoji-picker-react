@@ -1141,20 +1141,20 @@ describe('v5 primitive exports and managed-panel grammar', () => {
     }
   });
 
-  it('does not export a public Panel primitive', async () => {
+  it('exports a public Panel primitive', async () => {
     const primitives = (await import('../../src/primitives')) as Record<
       string,
       unknown
     >;
-    expect(primitives.Panel).toBeUndefined();
+    expect(primitives.Panel).toBeDefined();
   });
 
-  it('does not export a public Reactions primitive', async () => {
+  it('exports a public Reactions primitive', async () => {
     const primitives = (await import('../../src/primitives')) as Record<
       string,
       unknown
     >;
-    expect(primitives.Reactions).toBeUndefined();
+    expect(primitives.Reactions).toBeDefined();
   });
 
   it('Root creates exactly one managed panel DOM wrapper', () => {

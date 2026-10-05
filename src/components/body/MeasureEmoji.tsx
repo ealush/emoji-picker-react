@@ -59,7 +59,7 @@ export function MeasureEmoji() {
   }
 
   return (
-    <div ref={ref}>
+    <div ref={ref} aria-hidden="true">
       <ClickableEmoji
         emoji={dummyEmoji}
         unified={unified}

@@ -1,10 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
 
-import {
-  ListEmoji,
-  useListComponents,
-} from '../components/body/listComponents';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { useActiveSkinToneState } from '../components/context/PickerContext';
 import { ClickableEmoji } from '../components/emoji/Emoji';
@@ -14,15 +10,8 @@ import {
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig,
 } from '../config/useConfig';
-import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
-import {
-  emojiHasVariations,
-  emojiNames,
-  emojiUnified,
-} from '../dataUtils/emojiUtils';
-import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
-import { isCustomEmoji } from '../typeRefinements/typeRefinements';
-import { EmojiStyleValue } from '../types/exposedTypes';
+import { DataEmojis } from '../dataUtils/DataTypes';
+import { emojiUnified } from '../dataUtils/emojiUtils';
 import {
   getEmojiPositionStyle,
   shouldVirtualize,
@@ -54,7 +43,6 @@ export function useEmojiVirtualization({
   const getEmojiUrl = useGetEmojiUrlConfig();
   const showVariations = !useSkinTonesDisabledConfig();
   const BodyRef = useBodyRef();
-  const { Emoji: CustomEmojiCell } = useListComponents();
 
   let virtualizedCounter = 0;
 
@@ -124,12 +112,6 @@ export function useEmojiVirtualization({
         // Grid semantics (issue #508): each emoji is a cell of its
         // category row; native button activation is kept.
         role="gridcell"
-        as={CustomEmojiCell}
-        emojiInfo={
-          CustomEmojiCell
-            ? listEmoji(emoji, unified, emojiStyle, getEmojiUrl)
-            : undefined
-        }
       />,
     );
     return accumulator;
@@ -139,24 +121,5 @@ export function useEmojiVirtualization({
     virtualizedCounter,
     emojis,
     dimensions,
-  };
-}
-
-function listEmoji(
-  emoji: DataEmoji,
-  unified: string,
-  emojiStyle: EmojiStyleValue,
-  getEmojiUrl: (unified: string, style: EmojiStyleValue) => string,
-): Omit<ListEmoji, 'isActive'> {
-  const isCustom = isCustomEmoji(emoji);
-  return {
-    unified,
-    names: emojiNames(emoji),
-    emoji: isCustom ? unified : parseNativeEmoji(unified),
-    isCustom,
-    imageUrl: isCustom
-      ? (emoji.imgUrl as string)
-      : getEmojiUrl(unified, emojiStyle),
-    hasVariations: emojiHasVariations(emoji),
   };
 }

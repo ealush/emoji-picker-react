@@ -220,10 +220,17 @@ A benchmark failure cannot be waived merely because functional tests pass.
 
 ## Complete runtime measurement amendment (2026-10-04)
 
-The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.8 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
+The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.4 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
 
 Only unused component/context/style factories are eligible for removal. Style construction (including helper arguments and icons) stays inside an annotated factory, and rendered parts retain their referenced styles. Default dataset registration remains intentional; the package does not declare blanket `sideEffects: false`. Packaging checks execute minified minimal and default consumers and assert retained layout CSS, keyboard selection, controlled search and default navigation/preview/tone parts.
 
 The default dataset remains a deferred chunk for primitives; main/data-helper mixed consumers intentionally register it eagerly. A 25 KiB runtime remains a proposed profiling target rather than a met release gate. Account for initial JavaScript and dataset traffic separately.
 
 The original frozen Phase 0 timing artifact is unavailable. `check:perf` currently compares against the reconstructed same-session v4 baseline; timing is a local quiet-machine gate, not a CI job. Deterministic behavior and packaging gates run in CI.
+
+
+### Composition API verification (2026-10-05)
+
+The BYOD API adds explicit Panel/Reactions, shared control replacements and focused actions without relaxing size or timing gates. Re-encoding the existing four inline SVG assets as URI-encoded XML preserves paths/colors and reduces their shipped compressed cost. The packed minimal startup is 33.4 KiB gzip including ShipStyles, below the unchanged 34 KiB cap. Full entries measure 74.48 kB CJS, 73.44 kB ESM and 72.83 kB primitives (Brotli, dependencies included), below the unchanged 75 kB caps; data remains 39.09 kB below 42 kB.
+
+The unchanged v4 timing baseline passes: cold preparation 89.0%, one mount 83.8%, ten mounts 100.8%, with zero additional shared base-index builds. These are local measurements and normal run-to-run variation applies. Source identity/state isolation tests remain part of the gate. No screenshot baseline, tolerance or performance baseline was regenerated for the API changes.

@@ -104,7 +104,7 @@ All variables: [CSS_VARIABLES.md](CSS_VARIABLES.md).
 
 ### Unstyled
 
-`unstyled` removes Root’s branded border, background, radius and typography. Managed parts retain their functional styles and some cosmetic defaults; override them with tokens, part selectors or custom cell components:
+`unstyled` removes decorative styling from every managed part. Geometry, virtualization, keyboard behavior and presence remain managed; browser native controls retain their own appearance. Supply your design with CSS or component replacements:
 
 ```jsx
 <EmojiPicker unstyled className="my-picker" />

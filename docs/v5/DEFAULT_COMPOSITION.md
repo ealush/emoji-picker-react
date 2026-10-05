@@ -127,13 +127,13 @@ Owns:
 
 ### Managed reactions
 
-Private compact-reaction region exposed as `data-epr-part="reactions"`.
+Public managed compact-reaction region exposed as `data-epr-part="reactions"`.
 
 Rendered by Root when reactions are configured. It is a sibling of the managed panel, never inside it.
 
 ### Managed panel
 
-Private DOM wrapper exposed as `data-epr-part="panel"`.
+Public managed DOM wrapper exposed as `data-epr-part="panel"`.
 
 It contains every Root child and is the single subtree Root hides/inerts when compact reactions are active.
 
@@ -186,6 +186,8 @@ The implementation violates this contract if:
 - data entry point duplicates search/normalization;
 - fixes must be applied in two behavior implementations;
 - DefaultAppearance inserts a wrapper and moves v4 root props away from Root;
-- a public Panel or Reactions component reappears merely to satisfy internal presence/inert requirements.
+- default and explicit Panel/Reactions paths duplicate presence or selection behavior.
 
 A source-architecture test MUST be added once final module paths exist.
+
+Explicit compositions use the same exported Panel and Reactions implementation with Root composition="explicit". Root appearance="default" supplies the default tree's leaf styling; unstyled selects none. Shared components replacements are documented in PRIMITIVES.md §16.

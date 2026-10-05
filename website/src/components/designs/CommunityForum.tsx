@@ -48,7 +48,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         <span className="forum-reply-label">Your reply</span>
         <textarea ref={input} className="forum-editor" aria-label="Reply" rows={1}
           value={reply} onChange={(event) => setReply(event.target.value)} />
-        <RootComponent
+        <RootComponent appearance="default"
           className={className}
           customEmojis={community}
           onEmojiClick={(emoji: Picker.EmojiClickData) => {

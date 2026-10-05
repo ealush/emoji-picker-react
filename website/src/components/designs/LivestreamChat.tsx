@@ -41,7 +41,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
             </li>
           ))}
         </ul>
-        <RootComponent
+        <RootComponent appearance="default"
           className={className}
           searchPlaceholder="Search emotes and emoji"
           skinTonePickerLocation={SkinTonePickerLocation.NONE}

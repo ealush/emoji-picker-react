@@ -66,3 +66,41 @@ describe('BYOD input type contract', () => {
   it('exports the composition with its React ref', () =>
     expect(custom.props.ref).toBe(ref));
 });
+
+const slots: Picker.PickerComponents = {
+  CategoryButton: ({ category, ...props }) => (
+    <button {...props} data-active={category.isActive} />
+  ),
+  SkinToneButton: ({ tone, ...props }) => (
+    <button {...props} data-open={tone.isOpen} />
+  ),
+  ExpandButton: (props) => <button {...props} />,
+  ClearButton: (props) => <button {...props} />,
+};
+const explicit = (
+  <Picker.Root composition="explicit" appearance="none" components={slots}>
+    <Picker.Reactions ref={React.createRef<HTMLUListElement>()} />
+    <Picker.Panel ref={React.createRef<HTMLDivElement>()}>
+      <Picker.SearchInput />
+    </Picker.Panel>
+  </Picker.Root>
+);
+// @ts-expect-error Panel's required hidden presence is managed.
+const hiddenPanel = <Picker.Panel hidden />;
+const reactionChildren = (
+  // @ts-expect-error Reactions owns its managed children.
+  <Picker.Reactions>
+    <button />
+  </Picker.Reactions>
+);
+// @ts-expect-error Component maps do not accept invented slots.
+const invalidSlots: Picker.PickerComponents = { Item: () => <button /> };
+const invalidAppearance = (
+  // @ts-expect-error Appearance is a closed contract.
+  <Picker.Root appearance="unstyled">content</Picker.Root>
+);
+void explicit;
+void hiddenPanel;
+void reactionChildren;
+void invalidSlots;
+void invalidAppearance;

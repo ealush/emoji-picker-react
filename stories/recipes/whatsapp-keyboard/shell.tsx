@@ -24,7 +24,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         <span aria-hidden>😊</span>
         <div className="wa-input">Type a message</div>
       </div>
-      <RootComponent         className={className}
+      <RootComponent appearance="default"         className={className}
         searchPlaceholder="Search emoji"
         skinTonePickerLocation={SkinTonePickerLocation.NONE}
       >

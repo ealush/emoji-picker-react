@@ -59,7 +59,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         }
       }} />
     {open && <div ref={picker}>
-      <RootComponent className={className} searchValue={query}
+      <RootComponent appearance="default" className={className} searchValue={query}
         skinTonePickerLocation={Picker.SkinTonePickerLocation.NONE}
         autoFocusSearch={false} onEmojiClick={insert}>
         <Picker.Viewport><Picker.List /><Picker.Empty /></Picker.Viewport>

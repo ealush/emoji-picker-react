@@ -1,6 +1,6 @@
 import type { Meta } from '@storybook/react-vite';
 
-export { MuiComposition } from './MuiComposition';
+export { MuiComposition, MuiControls } from './MuiComposition';
 
 export default {
   title: 'V5/Design library',

@@ -25,7 +25,7 @@ export type ShellProps = {
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
   return (
-    <RootComponent       className={className}
+    <RootComponent appearance="default"       className={className}
       colorScheme="light"
       searchPlaceholder="Search…"
       skinTonePickerLocation={SkinTonePickerLocation.NONE}

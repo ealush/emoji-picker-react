@@ -260,22 +260,11 @@ export function useSearchInputController() {
     commit(raw);
   }
 
-  function handleClear() {
-    if (isControlled) {
-      emit('');
-      recordProposal(null);
-      reconcileControlled();
-      return;
-    }
-    commit('');
-  }
-
   return {
     value: display,
     handleChange,
     handleCompositionStart,
     handleCompositionEnd,
-    handleClear,
     isControlled,
   };
 }
@@ -345,16 +334,30 @@ export function useTypeToSearchKey() {
   );
 }
 
+/** Explicit programmatic proposals; no input or input-controller effects required. */
+export function useSetSearchValue() {
+  const controlled = useIsControlledSearch();
+  const commit = useCommitSearch();
+  const emit = useEmitSearchChange();
+  return React.useCallback(
+    (value: string) => {
+      if (controlled) emit(value);
+      else commit(value);
+    },
+    [controlled, commit, emit],
+  );
+}
+
 /** Clear-button / Escape transition (STATE.md §6): proposes/commits ''. */
 export function useClearSearchValue() {
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
-  const { handleClear } = useSearchInputController();
+  const setValue = useSetSearchValue();
 
   return React.useCallback(() => {
-    handleClear();
+    setValue('');
     if (SearchInputRef.current) {
       focusSearchInput();
     }
-  }, [handleClear, SearchInputRef, focusSearchInput]);
+  }, [setValue, SearchInputRef, focusSearchInput]);
 }

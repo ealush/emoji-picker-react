@@ -9,6 +9,8 @@ The primitive layer provides **composition with managed behavior**: rearrange th
 v5 exports:
 
 - `Root`
+- `Panel` — expanded content boundary for explicit composition
+- `Reactions` — compact managed reaction list for explicit composition
 - `Search`
 - `SearchInput` — forwards native input props/ref; shares Search behavior
 - `CategoryNav`
@@ -20,30 +22,15 @@ v5 exports:
 - `LoadError` — localized error and retry; custom render function supported
 - `SkinTone` — the managed skin tone control, placed anywhere
 
-and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), `useEmojiDataState`, plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
+and the hooks `useActiveEmoji`, `useSkinTone`, `useSearchState` (§15), `useEmojiDataState`, `useSearchActions`, `useCategoryNavigation`, `usePickerMode` (§17), plus token presets (`structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`).
 
-There is intentionally **no public `Panel` primitive and no public `Reactions` primitive**.
+Root offers two composition modes. The default `composition="managed"` supplies one `Panel` around children and a `Reactions` sibling, preserving the convenience composition. With `composition="explicit"`, Root renders children in caller order; place one `Panel` around full-picker content and optionally one `Reactions` anywhere outside Panel within Root. Wrappers and styling-library components are supported; there is no `child.type` detection.
 
-Both are rendered by Root and exposed for styling as `data-epr-part="panel"` and `data-epr-part="reactions"`.
-
-### Why these two are not primitives
-
-A structural primitive earns its place in the public API only when a consumer can meaningfully decide *where* it goes or *what* it does. Apply this test:
-
-> If a component has no behavioral props of its own and exactly one legal position, it is boilerplate. Render it from Root and expose a `data-epr-part` hook instead.
-
-`Panel` and `Reactions` both fail that test:
-
-- neither carries behavior — every reactions input (`reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, `onReactionsModeChange`) is already a Root prop;
-- neither has more than one legal position;
-- neither can be wrapped, reordered, or portaled;
-- everything a consumer actually wants from them — class, color, spacing, motion — is CSS, which the part hooks already provide.
-
-`Viewport` and `List` deliberately **do** remain separate primitives, because they are two distinct DOM elements with genuinely different styling and measurement responsibilities, and merging them would leave one props bag with two ambiguous targets. The heuristic above is about ceremony, not about collapsing every adjacent pair.
+`Panel` owns hidden/inert presence and a real div ref. `Reactions` owns selection, navigation and a real ul ref. Root still owns configuration and mode state. These boundaries let a design system place, style and reference each subtree without duplicating behavior. A constrained legal position can still justify a public presence or ref boundary.
 
 ## 2. Composition grammar
 
-The common shape is:
+The convenient managed shape is:
 
 ```tsx
 <Root>
@@ -80,7 +67,8 @@ Root renders conceptually:
 Rules:
 
 - `Root` is required.
-- Every direct Root child becomes panel content, in caller order.
+- In managed composition every direct Root child becomes panel content, in caller order. Do not add Panel or Reactions yourself in this mode.
+- In explicit composition place the expanded regions inside one Panel. Place Reactions outside it when compact mode is used. Root preserves its supplied width/height; the host owns compact layout. Omit Reactions for a full-picker-only composition and do not collapse that composition.
 - Consumer wrappers, headers, close buttons and other ordinary UI are legal panel content.
 - `Search` or `SearchInput`, `CategoryNav`, `Viewport`, `Preview` and `SkinTone` are optional singleton regions anywhere inside panel content.
 - At most one `Viewport` is supported per Root.
@@ -89,7 +77,7 @@ Rules:
 - A Root with no Viewport/List is valid but has no emoji grid. This removes an unnecessary post-mount "missing child" grammar check.
 - Registered primitives rendered through a portal outside Root are unsupported.
 
-There is no child-ordering rule to get wrong, and no mandatory public wrapper whose absence can only be discovered after mount.
+Parts may be wrapped and reordered within these presence boundaries. Explicit composition is an opt-in; existing managed compositions keep their grammar.
 
 ## 3. Reactions behavior
 
@@ -100,9 +88,9 @@ Compact reactions are a Root capability configured entirely through props, exact
 - `onEmojiClick(..., api).collapseToReactions()` returns to compact mode;
 - `allowExpandReactions={false}` may leave compact mode terminal, exactly as in v4.
 
-Because presence is no longer expressed by rendering a child, there is no "`reactionsDefaultOpen` without a Reactions element" state to normalize and no development warning for it.
+Managed composition supplies Reactions automatically. In explicit composition a caller using compact mode must supply Reactions; omitting it intentionally leaves no reaction controls.
 
-When compact reactions are active, Root applies hidden/inert/non-focusable state to the one internal panel wrapper. Consumers do not manage this state.
+When compact reactions are active, Panel applies hidden/inert/non-focusable state to its entire subtree. Consumers do not manage these attributes.
 
 ## 4. Validation mechanism
 
@@ -158,7 +146,7 @@ type PickerAppearanceProps =
   | 'style'
   | 'unstyled';
 
-export type RootBehaviorProps = Omit<PickerProps, PickerAppearanceProps>;
+export type RootBehaviorProps = Omit<PickerConfig, PickerAppearanceProps>;
 
 export type RootProps =
   Omit<
@@ -167,6 +155,9 @@ export type RootProps =
   > &
   RootBehaviorProps & {
     children: React.ReactNode;
+    appearance?: 'none' | 'default';
+    composition?: 'managed' | 'explicit';
+    components?: PickerComponents;
     /** Opt-in default color tokens (variables only). */
     colorScheme?: ThemeValue;
   };
@@ -205,7 +196,7 @@ Every public structural primitive uses `React.forwardRef`.
 | LoadError | `div role="alert"` | `React.Ref<HTMLDivElement>` |
 | SkinTone | `div` | `React.Ref<HTMLDivElement>` |
 
-The internal panel and the compact reactions UI are not ref-addressable in initial v5. Root accepts `panelProps` for panel classes, styles and native handlers; presence attributes remain reserved. Consumers also style them through `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`, and can place their own wrapper inside Root when they need a ref.
+Managed Root accepts `panelProps` for panel classes, styles and native handlers. In explicit composition Panel forwards its ref to the real div and Reactions forwards its ref to the real ul. Presence attributes remain reserved. Both expose their stable data-epr-part selectors.
 
 SearchInput supports `as` solely for a ref-forwarding native input component. Other primitives do not add general `as`/`asChild` polymorphism.
 
@@ -354,7 +345,7 @@ export type PreviewProps =
 
 They own their managed descendants.
 
-The compact reactions UI has no public props type because it is not a public component; it is configured through Root props and styled through `[data-epr-part="reactions"]`.
+ReactionsProps forwards native ul attributes except children, role and dangerouslySetInnerHTML. PanelProps forwards native div attributes and children except role, hidden, inert and dangerouslySetInnerHTML. Behavior is configured on Root.
 
 ## 12. Error boundaries
 
@@ -407,3 +398,62 @@ Custom List cells keep measured geometry, roles, names, tabIndex and reserved at
 `dangerouslySetInnerHTML` is excluded from managed native prop types and filtered at runtime. Stable forwarded refs do not detach on unrelated renders; callback-ref cleanup works alongside the React 16.8 floor. Bare Roots own their callbacks independently. `open={false}` renders no picker and aborts pending loading; reopened Roots can load again. Async loader shape failures are recoverable through LoadError and retry.
 
 Composition retains library-owned grid rendering, keyboard behavior and virtualization. The framework-free data API supports consumers that only need search/lookup; a renderer-independent UI engine is not part of this contract.
+
+## 16. Appearance ownership and shared control replacements
+
+Bare Root defaults to `appearance="none"`: no managed button reset, authored outline suppression, color, rounding, shadow, blur, transition or decorative icons on its controls. Browser native control appearance remains. Measured dimensions, cell positioning, scroll overflow, sticky category geometry and hidden/inert presence remain owned by the picker. Native emoji font/size is glyph rendering, not a theme.
+
+`appearance="default"` opts into built-in leaf appearance without adding Root chrome. This is useful for token-based recipes that deliberately reuse those controls. The default EmojiPicker sets this mode; `EmojiPicker unstyled` selects none. `colorScheme` only supplies color variables and does not enable decorative rules. Nested Roots reset both appearance and component replacements.
+
+`Root components` and `EmojiPicker components` accept `PickerComponents`:
+
+| Slot | Metadata to remove before spreading | Managed target |
+| --- | --- | --- |
+| Emoji | `emoji` (ListEmoji, including isActive) | native button in grid, variations and reactions |
+| CategoryHeader | `category` ({ id, name }) | one sticky header element |
+| CategoryButton | `category` ({ id, name, isActive }) | native button, role tab |
+| SkinToneButton | `tone` ({ skinTone, isActive, isOpen }) | native button in the managed fan |
+| ExpandButton | none | native button |
+| ClearButton | none | native button |
+
+All slots receive children, className, style, accessible names and behavioral attributes. Render one target element and spread the managed props intact. Merge className and style with your design-library props; retain supplied dimensions, positions and transforms. Keep slot component identities stable. A List components map overrides individual grid/header slots while inheriting the rest of Root's map; it does not change variations or reactions. Replacements carry geometry and behavior without their managed leaf decoration, even under appearance="default".
+
+```tsx
+const components: PickerComponents = {
+  CategoryButton: ({ category, ...props }) =>
+    <DesignButton {...props} selected={category.isActive} />,
+  SkinToneButton: ({ tone, ...props }) =>
+    <DesignButton {...props} selected={tone.isActive} />,
+  Emoji: ({ emoji, ...props }) =>
+    <DesignButton {...props} selected={emoji.isActive} />,
+};
+```
+
+Input replacement retains the typed `SearchInput as={Input}` contract. The ref and native input props must land on the actual input; a composite TextField needs an adapter such as `stories/v5/MuiComposition.tsx`. Do not substitute a div, link or textarea. There is no additional asChild/render convention to mix with components maps.
+
+For optional category, tone, clear and expand actions, a custom slot may run its own onClick first, call preventDefault(), then call the supplied onClick(event); that managed handler respects defaultPrevented. Required SearchInput change/focus/composition handlers retain library-first composition. Emoji selection uses native delegated events: a React bubble onClick is observational and does not cancel selection. Do not use stopPropagation to suppress required behavior.
+
+State selectors include data-epr-active on emoji/category/tone buttons and data-epr-open on tone buttons. aria-selected/aria-pressed remain the semantic state. Consumers must supply visible keyboard focus on custom controls.
+
+## 17. Actions for custom controls
+
+All hooks require Root and share its existing services; no private imports, DOM queries or duplicate timers are needed.
+
+- `useSearchActions()` returns `{ setValue(raw), clear() }`. Uncontrolled calls commit/filter and emit onSearchChange. Controlled calls emit a proposal only; filtering and useSearchState follow the accepted searchValue prop. Actions work with SearchInput omitted. clear also focuses a mounted SearchInput. Input-driven IME buffering remains managed by SearchInput; avoid programmatic edits during an active composition.
+- `useCategoryNavigation()` returns `{ categories: [{ id, name }], activeCategory, jumpToCategory(id) }`. Use returned IDs, including namespaced custom groups. Jumps share the managed deferred-scroll path and wait for a cleared search's layout. Clear a search before jumping to a section hidden by it.
+- `usePickerMode()` returns `{ reactionsOpen, canExpand, expand(), collapse() }`. Expansion respects allowExpandReactions. Mode callbacks and focus transfer remain managed. Supply Reactions when using collapse in explicit composition.
+- `useActiveEmoji()` and `useSkinTone()` continue to support fully custom previews and tone menus.
+
+```tsx
+<Root composition="explicit" components={components}>
+  <Reactions className="reaction-bar" />
+  <Panel className="picker-card">
+    <SearchInput as={DesignInput} />
+    <CategoryNav />
+    <Viewport><List /><Empty /><Loading /><LoadError /></Viewport>
+    <MyPreview />
+  </Panel>
+</Root>
+```
+
+Root remains the DOM boundary. Portaling a whole Root into a host Popover is supported; portaling individual registered parts outside Root remains unsupported.

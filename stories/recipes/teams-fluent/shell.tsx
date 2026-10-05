@@ -14,7 +14,7 @@ export type ShellProps = {
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
   return (
-    <RootComponent className={className} searchPlaceholder="Search emoji">
+    <RootComponent appearance="default" className={className} searchPlaceholder="Search emoji">
       <Picker.CategoryNav />
       <Picker.Search />
       <Picker.Viewport>

@@ -30,6 +30,8 @@ export const structuralPickerTokens: Record<string, string> = {
   /*  Category Navigation */
   '--epr-category-navigation-button-size': '30px',
 
+  '--epr-skin-tone-size': '15px',
+
   /* Variation Picker */
   '--epr-emoji-variation-picker-height': '45px',
 
@@ -82,8 +84,7 @@ export const lightPickerTokens: Record<string, string> = {
   '--epr-picker-border-radius': '8px',
 
   /* Skin Tone Picker */
-  '--epr-active-skin-tone-indicator-border-color':
-    'var(--epr-highlight-color)',
+  '--epr-active-skin-tone-indicator-border-color': 'var(--epr-highlight-color)',
   '--epr-active-skin-hover-color': 'var(--epr-hover-bg-color)',
 
   /* Search */

@@ -10,7 +10,7 @@ Choose batteries included or BYOD (bring your own design, design language and de
 
 It continues to support the documented v4 CSS custom properties.
 
-`<EmojiPicker unstyled />` keeps the same composition and behavior but drops Root’s branded chrome (border, background, radius, typography) and color tokens. Managed components retain functional styles and some cosmetic defaults, including cell rounding and header typography; customize them through tokens, part selectors or List components.
+`<EmojiPicker unstyled />` keeps the supplied composition and behavior while removing decorative appearance from every managed part: control colors/resets, rounding, typography, shadows, blur, motion and decorative icons. Browser native appearance remains. Geometry, positioning, scrolling and presence stay managed. A bare Root behaves the same; `Root appearance="default"` explicitly opts into built-in leaf appearance for token-based re-skins without adding Root chrome. `colorScheme` supplies variables only.
 
 ### Structural primitives
 

@@ -17,6 +17,7 @@ export default meta;
 export function CssModules() {
   return (
     <Picker.Root
+      appearance="default"
       className={styles.picker}
       skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >

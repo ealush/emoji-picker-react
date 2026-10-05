@@ -17,6 +17,7 @@ import useIsSearchMode from '../../hooks/useIsSearchMode';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Categories } from '../../types/exposedTypes';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
@@ -85,6 +86,7 @@ export function CategoryNavigation({
 }: {
   orientation?: NavOrientation;
 } = {}) {
+  const appearance = useDefaultAppearance();
   const { activeCategory, setActiveCategory } = useActiveCategory();
   const scrollCategoryIntoView = useScrollCategoryIntoView();
   const isSearchMode = useIsSearchMode();
@@ -109,7 +111,11 @@ export function CategoryNavigation({
 
   return (
     <div
-      className={cx(styles.nav, orientation === 'vertical' && styles.vertical)}
+      className={cx(
+        styles.nav,
+        appearance && styles.appearance,
+        orientation === 'vertical' && styles.vertical,
+      )}
       role="tablist"
       aria-label={labels.categoryNavigation}
       // Read by the keyboard handler: arrow keys follow the tab axis.
@@ -161,15 +167,18 @@ const styles = /* @__PURE__ */ (() =>
       gap: 'var(--epr-horizontal-padding)',
       padding: 'var(--epr-horizontal-padding) 0',
     },
+    appearance: { '.': 'epr-category-nav-appearance' },
     '.epr-search-active': {
-      nav: {
+      nav: { pointerEvents: 'none' },
+      appearance: {
         opacity: '0.3',
         cursor: 'default',
         pointerEvents: 'none',
       },
     },
     '.epr-structural-root:has(input:not(:placeholder-shown))': {
-      nav: {
+      nav: { pointerEvents: 'none' },
+      appearance: {
         opacity: '0.3',
         cursor: 'default',
         pointerEvents: 'none',

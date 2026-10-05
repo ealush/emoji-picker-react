@@ -46,7 +46,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           ×
         </button>
       </div>
-      <RootComponent         className={className}
+      <RootComponent appearance="default"         className={className}
         skinTonePickerLocation={SkinTonePickerLocation.NONE}
       >
         <Picker.CategoryNav />

@@ -18,7 +18,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
   const [open, setOpen] = useState(true);
   if (!open) return <button type="button" onClick={() => setOpen(true)}>Open emoji picker</button>;
   return (
-    <RootComponent       className={className}
+    <RootComponent appearance="default"       className={className}
       onKeyDown={(event: React.KeyboardEvent) => {
         if (event.key === 'Escape') setOpen(false);
       }}

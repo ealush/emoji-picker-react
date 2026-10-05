@@ -120,7 +120,7 @@ import * as EmojiPicker from 'emoji-picker-react/primitives';
 </EmojiPicker.Root>
 ```
 
-Root wraps every child in its one managed full-picker panel subtree, and renders the compact reactions UI itself when you pass reactions props. There is no Panel primitive and no Reactions primitive to place — style them with `[data-epr-part="panel"]` and `[data-epr-part="reactions"]`.
+Root defaults to managed composition: it wraps children in Panel and supplies Reactions. For independent placement and native refs, set `composition="explicit"`, place expanded content inside one Panel and place Reactions outside Panel within Root. Bare Root now removes decorative defaults from all managed controls; add `appearance="default"` to intentionally reuse built-in leaf styling. See [PRIMITIVES.md](./PRIMITIVES.md) for shared components and actions.
 
 The library still owns navigation, accessibility semantics, virtualization, variations, and selection — even when you replace emoji cell or category header markup through `List components`.
 

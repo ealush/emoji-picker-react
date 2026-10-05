@@ -1,4 +1,13 @@
 export { Root } from './Root';
+export { Panel } from './Panel';
+export type { PanelProps } from './Panel';
+export { Reactions } from './Reactions';
+export type { ReactionsProps } from './Reactions';
+export type {
+  PickerComponents,
+  CategoryButtonRenderProps,
+  SkinToneButtonRenderProps,
+} from './components';
 // Runtime configuration values must stay on this data-free entry: importing
 // them from the main entry also registers its synchronous English dataset.
 export {
@@ -30,7 +39,14 @@ export { Loading } from './Loading';
 export { LoadError } from './LoadError';
 export { useEmojiDataState } from './hooks';
 export { SkinTone } from './SkinTone';
-export { useActiveEmoji, useSkinTone, useSearchState } from './hooks';
+export {
+  useActiveEmoji,
+  useSkinTone,
+  useSearchState,
+  useSearchActions,
+  useCategoryNavigation,
+  usePickerMode,
+} from './hooks';
 export type { SearchState } from './hooks';
 export { Search } from './Search';
 export { SearchInput } from './SearchInput';

@@ -11,6 +11,7 @@ import {
   categoryIdFromCategoryConfig,
   categoryNameFromCategoryConfig,
 } from '../../config/categoryConfig';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import { CategoryConfig } from '../../types/exposedTypes';
 
 import { useListComponents } from './listComponents';
@@ -32,6 +33,7 @@ export function EmojiCategory({
   height,
   emojisPerRow,
 }: Props) {
+  const appearance = useDefaultAppearance();
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
   const categoryId = categoryIdFromCategoryConfig(categoryConfig);
   const { CategoryHeader } = useListComponents();
@@ -62,7 +64,7 @@ export function EmojiCategory({
         // Visual only: the rowgroup already carries the category name, and
         // a heading is not an allowed child of a grid rowgroup.
         <h2
-          className={cx(styles.label, styles.labelAppearance)}
+          className={cx(styles.label, appearance && styles.labelAppearance)}
           aria-hidden
           data-epr-part="category-label"
         >

@@ -5,6 +5,7 @@ import { stylesheet } from '../Stylesheet/stylesheet';
 import { useLabels } from '../config/useConfig';
 import { useIsEmojiDataLoading } from '../hooks/useResolvedEmojiData';
 
+import { useDefaultAppearance } from './appearance';
 import { filterPrimitiveProps } from './nativeProps';
 import { useRootScope } from './scope';
 import type { LoadingProps } from './types';
@@ -16,6 +17,7 @@ export const Loading = /* @__PURE__ */ React.forwardRef<
   HTMLDivElement,
   LoadingProps
 >(function Loading(props, forwardedRef) {
+  const appearance = useDefaultAppearance();
   const inScope = useRootScope('Loading');
   const { children, className, ...rest } = props;
   const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
@@ -34,7 +36,7 @@ export const Loading = /* @__PURE__ */ React.forwardRef<
       ref={forwardedRef}
       role="status"
       data-epr-part="loading"
-      className={cx(styles.loading, className)}
+      className={cx(styles.geometry, appearance && styles.loading, className)}
     >
       {children ?? labels.loading}
     </div>
@@ -43,13 +45,15 @@ export const Loading = /* @__PURE__ */ React.forwardRef<
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
-    loading: {
-      '.': 'epr-loading',
+    geometry: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       padding: 'var(--epr-horizontal-padding)',
       minHeight: 'var(--epr-emoji-fullsize)',
+    },
+    loading: {
+      '.': 'epr-loading',
       color: 'var(--epr-text-color)',
       fontSize: 'var(--epr-preview-text-size)',
     },

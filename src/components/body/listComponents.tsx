@@ -1,5 +1,11 @@
 import * as React from 'react';
 
+import { DataEmoji } from '../../dataUtils/DataTypes';
+import { emojiNames, emojiHasVariations } from '../../dataUtils/emojiUtils';
+import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
+import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
+import { EmojiStyleValue } from '../../types/exposedTypes';
+
 /** The emoji a custom `Emoji` cell renders. */
 export type ListEmoji = {
   /** True while hovered or keyboard-focused. */
@@ -49,4 +55,23 @@ export const ListComponentsContext =
 
 export function useListComponents(): ListComponents {
   return React.useContext(ListComponentsContext);
+}
+
+export function emojiRenderInfo(
+  emoji: DataEmoji,
+  unified: string,
+  emojiStyle: EmojiStyleValue,
+  getEmojiUrl: (unified: string, style: EmojiStyleValue) => string,
+): Omit<ListEmoji, 'isActive'> {
+  const isCustom = isCustomEmoji(emoji);
+  return {
+    unified,
+    names: emojiNames(emoji),
+    emoji: isCustom ? unified : parseNativeEmoji(unified),
+    isCustom,
+    imageUrl: isCustom
+      ? (emoji.imgUrl as string)
+      : getEmojiUrl(unified, emojiStyle),
+    hasVariations: emojiHasVariations(emoji),
+  };
 }

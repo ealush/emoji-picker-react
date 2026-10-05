@@ -14,10 +14,12 @@ test('picker layout survives common app resets', async ({ page }) => {
   await expect(roots).toHaveCount(2);
   await page.waitForTimeout(600);
 
-  for (const root of await roots.all()) {
+  for (const [index, root] of (await roots.all()).entries()) {
     const styles = await root.evaluate((aside) => {
       const input = aside.querySelector('input') as HTMLElement;
-      const emoji = aside.querySelector('[data-epr-part="emoji"]') as HTMLElement;
+      const emoji = aside.querySelector(
+        '[data-epr-part="emoji"]',
+      ) as HTMLElement;
       const content = aside.querySelector(
         '[data-epr-part="category-content"]',
       ) as HTMLElement;
@@ -33,7 +35,9 @@ test('picker layout survives common app resets', async ({ page }) => {
     });
     expect(styles.rootDisplay).toBe('flex');
     expect(styles.inputPaddingLeft).toBeGreaterThan(20);
-    expect(styles.inputBorder).toBeGreaterThan(0);
+    // The default owns its border; bare primitives respect the app's reset.
+    if (index === 0) expect(styles.inputBorder).toBeGreaterThan(0);
+    else expect(styles.inputBorder).toBe(0);
     expect(styles.emojiPadding).toBeGreaterThan(0);
     expect(styles.contentMarginLeft).toBeGreaterThan(0);
   }

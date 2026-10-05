@@ -63,11 +63,12 @@ check('primitives entry resolves', () => {
   }
 });
 
-// No public Panel or Reactions primitive.
-check('no Panel/Reactions primitive', () => {
+// Explicit composition exports the same managed presence and reactions parts.
+check('Panel/Reactions and custom actions resolve', () => {
   const primitives = requireFromScratch('emoji-picker-react/primitives');
-  assert.strictEqual(primitives.Panel, undefined);
-  assert.strictEqual(primitives.Reactions, undefined);
+  assert.ok(primitives.Panel);
+  assert.ok(primitives.Reactions);
+  for (const hook of ['useSearchActions', 'useCategoryNavigation', 'usePickerMode']) assert.equal(typeof primitives[hook], 'function');
 });
 
 // Data entry resolves and searches the packaged dataset.
@@ -173,13 +174,18 @@ check('primitives load the dataset on demand', () => {
   assert.ok(staticClosure('dist/esm/index.mjs').includes(DATASET_MARKER), 'main ESM is missing the dataset');
 });
 
-// Icons: every CSS url() data URI must be base64 (raw-text SVG data URLs
-// are invalid inside an unquoted url() and rendered blank icons).
-check('icon data URIs are valid CSS', () => {
+// Icons are URI-encoded SVG XML. Reserved XML/CSS characters must stay
+// escaped so quoted url() values remain valid; browser visual tests verify paint.
+check('icon data URIs are encoded SVG XML', () => {
   for (const file of ['dist/index.js', 'dist/primitives/index.js']) {
     const content = read(file);
-    assert.ok(!/url\(\\?["']?data:image\/svg\+xml,/.test(content), `${file} has a raw-text SVG data URL`);
-    assert.ok(/data:image\/svg\+xml;base64,/.test(content), `${file} has no base64 icons`);
+    const icons = [...content.matchAll(/data:image\/svg\+xml,([^"'\s]+)/g)];
+    assert.ok(icons.length > 0, `${file} has no embedded SVG icons`);
+    for (const [, encoded] of icons) {
+      assert.ok(encoded.startsWith('%3Csvg'), `${file} contains raw SVG XML`);
+      const svg = decodeURIComponent(encoded);
+      assert.ok(svg.startsWith('<svg ') && svg.endsWith('</svg>'), `${file} has malformed SVG`);
+    }
   }
 });
 

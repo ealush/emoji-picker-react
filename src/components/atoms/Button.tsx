@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
+import { useDefaultAppearance } from '../../primitives/appearance';
 
 interface Props extends React.DetailedHTMLProps<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -11,11 +12,12 @@ interface Props extends React.DetailedHTMLProps<
 }
 
 export function Button(props: Props) {
+  const appearance = useDefaultAppearance();
   return (
     <button
       type="button"
       {...props}
-      className={cx(buttonStyles.button, props.className)}
+      className={cx(appearance && buttonStyles.button, props.className)}
     >
       {props.children}
     </button>

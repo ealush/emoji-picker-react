@@ -7,6 +7,7 @@ import {
   commonStyles,
   stylesheet,
 } from '../../Stylesheet/stylesheet';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import { Button } from '../atoms/Button';
 import { EmojiRenderProps, ListEmoji } from '../body/listComponents';
 import { useIsActiveEmoji } from '../context/PickerContext';
@@ -47,6 +48,7 @@ export function ClickableEmojiButton({
   role,
 }: ClickableEmojiButtonProps) {
   const isActive = useIsActiveEmoji(unified);
+  const appearance = useDefaultAppearance();
   const cellClassName = emojiCellClassName({
     hidden,
     hiddenOnSearch,
@@ -54,7 +56,7 @@ export function ClickableEmojiButton({
     showVariations,
     noBackground,
     className,
-    custom: !!Custom,
+    custom: !!Custom || !appearance,
   });
 
   if (Custom && emojiInfo) {

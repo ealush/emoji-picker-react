@@ -9,6 +9,7 @@ import {
   MutableConfigProvider,
   useDefineMutableConfig,
 } from './config/mutableConfig';
+import type { PickerComponents } from './primitives/components';
 import type { ThemeValue } from './types/exposedTypes';
 
 export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
@@ -40,11 +41,13 @@ export interface PickerProps extends PickerConfig {
    */
   colorScheme?: ThemeValue;
   /**
-   * Render without Root’s branded border, background, colors or typography.
-   * Managed parts retain their functional styles and cosmetic defaults. Style it with `className`,
+   * Render without decorative styling on every managed part.
+   * Geometry, presence and navigation remain managed. Style it with `className`,
    * `--epr-*` variables and `[data-epr-part]` selectors.
    */
   unstyled?: boolean;
+  /** Shared replacements for interactive controls and category headers. */
+  components?: PickerComponents;
 }
 export type Props = PickerProps;
 
@@ -65,3 +68,9 @@ export default function EmojiPicker(props: PickerProps) {
     </ErrorBoundary>
   );
 }
+
+export type {
+  PickerComponents,
+  CategoryButtonRenderProps,
+  SkinToneButtonRenderProps,
+} from './primitives/components';

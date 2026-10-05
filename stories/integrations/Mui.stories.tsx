@@ -23,8 +23,9 @@ const muiTheme = createTheme({
 });
 
 // MUI's styled() maps the MUI theme onto picker tokens; the picker drops
-// its own chrome (`unstyled`) and sits inside an MUI Popover/Paper.
+// chrome is overridden by the host and sits inside an MUI Popover/Paper.
 const MuiEmojiPicker = styled(EmojiPicker)(({ theme }) => ({
+  '--epr-font-family': theme.typography.fontFamily,
   '--epr-bg-color': theme.palette.background.paper,
   '--epr-text-color': theme.palette.text.secondary,
   '--epr-highlight-color': theme.palette.primary.main,
@@ -42,6 +43,7 @@ const MuiEmojiPicker = styled(EmojiPicker)(({ theme }) => ({
   '--epr-category-icon-inactive-color': theme.palette.text.secondary,
   '--epr-preview-text-color': theme.palette.text.primary,
   '--epr-preview-border-color': theme.palette.divider,
+  border: 0,
   fontFamily: theme.typography.fontFamily,
   '& [data-epr-part="category-label"]': {
     ...theme.typography.overline,
@@ -87,10 +89,11 @@ export function Mui() {
           slotProps={{ paper: { component: Paper, elevation: 8 } }}
         >
           <MuiEmojiPicker
-            unstyled
             width={340}
             height={420}
-            onEmojiClick={(emoji: EmojiClickData) => setText((t) => t + emoji.emoji)}
+            onEmojiClick={(emoji: EmojiClickData) =>
+              setText((t) => t + emoji.emoji)
+            }
           />
         </Popover>
       </Stack>

@@ -2,7 +2,7 @@ import type { Meta } from '@storybook/react-vite';
 import React from 'react';
 import styled, { ThemeProvider } from 'styled-components';
 
-import EmojiPicker from '../../src';
+import * as Picker from '../../src/primitives';
 
 const meta = {
   title: 'Integrations/styled-components',
@@ -20,9 +20,9 @@ const theme = {
   muted: '#1e293b',
 };
 
-// The batteries-included picker takes a className, so styled() works on it
-// as-is. `unstyled` drops the default chrome; the theme supplies the rest.
-const ThemedPicker = styled(EmojiPicker).attrs({ unstyled: true })`
+// styled(Root) owns the chrome and explicitly opts into managed leaf
+// appearance for this token-based recipe.
+const ThemedPicker = styled(Picker.Root).attrs({ appearance: 'default' })`
   --epr-bg-color: ${(p) => p.theme.panel};
   --epr-text-color: ${(p) => p.theme.text};
   --epr-highlight-color: ${(p) => p.theme.accent};
@@ -43,7 +43,9 @@ const ThemedPicker = styled(EmojiPicker).attrs({ unstyled: true })`
   --epr-emoji-variation-picker-bg-color: ${(p) => p.theme.panel};
   border-radius: 18px;
   background: ${(p) => p.theme.panel};
-  box-shadow: 0 0 0 1px #1e293b, 0 20px 40px rgb(2 6 23 / 60%);
+  box-shadow:
+    0 0 0 1px #1e293b,
+    0 20px 40px rgb(2 6 23 / 60%);
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   color: ${(p) => p.theme.text};
 
@@ -58,7 +60,17 @@ export function StyledComponents() {
   return (
     <ThemeProvider theme={theme}>
       <div style={{ padding: 24, borderRadius: 24, background: theme.bg }}>
-        <ThemedPicker width={340} height={440} />
+        <ThemedPicker style={{ width: 340, height: 440 }}>
+          <Picker.Search />
+          <Picker.CategoryNav />
+          <Picker.Viewport>
+            <Picker.List />
+            <Picker.Empty />
+            <Picker.Loading />
+            <Picker.LoadError />
+          </Picker.Viewport>
+          <Picker.Preview />
+        </ThemedPicker>
       </div>
     </ThemeProvider>
   );

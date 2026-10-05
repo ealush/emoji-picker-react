@@ -35,7 +35,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           <h3>Choose an icon</h3>
           <button type="button">Done</button>
         </div>
-        <RootComponent
+        <RootComponent appearance="default"
           className={className}
           searchPlaceholder="Search"
           skinTonePickerLocation={SkinTonePickerLocation.NONE}

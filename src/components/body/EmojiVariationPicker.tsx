@@ -20,6 +20,7 @@ import {
   emojiUnified,
   emojiVariations,
 } from '../../dataUtils/emojiUtils';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import {
   useAnchoredEmojiRef,
   useBodyRef,
@@ -36,6 +37,7 @@ enum Direction {
 }
 
 export function EmojiVariationPicker() {
+  const appearance = useDefaultAppearance();
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
   const [emoji] = useEmojiVariationPickerState();
@@ -77,11 +79,7 @@ export function EmojiVariationPicker() {
     <div
       ref={VariationPickerRef}
       data-epr-part="variation-picker"
-      className={cx(
-        styles.variationPicker,
-        getMenuDirection() === Direction.Down && styles.pointingUp,
-        visible && styles.visible,
-      )}
+      className={variationClassName(appearance, visible, getMenuDirection())}
       style={{ top }}
     >
       {visible && emoji
@@ -99,8 +97,24 @@ export function EmojiVariationPicker() {
               />
             ))
         : null}
-      <div className={cx(styles.pointer)} style={pointerStyle} />
+      {appearance && (
+        <div className={cx(styles.pointer)} style={pointerStyle} />
+      )}
     </div>
+  );
+}
+
+function variationClassName(
+  appearance: boolean,
+  visible: boolean,
+  direction: Direction,
+) {
+  return cx(
+    styles.geometry,
+    appearance && styles.variationPicker,
+    appearance && direction === Direction.Down && styles.pointingUp,
+    visible && styles.visibleGeometry,
+    appearance && visible && styles.visible,
   );
 }
 
@@ -179,14 +193,12 @@ function useVariationPickerTop(
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
-    variationPicker: {
+    geometry: {
       '.': ClassNames.variationPicker,
       position: 'absolute',
       right: '15px',
       left: '15px',
       padding: '5px',
-      boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
-      borderRadius: '3px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-around',
@@ -194,17 +206,24 @@ const styles = /* @__PURE__ */ (() =>
       visibility: 'hidden',
       pointerEvents: 'none',
       top: '-100%',
-      border: '1px solid var(--epr-picker-border-color)',
       height: 'var(--epr-emoji-variation-picker-height)',
       zIndex: 'var(--epr-skin-variation-picker-z-index)',
+    },
+    variationPicker: {
+      '.': ClassNames.variationPicker,
+      boxShadow: '0px 2px 5px rgba(0, 0, 0, 0.2)',
+      borderRadius: '3px',
+      border: '1px solid var(--epr-picker-border-color)',
       background: 'var(--epr-emoji-variation-picker-bg-color)',
       transform: 'scale(0.9)',
       transition: 'transform 0.1s ease-out, opacity 0.2s ease-out',
     },
-    visible: {
+    visibleGeometry: {
       opacity: '1',
       visibility: 'visible',
       pointerEvents: 'all',
+    },
+    visible: {
       transform: 'scale(1)',
     },
     pointingUp: {

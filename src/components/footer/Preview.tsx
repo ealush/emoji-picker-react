@@ -12,6 +12,7 @@ import {
 } from '../../config/useConfig';
 import { emojiName, emojiUnified } from '../../dataUtils/emojiUtils';
 import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
 import {
@@ -25,6 +26,7 @@ import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
 import { SkinTonePickerMenu } from '../header/SkinTonePicker/SkinTonePicker';
 
 export function Preview() {
+  const appearance = useDefaultAppearance();
   const previewConfig = usePreviewConfig();
   const isSkinToneInPreview = useIsSkinToneInPreview();
   const [reactionsOpen] = useReactionsModeState();
@@ -36,9 +38,10 @@ export function Preview() {
   return (
     <Flex
       className={cx(
-        styles.preview,
-        commonInteractionStyles.hiddenOnReactions,
-        reactionsOpen && styles.hideOnReactions,
+        styles.previewGeometry,
+        appearance && styles.preview,
+        appearance && commonInteractionStyles.hiddenOnReactions,
+        appearance && reactionsOpen && styles.hideOnReactions,
       )}
     >
       <PreviewBody />
@@ -49,6 +52,7 @@ export function Preview() {
 }
 
 export function PreviewBody() {
+  const appearance = useDefaultAppearance();
   const previewConfig = usePreviewConfig();
   const [previewEmoji] = useActiveEmojiState();
   const emojiStyle = useEmojiStyleConfig();
@@ -97,7 +101,7 @@ export function PreviewBody() {
           />
         )}
       </div>
-      <div className={cx(styles.label)}>
+      <div className={cx(styles.labelGeometry, appearance && styles.label)}>
         {show ? emojiName(emoji) : defaultText}
       </div>
     </>
@@ -111,18 +115,21 @@ const PREVIEW_EMOJI_SIZE = 'var(--epr-preview-emoji-size)';
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
-    preview: {
+    previewGeometry: {
       alignItems: 'center',
-      borderTop: '1px solid var(--epr-preview-border-color)',
       height: 'var(--epr-preview-height)',
       padding: '0 var(--epr-horizontal-padding)',
       position: 'relative',
       zIndex: 'var(--epr-preview-z-index)',
     },
+    labelGeometry: { padding: 'var(--epr-preview-text-padding)' },
+    preview: {
+      borderTop: '1px solid var(--epr-preview-border-color)',
+      zIndex: 'var(--epr-preview-z-index)',
+    },
     label: {
       color: 'var(--epr-preview-text-color)',
       fontSize: 'var(--epr-preview-text-size)',
-      padding: 'var(--epr-preview-text-padding)',
       textTransform: 'capitalize',
     },
     emoji: {

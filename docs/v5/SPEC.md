@@ -80,23 +80,11 @@ Required v5 primitives:
 - `List`
 - `Preview`
 
-Root places every child inside one managed full-picker panel wrapper, and renders the compact reactions UI beside it when reactions are configured. `panel` and `reactions` are stable styling parts, not public composition primitives.
+Root defaults to managed composition, supplying one Panel and Reactions. An explicit composition exports those same parts for independent placement, native refs and presence boundaries. Expanded regions stay inside one Panel; Reactions stays outside it within Root. SkinTone can also be placed explicitly with the built-in location disabled. Variations remain managed in Viewport and use shared Emoji component replacements.
 
-### 4.0 What earns a primitive
+A primitive may earn its boundary through layout, a native ref or managed presence even when its legal placement is constrained. Viewport and List remain separate elements with distinct measurement jobs.
 
-> A component belongs in the public primitive API only if a consumer can meaningfully decide **where it goes** or **what it does**. No behavioral props plus exactly one legal position means it is boilerplate — render it from Root and expose a `data-epr-part` hook instead.
-
-Applying that test, initial v5 deliberately does not export:
-
-- **`Panel`** — no props, one legal position, and its whole job is to be the subtree Root inerts.
-- **`Reactions`** — no behavioral props; `reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick` and `onReactionsModeChange` are all already Root props. Expressing "this picker has reactions" by rendering a positional child duplicates `reactionsDefaultOpen`, and it forced a child-ordering rule that bought nothing.
-- **`SkinTone`** — `skinTonePickerLocation` already decides its placement; Search and Preview host it.
-
-The variation picker likewise remains managed inside the viewport/grid implementation.
-
-`Viewport` and `List` **do** stay separate: two real elements, two different styling/measurement jobs, two independent `className`/`style`/`ref` targets. The test above is about ceremony, not about collapsing every adjacent pair.
-
-The exact grammar and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+The grammar, appearance ownership, replacement protocol and actions are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### 4.1 Composition scope
 

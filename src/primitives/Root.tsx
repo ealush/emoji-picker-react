@@ -3,7 +3,6 @@ import { cx } from 'shipstyles';
 
 import { ClassNames } from '../DomUtils/classNames';
 import { PickerStyleTag } from '../Stylesheet/stylesheet';
-import { Reactions } from '../components/Reactions/Reactions';
 import {
   ElementRefContextProvider,
   usePickerMainRef,
@@ -38,7 +37,11 @@ import {
 } from '../hooks/useResolvedEmojiData';
 import { Theme, ThemeValue } from '../types/exposedTypes';
 
-import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
+import { Panel } from './Panel';
+import { Reactions } from './Reactions';
+import { AppearanceContext } from './appearance';
+import { PickerComponentsContext, EMPTY_COMPONENTS } from './components';
+import { useMergedRefs } from './nativeProps';
 import { RootScopeProvider } from './scope';
 import { StructuralStyleTag, structuralStyles } from './structuralStyles';
 import type { RootProps } from './types';
@@ -51,9 +54,8 @@ import type { RootProps } from './types';
 // attributes land on the real element. `role` is library-owned and
 // `data-epr-*` is reserved, so both are stripped from consumer props.
 //
-// Root renders the compact reactions UI from props alone plus exactly one
-// internal managed full-picker panel wrapper around every child. There is
-// intentionally no public Panel or Reactions primitive. Root installs no
+// Managed composition supplies Reactions and one Panel around children.
+// Explicit composition lets callers place those same public parts. Root installs no
 // ErrorBoundary; consumer render errors propagate to the application's
 // own boundary.
 
@@ -145,7 +147,14 @@ function assignRootProp(
 
 export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
   function Root(props, forwardedRef) {
-    const { children, panelProps, ...rest } = props;
+    const {
+      children,
+      panelProps,
+      appearance = 'none',
+      composition = 'managed',
+      components,
+      ...rest
+    } = props;
     const { behaviorProps: rawBehaviorProps, asideProps } =
       splitRootProps(rest);
     // emojiData may be an object, a loader, or absent; everything below
@@ -186,15 +195,31 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
               <PickerDataProvider>
                 <PickerContextProvider>
                   <RootScopeProvider>
-                    <RootAside
-                      panelProps={panelProps}
-                      ref={forwardedRef}
-                      asideProps={asideProps}
-                      behaviorNonce={behaviorProps.nonce as string | undefined}
-                      cssLayer={behaviorProps.cssLayer as string | undefined}
+                    <AppearanceContext.Provider
+                      value={appearance === 'default'}
                     >
-                      {children}
-                    </RootAside>
+                      <PickerComponentsContext.Provider
+                        value={components ?? EMPTY_COMPONENTS}
+                      >
+                        <ActiveCategoryProvider>
+                          <RootAside
+                            composition={composition}
+                            appearance={appearance}
+                            panelProps={panelProps}
+                            ref={forwardedRef}
+                            asideProps={asideProps}
+                            behaviorNonce={
+                              behaviorProps.nonce as string | undefined
+                            }
+                            cssLayer={
+                              behaviorProps.cssLayer as string | undefined
+                            }
+                          >
+                            {children}
+                          </RootAside>
+                        </ActiveCategoryProvider>
+                      </PickerComponentsContext.Provider>
+                    </AppearanceContext.Provider>
                   </RootScopeProvider>
                 </PickerContextProvider>
               </PickerDataProvider>
@@ -214,9 +239,19 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     cssLayer: string | undefined;
     children: React.ReactNode;
     panelProps?: RootProps['panelProps'];
+    composition: 'managed' | 'explicit';
+    appearance: 'none' | 'default';
   }
 >(function RootAside(
-  { asideProps, behaviorNonce, cssLayer, children, panelProps },
+  {
+    asideProps,
+    behaviorNonce,
+    cssLayer,
+    children,
+    panelProps,
+    composition,
+    appearance,
+  },
   forwardedRef,
 ) {
   const PickerMainRef = usePickerMainRef();
@@ -276,24 +311,24 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
             [ClassNames.reactions]: reactionsOpen,
           },
           className,
-          // Collapsed presentation comes last deliberately: cx resolves
-          // atomic conflicts last-wins, and the pill (50px radius,
-          // translucent background) must beat the default appearance's
-          // 8px radius and opaque background in reactions mode. It is
-          // cx-referenced (not just the marker class) so the stylesheet
-          // emits it: shipstyles only emits class-mapped rules for style
-          // objects that reach cx.
-          reactionsOpen && structuralStyles.collapsed,
+          collapsedClassName(composition, appearance, reactionsOpen),
         )}
         style={{
           ...styleProps,
-          ...(!reactionsOpen && { height, width }),
+          ...((!reactionsOpen || composition === 'explicit') && {
+            height,
+            width,
+          }),
         }}
       >
-        <Reactions />
-        <ManagedPanel hidden={reactionsOpen} panelProps={panelProps}>
-          <ActiveCategoryProvider>{children}</ActiveCategoryProvider>
-        </ManagedPanel>
+        {composition === 'explicit' ? (
+          children
+        ) : (
+          <>
+            <Reactions />
+            <Panel {...panelProps}>{children}</Panel>
+          </>
+        )}
         <SearchSync />
         <ReactionsModeObserver />
         <NavigationInvalidation />
@@ -302,57 +337,15 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
   );
 });
 
-// The single managed full-picker panel wrapper. `hidden` renders
-// declaratively; `inert` is applied imperatively because the supported
-// React versions do not all render it as a DOM attribute. Ref callbacks
-// do not participate in hydration comparison, so SSR output stays clean.
-// Memoized: the aside rerenders per keystroke, and a skipped panel skips
-// the entire full-picker subtree with it (consumers with inline children
-// elements still update, as with any memo boundary).
-const ManagedPanel = /* @__PURE__ */ React.memo(function ManagedPanel({
-  hidden,
-  children,
-  panelProps,
-}: {
-  hidden: boolean;
-  children: React.ReactNode;
-  panelProps?: RootProps['panelProps'];
-}) {
-  const setInert = React.useCallback(
-    (node: HTMLDivElement | null) => {
-      if (!node) {
-        return;
-      }
-      if (hidden) {
-        node.setAttribute('inert', '');
-      } else {
-        node.removeAttribute('inert');
-      }
-    },
-    [hidden],
+function collapsedClassName(
+  composition: 'managed' | 'explicit',
+  appearance: 'none' | 'default',
+  reactionsOpen: boolean,
+) {
+  return cx(
+    composition === 'managed' && reactionsOpen && structuralStyles.collapsed,
+    appearance === 'default' &&
+      reactionsOpen &&
+      structuralStyles.collapsedAppearance,
   );
-  return (
-    <div
-      {...filterPrimitiveProps((panelProps ?? {}) as Record<string, unknown>, [
-        'role',
-        'hidden',
-        'inert',
-        'children',
-        'dangerouslySetInnerHTML',
-        'className',
-        'style',
-      ])}
-      data-epr-part="panel"
-      className={cx(structuralStyles.panel, panelProps?.className)}
-      hidden={hidden}
-      // Inline (not the hidden attribute alone): author display:flex from
-      // the structural panel class would otherwise override the
-      // user-agent [hidden] rule, leaving a visually expanded picker
-      // with an inert grid when reactions mode collapses it.
-      style={{ ...panelProps?.style, ...(hidden && { display: 'none' }) }}
-      ref={setInert}
-    >
-      {children}
-    </div>
-  );
-});
+}

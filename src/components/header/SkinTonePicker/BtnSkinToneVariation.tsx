@@ -4,6 +4,8 @@ import { cx } from 'shipstyles';
 import { stylesheet } from '../../../Stylesheet/stylesheet';
 import { PickerLabels } from '../../../config/config';
 import { useLabels } from '../../../config/useConfig';
+import { useDefaultAppearance } from '../../../primitives/appearance';
+import { usePickerComponents } from '../../../primitives/components';
 import { SkinTones } from '../../../types/exposedTypes';
 import { Button } from '../../atoms/Button';
 
@@ -25,20 +27,42 @@ export function BtnSkinToneVariation({
   tabIndex,
 }: Props) {
   const labels = useLabels();
-  return (
-    <Button
-      style={style}
-      onClick={onClick}
-      tabIndex={tabIndex}
-      className={cx(
-        `epr-tone-${skinToneVariation}`,
-        styles.tone,
-        !isOpen && styles.closedTone,
-        isActive && styles.active,
-      )}
-      aria-pressed={isActive}
-      aria-label={labels[SKIN_TONE_LABEL_KEYS[skinToneVariation]]}
-    ></Button>
+  const appearance = useDefaultAppearance();
+  const { SkinToneButton: Custom } = usePickerComponents();
+  const decorated = appearance && !Custom;
+  const glyph =
+    '✋' +
+    (skinToneVariation === SkinTones.NEUTRAL
+      ? ''
+      : String.fromCodePoint(parseInt(skinToneVariation, 16)));
+  const props = {
+    type: 'button' as const,
+    style,
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (!event.defaultPrevented) onClick();
+    },
+    tabIndex,
+    className: cx(
+      `epr-tone-${skinToneVariation}`,
+      styles.geometry,
+      decorated && styles.tone,
+      !isOpen && styles.closedTone,
+      isActive && styles.active,
+    ),
+    'aria-pressed': isActive,
+    'aria-label': labels[SKIN_TONE_LABEL_KEYS[skinToneVariation]],
+    'data-epr-part': 'skin-tone-button',
+    'data-epr-active': isActive ? '' : undefined,
+    'data-epr-open': isOpen ? '' : undefined,
+    children: decorated ? undefined : glyph,
+  };
+  return Custom ? (
+    <Custom
+      {...props}
+      tone={{ skinTone: skinToneVariation, isActive, isOpen }}
+    />
+  ) : (
+    <Button {...props} />
   );
 }
 
@@ -53,6 +77,14 @@ const SKIN_TONE_LABEL_KEYS: Record<SkinTones, keyof PickerLabels> = {
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
+    geometry: {
+      width: 'var(--epr-skin-tone-size)',
+      height: 'var(--epr-skin-tone-size)',
+      display: 'block',
+      position: 'absolute',
+      right: '0',
+      zIndex: '0',
+    },
     closedTone: {
       opacity: '0',
       zIndex: '0',
@@ -64,15 +96,9 @@ const styles = /* @__PURE__ */ (() =>
     },
     tone: {
       '.': 'epr-tone',
-      width: 'var(--epr-skin-tone-size)',
-      display: 'block',
       cursor: 'pointer',
       borderRadius: '4px',
-      height: 'var(--epr-skin-tone-size)',
-      position: 'absolute',
-      right: '0',
       transition: 'transform 0.3s ease-in-out, opacity 0.35s ease-in-out',
-      zIndex: '0',
       border: '1px solid var(--epr-skin-tone-outer-border-color)',
       boxShadow: 'inset 0px 0px 0 1px var(--epr-skin-tone-inner-border-color)',
       ':hover': {

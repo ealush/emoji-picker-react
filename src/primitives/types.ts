@@ -4,6 +4,8 @@ import type { ListComponents } from '../components/body/listComponents';
 import type { PickerConfig } from '../config/config';
 import type { ThemeValue } from '../types/exposedTypes';
 
+import type { PickerComponents } from './components';
+
 // Public primitive prop contracts (docs/v5/PRIMITIVES.md §5, §9–§11).
 // React-16.8-compatible types only (no React-18-only type helpers).
 
@@ -29,6 +31,12 @@ export type RootProps = Omit<
 > &
   RootBehaviorProps & {
     children: React.ReactNode;
+    /** Built-in leaf appearance. Bare compositions default to 'none'. */
+    appearance?: 'none' | 'default';
+    /** Managed wraps children in Panel and supplies Reactions. Explicit owns their placement. */
+    composition?: 'managed' | 'explicit';
+    /** Shared replacements for grid, variation, reaction and navigation controls. */
+    components?: PickerComponents;
     /** Styles/attributes for the managed content wrapper. Presence stays library-owned. */
     panelProps?: Omit<
       React.HTMLAttributes<HTMLDivElement>,
