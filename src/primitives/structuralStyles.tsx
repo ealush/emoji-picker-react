@@ -26,6 +26,10 @@ const structuralSheet = /* @__PURE__ */ createSheet('epr-structural', null);
 // separately. Keep this inside the same nonce/layer boundary as the sheet.
 const boxSizingReset =
   ':where(.epr-structural-root *){box-sizing:border-box;}' +
+  // appearance="default" paints the token surface behind the built-in
+  // leaves, so colorScheme="dark" is not dark controls on a transparent
+  // root. Zero specificity: any consumer background wins.
+  ':where(.epr-appearance-default){background-color:var(--epr-bg-color);}' +
   // `columns`: the picker hugs that many emoji columns (plus the stable
   // scrollbar gutter) unless the consumer sizes it; any width rule wins.
   // In layout the content box spans the row (columns spread evenly); a

@@ -311,6 +311,7 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
           theme === Theme.LIGHT && structuralStyles.themeLight,
           theme === Theme.DARK && structuralStyles.themeDark,
           theme === Theme.AUTO && structuralStyles.themeAuto,
+          appearance === 'default' && 'epr-appearance-default',
           {
             [ClassNames.searchActive]: searchModeActive,
             [ClassNames.reactions]: reactionsOpen,
