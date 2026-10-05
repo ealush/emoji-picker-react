@@ -8,6 +8,7 @@ import {
   focusPrevElementSibling,
 } from '../DomUtils/focusElement';
 import { getActiveElement } from '../DomUtils/getActiveElement';
+import { isRtl } from '../DomUtils/isRtl';
 import {
   focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
@@ -737,17 +738,12 @@ function useOnType() {
 // is the region whose computed direction decides.
 function logicalArrowKey(event: KeyboardEvent): string {
   const { key } = event;
-  if (key !== KeyboardEvents.ArrowLeft && key !== KeyboardEvents.ArrowRight) {
-    return key;
-  }
-  const region = event.currentTarget as Element | null;
-  if (!region || typeof window === 'undefined' || !region.nodeType) {
-    return key;
-  }
-  return window.getComputedStyle(region).direction === 'rtl'
-    ? key === KeyboardEvents.ArrowLeft
-      ? KeyboardEvents.ArrowRight
-      : KeyboardEvents.ArrowLeft
+  const flip: Record<string, string> = {
+    [KeyboardEvents.ArrowLeft]: KeyboardEvents.ArrowRight,
+    [KeyboardEvents.ArrowRight]: KeyboardEvents.ArrowLeft,
+  };
+  return flip[key] && isRtl(event.currentTarget as Element | null)
+    ? flip[key]
     : key;
 }
 

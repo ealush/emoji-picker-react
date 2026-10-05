@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { ClassNames } from '../../../DomUtils/classNames';
+import { isRtl } from '../../../DomUtils/isRtl';
 import { stylesheet } from '../../../Stylesheet/stylesheet';
 import {
   useOnSkinToneChangeConfig,
@@ -190,11 +191,3 @@ const styles = /* @__PURE__ */ (() =>
       height: 'var(--epr-skin-tone-size)',
     },
   }))();
-
-function isRtl(element: Element | null): boolean {
-  return (
-    !!element &&
-    typeof window !== 'undefined' &&
-    window.getComputedStyle(element).direction === 'rtl'
-  );
-}

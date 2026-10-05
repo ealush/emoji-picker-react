@@ -222,8 +222,8 @@ export function useColumnsConfig(): number | undefined {
 }
 
 export function validColumns(columns: unknown): number | undefined {
-  return typeof columns === 'number' && Number.isInteger(columns) && columns > 0
-    ? columns
+  return Number.isInteger(columns) && (columns as number) > 0
+    ? (columns as number)
     : undefined;
 }
 
