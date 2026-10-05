@@ -169,17 +169,23 @@ export function mergeConfig(
     userConfig.customEmojis,
   );
 
+  // Dataset ids are lowercase; accept the uppercase spelling consumers
+  // copy from docs and tools (and stray whitespace), like `reactions` and
+  // `suggestedEmojis` already do.
   config.hiddenEmojis.forEach((emoji) => {
-    config.unicodeToHide.add(emoji);
+    const id = String(emoji).trim().toLowerCase();
+    if (id) config.unicodeToHide.add(id);
   });
 
-  // Without Search, a search-located control moves to the preview; an
-  // explicit NONE (or PREVIEW) placement is kept as-is.
-  const skinTonePickerLocation =
-    config.searchDisabled &&
-    config.skinTonePickerLocation === SkinTonePickerLocation.SEARCH
-      ? SkinTonePickerLocation.PREVIEW
-      : config.skinTonePickerLocation;
+  // The built-in tone control needs a host region: without Search a
+  // search-located control moves to the preview, and without the preview
+  // a preview-located control moves to Search. With neither region it is
+  // off (NONE), the same as the explicit placement.
+  const skinTonePickerLocation = resolveSkinTonePickerLocation(
+    config.skinTonePickerLocation,
+    config.searchDisabled,
+    previewConfig.showPreview,
+  );
 
   return {
     ...config,
@@ -187,6 +193,24 @@ export function mergeConfig(
     previewConfig,
     skinTonePickerLocation,
   };
+}
+
+export function resolveSkinTonePickerLocation(
+  location: SkinTonePickerLocation,
+  searchDisabled: boolean,
+  showPreview: boolean,
+): SkinTonePickerLocation {
+  if (location === SkinTonePickerLocation.SEARCH && searchDisabled) {
+    return showPreview
+      ? SkinTonePickerLocation.PREVIEW
+      : SkinTonePickerLocation.NONE;
+  }
+  if (location === SkinTonePickerLocation.PREVIEW && !showPreview) {
+    return searchDisabled
+      ? SkinTonePickerLocation.NONE
+      : SkinTonePickerLocation.SEARCH;
+  }
+  return location;
 }
 
 export function basePickerConfig(): PickerConfigInternal {

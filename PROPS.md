@@ -57,14 +57,14 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |
 | `skinTone`               | `SkinTonesValue`         | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
-| `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. |
+| `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. When the chosen region is absent (`searchDisabled`, or `previewConfig.showPreview: false`) the control moves to the other region, or is off when neither exists. |
 
 ## Customization & Advanced
 
 | Prop            | Type                                             | Default                 | Description                                                              |
 | --------------- | ------------------------------------------------ | ----------------------- | ------------------------------------------------------------------------ |
 | `customEmojis`  | `CustomEmoji[]`                                  | `[]`                    | Array of custom image-based emojis to inject. See [CUSTOMIZATION.md](CUSTOMIZATION.md). |
-| `hiddenEmojis`  | `string[]`                                       | `[]`                    | Array of unified IDs (e.g., `'1f921'`) to hide from the picker.          |
+| `hiddenEmojis`  | `string[]`                                       | `[]`                    | Array of unified IDs (e.g., `'1f921'`) or custom emoji ids to hide from the picker. Case-insensitive. |
 | `previewConfig` | `PreviewConfig`                                  | `{ showPreview: true }` | Configuration for the bottom preview bar. See [CUSTOMIZATION.md](CUSTOMIZATION.md). |
 | `getEmojiUrl`   | `(unified: string, style: EmojiStyle) => string` | -                       | Function to override the default CDN URL for emoji images.               |
 | `categoryIcons` | `CategoryIcons`                                  | `{}`                    | Map `Categories` enum values to custom React nodes for navigation icons. See [CUSTOMIZATION.md](CUSTOMIZATION.md). |

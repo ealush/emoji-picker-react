@@ -170,7 +170,7 @@ Consequences:
 - Root renders the actual `aside`.
 - `className`, `style`, `id`, ordinary non-reserved `aria-*`, ordinary non-reserved `data-*`, title and root event handlers come from native `aside` attributes.
 - `role` is library-owned and cannot override the Root landmark semantics.
-- `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `colorScheme` only applies color tokens (named so CSS-in-JS wrappers, which reserve `theme`, pass it through).
+- `width`, `height` and `unstyled` remain default-`EmojiPicker` appearance props; Root's `colorScheme` only applies color tokens (named so CSS-in-JS wrappers, which reserve `theme`, pass it through). A `theme` prop on Root is ignored and development warns once.
 - `emojiData` accepts an object (synchronous, SSR-safe) or a loader; without it, the primitives entry loads the bundled dataset on demand.
 - Root has no default height. Give it one (`style` or a class) so the Viewport scrolls and virtualizes; development builds warn when a Viewport grows to its whole content.
 - `columns` (positive integer) sets the emojis per row. Root gets `data-epr-columns` and `--epr-columns`; a zero-specificity rule fits Root's width to the columns plus a stable scrollbar gutter, so any consumer width wins. A narrower container renders fewer columns. Invalid values are ignored.

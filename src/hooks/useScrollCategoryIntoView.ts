@@ -21,6 +21,14 @@ import { normalizeQuery } from '../data-core/prepare';
 // a newer jump supersedes this one.
 const MAX_WAIT_MS = 3000;
 
+// CSS.escape is missing in some embedded WebViews and older test DOMs; a
+// quoted attribute value only needs backslashes and quotes escaped.
+function escapeAttributeValue(value: string): string {
+  return typeof CSS !== 'undefined' && CSS.escape
+    ? CSS.escape(value)
+    : value.replace(/["\\]/g, '\\$&');
+}
+
 function searchInputValue(input: HTMLInputElement | null): string | undefined {
   return input ? normalizeQuery(input.value) : undefined;
 }
@@ -48,7 +56,7 @@ export function useScrollCategoryIntoView() {
       }
       // Group names are user-controlled; escape for the attribute selector.
       const $category = BodyRef.current.querySelector(
-        `[data-epr-category="${CSS.escape(category)}"]`,
+        `[data-epr-category="${escapeAttributeValue(category)}"]`,
       ) as NullableElement;
 
       if (!$category) {

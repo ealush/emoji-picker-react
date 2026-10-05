@@ -1,3 +1,4 @@
+/* global process: readonly */
 import * as React from 'react';
 import { cx } from 'shipstyles';
 
@@ -90,6 +91,21 @@ export function isPickerBehaviorProp(key: string): boolean {
   return CALLBACK_KEYS.has(key) || BEHAVIOR_KEYS.has(key);
 }
 
+let warnedTheme = false;
+function warnThemeOnRoot(): void {
+  if (warnedTheme || process.env.NODE_ENV === 'production') return;
+  warnedTheme = true;
+  // eslint-disable-next-line no-console
+  console.warn(
+    '[emoji-picker-react] Root ignores `theme`; use colorScheme="light" | "dark" | "auto".',
+  );
+}
+
+/** Test-only: allow the one-time warning to fire again. */
+export function __resetRootWarningsForTest(): void {
+  warnedTheme = false;
+}
+
 function splitRootProps(props: Omit<RootProps, 'children'>): {
   behaviorProps: Record<string, unknown>;
   asideProps: Record<string, unknown>;
@@ -132,8 +148,10 @@ function assignRootProp(
     return;
   }
   // `theme` is the default picker's v4 name; it is not a Root prop and
-  // must not leak onto the DOM element.
+  // must not leak onto the DOM element. Development says so once, since
+  // a silently ignored prop reads like a broken dark mode.
   if (key === 'theme') {
+    warnThemeOnRoot();
     return;
   }
   if (

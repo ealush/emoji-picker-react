@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { CustomEmoji } from '../../config/customEmojiConfig';
+import { DataEmoji, EmojiProperties } from '../../dataUtils/DataTypes';
 import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiUtils';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle } from '../../types/exposedTypes';
@@ -40,7 +42,8 @@ export function ViewOnlyEmoji({
     return (
       <EmojiImg
         style={style}
-        emojiName={unified}
+        // The image's alternative text is the emoji's name, not its id.
+        emojiName={customEmojiName(emojiToRender) || unified}
         emojiStyle={EmojiStyle.NATIVE}
         lazyLoad={lazyLoad}
         imgUrl={emojiToRender.imgUrl}
@@ -71,4 +74,13 @@ export function ViewOnlyEmoji({
   function onError() {
     setEmojisThatFailedToLoad((prev) => new Set(prev).add(unified));
   }
+}
+
+// A custom emoji reaches the renderer either as the consumer's `CustomEmoji`
+// (`names`) or as the dataset entry it was converted into (`n`).
+function customEmojiName(emoji: CustomEmoji | DataEmoji): string {
+  return (
+    emojiName(emoji as DataEmoji) ||
+    emojiName({ [EmojiProperties.name]: (emoji as CustomEmoji).names })
+  );
 }
