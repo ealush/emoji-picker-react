@@ -180,10 +180,16 @@ export function ReactionsObserver() {
   );
 }
 
-// Styled primitives: cosmetic classes without the branded wrapper.
+// Styled primitives: the built-in look (appearance="default") restyled
+// with cosmetic classes, without the default wrapper.
 export function StyledPrimitives() {
   return (
-    <Root className="styled-root">
+    <Root
+      appearance="default"
+      colorScheme="light"
+      className="styled-root"
+      style={{ width: 350, height: 450 }}
+    >
       <Search className="styled-search" />
       <CategoryNav className="styled-nav" />
       <Viewport className="styled-viewport">

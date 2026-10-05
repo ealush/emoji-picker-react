@@ -73,6 +73,41 @@ function useWarnWithoutList(): void {
   }, [registry]);
 }
 
+// A Viewport without a height constraint grows to the whole dataset:
+// nothing scrolls, so virtualization renders every emoji (~1,900 buttons).
+// A bare Root has no default height, so this is an easy first mistake.
+function useWarnUnboundedViewport(
+  BodyRef: React.MutableRefObject<HTMLElement | null>,
+): void {
+  React.useEffect(() => {
+    const viewport = BodyRef.current;
+    if (
+      process.env.NODE_ENV === 'production' ||
+      !viewport ||
+      typeof ResizeObserver === 'undefined' ||
+      warnedViewportChildren.has('unbounded')
+    ) {
+      return;
+    }
+    const observer = new ResizeObserver(() => {
+      const unbounded =
+        viewport.clientHeight > window.innerHeight * 2 &&
+        viewport.scrollHeight <= viewport.clientHeight + 1;
+      if (!unbounded || warnedViewportChildren.has('unbounded')) return;
+      warnedViewportChildren.add('unbounded');
+      observer.disconnect();
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[emoji-picker-react] <Viewport> has no height limit, so every ' +
+          'emoji renders at once. Give Root a height (style={{ height: 400 }} ' +
+          'or a class), or constrain the Viewport. See docs/v5/PRIMITIVES.md.',
+      );
+    });
+    observer.observe(viewport);
+    return () => observer.disconnect();
+  }, [BodyRef]);
+}
+
 /** Test-only: reset warn-once sets between cases. */
 export function __resetViewportWarningsForTest(): void {
   warnedViewportChildren.clear();
@@ -99,6 +134,7 @@ export const Viewport = /* @__PURE__ */ React.forwardRef<
   const BodyRef = useBodyRef();
   const mergedRef = useMergedRefs(forwardedRef, BodyRef);
   const scrollTop = useOnScroll(BodyRef);
+  useWarnUnboundedViewport(BodyRef);
   useMouseDownHandlers(BodyRef, MOUSE_EVENT_SOURCE.PICKER);
   useOnMouseMove();
 
