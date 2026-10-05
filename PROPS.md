@@ -54,8 +54,8 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `categories`             | `CategoryConfig[]`       | _(All)_                   | Array of category objects to customize order or visibility.          |
 | `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
 | `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order (unified or custom IDs). While present, `suggestedEmojisMode` is ignored for contents. |
-| `defaultSkinTone`        | `SkinTones`              | `SkinTones.NEUTRAL`       | The initial skin tone.                                               |
-| `skinTone`               | `SkinTones`              | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
+| `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |
+| `skinTone`               | `SkinTonesValue`         | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
 | `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. |
 

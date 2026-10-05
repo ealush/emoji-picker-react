@@ -31,6 +31,7 @@ export const DESIGN_EXAMPLES = [
     title: "Team chat composer",
     description: "A popover above a chat composer: search with skin tone, tabs, grid and a slim preview.",
     rootClass: "chat-picker",
+    kind: "In context",
     Example: TeamChat,
   },
   {
@@ -38,6 +39,7 @@ export const DESIGN_EXAMPLES = [
     title: "Article comments",
     description: "Reaction count chips plus a compact reactions bar that expands to the full picker.",
     rootClass: "comments-picker",
+    kind: "In context",
     Example: ArticleComments,
   },
   {
@@ -45,6 +47,7 @@ export const DESIGN_EXAMPLES = [
     title: "Doc editor insert panel",
     description: "A side-by-side panel: vertical rail, grid and a details pane via useActiveEmoji().",
     rootClass: "editor-picker",
+    kind: "In context",
     Example: EditorInsertPanel,
   },
   {
@@ -52,6 +55,7 @@ export const DESIGN_EXAMPLES = [
     title: "Livestream chat",
     description: "Docked under a dark chat column: tabs on top and a dense grid.",
     rootClass: "stream-picker",
+    kind: "In context",
     Example: LivestreamChat,
   },
   {
@@ -59,6 +63,7 @@ export const DESIGN_EXAMPLES = [
     title: "Set a status dialog",
     description: "An inline form section with status-friendly suggestions and renamed categories.",
     rootClass: "status-picker",
+    kind: "In context",
     Example: StatusDialog,
   },
   {
@@ -66,6 +71,7 @@ export const DESIGN_EXAMPLES = [
     title: "Shortcode typeahead",
     description: "Editable :name autocomplete: type a query, press Down then Enter to replace the token, or Escape to dismiss.",
     rootClass: "typeahead-picker",
+    kind: "In context",
     Example: ShortcodeTypeahead,
   },
   {
@@ -73,6 +79,7 @@ export const DESIGN_EXAMPLES = [
     title: "Video call reactions",
     description: "A translucent reactions pill over video that expands to a dark picker.",
     rootClass: "call-picker",
+    kind: "In context",
     Example: VideoCallReactions,
   },
   {
@@ -80,6 +87,7 @@ export const DESIGN_EXAMPLES = [
     title: "Community custom emojis",
     description: "Community custom emojis as their own group, before the standard set.",
     rootClass: "forum-picker",
+    kind: "In context",
     Example: CommunityForum,
   },
   {
@@ -87,6 +95,7 @@ export const DESIGN_EXAMPLES = [
     title: "Project icon picker",
     description: "A settings form: picking sets the project icon; categories are narrowed.",
     rootClass: "project-picker",
+    kind: "In context",
     Example: ProjectIconPicker,
   },
   {
@@ -94,6 +103,7 @@ export const DESIGN_EXAMPLES = [
     title: "Habit tracker (mobile)",
     description: "A mobile bottom sheet with large, tile-style emojis.",
     rootClass: "habit-picker",
+    kind: "In context",
     Example: HabitTrackerMobile,
   },
   {
@@ -101,6 +111,7 @@ export const DESIGN_EXAMPLES = [
     title: "Discord sidebar",
     description: "A Discord-style picker with the category rail in its own vertical column.",
     rootClass: "discord-picker",
+    kind: "In context",
     Example: DiscordSidebar,
   },
   {
@@ -108,6 +119,7 @@ export const DESIGN_EXAMPLES = [
     title: "Slack reactions",
     description: "The default picker in reactions mode with Slack's common reaction set.",
     rootClass: "slack-picker",
+    kind: "In context",
     Example: SlackReactions,
   },
   {
@@ -115,6 +127,7 @@ export const DESIGN_EXAMPLES = [
     title: "GitHub reactions",
     description: "GitHub's fixed reaction set as a compact bar that never expands.",
     rootClass: "gh-picker",
+    kind: "In context",
     Example: GithubReactions,
   },
   {
@@ -122,6 +135,7 @@ export const DESIGN_EXAMPLES = [
     title: "iMessage tapback",
     description: "An iMessage tapback bubble: love, like, dislike, laugh, emphasize, question.",
     rootClass: "imessage-picker",
+    kind: "In context",
     Example: IMessageTapback,
   },
   {
@@ -129,6 +143,7 @@ export const DESIGN_EXAMPLES = [
     title: "X composer",
     description: "An X post composer with the skin tone control beside the search field.",
     rootClass: "x-picker",
+    kind: "In context",
     Example: XComposer,
   },
   {
@@ -136,6 +151,7 @@ export const DESIGN_EXAMPLES = [
     title: "Notion icon picker",
     description: "A Notion page-icon popover with app tabs, Remove and Random inside the picker.",
     rootClass: "notion-picker",
+    kind: "In context",
     Example: NotionIconPicker,
   },
   {
@@ -143,6 +159,7 @@ export const DESIGN_EXAMPLES = [
     title: "Linear command palette",
     description: "A Linear command palette: search and grid only, no tabs and no preview.",
     rootClass: "linear-picker",
+    kind: "In context",
     Example: LinearPalette,
   },
   {
@@ -150,6 +167,7 @@ export const DESIGN_EXAMPLES = [
     title: "Teams (Fluent 2)",
     description: "Microsoft Teams in Fluent 2: tabs first, then search.",
     rootClass: "teams-picker",
+    kind: "In context",
     Example: TeamsFluent,
   },
   {
@@ -157,6 +175,7 @@ export const DESIGN_EXAMPLES = [
     title: "Material 3",
     description: "Material 3 with a bottom navigation bar and the M3 pill indicator.",
     rootClass: "m3-picker",
+    kind: "In context",
     Example: Material3,
   },
   {
@@ -164,6 +183,7 @@ export const DESIGN_EXAMPLES = [
     title: "Geist minimal",
     description: "A minimal Geist look: default light tokens with a few CSS adjustments.",
     rootClass: "geist-picker",
+    kind: "In context",
     Example: GeistMinimal,
   },
   {
@@ -171,6 +191,7 @@ export const DESIGN_EXAMPLES = [
     title: "Polaris rating card",
     description: "A Polaris rating card narrowed to a single category.",
     rootClass: "polaris-picker",
+    kind: "In context",
     Example: PolarisRating,
   },
   {
@@ -178,6 +199,7 @@ export const DESIGN_EXAMPLES = [
     title: "Intercom rating",
     description: "An Intercom-style satisfaction scale built from a stretched reactions bar.",
     rootClass: "intercom-scale",
+    kind: "In context",
     Example: IntercomRating,
   },
   {
@@ -185,6 +207,7 @@ export const DESIGN_EXAMPLES = [
     title: "iOS bottom sheet",
     description: "A narrow, touch-first iOS bottom sheet without search.",
     rootClass: "ios-sheet",
+    kind: "In context",
     Example: IosBottomSheet,
   },
   {
@@ -192,6 +215,7 @@ export const DESIGN_EXAMPLES = [
     title: "WhatsApp keyboard panel",
     description: "A full-width, short WhatsApp keyboard panel whose grid reflows its columns.",
     rootClass: "wa-picker",
+    kind: "In context",
     Example: WhatsAppKeyboard,
   },
   {
@@ -199,6 +223,7 @@ export const DESIGN_EXAMPLES = [
     title: "Windows 95",
     description: "Windows 95, with custom markup for every emoji cell and section header.",
     rootClass: "w95-picker",
+    kind: "In context",
     Example: Windows95,
   },
 ];

@@ -82,14 +82,16 @@ export function useSearchClearButtonLabelConfig(): string {
   return useLabels().searchClear;
 }
 
+// Literal values are the enum members' own strings, so the public
+// SkinTonesValue narrows to the enum the engine compares against.
 export function useDefaultSkinToneConfig(): SkinTones {
   const { defaultSkinTone } = usePickerConfig();
-  return defaultSkinTone;
+  return defaultSkinTone as SkinTones;
 }
 
 export function useSkinToneConfig(): SkinTones | undefined {
   const { skinTone } = usePickerConfig();
-  return skinTone;
+  return skinTone as SkinTones | undefined;
 }
 
 export function useAllowExpandReactions(): boolean {

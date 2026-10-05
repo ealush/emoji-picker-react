@@ -111,7 +111,7 @@ jobs:
       - run: npm run recipes
       - run: npm run registry
       - run: npm run designs
-      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/r stories/recipes docs/designs README.md
+      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/designs website/public/r stories/recipes docs/designs README.md
 
   browser-behavior:
     runs-on: ubuntu-latest

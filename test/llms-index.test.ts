@@ -7,52 +7,72 @@ import * as dataEntry from '../src/data';
 import * as mainEntry from '../src/index';
 import * as primitivesEntry from '../src/primitives';
 
-// llms.txt is what coding agents read first. Its "Entry points" line names
-// the public exports of every entry; this keeps that line honest when an
-// export is added, renamed or removed.
+// llms.txt is what coding agents read first. Its export index is generated
+// from the entry sources by scripts/generateLlmsTxt.js; this proves the
+// generated lines name real runtime exports and that the committed file is
+// current (the docs CI job also diffs it).
 const llms = readFileSync(join(process.cwd(), 'llms.txt'), 'utf8');
-const entryPoints = llms
-  .split('\n')
-  .find((line) => line.startsWith('- Entry points:'));
 
-function namesBetween(start: string, end: string): string[] {
-  const text = entryPoints!;
-  const from = text.indexOf(start);
-  const to = end ? text.indexOf(end, from) : text.length;
-  expect(from, `llms.txt names ${start}`).toBeGreaterThanOrEqual(0);
-  const section = text.slice(from, to === -1 ? undefined : to);
-  return Array.from(section.matchAll(/\b([A-Za-z][A-Za-z0-9]*)\b/g))
-    .map((match) => match[1])
-    .filter((word) => /^(use[A-Z]|[A-Z])/.test(word) || word.endsWith('Tokens'));
+function indexLine(specifier: string): string {
+  const line = llms
+    .split('\n')
+    .find((candidate) => candidate.startsWith(`- \`${specifier}\`: `));
+  expect(line, `llms.txt indexes ${specifier}`).toBeDefined();
+  return line as string;
 }
 
-describe('llms.txt entry-point index', () => {
-  it('lists real exports of emoji-picker-react', () => {
-    const names = namesBetween('`emoji-picker-react` (', '`emoji-picker-react/primitives`');
-    expect(names).toContain('EmojiPicker');
-    for (const name of names) {
-      if (name === 'EmojiPicker') {
-        expect(typeof mainEntry.default).toBe('function');
-      } else if (['PickerProps', 'EmojiClickData', 'PickerComponents'].includes(name)) {
-        // Type-only exports: checked by compat/exports-map type fixtures.
-      } else {
-        expect(name in mainEntry, `main entry exports ${name}`).toBe(true);
+function names(line: string, kind: 'values' | 'types' | 'default'): string[] {
+  const match = line.match(new RegExp(`${kind} ((?:\`[^\`]+\`(?:, )?)+)`));
+  return match ? Array.from(match[1].matchAll(/`([^`]+)`/g)).map((m) => m[1]) : [];
+}
+
+const expectValues = (line: string, entry: Record<string, unknown>) => {
+  const values = names(line, 'values');
+  expect(values.length).toBeGreaterThan(0);
+  for (const name of values) {
+    expect(name in entry, `${name} is exported`).toBe(true);
+  }
+};
+
+describe('llms.txt export index', () => {
+  it('matches the runtime exports of emoji-picker-react', () => {
+    const line = indexLine('emoji-picker-react');
+    expect(names(line, 'default')).toEqual(['EmojiPicker']);
+    expect(typeof mainEntry.default).toBe('function');
+    expectValues(line, mainEntry);
+    expect(names(line, 'types')).toEqual(
+      expect.arrayContaining(['PickerProps', 'EmojiClickData', 'PickerLabels', 'CustomEmoji']),
+    );
+  });
+
+  it('matches the runtime exports of emoji-picker-react/primitives', () => {
+    const line = indexLine('emoji-picker-react/primitives');
+    expectValues(line, primitivesEntry);
+    expect(names(line, 'values')).toEqual(
+      expect.arrayContaining(['Root', 'Panel', 'Reactions', 'useSearchActions', 'usePickerMode']),
+    );
+    expect(names(line, 'types')).toEqual(
+      expect.arrayContaining(['RootProps', 'PickerComponents', 'EmojiRenderProps']),
+    );
+  });
+
+  it('matches the runtime exports of emoji-picker-react/data', () => {
+    const line = indexLine('emoji-picker-react/data');
+    expectValues(line, dataEntry);
+    expect(names(line, 'values')).toEqual(['getEmojiByUnified', 'searchEmojis']);
+  });
+
+  it('lists every runtime export of each entry (nothing missing)', () => {
+    for (const [specifier, entry] of [
+      ['emoji-picker-react', mainEntry],
+      ['emoji-picker-react/primitives', primitivesEntry],
+      ['emoji-picker-react/data', dataEntry],
+    ] as const) {
+      const listed = new Set(names(indexLine(specifier), 'values'));
+      for (const name of Object.keys(entry)) {
+        if (name === 'default') continue;
+        expect(listed.has(name), `${specifier} lists ${name}`).toBe(true);
       }
-    }
-  });
-
-  it('lists real exports of emoji-picker-react/primitives', () => {
-    const names = namesBetween('`emoji-picker-react/primitives` (', '`emoji-picker-react/data`');
-    expect(names.length).toBeGreaterThan(20);
-    for (const name of names) {
-      expect(name in primitivesEntry, `primitives entry exports ${name}`).toBe(true);
-    }
-  });
-
-  it('lists real exports of emoji-picker-react/data', () => {
-    for (const name of ['searchEmojis', 'getEmojiByUnified']) {
-      expect(entryPoints).toContain(name);
-      expect(name in dataEntry, `data entry exports ${name}`).toBe(true);
     }
   });
 });

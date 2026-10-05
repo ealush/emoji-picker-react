@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // Generates the LLM-facing documentation (https://llmstxt.org):
 //   llms.txt       a concise index: what the library is, when to choose it,
-//                  key facts, and links to every doc
-//   llms-full.txt  the complete documentation in one file
+//                  key facts, the export index of every entry (read from the
+//                  entry sources, so it cannot drift), a quick reference and
+//                  links to every doc
+//   llms-full.txt  the complete documentation in one file, with a table of
+//                  contents
 // Both ship in the npm package and are copied into website/public so the
 // demo site serves them too. Run: npm run docs:llms
 const { copyFileSync, existsSync, readFileSync, writeFileSync } = require('fs');
@@ -19,7 +22,7 @@ const KEY_FACTS = `Key facts:
 
 - Install: \`npm install emoji-picker-react\`. Minimal use: \`import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />\`.
 - Choose batteries included or BYOD for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (\`unstyled\` or primitives + the project's styling solution).
-- Entry points: \`emoji-picker-react\` (default export EmojiPicker; Emoji; emojiByUnified; enums Categories, EmojiStyle, SkinTones, SkinTonePickerLocation, SuggestionMode, Theme; types PickerProps, EmojiClickData, PickerComponents); \`emoji-picker-react/primitives\` (parts Root, Panel, Reactions, Search, SearchInput, CategoryNav, Viewport, List, Preview, SkinTone, Empty, Loading, LoadError; hooks useActiveEmoji, useSkinTone, useSearchState, useSearchActions, useCategoryNavigation, usePickerMode, useEmojiDataState; tokens structuralPickerTokens, lightPickerTokens, darkPickerTokens, defaultPickerTokens; the same enums, data-free); \`emoji-picker-react/data\` (searchEmojis, getEmojiByUnified; no React); \`emoji-picker-react/data/emojis-<locale>\` (28 datasets).
+- Entry points: \`emoji-picker-react\` (the default picker, enums and types; registers the English dataset), \`emoji-picker-react/primitives\` (composable parts, hooks, tokens and the same enums; loads the dataset on demand), \`emoji-picker-react/data\` (search and lookup without React), \`emoji-picker-react/data/emojis-<locale>\` (28 datasets). The complete export list is below.
 - Styling: \`--epr-*\` CSS variables (they always yield to consumer CSS), \`[data-epr-part="…"]\` selectors, \`className\`/\`style\`. Ordinary resets are handled by library classes; more specific rules and !important can still override structural geometry. With Tailwind v4 or other @layer setups pass \`cssLayer="epr"\` and declare \`@layer epr, theme, base, components, utilities;\` first.
 - Use \`colorScheme="light" | "dark" | "auto"\` on Root, or prefer it over \`theme\` on EmojiPicker (CSS-in-JS wrappers reserve \`theme\`). Props accept string literals or enums.
 - Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are \`role="gridcell"\`); every UI string localizable through \`labels\`. Manual screen-reader verification has a separate release protocol.
@@ -27,6 +30,41 @@ const KEY_FACTS = `Key facts:
 - Composition keeps a managed grid. Root defaults to managed Panel/Reactions; composition="explicit" lets you place one Panel and optional Reactions within Root. Use SearchInput as={Input} with an input-forwarding adapter. Root/EmojiPicker components replace Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton and ExpandButton; List components override grid slots. Use useSearchActions, useCategoryNavigation and usePickerMode for custom controls. Bare Root and unstyled remove all managed decoration; geometry and presence remain. Do not invent asChild, onEmojiSelect or a renderer-independent UI engine.
 - Read the installed package llms-full.txt first; it matches the installed version. The primitives entry, \`unstyled\`, \`columns\`, \`components\`, \`labels\` and loader \`emojiData\` exist from 5.0.0; a 4.x installation has only the v4 props.
 - Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.`;
+
+// Public entries: [specifier, source file]. The export index is read from
+// these files so it cannot drift from what ships.
+const ENTRIES = [
+  ['emoji-picker-react', 'src/index.tsx'],
+  ['emoji-picker-react/primitives', 'src/primitives/index.ts'],
+  ['emoji-picker-react/data', 'src/data.ts'],
+];
+
+const LOCALES =
+  'bn, da, de, en, en-gb, es, es-mx, et, fi, fr, hi, hu, it, ja, ko, lt, ms, nb, nl, pl, pt, ru, sv, th, uk, vi, zh, zh-hant';
+
+const QUICK_REFERENCE = `Quick reference:
+
+\`\`\`tsx
+// Batteries included: theme the built-in look with colorScheme and --epr-* variables.
+import EmojiPicker from 'emoji-picker-react';
+<EmojiPicker colorScheme="auto" columns={8} className="my-picker" onEmojiClick={(e) => insert(e.emoji)} />
+
+// Unstyled: same layout and behavior, your CSS on [data-epr-part] selectors (color variables do nothing here).
+<EmojiPicker unstyled className="my-picker" />
+
+// Composed: your layout, your components; Root keeps state, keyboard, ARIA and virtualization.
+import * as Picker from 'emoji-picker-react/primitives';
+<Picker.Root columns={8} style={{ height: 400 }} components={{ Emoji: MyCell }} onEmojiClick={(e) => insert(e.emoji)}>
+  <Picker.SearchInput as={MyInput} />
+  <Picker.CategoryNav />
+  <Picker.Viewport><Picker.List /><Picker.Empty /><Picker.Loading /><Picker.LoadError /></Picker.Viewport>
+  <Picker.Preview />
+</Picker.Root>
+
+// Data only (no React): search and lookup.
+import { searchEmojis, getEmojiByUnified } from 'emoji-picker-react/data';
+searchEmojis('party'); getEmojiByUnified('1f389');
+\`\`\``;
 
 // [path, title, description] — the index links; llms-full.txt inlines them.
 const DOCS = [
@@ -60,8 +98,61 @@ const WORKED_EXAMPLE = [
 
 const read = (file) => readFileSync(join(root, file), 'utf8').trim();
 
+/**
+ * Names exported by an entry source file: `export { a, b as c } from`,
+ * `export type { … }`, `export default function X`, and local
+ * `export function|const|enum|class|interface|type X`.
+ */
+function exportsOf(file) {
+  const text = read(file);
+  const values = new Set();
+  const types = new Set();
+  let defaultName = null;
+
+  for (const match of text.matchAll(/export\s+(type\s+)?\{([^}]*)\}/g)) {
+    const listIsType = !!match[1];
+    for (const raw of match[2].split(',')) {
+      let item = raw.trim();
+      if (!item) continue;
+      const inlineType = /^type\s+/.test(item);
+      item = item.replace(/^type\s+/, '');
+      const alias = item.match(/\bas\s+(\w+)$/);
+      const name = alias ? alias[1] : item.split(/\s+/)[0];
+      (listIsType || inlineType ? types : values).add(name);
+    }
+  }
+  const defaultMatch = text.match(/export\s+default\s+(?:function\s+)?(\w+)/);
+  if (defaultMatch) defaultName = defaultMatch[1];
+  for (const match of text.matchAll(/^export\s+(interface|type)\s+(\w+)/gm)) {
+    types.add(match[2]);
+  }
+  for (const match of text.matchAll(/^export\s+(?:async\s+)?(function|const|let|enum|class)\s+(\w+)/gm)) {
+    values.add(match[2]);
+  }
+  const sorted = (set) => [...set].sort((a, b) => a.localeCompare(b));
+  return { defaultName, values: sorted(values), types: sorted(types) };
+}
+
+function exportIndex() {
+  const lines = ['Exports (generated from the entry sources):', ''];
+  for (const [specifier, file] of ENTRIES) {
+    const { defaultName, values, types } = exportsOf(file);
+    const parts = [];
+    if (defaultName) parts.push(`default \`${defaultName}\``);
+    if (values.length) parts.push(`values ${values.map((n) => `\`${n}\``).join(', ')}`);
+    if (types.length) parts.push(`types ${types.map((n) => `\`${n}\``).join(', ')}`);
+    lines.push(`- \`${specifier}\`: ${parts.join('; ')}.`);
+  }
+  lines.push(
+    `- \`emoji-picker-react/data/emojis-<locale>\`: default export, an \`EmojiData\` dataset (${LOCALES}).`,
+  );
+  return lines.join('\n');
+}
+
 const link = ([file, title, description]) =>
   `- [${title}](${RAW}/${file}): ${description}`;
+
+const EXPORTS = exportIndex();
 
 const index = [
   '# emoji-picker-react',
@@ -69,6 +160,10 @@ const index = [
   `> ${SUMMARY}`,
   '',
   KEY_FACTS,
+  '',
+  EXPORTS,
+  '',
+  QUICK_REFERENCE,
   '',
   '## Docs',
   '',
@@ -84,6 +179,7 @@ const index = [
   '',
 ].join('\n');
 
+const sections = [...DOCS, ...EXAMPLES];
 const full = [
   '# emoji-picker-react — complete documentation',
   '',
@@ -92,9 +188,20 @@ const full = [
   '> Generated by `npm run docs:llms`. Do not edit by hand.',
   '',
   KEY_FACTS,
+  '',
+  EXPORTS,
+  '',
+  QUICK_REFERENCE,
+  '',
+  'Contents:',
+  '',
+  ...sections.map(
+    ([file, title, description], i) => `${i + 1}. ${title} (${file}): ${description}`,
+  ),
+  `${sections.length + 1}. Worked example: team chat composer (stories/recipes/team-chat)`,
 ];
-for (const [file] of [...DOCS, ...EXAMPLES]) {
-  full.push('', `<!-- source: ${file} -->`, '', read(file));
+for (const [file, title] of sections) {
+  full.push('', `<!-- source: ${file} -->`, '', `<!-- ${title} -->`, '', read(file));
 }
 full.push('', '<!-- worked example: team chat composer (stories/recipes/team-chat) -->');
 for (const file of WORKED_EXAMPLE) {
@@ -111,5 +218,5 @@ if (existsSync(websitePublic)) {
   copyFileSync(join(root, 'llms-full.txt'), join(websitePublic, 'llms-full.txt'));
 }
 console.log(
-  `llms.txt (index) and llms-full.txt written from ${DOCS.length + EXAMPLES.length} docs.`,
+  `llms.txt (index) and llms-full.txt written from ${sections.length} docs and ${ENTRIES.length} entry sources.`,
 );

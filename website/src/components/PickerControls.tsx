@@ -6,6 +6,7 @@ import {
   PickerProps,
   SkinTonePickerLocation,
   SkinTones,
+  type SkinTonesValue,
   SuggestionMode,
   type SuggestionModeValue,
   type ThemeValue,
@@ -528,14 +529,14 @@ function SelectDefaultSkinTone({
   defaultSkinTone,
   setDefaultSkinTone,
 }: {
-  defaultSkinTone?: SkinTones;
-  setDefaultSkinTone: (defaultSkinTone: SkinTones) => void;
+  defaultSkinTone?: SkinTonesValue;
+  setDefaultSkinTone: (defaultSkinTone: SkinTonesValue) => void;
 }) {
   return (
     <Label text="Default Skin Tone">
       <select
         value={defaultSkinTone}
-        onChange={(e) => setDefaultSkinTone(e.target.value as SkinTones)}
+        onChange={(e) => setDefaultSkinTone(e.target.value as SkinTonesValue)}
       >
         <option value={SkinTones.NEUTRAL}>Neutral</option>
         <option value={SkinTones.LIGHT}>Light</option>

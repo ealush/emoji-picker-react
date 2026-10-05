@@ -21,6 +21,8 @@ const recipesDir = path.join(root, 'stories/recipes');
 const componentsDir = path.join(root, 'website/src/components/designs');
 const stylesDir = path.join(root, 'website/src/styles/designs');
 const sourcesDir = path.join(root, 'website/public/recipes');
+// Gallery thumbnails for the website carousel (same images as the README).
+const thumbnailsDir = path.join(root, 'website/public/designs');
 const screenshotsDir = path.join(root, 'docs/designs');
 const baselinesDir = path.join(root, 'playwright/recipes.spec.ts-snapshots');
 const readmePath = path.join(root, 'README.md');
@@ -106,6 +108,7 @@ const entries = recipes
       `    title: ${JSON.stringify(recipe.title.replace(/^Examples\//, ''))},\n` +
       `    description: ${JSON.stringify(recipe.description)},\n` +
       `    rootClass: ${JSON.stringify(recipe.rootClass)},\n` +
+      `    kind: ${JSON.stringify(recipe.title.startsWith('Examples/') ? 'In context' : 'Design system')},\n` +
       `    Example: ${recipe.name},\n` +
       `  },`,
   )
@@ -133,12 +136,15 @@ function storySlug(title) {
 
 fs.rmSync(screenshotsDir, { recursive: true, force: true });
 fs.mkdirSync(screenshotsDir, { recursive: true });
+fs.rmSync(thumbnailsDir, { recursive: true, force: true });
+fs.mkdirSync(thumbnailsDir, { recursive: true });
 for (const recipe of recipes) {
   const baseline = path.join(baselinesDir, `${storySlug(recipe.title)}.png`);
   if (!fs.existsSync(baseline)) {
     throw new Error(`${path.relative(root, baseline)} missing; run npx playwright test recipes`);
   }
   fs.copyFileSync(baseline, path.join(screenshotsDir, `${recipe.dir}.png`));
+  fs.copyFileSync(baseline, path.join(thumbnailsDir, `${recipe.dir}.png`));
 }
 
 function galleryCell(recipe) {
@@ -169,5 +175,5 @@ if (!markers.test(readme)) {
 fs.writeFileSync(readmePath, readme.replace(markers, gallery));
 
 console.log(
-  `designs: ported ${recipes.length} recipes to website/, screenshots to docs/designs/, README gallery updated`,
+  `designs: ported ${recipes.length} recipes to website/, screenshots to docs/designs/ and website/public/designs/, README gallery updated`,
 );

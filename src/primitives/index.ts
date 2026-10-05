@@ -24,10 +24,18 @@ export type {
   EmojiClickData,
   EmojiData,
   EmojiStyleValue,
+  SkinTonesValue,
   SuggestionModeValue,
   ThemeValue,
 } from '../types/exposedTypes';
-export type { PickerLabels } from '../config/config';
+export type {
+  PickerLabels,
+  PreviewConfig,
+  EmojiClickHandler,
+  SkinToneChangeHandler,
+  OnEmojiClickApi,
+} from '../config/config';
+export type { CustomEmoji } from '../config/customEmojiConfig';
 export {
   defaultPickerTokens,
   structuralPickerTokens,

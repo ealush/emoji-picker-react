@@ -119,6 +119,10 @@ Adapt `Input` and `Button` props to the installed design library.
 | A new loader function on every render | Hoist the loader to module scope; a new identity means a new dataset |
 | Hide the default focus ring on custom controls without a replacement | Provide `:focus-visible` styles |
 
+## 6a. Types
+
+Import types from the entry you use: `EmojiClickData`, `EmojiClickHandler`, `PickerLabels`, `CustomEmoji`, `PreviewConfig`, `PickerComponents`, `EmojiRenderProps`, `EmojiDataLoader` and the literal unions (`ThemeValue`, `EmojiStyleValue`, `SkinTonesValue`, `SuggestionModeValue`) come from both `emoji-picker-react` and `emoji-picker-react/primitives`; `RootProps` and the part prop types from `/primitives`; `EmojiInfo` from `/data`. The export index in `llms.txt` is generated from the entry sources and is complete.
+
 ## 7. Data, loading and bundle size
 
 Hoist an emoji loader at module scope or memoize it. Loaders receive `{ signal }`; pass it to `fetch`. Rejection and malformed payloads show `LoadError` and set `useEmojiDataState().error`; `retry()` starts another attempt. Source changes, closing and unmount abort old attempts.

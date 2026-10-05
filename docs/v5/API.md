@@ -468,6 +468,10 @@ Hoist loaders (module scope or `useCallback`): a new function identity loads aga
 
 Import runtime `Categories`, `EmojiStyle`, `SkinTones`, `SkinTonePickerLocation`, `SuggestionMode`, and `Theme` from `/primitives` in a lean composition. Importing runtime values from the main or `/data` entry registers its eager default dataset.
 
+## 12b. Exported types
+
+Both the main and the primitives entry export the types a typed consumer needs without reaching into the package: `PickerProps` / `RootProps`, `EmojiClickData`, `EmojiClickHandler` and `OnEmojiClickApi` (the `onEmojiClick` / `onReactionClick` signature and its `collapseToReactions` API), `SkinToneChangeHandler`, `PickerLabels`, `PreviewConfig`, `CustomEmoji`, `CategoryConfig`, `CategoryIcons`, `EmojiData`, `EmojiDataLoader` / `EmojiDataLoaderOptions` / `EmojiDataInput`, `PickerComponents` with `EmojiRenderProps`, `CategoryHeaderRenderProps`, `CategoryButtonRenderProps`, `SkinToneButtonRenderProps` and `ListEmoji`, plus the literal unions `ThemeValue`, `EmojiStyleValue`, `SuggestionModeValue` and `SkinTonesValue`. `defaultSkinTone` and `skinTone` accept `SkinTonesValue` (`'neutral'`, `'1f3fb'`, … or the `SkinTones` enum). The generated `llms.txt` lists the complete export index of every entry.
+
 ## 13. Locale imports
 
 v4 documentation currently uses:

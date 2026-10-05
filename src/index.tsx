@@ -25,11 +25,32 @@ export {
 export type {
   EmojiStyleValue,
   ThemeValue,
+  SkinTonesValue,
   EmojiClickData,
   SuggestionModeValue,
   CategoryIcons,
   CategoryConfig,
+  EmojiData,
 } from './types/exposedTypes';
+export type {
+  PickerLabels,
+  PreviewConfig,
+  EmojiClickHandler,
+  SkinToneChangeHandler,
+  OnEmojiClickApi,
+} from './config/config';
+export type { CustomEmoji } from './config/customEmojiConfig';
+export type {
+  EmojiDataInput,
+  EmojiDataLoader,
+  EmojiDataLoaderOptions,
+} from './hooks/useResolvedEmojiData';
+export type {
+  CategoryHeaderRenderProps,
+  EmojiRenderProps,
+  ListComponents,
+  ListEmoji,
+} from './components/body/listComponents';
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 

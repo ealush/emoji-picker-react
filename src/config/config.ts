@@ -12,6 +12,7 @@ import {
   EmojiStyleValue,
   SkinTonePickerLocation,
   SkinTones,
+  SkinTonesValue,
   SuggestionMode,
   SuggestionModeValue,
   Theme,
@@ -240,7 +241,7 @@ export type PickerConfigInternal = {
   searchPlaceHolder: string;
   searchPlaceholder: string;
   searchClearButtonLabel: string;
-  defaultSkinTone: SkinTones;
+  defaultSkinTone: SkinTonesValue;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
   emojiStyle: EmojiStyleValue;
@@ -294,7 +295,7 @@ export type PickerConfigInternal = {
    * Controlled active skin tone. Pair with `onSkinToneChange`; while
    * present, `defaultSkinTone` is ignored.
    */
-  skinTone?: SkinTones;
+  skinTone?: SkinTonesValue;
   /**
    * Emit the picker's CSS inside this cascade layer (e.g. "epr"), for
    * layered CSS frameworks such as Tailwind v4 whose utilities cannot
@@ -355,6 +356,13 @@ export type MouseDownEvent = (
 ) => void;
 export type OnSkinToneChange = (emoji: SkinTones) => void;
 
-type OnEmojiClickApi = {
+/** The `onEmojiClick` / `onReactionClick` callback signature. */
+export type EmojiClickHandler = MouseDownEvent;
+/** The `onSkinToneChange` callback signature. */
+export type SkinToneChangeHandler = OnSkinToneChange;
+
+/** Third argument of `onEmojiClick` / `onReactionClick`. */
+export type OnEmojiClickApi = {
+  /** Return to the compact reactions bar (no-op when reactions are off). */
   collapseToReactions: () => void;
 };

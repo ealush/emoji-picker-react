@@ -77,6 +77,16 @@ export enum SkinTones {
   DARK = '1f3ff',
 }
 
+/** A skin tone as the enum or its literal value (`'neutral'`, `'1f3fb'`, …). */
+export type SkinTonesValue =
+  | SkinTones
+  | 'neutral'
+  | '1f3fb'
+  | '1f3fc'
+  | '1f3fd'
+  | '1f3fe'
+  | '1f3ff';
+
 export enum Categories {
   SUGGESTED = 'suggested',
   CUSTOM = 'custom',
