@@ -325,7 +325,7 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [ ] All newly added CI jobs have passed on the final pushed candidate.
 - [ ] Release PR is reconciled with master and final release candidate checks pass.
 - [x] Unused primitive/component styles and icons can be removed without losing CSS, keyboard selection or search in the minified installed-tarball consumer. Default composition retains navigation, preview and skin-tone controls.
-- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 33.8 KiB (34 KiB regression cap).
+- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 34.0 KiB, 34,809 bytes (34 KiB regression cap, 34,816 bytes).
 
 Browser evidence belongs to the candidate report, with any local platform dependency failure stated explicitly. Performance baseline is reconstructed from v4 in a quiet session; no original Phase 0 artifact is available. Human assistive-technology verification remains required before an absolute accessibility claim.
 
@@ -350,5 +350,21 @@ The consolidated release head `52b7562c` passed all eight jobs in [CI run 372343
 
 Local evidence: 602 unit tests; build, compatibility types, lint, React API floor and size gates; minified packed default/primitives, CJS/ESM, publint and attw; actual packed React 16.8 interaction, SSR and hydration; website static export. Chromium/Firefox/mobile behavior covers MUI input sizing/cells, open-shadow-root keyboard handling and category jumps as well as insertion, dismissal, IME and touch. Final minimal initial bundle: 33.8 KiB gzip including ShipStyles, below the unchanged 34 KiB cap. The additional 0.8 KiB buys loader validation, callback/ref ownership and delegated-event isolation; the proposed 25 KiB target remains an optimization objective. The quiet-machine timing gate passes against the unchanged reconstructed v4 baseline: preparation 82.4%, one-picker mount 80.0%, ten-picker mount 97.5%; ten shared-dataset mounts add no base-index builds. Existing visual baselines and tolerances are unchanged. Final browser/CI results are recorded on PR #552.
 
+
+## Release hardening, second pass (2026-10-05)
+
+- [x] `dir="rtl"` mirrors the grid, search affordances and tone fan; left/right arrows follow the visual direction in the grid, tabs, reactions and tone fan (v4's CSS grid mirrored; v5's positioned cells did not).
+- [x] Recents holding one emoji under two tones list it once under the active tone, with unique React keys.
+- [x] Library styles render once per document or shadow root, per nonce and CSS text; ownership hands over in the same commit when the owner unmounts and skips owners removed from the document. Ten pickers: 41.5 KB of CSS instead of 416 KB; Chromium style recalculation 56 ms instead of 169 ms.
+- [x] `columns` on EmojiPicker and Root fixes the emojis per row and fits the width unless the consumer sets one; a narrower container renders fewer columns without clipping.
+- [x] `Root appearance="default"` paints `var(--epr-bg-color)` at zero specificity, so `colorScheme="dark"` never leaves dark controls on a transparent Root.
+- [x] The shadcn registry component styles its tabs, tone button and variations menu itself (a 0.9% pixel regression had stayed under the 5% screenshot tolerance); its behavior test now asserts both.
+- [x] Development builds warn when a Viewport has no height limit and renders every emoji.
+- [x] `prefers-reduced-motion: reduce` turns off the library's transitions.
+- [x] README, PROPS, CSS_VARIABLES, STYLING, PRIMITIVES, API and the agent guide state one styling rule: color variables theme the built-in look; `unstyled` and bare Root remove it. Examples that combined `unstyled` with color variables are fixed, and a tested starter stylesheet covers `unstyled`.
+
+Local evidence on the pushed head: 631 unit tests; build, compatibility types, lint, React API floor; size 74.93/75 kB (main CJS); installed minimal primitives consumer 34,809/34,816 bytes; packed CJS/ESM consumers, publint, attw; packed React 16.8 interaction, SSR and hydration; generated docs, recipes, registry and designs without drift; website static export. Playwright: 101 visual/interaction/axe tests with no baseline or tolerance change except the two intentionally restored shadcn integration baselines; 48 behavior tests across Chromium, Firefox and mobile touch. WebKit cannot launch on this host (missing system libraries) and runs in CI. Quiet-machine performance gate against the unchanged reconstructed v4 baseline: preparation 86.5%, one-picker mount 81.6%, ten-picker mount 99.1%, no additional base builds. Axe (WCAG 2.1 A/AA) is clean on the unstyled starter in light and dark, a design-library composition, RTL and `columns`.
+
+Follow-ups, not release blockers: the built-in look title-cases category labels (`text-transform: capitalize`), which over-capitalizes some locales (v4 behavior); manual NVDA/VoiceOver checks remain as above.
 
 Dependency audit: Next.js is patched from 16.3.5 to 16.3.8; compatible root/website lockfile fixes are included. `npm audit --omit=dev` reports zero vulnerabilities for both the published picker runtime and website production dependencies. Full development audits still report the upstream `braces` deeply-nested-pattern advisory in release/lint tooling; the registry's latest braces is 3.0.3 and has no patch for that advisory. Avoid `npm audit fix --force`: its suggested release/lint downgrades do not supply a patched parser. This residual development-tool issue is recorded rather than claimed fixed.

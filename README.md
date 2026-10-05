@@ -25,7 +25,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (33.8 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 > This branch documents the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552). New v5 APIs require the built candidate until v5 is published.

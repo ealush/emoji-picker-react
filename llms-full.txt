@@ -196,7 +196,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (33.8 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 > This branch documents the v5 candidate in [PR #552](https://github.com/ealush/emoji-picker-react/pull/552). New v5 APIs require the built candidate until v5 is published.
@@ -1078,7 +1078,7 @@ All 25 designs share a source generator. Their seven styling-stack variants rema
 
 Import runtime constants from `/primitives`. Runtime imports from the main or `/data` entry register the synchronous default dataset, so those mixed graphs intentionally have a larger initial payload.
 
-The configured minimal consumer, bundled from an installed package tarball, measures **33.8 KiB initial gzip including ShipStyles**, with the dataset deferred. Unused parts, icons and styles can be removed by the consumer bundler; the default picker retains its complete composition. The complete-runtime regression cap is **34 KiB**, down from 41 KiB after the original 40.5 KiB adoption candidate. Earlier gates that excluded ShipStyles are not comparable. Reducing the runtime toward 25 KiB remains profiling work. Account for initial JavaScript and dataset traffic separately.
+The configured minimal consumer, bundled from an installed package tarball, measures **34.0 KiB initial gzip including ShipStyles** (34,809 bytes), with the dataset deferred. Unused parts, icons and styles can be removed by the consumer bundler; the default picker retains its complete composition. The complete-runtime regression cap is **34 KiB**, down from 41 KiB after the original 40.5 KiB adoption candidate. Earlier gates that excluded ShipStyles are not comparable. Reducing the runtime toward 25 KiB remains profiling work. Account for initial JavaScript and dataset traffic separately.
 
 <!-- source: docs/v5/API.md -->
 
