@@ -16,7 +16,7 @@ export function emojiNames(emoji: WithName): string[] {
 }
 
 export function addedIn(emoji: DataEmoji): number {
-  return parseFloat(emoji[EmojiProperties.added_in]);
+  return parseFloat(emoji[EmojiProperties.added_in] || '0');
 }
 
 export function emojiName(emoji?: WithName): string {

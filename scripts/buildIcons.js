@@ -1,10 +1,16 @@
 // Generates src/components/icons/svgIcons.ts from the SVG sources.
 //
-// Icons ship as base64 data URIs in plain TS: importing .svg files relies
-// on bundler loaders whose output differs (esbuild emits raw-text data
-// URLs that are invalid inside CSS url(), Vite URL-encodes them with
-// unbalanced parentheses), which left the icons blank in published
-// bundles. Run after editing an icon: node ./scripts/buildIcons.js
+// Icons ship as data URIs in plain TS: importing .svg files relies on
+// bundler loaders whose output differs (esbuild emits raw-text data URLs
+// that are invalid inside CSS url(), Vite URL-encodes them with unbalanced
+// parentheses), which left the icons blank in published bundles.
+//
+// The URI is the minimally escaped form every consumer wraps in
+// url("..."): attribute quotes become single quotes and only the
+// characters a double-quoted CSS url() or a URL cannot carry verbatim are
+// percent-encoded. It is a third smaller than base64 and compresses far
+// better than a fully percent-encoded string.
+// Run after editing an icon: node ./scripts/buildIcons.js
 const { readFileSync, writeFileSync } = require('fs');
 const { join } = require('path');
 
@@ -16,18 +22,35 @@ const icons = {
   TIMES_ICON: 'header/Search/svg/times.svg',
 };
 
+// Editor boilerplate the browser never reads.
+const UNUSED_ROOT_ATTRIBUTES =
+  /\s(?:version|id|xmlns:xlink|x|y|enable-background|xml:space)="[^"]*"/g;
+
 const minify = (svg) =>
   svg
     .replace(/<\?xml[^>]*\?>/g, '')
+    .replace(/<!DOCTYPE[^>]*>/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<svg[^>]*>/, (root) => root.replace(UNUSED_ROOT_ATTRIBUTES, ''))
+    .replace(/\sid="[^"]*"/g, '')
+    .replace(/<g>\s*<\/g>/g, '')
     .replace(/>\s+</g, '><')
     .replace(/\s+/g, ' ')
     .trim();
 
+const encode = (svg) =>
+  svg
+    .replace(/"/g, "'")
+    .replace(
+      /[<>#%{}"]/g,
+      (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+    )
+    .replace(/[^\x20-\x7e]/g, encodeURIComponent);
+
 const lines = Object.entries(icons).map(([name, file]) => {
   const svg = minify(readFileSync(join(src, file), 'utf8'));
-  const uri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
-  return `// ${file}\nexport const ${name} =\n  '${uri}';`;
+  const uri = `data:image/svg+xml,${encode(svg)}`;
+  return `// ${file}\nexport const ${name} =\n  "${uri}";`;
 });
 
 writeFileSync(
