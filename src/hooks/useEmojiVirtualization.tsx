@@ -46,11 +46,23 @@ export function useEmojiVirtualization({
 
   let virtualizedCounter = 0;
 
+  // A section shows each rendered emoji once. Recents can hold the same
+  // emoji under two tones (e.g. neutral and medium); the active tone
+  // renders both as one identity, which must not be listed or keyed twice.
+  const rendered = new Set<string>();
   const emojisToPush = categoryEmojis.filter((emoji) => {
     const isDisallowed = isEmojiDisallowed(emoji);
     const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
 
-    return !failedToLoad && !filteredOut && !hidden && !isDisallowed;
+    if (failedToLoad || filteredOut || hidden || isDisallowed) {
+      return false;
+    }
+    const unified = emojiUnified(emoji, activeSkinTone);
+    if (rendered.has(unified)) {
+      return false;
+    }
+    rendered.add(unified);
+    return true;
   });
 
   const dimensions = useCategoryHeight(emojisToPush.length);
