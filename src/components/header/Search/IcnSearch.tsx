@@ -15,7 +15,7 @@ const styles = /* @__PURE__ */ (() =>
       content: '',
       position: 'absolute',
       top: '50%',
-      left: 'var(--epr-search-bar-inner-padding)',
+      insetInlineStart: 'var(--epr-search-bar-inner-padding)',
       transform: 'translateY(-50%)',
       width: '20px',
       height: '20px',

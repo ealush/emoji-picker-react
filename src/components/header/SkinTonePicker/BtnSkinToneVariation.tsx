@@ -82,7 +82,7 @@ const styles = /* @__PURE__ */ (() =>
       height: 'var(--epr-skin-tone-size)',
       display: 'block',
       position: 'absolute',
-      right: '0',
+      insetInlineEnd: '0',
       zIndex: '0',
     },
     closedTone: {

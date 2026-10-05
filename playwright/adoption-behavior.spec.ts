@@ -301,3 +301,45 @@ test('nested Escape precedes Radix document-capture dismissal', async ({
     page.getByRole('button', { name: 'Insert emoji' }),
   ).toBeFocused();
 });
+
+test('dir="rtl" mirrors the grid and arrows follow the visual direction', async ({
+  page,
+}) => {
+  await page.goto(story('picker-right-to-left--right-to-left'));
+  const cells = page.getByRole('gridcell');
+  await cells.first().waitFor();
+  const [first, second] = await Promise.all([
+    cells.nth(0).boundingBox(),
+    cells.nth(1).boundingBox(),
+  ]);
+  // The first cell sits at the inline start, which is the right edge.
+  expect(first!.x).toBeGreaterThan(second!.x);
+
+  const name = (locator: typeof cells) => locator.getAttribute('aria-label');
+  const focusedName = () =>
+    page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
+  await cells.nth(0).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(focusedName).toBe(await name(cells.nth(1)));
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(focusedName).toBe(await name(cells.nth(0)));
+
+  const tabs = page.getByRole('tab');
+  await tabs.nth(1).focus();
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(focusedName).toBe(await tabs.nth(2).getAttribute('aria-label'));
+
+  // The tone fan opens inward, staying inside the picker.
+  await page.locator('[data-epr-part="skin-tone"] button').first().click();
+  const root = (await page.locator('[data-epr-part="root"]').boundingBox())!;
+  await expect
+    .poll(async () => {
+      const boxes = await page
+        .locator('[data-epr-part="skin-tone"] button')
+        .evaluateAll((buttons) =>
+          buttons.map((button) => button.getBoundingClientRect().left),
+        );
+      return Math.min(...boxes) >= root.x;
+    })
+    .toBe(true);
+});

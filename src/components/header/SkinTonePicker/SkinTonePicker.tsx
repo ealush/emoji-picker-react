@@ -63,6 +63,10 @@ export function SkinTonePicker({
   const expandedSize = isOpen ? fullWidth : ITEM_SIZE + 'px';
 
   const vertical = direction === SkinTonePickerDirection.VERTICAL;
+  // The fan opens toward the inline start: leftward, or rightward under
+  // dir="rtl". The control is mounted before it can open, so the ref is set.
+  const inlineSign =
+    isOpen && !vertical && isRtl(SkinTonePickerRef.current) ? 1 : -1;
 
   return (
     <Relative
@@ -99,7 +103,7 @@ export function SkinTonePicker({
                 transform: cx(
                   vertical
                     ? `translateY(-${i * (isOpen ? ITEM_SIZE : 0)}px)`
-                    : `translateX(-${i * (isOpen ? ITEM_SIZE : 0)}px)`,
+                    : `translateX(${inlineSign * i * (isOpen ? ITEM_SIZE : 0)}px)`,
                   appearance && isOpen && active && 'scale(1.3)',
                 ),
               }}
@@ -186,3 +190,11 @@ const styles = /* @__PURE__ */ (() =>
       height: 'var(--epr-skin-tone-size)',
     },
   }))();
+
+function isRtl(element: Element | null): boolean {
+  return (
+    !!element &&
+    typeof window !== 'undefined' &&
+    window.getComputedStyle(element).direction === 'rtl'
+  );
+}

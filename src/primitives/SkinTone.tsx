@@ -110,6 +110,6 @@ const styles = /* @__PURE__ */ (() =>
     verticalAnchor: {
       position: 'absolute',
       bottom: '0',
-      right: '0',
+      insetInlineEnd: '0',
     },
   }))();

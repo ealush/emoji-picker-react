@@ -54,7 +54,7 @@ const styles = /* @__PURE__ */ (() =>
   stylesheet.create({
     geometry: {
       position: 'absolute',
-      right: 'var(--epr-search-bar-inner-padding)',
+      insetInlineEnd: 'var(--epr-search-bar-inner-padding)',
       height: '30px',
       width: '30px',
       display: 'flex',

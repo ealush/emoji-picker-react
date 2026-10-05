@@ -61,7 +61,7 @@ export function useEmojiVirtualization({
     }
   }, [dimensions, onHeightReady, emojisToPush.length]);
 
-  const isVirtualized = (style: { top: number; left: number } | undefined) =>
+  const isVirtualized = (style: { top: number } | undefined) =>
     dimensions &&
     BodyRef.current &&
     shouldVirtualize({

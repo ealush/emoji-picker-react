@@ -26,10 +26,12 @@ export function shouldVirtualize({
 }
 
 // Columns spread across the row like the category grid's own
-// `justify-content: space-between`: first column flush left, last flush
-// right, leftover width shared evenly between columns. Packing from the
-// left instead pushed the whole remainder (up to one emoji wide) into a
-// gap on the right edge. Whole pixels keep image emojis crisp.
+// `justify-content: space-between`: first column flush with the inline
+// start, last flush with the inline end, leftover width shared evenly
+// between columns. Packing from the start instead pushed the whole
+// remainder (up to one emoji wide) into a gap at the end. Whole pixels
+// keep image emojis crisp. The logical inset mirrors the grid under
+// `dir="rtl"`, as v4's CSS grid did.
 export function getEmojiPositionStyle(dimensions: Dimensions, index: number) {
   if (!dimensions) {
     return undefined;
@@ -40,7 +42,7 @@ export function getEmojiPositionStyle(dimensions: Dimensions, index: number) {
   const gap = emojisPerRow > 1 ? remainder / (emojisPerRow - 1) : 0;
   return {
     top: Math.floor(index / emojisPerRow) * emojiSize,
-    left: Math.round(column * (emojiSize + gap)),
+    insetInlineStart: Math.round(column * (emojiSize + gap)),
   };
 }
 

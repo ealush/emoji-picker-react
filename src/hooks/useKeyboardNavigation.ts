@@ -163,7 +163,7 @@ function useSearchInputKeyboardEvents() {
   const onKeyDown = useMemo(
     () =>
       function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
+        const key = logicalArrowKey(event);
 
         switch (key) {
           case KeyboardEvents.ArrowRight:
@@ -233,7 +233,7 @@ function useSkinTonePickerKeyboardEvents() {
     () =>
       // eslint-disable-next-line complexity
       function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
+        const key = logicalArrowKey(event);
         // The fan axis decides the arrow keys: the search placement and a
         // horizontal SkinTone primitive move left/right, the preview
         // placement and a vertical primitive move up/down.
@@ -343,7 +343,7 @@ function useCategoryNavigationKeyboardEvents() {
           (event.currentTarget as Element | null)?.getAttribute(
             'aria-orientation',
           ) === 'vertical';
-        const intent = categoryKeyIntent(event.key, vertical);
+        const intent = categoryKeyIntent(logicalArrowKey(event), vertical);
 
         if (!intent) {
           onType(event);
@@ -407,7 +407,7 @@ function useReactionsKeyboardEvents() {
   const onKeyDown = useMemo(
     () =>
       function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
+        const key = logicalArrowKey(event);
         const current = ReactionsRef.current;
 
         if (!current) {
@@ -483,7 +483,7 @@ function useBodyKeyboardEvents() {
   const onKeyDown = useMemo(
     () =>
       function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
+        const key = logicalArrowKey(event);
 
         const activeElement = buttonFromTarget(getActiveElement());
 
@@ -729,6 +729,26 @@ function useOnType() {
       typeToSearch(key);
     }
   };
+}
+
+// Left/right arrows follow the visual direction: under `dir="rtl"` the
+// grid, tabs, reactions and tone fan are mirrored, so ArrowLeft moves
+// forward. Handlers run on their region's own listener, so currentTarget
+// is the region whose computed direction decides.
+function logicalArrowKey(event: KeyboardEvent): string {
+  const { key } = event;
+  if (key !== KeyboardEvents.ArrowLeft && key !== KeyboardEvents.ArrowRight) {
+    return key;
+  }
+  const region = event.currentTarget as Element | null;
+  if (!region || typeof window === 'undefined' || !region.nodeType) {
+    return key;
+  }
+  return window.getComputedStyle(region).direction === 'rtl'
+    ? key === KeyboardEvents.ArrowLeft
+      ? KeyboardEvents.ArrowRight
+      : KeyboardEvents.ArrowLeft
+    : key;
 }
 
 function hasModifier(event: KeyboardEvent): boolean {
