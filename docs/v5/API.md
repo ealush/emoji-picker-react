@@ -301,7 +301,7 @@ function Header({ category, ...props }: EmojiPicker.CategoryHeaderRenderProps) {
 ```
 
 - `Emoji` must render a `<button>` carrying the provided `type`, `className`, `style` (virtualized position), `tabIndex`, `aria-label` and `data-epr-*` props. Its content may nest arbitrarily; clicks anywhere inside select the emoji.
-- `emoji` (`ListEmoji`): `unified` (with the active skin tone), `names`, `emoji` (native text), `isCustom`, `imageUrl`, `hasVariations`.
+- `emoji` (`ListEmoji`): `unified` (the exact rendered identity), `names`, `emoji` (native text), `isCustom`, `imageUrl` (undefined for standard native emojis; active image style URL otherwise, custom `imgUrl` for custom emojis), `hasVariations`.
 - `CategoryHeader` receives the sticky, measured label's `className` and `data-epr-part`; `category` is `{ id, name }`.
 
 There is still no render-prop over the whole list: virtualization, ordering and grid semantics stay library-owned.

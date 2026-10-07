@@ -3,11 +3,13 @@
 // it so the many existing import sites keep working.
 export {
   activeVariationFromUnified,
+  skinToneFromEmoji,
   addedIn,
   emojiHasVariations,
   emojiName,
   emojiNames,
   emojiUnified,
+  emojiCanonicalUnified,
   emojiUrlByUnified,
   emojiVariations,
   emojiVariationUnified,

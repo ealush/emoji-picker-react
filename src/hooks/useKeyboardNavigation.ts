@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-import { hasNextElementSibling } from '../DomUtils/elementPositionInRow';
 import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import {
   focusElement,
@@ -12,14 +11,12 @@ import { isRtl } from '../DomUtils/isRtl';
 import {
   focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
-  focusNextVisibleEmoji,
-  focusPrevVisibleEmoji,
-  focusVisibleEmojiOneRowDown,
-  focusVisibleEmojiOneRowUp,
+  focusAdjacentEmoji,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import { buttonFromTarget } from '../DomUtils/selectors';
 import {
+  ElementRef,
   useBodyRef,
   useCategoryNavigationRef,
   usePickerMainRef,
@@ -29,7 +26,7 @@ import {
 } from '../components/context/ElementRefContext';
 import {
   useNavigationRegistry,
-  useReactionsModeState,
+  useSearchComposingState,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 import { useSearchDisabledConfig } from '../config/useConfig';
@@ -57,401 +54,263 @@ import {
   useIsSkinToneInSearch,
 } from './useShouldShowSkinTonePicker';
 
-enum KeyboardEvents {
-  ArrowDown = 'ArrowDown',
-  ArrowUp = 'ArrowUp',
-  ArrowLeft = 'ArrowLeft',
-  ArrowRight = 'ArrowRight',
-  Escape = 'Escape',
-  Enter = 'Enter',
-  Space = ' ',
-}
-
 export function useKeyboardNavigation() {
-  usePickerMainKeyboardEvents();
-  useSearchInputKeyboardEvents();
-  useSkinTonePickerKeyboardEvents();
-  useCategoryNavigationKeyboardEvents();
-  useReactionsKeyboardEvents();
-  useBodyKeyboardEvents();
-}
-
-function usePickerMainKeyboardEvents() {
-  const PickerMainRef = usePickerMainRef();
+  const ref = usePickerMainRef();
+  const hasOpenToggles = useHasOpenToggles();
   const clearSearch = useClearSearchValue();
   const scrollTo = useScrollTo();
-  const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
-  const hasOpenToggles = useHasOpenToggles();
   const disallowMouseMove = useDisallowMouseMove();
-
   const closeAllOpenToggles = useCloseAllOpenToggles();
-
-  const onKeyDown = useMemo(
-    () =>
-      function onKeyDown(event: KeyboardEvent) {
-        const { key } = event;
-
-        disallowMouseMove();
-        switch (key) {
-          case KeyboardEvents.Escape:
-            event.preventDefault();
-            if (hasOpenToggles()) {
-              closeAllOpenToggles();
-              // A nested variation/tone menu consumes Escape before the
-              // host popover or autocomplete dismisses the whole picker.
-              event.stopPropagation();
-              return;
-            }
-            clearSearch();
-            scrollTo(0);
-            focusSearchInput();
-            break;
-        }
-      },
-    [
-      scrollTo,
-      clearSearch,
-      closeAllOpenToggles,
-      focusSearchInput,
-      hasOpenToggles,
-      disallowMouseMove,
-    ],
-  );
-
-  useEffect(() => {
-    const current = PickerMainRef.current;
-
-    if (!current) {
-      return;
-    }
-
-    // Hosts such as Radix dismiss at document capture. A Root-owned menu
-    // gets Escape at window capture first, scoped to this instance.
-    const onWindowEscape = (event: KeyboardEvent) => {
-      if (
-        event.key === KeyboardEvents.Escape &&
-        hasOpenToggles() &&
-        eventBelongsToPicker(event, current)
-      ) {
-        onKeyDown(event);
-      }
-    };
-    window.addEventListener('keydown', onWindowEscape, true);
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', onWindowEscape, true);
-      current.removeEventListener('keydown', scopedKeyDown);
-    };
-  }, [PickerMainRef, SearchInputRef, scrollTo, onKeyDown, hasOpenToggles]);
-}
-
-function useSearchInputKeyboardEvents() {
   const focusSkinTonePicker = useFocusSkinTonePicker();
-  const PickerMainRef = usePickerMainRef();
   const BodyRef = useBodyRef();
   const SearchInputRef = useSearchInputRef();
-  const [, setSkinToneFanOpenState] = useSkinToneFanOpenState();
-  const goDownFromSearchInput = useGoDownFromSearchInput();
+  const [isOpen, setIsOpen] = useSkinToneFanOpenState();
+  const focusCategoryNavigation = useFocusCategoryNavigation();
   const focusNextRegionFromSearch = useFocusNextRegionFrom('search');
   const isSkinToneInSearch = useIsSkinToneInSearch();
   const isSearchMode = useIsSearchMode();
-
-  const onKeyDown = useMemo(
-    () =>
-      function onKeyDown(event: KeyboardEvent) {
-        const key = logicalArrowKey(event);
-
-        switch (key) {
-          case KeyboardEvents.ArrowRight:
-            if (!isSkinToneInSearch) {
-              return;
-            }
-            event.preventDefault();
-            setSkinToneFanOpenState(true);
-            focusSkinTonePicker();
-            break;
-          case KeyboardEvents.ArrowDown:
-            event.preventDefault();
-            // The active-search Search↔Grid exception (NAVIGATION.md §5)
-            // wins over generic DOM-order traversal.
-            if (isSearchMode) {
-              goDownFromSearchInput();
-            } else {
-              focusNextRegionFromSearch(goDownFromSearchInput);
-            }
-            break;
-          case KeyboardEvents.Enter:
-            event.preventDefault();
-            focusAndClickFirstVisibleEmoji(BodyRef.current);
-            break;
-        }
-      },
-    [
-      focusSkinTonePicker,
-      goDownFromSearchInput,
-      focusNextRegionFromSearch,
-      isSearchMode,
-      setSkinToneFanOpenState,
-      BodyRef,
-      isSkinToneInSearch,
-    ],
-  );
-
-  useEffect(() => {
-    const current = SearchInputRef.current;
-
-    if (!current) {
-      return;
-    }
-
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
-
-    return () => {
-      current.removeEventListener('keydown', scopedKeyDown);
-    };
-  }, [PickerMainRef, SearchInputRef, onKeyDown]);
-}
-
-function useSkinTonePickerKeyboardEvents() {
   const SkinTonePickerRef = useSkinTonePickerRef();
-  const focusSearchInput = useFocusSearchInput();
-  const SearchInputRef = useSearchInputRef();
-  const goDownFromSearchInput = useGoDownFromSearchInput();
-  const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const isSkinToneInPreview = useIsSkinToneInPreview();
-  const isSkinToneInSearch = useIsSkinToneInSearch();
   const onType = useOnType();
-
-  const onKeyDown = useMemo(
-    () =>
-      // eslint-disable-next-line complexity
-      function onKeyDown(event: KeyboardEvent) {
-        const key = logicalArrowKey(event);
-        // The fan axis decides the arrow keys: the search placement and a
-        // horizontal SkinTone primitive move left/right, the preview
-        // placement and a vertical primitive move up/down.
-        const vertical =
-          isSkinToneInPreview ||
-          (!isSkinToneInSearch &&
-            (event.currentTarget as Element | null)?.getAttribute(
-              'data-epr-direction',
-            ) === 'vertical');
-
-        if (!vertical) {
-          switch (key) {
-            case KeyboardEvents.ArrowLeft:
-              event.preventDefault();
-              if (!isOpen) {
-                return focusSearchInput();
-              }
-              focusNextSkinTone(focusSearchInput);
-              break;
-            case KeyboardEvents.ArrowRight:
-              event.preventDefault();
-              if (!isOpen) {
-                return focusSearchInput();
-              }
-              focusPrevSkinTone();
-              break;
-            case KeyboardEvents.ArrowDown:
-              event.preventDefault();
-              if (isOpen) {
-                setIsOpen(false);
-              }
-              goDownFromSearchInput();
-              break;
-            default:
-              onType(event);
-              break;
-          }
-        }
-
-        if (vertical) {
-          switch (key) {
-            case KeyboardEvents.ArrowUp:
-              event.preventDefault();
-              if (!isOpen) {
-                return focusSearchInput();
-              }
-              focusNextSkinTone(focusSearchInput);
-              break;
-            case KeyboardEvents.ArrowDown:
-              event.preventDefault();
-              if (!isOpen) {
-                return focusSearchInput();
-              }
-              focusPrevSkinTone();
-              break;
-            default:
-              onType(event);
-              break;
-          }
-        }
-      },
-    [
-      isOpen,
-      focusSearchInput,
-      setIsOpen,
-      goDownFromSearchInput,
-      onType,
-      isSkinToneInPreview,
-      isSkinToneInSearch,
-    ],
-  );
-
-  useEffect(() => {
-    const current = SkinTonePickerRef.current;
-
-    if (!current) {
-      return;
-    }
-
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
-
-    return () => {
-      current.removeEventListener('keydown', scopedKeyDown);
-    };
-  }, [SkinTonePickerRef, SearchInputRef, isOpen, onKeyDown]);
-}
-
-function useCategoryNavigationKeyboardEvents() {
-  const focusSearchInput = useFocusSearchInput();
   const CategoryNavigationRef = useCategoryNavigationRef();
-  const BodyRef = useBodyRef();
-  const onType = useOnType();
   const focusPrevRegionFromCategories = useFocusPrevRegionFrom('categories');
   const focusNextRegionFromCategories = useFocusNextRegionFrom('categories');
+  const ReactionsRef = useReactionsRef();
+  const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
+  const setVariationPicker = useSetVariationPicker();
+  const registry = useNavigationRegistry();
+  const goDownFromSearchInput = () => {
+    if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
+    focusCategoryNavigation();
+  };
+  const goUpFromBody = () => {
+    if (isSearchMode) return focusSearchInput();
+    focusPrevRegionFromGrid(focusCategoryNavigation);
+  };
+  const main = function onKeyDown(event: KeyboardEvent) {
+    const { key } = event;
 
-  const onKeyDown = useMemo(
-    () =>
-      function onKeyDown(event: KeyboardEvent) {
-        // Arrows along the tab axis move between tabs; arrows across it
-        // leave for the previous/next region. A vertical tablist (e.g. a
-        // side rail) therefore uses Up/Down for tabs, per the ARIA tabs
-        // pattern, and Left/Right to leave.
-        const vertical =
-          (event.currentTarget as Element | null)?.getAttribute(
-            'aria-orientation',
-          ) === 'vertical';
-        const intent = categoryKeyIntent(logicalArrowKey(event), vertical);
+    disallowMouseMove();
+    switch (key) {
+      case 'Escape':
+        event.preventDefault();
+        if (hasOpenToggles()) {
+          closeAllOpenToggles();
+          // A nested variation/tone menu consumes Escape before the
+          // host popover or autocomplete dismisses the whole picker.
+          event.stopPropagation();
+          return;
+        }
+        clearSearch();
+        scrollTo(0);
+        focusSearchInput();
+        break;
+    }
+  };
+  const search = function onKeyDown(event: KeyboardEvent) {
+    if (!eventInRegion(event, SearchInputRef)) return;
+    const key = logicalArrowKey(event, SearchInputRef.current);
 
-        if (!intent) {
-          onType(event);
+    switch (key) {
+      case 'ArrowRight':
+        if (!isSkinToneInSearch) {
           return;
         }
         event.preventDefault();
-        switch (intent) {
-          case 'prev-tab':
-            focusPrevElementSibling(getActiveElement());
-            break;
-          case 'next-tab':
-            focusNextElementSibling(getActiveElement());
-            break;
-          case 'prev-region':
-            focusPrevRegionFromCategories(() => focusSearchInput());
-            break;
-          case 'next-region':
-            focusNextRegionFromCategories(() =>
-              focusFirstVisibleEmoji(BodyRef.current),
-            );
-            break;
+        setIsOpen(true);
+        focusSkinTonePicker();
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        // The active-search Search↔Grid exception (NAVIGATION.md §5)
+        // wins over generic DOM-order traversal.
+        if (isSearchMode) {
+          goDownFromSearchInput();
+        } else {
+          focusNextRegionFromSearch(goDownFromSearchInput);
         }
-      },
-    [
-      BodyRef,
-      focusSearchInput,
-      focusPrevRegionFromCategories,
-      focusNextRegionFromCategories,
-      onType,
-    ],
-  );
+        break;
+      case 'Enter':
+        event.preventDefault();
+        focusAndClickFirstVisibleEmoji(BodyRef.current);
+        break;
+    }
+  };
+  const tone = // eslint-disable-next-line complexity
+    function onKeyDown(event: KeyboardEvent) {
+      if (!eventInRegion(event, SkinTonePickerRef)) return;
+      const key = logicalArrowKey(event, SkinTonePickerRef.current);
+      // The fan axis decides the arrow keys: the search placement and a
+      // horizontal SkinTone primitive move left/right, the preview
+      // placement and a vertical primitive move up/down.
+      const vertical =
+        isSkinToneInPreview ||
+        (!isSkinToneInSearch &&
+          SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
+            'vertical');
 
-  useEffect(() => {
-    const current = CategoryNavigationRef.current;
+      switch (key) {
+        case vertical ? 'ArrowUp' : 'ArrowLeft':
+          event.preventDefault();
+          if (!isOpen) return focusSearchInput();
+          focusNextSkinTone(focusSearchInput);
+          break;
+        case vertical ? 'ArrowDown' : 'ArrowRight':
+          event.preventDefault();
+          if (!isOpen) return focusSearchInput();
+          focusPrevElementSibling(getActiveElement());
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          setIsOpen(false);
+          goDownFromSearchInput();
+          break;
+        default:
+          onType(event);
+      }
+    };
+  const categories = function onKeyDown(event: KeyboardEvent) {
+    if (!eventInRegion(event, CategoryNavigationRef)) return;
+    // Arrows along the tab axis move between tabs; arrows across it
+    // leave for the previous/next region. A vertical tablist (e.g. a
+    // side rail) therefore uses Up/Down for tabs, per the ARIA tabs
+    // pattern, and Left/Right to leave.
+    const vertical =
+      CategoryNavigationRef.current?.getAttribute('aria-orientation') ===
+      'vertical';
+    const key = logicalArrowKey(event, CategoryNavigationRef.current);
+    const direction = reactionFocusDelta(key);
 
-    if (!current) {
+    if (!direction) {
+      onType(event);
       return;
     }
-
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
-
-    return () => {
-      current.removeEventListener('keydown', scopedKeyDown);
-    };
-  }, [CategoryNavigationRef, BodyRef, onKeyDown]);
-}
-
-// Arrow keys move between reaction buttons (and the expand button)
-// while the reactions bar has focus. The bar lives outside the scroll
-// body, so the body handler never sees these events.
-// https://github.com/ealush/emoji-picker-react/issues/411
-function useReactionsKeyboardEvents() {
-  const ReactionsRef = useReactionsRef();
-  // The reactions bar mounts late when the user collapses the full
-  // picker, so the listener effect must rerun when it opens.
-  const [reactionsOpen] = useReactionsModeState();
-
-  const onKeyDown = useMemo(
-    () =>
-      function onKeyDown(event: KeyboardEvent) {
-        const key = logicalArrowKey(event);
-        const current = ReactionsRef.current;
-
-        if (!current) {
-          return;
-        }
-
-        const delta = reactionFocusDelta(key);
-
-        if (delta !== 0 && focusReactionSibling(current, delta)) {
-          event.preventDefault();
-        }
-      },
-    // reactionsOpen: the bar mounts late on collapse, and the new
-    // callback identity reinstalls the listener effect below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ReactionsRef, reactionsOpen],
-  );
-
-  useEffect(() => {
+    event.preventDefault();
+    if (vertical === (key === 'ArrowUp' || key === 'ArrowDown')) {
+      const focusSibling =
+        direction > 0 ? focusNextElementSibling : focusPrevElementSibling;
+      focusSibling(getActiveElement());
+    } else if (direction < 0) {
+      focusPrevRegionFromCategories(focusSearchInput);
+    } else {
+      focusNextRegionFromCategories(() =>
+        focusFirstVisibleEmoji(BodyRef.current),
+      );
+    }
+  };
+  const reactions = function onKeyDown(event: KeyboardEvent) {
+    if (!eventInRegion(event, ReactionsRef)) return;
+    const key = logicalArrowKey(event, ReactionsRef.current);
     const current = ReactionsRef.current;
 
     if (!current) {
       return;
     }
 
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
+    const delta = reactionFocusDelta(key);
 
-    return () => {
-      current.removeEventListener('keydown', scopedKeyDown);
+    if (delta !== 0 && focusReactionSibling(current, delta)) {
+      event.preventDefault();
+    }
+  };
+  const body = function onKeyDown(event: KeyboardEvent) {
+    if (!eventInRegion(event, BodyRef)) return;
+    const key = logicalArrowKey(event, BodyRef.current);
+
+    const activeElement = buttonFromTarget(event.target as HTMLElement);
+    // Consumer controls own editing and activation; only managed emoji
+    // buttons issue grid commands.
+    if (!activeElement) return;
+
+    // Navigation-generation guard (STATE.md §10): a pending
+    // materialize/scroll/focus completion aborts when search, data,
+    // geometry, or reactions state changed underneath it.
+    const generation = registry.currentGeneration();
+    const focusGuard = () => registry.isCurrent(generation);
+
+    const direction = reactionFocusDelta(key);
+    if (direction) {
+      event.preventDefault();
+      const row = key === 'ArrowDown' || key === 'ArrowUp';
+      if (row && hasOpenToggles()) closeAllOpenToggles();
+      else
+        focusAdjacentEmoji(activeElement, direction, row, {
+          shouldFocus: focusGuard,
+          exitUp: row ? goUpFromBody : undefined,
+        });
+      return;
+    }
+    switch (key) {
+      case ' ':
+        event.preventDefault();
+        setVariationPicker(event.target as HTMLElement);
+        break;
+      default:
+        onType(event);
+        break;
+    }
+  };
+  const [composing] = useSearchComposingState();
+  const handler = useRef<(event: KeyboardEvent, menusOnly?: boolean) => void>(
+    () => {},
+  );
+  // One listener owns the native lifecycle; current callbacks supply state
+  // and live region refs without reattaching on every picker render.
+  handler.current = (event, menusOnly) => {
+    if (
+      composing ||
+      event.isComposing ||
+      event.keyCode === 229 ||
+      (menusOnly && !hasOpenToggles())
+    )
+      return;
+    if (!menusOnly) {
+      search(event);
+      tone(event);
+      categories(event);
+      reactions(event);
+      body(event);
+    }
+    main(event);
+  };
+  useEffect(() => {
+    // RootAside owns this native aside for its entire mounted lifetime.
+    // Descendant parts are read through live refs by the delegated handler.
+    const current = ref.current;
+    if (!current) return;
+    const scoped = (event: KeyboardEvent) => {
+      if (eventBelongsToPicker(event, current)) handler.current(event);
     };
-  }, [ReactionsRef, onKeyDown]);
+    const capture = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && eventBelongsToPicker(event, current))
+        handler.current(event, true);
+    };
+    current.addEventListener('keydown', scoped);
+    window.addEventListener('keydown', capture, true);
+    return () => {
+      current.removeEventListener('keydown', scoped);
+      window.removeEventListener('keydown', capture, true);
+    };
+  }, [ref]);
 }
+
+function eventInRegion(event: KeyboardEvent, ref: ElementRef): boolean {
+  return !!ref.current?.contains(event.target as Node);
+}
+
+// Arrow keys move between reaction buttons (and the expand button)
+// while the reactions bar has focus. The bar lives outside the scroll
+// body, so the body handler never sees these events.
+// https://github.com/ealush/emoji-picker-react/issues/411
 
 function reactionFocusDelta(key: string): number {
   switch (key) {
-    case KeyboardEvents.ArrowRight:
-    case KeyboardEvents.ArrowDown:
+    case 'ArrowRight':
+    case 'ArrowDown':
       return 1;
-    case KeyboardEvents.ArrowLeft:
-    case KeyboardEvents.ArrowUp:
+    case 'ArrowLeft':
+    case 'ArrowUp':
       return -1;
     default:
       return 0;
@@ -469,131 +328,6 @@ function focusReactionSibling(root: HTMLElement, delta: number): boolean {
 
   focusElement(sibling);
   return true;
-}
-
-function useBodyKeyboardEvents() {
-  const BodyRef = useBodyRef();
-  const goUpFromBody = useGoUpFromBody();
-  const setVariationPicker = useSetVariationPicker();
-  const hasOpenToggles = useHasOpenToggles();
-  const closeAllOpenToggles = useCloseAllOpenToggles();
-  const registry = useNavigationRegistry();
-
-  const onType = useOnType();
-
-  const onKeyDown = useMemo(
-    () =>
-      function onKeyDown(event: KeyboardEvent) {
-        const key = logicalArrowKey(event);
-
-        const activeElement = buttonFromTarget(getActiveElement());
-
-        // Navigation-generation guard (STATE.md §10): a pending
-        // materialize/scroll/focus completion aborts when search, data,
-        // geometry, or reactions state changed underneath it.
-        const generation = registry.currentGeneration();
-        const focusGuard = () => registry.isCurrent(generation);
-
-        switch (key) {
-          case KeyboardEvents.ArrowRight:
-            event.preventDefault();
-            focusNextVisibleEmoji(activeElement, focusGuard);
-            break;
-          case KeyboardEvents.ArrowLeft:
-            event.preventDefault();
-            focusPrevVisibleEmoji(activeElement, focusGuard);
-            break;
-          case KeyboardEvents.ArrowDown:
-            event.preventDefault();
-            if (hasOpenToggles()) {
-              closeAllOpenToggles();
-              break;
-            }
-            focusVisibleEmojiOneRowDown(activeElement, focusGuard);
-            break;
-          case KeyboardEvents.ArrowUp:
-            event.preventDefault();
-            if (hasOpenToggles()) {
-              closeAllOpenToggles();
-              break;
-            }
-            focusVisibleEmojiOneRowUp(activeElement, goUpFromBody, focusGuard);
-            break;
-          case KeyboardEvents.Space:
-            event.preventDefault();
-            setVariationPicker(event.target as HTMLElement);
-            break;
-          default:
-            onType(event);
-            break;
-        }
-      },
-    [
-      goUpFromBody,
-      onType,
-      setVariationPicker,
-      hasOpenToggles,
-      closeAllOpenToggles,
-      registry,
-    ],
-  );
-
-  useEffect(() => {
-    const current = BodyRef.current;
-
-    if (!current) {
-      return;
-    }
-
-    const scopedKeyDown = (event: KeyboardEvent) => {
-      if (eventBelongsToPicker(event, current)) onKeyDown(event);
-    };
-    current.addEventListener('keydown', scopedKeyDown);
-
-    return () => {
-      current.removeEventListener('keydown', scopedKeyDown);
-    };
-  }, [BodyRef, onKeyDown]);
-}
-
-function useGoDownFromSearchInput() {
-  const focusCategoryNavigation = useFocusCategoryNavigation();
-  const isSearchMode = useIsSearchMode();
-  const BodyRef = useBodyRef();
-
-  return useCallback(
-    function goDownFromSearchInput() {
-      if (isSearchMode) {
-        return focusFirstVisibleEmoji(BodyRef.current);
-      }
-      return focusCategoryNavigation();
-    },
-    [BodyRef, focusCategoryNavigation, isSearchMode],
-  );
-}
-
-function useGoUpFromBody() {
-  const focusSearchInput = useFocusSearchInput();
-  const focusCategoryNavigation = useFocusCategoryNavigation();
-  const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
-  const isSearchMode = useIsSearchMode();
-
-  return useCallback(
-    function goUpFromEmoji() {
-      if (isSearchMode) {
-        return focusSearchInput();
-      }
-      // Previous focusable region in DOM order (normally Categories), with
-      // the legacy direct target as fallback when the graph is empty.
-      focusPrevRegionFromGrid(() => focusCategoryNavigation());
-    },
-    [
-      focusSearchInput,
-      isSearchMode,
-      focusCategoryNavigation,
-      focusPrevRegionFromGrid,
-    ],
-  );
 }
 
 // Cross-region focus through the registered semantic graph. Returns true
@@ -649,59 +383,28 @@ export function useFocusRegion() {
 }
 
 function useFocusNextRegionFrom(from: NavigationRegionKind) {
-  const registry = useNavigationRegistry();
-  const PickerMainRef = usePickerMainRef();
-  const focusRegion = useFocusRegion();
-
-  return useCallback(
-    function focusNextRegion(fallback?: () => void) {
-      const next = getNextRegion(registry, PickerMainRef.current, from);
-      if (!focusRegion(next)) {
-        fallback?.();
-      }
-    },
-    [registry, PickerMainRef, focusRegion, from],
-  );
+  return useFocusAdjacentRegion(from, 1);
 }
 
 function useFocusPrevRegionFrom(from: NavigationRegionKind) {
+  return useFocusAdjacentRegion(from, -1);
+}
+
+function useFocusAdjacentRegion(from: NavigationRegionKind, direction: number) {
   const registry = useNavigationRegistry();
   const PickerMainRef = usePickerMainRef();
   const focusRegion = useFocusRegion();
-
-  return useCallback(
-    function focusPrevRegion(fallback?: () => void) {
-      const prev = getPrevRegion(registry, PickerMainRef.current, from);
-      if (!focusRegion(prev)) {
-        fallback?.();
-      }
-    },
-    [registry, PickerMainRef, focusRegion, from],
-  );
+  return (fallback?: () => void) => {
+    const getRegion = direction > 0 ? getNextRegion : getPrevRegion;
+    if (!focusRegion(getRegion(registry, PickerMainRef.current, from)))
+      fallback?.();
+  };
 }
 
 function focusNextSkinTone(exitLeft: () => void) {
-  const currentSkinTone = getActiveElement();
-
-  if (!currentSkinTone) {
-    return;
-  }
-
-  if (!hasNextElementSibling(currentSkinTone)) {
-    exitLeft();
-  }
-
-  focusNextElementSibling(currentSkinTone);
-}
-
-function focusPrevSkinTone() {
-  const currentSkinTone = getActiveElement();
-
-  if (!currentSkinTone) {
-    return;
-  }
-
-  focusPrevElementSibling(currentSkinTone);
+  const current = getActiveElement();
+  if (current && !current.nextElementSibling) exitLeft();
+  focusNextElementSibling(current);
 }
 
 function useOnType() {
@@ -739,16 +442,13 @@ function useOnType() {
 
 // Left/right arrows follow the visual direction: under `dir="rtl"` the
 // grid, tabs, reactions and tone fan are mirrored, so ArrowLeft moves
-// forward. Handlers run on their region's own listener, so currentTarget
-// is the region whose computed direction decides.
-function logicalArrowKey(event: KeyboardEvent): string {
+// forward. The live region element supplies the computed direction.
+function logicalArrowKey(event: KeyboardEvent, region: Element | null): string {
   const { key } = event;
-  const flip: Record<string, string> = {
-    [KeyboardEvents.ArrowLeft]: KeyboardEvents.ArrowRight,
-    [KeyboardEvents.ArrowRight]: KeyboardEvents.ArrowLeft,
-  };
-  return flip[key] && isRtl(event.currentTarget as Element | null)
-    ? flip[key]
+  return (key === 'ArrowLeft' || key === 'ArrowRight') && isRtl(region)
+    ? key === 'ArrowLeft'
+      ? 'ArrowRight'
+      : 'ArrowLeft'
     : key;
 }
 
@@ -756,28 +456,4 @@ function hasModifier(event: KeyboardEvent): boolean {
   const { metaKey, ctrlKey, altKey } = event;
 
   return metaKey || ctrlKey || altKey;
-}
-
-type CategoryKeyIntent =
-  'prev-tab' | 'next-tab' | 'prev-region' | 'next-region';
-
-const HORIZONTAL_CATEGORY_KEYS: Record<string, CategoryKeyIntent> = {
-  [KeyboardEvents.ArrowLeft]: 'prev-tab',
-  [KeyboardEvents.ArrowRight]: 'next-tab',
-  [KeyboardEvents.ArrowUp]: 'prev-region',
-  [KeyboardEvents.ArrowDown]: 'next-region',
-};
-
-const VERTICAL_CATEGORY_KEYS: Record<string, CategoryKeyIntent> = {
-  [KeyboardEvents.ArrowUp]: 'prev-tab',
-  [KeyboardEvents.ArrowDown]: 'next-tab',
-  [KeyboardEvents.ArrowLeft]: 'prev-region',
-  [KeyboardEvents.ArrowRight]: 'next-region',
-};
-
-function categoryKeyIntent(
-  key: string,
-  vertical: boolean,
-): CategoryKeyIntent | undefined {
-  return (vertical ? VERTICAL_CATEGORY_KEYS : HORIZONTAL_CATEGORY_KEYS)[key];
 }

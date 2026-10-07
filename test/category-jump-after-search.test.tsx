@@ -20,12 +20,12 @@ vi.mock('../src/DomUtils/scrollTo', async (importOriginal) => {
     await importOriginal<typeof import('../src/DomUtils/scrollTo')>();
   return {
     ...actual,
-    scrollTo: (root: unknown, top = 0) => {
+    scrollTo: (root: unknown, top: number | (() => number) = 0) => {
       const animals = document.querySelector(
         '[data-epr-category="animals_nature"]',
       );
       jumps.push({
-        top,
+        top: typeof top === 'function' ? top() : top,
         animalsHidden: !!animals?.classList.contains('epr-hidden'),
         searchActive: !!document.querySelector('.epr-search-active'),
       });

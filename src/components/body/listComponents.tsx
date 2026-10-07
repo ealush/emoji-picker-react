@@ -4,7 +4,7 @@ import { DataEmoji } from '../../dataUtils/DataTypes';
 import { emojiNames, emojiHasVariations } from '../../dataUtils/emojiUtils';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
-import { EmojiStyleValue } from '../../types/exposedTypes';
+import { EmojiStyle, EmojiStyleValue } from '../../types/exposedTypes';
 
 /** The emoji a custom `Emoji` cell renders. */
 export type ListEmoji = {
@@ -16,8 +16,8 @@ export type ListEmoji = {
   /** Native emoji text (custom emojis: their id). */
   emoji: string;
   isCustom: boolean;
-  /** Image URL for the active emoji style (custom emojis: their imgUrl). */
-  imageUrl: string;
+  /** Active image style URL, or undefined for standard native emojis. */
+  imageUrl?: string;
   /** Whether a long press opens skin tone variations. */
   hasVariations: boolean;
 };
@@ -70,8 +70,10 @@ export function emojiRenderInfo(
     emoji: isCustom ? unified : parseNativeEmoji(unified),
     isCustom,
     imageUrl: isCustom
-      ? (emoji.imgUrl as string)
-      : getEmojiUrl(unified, emojiStyle),
+      ? emoji.imgUrl
+      : emojiStyle === EmojiStyle.NATIVE
+        ? undefined
+        : getEmojiUrl(unified, emojiStyle),
     hasVariations: emojiHasVariations(emoji),
   };
 }

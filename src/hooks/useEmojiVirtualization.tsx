@@ -52,9 +52,9 @@ export function useEmojiVirtualization({
   const rendered = new Set<string>();
   const emojisToPush = categoryEmojis.filter((emoji) => {
     const isDisallowed = isEmojiDisallowed(emoji);
-    const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
+    const { hidden } = isEmojiHidden(emoji);
 
-    if (failedToLoad || filteredOut || hidden || isDisallowed) {
+    if (hidden || isDisallowed) {
       return false;
     }
     const unified = emojiUnified(emoji, activeSkinTone);
@@ -110,6 +110,7 @@ export function useEmojiVirtualization({
 
     accumulator.push(
       <ClickableEmoji
+        index={index}
         showVariations={showVariations}
         key={unified}
         emoji={emoji}
@@ -133,5 +134,6 @@ export function useEmojiVirtualization({
     virtualizedCounter,
     emojis,
     dimensions,
+    emojiCount: emojisToPush.length,
   };
 }

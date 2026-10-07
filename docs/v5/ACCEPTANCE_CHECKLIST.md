@@ -56,7 +56,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] `searchLabel` implemented and default search aria-label is no longer hard-coded English.
 - [x] `suggestedEmojis` implemented.
 - [x] `onReactionsModeChange` implemented.
-- [x] no unapproved controlled `skinTone` or `mode/defaultMode` API was added.
+- [x] controlled `skinTone` follows STATE.md §11; no controlled `mode/defaultMode` API was added.
 
 ## 6. Search semantics
 

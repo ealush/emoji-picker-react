@@ -173,7 +173,7 @@ export function useGetEmojisByCategory() {
           if (!emoji) return undefined;
           return {
             ...emoji,
-            [Keys.unified]: identity,
+            renderUnified: identity,
           };
         })
         .filter(Boolean) as DataEmojis;
@@ -187,7 +187,7 @@ export function useGetEmojisByCategory() {
         if (!emoji) return undefined;
         return {
           ...emoji,
-          [Keys.unified]: s.unified,
+          fallbackUnified: s.unified,
         };
       })
       .filter(Boolean) as DataEmojis;

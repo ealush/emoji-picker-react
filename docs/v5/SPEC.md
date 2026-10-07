@@ -108,9 +108,9 @@ Consumers MUST NOT be required to:
 
 ### 4.2 Item-level customization
 
-v5 does not promise arbitrary replacement of managed emoji-button markup.
+v5 supports managed component replacements through `Root components` and `List components`, as specified in [PRIMITIVES.md §16](./PRIMITIVES.md#16-appearance-ownership-and-shared-control-replacements). Emoji cells must render one native button and preserve the supplied behavioral attributes, ARIA, geometry and focus treatment. Headers and control slots have their own documented native targets. SearchInput replacements forward their ref to the real input.
 
-This is deliberate. Stable parts/CSS tokens cover visual theming. If real consumer requirements later demonstrate that item-level React composition is necessary, it should be designed as a separate RFC with explicit ref/handler/ARIA/variation semantics rather than shipping an unsafe escape hatch speculatively.
+The engine continues to own selection, variations, virtualization and keyboard navigation. Component replacements customize presentation within that protocol; they do not expose arbitrary grid or state ownership.
 
 Do not describe the v5 primitives API as fully headless.
 
@@ -151,14 +151,14 @@ Normative semantics are specified in [STATE.md](./STATE.md).
 Important rules:
 
 - `searchValue` is the rendered source of truth when supplied;
-- user interaction emits `onSearchChange` but does not create a hidden optimistic value;
+- user interaction emits `onSearchChange`; a temporary input draft permits fast typing, but accepted state and filtering remain parent-owned (STATE.md §1/§4);
 - parent-driven changes do not re-emit the callback;
 - type-to-search uses the same search transition when Search is registered/enabled;
 - type-to-search focuses Search immediately in both controlled and uncontrolled mode, then follows ordinary input semantics; focus transfer is not conditional on the parent accepting the proposal;
 - with Search omitted it behaves like `searchDisabled` and leaves Grid focus/search state unchanged;
 - the clear button is a user-driven change and emits `onSearchChange('')`.
 
-Initial v5 does **not** add controlled skin tone, active category, focused emoji, variation state, scroll position, preview state, or picker mode. Those remain internal/existing APIs until a demonstrated consumer need justifies new surface.
+v5 supports controlled `skinTone` and uncontrolled `defaultSkinTone`, with `onSkinToneChange` proposals, as specified in STATE.md §11. Active category, focused emoji, variation state, scroll position, preview state and picker mode remain internal or observational surfaces.
 
 ## 7. Reactions
 

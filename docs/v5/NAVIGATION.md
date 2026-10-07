@@ -155,7 +155,7 @@ Consumers who require their own control to join the arrow graph need a future ex
 
 ## 8. Virtualized grid
 
-The grid owns logical coordinates independent of mounted DOM rows.
+The grid owns logical coordinates independent of mounted DOM rows. Horizontal and vertical commands use the filtered category count and logical index, preserving the column across rows and clamping to the last cell of a partial row. Commands originating from consumer controls inside Viewport MUST retain native editing and activation behavior; only managed emoji targets issue grid commands.
 
 A logical destination includes enough information to:
 1. identify the emoji;
@@ -206,3 +206,9 @@ Before scrolling or focusing, completion MUST verify that the generation is stil
 - Root unmount.
 
 This prevents a row calculated from an obsolete grid from stealing focus after rapid typing, resize, configuration changes, or mode transition.
+
+## 12. Element attachment and composition
+
+Keyboard listeners and region registrations follow each real element's attachment, replacement and detachment independently of Root rendering. Conditionally mounted, lazy and remounted parts receive the same behavior as initially mounted parts. Detached elements leave no active listeners or graph destinations.
+
+IME confirmation and candidate-navigation keys are not picker commands. Composing Enter, arrows and Escape MUST NOT be prevented, select an emoji, change focus or dismiss a picker menu. The shared composition state, native `isComposing` and legacy keyCode 229 suppress picker commands.

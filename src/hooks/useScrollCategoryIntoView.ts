@@ -38,7 +38,6 @@ export function useScrollCategoryIntoView() {
   const PickerMainRef = usePickerMainRef();
   const SearchInputRef = useSearchInputRef();
   const registry = useNavigationRegistry();
-  const latestJump = React.useRef(0);
   const [searchTerm] = useSearchTermState();
   const committedSearch = React.useRef(searchTerm);
   committedSearch.current = searchTerm;
@@ -47,11 +46,11 @@ export function useScrollCategoryIntoView() {
     // An explicit jump supersedes pending scroll/focus work (e.g. the
     // post-search scroll to top).
     registry.invalidate();
-    const jump = ++latestJump.current;
+    const generation = registry.currentGeneration();
     const deadline = Date.now() + MAX_WAIT_MS;
 
     const attempt = () => {
-      if (jump !== latestJump.current || !BodyRef.current) {
+      if (!registry.isCurrent(generation) || !BodyRef.current) {
         return;
       }
       // Group names are user-controlled; escape for the attribute selector.
@@ -79,14 +78,13 @@ export function useScrollCategoryIntoView() {
       // measurement effects update preceding rows. Read the offset on the
       // next frame, after those updates, rather than retaining the short
       // search-result layout as the jump destination.
-      requestAnimationFrame(() => {
-        if (
-          jump === latestJump.current &&
-          BodyRef.current?.contains($category)
-        ) {
-          scrollTo(PickerMainRef.current, $category.offsetTop || 0);
-        }
-      });
+      scrollTo(
+        PickerMainRef.current,
+        () => $category.offsetTop,
+        () =>
+          registry.isCurrent(generation) &&
+          !!BodyRef.current?.contains($category),
+      );
     };
     attempt();
   };

@@ -9,6 +9,10 @@ export enum EmojiProperties {
 }
 
 export interface DataEmoji extends WithName {
+  /** Exact rendered identity; canonical unified remains the search identity. */
+  renderUnified?: string;
+  /** Stored recent identity when the active tone has no matching variation. */
+  fallbackUnified?: string;
   [EmojiProperties.unified]: string;
   [EmojiProperties.variations]?: string[];
   [EmojiProperties.added_in]: string;

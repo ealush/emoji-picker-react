@@ -8,43 +8,41 @@ export function ElementRefContextProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const PickerMainRef = React.useRef<HTMLElement>(null);
-  const AnchoredEmojiRef = React.useRef<HTMLElement>(null);
-  const BodyRef = React.useRef<HTMLDivElement>(null);
-  const EmojiListRef = React.useRef<HTMLUListElement>(null);
-  const SearchInputRef = React.useRef<HTMLInputElement>(null);
-  const SkinTonePickerRef = React.useRef<HTMLDivElement>(null);
-  const CategoryNavigationRef = React.useRef<HTMLDivElement>(null);
-  const VariationPickerRef = React.useRef<HTMLDivElement>(null);
-  const ReactionsRef = React.useRef<HTMLUListElement>(null);
-
-  // Stable value identity: provider rerenders must not rerender ref
-  // consumers (all members are stable refs).
-  const value = React.useMemo(
-    () => ({
-      AnchoredEmojiRef,
-      BodyRef,
-      EmojiListRef,
-      CategoryNavigationRef,
-      PickerMainRef,
-      SearchInputRef,
-      SkinTonePickerRef,
-      VariationPickerRef,
-      ReactionsRef,
-    }),
-    // Refs are stable; this value never changes identity.
-    [],
-  );
-
+  const [refs] = React.useState(createElementRefs);
   return (
-    <ElementRefContext.Provider value={value}>
+    <ElementRefContext.Provider value={refs}>
       {children}
     </ElementRefContext.Provider>
   );
 }
 
 export type ElementRef<E extends HTMLElement = HTMLElement> =
-  React.MutableRefObject<E | null>;
+  React.MutableRefObject<E | null> & {
+    subscribe?: (listener: () => void) => () => void;
+  };
+
+// Observe attachment without rerendering ref consumers. Root services follow
+// conditional parts, native element replacements and remounts.
+function createElementRef<E extends HTMLElement>(): ElementRef<E> {
+  let current: E | null = null;
+  const listeners = new Set<() => void>();
+  return {
+    get current() {
+      return current;
+    },
+    set current(element: E | null) {
+      if (element === current) return;
+      current = element;
+      listeners.forEach((listener) => listener());
+    },
+    subscribe(listener: () => void) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+  };
+}
 
 type ElementRefs = {
   PickerMainRef: ElementRef;
@@ -58,17 +56,22 @@ type ElementRefs = {
   ReactionsRef: ElementRef<HTMLUListElement>;
 };
 
-const ElementRefContext = /* @__PURE__ */ React.createContext<ElementRefs>({
-  AnchoredEmojiRef: React.createRef(),
-  BodyRef: React.createRef(),
-  CategoryNavigationRef: React.createRef(),
-  EmojiListRef: React.createRef(),
-  PickerMainRef: React.createRef(),
-  SearchInputRef: React.createRef(),
-  SkinTonePickerRef: React.createRef(),
-  VariationPickerRef: React.createRef(),
-  ReactionsRef: React.createRef(),
-});
+function createElementRefs(): ElementRefs {
+  return {
+    PickerMainRef: createElementRef(),
+    AnchoredEmojiRef: createElementRef(),
+    BodyRef: createElementRef<HTMLDivElement>(),
+    EmojiListRef: createElementRef<HTMLUListElement>(),
+    SearchInputRef: createElementRef<HTMLInputElement>(),
+    SkinTonePickerRef: createElementRef<HTMLDivElement>(),
+    CategoryNavigationRef: createElementRef<HTMLDivElement>(),
+    VariationPickerRef: createElementRef<HTMLDivElement>(),
+    ReactionsRef: createElementRef<HTMLUListElement>(),
+  };
+}
+
+const ElementRefContext =
+  /* @__PURE__ */ React.createContext<ElementRefs>(createElementRefs());
 
 function useElementRef() {
   return React.useContext(ElementRefContext);

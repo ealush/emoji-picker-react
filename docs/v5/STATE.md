@@ -20,7 +20,7 @@ When `searchValue` is present:
 - filtering is scheduled from the value the parent actually supplies, not merely from a rejected proposal;
 - parent-driven `searchValue` changes do not re-emit `onSearchChange`.
 
-If the parent ignores a proposal, the accepted search value remains unchanged.
+If the parent ignores a proposal, the accepted search value remains unchanged. The input keeps a temporary raw draft during a typing burst; after 100 ms without another edit, an outstanding rejected draft reconciles to the latest accepted value. Parent acceptance or transformation synchronizes the display immediately. This draft never drives filtering.
 
 ### Uncontrolled
 
@@ -100,14 +100,9 @@ When a printable type-to-search key is handled from Grid:
 
 Focus transfer is **not** conditional on the parent accepting the proposal.
 
-This is the same thing a controlled `<input>` already does: you type into it, the parent ignores the change, the visible value does not move, and you remain focused in the input. Type-to-search is just that interaction started from one keystroke earlier.
+The first grid key seeds the input draft and transfers focus synchronously. Subsequent keystrokes use ordinary input editing. A Root-scoped pending proposal, stamped with the accepted value at emission, lets another grid key build on the same draft if parent updates lag behind fast typing. When the accepted stamp changes, the next proposal starts from the new accepted value.
 
-Deferring focus until acceptance was considered and rejected, because it breaks two ordinary cases:
-
-- **Fast typing.** Typing `cat` from the Grid would emit three proposals before the first commit lands. Each subsequent key computes from the still-unchanged accepted value, so the parent sees `c`, `a`, `t` rather than `c`, `ca`, `cat`, and focus never transfers.
-- **Parents that accept and transform.** `onSearchChange={v => setSearch(v.trimStart())}` has accepted the edit, but the accepted value never equals the exact proposal, so focus would stay stranded in the Grid while the results change underneath it.
-
-Because focus moves on the first key, every subsequent keystroke is an ordinary input edit and follows §1. There is no proposal queue, no pending-focus token, and no acceptance comparison.
+The quiet-time reconciliation compares that accepted stamp before discarding an outstanding draft. This is an acceptance comparison for display reconciliation, not a condition on focus transfer. There is no pending-focus token or queue of proposals. Rejected drafts do not filter; accepted or transformed parent values do.
 
 ### Search omitted/disabled
 
@@ -122,7 +117,7 @@ An explicit controlled `searchValue` may still filter List when Search is omitte
 
 ## 5. IME composition
 
-IME composition has a temporary DOM composition buffer.
+IME composition has a temporary DOM composition buffer. Picker keyboard commands, including Enter selection, arrow navigation, type-to-search and Root Escape, MUST leave composing keys unclaimed. Native `isComposing`, the active composition state and legacy keyCode 229 all suppress commands.
 
 From `compositionstart` until `compositionend`:
 
@@ -227,6 +222,8 @@ Examples:
 - custom ID `"PartyParrot"` → render identity `"partyparrot"`, matching how `customEmojis` was indexed;
 - character `"🧠"` → `"1f9e0"`; `"©"` → `"00a9-fe0f"`; `"#️⃣"` → `"0023-fe0f-20e3"` (apps that store recents as inserted text pass them through unchanged).
 
+Explicit neutral and toned identities, including mixed-tone sequences, are preserved through global skin-tone changes. Search matches the canonical base record while rendering and selection use the exact supplied identity. `useActiveEmoji()` reports the same identity and tone as clicking that button, including neutral variations.
+
 Supplying `suggestedEmojis` does not write those entries into localStorage by itself.
 
 ## 10. Async navigation cancellation
@@ -245,11 +242,12 @@ A pending materialize/scroll/focus operation captures the generation. It MUST ab
 
 Rapid input or resize must never focus an emoji from a stale grid snapshot.
 
-## 11. State intentionally not added
+## 11. Skin tone and state intentionally not added
+
+`skinTone` is the controlled visible source of truth; `defaultSkinTone` initializes uncontrolled state once per mounted lifetime. Selecting a tone or calling `useSkinTone()`'s setter emits `onSkinToneChange(next)`. While controlled, the parent decides the visible tone. Local selection is retained so removing the controlled prop resumes from the last selected tone. Explicit suggestions and neutral variation choices retain their own rendered identity.
 
 Initial v5 does not expose controlled:
 
-- skin tone beyond existing `defaultSkinTone` + `onSkinToneChange`;
 - active category;
 - focused emoji;
 - preview item;
@@ -264,3 +262,7 @@ localStorage is not read during SSR.
 Server output and hydration-first output use deterministic non-persisted suggestions. Persisted suggestions may apply after mount.
 
 See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md) for identity and React-16 runtime requirements.
+
+## 13. Asset failure recovery
+
+Image failures belong to the current rendering style, image resolver and custom-emoji source. Changing those inputs clears failures, and late errors from a superseded source MUST NOT hide the replacement. Standard native glyphs do not inherit image failures. Within one unchanged source, failures suppress the failed rendered identity for that mounted lifetime.

@@ -33,6 +33,7 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useSkinToneFanOpenState: vi.fn(() => [false, vi.fn()]),
   useReactionsModeState: vi.fn(() => [false, vi.fn()]),
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
+  useSearchComposingState: vi.fn(() => [false, vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
@@ -95,6 +96,7 @@ describe('useKeyboardNavigation', () => {
     pickerMain = document.createElement('div');
     searchInput = document.createElement('input');
 
+    pickerMain.appendChild(searchInput);
     (usePickerMainRef as any).mockReturnValue({ current: pickerMain });
     (useSearchInputRef as any).mockReturnValue({ current: searchInput });
     (useBodyRef as any).mockReturnValue({
@@ -171,6 +173,7 @@ describe('useKeyboardNavigation', () => {
 
     beforeEach(() => {
       categoryNav = document.createElement('div');
+      pickerMain.appendChild(categoryNav);
       (useCategoryNavigationRef as any).mockReturnValue({
         current: categoryNav,
       });

@@ -23,10 +23,11 @@ import {
 } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
-  activeVariationFromUnified,
+  skinToneFromEmoji,
   emojiHasVariations,
   emojiNames,
   emojiUnified,
+  emojiCanonicalUnified,
 } from '../dataUtils/emojiUtils';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
@@ -70,15 +71,14 @@ export function useMouseDownHandlers(
 
       closeAllOpenToggles();
 
-      const [emoji, unified] = emojiFromEvent(event, emojiByUnified);
+      const [record, unified] = emojiFromEvent(event, emojiByUnified);
 
-      if (!emoji || !unified) {
+      if (!record || !unified) {
         return;
       }
 
-      const skinToneToUse =
-        activeVariationFromUnified(unified) ??
-        (emojiHasVariations(emoji) ? SkinTones.NEUTRAL : activeSkinTone);
+      const emoji = { ...record, renderUnified: unified };
+      const skinToneToUse = skinToneFromEmoji(emoji, unified, activeSkinTone);
 
       updateSuggested();
       setSuggested(emoji, skinToneToUse);
@@ -250,7 +250,7 @@ function emojiFromEvent(
     return [];
   }
 
-  return [emoji, unified ?? resolvedUnified];
+  return [emoji, resolvedUnified];
 }
 
 export function emojiClickOutput(
@@ -277,19 +277,21 @@ export function emojiClickOutput(
     };
   }
   const unified = emojiUnified(emoji, activeSkinTone);
+  const imageStyle =
+    activeEmojiStyle === EmojiStyle.NATIVE
+      ? EmojiStyle.APPLE
+      : activeEmojiStyle;
 
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(
-      emojiStyle: EmojiStyleValue = activeEmojiStyle ?? EmojiStyle.APPLE,
-    ) {
+    getImageUrl(emojiStyle: EmojiStyleValue = imageStyle) {
       return getEmojiUrl(unified, emojiStyle);
     },
-    imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),
+    imageUrl: getEmojiUrl(unified, imageStyle),
     isCustom: false,
     names,
     unified,
-    unifiedWithoutSkinTone: emojiUnified(emoji),
+    unifiedWithoutSkinTone: emojiCanonicalUnified(emoji),
   };
 }

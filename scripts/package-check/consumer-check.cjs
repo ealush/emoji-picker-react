@@ -179,12 +179,21 @@ check('primitives load the dataset on demand', () => {
 check('icon data URIs are encoded SVG XML', () => {
   for (const file of ['dist/index.js', 'dist/primitives/index.js']) {
     const content = read(file);
-    const icons = [...content.matchAll(/data:image\/svg\+xml,([^"'\s]+)/g)];
+    // Match the opening quote's delimiter, allowing the other quote and
+    // whitespace inside the complete JS literal before decoding the URI.
+    const icons = [...content.matchAll(/("data:image\/svg\+xml,(?:\\.|[^"\\])*"|'data:image\/svg\+xml,(?:\\.|[^'\\])*')/g)]
+      .map(([literal]) => require('vm').runInNewContext(literal))
+      .filter((value) => value.startsWith('data:image/svg+xml,'))
+      .map((value) => value.slice('data:image/svg+xml,'.length));
     assert.ok(icons.length > 0, `${file} has no embedded SVG icons`);
-    for (const [, encoded] of icons) {
+    for (const encoded of icons) {
       assert.ok(encoded.startsWith('%3Csvg'), `${file} contains raw SVG XML`);
       const svg = decodeURIComponent(encoded);
-      assert.ok(svg.startsWith('<svg ') && svg.endsWith('</svg>'), `${file} has malformed SVG`);
+      const { JSDOM } = requireFromScratch('jsdom');
+      const xml = new JSDOM(svg, { contentType: 'image/svg+xml' });
+      assert.equal(xml.window.document.documentElement.localName, 'svg', `${file} has malformed SVG`);
+      assert.equal(xml.window.document.documentElement.namespaceURI, 'http://www.w3.org/2000/svg');
+      xml.window.close();
     }
   }
 });

@@ -29,6 +29,7 @@ type ClickableEmojiButtonProps = Readonly<{
   emojiInfo?: Omit<ListEmoji, 'isActive'>;
   /** `gridcell` inside the emoji grid; native button role elsewhere. */
   role?: 'gridcell';
+  index?: number;
 }>;
 
 export function ClickableEmojiButton({
@@ -46,6 +47,7 @@ export function ClickableEmojiButton({
   as: Custom,
   emojiInfo,
   role,
+  index,
 }: ClickableEmojiButtonProps) {
   const isActive = useIsActiveEmoji(unified);
   const appearance = useDefaultAppearance();
@@ -68,6 +70,7 @@ export function ClickableEmojiButton({
       'data-epr-part': 'emoji',
       'data-epr-active': isActive ? '' : undefined,
       'data-epr-unified': unified,
+      'data-epr-index': index,
       'aria-label': getAriaLabel(emojiNames),
       'data-epr-full-name': emojiNames.join(','),
       style,
@@ -87,6 +90,7 @@ export function ClickableEmojiButton({
       data-epr-part="emoji"
       data-epr-active={isActive ? '' : undefined}
       data-epr-unified={unified}
+      data-epr-index={index}
       aria-label={getAriaLabel(emojiNames)}
       data-epr-full-name={emojiNames}
       style={style}

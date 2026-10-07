@@ -20,7 +20,7 @@ import {
   useGetEmojiUrlConfig,
   useAllowExpandReactions,
 } from '../config/useConfig';
-import { activeVariationFromUnified } from '../dataUtils/emojiUtils';
+import { skinToneFromEmoji } from '../dataUtils/emojiUtils';
 import { emojiClickOutput } from '../hooks/useMouseDownHandlers';
 import {
   useEmojiDataState as useDataState,
@@ -64,9 +64,17 @@ export function useActiveEmoji(): EmojiClickData | null {
     if (!emoji) {
       return null;
     }
-    const skinTone =
-      activeVariationFromUnified(activeEmoji.unified) ?? activeSkinTone;
-    return emojiClickOutput(emoji, skinTone, emojiStyle, getEmojiUrl);
+    const skinTone = skinToneFromEmoji(
+      emoji,
+      activeEmoji.unified,
+      activeSkinTone,
+    );
+    return emojiClickOutput(
+      { ...emoji, renderUnified: activeEmoji.unified },
+      skinTone,
+      emojiStyle,
+      getEmojiUrl,
+    );
   }, [activeEmoji, activeSkinTone, emojiByUnified, emojiStyle, getEmojiUrl]);
 }
 

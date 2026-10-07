@@ -25,6 +25,7 @@ type ClickableEmojiProps = Readonly<
     style?: React.CSSProperties;
     tabIndex?: number;
     role?: 'gridcell';
+    index?: number;
   }
 >;
 
@@ -44,6 +45,7 @@ export function ClickableEmoji({
   style,
   tabIndex,
   role,
+  index,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
   const { Emoji: SharedEmoji } = usePickerComponents();
@@ -67,6 +69,7 @@ export function ClickableEmoji({
       as={Custom}
       emojiInfo={info}
       role={role}
+      index={index}
     >
       <ViewOnlyEmoji
         unified={unified}

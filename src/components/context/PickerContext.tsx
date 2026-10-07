@@ -3,6 +3,8 @@ import { useState } from 'react';
 
 import {
   useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
+  useCustomEmojisConfig,
   useEmojiVersionConfig,
   useDefaultSkinToneConfig,
   useSkinToneConfig,
@@ -147,7 +149,7 @@ const ViewportSliceContext = /* @__PURE__ */ React.createContext<{
 });
 
 const LoadSliceContext = /* @__PURE__ */ React.createContext<{
-  emojisThatFailedToLoadState: ReactState<Set<string>>;
+  emojisThatFailedToLoadState: [Set<string>, (unified: string) => void];
   isPastInitialLoad: boolean;
 }>({
   emojisThatFailedToLoadState: [new Set(), () => {}],
@@ -315,7 +317,27 @@ export function PickerContextProvider({ children }: Props) {
   );
 
   const activeCategoryState = useState<ActiveCategoryState>(null);
-  const emojisThatFailedToLoadState = useState<Set<string>>(new Set());
+  const emojiStyle = useEmojiStyleConfig();
+  const resolver = useGetEmojiUrlConfig();
+  const customEmojis = useCustomEmojisConfig();
+  // Each asset source owns its failure cache. Errors from older sources can
+  // only update their old cache; they never suppress the current assets.
+  const failedIds = React.useMemo(
+    () => new Set<string>(),
+    // The cache lifetime follows asset inputs, not the current failures.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [emojiStyle, resolver, customEmojis],
+  );
+  const [failureVersion, setFailureVersion] = useState({});
+  const setFailed = React.useCallback(
+    (unified: string) => {
+      failedIds.add(unified);
+      setFailureVersion({});
+    },
+    [failedIds],
+  );
+  const emojisThatFailedToLoadState: [Set<string>, (unified: string) => void] =
+    [failedIds, setFailed];
   const visibleCategoriesState = useState<string[]>([]);
   const emojiSizeState = useState<number | null>(null);
   const viewportValue = React.useMemo(
@@ -334,13 +356,11 @@ export function PickerContextProvider({ children }: Props) {
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
   const loadValue = React.useMemo(
     () => ({
-      emojisThatFailedToLoadState: emojisThatFailedToLoadState as ReactState<
-        Set<string>
-      >,
+      emojisThatFailedToLoadState,
       isPastInitialLoad,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [emojisThatFailedToLoadState[0], isPastInitialLoad],
+    [failedIds, failureVersion, setFailed, isPastInitialLoad],
   );
 
   useMarkInitialLoad(setIsPastInitialLoad);

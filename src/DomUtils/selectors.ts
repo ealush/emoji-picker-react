@@ -195,50 +195,6 @@ export function allVisibleEmojis(parent: NullableElement) {
   ) as HTMLElement[];
 }
 
-export function lastVisibleEmoji(element: NullableElement): NullableElement {
-  if (!element) return null;
-
-  const allEmojis = allVisibleEmojis(element);
-  const [last] = allEmojis.slice(-1);
-  if (!last) {
-    return null;
-  }
-
-  if (!isVisibleEmoji(last)) {
-    return prevVisibleEmoji(last);
-  }
-
-  return last;
-}
-
-export function nextVisibleEmoji(element: HTMLElement): NullableElement {
-  const next = element.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return firstVisibleEmoji(nextCategory(element));
-  }
-
-  if (!isVisibleEmoji(next)) {
-    return nextVisibleEmoji(next);
-  }
-
-  return next;
-}
-
-export function prevVisibleEmoji(element: HTMLElement): NullableElement {
-  const prev = element.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return lastVisibleEmoji(prevCategory(element));
-  }
-
-  if (!isVisibleEmoji(prev)) {
-    return prevVisibleEmoji(prev);
-  }
-
-  return prev;
-}
-
 export function firstVisibleEmoji(parent: NullableElement) {
   if (!parent) {
     return null;
@@ -249,44 +205,16 @@ export function firstVisibleEmoji(parent: NullableElement) {
   return firstVisibleElementInContainer(parent, allEmojis, 0.1);
 }
 
-export function prevCategory(element: NullableElement): NullableElement {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const prev = category.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return null;
-  }
-
-  if (isHidden(prev)) {
-    return prevCategory(prev);
-  }
-
-  return prev;
-}
-
-export function nextCategory(element: NullableElement): NullableElement {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const next = category.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return null;
-  }
-
-  if (isHidden(next)) {
-    return nextCategory(next);
-  }
-
-  return next;
+export function adjacentCategory(
+  element: NullableElement,
+  direction: number,
+): NullableElement {
+  const sibling =
+    direction > 0 ? 'nextElementSibling' : 'previousElementSibling';
+  let category = closestCategory(element)?.[sibling] as NullableElement;
+  while (category && isHidden(category))
+    category = category[sibling] as NullableElement;
+  return category ?? null;
 }
 
 export function closestCategory(element: NullableElement) {

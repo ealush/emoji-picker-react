@@ -19,7 +19,9 @@ test.describe('v5 acceptance', () => {
       page.getByRole('tablist', { name: 'Category navigation' }),
     ).toBeVisible();
     await expect(page.getByRole('grid')).toBeVisible();
-    await expect(page.getByLabel('grinning face', { exact: true })).toBeVisible();
+    await expect(
+      page.getByLabel('grinning face', { exact: true }),
+    ).toBeVisible();
   });
 
   test('default appearance does not wrap or steal Root DOM props', async ({
@@ -37,14 +39,24 @@ test.describe('v5 acceptance', () => {
     await expect(root).toHaveCSS('height', '360px');
   });
 
-  test('Root creates one managed panel containing all full-picker regions', async ({ page }) => {
+  test('Root creates one managed panel containing all full-picker regions', async ({
+    page,
+  }) => {
     await page.goto(storyUrl('v5-acceptance--reordered-primitives'));
 
     const panel = page.locator('[data-epr-part="panel"]');
     await expect(panel).toHaveCount(1);
 
-    for (const part of ['search', 'category-nav', 'viewport', 'list', 'preview']) {
-      await expect(panel.locator(`[data-epr-part="${part}"]`).first()).toBeVisible();
+    for (const part of [
+      'search',
+      'category-nav',
+      'viewport',
+      'list',
+      'preview',
+    ]) {
+      await expect(
+        panel.locator(`[data-epr-part="${part}"]`).first(),
+      ).toBeVisible();
     }
 
     await expect(
@@ -62,9 +74,7 @@ test.describe('v5 acceptance', () => {
     // Wait for the composition to mount before snapshotting DOM order
     // (evaluateAll does not retry on its own).
     await expect(
-      page.locator(
-        '[data-epr-part="panel"] [data-epr-part="search"]',
-      ),
+      page.locator('[data-epr-part="panel"] [data-epr-part="search"]'),
     ).toBeVisible();
 
     const order = await page
@@ -117,9 +127,11 @@ test.describe('v5 acceptance', () => {
   // NAVIGATION.md §6: omitted regions are absent from the graph, so every
   // arrow move at their former boundary lands on a real control.
   const focusedPart = (page: import('@playwright/test').Page) =>
-    page.evaluate(() =>
-      document.activeElement?.closest('[data-epr-part]')?.getAttribute('data-epr-part') ??
-      document.activeElement?.tagName,
+    page.evaluate(
+      () =>
+        document.activeElement
+          ?.closest('[data-epr-part]')
+          ?.getAttribute('data-epr-part') ?? document.activeElement?.tagName,
     );
 
   test('omitted Search leaves no dead destination above CategoryNav or Grid', async ({
@@ -138,7 +150,9 @@ test.describe('v5 acceptance', () => {
     await firstTab.focus();
     await page.keyboard.press('ArrowDown');
     await expect(
-      page.locator('[data-epr-part="category-content"] [data-epr-part="emoji"]:focus'),
+      page.locator(
+        '[data-epr-part="category-content"] [data-epr-part="emoji"]:focus',
+      ),
     ).toBeVisible();
     await page.keyboard.press('ArrowUp');
     // Grid top edge goes to the previous rendered region, CategoryNav.
@@ -153,7 +167,9 @@ test.describe('v5 acceptance', () => {
     await search.focus();
     await page.keyboard.press('ArrowDown');
     await expect(
-      page.locator('[data-epr-part="category-content"] [data-epr-part="emoji"]:focus'),
+      page.locator(
+        '[data-epr-part="category-content"] [data-epr-part="emoji"]:focus',
+      ),
     ).toBeVisible();
     await page.keyboard.press('ArrowUp');
     await expect(search).toBeFocused();
@@ -168,7 +184,11 @@ test.describe('v5 acceptance', () => {
     await search.focus();
     await page.keyboard.press('ArrowDown');
 
-    await expect(page.locator('[data-epr-part="category-content"] [data-epr-part="emoji"]:focus')).toBeVisible();
+    await expect(
+      page.locator(
+        '[data-epr-part="category-content"] [data-epr-part="emoji"]:focus',
+      ),
+    ).toBeVisible();
   });
 
   test('omitting Search disables built-in type-to-search without moving Grid focus', async ({
@@ -367,9 +387,7 @@ test.describe('v5 acceptance', () => {
   test('rejected controlled type-to-search still focuses Search', async ({
     page,
   }) => {
-    await page.goto(
-      storyUrl('v5-acceptance--controlled-typeahead-rejected'),
-    );
+    await page.goto(storyUrl('v5-acceptance--controlled-typeahead-rejected'));
 
     const search = page.getByLabel('Type to search for an emoji');
 
@@ -427,10 +445,7 @@ test.describe('v5 acceptance', () => {
       'data-epr-unified',
       'partyparrot',
     );
-    await expect(suggested.nth(2)).toHaveAttribute(
-      'data-epr-unified',
-      '1f603',
-    );
+    await expect(suggested.nth(2)).toHaveAttribute('data-epr-unified', '1f603');
   });
 
   test('keyboard navigation reaches an initially unmaterialized emoji', async ({
@@ -444,9 +459,7 @@ test.describe('v5 acceptance', () => {
     // Scope to the grid: the list also renders an invisible
     // opacity-zero MeasureEmoji decoy with the first emoji's label.
     await page
-      .locator(
-        '[data-epr-part="category-content"] [data-epr-part="emoji"]',
-      )
+      .locator('[data-epr-part="category-content"] [data-epr-part="emoji"]')
       .first()
       .focus();
 
@@ -463,9 +476,7 @@ test.describe('v5 acceptance', () => {
     const fingerprint = () =>
       page.evaluate(() => {
         const active = document.activeElement;
-        const viewport = document.querySelector(
-          '[data-epr-part="viewport"]',
-        );
+        const viewport = document.querySelector('[data-epr-part="viewport"]');
         return [
           active instanceof HTMLElement
             ? (active.getAttribute('data-epr-unified') ?? active.tagName)
@@ -547,7 +558,9 @@ test.describe('v5 acceptance', () => {
     begin: (page: import('@playwright/test').Page) =>
       page.evaluate(() =>
         (
-          window as typeof window & { __eprBeginDeferredNavigation?: () => void }
+          window as typeof window & {
+            __eprBeginDeferredNavigation?: () => void;
+          }
         ).__eprBeginDeferredNavigation?.(),
       ),
     resolve: (page: import('@playwright/test').Page) =>
@@ -614,9 +627,9 @@ test.describe('v5 acceptance', () => {
       if (scenario === 'unmount') {
         // The Root is gone: nothing of it may be focused or throw.
         await expect(page.locator('aside')).toHaveCount(0);
-        expect(
-          await page.evaluate(() => document.activeElement?.tagName),
-        ).toBe('BODY');
+        expect(await page.evaluate(() => document.activeElement?.tagName)).toBe(
+          'BODY',
+        );
       } else {
         await expect(staleTarget(page)).not.toBeFocused();
       }
@@ -672,9 +685,7 @@ test.describe('v5 acceptance', () => {
     await page.goto(storyUrl('v5-acceptance--localized-search-label'));
 
     await expect(page.getByLabel('Buscar un emoji')).toBeVisible();
-    await expect(
-      page.getByLabel('Type to search for an emoji'),
-    ).toHaveCount(0);
+    await expect(page.getByLabel('Type to search for an emoji')).toHaveCount(0);
   });
 
   test('native rendering never invokes standard emoji image resolver', async ({
@@ -695,7 +706,9 @@ test.describe('v5 acceptance', () => {
     expect(probeRequests).toBe(0);
   });
 
-  test('broken emoji images do not break keyboard navigation', async ({ page }) => {
+  test('broken emoji images do not break keyboard navigation', async ({
+    page,
+  }) => {
     let brokenAssetRequests = 0;
 
     await page.route('**/__epr_broken_asset__/**', async (route) => {
@@ -737,8 +750,12 @@ test.describe('v5 acceptance', () => {
     await first.locator('[data-epr-part="emoji"]').first().focus();
     await page.keyboard.press('p');
 
-    await expect(first.getByLabel('Type to search for an emoji')).toHaveValue('p');
-    await expect(second.getByLabel('Type to search for an emoji')).toHaveValue('');
+    await expect(first.getByLabel('Type to search for an emoji')).toHaveValue(
+      'p',
+    );
+    await expect(second.getByLabel('Type to search for an emoji')).toHaveValue(
+      '',
+    );
     await expect(first.locator(':focus')).toHaveCount(1);
     await expect(second.locator(':focus')).toHaveCount(0);
 
@@ -764,4 +781,51 @@ test.describe('v5 acceptance', () => {
       grid.getByLabel('grinning face', { exact: true }),
     ).toBeVisible();
   });
+});
+
+test('IME confirmation and candidate keys stay unclaimed by the picker', async ({
+  page,
+}) => {
+  await page.goto(storyUrl('v5-acceptance--ime-search'));
+  const search = page.getByLabel('Type to search for an emoji');
+  await search.focus();
+  await search.dispatchEvent('compositionstart', { data: '' });
+  for (const key of ['Enter', 'ArrowDown', 'ArrowRight', 'Escape']) {
+    const prevented = await search.evaluate((input, key) => {
+      const event = new KeyboardEvent('keydown', {
+        key,
+        bubbles: true,
+        cancelable: true,
+        isComposing: true,
+      });
+      input.dispatchEvent(event);
+      return event.defaultPrevented;
+    }, key);
+    expect(prevented).toBe(false);
+    await expect(search).toBeFocused();
+  }
+  await expect(page.getByTestId('filter-commit-count')).toHaveText('0');
+});
+
+test('one ArrowDown materializes the row after the last mounted row', async ({
+  page,
+}) => {
+  await page.goto(storyUrl('v5-acceptance--virtualized-keyboard'));
+  const category = page.locator('[data-epr-category="custom"]');
+  const content = category.locator('[data-epr-part="category-content"]');
+  await expect(content).toHaveAttribute('data-epr-emojis-per-row', /[1-9]/);
+  const last = category.locator('[data-epr-index]').last();
+  await expect(last).toBeAttached();
+  const columns = Number(await content.getAttribute('data-epr-emojis-per-row'));
+  const index = Number(await last.getAttribute('data-epr-index'));
+  const destination = category.locator(`[data-epr-index="${index + columns}"]`);
+  await expect(destination).toHaveCount(0);
+  // Focusing a below-viewport overscan cell would itself scroll and render
+  // the destination. Prevent native focus scrolling to test materialization.
+  await last.evaluate((button: HTMLElement) =>
+    button.focus({ preventScroll: true }),
+  );
+  await page.keyboard.press('ArrowDown');
+  await expect(destination).toBeFocused();
+  await expect(destination).toBeInViewport();
 });

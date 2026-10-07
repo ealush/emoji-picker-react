@@ -435,7 +435,9 @@ Input replacement retains the typed `SearchInput as={Input}` contract. The ref a
 
 For optional category, tone, clear and expand actions, a custom slot may run its own onClick first, call preventDefault(), then call the supplied onClick(event); that managed handler respects defaultPrevented. Required SearchInput change/focus/composition handlers retain library-first composition. Emoji selection uses native delegated events: a React bubble onClick is observational and does not cancel selection. Do not use stopPropagation to suppress required behavior.
 
-State selectors include data-epr-active on emoji/category/tone buttons and data-epr-open on tone buttons. aria-selected/aria-pressed remain the semantic state. Consumers must supply visible keyboard focus on custom controls.
+State selectors include data-epr-active on emoji/category/tone buttons and data-epr-open on tone buttons. aria-selected/aria-pressed remain the semantic state. Consumers must supply visible keyboard focus on custom controls. Emoji metadata's `unified` is the exact rendered identity, including explicit neutral or toned suggestions. `imageUrl` is undefined for standard native emojis. Image modes provide the active style's URL, and custom emojis provide their own `imgUrl`. Rendering native text alone never invokes the image resolver.
+
+Element replacements must keep the native target attached inside their managed region. The engine tracks attachment and detachment, uses logical coordinates for virtualized navigation, and cancels pending scroll/focus when navigation generation changes. A replacement must preserve managed position/size and `data-epr-*` props so that the destination can be materialized and focused. Consumer `preventDefault()` cancels only the optional control actions documented above; delegated emoji selection remains engine-owned.
 
 ## 17. Actions for custom controls
 

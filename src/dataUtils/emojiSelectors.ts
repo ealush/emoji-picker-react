@@ -39,14 +39,17 @@ export function unifiedWithoutSkinTone(unified: string): string {
   return unified;
 }
 
+export function emojiCanonicalUnified(emoji: DataEmoji): string {
+  return emoji[EmojiProperties.unified];
+}
+
 export function emojiUnified(emoji: DataEmoji, skinTone?: string): string {
-  const unified = emoji[EmojiProperties.unified];
-
-  if (!skinTone || !emojiHasVariations(emoji)) {
-    return unified;
-  }
-
-  return emojiVariationUnified(emoji, skinTone) ?? unified;
+  return (
+    emoji.renderUnified ??
+    (skinTone ? emojiVariationUnified(emoji, skinTone) : undefined) ??
+    emoji.fallbackUnified ??
+    emojiCanonicalUnified(emoji)
+  );
 }
 
 // WARNING: DO NOT USE DIRECTLY
@@ -119,4 +122,17 @@ export function activeVariationFromUnified(unified: string): SkinTones | null {
   return skinToneVariations.includes(suspectedSkinTone)
     ? suspectedSkinTone
     : null;
+}
+
+// A button's exact identity is authoritative, including an explicit neutral
+// variation. Preview metadata and selection share this resolution.
+export function skinToneFromEmoji(
+  emoji: DataEmoji,
+  unified: string,
+  activeTone: SkinTones,
+): SkinTones {
+  return (
+    activeVariationFromUnified(unified) ??
+    (emojiHasVariations(emoji) ? SkinTones.NEUTRAL : activeTone)
+  );
 }

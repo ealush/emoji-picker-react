@@ -72,7 +72,7 @@ export function ViewOnlyEmoji({
   );
 
   function onError() {
-    setEmojisThatFailedToLoad((prev) => new Set(prev).add(unified));
+    setEmojisThatFailedToLoad(unified);
   }
 }
 

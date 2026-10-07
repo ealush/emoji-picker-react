@@ -23,6 +23,7 @@ type Props = Readonly<{
   hiddenOnSearch?: boolean;
   height?: number;
   emojisPerRow?: number;
+  emojiCount?: number;
 }>;
 
 export function EmojiCategory({
@@ -32,6 +33,7 @@ export function EmojiCategory({
   hiddenOnSearch,
   height,
   emojisPerRow,
+  emojiCount,
 }: Props) {
   const appearance = useDefaultAppearance();
   const categoryName = categoryNameFromCategoryConfig(categoryConfig);
@@ -79,6 +81,7 @@ export function EmojiCategory({
         role={hasCells ? 'row' : 'none'}
         data-epr-part="category-content"
         data-epr-emojis-per-row={emojisPerRow}
+        data-epr-emoji-count={emojiCount}
       >
         {children}
       </div>

@@ -24,7 +24,9 @@ import {
  */
 export function useRegisterRegion(
   kind: NavigationRegionKind,
-  ref: React.RefObject<Element | null>,
+  ref: React.RefObject<Element | null> & {
+    subscribe?: (listener: () => void) => () => void;
+  },
   presenceDeps: readonly unknown[] = [],
 ): void {
   const registry = useNavigationRegistry();
@@ -39,29 +41,29 @@ export function useRegisterRegion(
       return;
     }
 
-    const element = ref.current;
-    if (!element) {
-      return () => {
-        registry.releaseSingleton(kind);
-      };
-    }
-
-    const rootElement = PickerMainRef.current;
-    if (rootElement && !rootElement.contains(element)) {
-      reportPortalRegion(kind);
-      return () => {
-        registry.releaseSingleton(kind);
-      };
-    }
-
-    const unregister = registry.register(kind, element);
+    let unregister: (() => void) | undefined;
+    const attach = () => {
+      unregister?.();
+      unregister = undefined;
+      const element = ref.current;
+      if (!element) return;
+      const rootElement = PickerMainRef.current;
+      if (rootElement && !rootElement.contains(element)) {
+        reportPortalRegion(kind);
+        return;
+      }
+      unregister = registry.register(kind, element);
+    };
+    attach();
+    const unsubscribe = ref.subscribe?.(attach);
     return () => {
-      unregister();
+      unsubscribe?.();
+      unregister?.();
       registry.releaseSingleton(kind);
     };
     // presenceDeps reruns the effect when region presence may have changed.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registry, kind, PickerMainRef, ...presenceDeps]);
+  }, [registry, kind, ref, PickerMainRef, ...presenceDeps]);
 }
 
 /**
