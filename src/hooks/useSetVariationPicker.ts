@@ -1,5 +1,6 @@
 import {
   allUnifiedFromEmojiElement,
+  buttonFromTarget,
   NullableElement,
 } from '../DomUtils/selectors';
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
@@ -25,7 +26,9 @@ export default function useSetVariationPicker() {
     const emoji = emojiByUnified(resolvedUnified);
 
     if (emoji) {
-      setAnchoredEmojiRef(element);
+      // Anchor to the emoji button, not the event target: the target may
+      // be a nested child (an image, or custom cell markup).
+      setAnchoredEmojiRef(buttonFromTarget(element) ?? element);
       setEmojiVariationPicker(emoji);
     }
   };

@@ -4,7 +4,7 @@ import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
 import {
-  MutableConfigContext,
+  MutableConfigProvider,
   useDefineMutableConfig,
 } from './config/mutableConfig';
 
@@ -32,13 +32,15 @@ export default function EmojiPicker(props: PickerProps) {
     onEmojiClick: props.onEmojiClick,
     onReactionClick: props.onReactionClick,
     onSkinToneChange: props.onSkinToneChange,
+    onSearchChange: props.onSearchChange,
+    onReactionsModeChange: props.onReactionsModeChange,
   });
 
   return (
     <ErrorBoundary>
-      <MutableConfigContext.Provider value={MutableConfigRef}>
+      <MutableConfigProvider value={MutableConfigRef} inheritToRoot>
         <EmojiPickerReact {...props} />
-      </MutableConfigContext.Provider>
+      </MutableConfigProvider>
     </ErrorBoundary>
   );
 }

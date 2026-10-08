@@ -1,38 +1,91 @@
 import * as React from 'react';
 
-import { EmojiButtonSelector } from '../DomUtils/selectors';
+import { asSelectors, ClassNames } from '../DomUtils/classNames';
+import {
+  elementBorderBoxHeight,
+  EmojiButtonSelector,
+} from '../DomUtils/selectors';
 import {
   useEmojiListRef,
   usePickerMainRef,
 } from '../components/context/ElementRefContext';
 import {
+  useNavigationRegistry,
   useReactionsModeState,
   useVisibleCategoriesState,
   useEmojiSizeState,
 } from '../components/context/PickerContext';
+import { useColumnsConfig } from '../config/useConfig';
+
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 const EMOJI_SIZE_DEFAULT = 40;
+
+// Rows live inside the category content box, not the full list:
+// category margins/padding shrink the usable width, and dividing
+// the raw list width would overcount columns so the last emoji in
+// every row spills past the content edge (into the scrollbar).
+// Measure a rendered, visible content box when one exists; fall back
+// to the list width (identical when categories carry no horizontal
+// inset). Hidden categories report zero width and are skipped.
+function firstVisibleContentWidth(
+  listEl: HTMLElement,
+  fallbackWidth: number,
+): number {
+  const contentBoxes = listEl.querySelectorAll(
+    asSelectors(ClassNames.categoryContent),
+  );
+  for (const box of Array.from(contentBoxes)) {
+    const width = (box as HTMLElement).clientWidth;
+    if (width > 0) {
+      return width;
+    }
+  }
+  return fallbackWidth;
+}
+
+// A column-count change obsoletes rows computed by pending keyboard
+// navigation (NAVIGATION.md §11).
+function trackColumnCount(
+  previousRef: React.MutableRefObject<number | undefined>,
+  emojisPerRow: number,
+  registry: { invalidate(): void },
+): void {
+  if (
+    previousRef.current !== undefined &&
+    previousRef.current !== emojisPerRow
+  ) {
+    registry.invalidate();
+  }
+  previousRef.current = emojisPerRow;
+}
 
 export function useCategoryHeight(emojiCount: number):
   | {
       categoryHeight: number;
       emojisPerRow: number;
       emojiSize: number;
+      rowWidth: number;
     }
   | undefined {
   const EmojiListRef = useEmojiListRef();
   const [isReactionsMode] = useReactionsModeState();
   const PickerMainRef = usePickerMainRef();
-  const emojiSizeRef = React.useRef<number | undefined>();
+  const emojiSizeRef = React.useRef<number | undefined>(undefined);
+  const emojisPerRowRef = React.useRef<number | undefined>(undefined);
+  const registry = useNavigationRegistry();
   const [visibleCategories] = useVisibleCategoriesState();
   const [emojiSizeFromContext] = useEmojiSizeState();
+  const columns = useColumnsConfig();
   const [dimensions, setDimensions] = React.useState<{
     categoryHeight: number;
     emojisPerRow: number;
     emojiSize: number;
+    rowWidth: number;
   }>();
 
   // Helper to compute and store dimensions based on current DOM
+  // eslint-disable-next-line complexity
   const computeAndSetDimensions = React.useCallback(() => {
     const listEl = EmojiListRef.current;
     if (!listEl) return;
@@ -41,7 +94,8 @@ export function useCategoryHeight(emojiCount: number):
       EmojiButtonSelector,
     ) as HTMLElement | null;
 
-    const measured = emojiElement?.clientHeight;
+    // Border-box geometry includes design-library button borders.
+    const measured = elementBorderBoxHeight(emojiElement);
     if (measured) {
       emojiSizeRef.current = measured;
     }
@@ -54,15 +108,20 @@ export function useCategoryHeight(emojiCount: number):
 
     if (pickerWidth === 0 || emojiSize === 0) return;
 
-    const emojisPerRow = Math.max(1, Math.floor(pickerWidth / emojiSize));
+    const rowWidth = firstVisibleContentWidth(listEl, pickerWidth);
+    const fit = Math.max(1, Math.floor(rowWidth / emojiSize));
+    const emojisPerRow = columns ? Math.min(columns, fit) : fit;
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;
 
-    setDimensions({ categoryHeight, emojisPerRow, emojiSize });
-  }, [EmojiListRef, emojiCount, emojiSizeFromContext]);
+    trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
+    setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
+  }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry, columns]);
 
-  // Recompute on data-count changes and when reactions mode toggles
-  React.useEffect(() => {
+  // Restore measured row heights in the same commit as the filtered
+  // contents. A passive effect leaves one frame of stale offsets that
+  // category navigation can observe immediately after clearing search.
+  useIsomorphicLayoutEffect(() => {
     computeAndSetDimensions();
   }, [
     emojiCount,
@@ -70,6 +129,22 @@ export function useCategoryHeight(emojiCount: number):
     computeAndSetDimensions,
     visibleCategories.length,
   ]);
+
+  // Fluid layouts (width: 100%, sheets, docks) resize without a CSS
+  // transition: recompute columns when the list's width changes.
+  React.useEffect(() => {
+    const listEl = EmojiListRef.current;
+    if (!listEl || typeof ResizeObserver === 'undefined') return;
+    let lastWidth = listEl.clientWidth;
+    const observer = new ResizeObserver(() => {
+      const width = listEl.clientWidth;
+      if (width === lastWidth) return;
+      lastWidth = width;
+      computeAndSetDimensions();
+    });
+    observer.observe(listEl);
+    return () => observer.disconnect();
+  }, [EmojiListRef, computeAndSetDimensions]);
 
   // Listen to transitionend on the picker root (where height transition occurs)
   React.useEffect(() => {

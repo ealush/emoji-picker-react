@@ -1,18 +1,22 @@
-import { useEmojisThatFailedToLoadState } from '../components/context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useEmojisThatFailedToLoadState,
+} from '../components/context/PickerContext';
 import { DataEmoji } from '../dataUtils/DataTypes';
-import { emojiUnified } from '../dataUtils/emojiUtils';
+import { emojiUnified, emojiCanonicalUnified } from '../dataUtils/emojiUtils';
 
 import { useIsEmojiFiltered } from './useFilter';
 
 export function useIsEmojiHidden(): (emoji: DataEmoji) => IsHiddenReturn {
+  const [activeSkinTone] = useActiveSkinToneState();
   const [emojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
   const isEmojiFiltered = useIsEmojiFiltered();
 
   return (emoji: DataEmoji): IsHiddenReturn => {
-    const unified = emojiUnified(emoji);
-
-    const failedToLoad = emojisThatFailedToLoad.has(unified);
-    const filteredOut = isEmojiFiltered(unified);
+    const failedToLoad = emojisThatFailedToLoad.has(
+      emojiUnified(emoji, activeSkinTone),
+    );
+    const filteredOut = isEmojiFiltered(emojiCanonicalUnified(emoji));
 
     return {
       failedToLoad,

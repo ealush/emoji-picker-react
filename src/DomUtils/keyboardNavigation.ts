@@ -1,23 +1,23 @@
-import { elementCountInRow } from './elementPositionInRow';
 import { focusElement } from './focusElement';
 import { scrollEmojiAboveLabel } from './scrollTo';
 import {
-  allVisibleEmojis,
   closestCategory,
+  allVisibleEmojis,
   firstVisibleEmoji,
-  lastVisibleEmoji,
-  nextCategory,
-  nextVisibleEmoji,
+  adjacentCategory,
   NullableElement,
-  prevCategory,
-  prevVisibleEmoji,
-  closestCategoryContent,
+  closestScrollBody,
+  categoryLabelHeight,
+  VisibleEmojiSelector,
 } from './selectors';
 
-export function focusFirstVisibleEmoji(parent: NullableElement) {
+export function focusFirstVisibleEmoji(
+  parent: NullableElement,
+  shouldFocus?: () => boolean,
+) {
   const emoji = firstVisibleEmoji(parent);
-  focusElement(emoji);
-  scrollEmojiAboveLabel(emoji);
+  focusElement(emoji, shouldFocus);
+  scrollEmojiAboveLabel(emoji, shouldFocus);
 }
 
 export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
@@ -27,155 +27,112 @@ export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
   firstEmoji?.click();
 }
 
-export function focusLastVisibleEmoji(parent: NullableElement) {
-  focusElement(lastVisibleEmoji(parent));
+// Logical coordinates include unmounted cells. The DOM carries only the
+// filtered count, column geometry and each mounted cell's logical index.
+function categoryGeometry(category: HTMLElement) {
+  const content = category.querySelector<HTMLElement>(
+    '[data-epr-part="category-content"]',
+  );
+  const count = Number(content?.dataset.eprEmojiCount);
+  const columns = Number(content?.dataset.eprEmojisPerRow) || count;
+  return { content, count, columns };
 }
 
-export function focusNextVisibleEmoji(element: NullableElement) {
-  if (!element) {
-    return;
-  }
-
-  const next = nextVisibleEmoji(element);
-
-  if (!next) {
-    return focusFirstVisibleEmoji(nextCategory(element));
-  }
-
-  focusElement(next);
-  scrollEmojiAboveLabel(next);
-}
-
-export function focusPrevVisibleEmoji(element: NullableElement) {
-  if (!element) {
-    return;
-  }
-
-  const prev = prevVisibleEmoji(element);
-
-  if (!prev) {
-    return focusLastVisibleEmoji(prevCategory(element));
-  }
-
-  focusElement(prev);
-  scrollEmojiAboveLabel(prev);
-}
-
-export function focusVisibleEmojiOneRowUp(
+// eslint-disable-next-line complexity
+export function focusAdjacentEmoji(
   element: NullableElement,
-  exitUp: () => void,
+  direction: number,
+  row: boolean,
+  { shouldFocus, exitUp }: { shouldFocus?: () => boolean; exitUp?: () => void },
 ) {
-  if (!element) {
+  if (!element || (shouldFocus && !shouldFocus())) return;
+  const category = closestCategory(element);
+  if (!category || element.dataset.eprIndex === undefined) {
+    // Variation buttons are fully mounted and use ordinary sibling movement.
+    const buttons = allVisibleEmojis(element.parentElement);
+    focusElement(
+      buttons[buttons.indexOf(element) + direction] ?? null,
+      shouldFocus,
+    );
     return;
   }
-
-  const prev = visibleEmojiOneRowUp(element);
-
-  if (!prev) {
-    return exitUp();
-  }
-
-  focusElement(prev);
-  scrollEmojiAboveLabel(prev);
+  const destination = logicalDestination(category, element, direction, row);
+  if (destination)
+    focusLogicalEmoji(destination.category, destination.index, shouldFocus);
+  else if (direction < 0) exitUp?.();
 }
 
-export function focusVisibleEmojiOneRowDown(element: NullableElement) {
-  if (!element) {
-    return;
+function logicalDestination(
+  category: HTMLElement,
+  element: HTMLElement,
+  direction: number,
+  row: boolean,
+) {
+  const geometry = categoryGeometry(category);
+  const columns = geometry.columns;
+  let count = geometry.count;
+  if (count <= 0) return null;
+  const currentIndex = Number(element.dataset.eprIndex);
+  const column = row ? currentIndex % columns : 0;
+  let index = row
+    ? (Math.floor(currentIndex / columns) + direction) * columns
+    : currentIndex + direction;
+  if (index < 0 || index >= count) {
+    const adjacent = adjacentDestination(category, direction, row);
+    if (!adjacent) return null;
+    ({ category, count, index } = adjacent);
   }
-
-  const next = visibleEmojiOneRowDown(element);
-
-  return focusElement(next);
+  return { category, index: Math.min(index + column, count - 1) };
 }
 
-function visibleEmojiOneRowUp(element: HTMLElement) {
-  if (!element) {
-    return null;
-  }
+function adjacentDestination(
+  category: HTMLElement,
+  direction: number,
+  row: boolean,
+) {
+  const adjacent = adjacentCategory(category, direction);
+  if (!adjacent) return null;
+  const { count, columns } = categoryGeometry(adjacent);
+  if (count <= 0) return null;
+  const index =
+    direction > 0
+      ? 0
+      : row
+        ? Math.floor((count - 1) / columns) * columns
+        : count - 1;
+  return { category: adjacent, count, index };
+}
 
-  const categoryContent = closestCategoryContent(element);
-  const category = closestCategory(categoryContent);
-  const countInRow = elementCountInRow(categoryContent, element);
-
-  const emojisInCurrentCategory = allVisibleEmojis(category);
-  const currentEmojiIndex = emojisInCurrentCategory.indexOf(element);
-  const indexInRow = currentEmojiIndex % countInRow;
-
-  if (currentEmojiIndex === -1) {
-    return null;
-  }
-
-  if (emojisInCurrentCategory[currentEmojiIndex - countInRow]) {
-    return emojisInCurrentCategory[currentEmojiIndex - countInRow];
-  }
-
-  const prevVisibleCategory = prevCategory(category);
-
-  if (!prevVisibleCategory) {
-    return null;
-  }
-
-  const allPrevEmojis = allVisibleEmojis(prevVisibleCategory);
-
-  // if there is an emoji in the same index of `indexInRow` in the previous category, return it
-  // for this we need to find the last emoji in the previous category that shares the same indexInRow
-  // this is by using the % operator to find the last emoji that matches
-
-  const lastIndexInRow = (allPrevEmojis.length % countInRow) - 1;
-
-  if (indexInRow > lastIndexInRow) {
-    return allPrevEmojis.at(-1);
-  }
-
-  // otherwise, return the last emoji that shares the same indexInRow
-
-  for (let i = allPrevEmojis.length - 1; i >= 0; i--) {
-    if (i % countInRow === indexInRow) {
-      return allPrevEmojis[i];
+function focusLogicalEmoji(
+  category: HTMLElement,
+  index: number,
+  shouldFocus?: () => boolean,
+) {
+  const { content, columns, count } = categoryGeometry(category);
+  const body = closestScrollBody(category);
+  if (!body || !content || !columns) return;
+  const size = content.clientHeight / Math.ceil(count / columns);
+  let frames = 60;
+  const valid = () =>
+    (!shouldFocus || shouldFocus()) && body.contains(category);
+  const attempt = () => {
+    if (!valid()) return;
+    const emoji = category.querySelector<HTMLElement>(
+      `${VisibleEmojiSelector}[data-epr-index="${index}"]`,
+    );
+    if (emoji) {
+      emoji.focus();
+      scrollEmojiAboveLabel(emoji, valid);
+      return;
     }
-  }
-
-  return allPrevEmojis.at(-1);
-}
-
-function visibleEmojiOneRowDown(element: HTMLElement) {
-  if (!element) {
-    return null;
-  }
-
-  const categoryContent = closestCategoryContent(element);
-  const category = closestCategory(categoryContent);
-  const countInRow = elementCountInRow(categoryContent, element);
-
-  const emojisInCurrentCategory = allVisibleEmojis(category);
-  const currentEmojiIndex = emojisInCurrentCategory.indexOf(element);
-
-  if (currentEmojiIndex === -1) {
-    return null;
-  }
-
-  // the remainder until the end of the row
-  const remainder = countInRow - (currentEmojiIndex % countInRow) - 1;
-  const firstInNextRow = currentEmojiIndex + remainder + 1;
-
-  if (emojisInCurrentCategory[firstInNextRow]) {
-    // if we have a next row, search in the next row for the last available emoji
-    for (let p = currentEmojiIndex + countInRow; p % countInRow >= 0; p--) {
-      if (emojisInCurrentCategory[p]) {
-        return emojisInCurrentCategory[p];
-      }
-    }
-  }
-
-  const indexInRow = currentEmojiIndex % countInRow;
-
-  const nextVisibleCategory = nextCategory(category);
-  const emojisInNextCategory = allVisibleEmojis(nextVisibleCategory);
-
-  if (emojisInNextCategory[indexInRow]) {
-    return emojisInNextCategory[indexInRow];
-  }
-
-  return emojisInNextCategory.at(0) ?? null;
+    if (!size || --frames <= 0) return;
+    if (frames === 59)
+      body.scrollTop =
+        category.offsetTop +
+        content.offsetTop +
+        Math.floor(index / columns) * size -
+        categoryLabelHeight(category);
+    requestAnimationFrame(attempt);
+  };
+  requestAnimationFrame(attempt);
 }

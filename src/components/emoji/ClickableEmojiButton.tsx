@@ -20,8 +20,11 @@ type ClickableEmojiButtonProps = Readonly<{
   noBackground?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  role?: string;
+  logicalIndex?: number;
 }>;
 
+// eslint-disable-next-line complexity
 export function ClickableEmojiButton({
   emojiNames,
   unified,
@@ -33,6 +36,8 @@ export function ClickableEmojiButton({
   className,
   noBackground = false,
   style,
+  role,
+  logicalIndex,
 }: ClickableEmojiButtonProps) {
   return (
     <Button
@@ -48,9 +53,12 @@ export function ClickableEmojiButton({
         className,
       )}
       data-unified={unified}
+      data-epr-unified={unified}
+      data-epr-index={logicalIndex}
       aria-label={getAriaLabel(emojiNames)}
       data-full-name={emojiNames}
       style={style}
+      role={role}
     >
       {children}
     </Button>

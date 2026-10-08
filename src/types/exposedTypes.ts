@@ -42,6 +42,8 @@ export enum SuggestionMode {
   FREQUENT = 'frequent',
 }
 
+export type SuggestionModeValue = SuggestionMode | 'recent' | 'frequent';
+
 export enum EmojiStyle {
   NATIVE = 'native',
   APPLE = 'apple',
@@ -50,11 +52,21 @@ export enum EmojiStyle {
   FACEBOOK = 'facebook',
 }
 
+export type EmojiStyleValue =
+  | EmojiStyle
+  | 'native'
+  | 'apple'
+  | 'twitter'
+  | 'google'
+  | 'facebook';
+
 export enum Theme {
   DARK = 'dark',
   LIGHT = 'light',
   AUTO = 'auto',
 }
+
+export type ThemeValue = Theme | 'dark' | 'light' | 'auto';
 
 export enum SkinTones {
   NEUTRAL = 'neutral',
@@ -64,6 +76,8 @@ export enum SkinTones {
   MEDIUM_DARK = '1f3fe',
   DARK = '1f3ff',
 }
+
+export type SkinTonesValue = SkinTones | 'neutral' | '1f3fb' | '1f3fc' | '1f3fd' | '1f3fe' | '1f3ff';
 
 export enum Categories {
   SUGGESTED = 'suggested',
@@ -79,6 +93,7 @@ export enum Categories {
 }
 
 export enum SkinTonePickerLocation {
+  NONE = 'NONE',
   SEARCH = 'SEARCH',
   PREVIEW = 'PREVIEW',
 }
