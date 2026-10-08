@@ -70,4 +70,32 @@ describe('emoji grid semantics (a11y)', () => {
       within(grid).getByRole('rowgroup', { name: 'Animals & Nature' }),
     ).toBeInTheDocument();
   });
+
+  it('exposes emojis as gridcells of category rows (valid grid ownership)', () => {
+    // A grid owns rowgroups -> rows -> gridcells. Emoji buttons keep native
+    // activation but take the gridcell role; the visual category title is
+    // aria-hidden (the rowgroup carries the name, and a heading is not an
+    // allowed rowgroup child); a row with no rendered cells is
+    // presentational.
+    const { container } = renderPicker();
+    const grid = screen.getByRole('grid');
+    const group = within(grid).getByRole('rowgroup', {
+      name: 'Smileys & People',
+    });
+    const row = within(group).getByRole('row');
+    expect(
+      within(row).getByRole('gridcell', { name: 'grinning face' }).tagName,
+    ).toBe('BUTTON');
+    for (const label of Array.from(
+      container.querySelectorAll('[data-epr-part="category-label"]'),
+    )) {
+      expect(label.getAttribute('aria-hidden')).toBe('true');
+    }
+    for (const content of Array.from(
+      container.querySelectorAll('[data-epr-part="category-content"]'),
+    )) {
+      const hasCells = content.querySelector('[role="gridcell"]') !== null;
+      expect(content.getAttribute('role')).toBe(hasCells ? 'row' : 'none');
+    }
+  });
 });
