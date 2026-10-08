@@ -4,21 +4,31 @@ import { Header } from './components/header/Header';
 import {
   defaultRootClassName,
   defaultRootStyle,
-  DefaultAppearance,
 } from './components/main/defaultAppearance';
 import { compareConfig } from './config/compareConfig';
-import { useOpenConfig, validColumns } from './config/useConfig';
+import { resolveSkinTonePickerLocation } from './config/config';
+import { DefaultPickerConfiguration } from './config/defaultPickerConfiguration';
+import {
+  validColumns,
+  usePreviewConfig,
+  useSkinTonesDisabledConfig,
+} from './config/useConfig';
+import { useIsSkinToneInPreview } from './hooks/useShouldShowSkinTonePicker';
 import {
   Empty,
   List,
   Loading,
   LoadError,
   Preview,
+  SkinTone,
+  Panel,
+  Reactions,
   Root,
   Viewport,
 } from './primitives';
 import { isPickerBehaviorProp } from './primitives/Root';
 import type { RootBehaviorProps, RootProps } from './primitives/types';
+import { SkinTonePickerLocation } from './types/exposedTypes';
 
 import { PickerProps } from './index';
 
@@ -41,40 +51,49 @@ function EmojiPicker(props: PickerProps) {
     style,
     unstyled,
     components,
+    open,
+    searchDisabled = false,
+    skinTonesDisabled = false,
+    skinTonePickerLocation = SkinTonePickerLocation.SEARCH,
+    previewConfig,
     ...rest
   } = rootInput;
   const theme = colorScheme ?? legacyTheme;
+  const showPreview = previewConfig?.showPreview ?? true;
+  const resolvedLocation = resolveSkinTonePickerLocation(
+    skinTonePickerLocation,
+    searchDisabled,
+    showPreview,
+  );
+  const defaultConfiguration = {
+    searchDisabled,
+    skinTonesDisabled,
+    skinTonePickerLocation: resolvedLocation,
+    previewConfig,
+  };
   const { behaviorProps, unknownProps } = pickBehaviorProps(rest);
   useUnknownPropsWarning(unknownProps);
-  // Static composition element: no props flow into it, so its identity
-  // stays stable across parent rerenders and the memoized managed panel
-  // can skip the whole full-picker subtree per keystroke.
-  const content = React.useMemo(
-    () => (
-      <DefaultAppearance>
-        <ContentControl />
-      </DefaultAppearance>
-    ),
-    [],
-  );
 
   return (
     <>
-      {props.open === false ? null : (
-        <Root
-          appearance={unstyled ? 'none' : 'default'}
-          components={components}
-          {...(behaviorProps as RootBehaviorProps)}
-          className={defaultRootClassName(theme, className, unstyled)}
-          style={defaultRootStyle({
-            width,
-            height,
-            style,
-            columns: validColumns(props.columns),
-          })}
-        >
-          {content}
-        </Root>
+      {open === false ? null : (
+        <DefaultPickerConfiguration.Provider value={defaultConfiguration}>
+          <Root
+            appearance={unstyled ? 'none' : 'default'}
+            components={components}
+            {...(behaviorProps as RootBehaviorProps)}
+            className={defaultRootClassName(theme, className, unstyled)}
+            style={defaultRootStyle({
+              width,
+              height,
+              style,
+              columns: validColumns(props.columns),
+            })}
+          >
+            <Reactions />
+            <Panel>{CONTENT}</Panel>
+          </Root>
+        </DefaultPickerConfiguration.Provider>
       )}
     </>
   );
@@ -130,11 +149,9 @@ function useUnknownPropsWarning(unknownProps: string) {
 }
 
 function ContentControl() {
-  const isOpen = useOpenConfig();
-
-  if (!isOpen) {
-    return null;
-  }
+  const showPreview = usePreviewConfig().showPreview;
+  const skinTonesDisabled = useSkinTonesDisabledConfig();
+  const toneInPreview = useIsSkinToneInPreview();
 
   return (
     <>
@@ -145,9 +162,18 @@ function ContentControl() {
         <Loading />
         <LoadError />
       </Viewport>
-      <Preview />
+      {showPreview && (
+        <Preview>
+          {!skinTonesDisabled && toneInPreview && (
+            <SkinTone orientation="vertical" />
+          )}
+        </Preview>
+      )}
     </>
   );
 }
+
+// One immutable composition element; state still belongs to each mounted Root.
+const CONTENT = /* @__PURE__ */ React.createElement(ContentControl);
 
 export default /* @__PURE__ */ React.memo(EmojiPicker, compareConfig);

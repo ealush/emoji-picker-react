@@ -27,6 +27,8 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 
+import { minify } from 'terser';
+
 import { bundleDeclarations } from './bundleDeclarations.js';
 
 const repoRoot = join(__dirname, '..');
@@ -47,7 +49,7 @@ const EXTERNALS = [
 
 const COMMON = [...EXTERNALS, '--bundle', '--log-level=warning'];
 
-function buildCjs(src: string, outfile: string) {
+async function buildCjs(src: string, outfile: string) {
   sh(bin('esbuild'), [
     join(repoRoot, src),
     ...COMMON,
@@ -55,10 +57,21 @@ function buildCjs(src: string, outfile: string) {
     // Ship optimized production CJS without changing public property names.
     '--minify',
     '--platform=node',
-    // Match the declared Node >=18 runtime floor for the CJS entries.
-    '--target=node18',
+    // Preserve the existing syntax target until the v5 migration commit.
+    '--target=es2019',
     `--outfile=${join(repoRoot, outfile)}`,
   ]);
+  // CommonJS top-level bindings are private to this module. Compress them
+  // without property mangling, unsafe transforms or environment substitution.
+  const result = await minify(readFileSync(join(repoRoot, outfile), 'utf8'), {
+    ecma: 2019,
+    toplevel: true,
+    compress: { passes: 3 },
+    mangle: true,
+    format: { comments: false },
+  });
+  if (!result.code) throw new Error(`Empty CommonJS output: ${outfile}`);
+  writeFileSync(join(repoRoot, outfile), result.code + '\n');
 }
 
 function buildEsm() {
@@ -125,9 +138,9 @@ async function main() {
     throw new Error('esbuild not found; run npm install first.');
   }
   buildEsm();
-  buildCjs('src/index.tsx', 'dist/index.js');
-  buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
-  buildCjs('src/data.ts', 'dist/data/index.js');
+  await buildCjs('src/index.tsx', 'dist/index.js');
+  await buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
+  await buildCjs('src/data.ts', 'dist/data/index.js');
   markClientEntries();
   await buildDeclarations();
   console.log(

@@ -52,7 +52,7 @@ describe('v5 one-implementation architecture', () => {
     expect(renderersOf(/<EmojiList[\s>]/)).toEqual([]);
     expect(renderersOf(/<SearchContainer[\s>]/)).toEqual([]);
     expect(renderersOf(/<CategoryNavigation[\s>]/)).toEqual([]);
-    expect(renderersOf(/<Reactions[\s>]/)).toEqual([]);
+    expect(renderersOf(/<Reactions[\s>]/)).toEqual(['EmojiPickerReact.tsx']);
 
     // ...and each primitive genuinely renders its managed region.
     expect(read('primitives/List.tsx')).toMatch(/<EmojiList[\s>]/);
@@ -60,7 +60,7 @@ describe('v5 one-implementation architecture', () => {
     expect(read('primitives/CategoryNav.tsx')).toMatch(
       /<CategoryNavigation[\s>]/,
     );
-    expect(read('primitives/Root.tsx')).toMatch(/<Reactions[\s>]/);
+    expect(read('EmojiPickerReact.tsx')).toMatch(/<Reactions[\s>]/);
   });
 
   it('keeps default appearance out of the primitives closure', () => {
@@ -76,10 +76,10 @@ describe('v5 one-implementation architecture', () => {
 
   it('exports explicit Panel and Reactions using the same managed parts', () => {
     const entry = read('primitives/index.ts');
-    expect(entry).toContain("export { Panel }");
-    expect(entry).toContain("export { Reactions }");
+    expect(entry).toContain('export { Panel }');
+    expect(entry).toContain('export { Reactions }');
     expect(read('primitives/Panel.tsx')).toContain('data-epr-part="panel"');
-    expect(read('primitives/Root.tsx')).toContain("composition === 'explicit'");
+    expect(read('primitives/Root.tsx')).toContain('{children}');
   });
 
   it('keeps every library-owned data attribute in the data-epr namespace', () => {
@@ -95,10 +95,10 @@ describe('v5 one-implementation architecture', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('renders the managed panel and reactions parts from Root alone', () => {
+  it('leaves panel and reactions presence to the caller', () => {
     const root = read('primitives/Root.tsx');
-    expect(root).toContain('<Panel');
-    expect(root).toContain('<Reactions />');
+    expect(root).not.toContain('<Panel');
+    expect(root).not.toMatch(/<Reactions(?:\s|\/|>)/);
     // Root must not install an ErrorBoundary (error ownership stays with
     // the default wrapper / application).
     expect(root).not.toContain('<ErrorBoundary');

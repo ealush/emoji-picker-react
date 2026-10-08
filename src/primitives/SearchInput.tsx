@@ -5,7 +5,6 @@ import {
   formatSearchResultsLabel,
   useLabels,
   useAutoFocusSearchConfig,
-  useSearchDisabledConfig,
   useSearchLabelConfig,
   useSearchPlaceHolderConfig,
 } from '../config/useConfig';
@@ -43,7 +42,6 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
   SearchInputProps<SearchInputElement>
 >(function SearchInput(props, ref) {
   const inScope = useRootScope('SearchInput');
-  const disabled = useSearchDisabledConfig();
   const inputRef = useSearchInputRef();
   const mergedRef = useMergedRefs(inputRef, ref);
   const closeToggles = useCloseAllOpenToggles();
@@ -54,7 +52,7 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
   const resultCount = useVisibleSearchResultCount();
   const { loading, error } = useEmojiDataState();
   const controller = useSearchInputController();
-  useRegisterRegion('search', inputRef, [disabled]);
+  useRegisterRegion('search', inputRef);
   const {
     as: Input = 'input',
     onChange,
@@ -72,7 +70,7 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
     'children',
     'dangerouslySetInnerHTML',
   ]);
-  if (!inScope || disabled) return null;
+  if (!inScope) return null;
   return (
     <>
       <Input

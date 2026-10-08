@@ -3,7 +3,15 @@ import * as React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { Categories } from '../src/config/categoryConfig';
-import { List, Root, Search, Viewport } from '../src/primitives';
+import {
+  List,
+  Root,
+  Search,
+  Viewport,
+  Reactions,
+  Panel,
+  SkinTone,
+} from '../src/primitives';
 import { __resetPrimitiveWarningsForTest } from '../src/primitives/scope';
 import { EmojiData } from '../src/types/exposedTypes';
 
@@ -18,7 +26,9 @@ vi.mock('../src/hooks/preloadEmoji', () => ({
 let btnPlusRenders = 0;
 vi.mock('../src/components/Reactions/BtnPlus', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('../src/components/Reactions/BtnPlus')>();
+    await importOriginal<
+      typeof import('../src/components/Reactions/BtnPlus')
+    >();
   return {
     ...actual,
     BtnPlus: (props: Record<string, never>) => {
@@ -89,9 +99,12 @@ describe('v5 primitives usability (item 9)', () => {
         emojiData={miniData}
         style={tokens as unknown as React.CSSProperties}
       >
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const aside = container.querySelector(
@@ -106,7 +119,12 @@ describe('v5 primitives usability (item 9)', () => {
   it('merges inputProps.className with the library input class', () => {
     render(
       <Root emojiData={miniData}>
-        <Search inputProps={{ className: 'consumer-class' }} />
+        <Reactions />
+        <Panel>
+          <Search inputProps={{ className: 'consumer-class' }}>
+            <SkinTone />
+          </Search>
+        </Panel>
       </Root>,
     );
     const input = screen.getByRole('textbox') as HTMLInputElement;
@@ -156,9 +174,12 @@ describe('v5 primitives usability (item 9)', () => {
   it('grid letter keys are not swallowed when Search is omitted', () => {
     render(
       <Root emojiData={miniData}>
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const button = gridFirstButton();
@@ -172,10 +193,15 @@ describe('v5 primitives usability (item 9)', () => {
   it('grid letter keys still type-to-search when Search is present', async () => {
     render(
       <Root emojiData={miniData}>
-        <Search />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search>
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const input = (await screen.findByRole('textbox')) as HTMLInputElement;
@@ -191,10 +217,15 @@ describe('v5 primitives usability (item 9)', () => {
   it('typing does not rerender the reactions bar', async () => {
     const { container } = render(
       <Root emojiData={miniData} reactionsDefaultOpen>
-        <Search />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search>
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     // The panel (and its search input) hides in reactions mode, but the

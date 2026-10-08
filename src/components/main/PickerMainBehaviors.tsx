@@ -2,6 +2,7 @@ import * as React from 'react';
 
 /* global process: readonly */
 
+import { categoryIdFromCategoryConfig } from '../../config/categoryConfig';
 import { useMutableConfig } from '../../config/mutableConfig';
 import {
   useCategoriesConfig,
@@ -125,9 +126,9 @@ export const NavigationInvalidation = /* @__PURE__ */ React.memo(
     const [emojiSize] = useEmojiSizeState();
     // Keyed by order/membership, not identity: the merged config is rebuilt
     // for unrelated prop changes, which must not cancel navigation.
-    const categoriesKey = useCategoriesConfig()
-      .map((config) => config.category)
-      .join('|');
+    const categoriesKey = JSON.stringify(
+      useCategoriesConfig().map(categoryIdFromCategoryConfig),
+    );
     const prevSnapshot = React.useRef<
       [boolean, unknown, number | null, string]
     >([reactionsMode, emojiData, emojiSize, categoriesKey]);

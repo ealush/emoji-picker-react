@@ -20,7 +20,7 @@
     "emoji-reactions"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=10"
   },
   "repository": {
     "type": "git",
@@ -164,7 +164,8 @@
     "rollup": "^4.64.0",
     "rollup-plugin-dts": "^6.5.1",
     "tsx": "^4.23.15",
-    "@types/jsdom": "^21.1.7"
+    "@types/jsdom": "^21.1.7",
+    "terser": "5.31.0"
   },
   "dependencies": {
     "shipstyles": "1.0.0"
@@ -227,6 +228,8 @@
       "default": "./dist/data/emojis-*.js"
     },
     "./src/data/*.json": "./src/data/*.json",
-    "./package.json": "./package.json"
-  }
+    "./package.json": "./package.json",
+    "./*": "./*"
+  },
+  "type": "commonjs"
 }

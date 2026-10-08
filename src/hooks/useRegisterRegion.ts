@@ -52,6 +52,13 @@ export function useRegisterRegion(
         reportPortalRegion(kind);
         return;
       }
+      // A tone control composed inside Search belongs to that region's
+      // local keyboard flow, rather than an extra region on ArrowDown.
+      if (
+        kind === 'preview-skin-tone' &&
+        element.closest('[data-epr-part="search"]')
+      )
+        return;
       unregister = registry.register(kind, element);
     };
     attach();

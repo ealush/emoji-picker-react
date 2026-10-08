@@ -11,6 +11,9 @@ import {
   Root,
   Search,
   Viewport,
+  Reactions,
+  Panel,
+  SkinTone,
 } from '../src/primitives';
 import { composeHandlers } from '../src/primitives/nativeProps';
 import { __resetPrimitiveWarningsForTest } from '../src/primitives/scope';
@@ -77,10 +80,15 @@ function Composition({
 }) {
   return (
     <Root emojiData={emojiData} {...rootProps}>
-      <Search {...searchProps} />
-      <CategoryNav />
-      <Viewport>{viewportChildren ?? <List />}</Viewport>
-      <Preview />
+      <Reactions />
+      <Panel>
+        <Search {...searchProps}>
+          <SkinTone />
+        </Search>
+        <CategoryNav />
+        <Viewport>{viewportChildren ?? <List />}</Viewport>
+        <Preview />
+      </Panel>
     </Root>
   );
 }
@@ -109,39 +117,47 @@ describe('v5 primitive composition (PRIMITIVES.md §2)', () => {
   it('keeps arbitrary consumer wrappers and controls inside the panel', () => {
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <div className="my-card">
-          <CategoryNav />
-          <div className="my-header">
-            <button type="button">Close</button>
-            <Search />
+        <Reactions />
+        <Panel>
+          <div className="my-card">
+            <CategoryNav />
+            <div className="my-header">
+              <button type="button">Close</button>
+              <Search>
+                <SkinTone />
+              </Search>
+            </div>
+            <Viewport>
+              <List />
+            </Viewport>
+            <Preview />
           </div>
-          <Viewport>
-            <List />
-          </Viewport>
-          <Preview />
-        </div>
+        </Panel>
       </Root>,
     );
     const panel = container.querySelector('[data-epr-part="panel"]');
     expect(panel?.querySelector('.my-card')).not.toBeNull();
-    expect(
-      panel?.querySelector('.my-header button')?.textContent,
-    ).toBe('Close');
+    expect(panel?.querySelector('.my-header button')?.textContent).toBe(
+      'Close',
+    );
     // Regions still register through wrappers: Search Down reaches Grid.
     expect(panel?.querySelector('[data-epr-part="search"]')).not.toBeNull();
     expect(panel?.querySelector('[data-epr-part="list"]')).not.toBeNull();
   });
 
-  it('renders reactions from props alone, with no Reactions child element', () => {
+  it('renders explicitly supplied reactions and panel with managed mode state', () => {
     const { container } = render(
       <Root
         emojiData={twoCategoryData}
         reactionsDefaultOpen
         reactions={['1f600']}
       >
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const reactions = container.querySelector('[data-epr-part="reactions"]');
@@ -155,40 +171,40 @@ describe('v5 primitive composition (PRIMITIVES.md §2)', () => {
     expect(panel.contains(reactions)).toBe(false);
   });
 
-  it('omits regions cleanly: disabled search, single tab, hidden preview', () => {
+  it('omits regions cleanly: absent search, single tab, absent preview', () => {
     const { container } = render(
       <Root
         emojiData={singleCategoryData}
         categories={[
           { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
         ]}
-        searchDisabled
       >
-        <Search />
-        <CategoryNav />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <CategoryNav />
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
-    expect(
-      container.querySelector('[data-epr-part="search"]'),
-    ).toBeNull();
-    expect(
-      container.querySelector('[role="tablist"]'),
-    ).toBeNull();
+    expect(container.querySelector('[data-epr-part="search"]')).toBeNull();
+    expect(container.querySelector('[role="tablist"]')).toBeNull();
     expect(container.querySelector('[data-epr-part="list"]')).not.toBeNull();
   });
 
   it('a Root without Viewport/List is valid but has no grid', () => {
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <Search />
+        <Reactions />
+        <Panel>
+          <Search>
+            <SkinTone />
+          </Search>
+        </Panel>
       </Root>,
     );
-    expect(
-      container.querySelector('[data-epr-part="root"]'),
-    ).not.toBeNull();
+    expect(container.querySelector('[data-epr-part="root"]')).not.toBeNull();
     expect(container.querySelector('[data-epr-part="list"]')).toBeNull();
   });
 });
@@ -205,9 +221,12 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
       // No List: renders, with a development hint.
       render(
         <Root emojiData={twoCategoryData}>
-          <Viewport>
-            <div />
-          </Viewport>
+          <Reactions />
+          <Panel>
+            <Viewport>
+              <div />
+            </Viewport>
+          </Panel>
         </Root>,
       );
       expect(warn).toHaveBeenCalledWith(
@@ -218,10 +237,13 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
       try {
         render(
           <Root emojiData={twoCategoryData}>
-            <Viewport>
-              <List />
-              <List />
-            </Viewport>
+            <Reactions />
+            <Panel>
+              <Viewport>
+                <List />
+                <List />
+              </Viewport>
+            </Panel>
           </Root>,
         );
       } catch (error) {
@@ -247,11 +269,14 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
     );
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <Viewport>
-          <div className="wrapper">
-            <Wrapped />
-          </div>
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <div className="wrapper">
+              <Wrapped />
+            </div>
+          </Viewport>
+        </Panel>
       </Root>,
     );
     expect(container.querySelector('[role="grid"]')).not.toBeNull();
@@ -263,7 +288,10 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
       expect(() =>
         render(
           <Root emojiData={twoCategoryData}>
-            <List />
+            <Reactions />
+            <Panel>
+              <List />
+            </Panel>
           </Root>,
         ),
       ).toThrow(/inside <Viewport>/);
@@ -294,11 +322,14 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
       expect(() =>
         render(
           <Root emojiData={twoCategoryData}>
-            <Search />
-            <Search />
-            <Viewport>
-              <List />
-            </Viewport>
+            <Reactions />
+            <Panel>
+              <Search />
+              <Search />
+              <Viewport>
+                <List />
+              </Viewport>
+            </Panel>
           </Root>,
         ),
       ).toThrow(/Duplicate <Search>/);
@@ -313,11 +344,18 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
     try {
       const { container } = render(
         <Root emojiData={twoCategoryData}>
-          <Search />
-          <Search />
-          <Viewport>
-            <List />
-          </Viewport>
+          <Reactions />
+          <Panel>
+            <Search>
+              <SkinTone />
+            </Search>
+            <Search>
+              <SkinTone />
+            </Search>
+            <Viewport>
+              <List />
+            </Viewport>
+          </Panel>
         </Root>,
       );
       expect(warn).toHaveBeenCalled();
@@ -342,12 +380,17 @@ describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
     const previewRef = React.createRef<HTMLDivElement>();
     render(
       <Root emojiData={twoCategoryData} ref={rootRef}>
-        <Search ref={searchRef} />
-        <CategoryNav ref={navRef} />
-        <Viewport ref={viewportRef}>
-          <List ref={listRef} />
-        </Viewport>
-        <Preview ref={previewRef} />
+        <Reactions />
+        <Panel>
+          <Search ref={searchRef}>
+            <SkinTone />
+          </Search>
+          <CategoryNav ref={navRef} />
+          <Viewport ref={viewportRef}>
+            <List ref={listRef} />
+          </Viewport>
+          <Preview ref={previewRef} />
+        </Panel>
       </Root>,
     );
     expect(rootRef.current?.tagName).toBe('ASIDE');
@@ -364,18 +407,23 @@ describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
     const onClick = vi.fn();
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <Search
-          id="consumer-search"
-          className="consumer-class"
-          aria-label="consumer region"
-          data-foo="bar"
-          data-epr-part="hijack"
-          role="hijack"
-          onClick={onClick}
-        />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search
+            id="consumer-search"
+            className="consumer-class"
+            aria-label="consumer region"
+            data-foo="bar"
+            data-epr-part="hijack"
+            role="hijack"
+            onClick={onClick}
+          >
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const search = container.querySelector(
@@ -404,9 +452,12 @@ describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
         data-track="yes"
         onMouseDown={onMouseDown}
       >
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const aside = container.querySelector('aside') as HTMLElement;
@@ -423,19 +474,24 @@ describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
     const inputRef = React.createRef<HTMLInputElement>();
     render(
       <Root emojiData={twoCategoryData} autoFocusSearch={false}>
-        <Search
-          inputRef={inputRef}
-          inputProps={{
-            'aria-label': 'Primitive search label',
-            name: 'primitive-search',
-            onFocus: () => {
-              calls.push('consumer');
-            },
-          }}
-        />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search
+            inputRef={inputRef}
+            inputProps={{
+              'aria-label': 'Primitive search label',
+              name: 'primitive-search',
+              onFocus: () => {
+                calls.push('consumer');
+              },
+            }}
+          >
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const input = (await screen.findByRole('textbox')) as HTMLInputElement;
@@ -460,10 +516,15 @@ describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
   it('searchLabel applies when inputProps carries no explicit label', async () => {
     render(
       <Root emojiData={twoCategoryData} searchLabel="Root search label">
-        <Search />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search>
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     expect(await screen.findByRole('textbox')).toHaveAttribute(
@@ -528,7 +589,10 @@ describe('v5 primitive handler composition and error ownership', () => {
       expect(() =>
         render(
           <Root emojiData={twoCategoryData}>
-            <Exploding />
+            <Reactions />
+            <Panel>
+              <Exploding />
+            </Panel>
           </Root>,
         ),
       ).toThrow('consumer boom');
@@ -544,14 +608,19 @@ describe('v5 primitive handler composition and error ownership', () => {
     const seen: Event[] = [];
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <Search
-          onClick={(event) => {
-            seen.push(event);
-          }}
-        />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search
+            onClick={(event) => {
+              seen.push(event);
+            }}
+          >
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     const search = container.querySelector('[data-epr-part="search"]');
@@ -587,13 +656,16 @@ describe('v5 default picker root ownership', () => {
 
   it('emits no DOM wrapper from the appearance layer', () => {
     const { container } = render(
-      <EmojiPicker emojiData={twoCategoryData} emojiStyle={EmojiStyle.NATIVE} />,
+      <EmojiPicker
+        emojiData={twoCategoryData}
+        emojiStyle={EmojiStyle.NATIVE}
+      />,
     );
     const aside = container.querySelector('aside[data-epr-part="root"]');
     // The style tags are the only non-aside top-level nodes the library adds.
     const topLevel = Array.from(container.children ?? []);
-    expect(
-      topLevel.filter((element) => element.tagName !== 'STYLE'),
-    ).toEqual(aside ? [aside] : []);
+    expect(topLevel.filter((element) => element.tagName !== 'STYLE')).toEqual(
+      aside ? [aside] : [],
+    );
   });
 });

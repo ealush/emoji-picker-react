@@ -5,7 +5,15 @@ import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker, { Props } from '../src';
 import { Categories } from '../src/config/categoryConfig';
-import { List, Root, Search, Viewport } from '../src/primitives';
+import {
+  List,
+  Root,
+  Search,
+  Viewport,
+  Reactions,
+  Panel,
+  SkinTone,
+} from '../src/primitives';
 import { EmojiData } from '../src/types/exposedTypes';
 
 vi.mock('../src/hooks/preloadEmoji', () => ({
@@ -167,9 +175,7 @@ describe('v5 callback refresh (default picker)', () => {
     const first = vi.fn();
     const second = vi.fn();
     let collapse: (() => void) | null = null;
-    const picker = (
-      onReactionsModeChange: (...args: never[]) => void,
-    ) => (
+    const picker = (onReactionsModeChange: (...args: never[]) => void) => (
       <EmojiPicker
         emojiData={minimalEmojiData}
         categories={[Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE]}
@@ -204,10 +210,15 @@ describe('v5 callback refresh (default picker)', () => {
     const second = vi.fn();
     const tree = (onEmojiClick: (...args: never[]) => void) => (
       <Root emojiData={minimalEmojiData} onEmojiClick={onEmojiClick}>
-        <Search />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search>
+            <SkinTone />
+          </Search>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>
     );
     const { rerender } = render(tree(first));

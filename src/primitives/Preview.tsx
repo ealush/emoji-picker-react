@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Preview as PreviewView } from '../components/footer/Preview';
-import { usePreviewConfig } from '../config/useConfig';
 import { useSingletonClaim } from '../hooks/useRegisterRegion';
 
 import { filterPrimitiveProps } from './nativeProps';
@@ -10,20 +9,20 @@ import type { PreviewProps } from './types';
 
 // Public Preview primitive (docs/v5/PRIMITIVES.md §11).
 //
-// Managed preview region, including the preview-position skin-tone
-// control. Renders nothing when preview is disabled.
+// Managed preview region. Additional controls are supplied as children;
+// omit Preview itself to omit the preview region.
 export const Preview = /* @__PURE__ */ React.forwardRef<
   HTMLDivElement,
   PreviewProps
 >(function Preview(props, forwardedRef) {
   const inScope = useRootScope('Preview');
   useSingletonClaim('preview');
-  const previewConfig = usePreviewConfig();
-  const nativeProps = filterPrimitiveProps(props as Record<string, unknown>, [
+  const { children, ...rest } = props;
+  const nativeProps = filterPrimitiveProps(rest as Record<string, unknown>, [
     'role',
   ]);
 
-  if (!inScope || !previewConfig.showPreview) {
+  if (!inScope) {
     return null;
   }
 
@@ -33,7 +32,7 @@ export const Preview = /* @__PURE__ */ React.forwardRef<
       ref={forwardedRef}
       data-epr-part="preview"
     >
-      <PreviewView />
+      <PreviewView>{children}</PreviewView>
     </div>
   );
 });

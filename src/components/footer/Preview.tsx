@@ -11,7 +11,6 @@ import {
   usePreviewConfig,
 } from '../../config/useConfig';
 import { emojiName, emojiUnified } from '../../dataUtils/emojiUtils';
-import { useIsSkinToneInPreview } from '../../hooks/useShouldShowSkinTonePicker';
 import { useDefaultAppearance } from '../../primitives/appearance';
 import Flex from '../Layout/Flex';
 import Space from '../Layout/Space';
@@ -23,17 +22,10 @@ import {
 } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 import { ViewOnlyEmoji } from '../emoji/ViewOnlyEmoji';
-import { SkinTonePickerMenu } from '../header/SkinTonePicker/SkinTonePicker';
 
-export function Preview() {
+export function Preview({ children }: { children?: React.ReactNode }) {
   const appearance = useDefaultAppearance();
-  const previewConfig = usePreviewConfig();
-  const isSkinToneInPreview = useIsSkinToneInPreview();
   const [reactionsOpen] = useReactionsModeState();
-
-  if (!previewConfig.showPreview) {
-    return null;
-  }
 
   return (
     <Flex
@@ -46,7 +38,7 @@ export function Preview() {
     >
       <PreviewBody />
       <Space />
-      {isSkinToneInPreview ? <SkinTonePickerMenu /> : null}
+      {children}
     </Flex>
   );
 }

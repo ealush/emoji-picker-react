@@ -2,39 +2,30 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../../Stylesheet/stylesheet';
-import { useSearchDisabledConfig } from '../../../config/useConfig';
-import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
 import { SearchInput } from '../../../primitives/SearchInput';
 import { useDefaultAppearance } from '../../../primitives/appearance';
 import { filterPrimitiveProps } from '../../../primitives/nativeProps';
 import type { SearchProps } from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
-import { SkinTonePicker } from '../SkinTonePicker/SkinTonePicker';
 
 import { BtnClearSearch } from './BtnClearSearch';
 import { IcnSearch } from './IcnSearch';
 
 export function SearchContainer({
+  children,
   inputProps,
   inputRef,
 }: {
   inputProps?: SearchProps['inputProps'];
   inputRef?: SearchProps['inputRef'];
+  children?: React.ReactNode;
 } = {}) {
-  const searchDisabled = useSearchDisabledConfig();
-
-  const isSkinToneInSearch = useIsSkinToneInSearch();
-
-  if (searchDisabled) {
-    return null;
-  }
-
   return (
     <Flex className={cx(styles.overlay)}>
       <Search inputProps={inputProps} inputRef={inputRef} />
 
-      {isSkinToneInSearch ? <SkinTonePicker /> : null}
+      {children}
     </Flex>
   );
 }

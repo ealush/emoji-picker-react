@@ -23,7 +23,22 @@ export type PickerAppearanceProps =
   | 'style'
   | 'unstyled';
 
-export type RootBehaviorProps = Omit<PickerConfig, PickerAppearanceProps>;
+/** Presence and placement belong to the caller's JSX, not Root switches. */
+export type PickerCompositionProps =
+  | 'open'
+  | 'searchDisabled'
+  | 'skinTonesDisabled'
+  | 'skinTonePickerLocation';
+
+export type RootBehaviorProps = Omit<
+  PickerConfig,
+  PickerAppearanceProps | PickerCompositionProps | 'previewConfig'
+> & {
+  previewConfig?: Omit<
+    NonNullable<PickerConfig['previewConfig']>,
+    'showPreview'
+  >;
+};
 
 export type RootProps = Omit<
   React.HTMLAttributes<HTMLElement>,
@@ -33,15 +48,8 @@ export type RootProps = Omit<
     children: React.ReactNode;
     /** Built-in leaf appearance. Bare compositions default to 'none'. */
     appearance?: 'none' | 'default';
-    /** Managed wraps children in Panel and supplies Reactions. Explicit owns their placement. */
-    composition?: 'managed' | 'explicit';
     /** Shared replacements for grid, variation, reaction and navigation controls. */
     components?: PickerComponents;
-    /** Styles/attributes for the managed content wrapper. Presence stays library-owned. */
-    panelProps?: Omit<
-      React.HTMLAttributes<HTMLDivElement>,
-      'children' | 'role' | 'hidden' | 'inert' | 'dangerouslySetInnerHTML'
-    >;
     /**
      * Opt-in color scheme: applies the default light/dark color tokens as
      * CSS variables on Root (no border, background or typography).
@@ -53,8 +61,9 @@ export type RootProps = Omit<
 
 export type SearchProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children' | 'dangerouslySetInnerHTML'
+  'role' | 'dangerouslySetInnerHTML'
 > & {
+  /** Trailing controls, e.g. <SkinTone />. Nothing is inserted automatically. */
   inputProps?: Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
     | 'type'
@@ -95,7 +104,10 @@ type ReservedInputProps =
   | 'as';
 
 type InputBehaviorHandlers =
-  'onChange' | 'onFocus' | 'onCompositionStart' | 'onCompositionEnd';
+  | 'onChange'
+  | 'onFocus'
+  | 'onCompositionStart'
+  | 'onCompositionEnd';
 
 /** Native input props plus the selected design-system input's own props. */
 export type SearchInputProps<T extends SearchInputElement = 'input'> = Omit<
@@ -129,7 +141,7 @@ export type CategoryNavProps = Omit<
 
 export type PreviewProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  'role' | 'children' | 'dangerouslySetInnerHTML'
+  'role' | 'dangerouslySetInnerHTML'
 >;
 
 export type ListProps = Omit<

@@ -71,6 +71,7 @@ export type {
   SkinToneProps,
   ListProps,
   PickerAppearanceProps,
+  PickerCompositionProps,
   PreviewProps,
   RootBehaviorProps,
   RootProps,

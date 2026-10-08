@@ -21,6 +21,7 @@ import {
 } from '../components/main/PickerMainBehaviors';
 import { ActiveCategoryProvider } from '../components/navigation/CategoryNavigation';
 import { basePickerConfig } from '../config/config';
+import { DefaultPickerConfiguration } from '../config/defaultPickerConfiguration';
 import {
   MutableConfigProvider,
   NO_MUTABLE_PROVIDER,
@@ -37,10 +38,12 @@ import {
   EmojiDataInput,
   useResolvedEmojiData,
 } from '../hooks/useResolvedEmojiData';
-import { Theme, ThemeValue } from '../types/exposedTypes';
+import {
+  SkinTonePickerLocation,
+  Theme,
+  ThemeValue,
+} from '../types/exposedTypes';
 
-import { Panel } from './Panel';
-import { Reactions } from './Reactions';
 import { AppearanceContext } from './appearance';
 import { PickerComponentsContext, EMPTY_COMPONENTS } from './components';
 import { useMergedRefs } from './nativeProps';
@@ -56,8 +59,7 @@ import type { RootProps } from './types';
 // attributes land on the real element. `role` is library-owned and
 // `data-epr-*` is reserved, so both are stripped from consumer props.
 //
-// Managed composition supplies Reactions and one Panel around children.
-// Explicit composition lets callers place those same public parts. Root installs no
+// Caller JSX owns every part's presence and placement. Root installs no
 // ErrorBoundary; consumer render errors propagate to the application's
 // own boundary.
 
@@ -123,7 +125,17 @@ function splitRootProps(props: Omit<RootProps, 'children'>): {
   return { behaviorProps, asideProps };
 }
 
+const COMPOSITION_PROPS = new Set([
+  'open',
+  'searchDisabled',
+  'skinTonesDisabled',
+  'skinTonePickerLocation',
+  'composition',
+  'panelProps',
+]);
+
 const NON_BEHAVIOR_PROPS = new Set([
+  ...COMPOSITION_PROPS,
   'role',
   'width',
   'height',
@@ -154,39 +166,61 @@ function assignRootProp(
     warnThemeOnRoot();
     return;
   }
-  if (
-    CALLBACK_KEYS.has(key) ||
-    (BEHAVIOR_KEYS.has(key) && !APPEARANCE_ONLY_PROPS.has(key))
-  ) {
-    behaviorProps[key] = value;
+  if (isRootBehaviorProp(key)) {
+    behaviorProps[key] =
+      key === 'previewConfig' ? omitPreviewPresence(value) : value;
     return;
   }
   asideProps[key] = value;
 }
 
+function isRootBehaviorProp(key: string): boolean {
+  return (
+    CALLBACK_KEYS.has(key) ||
+    (BEHAVIOR_KEYS.has(key) && !APPEARANCE_ONLY_PROPS.has(key))
+  );
+}
+
+function omitPreviewPresence(value: unknown): unknown {
+  if (!value || typeof value !== 'object') return value;
+  const preview = { ...(value as Record<string, unknown>) };
+  delete preview.showPreview;
+  return preview;
+}
+
 export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
   function Root(props, forwardedRef) {
-    const {
-      children,
-      panelProps,
-      appearance = 'none',
-      composition = 'managed',
-      components,
-      ...rest
-    } = props;
+    const { children, appearance = 'none', components, ...rest } = props;
     const { behaviorProps: rawBehaviorProps, asideProps } =
       splitRootProps(rest);
+    const defaultConfiguration = React.useContext(DefaultPickerConfiguration);
+    const ignoredProps =
+      Object.keys(rest).some((key) => COMPOSITION_PROPS.has(key)) ||
+      'showPreview' in ((rest.previewConfig ?? {}) as object);
+    React.useEffect(() => {
+      if (ignoredProps && process.env.NODE_ENV !== 'production') {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '[emoji-picker-react] Root ignores composition props. Compose parts instead.',
+        );
+      }
+    }, [ignoredProps]);
     // emojiData may be an object, a loader, or absent; everything below
     // Root only ever sees a synchronous dataset.
     const dataState = useResolvedEmojiData(
       rawBehaviorProps.emojiData as EmojiDataInput | undefined,
-      rawBehaviorProps.open !== false,
     );
     const resolvedEmojiData = dataState.data;
-    const behaviorProps =
-      resolvedEmojiData === rawBehaviorProps.emojiData
-        ? rawBehaviorProps
-        : { ...rawBehaviorProps, emojiData: resolvedEmojiData };
+    const behaviorProps = {
+      ...rawBehaviorProps,
+      emojiData: resolvedEmojiData,
+      // Mounted primitives are always available. Legacy engine behavior
+      // (e.g. suppressing variations) is supplied by the default wrapper.
+      searchDisabled: false,
+      skinTonesDisabled: false,
+      skinTonePickerLocation: SkinTonePickerLocation.NONE,
+      ...defaultConfiguration,
+    };
     const parentMutableRef = useInheritedMutableConfig();
     const ownedMutableRef = useDefineMutableConfig({
       onEmojiClick: behaviorProps.onEmojiClick as never,
@@ -204,48 +238,47 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
         ? parentMutableRef
         : ownedMutableRef;
 
-    if (rawBehaviorProps.open === false) return null;
-
     return (
-      <ElementRefContextProvider>
-        <DataLoadingProvider value={dataState}>
-          <PickerConfigProvider {...behaviorProps}>
-            <MutableConfigProvider value={mutableRef}>
-              <PickerDataProvider>
-                <PickerContextProvider>
-                  <RootScopeProvider>
-                    <AppearanceContext.Provider
-                      value={appearance === 'default'}
-                    >
-                      <PickerComponentsContext.Provider
-                        value={components ?? EMPTY_COMPONENTS}
+      <DefaultPickerConfiguration.Provider value={null}>
+        <ElementRefContextProvider>
+          <DataLoadingProvider value={dataState}>
+            <PickerConfigProvider {...behaviorProps}>
+              <MutableConfigProvider value={mutableRef}>
+                <PickerDataProvider>
+                  <PickerContextProvider>
+                    <RootScopeProvider>
+                      <AppearanceContext.Provider
+                        value={appearance === 'default'}
                       >
-                        <ActiveCategoryProvider>
-                          <RootAside
-                            composition={composition}
-                            appearance={appearance}
-                            panelProps={panelProps}
-                            ref={forwardedRef}
-                            asideProps={asideProps}
-                            behaviorNonce={
-                              behaviorProps.nonce as string | undefined
-                            }
-                            cssLayer={
-                              behaviorProps.cssLayer as string | undefined
-                            }
-                          >
-                            {children}
-                          </RootAside>
-                        </ActiveCategoryProvider>
-                      </PickerComponentsContext.Provider>
-                    </AppearanceContext.Provider>
-                  </RootScopeProvider>
-                </PickerContextProvider>
-              </PickerDataProvider>
-            </MutableConfigProvider>
-          </PickerConfigProvider>
-        </DataLoadingProvider>
-      </ElementRefContextProvider>
+                        <PickerComponentsContext.Provider
+                          value={components ?? EMPTY_COMPONENTS}
+                        >
+                          <ActiveCategoryProvider>
+                            <RootAside
+                              defaultLayout={defaultConfiguration !== null}
+                              appearance={appearance}
+                              ref={forwardedRef}
+                              asideProps={asideProps}
+                              behaviorNonce={
+                                behaviorProps.nonce as string | undefined
+                              }
+                              cssLayer={
+                                behaviorProps.cssLayer as string | undefined
+                              }
+                            >
+                              {children}
+                            </RootAside>
+                          </ActiveCategoryProvider>
+                        </PickerComponentsContext.Provider>
+                      </AppearanceContext.Provider>
+                    </RootScopeProvider>
+                  </PickerContextProvider>
+                </PickerDataProvider>
+              </MutableConfigProvider>
+            </PickerConfigProvider>
+          </DataLoadingProvider>
+        </ElementRefContextProvider>
+      </DefaultPickerConfiguration.Provider>
     );
   },
 );
@@ -258,21 +291,12 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     behaviorNonce: string | undefined;
     cssLayer: string | undefined;
     children: React.ReactNode;
-    panelProps?: RootProps['panelProps'];
-    composition: 'managed' | 'explicit';
+    defaultLayout: boolean;
     appearance: 'none' | 'default';
   }
   // eslint-disable-next-line complexity
 >(function RootAside(
-  {
-    asideProps,
-    behaviorNonce,
-    cssLayer,
-    children,
-    panelProps,
-    composition,
-    appearance,
-  },
+  { asideProps, behaviorNonce, cssLayer, children, defaultLayout, appearance },
   forwardedRef,
 ) {
   const columns = useColumnsConfig();
@@ -295,16 +319,15 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     colorScheme?: ThemeValue;
     [key: string]: unknown;
   };
-  // Compact reactions mode drops explicit dimensions so the compact
-  // presentation applies — the same conditional the default wrapper used
-  // to compute, now owned by Root presence handling.
-  const { height, width, ...styleProps } = (style ?? {}) as Omit<
-    React.CSSProperties,
-    'height' | 'width'
-  > & {
-    height?: React.CSSProperties['height'];
-    width?: React.CSSProperties['width'];
+  const rootStyle: React.CSSProperties = {
+    ...(columns && ({ '--epr-columns': columns } as React.CSSProperties)),
+    ...style,
   };
+  // The default assembly owns compact sizing; caller compositions keep theirs.
+  if (reactionsOpen && defaultLayout) {
+    delete rootStyle.height;
+    delete rootStyle.width;
+  }
 
   return (
     <>
@@ -335,25 +358,11 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
             [ClassNames.reactions]: reactionsOpen,
           },
           className,
-          collapsedClassName(composition, appearance, reactionsOpen),
+          collapsedClassName(defaultLayout, appearance, reactionsOpen),
         )}
-        style={{
-          ...(columns && ({ '--epr-columns': columns } as React.CSSProperties)),
-          ...styleProps,
-          ...((!reactionsOpen || composition === 'explicit') && {
-            height,
-            width,
-          }),
-        }}
+        style={rootStyle}
       >
-        {composition === 'explicit' ? (
-          children
-        ) : (
-          <>
-            <Reactions />
-            <Panel {...panelProps}>{children}</Panel>
-          </>
-        )}
+        {children}
         <SearchSync />
         <ReactionsModeObserver />
         <NavigationInvalidation />
@@ -363,12 +372,12 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
 });
 
 function collapsedClassName(
-  composition: 'managed' | 'explicit',
+  defaultLayout: boolean,
   appearance: 'none' | 'default',
   reactionsOpen: boolean,
 ) {
   return cx(
-    composition === 'managed' && reactionsOpen && structuralStyles.collapsed,
+    defaultLayout && reactionsOpen && structuralStyles.collapsed,
     appearance === 'default' &&
       reactionsOpen &&
       structuralStyles.collapsedAppearance,

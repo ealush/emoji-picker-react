@@ -11,11 +11,7 @@ import {
   useVisibleCategoriesState,
 } from '../components/context/PickerContext';
 import { useActiveCategory } from '../components/navigation/CategoryNavigation';
-import {
-  MOUSE_EVENT_SOURCE,
-  useCategoriesConfig,
-  usePreviewConfig,
-} from '../config/useConfig';
+import { MOUSE_EVENT_SOURCE, useCategoriesConfig } from '../config/useConfig';
 import { useActiveCategoryScrollDetection } from '../hooks/useActiveCategoryScrollDetection';
 import { useOnMouseMove } from '../hooks/useDisallowMouseMove';
 import { useEmojiPreviewEvents } from '../hooks/useEmojiPreviewEvents';
@@ -171,7 +167,7 @@ function ViewportObservers() {
   const [, setActiveEmoji] = useActiveEmojiState();
   // Hover/focus tracking for Preview and useActiveEmoji lives with the
   // scroll container too, so it works whether or not Preview is rendered.
-  useEmojiPreviewEvents(usePreviewConfig().showPreview, setActiveEmoji);
+  useEmojiPreviewEvents(true, setActiveEmoji);
   const [, setVisibleCategories] = useVisibleCategoriesState();
   const categoriesConfig = useCategoriesConfig();
   // The observer re-subscribes when the merged categories reference
