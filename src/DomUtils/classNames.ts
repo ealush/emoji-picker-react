@@ -13,6 +13,7 @@ export enum ClassNames {
   emojiList = 'epr-emoji-list',
   external = '__EmojiPicker__',
   emojiPicker = 'EmojiPickerReact',
+  reactions = 'epr-reactions',
   open = 'epr-open',
   vertical = 'epr-vertical',
   horizontal = 'epr-horizontal',

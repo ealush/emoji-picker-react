@@ -3,19 +3,25 @@ import * as React from 'react';
 import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
+import type { EmojiDataInput } from '../hooks/useResolvedEmojiData';
 import {
   CategoryIcons,
   EmojiClickData,
   EmojiData,
   EmojiStyle,
+  EmojiStyleValue,
   SkinTonePickerLocation,
   SkinTones,
+  SkinTonesValue,
   SuggestionMode,
+  SuggestionModeValue,
   Theme,
+  ThemeValue,
 } from '../types/exposedTypes';
 
 import {
   CategoriesConfig,
+  UserCategoryConfig,
   baseCategoriesConfig,
   mergeCategoriesConfig,
 } from './categoryConfig';
@@ -24,6 +30,9 @@ import { CustomEmoji } from './customEmojiConfig';
 const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
+export const DEFAULT_PICKER_WIDTH = 350;
+export const DEFAULT_PICKER_HEIGHT = 450;
+export const DEFAULT_SEARCH_INPUT_LABEL = 'Type to search for an emoji';
 export const DEFAULT_SEARCH_CLEAR_BUTTON_LABEL = 'Clear';
 export const SEARCH_RESULTS_NO_RESULTS_FOUND = 'No results found';
 export const SEARCH_RESULTS_SUFFIX =
@@ -33,13 +42,78 @@ export const SEARCH_RESULTS_ONE_RESULT_FOUND =
 export const SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND =
   '%n results' + SEARCH_RESULTS_SUFFIX;
 
-export function mergeConfig(
-  userConfig: PickerConfig = {},
-): PickerConfigInternal {
-  const base = basePickerConfig();
+/**
+ * Every user-facing string the picker renders or announces. All keys are
+ * optional on the `labels` prop; anything omitted keeps its English
+ * default. Category names come from `categories` / localized `emojiData`,
+ * and the preview caption from `previewConfig.defaultCaption`.
+ */
+export type PickerLabels = {
+  searchPlaceholder: string;
+  /** Accessible name of the search input. */
+  searchLabel: string;
+  searchClear: string;
+  /** Live-region announcement and visible empty state. */
+  searchResultsNone: string;
+  searchResultsOne: string;
+  /** `%n` is replaced with the result count. */
+  searchResultsMany: string;
+  categoryNavigation: string;
+  reactions: string;
+  expandReactions: string;
+  /** Shown by the Loading part while the dataset loads. */
+  loading: string;
+  loadingError: string;
+  retryLoading: string;
+  skinToneNeutral: string;
+  skinToneLight: string;
+  skinToneMediumLight: string;
+  skinToneMedium: string;
+  skinToneMediumDark: string;
+  skinToneDark: string;
+};
 
-  // Get localized mood from emojiData, fallback to base default
-  // Get localized mood from emojiData, fallback to base default
+// English defaults, identical to the v4 strings so existing queries and
+// snapshots keep matching.
+export const DEFAULT_LABELS: PickerLabels = {
+  searchPlaceholder: DEFAULT_SEARCH_PLACEHOLDER,
+  searchLabel: DEFAULT_SEARCH_INPUT_LABEL,
+  searchClear: DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
+  searchResultsNone: SEARCH_RESULTS_NO_RESULTS_FOUND,
+  searchResultsOne: SEARCH_RESULTS_ONE_RESULT_FOUND,
+  searchResultsMany: SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
+  categoryNavigation: 'Category navigation',
+  reactions: 'Reactions',
+  expandReactions: 'Show all Emojis',
+  loading: 'Loading…',
+  loadingError: 'Could not load emojis.',
+  retryLoading: 'Try again',
+  skinToneNeutral: 'Skin tone NEUTRAL',
+  skinToneLight: 'Skin tone LIGHT',
+  skinToneMediumLight: 'Skin tone MEDIUM_LIGHT',
+  skinToneMedium: 'Skin tone MEDIUM',
+  skinToneMediumDark: 'Skin tone MEDIUM_DARK',
+  skinToneDark: 'Skin tone DARK',
+};
+
+type ResolvedUserConfig = Omit<PickerConfig, 'emojiData'> & {
+  emojiData?: EmojiData;
+};
+
+function withResolvedEmojiData(config: PickerConfig): ResolvedUserConfig {
+  return (
+    typeof config.emojiData === 'function'
+      ? { ...config, emojiData: undefined }
+      : config
+  ) as ResolvedUserConfig;
+}
+
+// Localized mood caption from emojiData is the default; an explicit
+// previewConfig.defaultCaption still wins.
+function mergePreviewConfig(
+  base: PreviewConfig,
+  userConfig: ResolvedUserConfig,
+): PreviewConfig {
   const localizedMood = (
     userConfig.emojiData?.categories as Record<
       string,
@@ -47,16 +121,44 @@ export function mergeConfig(
     >
   )?.preview_mood?.name;
 
-  const previewConfig = {
-    ...base.previewConfig,
-    // Localized mood is default, but user can override
+  return {
+    ...base,
     ...(localizedMood && !userConfig.previewConfig?.defaultCaption
       ? { defaultCaption: localizedMood }
       : {}),
     ...(userConfig.previewConfig ?? {}),
   };
+}
 
-  const config = Object.assign(base, userConfig);
+/**
+ * The default style is native, but a caller-supplied image URL resolver is
+ * an explicit request for images: without an explicit `emojiStyle` it keeps
+ * v4's image default (Apple), so the resolver is actually used.
+ */
+export function resolveEmojiStyle(
+  emojiStyle: EmojiStyleValue | undefined,
+  customImageSource: unknown,
+): EmojiStyleValue {
+  if (emojiStyle !== undefined) {
+    return emojiStyle;
+  }
+  return customImageSource ? EmojiStyle.APPLE : EmojiStyle.NATIVE;
+}
+
+export function mergeConfig(
+  rawUserConfig: PickerConfig = {},
+): PickerConfigInternal {
+  const base = basePickerConfig();
+  // Root resolves loaders before configuration is merged; a loader that
+  // reaches this point (direct internal use) is treated as "not loaded".
+  const userConfig = withResolvedEmojiData(rawUserConfig);
+  const previewConfig = mergePreviewConfig(base.previewConfig, userConfig);
+
+  const config = Object.assign(base, userConfig) as PickerConfigInternal;
+  config.emojiStyle = resolveEmojiStyle(
+    userConfig.emojiStyle,
+    userConfig.getEmojiUrl,
+  );
 
   const categories = mergeCategoriesConfig(
     userConfig.categories,
@@ -67,13 +169,23 @@ export function mergeConfig(
     userConfig.customEmojis,
   );
 
+  // Dataset ids are lowercase; accept the uppercase spelling consumers
+  // copy from docs and tools (and stray whitespace), like `reactions` and
+  // `suggestedEmojis` already do.
   config.hiddenEmojis.forEach((emoji) => {
-    config.unicodeToHide.add(emoji);
+    const id = String(emoji).trim().toLowerCase();
+    if (id) config.unicodeToHide.add(id);
   });
 
-  const skinTonePickerLocation = config.searchDisabled
-    ? SkinTonePickerLocation.PREVIEW
-    : config.skinTonePickerLocation;
+  // The built-in tone control needs a host region: without Search a
+  // search-located control moves to the preview, and without the preview
+  // a preview-located control moves to Search. With neither region it is
+  // off (NONE), the same as the explicit placement.
+  const skinTonePickerLocation = resolveSkinTonePickerLocation(
+    config.skinTonePickerLocation,
+    config.searchDisabled,
+    previewConfig.showPreview,
+  );
 
   return {
     ...config,
@@ -83,6 +195,24 @@ export function mergeConfig(
   };
 }
 
+export function resolveSkinTonePickerLocation(
+  location: SkinTonePickerLocation,
+  searchDisabled: boolean,
+  showPreview: boolean,
+): SkinTonePickerLocation {
+  if (location === SkinTonePickerLocation.SEARCH && searchDisabled) {
+    return showPreview
+      ? SkinTonePickerLocation.PREVIEW
+      : SkinTonePickerLocation.NONE;
+  }
+  if (location === SkinTonePickerLocation.PREVIEW && !showPreview) {
+    return searchDisabled
+      ? SkinTonePickerLocation.NONE
+      : SkinTonePickerLocation.SEARCH;
+  }
+  return location;
+}
+
 export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
@@ -90,10 +220,10 @@ export function basePickerConfig(): PickerConfigInternal {
     className: '',
     customEmojis: [],
     defaultSkinTone: SkinTones.NEUTRAL,
-    emojiStyle: EmojiStyle.APPLE,
+    emojiStyle: EmojiStyle.NATIVE,
     emojiVersion: null,
     getEmojiUrl: emojiUrlByUnified,
-    height: 450,
+    height: DEFAULT_PICKER_HEIGHT,
     lazyLoadEmojis: false,
     previewConfig: {
       ...basePreviewConfig,
@@ -108,7 +238,7 @@ export function basePickerConfig(): PickerConfigInternal {
     suggestedEmojisMode: SuggestionMode.FREQUENT,
     theme: Theme.LIGHT,
     unicodeToHide: new Set<string>(KNOWN_FAILING_EMOJIS),
-    width: 350,
+    width: DEFAULT_PICKER_WIDTH,
     reactionsDefaultOpen: false,
     reactions: DEFAULT_REACTIONS,
     open: true,
@@ -117,6 +247,16 @@ export function basePickerConfig(): PickerConfigInternal {
     emojiData: undefined,
     categoryIcons: {},
     nonce: undefined,
+    searchValue: undefined,
+    defaultSearchValue: undefined,
+    onSearchChange: undefined,
+    searchLabel: undefined,
+    suggestedEmojis: undefined,
+    onReactionsModeChange: undefined,
+    labels: undefined,
+    skinTone: undefined,
+    cssLayer: undefined,
+    columns: undefined,
   };
 }
 
@@ -125,13 +265,13 @@ export type PickerConfigInternal = {
   searchPlaceHolder: string;
   searchPlaceholder: string;
   searchClearButtonLabel: string;
-  defaultSkinTone: SkinTones;
+  defaultSkinTone: SkinTonesValue;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
-  emojiStyle: EmojiStyle;
+  emojiStyle: EmojiStyleValue;
   categories: CategoriesConfig;
-  theme: Theme;
-  suggestedEmojisMode: SuggestionMode;
+  theme: ThemeValue;
+  suggestedEmojisMode: SuggestionModeValue;
   lazyLoadEmojis: boolean;
   previewConfig: PreviewConfig;
   className: string;
@@ -151,6 +291,48 @@ export type PickerConfigInternal = {
   emojiData?: EmojiData;
   categoryIcons: CategoryIcons;
   nonce?: string;
+  /**
+   * Controlled search value (raw user text). When present, it is the
+   * accepted visible source of truth; user edits emit `onSearchChange`
+   * proposals instead of committing locally. See docs/v5/STATE.md.
+   */
+  searchValue?: string;
+  /** Uncontrolled initial search value, read once per mounted lifetime. */
+  defaultSearchValue?: string;
+  /** Emitted synchronously with each committed (uncontrolled) or proposed (controlled) user edit. */
+  onSearchChange?: (value: string) => void;
+  /** Accessible label for the search input. Defaults to English. */
+  searchLabel?: string;
+  /**
+   * Caller-defined Suggested category contents/order (unified or custom
+   * IDs). While present, `suggestedEmojisMode` is ignored for contents.
+   */
+  suggestedEmojis?: string[];
+  /** Observes compact-reactions vs full-picker transitions. */
+  onReactionsModeChange?: (reactionsOpen: boolean) => void;
+  /**
+   * Localized user-facing strings. Takes precedence over the individual
+   * `searchPlaceholder` / `searchLabel` / `searchClearButtonLabel` props.
+   */
+  labels?: Partial<PickerLabels>;
+  /**
+   * Controlled active skin tone. Pair with `onSkinToneChange`; while
+   * present, `defaultSkinTone` is ignored.
+   */
+  skinTone?: SkinTonesValue;
+  /**
+   * Emit the picker's CSS inside this cascade layer (e.g. "epr"), for
+   * layered CSS frameworks such as Tailwind v4 whose utilities cannot
+   * beat unlayered CSS. Declare the layer first in your CSS:
+   * `@layer epr, theme, base, components, utilities;`. Default: unlayered.
+   */
+  cssLayer?: string;
+  /**
+   * Emojis per row. The picker then sizes its width to fit those columns
+   * unless you set a width; a narrower container shows fewer columns.
+   * Default: as many as the width fits.
+   */
+  columns?: number;
 };
 
 export type PreviewConfig = {
@@ -170,7 +352,22 @@ type ConfigExternal = {
   onEmojiClick: MouseDownEvent;
   onReactionClick: MouseDownEvent;
   onSkinToneChange: OnSkinToneChange;
-} & Omit<PickerConfigInternal, 'previewConfig' | 'unicodeToHide'>;
+  /**
+   * User-supplied allowlist/order/merge input. Bare `Categories` members
+   * are accepted alongside full configs (as in v4 usage and this repo's
+   * own tests); the merged internal representation stays `CategoriesConfig`.
+   */
+  categories: UserCategoryConfig;
+  /**
+   * Dataset: an object (synchronous, SSR-safe), or a loader such as
+   * `() => import('emoji-picker-react/data/emojis-fr')` to code-split it.
+   * Omitted: the bundled English dataset.
+   */
+  emojiData: EmojiDataInput;
+} & Omit<
+  PickerConfigInternal,
+  'previewConfig' | 'unicodeToHide' | 'categories' | 'emojiData'
+>;
 
 export type PickerConfig = Partial<ConfigExternal>;
 
@@ -183,6 +380,13 @@ export type MouseDownEvent = (
 ) => void;
 export type OnSkinToneChange = (emoji: SkinTones) => void;
 
-type OnEmojiClickApi = {
+/** The `onEmojiClick` / `onReactionClick` callback signature. */
+export type EmojiClickHandler = MouseDownEvent;
+/** The `onSkinToneChange` callback signature. */
+export type SkinToneChangeHandler = OnSkinToneChange;
+
+/** Third argument of `onEmojiClick` / `onReactionClick`. */
+export type OnEmojiClickApi = {
+  /** Return to the compact reactions bar (no-op when reactions are off). */
   collapseToReactions: () => void;
 };

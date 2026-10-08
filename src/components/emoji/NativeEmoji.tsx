@@ -2,6 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
+import { DEFAULT_NATIVE_EMOJI_FONT } from '../../dataUtils/nativeEmojiSupport';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 
 import { emojiStyles } from './emojiStyles';
@@ -37,8 +38,8 @@ export function NativeEmoji({
 const styles = stylesheet.create({
   nativeEmoji: {
     '.': 'epr-emoji-native',
-    fontFamily:
-      '"Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "EmojiOne Color", "Android Emoji"!important',
+    // Rendering and support detection share the consumer token and fallback.
+    fontFamily: `var(--epr-emoji-font-family, ${DEFAULT_NATIVE_EMOJI_FONT})!important`,
     position: 'relative',
     lineHeight: '100%',
     fontSize: 'var(--epr-emoji-size)',

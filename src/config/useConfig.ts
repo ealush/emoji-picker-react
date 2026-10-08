@@ -1,24 +1,25 @@
 import * as React from 'react';
 
-import { usePickerConfig } from '../components/context/PickerConfigContext';
+import {
+  usePickerConfig,
+  useSearchSliceConfig,
+} from '../components/context/PickerConfigContext';
 import { useReactionsModeState } from '../components/context/PickerContext';
 import {
   EmojiClickData,
-  EmojiStyle,
+  EmojiStyleValue,
   SkinTonePickerLocation,
   SkinTones,
-  SuggestionMode,
-  Theme,
+  SuggestionModeValue,
+  ThemeValue,
 } from '../types/exposedTypes';
 
 import { CategoriesConfig } from './categoryConfig';
 import {
+  DEFAULT_LABELS,
   DEFAULT_SEARCH_PLACEHOLDER,
-  DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
-  SEARCH_RESULTS_NO_RESULTS_FOUND,
-  SEARCH_RESULTS_ONE_RESULT_FOUND,
-  SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND,
   PickerDimensions,
+  PickerLabels,
   PreviewConfig,
 } from './config';
 import { CustomEmoji } from './customEmojiConfig';
@@ -29,23 +30,68 @@ export enum MOUSE_EVENT_SOURCE {
   PICKER = 'picker',
 }
 
+/**
+ * Resolved user-facing strings: English defaults, then the legacy
+ * individual props, then `labels` (highest precedence).
+ */
+export function useLabels(): PickerLabels {
+  const {
+    labels,
+    searchPlaceHolder,
+    searchPlaceholder,
+    searchLabel,
+    searchClearButtonLabel,
+  } = usePickerConfig();
+  return React.useMemo(() => {
+    const legacyPlaceholder = [searchPlaceHolder, searchPlaceholder].find(
+      (p) => p !== undefined && p !== DEFAULT_SEARCH_PLACEHOLDER,
+    );
+    const resolved: PickerLabels = { ...DEFAULT_LABELS };
+    if (legacyPlaceholder !== undefined) {
+      resolved.searchPlaceholder = legacyPlaceholder;
+    }
+    if (searchLabel !== undefined) {
+      resolved.searchLabel = searchLabel;
+    }
+    if (searchClearButtonLabel !== undefined) {
+      resolved.searchClear = searchClearButtonLabel;
+    }
+    if (labels) {
+      for (const key of Object.keys(labels) as Array<keyof PickerLabels>) {
+        const value = labels[key];
+        if (value !== undefined) {
+          resolved[key] = value;
+        }
+      }
+    }
+    return resolved;
+  }, [
+    labels,
+    searchPlaceHolder,
+    searchPlaceholder,
+    searchLabel,
+    searchClearButtonLabel,
+  ]);
+}
+
 export function useSearchPlaceHolderConfig(): string {
-  const { searchPlaceHolder, searchPlaceholder } = usePickerConfig();
-  return (
-    [searchPlaceHolder, searchPlaceholder].find(
-      (p) => p !== DEFAULT_SEARCH_PLACEHOLDER,
-    ) ?? DEFAULT_SEARCH_PLACEHOLDER
-  );
+  return useLabels().searchPlaceholder;
 }
 
 export function useSearchClearButtonLabelConfig(): string {
-  const { searchClearButtonLabel } = usePickerConfig();
-  return searchClearButtonLabel ?? DEFAULT_SEARCH_CLEAR_BUTTON_LABEL;
+  return useLabels().searchClear;
 }
 
+// Literal values are the enum members' own strings, so the public
+// SkinTonesValue narrows to the enum the engine compares against.
 export function useDefaultSkinToneConfig(): SkinTones {
   const { defaultSkinTone } = usePickerConfig();
-  return defaultSkinTone;
+  return defaultSkinTone as SkinTones;
+}
+
+export function useSkinToneConfig(): SkinTones | undefined {
+  const { skinTone } = usePickerConfig();
+  return skinTone as SkinTones | undefined;
 }
 
 export function useAllowExpandReactions(): boolean {
@@ -58,7 +104,7 @@ export function useSkinTonesDisabledConfig(): boolean {
   return skinTonesDisabled;
 }
 
-export function useEmojiStyleConfig(): EmojiStyle {
+export function useEmojiStyleConfig(): EmojiStyleValue {
   const { emojiStyle } = usePickerConfig();
   return emojiStyle;
 }
@@ -91,23 +137,36 @@ export function useOpenConfig(): boolean {
 export function useOnEmojiClickConfig(
   mouseEventSource: MOUSE_EVENT_SOURCE,
 ): (emoji: EmojiClickData, event: MouseEvent) => void {
+  // The ref object is stable; callbacks are read at call time so a
+  // subscribed listener always invokes the latest parent callback even
+  // when the memoized tree skips rerendering on callback-only updates.
+  // Reading them during render would freeze the first-render callback
+  // into every listener closure.
   const { current } = useMutableConfig();
   const [, setReactionsOpen] = useReactionsModeState();
 
-  const handler = current.onEmojiClick || (() => {});
-  const { onReactionClick } = current;
-
-  if (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS && onReactionClick) {
-    return (...args) =>
-      onReactionClick(...args, {
+  if (mouseEventSource === MOUSE_EVENT_SOURCE.REACTIONS) {
+    return (...args) => {
+      const onReactionClick = current.onReactionClick;
+      if (onReactionClick) {
+        return onReactionClick(...args, {
+          collapseToReactions: () => {
+            setReactionsOpen(true);
+          },
+        });
+      }
+      const onEmojiClick = current.onEmojiClick || noop;
+      return onEmojiClick(...args, {
         collapseToReactions: () => {
-          setReactionsOpen((o) => o);
+          setReactionsOpen(true);
         },
       });
+    };
   }
 
   return (...args) => {
-    handler(...args, {
+    const onEmojiClick = current.onEmojiClick || noop;
+    return onEmojiClick(...args, {
       collapseToReactions: () => {
         setReactionsOpen(true);
       },
@@ -118,7 +177,9 @@ export function useOnEmojiClickConfig(
 export function useOnSkinToneChangeConfig(): (skinTone: SkinTones) => void {
   const { current } = useMutableConfig();
 
-  return current.onSkinToneChange || (() => {});
+  return (skinTone: SkinTones) => {
+    current.onSkinToneChange?.(skinTone);
+  };
 }
 
 export function usePreviewConfig(): PreviewConfig {
@@ -126,13 +187,13 @@ export function usePreviewConfig(): PreviewConfig {
   return previewConfig;
 }
 
-export function useThemeConfig(): Theme {
+export function useThemeConfig(): ThemeValue {
   const { theme } = usePickerConfig();
 
   return theme;
 }
 
-export function useSuggestedEmojisModeConfig(): SuggestionMode {
+export function useSuggestedEmojisModeConfig(): SuggestionModeValue {
   const { suggestedEmojisMode } = usePickerConfig();
   return suggestedEmojisMode;
 }
@@ -155,6 +216,17 @@ export function useStyleConfig(): React.CSSProperties {
 export function useReactionsOpenConfig(): boolean {
   const { reactionsDefaultOpen } = usePickerConfig();
   return reactionsDefaultOpen;
+}
+
+export function useColumnsConfig(): number | undefined {
+  const { columns } = usePickerConfig();
+  return validColumns(columns);
+}
+
+export function validColumns(columns: unknown): number | undefined {
+  return Number.isInteger(columns) && (columns as number) > 0
+    ? (columns as number)
+    : undefined;
 }
 
 export function useEmojiVersionConfig(): string | null {
@@ -184,11 +256,32 @@ export function useReactionsConfig(): string[] {
 
 export function useGetEmojiUrlConfig(): (
   unified: string,
-  style: EmojiStyle,
+  style: EmojiStyleValue,
 ) => string {
   const { getEmojiUrl } = usePickerConfig();
   return getEmojiUrl;
 }
+
+export function useSearchValueConfig(): string | undefined {
+  const { searchValue } = useSearchSliceConfig();
+  return searchValue;
+}
+
+export function useDefaultSearchValueConfig(): string | undefined {
+  const { defaultSearchValue } = useSearchSliceConfig();
+  return defaultSearchValue;
+}
+
+export function useSearchLabelConfig(): string {
+  return useLabels().searchLabel;
+}
+
+export function useSuggestedEmojisConfig(): string[] | undefined {
+  const { suggestedEmojis } = usePickerConfig();
+  return suggestedEmojis;
+}
+
+function noop() {}
 
 function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
   return typeof dimensionConfig === 'number'
@@ -196,18 +289,18 @@ function getDimension(dimensionConfig: PickerDimensions): PickerDimensions {
     : dimensionConfig;
 }
 
-export function useSearchResultsConfig(searchResultsCount: number): string {
+export function formatSearchResultsLabel(
+  labels: PickerLabels,
+  searchResultsCount: number,
+): string {
   const hasResults = searchResultsCount > 0;
   const isPlural = searchResultsCount > 1;
 
   if (hasResults) {
     return isPlural
-      ? SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND.replace(
-          '%n',
-          searchResultsCount.toString(),
-        )
-      : SEARCH_RESULTS_ONE_RESULT_FOUND;
+      ? labels.searchResultsMany.replace('%n', searchResultsCount.toString())
+      : labels.searchResultsOne;
   }
 
-  return SEARCH_RESULTS_NO_RESULTS_FOUND;
+  return labels.searchResultsNone;
 }

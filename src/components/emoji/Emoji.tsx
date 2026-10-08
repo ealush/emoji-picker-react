@@ -17,6 +17,8 @@ type ClickableEmojiProps = Readonly<
     buttonClassName?: string;
     noBackground?: boolean;
     style?: React.CSSProperties;
+    role?: string;
+    logicalIndex?: number;
   }
 >;
 
@@ -34,6 +36,8 @@ export function ClickableEmoji({
   buttonClassName,
   noBackground = false,
   style,
+  role,
+  logicalIndex,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
 
@@ -47,6 +51,8 @@ export function ClickableEmoji({
       unified={unified}
       noBackground={noBackground}
       style={style}
+      role={role}
+      logicalIndex={logicalIndex}
       className={buttonClassName}
     >
       <ViewOnlyEmoji

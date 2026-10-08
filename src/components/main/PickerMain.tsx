@@ -53,6 +53,7 @@ function PickerRootElement({ children }: RootProps) {
 
   return (
     <aside
+      data-epr-part="root"
       className={cx(
         styles.main,
         styles.baseVariables,

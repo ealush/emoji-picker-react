@@ -2,7 +2,7 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { stylesheet } from '../../Stylesheet/stylesheet';
-import { EmojiStyle } from '../../types/exposedTypes';
+import { EmojiStyleValue } from '../../types/exposedTypes';
 
 import { emojiStyles } from './emojiStyles';
 
@@ -15,7 +15,7 @@ export function EmojiImg({
   className,
 }: {
   emojiName: string;
-  emojiStyle: EmojiStyle;
+  emojiStyle: EmojiStyleValue;
   style: React.CSSProperties;
   lazyLoad?: boolean;
   imgUrl: string;

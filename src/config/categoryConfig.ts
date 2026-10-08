@@ -3,6 +3,7 @@ import {
   CategoryConfig,
   EmojiData,
   SuggestionMode,
+  SuggestionModeValue,
 } from '../types/exposedTypes';
 
 import { CustomEmoji } from './customEmojiConfig';
@@ -232,13 +233,16 @@ export function mergeCategoriesConfig(
   }
 }
 
+// A fresh object every time: the module-level defaults are shared by every
+// picker in the page, so merging into them would make one picker's
+// localized or "Recently Used" names leak into the next.
 function getBaseConfigByCategory(
   category: Categories,
   modifier: CategoryConfig = {} as CategoryConfig,
-) {
-  return Object.assign(configByCategory[category], modifier);
+): CategoryConfig {
+  return { ...configByCategory[category], ...modifier };
 }
 
 type CategoryConfigModifiers = {
-  suggestionMode?: SuggestionMode;
+  suggestionMode?: SuggestionModeValue;
 };

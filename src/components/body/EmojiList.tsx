@@ -106,7 +106,7 @@ function RenderCategory({
       categoryIdFromCategoryConfig(categoryConfig),
     );
 
-  const { virtualizedCounter, emojis, dimensions } = useEmojiVirtualization({
+  const { virtualizedCounter, emojis, dimensions, emojiCount } = useEmojiVirtualization({
     categoryEmojis,
     topOffset,
     onHeightReady,
@@ -119,6 +119,7 @@ function RenderCategory({
       categoryConfig={categoryConfig}
       height={dimensions?.categoryHeight}
       emojisPerRow={dimensions?.emojisPerRow}
+      emojiCount={emojiCount}
       // Indicates that there are no visible emojis
       // Hence, the category should be hidden
       hidden={!emojis.length && virtualizedCounter === 0}

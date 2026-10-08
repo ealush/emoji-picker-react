@@ -1,7 +1,11 @@
-import { SkinTones, SuggestionMode } from '../types/exposedTypes';
+import {
+  SkinTones,
+  SuggestionMode,
+  SuggestionModeValue,
+} from '../types/exposedTypes';
 
 import { DataEmoji } from './DataTypes';
-import { emojiUnified } from './emojiUtils';
+import { emojiUnified, emojiCanonicalUnified } from './emojiUtils';
 
 const SUGGESTED_LS_KEY = 'epr_suggested';
 
@@ -13,7 +17,7 @@ type SuggestedItem = {
 
 type Suggested = SuggestedItem[];
 
-export function getSuggested(mode?: SuggestionMode): Suggested {
+export function getSuggested(mode?: SuggestionModeValue): Suggested {
   try {
     if (typeof window === 'undefined' || !window.localStorage) {
       return [];
@@ -36,7 +40,7 @@ export function setSuggested(emoji: DataEmoji, skinTone: SkinTones) {
   const recent = getSuggested();
 
   const unified = emojiUnified(emoji, skinTone);
-  const originalUnified = emojiUnified(emoji);
+  const originalUnified = emojiCanonicalUnified(emoji);
 
   let existing = recent.find(({ unified: u }) => u === unified);
 
