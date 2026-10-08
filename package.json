@@ -64,7 +64,7 @@
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
     "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts",
     "build:data": "npm run build:data:src && npm run build:data:dist",
-    "storybook": "npm run build:data && storybook dev -p 6006",
+    "storybook": "npm run build:data && storybook dev --host 0.0.0.0 -p 6006",
     "build-storybook": "storybook build",
     "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
     "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
