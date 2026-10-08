@@ -40,6 +40,14 @@ export function useEmojiPreviewEvents(
 
     bodyRef?.addEventListener('mouseover', onMouseOver, true);
 
+    // Mouseover precedes mousemove on a newly hovered cell. Resume hover
+    // during capture, before the body's movement listener clears the
+    // keyboard guard, so the first real pointer movement is not lost.
+    bodyRef?.addEventListener('mousemove', onMouseMove, {
+      capture: true,
+      passive: true,
+    });
+
     bodyRef?.addEventListener('focus', onEnter, true);
 
     bodyRef?.addEventListener('mouseout', onLeave, {
@@ -83,6 +91,14 @@ export function useEmojiPreviewEvents(
       if (e.key === 'Escape') {
         setPreviewEmoji(null);
       }
+    }
+
+    function onMouseMove(e: MouseEvent) {
+      if (!eventBelongsToPicker(e, bodyRef) || !isMouseDisallowed()) {
+        return;
+      }
+      allowMouseMove();
+      onMouseOver(e);
     }
 
     // eslint-disable-next-line complexity
@@ -149,6 +165,7 @@ export function useEmojiPreviewEvents(
 
     return () => {
       bodyRef?.removeEventListener('mouseover', onMouseOver, true);
+      bodyRef?.removeEventListener('mousemove', onMouseMove, true);
       bodyRef?.removeEventListener('mouseout', onLeave);
       bodyRef?.removeEventListener('focus', onEnter, true);
       bodyRef?.removeEventListener('blur', onLeave, true);
