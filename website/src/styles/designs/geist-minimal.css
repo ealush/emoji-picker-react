@@ -1,0 +1,68 @@
+/* Generated from stories/recipes/geist-minimal by scripts/portDesigns.mts. */
+/* The surrounding mock app (shared by every stack variant). */
+
+
+/* Vercel Geist — built-in light tokens via <Root theme="light">, then a
+   minimal monochrome layer: hairlines, mono section headers, square
+   focus rings, caller-defined suggestions first. */
+/* Picker styles — the source of truth for every stack variant. */
+.geist-picker {
+  --epr-highlight-color: #000000;
+  --epr-text-color: #666666;
+  --epr-hover-bg-color: #f2f2f2;
+  --epr-focus-bg-color: #ebebeb;
+  --epr-search-input-bg-color: #ffffff;
+  --epr-search-input-bg-color-active: #ffffff;
+  --epr-search-border-color: #eaeaea;
+  --epr-search-border-color-active: #000000;
+  --epr-search-input-height: 36px;
+  --epr-search-input-border-radius: 6px;
+  --epr-search-input-padding: 0 12px 0 34px;
+  --epr-category-icon-active-color: #000000;
+  --epr-category-icon-inactive-color: #a1a1a1;
+  --epr-category-navigation-button-size: 20px;
+  --epr-category-label-height: 32px;
+  --epr-emoji-size: 26px;
+  --epr-emoji-padding: 6px;
+  --epr-horizontal-padding: 12px;
+  width: 336px;
+  height: 400px;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+  font-family: Geist, Inter, -apple-system, 'Segoe UI', sans-serif;
+}
+.geist-picker [data-epr-part='search'] > * {
+  padding: 12px 12px 8px;
+}
+.geist-picker [data-epr-part='category-nav'] {
+  border-bottom: 1px solid #eaeaea;
+}
+.geist-picker [data-epr-part='category-nav'] > * {
+  padding: 4px 12px 10px;
+}
+.geist-picker .geist-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #6b6b6b;
+  font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.geist-picker .geist-header::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid #eaeaea;
+}
+.geist-picker [data-epr-part='emoji'] {
+  border-radius: 6px;
+}
+.geist-picker [data-epr-part='emoji']:focus-visible {
+  outline: 2px solid #000;
+  outline-offset: -2px;
+}

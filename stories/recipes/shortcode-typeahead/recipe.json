@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Shortcode typeahead",
+  "name": "ShortcodeTypeahead",
+  "rootClass": "typeahead-picker",
+  "root": "Picker.Root",
+  "description": "Editable :name autocomplete: type a query, press Down then Enter to replace the token, or Escape to dismiss.",
+  "order": 6
+}

@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
 import EmojiPicker, { Categories, Props } from '../../src';
@@ -6,11 +6,11 @@ import { SuggestionMode } from '../../src/types/exposedTypes';
 import { Template } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Behavior',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 

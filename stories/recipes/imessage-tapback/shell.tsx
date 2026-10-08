@@ -1,0 +1,25 @@
+import React from 'react';
+
+import EmojiPicker from '../../../src';
+
+import './app.css';
+
+// Tapback set: love, like, dislike, laugh, emphasize, question.
+export type ShellProps = {
+  /** The picker root: EmojiPicker, or a styled() wrapper of it. */
+  Root?: React.ElementType;
+  className?: string;
+};
+
+export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellProps) {
+  return (
+    <div className="imessage-stage">
+      <RootComponent         className={className}
+        colorScheme="dark"
+        reactionsDefaultOpen
+        reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}
+      />
+      <div className="imessage-bubble">Dinner at 8? I booked the place by the river.</div>
+    </div>
+  );
+}

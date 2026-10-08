@@ -1,0 +1,185 @@
+/* Generated from stories/recipes/team-chat by scripts/portDesigns.mts. */
+/* The host app around the picker (shared by every stack variant). */
+.chat-window {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 560px;
+  height: 640px;
+  overflow: hidden;
+  border: 1px solid #e4e4e7;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #18181b;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+}
+.chat-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e4e4e7;
+}
+.chat-channel {
+  font-weight: 700;
+}
+.chat-members {
+  color: #52525b;
+  font-size: 13px;
+}
+.chat-messages {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 16px 18px;
+  list-style: none;
+}
+.chat-message {
+  display: flex;
+  gap: 10px;
+}
+.chat-message p {
+  margin: 0;
+  line-height: 1.45;
+}
+.chat-meta {
+  color: #52525b;
+  font-size: 12px;
+}
+.chat-meta strong {
+  margin-right: 6px;
+  color: #18181b;
+  font-size: 14px;
+}
+.chat-avatar {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 8px;
+}
+.chat-avatar-a {
+  background: linear-gradient(135deg, #f472b6, #f59e0b);
+}
+.chat-avatar-b {
+  background: linear-gradient(135deg, #60a5fa, #34d399);
+}
+.chat-popover {
+  position: absolute;
+  right: 18px;
+  bottom: 96px;
+  filter: drop-shadow(0 12px 28px rgb(24 24 27 / 18%));
+}
+.chat-popover::after {
+  content: '';
+  position: absolute;
+  right: 74px;
+  bottom: -7px;
+  width: 14px;
+  height: 14px;
+  border-right: 1px solid #e4e4e7;
+  border-bottom: 1px solid #e4e4e7;
+  background: #ffffff;
+  transform: rotate(45deg);
+}
+.chat-composer {
+  margin: 0 18px 18px;
+  border: 1px solid #d4d4d8;
+  border-radius: 12px;
+}
+.chat-input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 12px 14px 4px;
+}
+.chat-tools {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 6px 8px 8px;
+}
+.chat-tools button {
+  min-width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #3f3f46;
+  font: inherit;
+  font-size: 16px;
+}
+.chat-tools .chat-emoji-button {
+  background: #eef2ff;
+  color: #4338ca;
+}
+.chat-tools .chat-send {
+  padding: 0 14px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Team chat composer — a compact popover: indigo accents, 12px radius,
+   slim preview strip. */
+.chat-picker {
+  --epr-bg-color: #ffffff;
+  --epr-text-color: #52525b;
+  --epr-highlight-color: #4f46e5;
+  --epr-hover-bg-color: #f4f4f5;
+  --epr-focus-bg-color: #e0e7ff;
+  --epr-picker-border-color: #e4e4e7;
+  --epr-search-input-bg-color: #f4f4f5;
+  --epr-search-input-bg-color-active: #ffffff;
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: #6366f1;
+  --epr-search-input-height: 34px;
+  --epr-search-input-border-radius: 8px;
+  --epr-search-input-text-color: #18181b;
+  --epr-search-input-placeholder-color: #71717a;
+  --epr-category-label-bg-color: #fffffff2;
+  --epr-category-label-text-color: #52525b;
+  --epr-category-label-height: 30px;
+  --epr-category-icon-active-color: #4f46e5;
+  --epr-category-icon-inactive-color: #71717a;
+  --epr-category-navigation-button-size: 20px;
+  --epr-preview-height: 46px;
+  --epr-preview-emoji-size: 26px;
+  --epr-preview-text-color: #18181b;
+  --epr-preview-border-color: #e4e4e7;
+  --epr-emoji-size: 26px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 12px;
+  width: 340px;
+  height: 380px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.chat-picker [data-epr-part='search'] > * {
+  padding: 12px 12px 4px;
+}
+.chat-picker [data-epr-part='category-nav'] > * {
+  padding: 8px 12px;
+}
+.chat-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  box-shadow: 0 10px 0 -8px #4f46e5;
+}
+.chat-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+.chat-picker [data-epr-part='emoji'] {
+  border-radius: 8px;
+}
+.chat-picker [data-epr-part='preview'] {
+  font-size: 13px;
+}

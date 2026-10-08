@@ -1,0 +1,39 @@
+/* The surrounding mock app (shared by every stack variant). */
+.w95-window {
+  --w95-face: #c0c0c0;
+  --w95-light: #ffffff;
+  --w95-dark: #808080;
+  --w95-darker: #000000;
+  width: 380px;
+  padding: 3px;
+  background: var(--w95-face);
+  box-shadow:
+    inset -1px -1px var(--w95-darker),
+    inset 1px 1px var(--w95-face),
+    inset -2px -2px var(--w95-dark),
+    inset 2px 2px var(--w95-light);
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, Geneva,
+    sans-serif;
+  font-size: 12px;
+}
+.w95-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 3px 3px 6px;
+  background: linear-gradient(90deg, #000080, #1084d0);
+  color: #fff;
+  font-weight: 700;
+}
+.w95-title button {
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  border: 0;
+  background: var(--w95-face);
+  box-shadow:
+    inset -1px -1px var(--w95-darker),
+    inset 1px 1px var(--w95-light),
+    inset -2px -2px var(--w95-dark);
+  font: 700 10px/1 sans-serif;
+}

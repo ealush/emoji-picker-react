@@ -1,0 +1,30 @@
+/* Plain CSS on the default picker: tokens on a class, parts by
+   [data-epr-part]. No specificity tricks needed (the picker's CSS is in
+   the `epr` cascade layer). */
+.brand-picker {
+  --epr-bg-color: #fdf2f8;
+  --epr-text-color: #831843;
+  --epr-highlight-color: #db2777;
+  --epr-hover-bg-color: #fce7f3;
+  --epr-focus-bg-color: #fbcfe8;
+  --epr-picker-border-color: #f9a8d4;
+  --epr-search-input-bg-color: #ffffff;
+  --epr-search-border-color: #fbcfe8;
+  --epr-search-input-text-color: #831843;
+  --epr-search-input-placeholder-color: #9d4b73;
+  --epr-category-label-bg-color: #fdf2f8f0;
+  --epr-category-label-text-color: #9d174d;
+  --epr-category-icon-active-color: #db2777;
+  --epr-category-icon-inactive-color: #be6a94;
+  --epr-preview-text-color: #831843;
+  --epr-picker-border-radius: 24px;
+  font-family: 'Avenir Next', Avenir, 'Segoe UI', sans-serif;
+}
+
+.brand-picker [data-epr-part='emoji'] {
+  border-radius: 12px;
+}
+
+.brand-picker [data-epr-part='preview'] {
+  background: #fce7f3;
+}

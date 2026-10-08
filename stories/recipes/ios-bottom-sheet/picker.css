@@ -1,0 +1,34 @@
+/* iOS — narrow bottom sheet on a phone: drag handle, no search, no section
+   titles, larger touch targets, tabs at the bottom. */
+/* Picker styles — the source of truth for every stack variant. */
+.ios-sheet {
+  --epr-bg-color: #f2f2f7;
+  --epr-text-color: #3c3c43;
+  --epr-highlight-color: #007aff;
+  --epr-hover-bg-color: rgb(120 120 128 / 16%);
+  --epr-focus-bg-color: rgb(120 120 128 / 20%);
+  --epr-category-label-height: 0px;
+  --epr-category-icon-active-color: #007aff;
+  --epr-category-icon-inactive-color: #8e8e93;
+  --epr-category-navigation-button-size: 26px;
+  --epr-emoji-size: 34px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 12px;
+  height: 100%;
+  border-radius: 16px 16px 0 0;
+  background: var(--epr-bg-color);
+  box-shadow: 0 -4px 24px rgb(0 0 0 / 18%);
+}
+.ios-sheet [data-epr-part='category-label'] {
+  display: none;
+}
+.ios-sheet [data-epr-part='emoji'] {
+  border-radius: 10px;
+}
+.ios-sheet [data-epr-part='category-nav'] {
+  border-top: 0.5px solid rgb(60 60 67 / 29%);
+  background: rgb(249 249 249 / 94%);
+}
+.ios-sheet [data-epr-part='category-nav'] > * {
+  padding: 8px 10px 22px;
+}

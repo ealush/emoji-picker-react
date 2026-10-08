@@ -1,0 +1,60 @@
+/* WhatsApp — emoji keyboard panel docked under a chat: wide and short,
+   flat surfaces, green accent, tabs along the bottom like a keyboard. */
+/* Picker styles — the source of truth for every stack variant. */
+.wa-picker {
+  --epr-bg-color: #ffffff;
+  --epr-text-color: #54656f;
+  --epr-highlight-color: #00a884;
+  --epr-hover-bg-color: #f5f6f6;
+  --epr-focus-bg-color: #e9edef;
+  --epr-search-input-bg-color: #f0f2f5;
+  --epr-search-input-bg-color-active: #f0f2f5;
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: transparent;
+  --epr-search-input-height: 34px;
+  --epr-search-input-border-radius: 8px;
+  --epr-search-input-padding: 0 12px 0 36px;
+  --epr-search-input-text-color: #111b21;
+  --epr-search-input-placeholder-color: #667781;
+  --epr-category-label-bg-color: #fffffff2;
+  --epr-category-label-text-color: #667781;
+  --epr-category-label-height: 28px;
+  --epr-category-icon-active-color: #00a884;
+  --epr-category-icon-inactive-color: #8696a0;
+  --epr-category-navigation-button-size: 24px;
+  --epr-emoji-size: 30px;
+  --epr-emoji-padding: 6px;
+  --epr-horizontal-padding: 16px;
+  width: 100%;
+  height: 300px;
+  border-top: 1px solid #e9edef;
+  background: #fff;
+}
+.wa-picker [data-epr-part='search'] > * {
+  padding: 10px 16px 4px;
+}
+.wa-picker [data-epr-part='category-label'] {
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.wa-picker [data-epr-part='emoji'] {
+  border-radius: 50%;
+}
+.wa-picker [data-epr-part='category-nav'] {
+  border-top: 1px solid #e9edef;
+}
+.wa-picker [data-epr-part='category-nav'] > * {
+  justify-content: space-between;
+  padding: 6px 40px;
+}
+.wa-picker [data-epr-part='category-tab'][aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  bottom: -6px;
+  left: -10px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: #00a884;
+}

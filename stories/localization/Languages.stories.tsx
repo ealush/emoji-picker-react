@@ -1,5 +1,5 @@
 import React from 'react';
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 
 import EmojiPicker from '../../src';
 import bn from '../../dist/data/emojis-bn';
@@ -32,10 +32,10 @@ import zhHant from '../../dist/data/emojis-zh-hant';
 
 const meta: Meta<typeof EmojiPicker> = {
   title: 'Localization/Languages',
+  tags: ['visual'],
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 };
 

@@ -1,0 +1,75 @@
+/* Generated from stories/recipes/discord-sidebar by scripts/portDesigns.mts. */
+/* The surrounding mock app (shared by every stack variant). */
+.discord-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.discord-rail {
+  width: 48px;
+  flex: none;
+  background: #232428;
+  overflow-y: auto;
+}
+.discord-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.discord-main [data-epr-part='search'] > * {
+  padding: 10px 10px 6px;
+}
+
+/* Discord — dark picker with a vertical category rail on the left,
+   blurple accents, and a status-style preview footer. */
+/* Picker styles — the source of truth for every stack variant. */
+.discord-picker {
+  --epr-bg-color: #2b2d31;
+  --epr-text-color: #dbdee1;
+  --epr-highlight-color: #5865f2;
+  --epr-hover-bg-color: #3f4248;
+  --epr-focus-bg-color: #404249;
+  --epr-picker-border-color: #1e1f22;
+  --epr-search-input-bg-color: #1e1f22;
+  --epr-search-input-text-color: #dbdee1;
+  --epr-search-input-placeholder-color: #949ba4;
+  --epr-search-border-color: #1e1f22;
+  --epr-search-border-color-active: #5865f2;
+  --epr-search-input-border-radius: 4px;
+  --epr-search-input-height: 30px;
+  --epr-category-label-bg-color: #2b2d31f2;
+  --epr-category-label-text-color: #b5bac1;
+  --epr-category-label-height: 30px;
+  --epr-category-icon-active-color: #dbdee1;
+  --epr-category-icon-inactive-color: #80848e;
+  --epr-category-navigation-button-size: 24px;
+  --epr-preview-border-color: #1e1f22;
+  --epr-preview-text-color: #f2f3f5;
+  --epr-preview-height: 52px;
+  --epr-preview-emoji-size: 30px;
+  --epr-skin-tone-picker-menu-color: #2b2d31f5;
+  --epr-emoji-variation-picker-bg-color: #232428;
+  --epr-emoji-size: 32px;
+  --epr-emoji-padding: 4px;
+  width: 420px;
+  height: 440px;
+  border-radius: 8px;
+  background: var(--epr-bg-color);
+  box-shadow: 0 8px 16px rgb(0 0 0 / 24%);
+  font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  color: var(--epr-text-color);
+}
+.discord-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.discord-picker [data-epr-part='emoji'] {
+  border-radius: 4px;
+}
+.discord-picker [data-epr-part='preview'] {
+  background: #232428;
+}

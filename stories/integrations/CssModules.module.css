@@ -1,0 +1,36 @@
+/* CSS Modules: locally scoped class names, applied through className. */
+.picker {
+  --epr-bg-color: #f0fdf4;
+  --epr-text-color: #166534;
+  --epr-highlight-color: #15803d;
+  --epr-hover-bg-color: #dcfce7;
+  --epr-focus-bg-color: #bbf7d0;
+  --epr-search-input-bg-color: #ffffff;
+  --epr-search-border-color: #bbf7d0;
+  --epr-search-border-color-active: #15803d;
+  --epr-search-input-text-color: #14532d;
+  --epr-search-input-placeholder-color: #4d7c5d;
+  --epr-category-label-bg-color: #f0fdf4f0;
+  --epr-category-label-text-color: #166534;
+  --epr-category-icon-active-color: #15803d;
+  --epr-category-icon-inactive-color: #5f8f6e;
+  --epr-emoji-size: 28px;
+  width: 340px;
+  height: 420px;
+  border: 2px solid #86efac;
+  border-radius: 20px;
+  background: #f0fdf4;
+  font-family: Nunito, 'Trebuchet MS', sans-serif;
+}
+
+.nav {
+  border-top: 2px solid #bbf7d0;
+}
+
+.list [data-epr-part='emoji'] {
+  border-radius: 50%;
+}
+
+.list [data-epr-part='category-label'] {
+  font-weight: 800;
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Polaris rating card",
+  "name": "PolarisRating",
+  "rootClass": "polaris-picker",
+  "root": "Picker.Root",
+  "description": "A Polaris rating card narrowed to a single category.",
+  "order": 21
+}

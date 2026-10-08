@@ -1,0 +1,20 @@
+/* The surrounding mock app (shared by every stack variant). */
+.linear-footer {
+  display: flex;
+  gap: 16px;
+  padding: 8px 14px;
+  border-top: 1px solid #2e2f36;
+  color: #9a9fa8;
+  font-size: 12px;
+}
+.linear-footer kbd {
+  padding: 1px 5px;
+  border: 1px solid #3a3b42;
+  border-radius: 4px;
+  font-family: inherit;
+}
+.linear-empty {
+  padding: 32px 0;
+  color: #8a8f98;
+  font-size: 14px;
+}
