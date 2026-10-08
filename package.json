@@ -3,192 +3,6 @@
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "homepage": "https://ealush.com/emoji-picker-react",
-  "files": [
-    "dist",
-    "src",
-    "llms.txt"
-  ],
-  "description": "Emoji Picker component for React Applications on the web",
-  "keywords": [
-    "emoji-picker",
-    "react-emoji-picker",
-    "emoji",
-    "emojis",
-    "reactions",
-    "reactions-picker",
-    "emoji-reactions"
-  ],
-  "engines": {
-    "node": ">=10"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ealush/emoji-picker-react.git"
-  },
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/ealush"
-    },
-    {
-      "type": "tidelift",
-      "url": "https://tidelift.com/subscription/pkg/npm-emoji-picker-react"
-    }
-  ],
-  "overrides": {
-    "decode-uri-component": "0.2.2",
-    "deep-object-diff": "1.1.9",
-    "ua-parser-js": "0.7.41",
-    "minimist": "1.2.8",
-    "loader-utils": "2.0.4",
-    "form-data": "4.0.6",
-    "request": {
-      "form-data": "2.5.6"
-    },
-    "tsconfig-paths": {
-      "json5": "1.0.2"
-    }
-  },
-  "scripts": {
-    "start": "tsdx watch",
-    "build": "npm run check:scripts && npm run clean && npm run build:data:src && npm run type-check && npm run build:data:dist && tsx ./scripts/build.ts && npm run docs:llms",
-    "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:visual": "playwright test",
-    "lint": "eslint ./src --ext .ts,.tsx",
-    "prepare": "npm run build",
-    "size": "size-limit",
-    "analyze": "size-limit --why",
-    "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
-    "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts && tsx ./scripts/buildDataTwins.ts",
-    "build:data": "npm run build:data:src && npm run build:data:dist",
-    "storybook": "npm run build:data && storybook dev --host 0.0.0.0 -p 6006",
-    "build-storybook": "storybook build",
-    "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
-    "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
-    "check:perf": "tsx ./bench/run.ts",
-    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
-    "check:package": "tsx ./scripts/package-check/run.ts",
-    "check:react16": "tsx ./scripts/react16-fixture/run.ts",
-    "clean": "tsx ./scripts/clean.ts",
-    "check:scripts": "tsc --project scripts/tsconfig.json",
-    "icons": "tsx ./scripts/buildIcons.ts",
-    "recipes": "tsx ./scripts/generateRecipes.mts",
-    "designs": "tsx ./scripts/portDesigns.mts",
-    "registry": "tsx ./scripts/generateRegistry.mts",
-    "check:data-package": "tsx ./scripts/checkDataPackage.ts"
-  },
-  "peerDependencies": {
-    "react": ">=16.8"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint"
-    }
-  },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true
-  },
-  "name": "emoji-picker-react",
-  "author": "ealush",
-  "module": "dist/esm/index.mjs",
-  "size-limit": [
-    {
-      "path": "dist/index.js",
-      "limit": "75 KB"
-    },
-    {
-      "path": "dist/esm/index.mjs",
-      "limit": "75 KB"
-    },
-    {
-      "path": "dist/esm/primitives/index.mjs",
-      "limit": "75 KB"
-    },
-    {
-      "path": "dist/esm/data.mjs",
-      "limit": "42 KB"
-    }
-  ],
-  "devDependencies": {
-    "@axe-core/playwright": "^4.13.0",
-    "@babel/core": "^7.18.10",
-    "@babel/preset-react": "^7.24.1",
-    "@babel/preset-typescript": "^7.24.1",
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^9.4.0",
-    "@playwright/test": "^1.46.1",
-    "@radix-ui/react-popover": "^1.2.0",
-    "@semantic-release/changelog": "^7.0.0",
-    "@semantic-release/git": "^11.0.1",
-    "@semantic-release/github": "^12.0.9",
-    "@semantic-release/npm": "^13.1.5",
-    "@size-limit/preset-small-lib": "^14.1.0",
-    "@storybook/addon-essentials": "^8.6.15",
-    "@storybook/addon-info": "^5.3.21",
-    "@storybook/addon-links": "^8.6.15",
-    "@storybook/addon-webpack5-compiler-swc": "1.0.5",
-    "@storybook/react": "^8.6.15",
-    "@storybook/react-webpack5": "8.6.15",
-    "@storybook/test": "^8.6.15",
-    "@tailwindcss/postcss": "^4.3.3",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.4.8",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.36.2",
-    "@typescript-eslint/parser": "^5.36.2",
-    "autoprefixer": "^10.4.8",
-    "babel-loader": "^8.2.5",
-    "clsx": "^2.1.1",
-    "conventional-changelog-conventionalcommits": "^9.3.1",
-    "cssnano": "^5.1.13",
-    "emoji-datasource": "^16.0.0",
-    "emojibase-data": "^17.0.0",
-    "eslint-import-resolver-typescript": "^3.3.0",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "fs-extra": "^10.1.0",
-    "glob": "^8.0.3",
-    "husky": "^8.0.1",
-    "jsdom": "^24.1.0",
-    "lodash": "^4.17.21",
-    "postcss-loader": "^8.2.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-is": "^18.2.0",
-    "rollup-plugin-svg": "^2.0.0",
-    "semantic-release": "^25.0.9",
-    "size-limit": "^14.1.0",
-    "storybook": "8.6.15",
-    "styled-components": "^6.5.3",
-    "tailwind-merge": "^3.7.0",
-    "tailwindcss": "^4.3.3",
-    "tiny-invariant": "^1.2.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.4.0",
-    "typescript": "5.9",
-    "vitest": "^4.1.11",
-    "esbuild": "^0.28.2",
-    "rollup": "^4.64.0",
-    "rollup-plugin-dts": "^6.5.1",
-    "postcss": "^8.5.28",
-    "tsx": "^4.23.15",
-    "@types/jsdom": "^21.1.7",
-    "terser": "5.31.0"
-  },
-  "dependencies": {
-    "shipstyles": "1.0.0"
-  },
   "exports": {
     ".": {
       "import": {
@@ -247,8 +61,202 @@
       "default": "./dist/data/emojis-*.js"
     },
     "./src/data/*.json": "./src/data/*.json",
-    "./package.json": "./package.json",
-    "./*": "./*"
+    "./package.json": "./package.json"
   },
-  "type": "commonjs"
+  "homepage": "https://ealush.com/emoji-picker-react",
+  "files": [
+    "dist",
+    "src",
+    "llms.txt"
+  ],
+  "description": "React emoji picker: batteries included, or BYOD (bring your own design, design language and design library). Shared keyboard navigation, localization and virtualization across styled, unstyled and composed UIs.",
+  "keywords": [
+    "emoji-picker",
+    "react-emoji-picker",
+    "emoji",
+    "emojis",
+    "reactions",
+    "reactions-picker",
+    "emoji-reactions",
+    "emoji picker",
+    "react emoji picker",
+    "design-system",
+    "bring-your-own-styles",
+    "plug-and-play",
+    "unstyled",
+    "headless",
+    "composable",
+    "tailwind",
+    "shadcn",
+    "accessible",
+    "a11y",
+    "typescript",
+    "nextjs",
+    "react-19",
+    "skin-tones",
+    "emoji-search",
+    "i18n",
+    "llms.txt"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ealush/emoji-picker-react.git"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/ealush"
+    },
+    {
+      "type": "tidelift",
+      "url": "https://tidelift.com/subscription/pkg/npm-emoji-picker-react"
+    }
+  ],
+  "overrides": {
+    "decode-uri-component": "0.2.2",
+    "deep-object-diff": "1.1.9",
+    "ua-parser-js": "0.7.41",
+    "minimist": "1.2.8",
+    "loader-utils": "2.0.4",
+    "form-data": "4.0.6",
+    "request": {
+      "form-data": "2.5.6"
+    },
+    "tsconfig-paths": {
+      "json5": "1.0.2"
+    }
+  },
+  "scripts": {
+    "start": "npm run storybook",
+    "build": "npm run check:scripts && npm run clean && npm run build:data:src && npm run type-check && npm run build:data:dist && tsx ./scripts/build.ts && npm run docs:llms",
+    "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:visual": "playwright test",
+    "lint": "eslint src",
+    "prepare": "husky && npm run build",
+    "size": "size-limit",
+    "analyze": "size-limit --why",
+    "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
+    "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts && tsx ./scripts/buildDataTwins.ts",
+    "build:data": "npm run build:data:src && npm run build:data:dist",
+    "storybook": "npm run build:data && storybook dev --host 0.0.0.0 -p 6006",
+    "build-storybook": "storybook build",
+    "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
+    "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
+    "check:react16": "tsx ./scripts/react16-fixture/run.ts",
+    "check:package": "tsx ./scripts/package-check/run.ts",
+    "check:compat": "tsc --project ./compat/v4-usage/tsconfig.json --noEmit && tsc --project ./test/v5-contract/tsconfig.json --noEmit && tsc --project ./compat/exports-map/tsconfig.json --noEmit",
+    "check:perf": "tsx ./bench/run.ts",
+    "clean": "tsx ./scripts/clean.ts",
+    "recipes": "tsx ./scripts/generateRecipes.mts",
+    "designs": "tsx ./scripts/portDesigns.mts",
+    "registry": "tsx ./scripts/generateRegistry.mts",
+    "check:scripts": "tsc --project scripts/tsconfig.json",
+    "icons": "tsx ./scripts/buildIcons.ts",
+    "check:data-package": "tsx ./scripts/checkDataPackage.ts"
+  },
+  "peerDependencies": {
+    "react": ">=16.8"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true
+  },
+  "name": "emoji-picker-react",
+  "author": "ealush",
+  "module": "dist/esm/index.mjs",
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "limit": "75 KB"
+    },
+    {
+      "path": "dist/esm/index.mjs",
+      "limit": "75 KB"
+    },
+    {
+      "path": "dist/esm/primitives/index.mjs",
+      "limit": "75 KB"
+    },
+    {
+      "path": "dist/esm/data.mjs",
+      "limit": "42 KB"
+    }
+  ],
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@eslint/js": "^9.39.5",
+    "@mui/material": "^9.4.0",
+    "@playwright/test": "^1.63.0",
+    "@radix-ui/react-popover": "^1.1.23",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/github": "^12.0.9",
+    "@semantic-release/npm": "^13.1.5",
+    "@size-limit/preset-small-lib": "^14.1.0",
+    "@storybook/addon-docs": "^10.6.1",
+    "@storybook/addon-links": "^10.6.1",
+    "@storybook/react-vite": "^10.6.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^24.19.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "clsx": "^2.1.1",
+    "conventional-changelog-conventionalcommits": "^9.3.1",
+    "emoji-datasource": "^16.0.0",
+    "emojibase-data": "^17.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.39.5",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "jsdom": "^30.1.1",
+    "postcss": "^8.5.28",
+    "prettier": "^3.9.9",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "rollup": "^4.64.0",
+    "rollup-plugin-dts": "^6.5.1",
+    "semantic-release": "^25.0.9",
+    "size-limit": "^14.1.0",
+    "storybook": "^10.6.1",
+    "styled-components": "^6.5.3",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "tslib": "^2.4.0",
+    "typescript": "5.9",
+    "typescript-eslint": "^8.71.0",
+    "vite": "^8.3.2",
+    "vitest": "^5.0.3",
+    "tsx": "^4.23.15",
+    "@types/jsdom": "^21.1.7",
+    "terser": "5.31.0"
+  },
+  "dependencies": {
+    "shipstyles": "1.0.0"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "example",
+    "test": "test"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ealush/emoji-picker-react/issues"
+  }
 }
