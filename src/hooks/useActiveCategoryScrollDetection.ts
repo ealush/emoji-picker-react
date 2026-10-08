@@ -24,6 +24,7 @@ export function useActiveCategoryScrollDetection({
   useEffect(() => {
     const visibleCategories = new Map<string, number>();
     const intersectingCategories = new Map<string, boolean>();
+    const targets = new Map<string, Element>();
     const bodyRef = BodyRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -40,6 +41,7 @@ export function useActiveCategoryScrollDetection({
 
           visibleCategories.set(id, entry.intersectionRatio);
           intersectingCategories.set(id, entry.isIntersecting);
+          targets.set(id, entry.target);
         }
 
         const ratios = Array.from(visibleCategories);
@@ -54,8 +56,15 @@ export function useActiveCategoryScrollDetection({
           return setActiveCategory(lastCategory[0]);
         }
 
+        const viewportTop = bodyRef.getBoundingClientRect().top;
         for (const [id, ratio] of ratios) {
-          if (ratio) {
+          // Fractional offsets can leave less than a pixel of the preceding
+          // section intersecting after a jump. It must not steal the tab
+          // highlight from the section aligned with the viewport top.
+          if (
+            ratio &&
+            targets.get(id)!.getBoundingClientRect().bottom > viewportTop + 1
+          ) {
             setActiveCategory(id);
             break;
           }

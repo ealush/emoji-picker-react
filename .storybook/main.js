@@ -1,4 +1,12 @@
 const path = require('path');
+
+// Extra dev-server hosts (e.g. Tailscale MagicDNS) via STORYBOOK_ALLOWED_HOSTS
+// (comma-separated). Passed at runtime so machine-specific names never land in git.
+const extraAllowedHosts = (process.env.STORYBOOK_ALLOWED_HOSTS || '')
+  .split(',')
+  .map((host) => host.trim())
+  .filter(Boolean);
+
 module.exports = {
   stories: ['../stories/**/*.stories.@(ts|tsx|js|jsx)'],
   addons: [
@@ -42,6 +50,10 @@ module.exports = {
   framework: {
     name: '@storybook/react-webpack5',
     options: {},
+  },
+
+  core: {
+    allowedHosts: extraAllowedHosts,
   },
 
   docs: {},

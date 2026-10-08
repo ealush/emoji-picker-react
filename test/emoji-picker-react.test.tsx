@@ -118,6 +118,16 @@ describe('EmojiPicker', () => {
     expect(input).toHaveValue('');
   });
 
+  it('clears the uncontrolled search field on Escape', async () => {
+    renderPicker();
+    const input = screen.getByLabelText('Type to search for an emoji');
+    await userEvent.type(input, 'grinning');
+
+    fireEvent.keyDown(input, { key: 'Escape' });
+
+    expect(input).toHaveValue('');
+  });
+
   it('renders reactions menu and fires reaction clicks', async () => {
     const onReactionClick = vi.fn();
     renderPicker({

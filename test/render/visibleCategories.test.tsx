@@ -61,9 +61,9 @@ function fireIntersections(ids: string[]) {
     (target) =>
       ({
         target,
-        isIntersecting: ids.includes(target.getAttribute('data-name') ?? ''),
+        isIntersecting: ids.includes(target.getAttribute('data-epr-category') ?? ''),
         intersectionRatio: ids.includes(
-          target.getAttribute('data-name') ?? '',
+          target.getAttribute('data-epr-category') ?? '',
         )
           ? 1
           : 0,
@@ -87,7 +87,7 @@ const renderPicker = (props: Partial<Props> = {}) => {
 };
 
 const emojisIn = (name: string) =>
-  within(screen.getByRole('rowgroup', { name })).queryAllByRole('button');
+  within(screen.getByRole('rowgroup', { name })).queryAllByRole('gridcell');
 
 describe('first-paint render gating', () => {
   const realIO = globalThis.IntersectionObserver;

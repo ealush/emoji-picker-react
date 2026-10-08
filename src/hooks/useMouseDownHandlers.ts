@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 
+import { eventBelongsToPicker } from '../DomUtils/eventBelongsToPicker';
 import {
   allUnifiedFromEmojiElement,
   isEmojiElement,
@@ -22,15 +23,21 @@ import {
 } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
-  activeVariationFromUnified,
+  skinToneFromEmoji,
   emojiHasVariations,
   emojiNames,
   emojiUnified,
+  emojiCanonicalUnified,
 } from '../dataUtils/emojiUtils';
 import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import { setSuggested } from '../dataUtils/suggested';
 import { isCustomEmoji } from '../typeRefinements/typeRefinements';
-import { EmojiClickData, SkinTones, EmojiStyle } from '../types/exposedTypes';
+import {
+  EmojiClickData,
+  EmojiStyle,
+  EmojiStyleValue,
+  SkinTones,
+} from '../types/exposedTypes';
 
 import { useCloseAllOpenToggles } from './useCloseAllOpenToggles';
 import useSetVariationPicker from './useSetVariationPicker';
@@ -39,7 +46,9 @@ export function useMouseDownHandlers(
   ContainerRef: React.MutableRefObject<NullableElement>,
   mouseEventSource: MOUSE_EVENT_SOURCE,
 ) {
-  const mouseDownTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const mouseDownTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const setVariationPicker = useSetVariationPicker();
   const disallowClickRef = useDisallowClickRef();
   const [, setEmojiVariationPicker] = useEmojiVariationPickerState();
@@ -53,20 +62,23 @@ export function useMouseDownHandlers(
 
   const onClick = React.useCallback(
     function onClick(event: MouseEvent) {
-      if (disallowClickRef.current) {
+      if (
+        !eventBelongsToPicker(event, ContainerRef.current) ||
+        disallowClickRef.current
+      ) {
         return;
       }
 
       closeAllOpenToggles();
 
-      const [emoji, unified] = emojiFromEvent(event, emojiByUnified);
+      const [record, unified] = emojiFromEvent(event, emojiByUnified);
 
-      if (!emoji || !unified) {
+      if (!record || !unified) {
         return;
       }
 
-      const skinToneToUse =
-        activeVariationFromUnified(unified) || activeSkinTone;
+      const emoji = { ...record, renderUnified: unified };
+      const skinToneToUse = skinToneFromEmoji(emoji, unified, activeSkinTone);
 
       updateSuggested();
       setSuggested(emoji, skinToneToUse);
@@ -76,6 +88,7 @@ export function useMouseDownHandlers(
       );
     },
     [
+      ContainerRef,
       activeSkinTone,
       closeAllOpenToggles,
       disallowClickRef,
@@ -89,6 +102,7 @@ export function useMouseDownHandlers(
 
   const onMouseDown = React.useCallback(
     function onMouseDown(event: MouseEvent) {
+      if (!eventBelongsToPicker(event, ContainerRef.current)) return;
       if (mouseDownTimerRef.current) {
         clearTimeout(mouseDownTimerRef.current);
       }
@@ -99,15 +113,19 @@ export function useMouseDownHandlers(
         return;
       }
 
+      // Preserve the native target before dispatch ends. Shadow DOM events
+      // are retargeted to the host afterward, before the long-press timer.
+      const target = event.target as HTMLElement;
       mouseDownTimerRef.current = setTimeout(() => {
         disallowClickRef.current = true;
         mouseDownTimerRef.current = undefined;
         closeAllOpenToggles();
-        setVariationPicker(event.target as HTMLElement);
+        setVariationPicker(target);
         setEmojiVariationPicker(emoji);
       }, 500);
     },
     [
+      ContainerRef,
       disallowClickRef,
       emojiByUnified,
       closeAllOpenToggles,
@@ -140,6 +158,40 @@ export function useMouseDownHandlers(
       return;
     }
     const confainerRef = ContainerRef.current;
+    let pointerStart: { x: number; y: number } | null = null;
+    const cancelPress = () => {
+      if (mouseDownTimerRef.current) clearTimeout(mouseDownTimerRef.current);
+      mouseDownTimerRef.current = undefined;
+      pointerStart = null;
+    };
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse' || !event.isPrimary) return;
+      pointerStart = { x: event.clientX, y: event.clientY };
+      onMouseDown(event);
+    };
+    const onPointerMove = (event: PointerEvent) => {
+      if (
+        pointerStart &&
+        Math.hypot(
+          event.clientX - pointerStart.x,
+          event.clientY - pointerStart.y,
+        ) > 8
+      ) {
+        cancelPress();
+      }
+    };
+    const onPointerUp = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') return;
+      onMouseUp();
+      pointerStart = null;
+    };
+    const onPointerCancel = () => {
+      onMouseUp();
+      cancelPress();
+    };
+    const onContextMenu = (event: Event) => {
+      if (disallowClickRef.current) event.preventDefault();
+    };
     confainerRef.addEventListener('click', onClick, {
       passive: true,
     });
@@ -150,13 +202,32 @@ export function useMouseDownHandlers(
     confainerRef.addEventListener('mouseup', onMouseUp, {
       passive: true,
     });
+    confainerRef.addEventListener('pointerdown', onPointerDown, {
+      passive: true,
+    });
+    confainerRef.addEventListener('pointermove', onPointerMove, {
+      passive: true,
+    });
+    window.addEventListener('pointerup', onPointerUp, { passive: true });
+    window.addEventListener('pointercancel', onPointerCancel, {
+      passive: true,
+    });
+    confainerRef.addEventListener('scroll', cancelPress, { passive: true });
+    confainerRef.addEventListener('contextmenu', onContextMenu);
 
     return () => {
+      cancelPress();
       confainerRef?.removeEventListener('click', onClick);
       confainerRef?.removeEventListener('mousedown', onMouseDown);
       confainerRef?.removeEventListener('mouseup', onMouseUp);
+      confainerRef.removeEventListener('pointerdown', onPointerDown);
+      confainerRef.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerCancel);
+      confainerRef.removeEventListener('scroll', cancelPress);
+      confainerRef.removeEventListener('contextmenu', onContextMenu);
     };
-  }, [ContainerRef, onClick, onMouseDown, onMouseUp]);
+  }, [ContainerRef, onClick, onMouseDown, onMouseUp, disallowClickRef]);
 }
 
 function emojiFromEvent(
@@ -179,13 +250,13 @@ function emojiFromEvent(
     return [];
   }
 
-  return [emoji, unified ?? resolvedUnified];
+  return [emoji, resolvedUnified];
 }
 
-function emojiClickOutput(
+export function emojiClickOutput(
   emoji: DataEmoji,
   activeSkinTone: SkinTones,
-  activeEmojiStyle: EmojiStyle,
+  activeEmojiStyle: EmojiStyleValue,
   getEmojiUrl: GetEmojiUrl,
 ): EmojiClickData {
   const names = emojiNames(emoji);
@@ -206,17 +277,21 @@ function emojiClickOutput(
     };
   }
   const unified = emojiUnified(emoji, activeSkinTone);
+  const imageStyle =
+    activeEmojiStyle === EmojiStyle.NATIVE
+      ? EmojiStyle.APPLE
+      : activeEmojiStyle;
 
   return {
     activeSkinTone,
     emoji: parseNativeEmoji(unified),
-    getImageUrl(emojiStyle: EmojiStyle = activeEmojiStyle ?? EmojiStyle.APPLE) {
+    getImageUrl(emojiStyle: EmojiStyleValue = imageStyle) {
       return getEmojiUrl(unified, emojiStyle);
     },
-    imageUrl: getEmojiUrl(unified, activeEmojiStyle ?? EmojiStyle.APPLE),
+    imageUrl: getEmojiUrl(unified, imageStyle),
     isCustom: false,
     names,
     unified,
-    unifiedWithoutSkinTone: emojiUnified(emoji),
+    unifiedWithoutSkinTone: emojiCanonicalUnified(emoji),
   };
 }

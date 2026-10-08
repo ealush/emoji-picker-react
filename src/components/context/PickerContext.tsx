@@ -1,23 +1,97 @@
 import * as React from 'react';
 import { useState } from 'react';
 
+import { isJsdom } from '../../DomUtils/isJsdom';
 import {
   useDefaultSkinToneConfig,
+  useDefaultSearchValueConfig,
+  useEmojiStyleConfig,
+  useEmojiVersionConfig,
   useReactionsOpenConfig,
+  useSearchValueConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import {
+  UNKNOWN_SUPPORT,
+  NativeEmojiSupport,
+  detectNativeEmojiSupport,
+} from '../../dataUtils/nativeEmojiSupport';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { useDisallowedEmojis } from '../../hooks/useDisallowedEmojis';
 import { FilterDict } from '../../hooks/useFilter';
 import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
-import { SkinTones } from '../../types/exposedTypes';
+import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
+import { NavigationRegistry } from '../../state/navigationRegistry';
+import { EmojiStyle, SkinTones } from '../../types/exposedTypes';
 
+import { usePickerMainRef } from './ElementRefContext';
 import { usePickerDataContext } from './PickerDataContext';
 
+const NativeSupportContext = React.createContext<NativeEmojiSupport | null>(null);
+
+function useNativeEmojiSupportState(): NativeEmojiSupport | null {
+  const emojiStyle = useEmojiStyleConfig();
+  const emojiVersion = useEmojiVersionConfig();
+  const PickerMainRef = usePickerMainRef();
+  const shouldDetect = emojiStyle === EmojiStyle.NATIVE && !emojiVersion;
+  const [support, setSupport] = useState<NativeEmojiSupport | null>(null);
+
+  useIsomorphicLayoutEffect(() => {
+    if (!shouldDetect || isJsdom()) {
+      setSupport(null);
+      return;
+    }
+    // Probe with the font the picker actually renders native emojis in,
+    // so a consumer font (e.g. a country-flag polyfill set through
+    // --epr-emoji-font-family) is what gets measured.
+    const root = PickerMainRef.current;
+    const view = root?.ownerDocument.defaultView;
+    if (!root || !view) return;
+    let previousFont: string | null = null;
+    const probe = (refresh = false) => {
+      const customFont = view.getComputedStyle(root)
+        .getPropertyValue('--epr-emoji-font-family')
+        .trim();
+      // Attribute changes often leave the computed font unchanged.
+      if (!refresh && customFont === previousFont) return;
+      previousFont = customFont;
+      const detected = detectNativeEmojiSupport(
+        customFont || undefined,
+        refresh,
+      );
+      // An inconclusive probe filters nothing, just like the initial null.
+      // Avoid another synchronous full-grid render for this no-op result.
+      setSupport(
+        detected === UNKNOWN_SUPPORT ? null : detected,
+      );
+    };
+    probe();
+    // Any root or ancestor attribute can select another emoji font via CSS.
+    const observer = new view.MutationObserver(() => probe());
+    for (let element: HTMLElement | null = root; element; element = element.parentElement) {
+      observer.observe(element, {
+        attributes: true,
+      });
+    }
+    const fonts = root.ownerDocument.fonts;
+    const refresh = () => probe(true);
+    fonts?.addEventListener('loadingdone', refresh);
+    return () => {
+      observer.disconnect();
+      fonts?.removeEventListener('loadingdone', refresh);
+    };
+  }, [shouldDetect, PickerMainRef]);
+
+  return shouldDetect ? support : null;
+}
+
 export function PickerContextProvider({ children }: Props) {
+  const nativeEmojiSupport = useNativeEmojiSupportState();
   const disallowedEmojis = useDisallowedEmojis();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
+  const initialSearchValue =
+    useSearchValueConfig() ?? useDefaultSearchValueConfig() ?? '';
   const { searchIndex } = usePickerDataContext();
 
   // Initialize the filter with the inititial dictionary
@@ -42,6 +116,15 @@ export function PickerContextProvider({ children }: Props) {
   const [isPastInitialLoad, setIsPastInitialLoad] = useState(false);
   const visibleCategoriesState = useState<string[]>([]);
   const emojiSizeState = useState<number | null>(null);
+  const filterQueryOrderRef = React.useRef<string[]>([]);
+  const navigationRegistryRef = React.useRef<NavigationRegistry | null>(null);
+  if (!navigationRegistryRef.current) {
+    navigationRegistryRef.current = new NavigationRegistry();
+  }
+  const searchDisplayState = useState<string>(initialSearchValue);
+  const searchCommittedState = useState<string>(initialSearchValue);
+  const searchComposingState = useState<boolean>(false);
+  const activeEmojiState = useState<ActiveEmojiState>(null);
 
   useMarkInitialLoad(setIsPastInitialLoad);
 
@@ -63,9 +146,17 @@ export function PickerContextProvider({ children }: Props) {
         reactionsModeState,
         visibleCategoriesState,
         emojiSizeState,
+        filterQueryOrderRef,
+        navigationRegistry: navigationRegistryRef.current,
+        searchDisplayState,
+        searchCommittedState,
+        searchComposingState,
+        activeEmojiState,
       }}
     >
-      {children}
+      <NativeSupportContext.Provider value={nativeEmojiSupport}>
+        {children}
+      </NativeSupportContext.Provider>
     </PickerContext.Provider>
   );
 }
@@ -88,6 +179,12 @@ const PickerContext = React.createContext<{
   reactionsModeState: ReactState<boolean>;
   visibleCategoriesState: ReactState<Array<string>>;
   emojiSizeState: ReactState<number | null>;
+  filterQueryOrderRef: React.MutableRefObject<string[]>;
+  navigationRegistry: NavigationRegistry;
+  searchDisplayState: ReactState<string>;
+  searchCommittedState: ReactState<string>;
+  searchComposingState: ReactState<boolean>;
+  activeEmojiState: ReactState<ActiveEmojiState>;
 }>({
   activeCategoryState: [null, () => {}],
   activeSkinTone: [SkinTones.NEUTRAL, () => {}],
@@ -104,6 +201,12 @@ const PickerContext = React.createContext<{
   reactionsModeState: [false, () => {}],
   visibleCategoriesState: [[], () => []],
   emojiSizeState: [null, () => {}],
+  filterQueryOrderRef: { current: [] },
+  navigationRegistry: new NavigationRegistry(),
+  searchDisplayState: ['', () => {}],
+  searchCommittedState: ['', () => {}],
+  searchComposingState: [false, () => {}],
+  activeEmojiState: [null, () => {}],
 });
 
 type Props = Readonly<{
@@ -177,6 +280,35 @@ export function useEmojiSizeState() {
   const { emojiSizeState } = React.useContext(PickerContext);
   return emojiSizeState;
 }
+
+export function useFilterQueryOrderRef() {
+  return React.useContext(PickerContext).filterQueryOrderRef;
+}
+
+export function useNavigationRegistry(): NavigationRegistry {
+  return React.useContext(PickerContext).navigationRegistry;
+}
+
+export function useSearchDisplayState() {
+  return React.useContext(PickerContext).searchDisplayState;
+}
+
+export function useSearchCommittedState() {
+  return React.useContext(PickerContext).searchCommittedState;
+}
+
+export function useSearchComposingState() {
+  return React.useContext(PickerContext).searchComposingState;
+}
+
+export function useNativeEmojiSupport(): NativeEmojiSupport | null {
+  return React.useContext(NativeSupportContext);
+}
+
+export type ActiveEmojiState = null | {
+  unified: string;
+  originalUnified: string;
+};
 
 export function useUpdateSuggested(): [number, () => void] {
   const { suggestedUpdateState } = React.useContext(PickerContext);

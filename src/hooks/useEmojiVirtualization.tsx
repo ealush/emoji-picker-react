@@ -46,11 +46,23 @@ export function useEmojiVirtualization({
 
   let virtualizedCounter = 0;
 
+  // A section shows each rendered emoji once. Recents can hold the same
+  // emoji under two tones (e.g. neutral and medium); the active tone
+  // renders both as one identity, which must not be listed or keyed twice.
+  const rendered = new Set<string>();
   const emojisToPush = categoryEmojis.filter((emoji) => {
     const isDisallowed = isEmojiDisallowed(emoji);
-    const { failedToLoad, filteredOut, hidden } = isEmojiHidden(emoji);
+    const { hidden } = isEmojiHidden(emoji);
 
-    return !failedToLoad && !filteredOut && !hidden && !isDisallowed;
+    if (hidden || isDisallowed) {
+      return false;
+    }
+    const unified = emojiUnified(emoji, activeSkinTone);
+    if (rendered.has(unified)) {
+      return false;
+    }
+    rendered.add(unified);
+    return true;
   });
 
   const dimensions = useCategoryHeight(emojisToPush.length);
@@ -61,7 +73,7 @@ export function useEmojiVirtualization({
     }
   }, [dimensions, onHeightReady, emojisToPush.length]);
 
-  const isVirtualized = (style: { top: number; left: number } | undefined) =>
+  const isVirtualized = (style: { top: number } | undefined) =>
     dimensions &&
     BodyRef.current &&
     shouldVirtualize({
@@ -109,6 +121,10 @@ export function useEmojiVirtualization({
           ...style,
           position: 'absolute',
         }}
+        logicalIndex={index}
+        // Grid semantics (issue #508): each emoji is a cell of its
+        // category row; native button activation is kept.
+        role="gridcell"
       />,
     );
     return accumulator;
@@ -118,5 +134,6 @@ export function useEmojiVirtualization({
     virtualizedCounter,
     emojis,
     dimensions,
+    emojiCount: emojisToPush.length,
   };
 }

@@ -12,6 +12,7 @@ import {
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
 import {
   activeVariationFromUnified,
+  emojiNames,
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
 import { getSuggested } from '../../dataUtils/suggested';
@@ -29,6 +30,7 @@ export interface PickerDataContextValue {
   customGroups: Record<string, DataEmojis>;
   emojiByUnified: (unified?: string) => DataEmoji | undefined;
   activeVariationFromUnified: (unified: string) => SkinTones | null;
+  queryFilterDict: (query: string) => Record<string, DataEmoji>;
 }
 
 const PickerDataContext = React.createContext<PickerDataContextValue>({
@@ -39,6 +41,7 @@ const PickerDataContext = React.createContext<PickerDataContextValue>({
   customGroups: Object.create(null),
   emojiByUnified,
   activeVariationFromUnified: () => null,
+  queryFilterDict: () => ({}),
 });
 
 export function PickerDataProvider({
@@ -127,12 +130,27 @@ export function PickerDataProvider({
     [data.allEmojisByUnified],
   );
 
+  const queryFilterDict = React.useCallback(
+    (query: string): Record<string, DataEmoji> => {
+      const matches: Record<string, DataEmoji> = Object.create(null);
+      data.allEmojis.forEach((emoji) => {
+        const unified = emoji[Keys.unified];
+        if (emojiNames(emoji).some((name) => name.toLowerCase().includes(query))) {
+          matches[unified] = emoji;
+        }
+      });
+      return matches;
+    },
+    [data.allEmojis],
+  );
+
   return (
     <PickerDataContext.Provider
       value={{
         ...data,
         emojiByUnified,
         activeVariationFromUnified,
+        queryFilterDict,
       }}
     >
       {children}

@@ -1,8 +1,4 @@
-import { DataEmoji } from '../dataUtils/DataTypes';
-import {
-  emojiByUnified,
-  unifiedWithoutSkinTone,
-} from '../dataUtils/emojiSelectors';
+import { unifiedWithoutSkinTone } from '../dataUtils/emojiSelectors';
 
 import { asSelectors, ClassNames } from './classNames';
 import { firstVisibleElementInContainer } from './elementPositionInRow';
@@ -30,30 +26,10 @@ export function isEmojiButton(element: NullableElement): boolean {
   return element.matches(EmojiButtonSelector);
 }
 
-export function emojiFromElement(
-  element: NullableElement,
-): [DataEmoji, string] | [] {
-  const originalUnified = originalUnifiedFromEmojiElement(element);
-  const unified = unifiedFromEmojiElement(element);
-
-  if (!originalUnified) {
-    return [];
-  }
-
-  const emoji = emojiByUnified(unified ?? originalUnified);
-
-  if (!emoji) {
-    return [];
-  }
-
-  return [emoji, unified as string];
-}
-
+// Any element inside an emoji button counts: custom List cells may nest
+// their content arbitrarily deep.
 export function isEmojiElement(element: NullableElement): boolean {
-  return Boolean(
-    element?.matches(EmojiButtonSelector) ||
-    element?.parentElement?.matches(EmojiButtonSelector),
-  );
+  return buttonFromTarget(element) !== null;
 }
 
 export function categoryLabelFromCategory(
@@ -71,6 +47,11 @@ export function closestCategoryLabel(
 
 export function elementHeight(element: NullableElement): number {
   return element?.clientHeight ?? 0;
+}
+
+/** Layout size including host button borders (unaffected by transforms). */
+export function elementBorderBoxHeight(element: NullableElement): number {
+  return element?.offsetHeight || element?.clientHeight || 0;
 }
 
 export function emojiTrueOffsetTop(element: NullableElement): number {
@@ -152,7 +133,7 @@ function elementOffsetLeft(element: NullableElement): number {
 }
 
 export function unifiedFromEmojiElement(emoji: NullableElement): string | null {
-  return elementDataSetKey(buttonFromTarget(emoji), 'unified') ?? null;
+  return elementDataSetKey(buttonFromTarget(emoji), 'eprUnified') ?? null;
 }
 
 export function originalUnifiedFromEmojiElement(
@@ -214,50 +195,6 @@ export function allVisibleEmojis(parent: NullableElement) {
   ) as HTMLElement[];
 }
 
-export function lastVisibleEmoji(element: NullableElement): NullableElement {
-  if (!element) return null;
-
-  const allEmojis = allVisibleEmojis(element);
-  const [last] = allEmojis.slice(-1);
-  if (!last) {
-    return null;
-  }
-
-  if (!isVisibleEmoji(last)) {
-    return prevVisibleEmoji(last);
-  }
-
-  return last;
-}
-
-export function nextVisibleEmoji(element: HTMLElement): NullableElement {
-  const next = element.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return firstVisibleEmoji(nextCategory(element));
-  }
-
-  if (!isVisibleEmoji(next)) {
-    return nextVisibleEmoji(next);
-  }
-
-  return next;
-}
-
-export function prevVisibleEmoji(element: HTMLElement): NullableElement {
-  const prev = element.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return lastVisibleEmoji(prevCategory(element));
-  }
-
-  if (!isVisibleEmoji(prev)) {
-    return prevVisibleEmoji(prev);
-  }
-
-  return prev;
-}
-
 export function firstVisibleEmoji(parent: NullableElement) {
   if (!parent) {
     return null;
@@ -268,44 +205,16 @@ export function firstVisibleEmoji(parent: NullableElement) {
   return firstVisibleElementInContainer(parent, allEmojis, 0.1);
 }
 
-export function prevCategory(element: NullableElement): NullableElement {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const prev = category.previousElementSibling as HTMLElement;
-
-  if (!prev) {
-    return null;
-  }
-
-  if (isHidden(prev)) {
-    return prevCategory(prev);
-  }
-
-  return prev;
-}
-
-export function nextCategory(element: NullableElement): NullableElement {
-  const category = closestCategory(element);
-
-  if (!category) {
-    return null;
-  }
-
-  const next = category.nextElementSibling as HTMLElement;
-
-  if (!next) {
-    return null;
-  }
-
-  if (isHidden(next)) {
-    return nextCategory(next);
-  }
-
-  return next;
+export function adjacentCategory(
+  element: NullableElement,
+  direction: number,
+): NullableElement {
+  const sibling =
+    direction > 0 ? 'nextElementSibling' : 'previousElementSibling';
+  let category = closestCategory(element)?.[sibling] as NullableElement;
+  while (category && isHidden(category))
+    category = category[sibling] as NullableElement;
+  return category ?? null;
 }
 
 export function closestCategory(element: NullableElement) {

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export function useDebouncedState<T>(
   initialValue: T,
@@ -6,6 +6,18 @@ export function useDebouncedState<T>(
 ): [T, (value: T) => Promise<T>] {
   const [state, setState] = useState<T>(initialValue);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // A pending trailing edge must never fire after unmount (React warns
+  // about the post-unmount setState and the work is wasted).
+  useEffect(
+    () => () => {
+      if (timer.current) {
+        clearTimeout(timer.current);
+        timer.current = null;
+      }
+    },
+    [],
+  );
 
   function debouncedSetState(value: T) {
     return new Promise<T>((resolve) => {

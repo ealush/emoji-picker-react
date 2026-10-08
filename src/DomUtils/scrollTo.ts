@@ -13,7 +13,11 @@ import {
   queryScrollBody,
 } from './selectors';
 
-export function scrollTo(root: NullableElement, top: number = 0) {
+export function scrollTo(
+  root: NullableElement,
+  top: number | (() => number) = 0,
+  shouldScroll?: () => boolean,
+) {
   const $eprBody = queryScrollBody(root);
 
   if (!$eprBody) {
@@ -21,19 +25,8 @@ export function scrollTo(root: NullableElement, top: number = 0) {
   }
 
   requestAnimationFrame(() => {
-    $eprBody.scrollTop = top;
-  });
-}
-
-export function scrollBy(root: NullableElement, by: number): void {
-  const $eprBody = queryScrollBody(root);
-
-  if (!$eprBody) {
-    return;
-  }
-
-  requestAnimationFrame(() => {
-    $eprBody.scrollTop = $eprBody.scrollTop + by;
+    if (!shouldScroll || shouldScroll())
+      $eprBody.scrollTop = typeof top === 'function' ? top() : top;
   });
 }
 
@@ -52,7 +45,10 @@ export function useScrollTo() {
   );
 }
 
-export function scrollEmojiAboveLabel(emoji: NullableElement) {
+export function scrollEmojiAboveLabel(
+  emoji: NullableElement,
+  shouldScroll?: () => boolean,
+) {
   if (!emoji || !isEmojiBehindLabel(emoji)) {
     return;
   }
@@ -63,5 +59,11 @@ export function scrollEmojiAboveLabel(emoji: NullableElement) {
 
   const scrollBody = closestScrollBody(emoji);
   const by = emojiDistanceFromScrollTop(emoji);
-  scrollBy(scrollBody, -(categoryLabelHeight(closestCategory(emoji)) - by));
+  if (scrollBody)
+    scrollTo(
+      scrollBody,
+      () =>
+        scrollBody.scrollTop - categoryLabelHeight(closestCategory(emoji)) + by,
+      shouldScroll,
+    );
 }

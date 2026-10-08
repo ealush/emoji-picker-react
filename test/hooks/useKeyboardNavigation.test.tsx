@@ -1,7 +1,6 @@
 import { fireEvent, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
 import {
   useBodyRef,
   useCategoryNavigationRef,
@@ -10,13 +9,15 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../../src/components/context/ElementRefContext';
+import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
+import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
   useFocusSkinTonePicker,
 } from '../../src/hooks/useFocus';
-import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
 import { useIsSkinToneInSearch } from '../../src/hooks/useShouldShowSkinTonePicker';
+import { NavigationRegistry } from '../../src/state/navigationRegistry';
 
 // Mocks
 vi.mock('../../src/components/context/ElementRefContext', () => ({
@@ -31,6 +32,8 @@ vi.mock('../../src/components/context/ElementRefContext', () => ({
 vi.mock('../../src/components/context/PickerContext', () => ({
   useSkinToneFanOpenState: vi.fn(() => [false, vi.fn()]),
   useReactionsModeState: vi.fn(() => [false, vi.fn()]),
+  useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
+  useSearchComposingState: vi.fn(() => [false, vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
@@ -47,8 +50,17 @@ vi.mock('../../src/hooks/useDisallowMouseMove', () => ({
 }));
 
 vi.mock('../../src/hooks/useFilter', () => ({
-  useAppendSearch: vi.fn(() => vi.fn()),
-  useClearSearch: vi.fn(() => vi.fn()),
+  useFilter: vi.fn(() => ({
+    onChange: vi.fn(),
+    searchTerm: '',
+    SearchInputRef: { current: null },
+    statusSearchResults: '',
+  })),
+}));
+
+vi.mock('../../src/hooks/useSearchController', () => ({
+  useTypeToSearchKey: vi.fn(() => vi.fn()),
+  useClearSearchValue: vi.fn(() => vi.fn()),
 }));
 
 vi.mock('../../src/hooks/useFocus', () => ({
@@ -84,6 +96,7 @@ describe('useKeyboardNavigation', () => {
     pickerMain = document.createElement('div');
     searchInput = document.createElement('input');
 
+    pickerMain.appendChild(searchInput);
     (usePickerMainRef as any).mockReturnValue({ current: pickerMain });
     (useSearchInputRef as any).mockReturnValue({ current: searchInput });
     (useBodyRef as any).mockReturnValue({
@@ -160,6 +173,7 @@ describe('useKeyboardNavigation', () => {
 
     beforeEach(() => {
       categoryNav = document.createElement('div');
+      pickerMain.appendChild(categoryNav);
       (useCategoryNavigationRef as any).mockReturnValue({
         current: categoryNav,
       });

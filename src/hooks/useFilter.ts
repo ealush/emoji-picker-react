@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { scrollTo } from '../DomUtils/scrollTo';
 import {
   usePickerMainRef,
@@ -5,55 +7,44 @@ import {
 } from '../components/context/ElementRefContext';
 import {
   FilterState,
+  useFilterQueryOrderRef,
   useFilterRef,
+  useNavigationRegistry,
   useSearchTermState,
 } from '../components/context/PickerContext';
-import { useSearchResultsConfig } from '../config/useConfig';
+import { usePickerDataContext } from '../components/context/PickerDataContext';
+import { useLabels, formatSearchResultsLabel } from '../config/useConfig';
+import { normalizeQuery } from '../data-core/prepare';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiUtils';
 
-import { useFocusSearchInput } from './useFocus';
+import { useVisibleSearchResultCount } from './useSearchResults';
+
+/**
+ * Bound on cached per-query filter dicts per Root. Dicts are cheaply
+ * rebuilt from the shared memoized core, so a long typing session keeps
+ * only a recent window instead of growing without bound.
+ */
+const MAX_FILTER_QUERIES = 50;
 
 function useSetFilterRef() {
   const filterRef = useFilterRef();
+  const orderRef = useFilterQueryOrderRef();
 
-  return function setFilter(
-    setter: FilterState | ((current: FilterState) => FilterState),
-  ): void {
-    if (typeof setter === 'function') {
-      return setFilter(setter(filterRef.current));
+  return function setFilter(nextValue: string, dict: FilterDict): void {
+    // Copy-on-write into a fresh object: the ref never aliases shared
+    // snapshot state, and spread defines own properties (no prototype
+    // mutation for adversarial queries such as "__proto__").
+    const next: FilterState = { ...filterRef.current, [nextValue]: dict };
+    const order = orderRef.current;
+    if (!order.includes(nextValue)) {
+      order.push(nextValue);
     }
-
-    filterRef.current = setter;
-  };
-}
-
-export function useClearSearch() {
-  const applySearch = useApplySearch();
-  const SearchInputRef = useSearchInputRef();
-  const focusSearchInput = useFocusSearchInput();
-
-  return function clearSearch() {
-    if (SearchInputRef.current) {
-      SearchInputRef.current.value = '';
+    while (order.length > MAX_FILTER_QUERIES) {
+      const oldest = order.shift() as string;
+      delete next[oldest];
     }
-
-    applySearch('');
-    focusSearchInput();
-  };
-}
-
-export function useAppendSearch() {
-  const SearchInputRef = useSearchInputRef();
-  const applySearch = useApplySearch();
-
-  return function appendSearch(str: string) {
-    if (SearchInputRef.current) {
-      SearchInputRef.current.value = `${SearchInputRef.current.value}${str}`;
-      applySearch(getNormalizedSearchTerm(SearchInputRef.current.value));
-    } else {
-      applySearch(getNormalizedSearchTerm(str));
-    }
+    filterRef.current = next;
   };
 }
 
@@ -62,80 +53,88 @@ export function useFilter() {
   const filterRef = useFilterRef();
   const setFilterRef = useSetFilterRef();
   const applySearch = useApplySearch();
+  const { queryFilterDict } = usePickerDataContext();
+  const labels = useLabels();
 
   const [searchTerm] = useSearchTermState();
-  const statusSearchResults = getStatusSearchResults(
-    filterRef.current,
-    searchTerm,
-  );
+  const resultCount = useVisibleSearchResultCount();
 
   return {
     onChange,
     searchTerm,
     SearchInputRef,
-    statusSearchResults,
+    statusSearchResults:
+      resultCount === null ? '' : formatSearchResultsLabel(labels, resultCount),
   };
 
   function onChange(inputValue: string) {
     const filter = filterRef.current;
 
-    const nextValue = inputValue.toLowerCase();
+    // Normalized derived query (STATE.md §2): the visible/callback value
+    // stays raw, filtering folds case and trims surrounding whitespace.
+    // Matching itself runs in the single shared prepared core.
+    const nextValue = normalizeQuery(inputValue);
 
-    if (filter?.[nextValue] || nextValue.length <= 1) {
+    if (!nextValue) {
+      return applySearch(nextValue);
+    }
+    if (hasOwnQuery(filter, nextValue)) {
       return applySearch(nextValue);
     }
 
-    const longestMatch = findLongestMatch(nextValue, filter);
-
-    if (!longestMatch) {
-      // Can we even get here?
-      // If so, we need to search among all emojis
-      return applySearch(nextValue);
-    }
-
-    setFilterRef((current) =>
-      Object.assign(current, {
-        [nextValue]: filterEmojiObjectByKeyword(longestMatch, nextValue),
-      }),
-    );
+    setFilterRef(nextValue, queryFilterDict(nextValue));
     applySearch(nextValue);
   }
+}
+
+export function useClearSearch() {
+  const SearchInputRef = useSearchInputRef();
+  const { onChange } = useFilter();
+  return function clearSearch() {
+    if (SearchInputRef.current) SearchInputRef.current.value = '';
+    onChange('');
+  };
+}
+
+function hasOwnQuery(filter: FilterState, query: string): boolean {
+  return Object.prototype.hasOwnProperty.call(filter, query);
 }
 
 function useApplySearch() {
   const [, setSearchTerm] = useSearchTermState();
   const PickerMainRef = usePickerMainRef();
+  const registry = useNavigationRegistry();
+  // A search frame pending at unmount must not schedule post-unmount
+  // debounce work (the debounced state also clears its own timer, so
+  // both stages of the pipeline die with the Root).
+  const mountedRef = React.useRef(true);
+  React.useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   return function applySearch(searchTerm: string) {
+    // A new accepted filter obsoletes pending grid materialize/focus work.
+    registry.invalidate();
+    // The scroll back to the top lands after the debounce; navigation in
+    // the meantime (e.g. a category tab clicked right after clearing the
+    // search) supersedes it instead of being yanked back to the top.
+    const token = registry.currentGeneration();
     requestAnimationFrame(() => {
+      if (!mountedRef.current) {
+        return;
+      }
       setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
         () => {
-          scrollTo(PickerMainRef.current, 0);
+          if (registry.isCurrent(token)) {
+            scrollTo(PickerMainRef.current, 0, () => registry.isCurrent(token));
+          }
         },
       );
     });
   };
-}
-
-export function filterEmojiObjectByKeyword(
-  emojis: FilterDict,
-  keyword: string,
-): FilterDict {
-  const filtered: FilterDict = {};
-
-  for (const unified in emojis) {
-    const emoji = emojis[unified];
-
-    if (hasMatch(emoji, keyword)) {
-      filtered[unified] = emoji;
-    }
-  }
-
-  return filtered;
-}
-
-function hasMatch(emoji: DataEmoji, keyword: string): boolean {
-  return emojiNames(emoji).some((name) => name.includes(keyword));
 }
 
 export function useIsEmojiFiltered(): (unified: string) => boolean {
@@ -159,45 +158,30 @@ export function isEmojiFilteredBySearchTerm(
 
 export type FilterDict = Record<string, DataEmoji>;
 
+export function filterEmojiObjectByKeyword(
+  emojis: FilterDict,
+  keyword: string,
+): FilterDict {
+  const filtered: FilterDict = {};
+  Object.keys(emojis).forEach((unified) => {
+    const emoji = emojis[unified];
+    if (
+      emojiNames(emoji).some((name) => name.toLowerCase().includes(keyword))
+    ) {
+      filtered[unified] = emoji;
+    }
+  });
+  return filtered;
+}
+
 export function findLongestMatch(
   keyword: string,
   dict: Record<string, FilterDict> | null,
 ): FilterDict | null {
-  if (!dict) {
-    return null;
-  }
-
-  if (dict[keyword]) {
-    return dict[keyword];
-  }
-
-  const longestMatchingKey = Object.keys(dict)
-    .sort((a, b) => b.length - a.length)
+  if (!dict) return null;
+  if (dict[keyword]) return dict[keyword];
+  const longest = Object.keys(dict)
+    .sort((left, right) => right.length - left.length)
     .find((key) => keyword.includes(key));
-
-  if (longestMatchingKey) {
-    return dict[longestMatchingKey];
-  }
-
-  return null;
-}
-
-export function getNormalizedSearchTerm(str: string): string {
-  if (!str || typeof str !== 'string') {
-    return '';
-  }
-
-  return str.trim().toLowerCase();
-}
-
-function getStatusSearchResults(
-  filterState: FilterState,
-  searchTerm: string,
-): string {
-  if (!filterState?.[searchTerm]) return '';
-
-  const searchResultsCount =
-    Object.entries(filterState?.[searchTerm])?.length || 0;
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  return useSearchResultsConfig(searchResultsCount);
+  return longest ? dict[longest] : null;
 }

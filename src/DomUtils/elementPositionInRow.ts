@@ -1,4 +1,4 @@
-import { DEFAULT_LABEL_HEIGHT } from '../components/main/PickerMain';
+import { DEFAULT_LABEL_HEIGHT } from '../components/main/labelHeight';
 
 import { ClassNames, asSelectors } from './classNames';
 import { NullableElement } from './selectors';
@@ -17,7 +17,7 @@ export function elementCountInRow(
   // off by one (e.g. category padding shrinking the content box), which
   // makes arrow-up/arrow-down drift sideways by a column.
   // https://github.com/ealush/emoji-picker-react/issues/502
-  const declared = Number(parent.dataset?.emojisPerRow);
+  const declared = Number(parent.dataset?.eprEmojisPerRow);
   if (Number.isInteger(declared) && declared > 0) {
     return declared;
   }
@@ -81,8 +81,30 @@ export function getLabelHeight(parentNode: NullableElement) {
     if (height > 0) {
       return height;
     }
+    // A design that hides category titles takes no label space; falling
+    // back to the default here would offset every virtualization window
+    // by a phantom label per category.
+    if (isDisplayNone(label)) {
+      return 0;
+    }
   }
 
-  // fallback to default
-  return DEFAULT_LABEL_HEIGHT;
+  // Not laid out yet: use the documented token, then the default.
+  const token = readPxToken(parentNode, '--epr-category-label-height');
+  return token ?? DEFAULT_LABEL_HEIGHT;
+}
+
+function isDisplayNone(element: Element): boolean {
+  return (
+    typeof getComputedStyle === 'function' &&
+    getComputedStyle(element).display === 'none'
+  );
+}
+
+function readPxToken(element: Element, name: string): number | null {
+  if (typeof getComputedStyle !== 'function') {
+    return null;
+  }
+  const value = parseFloat(getComputedStyle(element).getPropertyValue(name));
+  return Number.isFinite(value) ? value : null;
 }
