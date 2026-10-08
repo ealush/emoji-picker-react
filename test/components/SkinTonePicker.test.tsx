@@ -14,10 +14,14 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useActiveSkinToneState: vi.fn(),
 }));
 
-vi.mock('../../src/config/useConfig', () => ({
-  useOnSkinToneChangeConfig: vi.fn(),
-  useSkinTonesDisabledConfig: vi.fn(),
-}));
+vi.mock('../../src/config/useConfig', async () => {
+  const { DEFAULT_LABELS } = await import('../../src/config/config');
+  return {
+    useLabels: vi.fn(() => DEFAULT_LABELS),
+    useOnSkinToneChangeConfig: vi.fn(),
+    useSkinTonesDisabledConfig: vi.fn(),
+  };
+});
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({
   useCloseAllOpenToggles: vi.fn(() => vi.fn()),

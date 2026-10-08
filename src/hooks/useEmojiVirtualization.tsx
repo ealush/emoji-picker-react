@@ -121,7 +121,7 @@ export function useEmojiVirtualization({
           ...style,
           position: 'absolute',
         }}
-        logicalIndex={index}
+        index={index}
         // Grid semantics (issue #508): each emoji is a cell of its
         // category row; native button activation is kept.
         role="gridcell"

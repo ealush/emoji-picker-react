@@ -45,7 +45,7 @@ const EXTERNALS = [
   '--external:shipstyles',
 ];
 
-const COMMON = [...EXTERNALS, '--bundle', '--loader:.svg=dataurl', '--log-level=warning'];
+const COMMON = [...EXTERNALS, '--bundle', '--log-level=warning'];
 
 function buildCjs(src: string, outfile: string) {
   sh(bin('esbuild'), [
@@ -55,8 +55,8 @@ function buildCjs(src: string, outfile: string) {
     // Ship optimized production CJS without changing public property names.
     '--minify',
     '--platform=node',
-    // Preserve the current runtime syntax target; primitives packaging follows.
-    '--target=es2019',
+    // Match the declared Node >=18 runtime floor for the CJS entries.
+    '--target=node18',
     `--outfile=${join(repoRoot, outfile)}`,
   ]);
 }
@@ -65,6 +65,7 @@ function buildEsm() {
   rmSync(join(repoRoot, 'dist', 'esm'), { recursive: true, force: true });
   sh(bin('esbuild'), [
     join(repoRoot, 'src/index.tsx'),
+    join(repoRoot, 'src/primitives/index.ts'),
     join(repoRoot, 'src/data.ts'),
     ...COMMON,
     '--splitting',
@@ -86,6 +87,7 @@ async function buildDeclarations() {
   ]);
   const entries = [
     ['index.d.ts', 'index.d.mts'],
+    [join('primitives', 'index.d.ts'), join('primitives', 'index.d.mts')],
     ['data.d.ts', 'data.d.mts'],
   ];
   for (const [dts, dmts] of entries) {
@@ -107,6 +109,8 @@ function markClientEntries() {
   for (const file of [
     'dist/index.js',
     'dist/esm/index.mjs',
+    'dist/primitives/index.js',
+    'dist/esm/primitives/index.mjs',
   ]) {
     const path = join(repoRoot, file);
     const content = readFileSync(path, 'utf8');
@@ -122,6 +126,7 @@ async function main() {
   }
   buildEsm();
   buildCjs('src/index.tsx', 'dist/index.js');
+  buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
   buildCjs('src/data.ts', 'dist/data/index.js');
   markClientEntries();
   await buildDeclarations();

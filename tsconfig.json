@@ -1,14 +1,9 @@
 {
-  "include": [
-    "src",
-    "types"
-  ],
+  "include": ["src", "types"],
   "compilerOptions": {
     "module": "esnext",
-    "lib": [
-      "dom",
-      "esnext"
-    ],
+    "target": "es2019",
+    "lib": ["dom", "dom.iterable", "es2019"],
     "importHelpers": true,
     "declaration": true,
     "sourceMap": true,
@@ -22,9 +17,10 @@
     "resolveJsonModule": true,
     "jsx": "react",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
-    "target": "es2019"
+    "types": []
   }
 }

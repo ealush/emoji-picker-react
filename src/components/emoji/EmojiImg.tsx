@@ -39,13 +39,14 @@ export function EmojiImg({
   );
 }
 
-const styles = stylesheet.create({
-  emojiImag: {
-    '.': 'epr-emoji-img',
-    maxWidth: 'var(--epr-emoji-fullsize)',
-    maxHeight: 'var(--epr-emoji-fullsize)',
-    minWidth: 'var(--epr-emoji-fullsize)',
-    minHeight: 'var(--epr-emoji-fullsize)',
-    padding: 'var(--epr-emoji-padding)',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    emojiImag: {
+      '.': 'epr-emoji-img',
+      maxWidth: 'var(--epr-emoji-fullsize)',
+      maxHeight: 'var(--epr-emoji-fullsize)',
+      minWidth: 'var(--epr-emoji-fullsize)',
+      minHeight: 'var(--epr-emoji-fullsize)',
+      padding: 'var(--epr-emoji-padding)',
+    },
+  }))();

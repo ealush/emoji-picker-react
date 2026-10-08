@@ -31,14 +31,15 @@ export default function Flex({
   );
 }
 
-const styles = stylesheet.create({
-  flex: {
-    display: 'flex',
-  },
-  [FlexDirection.ROW]: {
-    flexDirection: 'row',
-  },
-  [FlexDirection.COLUMN]: {
-    flexDirection: 'column',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    flex: {
+      display: 'flex',
+    },
+    [FlexDirection.ROW]: {
+      flexDirection: 'row',
+    },
+    [FlexDirection.COLUMN]: {
+      flexDirection: 'column',
+    },
+  }))();

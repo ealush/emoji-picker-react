@@ -1,25 +1,27 @@
 import * as React from 'react';
 import { cx } from 'shipstyles';
 
-import { darkMode, stylesheet } from '../../../Stylesheet/stylesheet';
-import {
-  useAutoFocusSearchConfig,
-  useSearchDisabledConfig,
-  useSearchPlaceHolderConfig,
-} from '../../../config/useConfig';
-import { useCloseAllOpenToggles } from '../../../hooks/useCloseAllOpenToggles';
-import { useFilter } from '../../../hooks/useFilter';
+import { stylesheet } from '../../../Stylesheet/stylesheet';
+import { useSearchDisabledConfig } from '../../../config/useConfig';
 import { useIsSkinToneInSearch } from '../../../hooks/useShouldShowSkinTonePicker';
+import { SearchInput } from '../../../primitives/SearchInput';
+import { useDefaultAppearance } from '../../../primitives/appearance';
+import { filterPrimitiveProps } from '../../../primitives/nativeProps';
+import type { SearchProps } from '../../../primitives/types';
 import Flex from '../../Layout/Flex';
 import Relative from '../../Layout/Relative';
-import { useSearchInputRef } from '../../context/ElementRefContext';
 import { SkinTonePicker } from '../SkinTonePicker/SkinTonePicker';
 
 import { BtnClearSearch } from './BtnClearSearch';
 import { IcnSearch } from './IcnSearch';
-import SVGTimes from './svg/times.svg';
 
-export function SearchContainer() {
+export function SearchContainer({
+  inputProps,
+  inputRef,
+}: {
+  inputProps?: SearchProps['inputProps'];
+  inputRef?: SearchProps['inputRef'];
+} = {}) {
   const searchDisabled = useSearchDisabledConfig();
 
   const isSkinToneInSearch = useIsSkinToneInSearch();
@@ -30,136 +32,83 @@ export function SearchContainer() {
 
   return (
     <Flex className={cx(styles.overlay)}>
-      <Search />
+      <Search inputProps={inputProps} inputRef={inputRef} />
 
       {isSkinToneInSearch ? <SkinTonePicker /> : null}
     </Flex>
   );
 }
 
-export function Search() {
-  const closeAllOpenToggles = useCloseAllOpenToggles();
-  const SearchInputRef = useSearchInputRef();
-  const placeholder = useSearchPlaceHolderConfig();
-  const autoFocus = useAutoFocusSearchConfig();
-  const { statusSearchResults, searchTerm, onChange } = useFilter();
-
-  const input = SearchInputRef?.current;
-  const value = input?.value;
-
+export function Search({
+  inputProps,
+  inputRef,
+}: {
+  inputProps?: SearchProps['inputProps'];
+  inputRef?: SearchProps['inputRef'];
+} = {}) {
+  const appearance = useDefaultAppearance();
+  // The managed region and the standalone native-input primitive share
+  // the same controller, registration and accessible announcements.
+  const safe = filterPrimitiveProps(
+    (inputProps ?? {}) as Record<string, unknown>,
+    [
+      'type',
+      'value',
+      'defaultValue',
+      'onChange',
+      'autoFocus',
+      'placeholder',
+      'aria-controls',
+    ],
+  );
+  const { className, ...rest } = safe;
   return (
     <Relative className={cx(styles.searchContainer)}>
-      <input
-        // eslint-disable-next-line jsx-a11y/no-autofocus
-        autoFocus={autoFocus}
-        aria-label={'Type to search for an emoji'}
-        onFocus={closeAllOpenToggles}
-        className={cx(styles.search)}
-        type="text"
-        aria-controls="epr-search-id"
-        placeholder={placeholder}
-        onChange={(event) => {
-          onChange(event?.target?.value ?? value);
-        }}
-        ref={SearchInputRef}
+      <SearchInput
+        {...rest}
+        className={cx(
+          styles.inputGeometry,
+          appearance && styles.search,
+          className as string | undefined,
+        )}
+        ref={inputRef}
       />
-      {searchTerm ? (
-        <div
-          role="status"
-          className={cx('epr-status-search-results', styles.visuallyHidden)}
-          aria-live="polite"
-          id="epr-search-id"
-          aria-atomic="true"
-        >
-          {statusSearchResults}
-        </div>
-      ) : null}
-      <IcnSearch />
+      {appearance && <IcnSearch />}
       <BtnClearSearch />
     </Relative>
   );
 }
 
-const styles = stylesheet.create({
-  overlay: {
-    padding: 'var(--epr-header-padding)',
-    zIndex: 'var(--epr-header-overlay-z-index)',
-  },
-  searchContainer: {
-    '.': 'epr-search-container',
-    flex: '1',
-    display: 'block',
-    minWidth: '0',
-  },
-  visuallyHidden: {
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: '1px',
-    overflow: 'hidden',
-    position: 'absolute',
-    whiteSpace: 'nowrap',
-    width: '1px',
-  },
-  search: {
-    outline: 'none',
-    transition: 'all 0.2s ease-in-out',
-    color: 'var(--epr-search-input-text-color)',
-    borderRadius: 'var(--epr-search-input-border-radius)',
-    padding: 'var(--epr-search-input-padding)',
-    height: 'var(--epr-search-input-height)',
-    backgroundColor: 'var(--epr-search-input-bg-color)',
-    border: '1px solid var(--epr-search-border-color)',
-    width: '100%',
-    ':focus': {
-      backgroundColor: 'var(--epr-search-input-bg-color-active)',
-      border: '1px solid var(--epr-search-border-color-active)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    overlay: {
+      padding: 'var(--epr-header-padding)',
+      zIndex: 'var(--epr-header-overlay-z-index)',
     },
-    '::placeholder': {
-      color: 'var(--epr-search-input-placeholder-color)',
+    searchContainer: {
+      '.': 'epr-search-container',
+      flex: '1',
+      display: 'block',
+      minWidth: '0',
     },
-  },
-
-  btnClearSearch: {
-    '.': 'epr-btn-clear-search',
-    position: 'absolute',
-    right: 'var(--epr-search-bar-inner-padding)',
-    height: '30px',
-    width: '30px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    padding: '0',
-    borderRadius: '50%',
-    ':hover': {
-      background: 'var(--epr-hover-bg-color)',
+    inputGeometry: {
+      padding: 'var(--epr-search-input-padding)',
+      height: 'var(--epr-search-input-height)',
+      width: '100%',
     },
-    ':focus': {
-      background: 'var(--epr-hover-bg-color)',
+    search: {
+      outline: 'none',
+      transition: 'all 0.2s ease-in-out',
+      color: 'var(--epr-search-input-text-color)',
+      borderRadius: 'var(--epr-search-input-border-radius)',
+      backgroundColor: 'var(--epr-search-input-bg-color)',
+      border: '1px solid var(--epr-search-border-color)',
+      ':focus': {
+        backgroundColor: 'var(--epr-search-input-bg-color-active)',
+        border: '1px solid var(--epr-search-border-color-active)',
+      },
+      '::placeholder': {
+        color: 'var(--epr-search-input-placeholder-color)',
+      },
     },
-  },
-  icnClearnSearch: {
-    '.': 'epr-icn-clear-search',
-    backgroundColor: 'transparent',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: '20px',
-    height: '20px',
-    width: '20px',
-    backgroundImage: `url(${SVGTimes})`,
-    ':hover': {
-      backgroundPositionY: '-20px',
-    },
-    ':focus': {
-      backgroundPositionY: '-20px',
-    },
-  },
-  ...darkMode('icnClearnSearch', {
-    backgroundPositionY: '-40px',
-  }),
-  ...darkMode('btnClearSearch', {
-    ':hover > .epr-icn-clear-search': {
-      backgroundPositionY: '-60px',
-    },
-  }),
-});
+  }))();

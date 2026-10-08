@@ -81,10 +81,10 @@ describe('custom emoji groups', () => {
 
     // Sections.
     expect(
-      screen.getByRole('heading', { name: 'Animals' }),
+      screen.getByRole('rowgroup', { name: 'Animals' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'People' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Misc' })).toBeInTheDocument();
+    expect(screen.getByRole('rowgroup', { name: 'People' })).toBeInTheDocument();
+    expect(screen.getByRole('rowgroup', { name: 'Misc' })).toBeInTheDocument();
 
     // Each emoji lives in exactly one section.
     expect(
@@ -157,8 +157,8 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(screen.getAllByRole('heading', { name: 'Animals' })).toHaveLength(1);
-    expect(screen.queryByRole('heading', { name: 'Animals 2' })).toBeNull();
+    expect(screen.getAllByRole('rowgroup', { name: 'Animals' })).toHaveLength(1);
+    expect(screen.queryByRole('rowgroup', { name: 'Animals 2' })).toBeNull();
   });
 
   it('hides the ungrouped Custom tab when every custom is grouped', () => {
@@ -190,14 +190,16 @@ describe('custom emoji groups', () => {
     expect(screen.queryByRole('tab', { name: 'animals' })).toBeNull();
     expect(screen.queryByRole('rowgroup', { name: 'animals' })).toBeNull();
     expect(
-      screen.getByRole('heading', { name: 'Smileys & People' }),
+      screen.getByRole('rowgroup', { name: 'Smileys & People' }),
     ).toBeInTheDocument();
   });
 
   it('places group sections in categories order, interleaved with standard categories', () => {
     renderPicker();
 
-    const headings = screen.getAllByRole('heading').map((h) => h.textContent);
+    const headings = screen
+      .getAllByRole('rowgroup')
+      .map((group) => group.getAttribute('aria-label'));
     expect(headings).toEqual(['Smileys & People', 'Animals', 'People', 'Misc']);
   });
 
@@ -370,7 +372,9 @@ describe('custom emoji group updates', () => {
       .getAllByRole('tab')
       .map((tab) => tab.getAttribute('aria-label'));
     expect(tabs).toEqual(['People', 'Wildlife']);
-    const headings = screen.getAllByRole('heading').map((h) => h.textContent);
+    const headings = screen
+      .getAllByRole('rowgroup')
+      .map((group) => group.getAttribute('aria-label'));
     expect(headings).toEqual(['People', 'Wildlife']);
     expect(screen.queryByRole('tab', { name: 'Animals' })).toBeNull();
     expect(screen.getByTestId('icon-v2')).toBeInTheDocument();

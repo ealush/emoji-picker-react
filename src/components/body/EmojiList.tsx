@@ -12,6 +12,8 @@ import {
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
+import { useRegisterRegion } from '../../hooks/useRegisterRegion';
+import { useMergedRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
 import { useEmojiListRef } from '../context/ElementRefContext';
 import { useVisibleCategoriesState } from '../context/PickerContext';
@@ -20,13 +22,28 @@ import { useGetEmojisByCategory } from '../context/PickerDataContext';
 import { EmojiCategory } from './EmojiCategory';
 import { MeasureEmoji } from './MeasureEmoji';
 
-export function EmojiList({ scrollTop }: { scrollTop: number }) {
+export function EmojiList({
+  scrollTop,
+  outerRef,
+  className,
+  nativeProps,
+}: {
+  scrollTop: number;
+  outerRef?: React.Ref<HTMLUListElement>;
+  className?: string;
+  nativeProps?: Omit<
+    React.HTMLAttributes<HTMLUListElement>,
+    'role' | 'children' | 'className' | 'ref'
+  >;
+}) {
   const categories = useCategoriesConfig();
   const [categoryHeights, setCategoryHeights] = React.useState<{
     [key: string]: number;
   }>({});
   const EmojiListRef = useEmojiListRef();
+  const mergedRef = useMergedRefs(EmojiListRef, outerRef);
   const getEmojisByCategory = useGetEmojisByCategory();
+  useRegisterRegion('grid', EmojiListRef);
 
   const labelHeight = getLabelHeight(EmojiListRef.current);
 
@@ -40,8 +57,14 @@ export function EmojiList({ scrollTop }: { scrollTop: number }) {
   // The list markup is kept for a backwards-compatible DOM structure;
   // the grid role override is intentional.
   return (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
-    <ul className={cx(styles.emojiList)} ref={EmojiListRef} role="grid">
+    <ul
+      {...nativeProps}
+      className={cx(styles.emojiList, className)}
+      ref={mergedRef}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-element-to-interactive-role
+      role="grid"
+      data-epr-part="list"
+    >
       <MeasureEmoji />
       {categories.map((categoryConfig, index) => {
         const category = categoryFromCategoryConfig(categoryConfig);
@@ -102,17 +125,16 @@ function RenderCategory({
   // https://github.com/ealush/emoji-picker-react/issues/475
   const isCategoryVisible =
     isFirstCategory ||
-    visibleCategories.includes(
-      categoryIdFromCategoryConfig(categoryConfig),
-    );
+    visibleCategories.includes(categoryIdFromCategoryConfig(categoryConfig));
 
-  const { virtualizedCounter, emojis, dimensions, emojiCount } = useEmojiVirtualization({
-    categoryEmojis,
-    topOffset,
-    onHeightReady,
-    scrollTop,
-    isCategoryVisible,
-  });
+  const { virtualizedCounter, emojis, dimensions, emojiCount } =
+    useEmojiVirtualization({
+      categoryEmojis,
+      topOffset,
+      onHeightReady,
+      scrollTop,
+      isCategoryVisible,
+    });
 
   return (
     <EmojiCategory
@@ -129,11 +151,12 @@ function RenderCategory({
   );
 }
 
-const styles = stylesheet.create({
-  emojiList: {
-    '.': ClassNames.emojiList,
-    listStyle: 'none',
-    margin: '0',
-    padding: '0',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    emojiList: {
+      '.': ClassNames.emojiList,
+      listStyle: 'none',
+      margin: '0',
+      padding: '0',
+    },
+  }))();

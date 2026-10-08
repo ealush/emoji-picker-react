@@ -1,7 +1,11 @@
 import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { CategoryNavigation } from '../../src/components/navigation/CategoryNavigation';
+import {
+  ActiveCategoryProvider,
+  CategoryNavigation,
+} from '../../src/components/navigation/CategoryNavigation';
+import { NavigationRegistry } from '../../src/state/navigationRegistry';
 import { Categories } from '../../src/types/exposedTypes';
 import { useCategoriesConfig } from '../../src/config/useConfig';
 import { useVisibleCategoriesState } from '../../src/components/context/PickerContext';
@@ -13,17 +17,23 @@ import { useShouldHideCustomEmojis } from '../../src/hooks/useShouldHideCustomEm
 // Mocks
 vi.mock('../../src/components/context/ElementRefContext', () => ({
   useCategoryNavigationRef: vi.fn(),
+  usePickerMainRef: vi.fn(() => ({ current: null })),
 }));
 
 vi.mock('../../src/components/context/PickerContext', () => ({
   useVisibleCategoriesState: vi.fn(),
+  useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
 }));
 
-vi.mock('../../src/config/useConfig', () => ({
-  useCategoriesConfig: vi.fn(),
-  useCategoryIconsConfig: vi.fn(() => ({})),
-  useClassNameConfig: vi.fn(() => ''),
-}));
+vi.mock('../../src/config/useConfig', async () => {
+  const { DEFAULT_LABELS } = await import('../../src/config/config');
+  return {
+    useLabels: vi.fn(() => DEFAULT_LABELS),
+    useCategoriesConfig: vi.fn(),
+    useCategoryIconsConfig: vi.fn(() => ({})),
+    useClassNameConfig: vi.fn(() => ''),
+  };
+});
 
 vi.mock('../../src/hooks/useActiveCategoryScrollDetection', () => ({
   useActiveCategoryScrollDetection: vi.fn(),
@@ -82,7 +92,11 @@ describe('CategoryNavigation', () => {
   });
 
   it('renders categories', () => {
-    render(<CategoryNavigation />);
+    render(
+      <ActiveCategoryProvider>
+        <CategoryNavigation />
+      </ActiveCategoryProvider>,
+    );
     expect(
       screen.getByTestId(`category-btn-${Categories.SMILEYS_PEOPLE}`),
     ).toBeDefined();
@@ -92,7 +106,11 @@ describe('CategoryNavigation', () => {
   });
 
   it('scrolls to category on click', () => {
-    render(<CategoryNavigation />);
+    render(
+      <ActiveCategoryProvider>
+        <CategoryNavigation />
+      </ActiveCategoryProvider>,
+    );
     fireEvent.click(
       screen.getByTestId(`category-btn-${Categories.ANIMALS_NATURE}`),
     );
@@ -116,7 +134,11 @@ describe('CategoryNavigation', () => {
     ]);
     (useShouldHideCustomEmojis as any).mockReturnValue(true);
 
-    const { container } = render(<CategoryNavigation />);
+    const { container } = render(
+      <ActiveCategoryProvider>
+        <CategoryNavigation />
+      </ActiveCategoryProvider>,
+    );
     expect(container.firstChild).toBeNull();
   });
 
@@ -125,10 +147,12 @@ describe('CategoryNavigation', () => {
       { category: Categories.SMILEYS_PEOPLE, name: 'Smileys & People' },
     ]);
 
-    const { container, queryByRole } = render(<CategoryNavigation />);
+    const { container, queryByRole } = render(
+      <ActiveCategoryProvider>
+        <CategoryNavigation />
+      </ActiveCategoryProvider>,
+    );
     expect(container.firstChild).toBeNull();
-    expect(
-      queryByRole('tablist', { name: 'Category navigation' }),
-    ).toBeNull();
+    expect(queryByRole('tablist', { name: 'Category navigation' })).toBeNull();
   });
 });

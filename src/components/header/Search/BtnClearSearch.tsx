@@ -7,28 +7,39 @@ import {
   stylesheet,
 } from '../../../Stylesheet/stylesheet';
 import { useSearchClearButtonLabelConfig } from '../../../config/useConfig';
-import { useClearSearch } from '../../../hooks/useFilter';
+import { useClearSearchValue } from '../../../hooks/useSearchController';
+import { useDefaultAppearance } from '../../../primitives/appearance';
+import { usePickerComponents } from '../../../primitives/components';
 import { Button } from '../../atoms/Button';
-
-import SVGTimes from './svg/times.svg';
+import { TIMES_ICON as SVGTimes } from '../../icons/svgIcons';
 
 export function BtnClearSearch() {
-  const clearSearch = useClearSearch();
+  const clearSearch = useClearSearchValue();
   const searchClearButtonLabel = useSearchClearButtonLabelConfig();
 
-  return (
-    <Button
-      className={cx(
-        styles.btnClearSearch,
-        commonInteractionStyles.visibleOnSearchOnly,
-      )}
-      onClick={clearSearch}
-      aria-label={searchClearButtonLabel}
-      title={searchClearButtonLabel}
-    >
-      <div className={cx(styles.icnClearnSearch)} />
-    </Button>
-  );
+  const appearance = useDefaultAppearance();
+  const { ClearButton: Custom } = usePickerComponents();
+  const props = {
+    type: 'button' as const,
+    className: cx(
+      styles.geometry,
+      appearance && !Custom && styles.btnClearSearch,
+      commonInteractionStyles.visibleOnSearchOnly,
+    ),
+    onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (!event.defaultPrevented) clearSearch();
+    },
+    'data-epr-part': 'search-clear',
+    'aria-label': searchClearButtonLabel,
+    title: searchClearButtonLabel,
+    children:
+      appearance && !Custom ? (
+        <div className={cx(styles.icnClearnSearch)} />
+      ) : (
+        '×'
+      ),
+  };
+  return Custom ? <Custom {...props} /> : <Button {...props} />;
 }
 
 const HoverDark = {
@@ -39,44 +50,47 @@ const HoverDark = {
   },
 };
 
-const styles = stylesheet.create({
-  btnClearSearch: {
-    '.': 'epr-btn-clear-search',
-    position: 'absolute',
-    right: 'var(--epr-search-bar-inner-padding)',
-    height: '30px',
-    width: '30px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    padding: '0',
-    borderRadius: '50%',
-    ':hover': {
-      background: 'var(--epr-hover-bg-color)',
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    geometry: {
+      position: 'absolute',
+      insetInlineEnd: 'var(--epr-search-bar-inner-padding)',
+      height: '30px',
+      width: '30px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      padding: '0',
     },
-    ':focus': {
-      background: 'var(--epr-hover-bg-color)',
+    btnClearSearch: {
+      '.': 'epr-btn-clear-search',
+      borderRadius: '50%',
+      ':hover': {
+        background: 'var(--epr-hover-bg-color)',
+      },
+      ':focus': {
+        background: 'var(--epr-hover-bg-color)',
+      },
     },
-  },
-  icnClearnSearch: {
-    '.': 'epr-icn-clear-search',
-    backgroundColor: 'transparent',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: '20px',
-    height: '20px',
-    width: '20px',
-    backgroundImage: `url(${SVGTimes})`,
-    ':hover': {
-      backgroundPositionY: '-20px',
+    icnClearnSearch: {
+      '.': 'epr-icn-clear-search',
+      backgroundColor: 'transparent',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: '20px',
+      height: '20px',
+      width: '20px',
+      backgroundImage: `url("${SVGTimes}")`,
+      ':hover': {
+        backgroundPositionY: '-20px',
+      },
+      ':focus': {
+        backgroundPositionY: '-20px',
+      },
     },
-    ':focus': {
-      backgroundPositionY: '-20px',
-    },
-  },
-  ...darkMode('icnClearnSearch', {
-    backgroundPositionY: '-40px',
-  }),
-  ...darkMode('btnClearSearch', HoverDark),
-});
+    ...darkMode('icnClearnSearch', {
+      backgroundPositionY: '-40px',
+    }),
+    ...darkMode('btnClearSearch', HoverDark),
+  }))();

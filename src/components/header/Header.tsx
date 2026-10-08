@@ -2,18 +2,23 @@ import * as React from 'react';
 import { cx } from 'shipstyles';
 
 import { commonInteractionStyles } from '../../Stylesheet/stylesheet';
+import { CategoryNav, Search } from '../../primitives';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import Relative from '../Layout/Relative';
-import { CategoryNavigation } from '../navigation/CategoryNavigation';
 
-import { SearchContainer } from './Search/Search';
-
+// Default header layout: private appearance/layout wrapper around the
+// public Search and CategoryNav primitives.
 export function Header() {
+  const appearance = useDefaultAppearance();
   return (
     <Relative
-      className={cx('epr-header', commonInteractionStyles.hiddenOnReactions)}
+      className={cx(
+        'epr-header',
+        appearance && commonInteractionStyles.hiddenOnReactions,
+      )}
     >
-      <SearchContainer />
-      <CategoryNavigation />
+      <Search />
+      <CategoryNav />
     </Relative>
   );
 }

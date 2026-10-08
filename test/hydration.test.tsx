@@ -111,6 +111,6 @@ describe('hydration with returning-user suggestions', () => {
         .join(' | ')}`,
     ).toEqual([]);
     expect(hydrationErrors).toEqual([]);
-    expect(container.querySelector('[data-unified="1f600"]')).not.toBeNull();
+    expect(container.querySelector('[data-epr-unified="1f600"]')).not.toBeNull();
   });
 });
