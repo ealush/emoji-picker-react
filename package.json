@@ -109,6 +109,7 @@
     }
   ],
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@babel/core": "^7.18.10",
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
