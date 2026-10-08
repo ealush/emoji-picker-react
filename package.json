@@ -67,7 +67,8 @@
   "files": [
     "dist",
     "src",
-    "llms.txt"
+    "llms.txt",
+    "llms-full.txt"
   ],
   "description": "React emoji picker: batteries included, or BYOD (bring your own design, design language and design library). Shared keyboard navigation, localization and virtualization across styled, unstyled and composed UIs.",
   "keywords": [

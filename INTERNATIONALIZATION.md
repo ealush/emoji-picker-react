@@ -4,12 +4,22 @@ Import the dictionary you need and pass it to the `emojiData` prop:
 
 ```javascript
 import EmojiPicker from 'emoji-picker-react';
-import es from 'emoji-picker-react/dist/data/emojis-es'; // Spanish
+import es from 'emoji-picker-react/data/emojis-es'; // Spanish
 
 function App() {
   return <EmojiPicker emojiData={es} />;
 }
 ```
+
+To keep the dataset out of your main bundle, pass a loader instead — the picker shows its loading state until it resolves:
+
+```javascript
+const loadSpanish = () => import('emoji-picker-react/data/emojis-es');
+
+<EmojiPicker emojiData={loadSpanish} />;
+```
+
+Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones, loading, loadingError and retryLoading) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
 
 ## Supported Languages
 
