@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "types": ["node"],
+    "jsx": "react",
+    "baseUrl": "..",
+    "paths": {
+      "emoji-picker-react": ["src/index.tsx"],
+      "emoji-picker-react/primitives": ["src/primitives/index.ts"],
+      "emoji-picker-react/data": ["src/data.ts"],
+      "emoji-picker-react/data/emojis-*": ["src/data/emojis-*"],
+      "@c/*": ["src/*"]
+    },
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.cts",
+    "./**/*.mts",
+    "../bench/**/*.ts",
+    "../src/svg.d.ts",
+    "../bench/**/*.cts",
+    "../bench/**/*.mts"
+  ],
+  "exclude": ["dist", "tsconfig.types.json", "../bench/.tmp"]
+}

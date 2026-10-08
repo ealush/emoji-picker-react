@@ -1,14 +1,15 @@
+import process from 'node:process';
 // Guards the React peer floor (>=16.8).
 // Fails if src uses any React API newer than hooks-era 16.8, so the
 // declared peer range stays justified by actual internal API usage.
 // Run: npm run check:react-floor
-const { readFileSync, readdirSync, statSync } = require('fs');
-const { join } = require('path');
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 const root = join(__dirname, '..', 'src');
 
 // [pattern, minimum React version that introduced it]
-const denied = [
+const denied: Array<[RegExp, string]> = [
   [/\buseId\b/, '18.0'],
   [/\buseSyncExternalStore\b/, '18.0'],
   [/\buseInsertionEffect\b/, '18.0'],
@@ -17,12 +18,15 @@ const denied = [
   [/\buseOptimistic\b/, '18.3 canary / 19.0'],
   [/\buseActionState\b/, '19.0'],
   [/from\s+['"]react-dom[^'"]*['"]/, 'banned: no react-dom in src'],
-  [/react\/jsx-runtime|react\/jsx-dev-runtime/, '16.14/17.0 (banned: classic jsx)'],
+  [
+    /react\/jsx-runtime|react\/jsx-dev-runtime/,
+    '16.14/17.0 (banned: classic jsx)',
+  ],
   [/\bcreateRoot\b|\bhydrateRoot\b/, '18.0 (banned: no react-dom in src)'],
   [/\bflushSync\b/, '18.0 (banned: no react-dom in src)'],
 ];
 
-function sourceFiles(dir) {
+function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((entry) => {
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) {
