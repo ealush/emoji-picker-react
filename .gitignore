@@ -9,3 +9,9 @@ tsconfig.tsbuildinfo
 test-output.txt
 test-results/
 *.txt
+!llms.txt
+!llms-full.txt
+!website/public/llms.txt
+!website/public/llms-full.txt
+bench/.tmp/
+storybook-static/

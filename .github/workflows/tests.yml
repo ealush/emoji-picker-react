@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   unit:
@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npm test
 
-  # Peer floor is >=16.8 by API inventory (scripts/checkReactApiFloor.js);
+  # Peer floor is >=16.8 by API inventory (scripts/checkReactApiFloor.ts);
   # this fails the build if src ever adopts a newer React API.
   api-floor:
     runs-on: ubuntu-latest
@@ -27,6 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: npm ci --ignore-scripts
       - run: npm run check:react-floor
 
   visual:
@@ -49,5 +50,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+      - run: npm ci --ignore-scripts
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt

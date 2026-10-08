@@ -21,14 +21,77 @@ import emojibaseGroups from 'emojibase-data/meta/groups.json'; // eslint-disable
 // eslint-disable-next-line import/no-extraneous-dependencies
 import emojiDataSource from 'emoji-datasource/emoji.json'; // eslint-disable-line import/extensions
 import {
+  existsSync as pathExistsSync,
   lstatSync,
-  pathExistsSync,
   readdirSync,
-  readJsonSync,
+  readFileSync,
   writeFileSync,
-  writeJSONSync,
-  // @ts-ignore
-} from 'fs-extra';
+} from 'fs';
+
+const readJsonSync = (path: string): unknown =>
+  JSON.parse(readFileSync(path, 'utf8'));
+
+type Messages = { groups: { key: string; message: string }[] };
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === 'object';
+}
+function isEmoji(value: unknown): value is EmojiRecord {
+  if (!isRecord(value)) return false;
+  for (const key of [
+    'annotation',
+    'label',
+    'shortcode',
+    'hexcode',
+    'hex',
+    'unicode',
+    'emoji',
+    'groupKey',
+    'group_key',
+  ]) {
+    if (value[key] !== undefined && typeof value[key] !== 'string')
+      return false;
+  }
+  for (const key of ['shortcodes', 'tags']) {
+    const field = value[key];
+    if (
+      field !== undefined &&
+      (!Array.isArray(field) ||
+        !field.every((item) => typeof item === 'string'))
+    )
+      return false;
+  }
+  for (const key of ['group', 'version']) {
+    if (
+      value[key] !== undefined &&
+      typeof value[key] !== 'string' &&
+      typeof value[key] !== 'number'
+    )
+      return false;
+  }
+  if (value.order !== undefined && typeof value.order !== 'number')
+    return false;
+  if (
+    value.skins !== undefined &&
+    (!Array.isArray(value.skins) || !value.skins.every(isEmoji))
+  )
+    return false;
+  return true;
+}
+function isMessages(value: unknown): value is Messages {
+  return (
+    isRecord(value) &&
+    Array.isArray(value.groups) &&
+    value.groups.every(
+      (group) =>
+        isRecord(group) &&
+        typeof group.key === 'string' &&
+        typeof group.message === 'string',
+    )
+  );
+}
+// fs-extra's writeJSONSync wrote compact JSON followed by a newline.
+const writeJSONSync = (path: string, data: unknown, encoding: 'utf8') =>
+  writeFileSync(path, JSON.stringify(data) + '\n', encoding);
 
 import {
   CleanEmoji,
@@ -43,7 +106,7 @@ import {
 } from './constants';
 
 const emojiDataSourceUnifieds = new Set<string>(
-  emojiDataSource.map((emoji: any) => emoji.unified),
+  emojiDataSource.map((emoji) => emoji.unified),
 );
 
 // --- Helper Functions ---
@@ -59,9 +122,9 @@ const getGroupEntries = (): GroupEntry[] => {
     emojibaseGroups &&
     typeof emojibaseGroups === 'object' &&
     'groups' in emojibaseGroups &&
-    Array.isArray((emojibaseGroups as any).groups)
+    Array.isArray(emojibaseGroups.groups)
   ) {
-    return (emojibaseGroups as any).groups as GroupEntry[];
+    return emojibaseGroups.groups as GroupEntry[];
   }
   return [];
 };
@@ -204,17 +267,22 @@ function getAvailableLanguages(): string[] {
 
 function readEmojiData(lang: string): {
   emojisInfo: EmojiRecord[];
-  messages: { groups: { key: string; message: string }[] } | null;
+  messages: Messages | null;
 } {
   const dataPath = join(EMOJI_BASE_DATA_PATH, lang, 'data.json');
   const messagesPath = join(EMOJI_BASE_DATA_PATH, lang, 'messages.json');
 
-  const emojisInfo: EmojiRecord[] = readJsonSync(dataPath);
-  let messages = null;
+  const emojisInfo = readJsonSync(dataPath);
+  if (!Array.isArray(emojisInfo) || !emojisInfo.every(isEmoji))
+    throw new Error(`${dataPath}: invalid emoji records`);
+  let messages: Messages | null = null;
 
   try {
     if (pathExistsSync(messagesPath)) {
-      messages = readJsonSync(messagesPath);
+      const value = readJsonSync(messagesPath);
+      if (!isMessages(value))
+        throw new Error(`${messagesPath}: invalid category messages`);
+      messages = value;
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -259,7 +327,7 @@ function groupEmojis(emojis: EmojiRecord[]): Record<string, CleanEmoji[]> {
     if (
       !category ||
       (category !== keys.GROUP_NAME_CUSTOM &&
-        !Object.values(keys).includes(category as any))
+        !Object.values<string>(keys).includes(category))
     ) {
       // Skip if category is null (explicitly ignored) or unknown
       return acc;
@@ -366,7 +434,7 @@ function processLanguage(lang: string) {
         keys.GROUP_NAME_SUGGESTED,
       ];
 
-      if (protectedCategories.includes(category as any)) {
+      if ((protectedCategories as readonly string[]).includes(category)) {
         acc[category] = emojis;
         return acc;
       }
