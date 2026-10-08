@@ -82,7 +82,19 @@ export const commonInteractionStyles = stylesheet.create({
   },
 });
 
-export function darkMode(key: string, value: Styles) {
+// Explicit return type: the inferred shape references shipstyles'
+// private PostConditionStyles, which declaration emit cannot name
+// (TS4058). Spelling it with the exported Styles type keeps entry
+// declaration emit clean.
+export function darkMode(
+  key: string,
+  value: Styles,
+): {
+  '.epr-dark-theme': { [styleKey: string]: Styles };
+  '.epr-auto-theme': {
+    [styleKey: string]: { '@media (prefers-color-scheme: dark)': Styles };
+  };
+} {
   return {
     '.epr-dark-theme': {
       [key]: value,

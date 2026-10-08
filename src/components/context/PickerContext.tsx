@@ -92,14 +92,14 @@ export function PickerContextProvider({ children }: Props) {
   const reactionsDefaultOpen = useReactionsOpenConfig();
   const initialSearchValue =
     useSearchValueConfig() ?? useDefaultSearchValueConfig() ?? '';
-  const { searchIndex } = usePickerDataContext();
+  const { emojiData, customGroups } = usePickerDataContext();
 
-  // Initialize the filter with the inititial dictionary
-  const filterRef = React.useRef<FilterState>(searchIndex);
+  // Query dictionaries belong to this picker, never to the shared snapshot.
+  const filterRef = React.useRef<FilterState>({});
 
   React.useEffect(() => {
-    filterRef.current = searchIndex;
-  }, [searchIndex]);
+    filterRef.current = {};
+  }, [emojiData, customGroups]);
   const disallowClickRef = React.useRef<boolean>(false);
   const disallowMouseRef = React.useRef<boolean>(false);
   const disallowedEmojisRef =
