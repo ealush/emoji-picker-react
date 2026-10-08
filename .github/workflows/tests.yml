@@ -17,6 +17,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm run check:data-package
 
   # Peer floor is >=16.8 by API inventory (scripts/checkReactApiFloor.ts);
   # this fails the build if src ever adopts a newer React API.

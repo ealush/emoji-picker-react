@@ -12,6 +12,7 @@ const sources = [
   'CUSTOMIZATION.md',
   'INTERNATIONALIZATION.md',
   'CSS_VARIABLES.md',
+  'docs/v5/DATA_API.md',
 ];
 
 const parts = [

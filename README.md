@@ -123,3 +123,17 @@ Building complex forms? Check out [**Vest**](https://vestjs.dev) — a validatio
 Contributions are welcome — see the [Contributing Guide](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md).
 
 Design inspiration by [Pavel Bolo](https://pavelbolo.com).
+
+## Data-only search and lookup
+
+```ts
+import { getEmojiByUnified, searchEmojis } from 'emoji-picker-react/data';
+
+const matches = searchEmojis('smile');
+const emoji = getEmojiByUnified('1F600');
+```
+
+These functions work without React and return immutable normalized records.
+Pass `{ emojiData }` to search or look up names in a supplied locale dataset.
+Search results follow dataset order and do not apply picker-specific display
+filters or custom emojis. See the [data API contract](docs/v5/DATA_API.md).
