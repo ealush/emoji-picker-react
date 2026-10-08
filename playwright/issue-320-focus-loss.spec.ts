@@ -115,19 +115,49 @@ test('hovering an emoji with picker focus continues keyboard navigation from it'
   await hovered.hover();
   await expect(hovered).toBeFocused();
 
-  // Arrow navigation now proceeds from the hovered emoji. Focus moves via
-  // requestAnimationFrame, so poll for the change.
+  // Start with keyboard input so hover is guarded against scroll-induced
+  // mouseover. Real pointer movement must then hand navigation back.
+  const initialIndex = await hovered.evaluate(button =>
+    Number((button as HTMLElement).dataset.eprIndex),
+  );
   await page.keyboard.press('ArrowRight');
-  await expect
-    .poll(
-      async () =>
-        page.evaluate(
-          () =>
-            (document.activeElement as HTMLElement | null)?.getAttribute(
-              'aria-label',
-            ) ?? '',
-        ),
-      { timeout: 5000 },
-    )
-    .not.toBe(exposedLabel);
+  const focusedIndex = () => page.evaluate(() =>
+    Number((document.activeElement as HTMLElement | null)?.dataset.eprIndex),
+  );
+  await expect.poll(focusedIndex).toBe(initialIndex + 1);
+
+  let previousHover = initialIndex;
+  for (const key of ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp']) {
+    const target = await page.evaluate(previous => {
+      const body = document.querySelector('.epr-body')!;
+      const viewport = body.getBoundingClientRect();
+      const focused = Number((document.activeElement as HTMLElement).dataset.eprIndex);
+      for (const button of Array.from(body.querySelectorAll<HTMLButtonElement>(
+        'button.epr-emoji[data-epr-index]',
+      ))) {
+        const content = button.closest('[data-epr-part="category-content"]') as HTMLElement;
+        const index = Number(button.dataset.eprIndex);
+        const columns = Number(content.dataset.eprEmojisPerRow);
+        const count = Number(content.dataset.eprEmojiCount);
+        const rect = button.getBoundingClientRect();
+        const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2);
+        if (index !== previous && index !== focused && index >= columns && index + columns < count &&
+            index % columns > 0 && index % columns < columns - 1 &&
+            rect.top >= viewport.top && rect.bottom <= viewport.bottom &&
+            (hit === button || button.contains(hit))) {
+          return { index, columns, label: button.getAttribute('aria-label')! };
+        }
+      }
+      return null;
+    }, previousHover);
+    expect(target).not.toBeNull();
+    const anchor = page.locator('.epr-body').getByLabel(target!.label, { exact: true }).first();
+    await anchor.hover();
+    await expect(anchor).toBeFocused();
+    await page.keyboard.press(key);
+    const delta = key === 'ArrowRight' ? 1 : key === 'ArrowLeft' ? -1 :
+      key === 'ArrowDown' ? target!.columns : -target!.columns;
+    await expect.poll(focusedIndex).toBe(target!.index + delta);
+    previousHover = target!.index;
+  }
 });
