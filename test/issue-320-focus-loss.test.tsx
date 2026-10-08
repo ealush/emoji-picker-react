@@ -50,8 +50,9 @@ function renderPickerWithExternalInput(props: Partial<Props> = {}) {
 }
 
 async function findEmojiButton(label: string) {
-  const buttons = await screen.findAllByLabelText(label);
-  return buttons[0];
+  // The hidden measurement emoji can share the label of the first cell.
+  // Keyboard navigation must exercise the managed grid button.
+  return screen.findByRole('gridcell', { name: label });
 }
 
 /**
@@ -122,6 +123,49 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
     await flushFocus();
 
     expect(document.activeElement).toBe(emojiButton);
+  });
+
+  it('continues arrows from the first emoji hovered after keyboard navigation', async () => {
+    renderPickerWithExternalInput();
+    screen.getByLabelText('Type to search for an emoji').focus();
+    const first = await findEmojiButton('grinning face');
+    const second = await findEmojiButton('grinning face with big eyes');
+
+    fireEvent.mouseOver(first);
+    await flushFocus();
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    await flushFocus();
+    expect(document.activeElement).toBe(second);
+
+    // Browsers dispatch mouseover before mousemove when the pointer enters
+    // another emoji. Keyboard scrolling can also generate mouseover alone.
+    fireEvent.mouseOver(first);
+    await flushFocus();
+    expect(document.activeElement).toBe(second);
+    fireEvent.mouseMove(first);
+    await flushFocus();
+    expect(document.activeElement).toBe(first);
+
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    await flushFocus();
+    expect(document.activeElement).toBe(second);
+  });
+
+  it('keeps an external editor focused when pointer movement resumes after keyboard input', async () => {
+    renderPickerWithExternalInput();
+    screen.getByLabelText('Type to search for an emoji').focus();
+    const first = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(first);
+    await flushFocus();
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    await flushFocus();
+
+    const external = screen.getByTestId('external-editor');
+    external.focus();
+    fireEvent.mouseOver(first);
+    fireEvent.mouseMove(first);
+    await flushFocus();
+    expect(document.activeElement).toBe(external);
   });
 
   it('does not steal focus that moved outside between hover and the deferred callback', async () => {

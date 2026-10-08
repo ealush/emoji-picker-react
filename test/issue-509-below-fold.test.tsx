@@ -90,7 +90,11 @@ describe('below-fold hover never takes focus', () => {
     mockRect(body, { y: 0, height: 200 });
     mockRect(emojiButton, { y: 190, height: 30 });
 
+    // The first real movement after keyboard input must restore preview
+    // updates while retaining the guard against focus-induced scroll jumps.
+    fireEvent.keyDown(search, { key: 'ArrowLeft' });
     fireEvent.mouseOver(emojiButton);
+    fireEvent.mouseMove(emojiButton);
     await flushFocus();
 
     // Preview follows the hover...
