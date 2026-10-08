@@ -12,6 +12,8 @@ import {
   MutableConfigProvider,
   useDefineMutableConfig,
 } from './config/mutableConfig';
+import type { PickerComponents } from './primitives/components';
+import type { ThemeValue } from './types/exposedTypes';
 
 export { ExportedEmoji as Emoji } from './components/emoji/ExportedEmoji';
 
@@ -23,12 +25,54 @@ export {
   SuggestionMode,
   SkinTonePickerLocation,
 } from './types/exposedTypes';
-
-export type { EmojiClickData, CategoryIcons, CategoryConfig } from './types/exposedTypes';
+export type {
+  EmojiStyleValue,
+  ThemeValue,
+  SkinTonesValue,
+  EmojiClickData,
+  SuggestionModeValue,
+  CategoryIcons,
+  CategoryConfig,
+  EmojiData,
+} from './types/exposedTypes';
+export type {
+  PickerLabels,
+  PreviewConfig,
+  EmojiClickHandler,
+  SkinToneChangeHandler,
+  OnEmojiClickApi,
+} from './config/config';
+export type { CustomEmoji } from './config/customEmojiConfig';
+export type {
+  EmojiDataInput,
+  EmojiDataLoader,
+  EmojiDataLoaderOptions,
+} from './hooks/useResolvedEmojiData';
+export type {
+  CategoryHeaderRenderProps,
+  EmojiRenderProps,
+  ListComponents,
+  ListEmoji,
+} from './components/body/listComponents';
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 
-export interface PickerProps extends PickerConfig {}
+export interface PickerProps extends PickerConfig {
+  /**
+   * Color scheme: 'light' | 'dark' | 'auto'. Preferred over `theme`, which
+   * Emotion, styled-components and MUI reserve on components they wrap
+   * (a styled(EmojiPicker) would swallow it). `theme` remains supported.
+   */
+  colorScheme?: ThemeValue;
+  /**
+   * Render without decorative styling on every managed part.
+   * Geometry, presence and navigation remain managed. Style it with `className`,
+   * `--epr-*` variables and `[data-epr-part]` selectors.
+   */
+  unstyled?: boolean;
+  /** Shared replacements for interactive controls and category headers. */
+  components?: PickerComponents;
+}
 export type Props = PickerProps;
 
 export default function EmojiPicker(props: PickerProps) {
@@ -48,3 +92,9 @@ export default function EmojiPicker(props: PickerProps) {
     </ErrorBoundary>
   );
 }
+
+export type {
+  PickerComponents,
+  CategoryButtonRenderProps,
+  SkinToneButtonRenderProps,
+} from './primitives/components';

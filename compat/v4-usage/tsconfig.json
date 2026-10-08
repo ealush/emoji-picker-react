@@ -1,0 +1,28 @@
+{
+  // Representative v4 consumer compiled against the PACKED v5
+  // declarations (IMPLEMENTATION_PLAN.md Phase 8). Prerequisite: run
+  // `npm run build` first so dist/ exists. Checked by
+  // `npm run check:compat` under node16 and bundler resolution.
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "jsx": "react",
+    "lib": ["dom", "esnext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "emoji-picker-react": ["../../dist/index.d.ts"],
+      "emoji-picker-react/primitives": ["../../dist/primitives/index.d.ts"],
+      "emoji-picker-react/data": ["../../dist/data.d.ts"],
+      "emoji-picker-react/data/emojis-*": ["../../dist/data/emojis-*"],
+      "emoji-picker-react/dist/data/*": ["../../dist/data/*"]
+    },
+    "types": ["react"]
+  },
+  "include": ["./usage.tsx"]
+}

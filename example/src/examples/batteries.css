@@ -1,0 +1,24 @@
+/* Theme the built-in look. Variables are declared by the library at zero
+   specificity, so one class wins regardless of load order. */
+.brand-picker {
+  --epr-bg-color: #faf5ff;
+  --epr-category-label-bg-color: #faf5ffe6;
+  --epr-search-input-bg-color: #f3e8ff;
+  --epr-search-input-bg-color-active: #fff;
+  --epr-picker-border-color: #e9d5ff;
+  --epr-text-color: #6b21a8;
+  --epr-highlight-color: #7c3aed;
+  --epr-hover-bg-color: #ede9fe;
+  --epr-focus-bg-color: #ddd6fe;
+  --epr-category-icon-active-color: #7c3aed;
+  --epr-category-icon-inactive-color: #a78bfa;
+  --epr-picker-border-radius: 16px;
+  --epr-emoji-size: 26px;
+  box-shadow: 0 16px 40px rgb(124 58 237 / 18%);
+}
+
+.brand-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
