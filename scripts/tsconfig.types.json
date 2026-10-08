@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "sourceMap": false,
+    "incremental": false,
+    "outDir": "../dist",
+    "rootDir": "../src"
+  },
+  "include": [
+    "../src/index.tsx",
+    "../src/data.ts",
+    "../src/env.d.ts",
+    "../src/svg.d.ts"
+  ]
+}

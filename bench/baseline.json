@@ -1,0 +1,92 @@
+{
+  "note": "Reconstructed v4 baseline: no Phase-0 baseline was frozen before refactoring.",
+  "ref": "master",
+  "sha": "0293c464b623112efd45fe956604163f6b7c8fa5",
+  "date": "2026-10-03T20:46:04.290Z",
+  "node": "v26.8.1",
+  "runs": 5,
+  "samples": 50,
+  "mountSamples": 8,
+  "metrics": {
+    "cold": {
+      "a": 0.00007000000005064066,
+      "sm": 0.14688799999998992,
+      "cat": 0.18981299999995827,
+      "birthday": 0.11446349999994254,
+      "zzz-no-match": 0.09645499999987805
+    },
+    "incremental": [
+      {
+        "sequence": "c > ca > cat",
+        "total": 0.42660899999987123,
+        "steps": [
+          {
+            "query": "c",
+            "median": 0.0002110000000357104
+          },
+          {
+            "query": "ca",
+            "median": 0.2151400000001331
+          },
+          {
+            "query": "cat",
+            "median": 0.20992599999999584
+          }
+        ]
+      },
+      {
+        "sequence": "s > sm > smi > smil > smile",
+        "total": 0.9832005000004074,
+        "steps": [
+          {
+            "query": "s",
+            "median": 0.0002509999999347201
+          },
+          {
+            "query": "sm",
+            "median": 0.23181099999999333
+          },
+          {
+            "query": "smi",
+            "median": 0.2599190000000817
+          },
+          {
+            "query": "smil",
+            "median": 0.23305399999958354
+          },
+          {
+            "query": "smile",
+            "median": 0.25450900000009824
+          }
+        ]
+      },
+      {
+        "sequence": "smil > smi > smil > smile",
+        "total": 0.6799704999999676,
+        "steps": [
+          {
+            "query": "smil",
+            "median": 0.2318519999998898
+          },
+          {
+            "query": "smi",
+            "median": 0.21397799999976996
+          },
+          {
+            "query": "smil",
+            "median": 0.00012100000003556488
+          },
+          {
+            "query": "smile",
+            "median": 0.23157099999980346
+          }
+        ]
+      }
+    ],
+    "mount": {
+      "one": 17.303014000000076,
+      "ten": 175.8372875
+    },
+    "prepare": 5.494023499999969
+  }
+}

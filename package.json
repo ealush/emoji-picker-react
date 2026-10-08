@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "npm run check:scripts && npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
+    "build": "npm run check:scripts && npm run clean && npm run build:data:src && npm run type-check && npm run build:data:dist && tsx ./scripts/build.ts && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -62,14 +62,16 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
-    "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts",
+    "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts && tsx ./scripts/buildDataTwins.ts",
     "build:data": "npm run build:data:src && npm run build:data:dist",
     "storybook": "npm run build:data && storybook dev --host 0.0.0.0 -p 6006",
     "build-storybook": "storybook build",
     "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
     "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
+    "check:perf": "tsx ./bench/run.ts",
     "check:scripts": "tsc --project scripts/tsconfig.json",
-    "clean": "tsx ./scripts/clean.ts"
+    "clean": "tsx ./scripts/clean.ts",
+    "check:data-package": "tsx ./scripts/checkDataPackage.ts"
   },
   "peerDependencies": {
     "react": ">=16.8"
@@ -86,15 +88,21 @@
   },
   "name": "emoji-picker-react",
   "author": "ealush",
-  "module": "dist/emoji-picker-react.esm.js",
+  "module": "dist/esm/index.mjs",
   "size-limit": [
     {
-      "path": "dist/emoji-picker-react.cjs.production.min.js",
-      "limit": "95 KB"
+      "path": "dist/index.js",
+      "limit": "95 KB",
+      "gzip": true
     },
     {
-      "path": "dist/emoji-picker-react.esm.js",
-      "limit": "95 KB"
+      "path": "dist/esm/index.mjs",
+      "limit": "95 KB",
+      "gzip": true
+    },
+    {
+      "path": "dist/esm/data.mjs",
+      "limit": "42 KB"
     }
   ],
   "devDependencies": {
@@ -106,7 +114,7 @@
     "@semantic-release/git": "^11.0.1",
     "@semantic-release/github": "^12.0.9",
     "@semantic-release/npm": "^13.1.5",
-    "@size-limit/preset-small-lib": "^8.0.1",
+    "@size-limit/preset-small-lib": "^14.1.0",
     "@storybook/addon-essentials": "^8.6.15",
     "@storybook/addon-info": "^5.3.21",
     "@storybook/addon-links": "^8.6.15",
@@ -142,16 +150,71 @@
     "react-is": "^18.2.0",
     "rollup-plugin-svg": "^2.0.0",
     "semantic-release": "^25.0.9",
-    "size-limit": "^8.0.1",
+    "size-limit": "^14.1.0",
     "storybook": "8.6.15",
     "tiny-invariant": "^1.2.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
-    "typescript": "^4.7.4",
+    "typescript": "5.9",
     "vitest": "^4.1.11",
-    "tsx": "^4.23.15"
+    "esbuild": "^0.25.12",
+    "tsx": "^4.23.15",
+    "@types/jsdom": "^21.1.7",
+    "rollup": "^4.64.0",
+    "rollup-plugin-dts": "^6.5.1"
   },
   "dependencies": {
     "shipstyles": "1.0.0"
+  },
+  "type": "commonjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/esm/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "default": "./dist/index.js"
+    },
+    "./data": {
+      "import": {
+        "types": "./dist/data.d.mts",
+        "default": "./dist/esm/data.mjs"
+      },
+      "require": {
+        "types": "./dist/data.d.ts",
+        "default": "./dist/data/index.js"
+      },
+      "default": "./dist/data/index.js"
+    },
+    "./data/emojis-*": {
+      "import": {
+        "types": "./dist/data/emojis-*.d.mts",
+        "default": "./dist/data/emojis-*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/emojis-*.d.ts",
+        "default": "./dist/data/emojis-*.js"
+      },
+      "default": "./dist/data/emojis-*.js"
+    },
+    "./dist/data/emojis-*.json": "./dist/data/emojis-*.json",
+    "./dist/data/emojis-*": {
+      "import": {
+        "types": "./dist/data/emojis-*.d.mts",
+        "default": "./dist/data/emojis-*.mjs"
+      },
+      "require": {
+        "types": "./dist/data/emojis-*.d.ts",
+        "default": "./dist/data/emojis-*.js"
+      },
+      "default": "./dist/data/emojis-*.js"
+    },
+    "./src/data/*.json": "./src/data/*.json",
+    "./package.json": "./package.json",
+    "./*": "./*"
   }
 }

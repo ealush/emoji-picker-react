@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { CustomEmoji } from '../../config/customEmojiConfig';
-import { useSuggestedEmojisModeConfig } from '../../config/useConfig';
-import defaultEmojiData from '../../data/emojis';
+import {
+  useSuggestedEmojisModeConfig,
+} from '../../config/useConfig';
+import { getPickerDataSnapshot } from '../../data-core/pickerData';
+import { normalizeQuery } from '../../data-core/prepare';
+import { searchEmojis } from '../../data-core/search';
 import {
   DataEmoji,
   DataEmojis,
-  EmojiProperties,
   EmojiProperties as Keys,
 } from '../../dataUtils/DataTypes';
 import { emojiByUnified } from '../../dataUtils/emojiSelectors';
@@ -16,6 +18,8 @@ import {
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
 import { getSuggested } from '../../dataUtils/suggested';
+import { useDataIdentityStabilityWarning } from '../../hooks/useDataIdentityStabilityWarning';
+import type { FilterDict } from '../../hooks/useFilter';
 import { useIsMounted } from '../../hooks/useIsMounted';
 import { Categories, EmojiData, SkinTones } from '../../types/exposedTypes';
 
@@ -26,23 +30,27 @@ export interface PickerDataContextValue {
   emojiData: EmojiData;
   allEmojis: DataEmojis;
   allEmojisByUnified: Record<string, DataEmoji>;
-  searchIndex: Record<string, Record<string, DataEmoji>>;
   customGroups: Record<string, DataEmojis>;
   emojiByUnified: (unified?: string) => DataEmoji | undefined;
   activeVariationFromUnified: (unified: string) => SkinTones | null;
-  queryFilterDict: (query: string) => Record<string, DataEmoji>;
+  /**
+   * Query-to-filter-dict through the single shared prepared core: core
+   * dataset matches mapped back to source records, unioned with the
+   * Root-local custom emojis the core never sees.
+   */
+  queryFilterDict: (query: string) => FilterDict;
 }
 
-const PickerDataContext = React.createContext<PickerDataContextValue>({
-  emojiData: {} as EmojiData,
-  allEmojis: [],
-  allEmojisByUnified: Object.create(null),
-  searchIndex: Object.create(null),
-  customGroups: Object.create(null),
-  emojiByUnified,
-  activeVariationFromUnified: () => null,
-  queryFilterDict: () => ({}),
-});
+const PickerDataContext =
+  /* @__PURE__ */ React.createContext<PickerDataContextValue>({
+    emojiData: {} as EmojiData,
+    allEmojis: [],
+    allEmojisByUnified: Object.create(null),
+    customGroups: Object.create(null),
+    emojiByUnified,
+    activeVariationFromUnified: () => null,
+    queryFilterDict: () => ({}),
+  });
 
 export function PickerDataProvider({
   children,
@@ -51,72 +59,17 @@ export function PickerDataProvider({
 }) {
   const { customEmojis, emojiData: genericEmojiData } = usePickerConfig();
 
-  const data = React.useMemo(() => {
-    const emojiData = genericEmojiData || (defaultEmojiData as EmojiData);
+  useDataIdentityStabilityWarning(genericEmojiData, customEmojis);
 
-    // Clone to avoid mutation of shared source
-    const newData: EmojiData = JSON.parse(JSON.stringify(emojiData));
-
-    // Group names and emoji ids are user-controlled strings: use
-    // null-prototype dictionaries so names like `__proto__` behave as
-    // ordinary data instead of resolving Object.prototype members.
-    const customGroups: Record<string, DataEmojis> = Object.create(null);
-
-    if (customEmojis && customEmojis.length > 0) {
-      for (const emoji of customEmojis) {
-        if (!emoji.group) {
-          continue;
-        }
-        customGroups[emoji.group] = customGroups[emoji.group] ?? [];
-        customGroups[emoji.group].push(customToRegularEmoji(emoji));
-      }
-
-      newData.emojis[Categories.CUSTOM] = customEmojis
-        .filter(emoji => !emoji.group)
-        .map(customToRegularEmoji);
-    }
-
-    const emojis = newData.emojis || {};
-
-    const allEmojis: DataEmojis = Object.values(emojis)
-      .concat(Object.values(customGroups))
-      .flat();
-    const allEmojisByUnified: Record<string, DataEmoji> =
-      Object.create(null);
-    const searchIndex: Record<string, Record<string, DataEmoji>> =
-      Object.create(null);
-
-    allEmojis.forEach((emoji) => {
-      const unified = emoji[Keys.unified];
-      allEmojisByUnified[unified] = emoji;
-
-      if (emoji[Keys.variations]) {
-        emoji[Keys.variations]?.forEach((variation) => {
-          allEmojisByUnified[variation] = emoji;
-        });
-      }
-
-      // Index for search
-      // Re-implement indexEmoji logic here to be local
-      const joinedNameString = (emoji[Keys.name] || [])
-        .join('')
-        .toLowerCase()
-        .split('');
-
-      joinedNameString.forEach((char: string) => {
-        searchIndex[char] = searchIndex[char] ?? Object.create(null);
-        searchIndex[char][unified] = emoji;
-      });
-    });
-
-    return {
-      emojiData: newData,
-      allEmojis,
-      allEmojisByUnified,
-      searchIndex,
-      customGroups,
-    };
-  }, [genericEmojiData, customEmojis]);
+  // Phase 2 shared derivation: no per-Root JSON clone of the full dataset,
+  // caller data never mutated, base index shared by dataset identity, custom
+  // derivation cached separately by customEmojis identity. emojiVersion /
+  // hiddenEmojis remain per-Root filtering layers elsewhere and never force
+  // a base-index rebuild.
+  const data = React.useMemo(
+    () => getPickerDataSnapshot(genericEmojiData, customEmojis),
+    [genericEmojiData, customEmojis],
+  );
 
   const emojiByUnified = React.useCallback(
     (unified?: string): DataEmoji | undefined => {
@@ -130,29 +83,53 @@ export function PickerDataProvider({
     [data.allEmojisByUnified],
   );
 
+  const allCustomEmojis = React.useMemo(
+    () => [
+      ...(data.emojiData.emojis?.[Categories.CUSTOM] ?? []),
+      ...Object.values(data.customGroups).flat(),
+    ],
+    [data.emojiData, data.customGroups],
+  );
+
   const queryFilterDict = React.useCallback(
-    (query: string): Record<string, DataEmoji> => {
-      const matches: Record<string, DataEmoji> = Object.create(null);
-      data.allEmojis.forEach((emoji) => {
-        const unified = emoji[Keys.unified];
-        if (emojiNames(emoji).some((name) => name.toLowerCase().includes(query))) {
-          matches[unified] = emoji;
+    (query: string): FilterDict => {
+      const normalized = normalizeQuery(query);
+      const dict: FilterDict = Object.create(null);
+      if (!normalized) {
+        return dict;
+      }
+      for (const info of searchEmojis(normalized, {
+        emojiData: genericEmojiData,
+      })) {
+        const emoji = data.allEmojisByUnified[info.unified];
+        if (emoji) {
+          dict[info.unified] = emoji;
         }
-      });
-      return matches;
+      }
+      for (const custom of allCustomEmojis) {
+        if (emojiNames(custom).some((name) => name.includes(normalized))) {
+          dict[custom[Keys.unified]] = custom;
+        }
+      }
+      return dict;
     },
-    [data.allEmojis],
+    [genericEmojiData, data.allEmojisByUnified, allCustomEmojis],
+  );
+
+  // Stable value identity: provider rerenders must not rerender data
+  // consumers while the dataset itself is unchanged.
+  const value = React.useMemo(
+    () => ({
+      ...data,
+      emojiByUnified,
+      activeVariationFromUnified,
+      queryFilterDict,
+    }),
+    [data, emojiByUnified, queryFilterDict],
   );
 
   return (
-    <PickerDataContext.Provider
-      value={{
-        ...data,
-        emojiByUnified,
-        activeVariationFromUnified,
-        queryFilterDict,
-      }}
-    >
+    <PickerDataContext.Provider value={value}>
       {children}
     </PickerDataContext.Provider>
   );
@@ -203,16 +180,5 @@ export function useGetEmojisByCategory() {
     }
 
     return emojiData.emojis?.[category] ?? [];
-  };
-}
-
-function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
-  return {
-    [EmojiProperties.name]: emoji.names.map((name: string) =>
-      name.toLowerCase(),
-    ),
-    [EmojiProperties.unified]: emoji.id.toLowerCase(),
-    [EmojiProperties.added_in]: '0',
-    [EmojiProperties.imgUrl]: emoji.imgUrl,
   };
 }

@@ -1,5 +1,10 @@
 import * as React from 'react';
 
+// The batteries-included entry promises synchronous access to the English
+// dataset. The primitives entry intentionally leaves this unregistered so
+// compositions can load it on demand.
+import './data/registerDefaultEmojiData';
+
 import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
 import { PickerConfig } from './config/config';
