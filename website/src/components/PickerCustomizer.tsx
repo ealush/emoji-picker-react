@@ -1,480 +1,400 @@
 "use client";
 
-import Picker, { Theme } from "emoji-picker-react";
-import React, { useEffect, useMemo, useState } from "react";
+import Picker from "emoji-picker-react";
+import { useMemo, useState } from "react";
 import styles from "@/styles/PickerCustomizer.module.css";
 
-const variableSections = [
+// The class the generated CSS targets. Tokens are declared by the library
+// at zero specificity, so one class on `className` is all an override needs.
+const PICKER_CLASS = "my-picker";
+
+type Variable = { label: string; name: string; value: string };
+type Group = { title: string; items: Variable[] };
+
+const GROUPS: Group[] = [
   {
     title: "General",
     items: [
-      {
-        label: "Emoji size",
-        variable: "--epr-emoji-size",
-        defaultValue: "30px",
-      },
-      {
-        label: "Emoji padding",
-        variable: "--epr-emoji-padding",
-        defaultValue: "5px",
-      },
-      {
-        label: "Picker background color",
-        variable: "--epr-bg-color",
-        defaultValue: "#fff",
-      },
-      {
-        label: "Text color",
-        variable: "--epr-text-color",
-        defaultValue: "#858585",
-      },
-      {
-        label: "Picker border color",
-        variable: "--epr-picker-border-color",
-        defaultValue: "#e7e7e7",
-      },
-      {
-        label: "Picker border radius",
-        variable: "--epr-picker-border-radius",
-        defaultValue: "8px",
-      },
-      {
-        label: "Horizontal padding",
-        variable: "--epr-horizontal-padding",
-        defaultValue: "10px",
-      },
-      {
-        label: "Highlight color",
-        variable: "--epr-highlight-color",
-        defaultValue: "#007aeb",
-      },
-      {
-        label: "Hover background color",
-        variable: "--epr-hover-bg-color",
-        defaultValue: "#e5f0fa",
-      },
-      {
-        label: "Focus background color",
-        variable: "--epr-focus-bg-color",
-        defaultValue: "#e0f0ff",
-      },
+      { label: "Font family", name: "--epr-font-family", value: "sans-serif" },
+      { label: "Emoji size", name: "--epr-emoji-size", value: "30px" },
+      { label: "Emoji padding", name: "--epr-emoji-padding", value: "5px" },
+      { label: "Background", name: "--epr-bg-color", value: "#ffffff" },
+      { label: "Text", name: "--epr-text-color", value: "#6b6b6b" },
+      { label: "Border", name: "--epr-picker-border-color", value: "#e7e7e7" },
+      { label: "Border radius", name: "--epr-picker-border-radius", value: "8px" },
+      { label: "Horizontal padding", name: "--epr-horizontal-padding", value: "10px" },
+      { label: "Highlight", name: "--epr-highlight-color", value: "#007aeb" },
+      { label: "Hover background", name: "--epr-hover-bg-color", value: "#e5f0fa" },
+      { label: "Focus background", name: "--epr-focus-bg-color", value: "#e0f0ff" },
     ],
   },
   {
-    title: "Search input",
+    title: "Search",
     items: [
-      {
-        label: "Search background color",
-        variable: "--epr-search-input-bg-color",
-        defaultValue: "#f6f6f6",
-      },
-      {
-        label: "Search active background color",
-        variable: "--epr-search-input-bg-color-active",
-        defaultValue: "var(--epr-search-input-bg-color)",
-      },
-      {
-        label: "Search text color",
-        variable: "--epr-search-input-text-color",
-        defaultValue: "var(--epr-text-color)",
-      },
-      {
-        label: "Search placeholder color",
-        variable: "--epr-search-input-placeholder-color",
-        defaultValue: "var(--epr-text-color)",
-      },
-      {
-        label: "Search border color",
-        variable: "--epr-search-border-color",
-        defaultValue: "var(--epr-search-input-bg-color)",
-      },
-      {
-        label: "Search border color (active)",
-        variable: "--epr-search-border-color-active",
-        defaultValue: "var(--epr-highlight-color)",
-      },
-      {
-        label: "Search border radius",
-        variable: "--epr-search-input-border-radius",
-        defaultValue: "8px",
-      },
-      {
-        label: "Search input height",
-        variable: "--epr-search-input-height",
-        defaultValue: "40px",
-      },
-      {
-        label: "Search icon color",
-        variable: "--epr-search-icon-color",
-        defaultValue: "",
-      },
+      { label: "Background", name: "--epr-search-input-bg-color", value: "#f6f6f6" },
+      { label: "Background (active)", name: "--epr-search-input-bg-color-active", value: "var(--epr-search-input-bg-color)" },
+      { label: "Text", name: "--epr-search-input-text-color", value: "var(--epr-text-color)" },
+      { label: "Placeholder", name: "--epr-search-input-placeholder-color", value: "var(--epr-text-color)" },
+      { label: "Border", name: "--epr-search-border-color", value: "var(--epr-search-input-bg-color)" },
+      { label: "Border (active)", name: "--epr-search-border-color-active", value: "var(--epr-highlight-color)" },
+      { label: "Border radius", name: "--epr-search-input-border-radius", value: "8px" },
+      { label: "Height", name: "--epr-search-input-height", value: "40px" },
     ],
   },
   {
     title: "Category navigation",
     items: [
-      {
-        label: "Category button size",
-        variable: "--epr-category-navigation-button-size",
-        defaultValue: "30px",
-      },
-      {
-        label: "Active category icon color",
-        variable: "--epr-category-icon-active-color",
-        defaultValue: "#6aa8de",
-      },
+      { label: "Button size", name: "--epr-category-navigation-button-size", value: "30px" },
+      { label: "Active icon", name: "--epr-category-icon-active-color", value: "#3371b7" },
+      { label: "Inactive icon", name: "--epr-category-icon-inactive-color", value: "#868686" },
     ],
   },
   {
     title: "Category labels",
     items: [
-      {
-        label: "Category label background color",
-        variable: "--epr-category-label-bg-color",
-        defaultValue: "#ffffffe6",
-      },
-      {
-        label: "Category label text color",
-        variable: "--epr-category-label-text-color",
-        defaultValue: "var(--epr-text-color)",
-      },
-      {
-        label: "Category label height",
-        variable: "--epr-category-label-height",
-        defaultValue: "40px",
-      },
+      { label: "Background", name: "--epr-category-label-bg-color", value: "#ffffffe6" },
+      { label: "Text", name: "--epr-category-label-text-color", value: "var(--epr-text-color)" },
+      { label: "Height", name: "--epr-category-label-height", value: "40px" },
     ],
   },
   {
-    title: "Preview area",
+    title: "Preview",
     items: [
-      {
-        label: "Preview height",
-        variable: "--epr-preview-height",
-        defaultValue: "70px",
-      },
-      {
-        label: "Preview text size",
-        variable: "--epr-preview-text-size",
-        defaultValue: "14px",
-      },
-      {
-        label: "Preview text color",
-        variable: "--epr-preview-text-color",
-        defaultValue: "var(--epr-text-color)",
-      },
+      { label: "Height", name: "--epr-preview-height", value: "70px" },
+      { label: "Emoji size", name: "--epr-preview-emoji-size", value: "45px" },
+      { label: "Text size", name: "--epr-preview-text-size", value: "14px" },
+      { label: "Text", name: "--epr-preview-text-color", value: "var(--epr-text-color)" },
     ],
   },
   {
-    title: "Skin tone picker",
+    title: "Skin tones",
     items: [
-      {
-        label: "Skin tone menu color",
-        variable: "--epr-skin-tone-picker-menu-color",
-        defaultValue: "#ffffff95",
-      },
-      {
-        label: "Skin tone size",
-        variable: "--epr-skin-tone-size",
-        defaultValue: "20px",
-      },
+      { label: "Menu background", name: "--epr-skin-tone-picker-menu-color", value: "#ffffff95" },
+      { label: "Swatch size", name: "--epr-skin-tone-size", value: "15px" },
     ],
   },
   {
     title: "Dark mode",
     items: [
-      {
-        label: "Dark background color",
-        variable: "--epr-dark-bg-color",
-        defaultValue: "#222222",
-      },
-      {
-        label: "Dark border color",
-        variable: "--epr-dark-picker-border-color",
-        defaultValue: "#151617",
-      },
-      {
-        label: "Dark text color",
-        variable: "--epr-dark-text-color",
-        defaultValue: "var(--epr-highlight-color)",
-      },
-      {
-        label: "Dark search background",
-        variable: "--epr-dark-search-input-bg-color",
-        defaultValue: "#333333",
-      },
-      {
-        label: "Dark hover background",
-        variable: "--epr-dark-hover-bg-color",
-        defaultValue: "#363636f6",
-      },
+      { label: "Background", name: "--epr-dark-bg-color", value: "#222222" },
+      { label: "Border", name: "--epr-dark-picker-border-color", value: "#151617" },
+      { label: "Text", name: "--epr-dark-text-color", value: "var(--epr-highlight-color)" },
+      { label: "Search background", name: "--epr-dark-search-input-bg-color", value: "#333333" },
+      { label: "Hover background", name: "--epr-dark-hover-bg-color", value: "#363636f6" },
     ],
   },
 ];
 
-type VariableState = {
-  enabled: boolean;
-  value: string;
-};
+const DEFAULTS: Record<string, string> = Object.fromEntries(
+  GROUPS.flatMap((group) => group.items.map((item) => [item.name, item.value])),
+);
 
-type VariableConfig = (typeof variableSections)[number]["items"][number];
+type Preset = { name: string; swatches: string[]; values: Record<string, string> };
 
-type VariableStateMap = Record<string, VariableState>;
+// Starting points: each sets a handful of variables. Everything else stays
+// at its default, so the generated CSS stays as short as the design needs.
+const PRESETS: Preset[] = [
+  { name: "Default", swatches: ["#ffffff", "#007aeb", "#e5f0fa"], values: {} },
+  {
+    name: "Indigo",
+    swatches: ["#ffffff", "#4f46e5", "#eef2ff"],
+    values: {
+      "--epr-highlight-color": "#4f46e5",
+      "--epr-hover-bg-color": "#eef2ff",
+      "--epr-focus-bg-color": "#e0e7ff",
+      "--epr-category-icon-active-color": "#4f46e5",
+      "--epr-search-input-bg-color": "#f5f3ff",
+      "--epr-picker-border-color": "#e0e7ff",
+      "--epr-picker-border-radius": "16px",
+    },
+  },
+  {
+    name: "Forest",
+    swatches: ["#f4f7f2", "#2f6f4e", "#dcebe0"],
+    values: {
+      "--epr-bg-color": "#f4f7f2",
+      "--epr-category-label-bg-color": "#f4f7f2e6",
+      "--epr-text-color": "#3d5a47",
+      "--epr-highlight-color": "#2f6f4e",
+      "--epr-hover-bg-color": "#dcebe0",
+      "--epr-focus-bg-color": "#cfe3d5",
+      "--epr-search-input-bg-color": "#e7efe8",
+      "--epr-picker-border-color": "#cfe3d5",
+      "--epr-category-icon-active-color": "#2f6f4e",
+      "--epr-category-icon-inactive-color": "#8aa893",
+    },
+  },
+  {
+    name: "Candy",
+    swatches: ["#fff4f8", "#e11d74", "#fde2ee"],
+    values: {
+      "--epr-bg-color": "#fff4f8",
+      "--epr-category-label-bg-color": "#fff4f8e6",
+      "--epr-text-color": "#8a2a56",
+      "--epr-highlight-color": "#e11d74",
+      "--epr-hover-bg-color": "#fde2ee",
+      "--epr-focus-bg-color": "#fbcfe0",
+      "--epr-search-input-bg-color": "#fde2ee",
+      "--epr-search-border-color": "#f9b8d2",
+      "--epr-picker-border-color": "#f9b8d2",
+      "--epr-picker-border-radius": "20px",
+      "--epr-category-icon-active-color": "#e11d74",
+      "--epr-category-icon-inactive-color": "#d08aa8",
+      "--epr-emoji-size": "26px",
+    },
+  },
+  {
+    name: "Mono",
+    swatches: ["#ffffff", "#111111", "#f2f2f2"],
+    values: {
+      "--epr-text-color": "#555555",
+      "--epr-highlight-color": "#111111",
+      "--epr-hover-bg-color": "#f2f2f2",
+      "--epr-focus-bg-color": "#e8e8e8",
+      "--epr-search-input-bg-color": "#ffffff",
+      "--epr-search-border-color": "#dddddd",
+      "--epr-search-border-color-active": "#111111",
+      "--epr-picker-border-color": "#dddddd",
+      "--epr-picker-border-radius": "4px",
+      "--epr-search-input-border-radius": "4px",
+      "--epr-category-icon-active-color": "#111111",
+      "--epr-category-icon-inactive-color": "#a3a3a3",
+      "--epr-font-family": "ui-monospace, SFMono-Regular, Menlo, monospace",
+    },
+  },
+];
 
-const initialState: VariableStateMap = variableSections
-  .flatMap((section) => section.items)
-  .reduce<VariableStateMap>((acc, item) => {
-    acc[item.variable] = {
-      value: item.defaultValue,
-      enabled: false,
-    };
-    return acc;
-  }, {});
+const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
-const colorValueRegex = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+// The native color input only takes six-digit hex: expand shorthand and
+// drop an alpha channel.
+function toInputColor(value: string): string {
+  if (!HEX.test(value)) return "#000000";
+  const hex = value.slice(1);
+  if (hex.length === 3) return `#${hex.split("").map((c) => c + c).join("")}`;
+  return `#${hex.slice(0, 6)}`;
+}
+
+type Scheme = "light" | "dark" | "auto";
 
 export function PickerCustomizer() {
-  const [variableValues, setVariableValues] = useState<VariableStateMap>(
-    () => ({ ...initialState }),
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [scheme, setScheme] = useState<Scheme>("light");
+  const [copied, setCopied] = useState<"css" | "jsx" | null>(null);
+
+  const changed = useMemo(
+    () =>
+      Object.entries(values).filter(
+        ([name, value]) => value.trim() !== "" && value !== DEFAULTS[name],
+      ),
+    [values],
   );
-  const [pickerKey, setPickerKey] = useState(Date.now());
 
-  const resetVariables = () => {
-    const resetState = variableSections
-      .flatMap((section) => section.items)
-      .reduce<VariableStateMap>((acc, item) => {
-        acc[item.variable] = {
-          value: item.defaultValue,
-          enabled: false,
-        };
-        return acc;
-      }, {});
-    setVariableValues(resetState);
-    setPickerKey(Date.now());
-  };
+  const activePreset =
+    PRESETS.find(
+      (preset) =>
+        Object.keys(preset.values).length === changed.length &&
+        changed.every(([name, value]) => preset.values[name] === value),
+    )?.name ?? null;
 
-  const enabledEntries = useMemo(() => {
-    return Object.entries(variableValues)
-      .filter(([, state]) => state.enabled)
-      .map(([variable, state]) => [variable, state.value]);
-  }, [variableValues]);
+  const css = changed.length
+    ? [`.${PICKER_CLASS} {`, ...changed.map(([n, v]) => `  ${n}: ${v};`), "}", ""].join("\n")
+    : `.${PICKER_CLASS} {\n  /* Change a variable to see it here */\n}\n`;
+  const jsx = `<EmojiPicker className="${PICKER_CLASS}"${scheme === "light" ? "" : ` colorScheme="${scheme}"`} />`;
 
-  const pickerStyle = useMemo(() => {
-    return enabledEntries.reduce<Record<string, string>>(
-      (acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      },
-      {},
-    );
-  }, [enabledEntries]);
-
-  const cssSnippet = useMemo(() => {
-    return enabledEntries;
-  }, [enabledEntries]);
-
-  const cssOutputString = useMemo(() => {
-    if (!enabledEntries.length) {
-      return "aside.EmojiPickerReact {\n  /* Toggle variables to output CSS */\n}\n";
+  async function copy(kind: "css" | "jsx", text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(kind);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      setCopied(null);
     }
+  }
 
-    const lines = enabledEntries.map(
-      ([variable, value]) => `  ${variable}: ${value};`,
-    );
-    return ["aside.EmojiPickerReact {", ...lines, "}", ""].join("\n");
-  }, [enabledEntries]);
+  function setValue(name: string, value: string) {
+    setValues((prev) => ({ ...prev, [name]: value }));
+  }
 
-  // Force picker re-render when variables change
-  useEffect(() => {
-    setPickerKey(Date.now());
-  }, [variableValues]);
+  function resetValue(name: string) {
+    setValues((prev) => {
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
+  }
 
   return (
     <div className={styles.customizer}>
-      {/* Inject CSS via style tag for live preview */}
-      <style>{cssOutputString}</style>
-      <div className={styles.customizerHeader}>
+      <style>{css}</style>
+      <div className={styles.header}>
         <div>
-          <div className={styles.customizerTitle}>
-            Customize how the picker looks
-          </div>
-          <div className={styles.customizerSummaryHint}>
-            Toggle the variables you want to override.
-          </div>
+          <h3 className={styles.title}>Theme the built-in look</h3>
+          <p className={styles.hint}>
+            Every change becomes one <code>--epr-*</code> variable on a class
+            you pass to <code>className</code>. Variables theme the default
+            picker; with <code>unstyled</code> or a bare primitives{" "}
+            <code>Root</code> you style the parts directly instead.
+          </p>
         </div>
-        <button
-          type="button"
-          className={styles.resetButton}
-          onClick={resetVariables}
-        >
-          <ResetIcon />
-          Reset
-        </button>
       </div>
-      <div className={styles.customizerBody}>
-        <div className={styles.customizerLayout}>
-          <form className={styles.customizerForm}>
-            {variableSections.map((section) => (
-              <details className={styles.section} key={section.title}>
-                <summary className={styles.sectionSummary}>
-                  <span className={styles.sectionTitle}>{section.title}</span>
-                  <span className={styles.sectionHint}>
-                    {section.items.length} variables
+
+      <div className={styles.presets} role="group" aria-label="Presets">
+        <span className={styles.presetsLabel}>Start from</span>
+        {PRESETS.map((preset) => (
+          <button
+            key={preset.name}
+            type="button"
+            className={styles.preset}
+            aria-pressed={activePreset === preset.name}
+            onClick={() => setValues(preset.values)}
+          >
+            <span className={styles.swatches} aria-hidden>
+              {preset.swatches.map((color) => (
+                <span key={color} style={{ background: color }} />
+              ))}
+            </span>
+            {preset.name}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.body}>
+        <div className={styles.form}>
+          {GROUPS.map((group) => {
+            const changedInGroup = group.items.filter(({ name }) =>
+              changed.some(([n]) => n === name),
+            ).length;
+            return (
+              <section key={group.title} className={styles.group}>
+                <h4 className={styles.groupTitle}>
+                  {group.title}
+                  <span className={styles.groupCount}>
+                    {changedInGroup ? `${changedInGroup} changed` : ""}
                   </span>
-                </summary>
-                <div className={styles.sectionGrid}>
-                  {section.items.map((item) => (
-                    <VariableControl
-                      key={item.variable}
-                      item={item}
-                      state={variableValues[item.variable]}
-                      onToggle={(enabled) =>
-                        setVariableValues((prev) => ({
-                          ...prev,
-                          [item.variable]: {
-                            ...prev[item.variable],
-                            enabled,
-                          },
-                        }))
-                      }
-                      onChange={(value) =>
-                        setVariableValues((prev) => ({
-                          ...prev,
-                          [item.variable]: {
-                            ...prev[item.variable],
-                            value,
-                          },
-                        }))
-                      }
-                    />
-                  ))}
-                </div>
-              </details>
-            ))}
-          </form>
+                </h4>
+                {group.items.map((item) => {
+                  const value = values[item.name] ?? item.value;
+                  const isChanged = changed.some(([n]) => n === item.name);
+                  const isColor = HEX.test(item.value);
+                  return (
+                    <div
+                      key={item.name}
+                      className={`${styles.row} ${isChanged ? styles.rowChanged : ""}`}
+                    >
+                      <label className={styles.label} htmlFor={`cv-${item.name}`}>
+                        {item.label}
+                      </label>
+                      <span className={styles.token}>{item.name}</span>
+                      <div className={styles.control}>
+                        {isColor && (
+                          <span className={styles.colorWell}>
+                            <span style={{ background: value }} />
+                            <input
+                              type="color"
+                              aria-label={`${group.title} ${item.label} color`}
+                              value={toInputColor(value)}
+                              onChange={(event) => setValue(item.name, event.target.value)}
+                            />
+                          </span>
+                        )}
+                        <input
+                          id={`cv-${item.name}`}
+                          className={styles.text}
+                          type="text"
+                          aria-label={`${group.title}: ${item.label}`}
+                          value={value}
+                          spellCheck={false}
+                          onChange={(event) => setValue(item.name, event.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className={styles.reset}
+                          aria-label={`Reset ${item.label}`}
+                          title="Reset to default"
+                          onClick={() => resetValue(item.name)}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </section>
+            );
+          })}
+        </div>
 
-          <div className={styles.previewSection}>
-            <div className={styles.previewHeader}>Live preview</div>
-            <div className={styles.previewWrapper}>
-              <Picker
-                key={pickerKey}
-                theme={Theme.AUTO}
-                height={360}
-                width={320}
-                searchDisabled={false}
-                previewConfig={{
-                  showPreview: true,
-                  defaultEmoji: "1f60a",
-                  defaultCaption: "How it feels",
-                }}
-              />
-            </div>
-
-            <div className={styles.outputSection}>
-              <div className={styles.outputHeader}>
-                <span>CSS output</span>
+        <div className={styles.preview}>
+          <div className={styles.previewBar}>
+            <span className={styles.previewTitle}>Live preview</span>
+            <div className={styles.segmented} role="group" aria-label="Color scheme">
+              {(["light", "dark", "auto"] as Scheme[]).map((option) => (
                 <button
+                  key={option}
                   type="button"
-                  className={styles.copyButton}
-                  onClick={() => navigator.clipboard.writeText(cssOutputString)}
+                  aria-pressed={scheme === option}
+                  onClick={() => setScheme(option)}
                 >
-                  Copy CSS
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className={styles.stage} data-scheme={scheme}>
+            <Picker
+              className={PICKER_CLASS}
+              colorScheme={scheme}
+              height={380}
+              width={320}
+              columns={7}
+              autoFocusSearch={false}
+              previewConfig={{ defaultEmoji: "1f3a8", defaultCaption: "Make it yours" }}
+            />
+          </div>
+          <div className={styles.output}>
+            <div className={styles.outputBlock}>
+              <div className={styles.outputHeader}>
+                <span>CSS</span>
+                <button type="button" className={styles.copy} onClick={() => copy("css", css)}>
+                  {copied === "css" ? "Copied" : "Copy"}
                 </button>
               </div>
-              <pre className={styles.outputCode}>
+              <pre className={styles.code}>
                 <code>
-                  <span className={styles.codeBrace}>
-                    aside.EmojiPickerReact {"{"}
-                  </span>
-                  {cssSnippet.length === 0 ? (
+                  {`.${PICKER_CLASS} {\n`}
+                  {changed.length === 0 ? (
                     <span className={styles.codeComment}>
-                      {"\n"} {"/* Toggle variables to output CSS */"}
+                      {"  /* Change a variable to see it here */\n"}
                     </span>
                   ) : (
-                    cssSnippet.map(([variable, value]) => (
-                      <span className={styles.codeLine} key={variable}>
-                        {"\n"}{" "}
-                        <span className={styles.codeVariable}>{variable}</span>
+                    changed.map(([name, value]) => (
+                      <span key={name}>
+                        {"  "}
+                        <span className={styles.codeVar}>{name}</span>
                         {": "}
-                        <span className={styles.codeValue}>{value}</span>;
+                        <span className={styles.codeValue}>{value}</span>
+                        {";\n"}
                       </span>
                     ))
                   )}
-                  {"\n"}
-                  <span className={styles.codeBrace}>{"}"}</span>
+                  {"}"}
                 </code>
+              </pre>
+            </div>
+            <div className={styles.outputBlock}>
+              <div className={styles.outputHeader}>
+                <span>JSX</span>
+                <button type="button" className={styles.copy} onClick={() => copy("jsx", jsx)}>
+                  {copied === "jsx" ? "Copied" : "Copy"}
+                </button>
+              </div>
+              <pre className={styles.code}>
+                <code>{jsx}</code>
               </pre>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function ResetIcon() {
-  return (
-    <svg
-      width="12"
-      height="12"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-    >
-      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-      <path d="M3 3v5h5" />
-    </svg>
-  );
-}
-
-function VariableControl({
-  item,
-  state,
-  onToggle,
-  onChange,
-}: {
-  item: VariableConfig;
-  state: VariableState;
-  onToggle: (enabled: boolean) => void;
-  onChange: (value: string) => void;
-}) {
-  const colorFallback = colorValueRegex.test(item.defaultValue)
-    ? item.defaultValue
-    : "#ffffff";
-  const colorValue = colorValueRegex.test(state.value)
-    ? state.value
-    : colorFallback;
-
-  return (
-    <div className={styles.variableRow}>
-      <label className={styles.variableLabel}>
-        <input
-          type="checkbox"
-          checked={state.enabled}
-          onChange={(event) => onToggle(event.target.checked)}
-        />
-        <span className={styles.variableName}>{item.label}</span>
-        <span className={styles.variableToken}>{item.variable}</span>
-      </label>
-      <div className={styles.variableControls}>
-        {colorValueRegex.test(item.defaultValue) && (
-          <input
-            type="color"
-            value={colorValue}
-            disabled={!state.enabled}
-            onChange={(event) => onChange(event.target.value)}
-            aria-label={`${item.label} color`}
-          />
-        )}
-        <input
-          type="text"
-          value={state.value}
-          disabled={!state.enabled}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={item.defaultValue || "e.g. 12px"}
-          aria-label={`${item.label} value`}
-        />
       </div>
     </div>
   );

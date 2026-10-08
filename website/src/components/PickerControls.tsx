@@ -9,67 +9,42 @@ import {
   type SkinTonesValue,
   SuggestionMode,
   type SuggestionModeValue,
-  Theme,
   type ThemeValue,
 } from "emoji-picker-react";
 import * as React from "react";
-import emojiDataBn from "emoji-picker-react/dist/data/emojis-bn.json";
-import emojiDataDa from "emoji-picker-react/dist/data/emojis-da.json";
-import emojiDataDe from "emoji-picker-react/dist/data/emojis-de.json";
-import emojiDataEn from "emoji-picker-react/dist/data/emojis-en.json";
-import emojiDataEnGb from "emoji-picker-react/dist/data/emojis-en-gb.json";
-import emojiDataEs from "emoji-picker-react/dist/data/emojis-es.json";
-import emojiDataEsMx from "emoji-picker-react/dist/data/emojis-es-mx.json";
-import emojiDataEt from "emoji-picker-react/dist/data/emojis-et.json";
-import emojiDataFi from "emoji-picker-react/dist/data/emojis-fi.json";
-import emojiDataFr from "emoji-picker-react/dist/data/emojis-fr.json";
-import emojiDataHi from "emoji-picker-react/dist/data/emojis-hi.json";
-import emojiDataHu from "emoji-picker-react/dist/data/emojis-hu.json";
-import emojiDataIt from "emoji-picker-react/dist/data/emojis-it.json";
-import emojiDataJa from "emoji-picker-react/dist/data/emojis-ja.json";
-import emojiDataKo from "emoji-picker-react/dist/data/emojis-ko.json";
-import emojiDataLt from "emoji-picker-react/dist/data/emojis-lt.json";
-import emojiDataMs from "emoji-picker-react/dist/data/emojis-ms.json";
-import emojiDataNb from "emoji-picker-react/dist/data/emojis-nb.json";
-import emojiDataNl from "emoji-picker-react/dist/data/emojis-nl.json";
-import emojiDataPl from "emoji-picker-react/dist/data/emojis-pl.json";
-import emojiDataPt from "emoji-picker-react/dist/data/emojis-pt.json";
-import emojiDataRu from "emoji-picker-react/dist/data/emojis-ru.json";
-import emojiDataSv from "emoji-picker-react/dist/data/emojis-sv.json";
-import emojiDataTh from "emoji-picker-react/dist/data/emojis-th.json";
-import emojiDataUk from "emoji-picker-react/dist/data/emojis-uk.json";
-import emojiDataZh from "emoji-picker-react/dist/data/emojis-zh.json";
-import emojiDataZhHant from "emoji-picker-react/dist/data/emojis-zh-hant.json";
 import { customEmojis } from "./customEmojis";
 
-const languages: Record<string, any> = {
-  bn: emojiDataBn,
-  da: emojiDataDa,
-  de: emojiDataDe,
-  en: emojiDataEn,
-  "en-gb": emojiDataEnGb,
-  es: emojiDataEs,
-  "es-mx": emojiDataEsMx,
-  et: emojiDataEt,
-  fi: emojiDataFi,
-  fr: emojiDataFr,
-  hi: emojiDataHi,
-  hu: emojiDataHu,
-  it: emojiDataIt,
-  ja: emojiDataJa,
-  ko: emojiDataKo,
-  lt: emojiDataLt,
-  ms: emojiDataMs,
-  nb: emojiDataNb,
-  nl: emojiDataNl,
-  pl: emojiDataPl,
-  pt: emojiDataPt,
-  ru: emojiDataRu,
-  sv: emojiDataSv,
-  th: emojiDataTh,
-  uk: emojiDataUk,
-  zh: emojiDataZh,
-  "zh-hant": emojiDataZhHant,
+// Locale datasets are code-split: each one loads on demand through the
+// `emojiData` loader form, so the demo bundle ships only the English data.
+// Loaders are hoisted (module scope): a new function identity reloads.
+const languages: Record<string, { name: string; load: PickerProps["emojiData"] }> = {
+  bn: { name: "Bengali", load: () => import("emoji-picker-react/data/emojis-bn") },
+  da: { name: "Danish", load: () => import("emoji-picker-react/data/emojis-da") },
+  de: { name: "German", load: () => import("emoji-picker-react/data/emojis-de") },
+  "en-gb": { name: "English (GB)", load: () => import("emoji-picker-react/data/emojis-en-gb") },
+  es: { name: "Spanish", load: () => import("emoji-picker-react/data/emojis-es") },
+  "es-mx": { name: "Spanish (Mexico)", load: () => import("emoji-picker-react/data/emojis-es-mx") },
+  et: { name: "Estonian", load: () => import("emoji-picker-react/data/emojis-et") },
+  fi: { name: "Finnish", load: () => import("emoji-picker-react/data/emojis-fi") },
+  fr: { name: "French", load: () => import("emoji-picker-react/data/emojis-fr") },
+  hi: { name: "Hindi", load: () => import("emoji-picker-react/data/emojis-hi") },
+  hu: { name: "Hungarian", load: () => import("emoji-picker-react/data/emojis-hu") },
+  it: { name: "Italian", load: () => import("emoji-picker-react/data/emojis-it") },
+  ja: { name: "Japanese", load: () => import("emoji-picker-react/data/emojis-ja") },
+  ko: { name: "Korean", load: () => import("emoji-picker-react/data/emojis-ko") },
+  lt: { name: "Lithuanian", load: () => import("emoji-picker-react/data/emojis-lt") },
+  ms: { name: "Malay", load: () => import("emoji-picker-react/data/emojis-ms") },
+  nb: { name: "Norwegian Bokmål", load: () => import("emoji-picker-react/data/emojis-nb") },
+  nl: { name: "Dutch", load: () => import("emoji-picker-react/data/emojis-nl") },
+  pl: { name: "Polish", load: () => import("emoji-picker-react/data/emojis-pl") },
+  pt: { name: "Portuguese", load: () => import("emoji-picker-react/data/emojis-pt") },
+  ru: { name: "Russian", load: () => import("emoji-picker-react/data/emojis-ru") },
+  sv: { name: "Swedish", load: () => import("emoji-picker-react/data/emojis-sv") },
+  th: { name: "Thai", load: () => import("emoji-picker-react/data/emojis-th") },
+  uk: { name: "Ukrainian", load: () => import("emoji-picker-react/data/emojis-uk") },
+  vi: { name: "Vietnamese", load: () => import("emoji-picker-react/data/emojis-vi") },
+  zh: { name: "Chinese (Simplified)", load: () => import("emoji-picker-react/data/emojis-zh") },
+  "zh-hant": { name: "Chinese (Traditional)", load: () => import("emoji-picker-react/data/emojis-zh-hant") },
 };
 
 export function PickerControls({
@@ -104,9 +79,15 @@ export function PickerControls({
           emojiStyle={pickerProps.emojiStyle}
           setEmojiStyle={(emojiStyle) => updateState("emojiStyle", emojiStyle)}
         />
-        <SelectTheme
-          theme={pickerProps.theme}
-          setTheme={(theme) => updateState("theme", theme)}
+        <SelectColorScheme
+          colorScheme={pickerProps.colorScheme}
+          setColorScheme={(colorScheme) =>
+            updateState("colorScheme", colorScheme)
+          }
+        />
+        <NumberColumns
+          columns={pickerProps.columns}
+          setColumns={(columns) => updateState("columns", columns)}
         />
         <NumberHeight
           height={pickerProps.height}
@@ -350,7 +331,7 @@ function SelectEmojiStyle({
     <Label text="Emoji Style">
       <select
         value={emojiStyle}
-        onChange={(e) => setEmojiStyle(e.target.value as EmojiStyle)}
+        onChange={(e) => setEmojiStyle(e.target.value as EmojiStyleValue)}
       >
         <option value={EmojiStyle.NATIVE}>Native</option>
         <option value={EmojiStyle.APPLE}>Apple</option>
@@ -362,16 +343,19 @@ function SelectEmojiStyle({
   );
 }
 
-function SelectTheme({
-  theme,
-  setTheme,
+function SelectColorScheme({
+  colorScheme,
+  setColorScheme,
 }: {
-  theme?: ThemeValue;
-  setTheme: (theme: ThemeValue) => void;
+  colorScheme?: ThemeValue;
+  setColorScheme: (colorScheme: ThemeValue) => void;
 }) {
   return (
-    <Label text="Theme">
-      <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
+    <Label text="Color scheme">
+      <select
+        value={colorScheme}
+        onChange={(e) => setColorScheme(e.target.value as ThemeValue)}
+      >
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="auto">Auto</option>
@@ -391,11 +375,34 @@ function SelectSuggestionMode({
     <Label text="Suggestions">
       <select
         value={suggestionMode}
-        onChange={(e) => setSuggestionMode(e.target.value as SuggestionMode)}
+        onChange={(e) => setSuggestionMode(e.target.value as SuggestionModeValue)}
       >
         <option value={SuggestionMode.RECENT}>Recent</option>
         <option value={SuggestionMode.FREQUENT}>Frequent</option>
       </select>
+    </Label>
+  );
+}
+
+function NumberColumns({
+  columns,
+  setColumns,
+}: {
+  columns?: number;
+  setColumns: (columns: number | undefined) => void;
+}) {
+  return (
+    <Label text="Columns (fit width)">
+      <input
+        type="number"
+        min={3}
+        max={12}
+        placeholder="auto"
+        value={columns ?? ""}
+        onChange={(e) =>
+          setColumns(e.target.value === "" ? undefined : +e.target.value)
+        }
+      />
     </Label>
   );
 }
@@ -529,7 +536,7 @@ function SelectDefaultSkinTone({
     <Label text="Default Skin Tone">
       <select
         value={defaultSkinTone}
-        onChange={(e) => setDefaultSkinTone(e.target.value as SkinTones)}
+        onChange={(e) => setDefaultSkinTone(e.target.value as SkinTonesValue)}
       >
         <option value={SkinTones.NEUTRAL}>Neutral</option>
         <option value={SkinTones.LIGHT}>Light</option>
@@ -545,20 +552,17 @@ function SelectDefaultSkinTone({
 function SelectLanguage({
   setEmojiData,
 }: {
-  setEmojiData: (emojiData: any) => void;
+  setEmojiData: (emojiData: PickerProps["emojiData"]) => void;
 }) {
   return (
     <Label text="Language">
       <select
-        onChange={(e) => {
-          const lang = e.target.value;
-          setEmojiData(languages[lang]);
-        }}
+        onChange={(e) => setEmojiData(languages[e.target.value]?.load)}
       >
-        <option value="">Default (en)</option>
-        {Object.keys(languages).map((lang) => (
+        <option value="">English (default)</option>
+        {Object.entries(languages).map(([lang, { name }]) => (
           <option key={lang} value={lang}>
-            {lang}
+            {name}
           </option>
         ))}
       </select>

@@ -1,0 +1,74 @@
+# emoji-picker-react
+
+> Emoji picker for React: batteries included with `<EmojiPicker />`, or BYOD (bring your own design, design language and design library) with `unstyled` and `emoji-picker-react/primitives`. Both paths share search, keyboard navigation, localization and virtualization. Use your existing Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS design.
+
+Key facts:
+
+- Install: `npm install emoji-picker-react`. Minimal use: `import EmojiPicker from 'emoji-picker-react'; <EmojiPicker onEmojiClick={(e) => insert(e.emoji)} />`.
+- Choose batteries included or BYOD for both "I just need an emoji picker" (the default component needs no styling) and "it must match our design system" (`unstyled` or primitives + the project's styling solution).
+- Entry points: `emoji-picker-react` (the default picker, enums and types; registers the English dataset), `emoji-picker-react/primitives` (composable parts, hooks, tokens and the same enums; loads the dataset on demand), `emoji-picker-react/data` (search and lookup without React), `emoji-picker-react/data/emojis-<locale>` (28 datasets). The complete export list is below.
+- Styling: `--epr-*` CSS variables (they always yield to consumer CSS), `[data-epr-part="…"]` selectors, `className`/`style`. Ordinary resets are handled by library classes; more specific rules and !important can still override structural geometry. With Tailwind v4 or other @layer setups pass `cssLayer="epr"` and declare `@layer epr, theme, base, components, utilities;` first.
+- Use `colorScheme="light" | "dark" | "auto"` on Root, or prefer it over `theme` on EmojiPicker (CSS-in-JS wrappers reserve `theme`). Props accept string literals or enums.
+- Accessibility: automated axe and keyboard/focus regression checks; grid semantics (emoji buttons are `role="gridcell"`); every UI string localizable through `labels`. Manual screen-reader verification has a separate release protocol.
+- Works with React 16.8–19, SSR, React Server Components (client entries are marked "use client"), TypeScript.
+- Composition keeps a managed grid. Root defaults to managed Panel/Reactions; composition="explicit" lets you place one Panel and optional Reactions within Root. Use SearchInput as={Input} with an input-forwarding adapter. Root/EmojiPicker components replace Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton and ExpandButton; List components override grid slots. Use useSearchActions, useCategoryNavigation and usePickerMode for custom controls. Bare Root and unstyled remove all managed decoration; geometry and presence remain. Do not invent asChild, onEmojiSelect or a renderer-independent UI engine.
+- Read the installed package llms-full.txt first; it matches the installed version. The primitives entry, `unstyled`, `columns`, `components`, `labels` and loader `emojiData` exist from 5.0.0; a 4.x installation has only the v4 props.
+- Do not override structural layout (viewport overflow, grid geometry); position the picker by wrapping it.
+
+Exports (generated from the entry sources):
+
+- `emoji-picker-react`: default `EmojiPicker`; values `Categories`, `Emoji`, `emojiByUnified`, `EmojiStyle`, `SkinTonePickerLocation`, `SkinTones`, `SuggestionMode`, `Theme`; types `CategoryButtonRenderProps`, `CategoryConfig`, `CategoryHeaderRenderProps`, `CategoryIcons`, `CustomEmoji`, `EmojiClickData`, `EmojiClickHandler`, `EmojiData`, `EmojiDataInput`, `EmojiDataLoader`, `EmojiDataLoaderOptions`, `EmojiRenderProps`, `EmojiStyleValue`, `ListComponents`, `ListEmoji`, `OnEmojiClickApi`, `PickerComponents`, `PickerLabels`, `PickerProps`, `PreviewConfig`, `Props`, `SkinToneButtonRenderProps`, `SkinToneChangeHandler`, `SkinTonesValue`, `SuggestionModeValue`, `ThemeValue`.
+- `emoji-picker-react/primitives`: values `Categories`, `CategoryNav`, `darkPickerTokens`, `defaultPickerTokens`, `EmojiStyle`, `Empty`, `lightPickerTokens`, `List`, `LoadError`, `Loading`, `Panel`, `Preview`, `Reactions`, `Root`, `Search`, `SearchInput`, `SkinTone`, `SkinTonePickerLocation`, `SkinTones`, `structuralPickerTokens`, `SuggestionMode`, `Theme`, `useActiveEmoji`, `useCategoryNavigation`, `useEmojiDataState`, `usePickerMode`, `useSearchActions`, `useSearchState`, `useSkinTone`, `Viewport`; types `CategoryButtonRenderProps`, `CategoryConfig`, `CategoryHeaderRenderProps`, `CategoryIcons`, `CategoryNavProps`, `CustomEmoji`, `EmojiClickData`, `EmojiClickHandler`, `EmojiData`, `EmojiDataInput`, `EmojiDataLoader`, `EmojiDataLoaderOptions`, `EmojiDataState`, `EmojiRenderProps`, `EmojiStyleValue`, `EmptyProps`, `ListComponents`, `ListEmoji`, `ListProps`, `LoadErrorProps`, `LoadingProps`, `OnEmojiClickApi`, `PanelProps`, `PickerAppearanceProps`, `PickerComponents`, `PickerLabels`, `PreviewConfig`, `PreviewProps`, `ReactionsProps`, `RootBehaviorProps`, `RootProps`, `SearchInputComponent`, `SearchInputElement`, `SearchInputProps`, `SearchProps`, `SearchState`, `SkinToneButtonRenderProps`, `SkinToneChangeHandler`, `SkinToneProps`, `SkinTonesValue`, `SuggestionModeValue`, `ThemeValue`, `ViewportProps`.
+- `emoji-picker-react/data`: values `getEmojiByUnified`, `searchEmojis`; types `EmojiData`, `EmojiDataOptions`, `EmojiInfo`.
+- `emoji-picker-react/data/emojis-<locale>`: default export, an `EmojiData` dataset (bn, da, de, en, en-gb, es, es-mx, et, fi, fr, hi, hu, it, ja, ko, lt, ms, nb, nl, pl, pt, ru, sv, th, uk, vi, zh, zh-hant).
+
+Quick reference:
+
+```tsx
+// Batteries included: theme the built-in look with colorScheme and --epr-* variables.
+import EmojiPicker from 'emoji-picker-react';
+<EmojiPicker colorScheme="auto" columns={8} className="my-picker" onEmojiClick={(e) => insert(e.emoji)} />
+
+// Unstyled: same layout and behavior, your CSS on [data-epr-part] selectors (color variables do nothing here).
+<EmojiPicker unstyled className="my-picker" />
+
+// Composed: your layout, your components; Root keeps state, keyboard, ARIA and virtualization.
+import * as Picker from 'emoji-picker-react/primitives';
+<Picker.Root columns={8} style={{ height: 400 }} components={{ Emoji: MyCell }} onEmojiClick={(e) => insert(e.emoji)}>
+  <Picker.SearchInput as={MyInput} />
+  <Picker.CategoryNav />
+  <Picker.Viewport><Picker.List /><Picker.Empty /><Picker.Loading /><Picker.LoadError /></Picker.Viewport>
+  <Picker.Preview />
+</Picker.Root>
+
+// Data only (no React): search and lookup.
+import { searchEmojis, getEmojiByUnified } from 'emoji-picker-react/data';
+searchEmojis('party'); getEmojiByUnified('1f389');
+```
+
+## Docs
+
+- [Agent integration guide](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/AGENT_GUIDE.md): installed-version discovery, batteries included/BYOD, typed input/cell contracts, localization and verification
+- [README](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/README.md): overview, quick start, choosing a path, styling with any solution, common tasks
+- [Props reference](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/PROPS.md): every prop of the default <EmojiPicker />
+- [CSS variables](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/CSS_VARIABLES.md): every --epr-* design token
+- [Customization](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/CUSTOMIZATION.md): custom emojis and groups, category icons, preview, CSP nonce
+- [Internationalization](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/INTERNATIONALIZATION.md): locale datasets and labels
+- [Adoption](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/ADOPTION.md): native input, loading recovery, registry installation and source downloads
+- [v5 API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/API.md): all v5 additions with examples
+- [Primitives](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/PRIMITIVES.md): composable parts, hooks, custom cells, grammar
+- [Styling contract](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING.md): tokens, parts, cascade, structural rules
+- [Styling recipes by library](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING_RECIPES.md): theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI
+- [Accessibility verification](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/ACCESSIBILITY_VERIFICATION.md): keyboard, screen-reader, localization and host focus release protocol
+- [Data API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/DATA_API.md): framework-free search and lookup
+- [Migrating from v4](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/MIGRATION.md): what changed and how to upgrade
+
+## Examples
+
+- [Design recipes](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/stories/recipes/README.md): 25 designs, each in seven styling stacks
+- [Styling integrations](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/stories/integrations/README.md): shadcn/ui, Tailwind, Emotion, styled-components, CSS Modules, CSS, MUI
+- [Example app](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/example/README.md): Vite + React 19 app running the batteries-included, unstyled, composed and data-API paths
+
+## Optional
+
+- [llms-full.txt](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/llms-full.txt): the complete documentation in one file

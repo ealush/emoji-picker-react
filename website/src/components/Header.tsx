@@ -14,6 +14,9 @@ export function Header() {
           <a href="#playground" className={styles.navLink}>
             Playground
           </a>
+          <a href="#designs" className={styles.navLink}>
+            Designs
+          </a>
           <a href="#install" className={styles.navLink}>
             Install
           </a>
