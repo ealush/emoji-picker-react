@@ -7,7 +7,8 @@
     "outDir": "./dist",
     "declaration": false,
     "sourceMap": false,
-    "noEmit": false
+    "noEmit": false,
+    "types": ["node"]
   },
   "include": ["./prepare.ts"]
 }

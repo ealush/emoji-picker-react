@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // Concatenates the distributable docs into a single llms.txt for LLM consumers.
 // Run: npm run docs:llms
-const { readFileSync, writeFileSync } = require('fs');
-const { join } = require('path');
+import { readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const root = join(__dirname, '..');
 

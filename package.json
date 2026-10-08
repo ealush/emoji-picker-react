@@ -52,7 +52,7 @@
   },
   "scripts": {
     "start": "tsdx watch",
-    "build": "npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
+    "build": "npm run check:scripts && npm run build:data:src && npm run type-check && tsdx build --transpileOnly && npm run build:data:dist && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -62,12 +62,14 @@
     "size": "size-limit",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
-    "build:data:dist": "tsc --project tsconfig.data.json && node ./scripts/copyData.js",
+    "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts",
     "build:data": "npm run build:data:src && npm run build:data:dist",
     "storybook": "npm run build:data && storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "docs:llms": "node ./scripts/generateLlmsTxt.js",
-    "check:react-floor": "node ./scripts/checkReactApiFloor.js"
+    "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
+    "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
+    "check:scripts": "tsc --project scripts/tsconfig.json",
+    "clean": "tsx ./scripts/clean.ts"
   },
   "peerDependencies": {
     "react": ">=16.8"
@@ -146,7 +148,8 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.4.0",
     "typescript": "^4.7.4",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "tsx": "^4.23.15"
   },
   "dependencies": {
     "shipstyles": "1.0.0"

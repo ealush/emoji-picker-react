@@ -2,13 +2,11 @@ name: Weekly emoji data update
 
 on:
   schedule:
-    - cron: "0 3 * * 1" # Mondays 03:00 UTC
+    - cron: '0 3 * * 1' # Mondays 03:00 UTC
   workflow_dispatch:
 
 permissions:
   contents: write
-  actions: write
-  id-token: write
 
 jobs:
   update:
@@ -39,11 +37,9 @@ jobs:
       # Versioning and publishing belong to semantic-release now: this job
       # only lands the data change. The chore(data) scope maps to a patch
       # release via releaseRules in .releaserc.json. No [skip ci].
-      # A push made with GITHUB_TOKEN does not trigger other workflows, so
-      # the Release workflow is dispatched explicitly instead — dispatches
-      # from GITHUB_TOKEN do create runs.
+      # A push made with GITHUB_TOKEN does not trigger other workflows.
+      # Publishing remains an explicit maintainer action after verification.
       - name: Commit data change if data changed
-        id: commit
         run: |
           git config user.name "ealush"
           git config user.email "code@ealush.com"
@@ -55,10 +51,6 @@ jobs:
           git add -A
           git commit -m "chore(data): weekly emoji data update"
           git push origin HEAD:master
-          echo "created=true" >> "$GITHUB_OUTPUT"
 
-      - name: Dispatch Release workflow
-        if: steps.commit.outputs.created == 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh workflow run release.yml --ref master
+      # Publishing is an explicit maintainer action while the v5 stack lands.
+      # See docs/STACK_LANDING.md before dispatching the Release workflow.
