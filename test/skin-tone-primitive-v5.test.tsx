@@ -14,10 +14,7 @@ describe('SkinTone primitive', () => {
   it('places the skin tone control anywhere and drives the grid', () => {
     const onSkinToneChange = vi.fn();
     const { container } = render(
-      <Picker.Root
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
-        onSkinToneChange={onSkinToneChange}
-      >
+      <Picker.Root onSkinToneChange={onSkinToneChange}>
         <Picker.Search />
         <Picker.Viewport>
           <Picker.List />
@@ -27,7 +24,7 @@ describe('SkinTone primitive', () => {
         </footer>
       </Picker.Root>,
     );
-    // Exactly one control: the built-in search placement is off.
+    // Exactly one control: nothing is inserted automatically.
     expect(tones(container)).toHaveLength(1);
     expect(
       container.querySelector('footer [data-epr-part="skin-tone"]'),
@@ -59,28 +56,42 @@ describe('SkinTone primitive', () => {
     expect(tones(container)).toHaveLength(0);
   });
 
-  it('warns when the built-in placement is also active', () => {
+  it('ignores a stale placement switch without hiding the mounted part', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    render(
-      <Picker.Root skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}>
+    const { container } = render(
+      <Picker.Root
+        {...({
+          skinTonePickerLocation: SkinTonePickerLocation.PREVIEW,
+        } as object)}
+      >
         <Picker.SkinTone />
       </Picker.Root>,
     );
+    expect(
+      container.querySelector('[data-epr-part="skin-tone"]'),
+    ).not.toBeNull();
     expect(warn).toHaveBeenCalledWith(
-      expect.stringContaining('skinTonePickerLocation="NONE"'),
+      expect.stringContaining('Root ignores composition props'),
     );
     warn.mockRestore();
   });
 
-  it('renders nothing when skin tones are disabled', () => {
-    const { container } = render(
-      <Picker.Root
-        skinTonesDisabled
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
-      >
-        <Picker.SkinTone className="mine" />
-      </Picker.Root>,
-    );
-    expect(container.querySelector('.mine')).toBeNull();
+  it('renders the mounted part when skin tones are disabled on Root', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    try {
+      const { container } = render(
+        <Picker.Root {...({ skinTonesDisabled: true } as object)}>
+          <Picker.SkinTone className="mine" />
+        </Picker.Root>,
+      );
+      // Presence belongs to the caller's JSX; the default picker (not Root)
+      // translates skinTonesDisabled into omitting the part.
+      expect(container.querySelector('.mine')).not.toBeNull();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('Root ignores composition props'),
+      );
+    } finally {
+      warn.mockRestore();
+    }
   });
 });

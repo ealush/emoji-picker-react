@@ -115,21 +115,20 @@ describe('primitive adoption contracts', () => {
     );
   });
 
-  it('keeps panel presence managed while accepting consumer layout props', () => {
+  it('keeps explicit panel presence while accepting consumer layout props', () => {
     const { container } = render(
-      <Picker.Root
-        emojiData={data}
-        reactionsDefaultOpen
-        panelProps={{
-          className: 'panel-layout',
-          style: { gap: 12, display: 'flex' },
-          'aria-label': 'Full picker',
-        }}
-      >
-        <Picker.SearchInput />
-        <Picker.Viewport>
-          <Picker.List />
-        </Picker.Viewport>
+      <Picker.Root emojiData={data} reactionsDefaultOpen>
+        <Picker.Reactions />
+        <Picker.Panel
+          className="panel-layout"
+          style={{ gap: 12, display: 'flex' }}
+          aria-label="Full picker"
+        >
+          <Picker.SearchInput />
+          <Picker.Viewport>
+            <Picker.List />
+          </Picker.Viewport>
+        </Picker.Panel>
       </Picker.Root>,
     );
     const panel = container.querySelector('[data-epr-part="panel"]')!;
@@ -137,7 +136,7 @@ describe('primitive adoption contracts', () => {
     expect(panel).toHaveAttribute('hidden');
     expect(panel).toHaveAttribute('inert');
     expect(panel).toHaveStyle({ display: 'none', gap: '12px' });
-    expect(container.querySelector('aside')).not.toHaveAttribute('panelProps');
+    expect(panel).toHaveAttribute('aria-label', 'Full picker');
   });
 
   it('forwards a native input ref and shares controlled search/IME behavior', async () => {
