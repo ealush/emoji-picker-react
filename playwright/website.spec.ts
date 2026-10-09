@@ -228,7 +228,22 @@ test('all gallery examples render and explicit reopening may focus search', asyn
   await stage.locator('[data-epr-part="search-input"]').focus();
   await page.keyboard.press('Escape');
   await expect(stage.locator('[data-epr-part="search-input"]')).toHaveCount(0);
-  await stage.getByRole('button', { name: 'Emoji', exact: true }).click();
+  const trigger = stage.getByRole('button', { name: 'Emoji', exact: true });
+  await trigger.click();
+  // Opening can scroll the picker under a stationary pointer. Its managed
+  // hover behavior may then move focus from search to that emoji.
+  await expect
+    .poll(() =>
+      stage
+        .locator('[data-epr-part="root"]')
+        .evaluate((root) => root.contains(document.activeElement)),
+    )
+    .toBe(true);
+  await page.mouse.move(0, 0);
+  await page.keyboard.press('Escape');
+  await expect(stage.locator('[data-epr-part="search-input"]')).toHaveCount(0);
+  await trigger.focus();
+  await page.keyboard.press('Enter');
   await expect(stage.locator('[data-epr-part="search-input"]')).toBeFocused();
   expect(errors).toEqual([]);
 });
