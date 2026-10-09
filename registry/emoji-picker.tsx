@@ -57,10 +57,9 @@ const sizes = {
 } as React.CSSProperties;
 
 export const EmojiPicker = React.forwardRef<HTMLElement, EmojiPickerProps>(
-  function EmojiPicker({ className, style, panelProps, ...props }, ref) {
+  function EmojiPicker({ className, style, ...props }, ref) {
     return (
       <Picker.Root
-        skinTonePickerLocation={Picker.SkinTonePickerLocation.NONE}
         {...props}
         ref={ref}
         components={components}
@@ -71,22 +70,21 @@ export const EmojiPicker = React.forwardRef<HTMLElement, EmojiPickerProps>(
           className,
         )}
         style={{ ...sizes, ...style }}
-        panelProps={{
-          ...panelProps,
-          className: cx('min-h-0 gap-2', panelProps?.className),
-        }}
       >
-        <div className="flex items-center gap-2 px-2 pt-2">
-          <Picker.SearchInput className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-3 text-sm text-popover-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
-          <Picker.SkinTone />
-        </div>
-        <Picker.CategoryNav className="border-b border-input px-1" />
-        <Picker.Viewport className="min-h-0">
-          <Picker.List />
-          <Picker.Empty className="p-6 text-center text-sm text-muted-foreground" />
-          <Picker.Loading className="p-6 text-center text-sm text-muted-foreground" />
-          <Picker.LoadError className="p-6 text-center text-sm" />
-        </Picker.Viewport>
+        <Picker.Reactions />
+        <Picker.Panel className="min-h-0 gap-2">
+          <div className="flex items-center gap-2 px-2 pt-2">
+            <Picker.SearchInput className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-3 text-sm text-popover-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
+            <Picker.SkinTone />
+          </div>
+          <Picker.CategoryNav className="border-b border-input px-1" />
+          <Picker.Viewport className="min-h-0">
+            <Picker.List />
+            <Picker.Empty className="p-6 text-center text-sm text-muted-foreground" />
+            <Picker.Loading className="p-6 text-center text-sm text-muted-foreground" />
+            <Picker.LoadError className="p-6 text-center text-sm" />
+          </Picker.Viewport>
+        </Picker.Panel>
       </Picker.Root>
     );
   },
