@@ -254,11 +254,11 @@ check('primitives load the dataset on demand', () => {
 check('icon data URIs are encoded SVG XML', () => {
   for (const file of ['dist/index.js', 'dist/primitives/index.js']) {
     const content = read(file);
-    // Match the opening quote's delimiter, allowing the other quote and
-    // whitespace inside the complete JS literal before decoding the URI.
+    // Decode complete JS string literals first: bundled CSS wraps the URI
+    // in url("..."), whose escaped quote is not a JS string boundary.
     const icons = [
       ...content.matchAll(
-        /("data:image\/svg\+xml,(?:\\.|[^"\\])*"|'data:image\/svg\+xml,(?:\\.|[^'\\])*')/g,
+        /(?<!\\)("(?:url\(|data:image\/svg\+xml,)(?:\\.|[^"\\])*"|'(?:url\(|data:image\/svg\+xml,)(?:\\.|[^'\\])*')/g,
       ),
     ]
       .map(
@@ -267,11 +267,14 @@ check('icon data URIs are encoded SVG XML', () => {
             literal,
           ) as unknown,
       )
-      .filter(
-        (value): value is string =>
-          typeof value === 'string' && value.startsWith('data:image/svg+xml,'),
-      )
-      .map((value) => value.slice('data:image/svg+xml,'.length));
+      .flatMap((value) => {
+        if (typeof value !== 'string') return [];
+        const cssUrl = /^url\((["'])(data:image\/svg\+xml,[\s\S]*)\1\)$/.exec(value);
+        const uri = cssUrl?.[2] ?? value;
+        return uri.startsWith('data:image/svg+xml,')
+          ? [uri.slice('data:image/svg+xml,'.length)]
+          : [];
+      });
     assert.ok(icons.length > 0, `${file} has no embedded SVG icons`);
     for (const encoded of icons) {
       assert.ok(encoded.startsWith('%3Csvg'), `${file} contains raw SVG XML`);
