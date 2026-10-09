@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -9,7 +8,7 @@ import './app.css';
 // whole configuration. Keyboard hints live in a consumer footer.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -22,7 +21,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         if (event.key === 'Escape') setOpen(false);
       }}
       searchPlaceholder="Search emoji…"
-      skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >
       <Picker.Search />
       <Picker.Viewport>

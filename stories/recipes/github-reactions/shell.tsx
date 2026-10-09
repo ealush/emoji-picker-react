@@ -8,7 +8,7 @@ import './app.css';
 // compact bar terminal: there is no "+" and no full picker.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<React.ComponentProps<typeof EmojiPicker>>;
   className?: string;
 };
 

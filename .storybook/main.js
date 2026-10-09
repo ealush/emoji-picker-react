@@ -24,6 +24,19 @@ module.exports = {
   },
 
   webpackFinal: async (config) => {
+    // Run Tailwind before Storybook's CSS loader. This sheet owns the
+    // utility generation for every recipe and the registry demo.
+    config.module.rules.push({
+      test: /\.css$/,
+      include: path.resolve(__dirname, '../stories/integrations/tailwind.css'),
+      enforce: 'pre',
+      use: [{
+        loader: require.resolve('postcss-loader'),
+        options: {
+          postcssOptions: { plugins: [require('@tailwindcss/postcss')()] },
+        },
+      }],
+    });
     config.module.rules.push({
       test: /\.(ts|js|tsx)?$/,
       exclude: /node_modules\/(?!(shipstyles)\/).*/,

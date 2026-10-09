@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Categories, SkinTonePickerLocation } from '../../../src/primitives';
+import { Categories } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -10,7 +10,7 @@ import './app.css';
 // that make sense as icons.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -32,7 +32,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
       <RootComponent appearance="default"
         className={className}
         searchPlaceholder="Search icons"
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
         autoFocusSearch={false}
         onEmojiClick={(emoji: { emoji: string }) => setIcon(emoji.emoji)}
         categories={[

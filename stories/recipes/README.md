@@ -75,3 +75,18 @@ so new folders are picked up automatically):
 To add a design: copy a folder, edit `picker.css` / `shell.tsx`, run
 `npm run recipes` to regenerate the seven stacks, then run the two suites
 with `--update-snapshots` and look at every new image before committing.
+
+## Composition and acceptance gates
+
+Primitive recipes express control presence and placement through JSX. Use
+`<Search><SkinTone /></Search>` for an attached tone control, or put `SkinTone`
+in a consumer row. Omit it for designs without that control; do not pass the
+default picker's placement/visibility switches to `Root`.
+
+`npm run check:contracts` compiles the actual recipe shells and registry source.
+Injected styling wrappers retain the appropriate `RootProps` or default-picker
+prop contract, so removed props fail checking instead of being silently ignored.
+
+CI also runs `playwright/adoption-behavior.spec.ts`: caret insertion, dismissal
+and focus restoration, registry controls, nested Escape, shadow DOM, RTL,
+columns and reduced motion. Arrow traversal follows composed region DOM order.
