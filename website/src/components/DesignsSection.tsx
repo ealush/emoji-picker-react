@@ -5,10 +5,17 @@ import { useEffect, useRef, useState } from 'react';
 import styles from '@/styles/DesignsSection.module.css';
 
 import { DESIGN_EXAMPLES } from './designs';
+import { GalleryStage } from './GalleryPicker';
 
 // GitHub Pages serves the site from this subpath; public assets need the
 // prefix (next.config.js basePath applies to routes, not raw fetches).
 const BASE = '/emoji-picker-react';
+
+function scrollBehavior(): ScrollBehavior {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ? 'instant'
+    : 'smooth';
+}
 
 type SourceFile = { name: string; content: string };
 
@@ -94,18 +101,24 @@ export function DesignsSection() {
   const { Example } = example;
 
   // Keep the selected card in view when selection changes by keyboard.
+  const previousIndex = useRef(index);
   useEffect(() => {
+    if (previousIndex.current === index) return;
+    previousIndex.current = index;
     cardRefs.current[index]?.scrollIntoView({
       block: 'nearest',
       inline: 'nearest',
-      behavior: 'smooth',
+      behavior: scrollBehavior(),
     });
   }, [index]);
 
   function page(direction: 1 | -1) {
     const track = trackRef.current;
     if (!track) return;
-    track.scrollBy({ left: direction * track.clientWidth * 0.8, behavior: 'smooth' });
+    track.scrollBy({
+      left: direction * track.clientWidth * 0.8,
+      behavior: scrollBehavior(),
+    });
   }
 
   function select(next: number, focus = false) {
@@ -165,6 +178,7 @@ export function DesignsSection() {
             {DESIGN_EXAMPLES.map((design, i) => (
               <button
                 key={design.id}
+                id={`design-tab-${design.id}`}
                 ref={(node) => {
                   cardRefs.current[i] = node;
                 }}
@@ -204,9 +218,13 @@ export function DesignsSection() {
           </span>
           <span>{example.description}</span>
         </p>
-        <div id="design-stage" className={styles.designStage} role="tabpanel">
-          <Example key={example.id} className={example.rootClass} />
-        </div>
+        <GalleryStage
+          key={example.id}
+          className={styles.designStage}
+          labelledBy={`design-tab-${example.id}`}
+        >
+          <Example className={example.rootClass} />
+        </GalleryStage>
         <button
           type="button"
           className={styles.codeButton}

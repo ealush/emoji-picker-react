@@ -17,34 +17,115 @@ import { customEmojis } from "./customEmojis";
 // Locale datasets are code-split: each one loads on demand through the
 // `emojiData` loader form, so the demo bundle ships only the English data.
 // Loaders are hoisted (module scope): a new function identity reloads.
-const languages: Record<string, { name: string; load: PickerProps["emojiData"] }> = {
-  bn: { name: "Bengali", load: () => import("emoji-picker-react/data/emojis-bn") },
-  da: { name: "Danish", load: () => import("emoji-picker-react/data/emojis-da") },
-  de: { name: "German", load: () => import("emoji-picker-react/data/emojis-de") },
-  "en-gb": { name: "English (GB)", load: () => import("emoji-picker-react/data/emojis-en-gb") },
-  es: { name: "Spanish", load: () => import("emoji-picker-react/data/emojis-es") },
-  "es-mx": { name: "Spanish (Mexico)", load: () => import("emoji-picker-react/data/emojis-es-mx") },
-  et: { name: "Estonian", load: () => import("emoji-picker-react/data/emojis-et") },
-  fi: { name: "Finnish", load: () => import("emoji-picker-react/data/emojis-fi") },
-  fr: { name: "French", load: () => import("emoji-picker-react/data/emojis-fr") },
-  hi: { name: "Hindi", load: () => import("emoji-picker-react/data/emojis-hi") },
-  hu: { name: "Hungarian", load: () => import("emoji-picker-react/data/emojis-hu") },
-  it: { name: "Italian", load: () => import("emoji-picker-react/data/emojis-it") },
-  ja: { name: "Japanese", load: () => import("emoji-picker-react/data/emojis-ja") },
-  ko: { name: "Korean", load: () => import("emoji-picker-react/data/emojis-ko") },
-  lt: { name: "Lithuanian", load: () => import("emoji-picker-react/data/emojis-lt") },
-  ms: { name: "Malay", load: () => import("emoji-picker-react/data/emojis-ms") },
-  nb: { name: "Norwegian Bokmål", load: () => import("emoji-picker-react/data/emojis-nb") },
-  nl: { name: "Dutch", load: () => import("emoji-picker-react/data/emojis-nl") },
-  pl: { name: "Polish", load: () => import("emoji-picker-react/data/emojis-pl") },
-  pt: { name: "Portuguese", load: () => import("emoji-picker-react/data/emojis-pt") },
-  ru: { name: "Russian", load: () => import("emoji-picker-react/data/emojis-ru") },
-  sv: { name: "Swedish", load: () => import("emoji-picker-react/data/emojis-sv") },
+const languages: Record<
+  string,
+  { name: string; load: PickerProps["emojiData"] }
+> = {
+  bn: {
+    name: "Bengali",
+    load: () => import("emoji-picker-react/data/emojis-bn"),
+  },
+  da: {
+    name: "Danish",
+    load: () => import("emoji-picker-react/data/emojis-da"),
+  },
+  de: {
+    name: "German",
+    load: () => import("emoji-picker-react/data/emojis-de"),
+  },
+  "en-gb": {
+    name: "English (GB)",
+    load: () => import("emoji-picker-react/data/emojis-en-gb"),
+  },
+  es: {
+    name: "Spanish",
+    load: () => import("emoji-picker-react/data/emojis-es"),
+  },
+  "es-mx": {
+    name: "Spanish (Mexico)",
+    load: () => import("emoji-picker-react/data/emojis-es-mx"),
+  },
+  et: {
+    name: "Estonian",
+    load: () => import("emoji-picker-react/data/emojis-et"),
+  },
+  fi: {
+    name: "Finnish",
+    load: () => import("emoji-picker-react/data/emojis-fi"),
+  },
+  fr: {
+    name: "French",
+    load: () => import("emoji-picker-react/data/emojis-fr"),
+  },
+  hi: {
+    name: "Hindi",
+    load: () => import("emoji-picker-react/data/emojis-hi"),
+  },
+  hu: {
+    name: "Hungarian",
+    load: () => import("emoji-picker-react/data/emojis-hu"),
+  },
+  it: {
+    name: "Italian",
+    load: () => import("emoji-picker-react/data/emojis-it"),
+  },
+  ja: {
+    name: "Japanese",
+    load: () => import("emoji-picker-react/data/emojis-ja"),
+  },
+  ko: {
+    name: "Korean",
+    load: () => import("emoji-picker-react/data/emojis-ko"),
+  },
+  lt: {
+    name: "Lithuanian",
+    load: () => import("emoji-picker-react/data/emojis-lt"),
+  },
+  ms: {
+    name: "Malay",
+    load: () => import("emoji-picker-react/data/emojis-ms"),
+  },
+  nb: {
+    name: "Norwegian Bokmål",
+    load: () => import("emoji-picker-react/data/emojis-nb"),
+  },
+  nl: {
+    name: "Dutch",
+    load: () => import("emoji-picker-react/data/emojis-nl"),
+  },
+  pl: {
+    name: "Polish",
+    load: () => import("emoji-picker-react/data/emojis-pl"),
+  },
+  pt: {
+    name: "Portuguese",
+    load: () => import("emoji-picker-react/data/emojis-pt"),
+  },
+  ru: {
+    name: "Russian",
+    load: () => import("emoji-picker-react/data/emojis-ru"),
+  },
+  sv: {
+    name: "Swedish",
+    load: () => import("emoji-picker-react/data/emojis-sv"),
+  },
   th: { name: "Thai", load: () => import("emoji-picker-react/data/emojis-th") },
-  uk: { name: "Ukrainian", load: () => import("emoji-picker-react/data/emojis-uk") },
-  vi: { name: "Vietnamese", load: () => import("emoji-picker-react/data/emojis-vi") },
-  zh: { name: "Chinese (Simplified)", load: () => import("emoji-picker-react/data/emojis-zh") },
-  "zh-hant": { name: "Chinese (Traditional)", load: () => import("emoji-picker-react/data/emojis-zh-hant") },
+  uk: {
+    name: "Ukrainian",
+    load: () => import("emoji-picker-react/data/emojis-uk"),
+  },
+  vi: {
+    name: "Vietnamese",
+    load: () => import("emoji-picker-react/data/emojis-vi"),
+  },
+  zh: {
+    name: "Chinese (Simplified)",
+    load: () => import("emoji-picker-react/data/emojis-zh"),
+  },
+  "zh-hant": {
+    name: "Chinese (Traditional)",
+    load: () => import("emoji-picker-react/data/emojis-zh-hant"),
+  },
 };
 
 export function PickerControls({
@@ -134,6 +215,7 @@ export function PickerControls({
           }
         />
         <ChkCustomEmojis
+          enabled={Boolean(pickerProps.customEmojis?.length)}
           setCustomEmojis={(customEmojis) =>
             updateState("customEmojis", customEmojis)
           }
@@ -142,9 +224,11 @@ export function PickerControls({
         {/* Advanced */}
         <div className={styles.sectionLabel}>Advanced</div>
         <SelectLanguage
+          emojiData={pickerProps.emojiData}
           setEmojiData={(emojiData) => updateState("emojiData", emojiData)}
         />
         <ChkCategoryIcons
+          enabled={Boolean(Object.keys(pickerProps.categoryIcons ?? {}).length)}
           setCategoryIcons={(categoryIcons) =>
             updateState("categoryIcons", categoryIcons)
           }
@@ -257,8 +341,10 @@ function ChkSearchDisabled({
 }
 
 function ChkCustomEmojis({
+  enabled,
   setCustomEmojis,
 }: {
+  enabled: boolean;
   setCustomEmojis: (
     toggleCustomEmojis: {
       names: string[];
@@ -267,18 +353,12 @@ function ChkCustomEmojis({
     }[],
   ) => void;
 }) {
-  const [toggleCustomEmojis, setToggleCustomEmojis] = React.useState(false);
-
-  React.useEffect(() => {
-    setCustomEmojis(toggleCustomEmojis ? customEmojis : []);
-  }, [toggleCustomEmojis]);
-
   return (
     <Label text="Custom Emojis">
       <input
         type="checkbox"
-        checked={toggleCustomEmojis}
-        onChange={(e) => setToggleCustomEmojis(e.target.checked)}
+        checked={enabled}
+        onChange={(e) => setCustomEmojis(e.target.checked ? customEmojis : [])}
       />
     </Label>
   );
@@ -298,23 +378,20 @@ const customCategoryIcons = {
 };
 
 function ChkCategoryIcons({
+  enabled,
   setCategoryIcons,
 }: {
+  enabled: boolean;
   setCategoryIcons: (categoryIcons: Record<string, React.ReactNode>) => void;
 }) {
-  const [useCustomIcons, setUseCustomIcons] = React.useState(false);
-
-  React.useEffect(() => {
-    // Pass empty object instead of undefined to avoid library crash
-    setCategoryIcons(useCustomIcons ? customCategoryIcons : {});
-  }, [useCustomIcons]);
-
   return (
     <Label text="Custom Category Icons">
       <input
         type="checkbox"
-        checked={useCustomIcons}
-        onChange={(e) => setUseCustomIcons(e.target.checked)}
+        checked={enabled}
+        onChange={(e) =>
+          setCategoryIcons(e.target.checked ? customCategoryIcons : {})
+        }
       />
     </Label>
   );
@@ -375,7 +452,9 @@ function SelectSuggestionMode({
     <Label text="Suggestions">
       <select
         value={suggestionMode}
-        onChange={(e) => setSuggestionMode(e.target.value as SuggestionModeValue)}
+        onChange={(e) =>
+          setSuggestionMode(e.target.value as SuggestionModeValue)
+        }
       >
         <option value={SuggestionMode.RECENT}>Recent</option>
         <option value={SuggestionMode.FREQUENT}>Frequent</option>
@@ -550,13 +629,21 @@ function SelectDefaultSkinTone({
 }
 
 function SelectLanguage({
+  emojiData,
   setEmojiData,
 }: {
+  emojiData: PickerProps["emojiData"];
   setEmojiData: (emojiData: PickerProps["emojiData"]) => void;
 }) {
   return (
     <Label text="Language">
       <select
+        aria-label="Language"
+        value={
+          Object.entries(languages).find(
+            ([, locale]) => locale.load === emojiData,
+          )?.[0] ?? ""
+        }
         onChange={(e) => setEmojiData(languages[e.target.value]?.load)}
       >
         <option value="">English (default)</option>

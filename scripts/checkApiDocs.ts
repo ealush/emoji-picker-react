@@ -11,21 +11,25 @@ import * as ts from 'typescript';
 // Compile the examples from Markdown itself, so prose cannot quietly retain
 // an API removed from the implementation while a separate fixture stays green.
 const repoRoot = join(__dirname, '..');
-const sourcePath = join(repoRoot, 'docs/v5/API.md');
-const markdown = readFileSync(sourcePath, 'utf8');
-const examples = [...markdown.matchAll(/^```tsx check\r?\n([\s\S]*?)^```/gm)];
-if (examples.length < 5) {
-  throw new Error('API.md must retain at least five checked usage examples');
-}
+const examples = ['docs/v5/API.md', 'website/README.md'].flatMap((source) => {
+  const markdown = readFileSync(join(repoRoot, source), 'utf8');
+  const blocks = [...markdown.matchAll(/^```tsx check\r?\n([\s\S]*?)^```/gm)];
+  const minimum = source === 'docs/v5/API.md' ? 5 : 3;
+  if (blocks.length < minimum)
+    throw new Error(`${source} must retain ${minimum} checked examples`);
+  return blocks.map(([block, code]) => ({
+    source,
+    code,
+    line: markdown.slice(0, markdown.indexOf(block)).split('\n').length,
+  }));
+});
 const scratchParent = join(repoRoot, '.codex-tmp');
 mkdirSync(scratchParent, { recursive: true });
 const scratch = mkdtempSync(join(scratchParent, 'api-docs-'));
 try {
-  const files = examples.map(([block, code], index) => {
+  const files = examples.map(({ source, code, line }, index) => {
     const file = join(scratch, `example-${index + 1}.tsx`);
-    const offset = markdown.indexOf(block);
-    const line = markdown.slice(0, offset).split('\n').length;
-    writeFileSync(file, `// docs/v5/API.md:${line}\n${code}`);
+    writeFileSync(file, `// ${source}:${line}\n${code}`);
     return file;
   });
   const program = ts.createProgram(files, {
@@ -55,7 +59,9 @@ try {
     };
     throw new Error(ts.formatDiagnostics(diagnostics, host));
   }
-  console.log(`API documentation: ${examples.length} examples type-check`);
+  console.log(
+    `API/website documentation: ${examples.length} examples type-check`,
+  );
 } finally {
   rmSync(scratch, { recursive: true, force: true });
 }

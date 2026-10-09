@@ -115,12 +115,12 @@ export default function PickerDemo() {
     key: K,
     value: PickerProps[K],
   ) {
-    setNow(Date.now());
-    setPickerProps({ ...pickerProps, [key]: value });
+    setNow((previous) => previous + 1);
+    setPickerProps((previous) => ({ ...previous, [key]: value }));
   }
 
   function resetState() {
-    setNow(Date.now());
+    setNow((previous) => previous + 1);
     setPickerProps(defaultProps);
   }
 }
