@@ -21,6 +21,12 @@ The most popular fully customizable emoji picker for React.
 - Responsive and mobile-friendly
 - SSR-safe
 
+## Copyable integration prompts
+
+Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
+to give a coding agent a concrete starting point for your application. Each
+prompt checks the installed version and keeps integration behavior explicit.
+
 ## Installation
 
 ```bash
