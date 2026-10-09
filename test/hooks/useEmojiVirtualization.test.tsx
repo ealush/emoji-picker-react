@@ -51,7 +51,7 @@ vi.mock('../../src/hooks/preloadEmoji', () => ({
 }));
 
 vi.mock('../../src/virtualization/virtualizationHelpers', () => ({
-  getEmojiPositionStyle: vi.fn(() => ({ top: 0, left: 0 })),
+  getEmojiPositionStyle: vi.fn(() => ({ top: 0, insetInlineStart: 0 })),
   shouldVirtualize: vi.fn(() => false),
 }));
 
@@ -78,7 +78,7 @@ describe('useEmojiVirtualization', () => {
     // ... (other mocks) ...
 
     // Virtualization mocks
-    (getEmojiPositionStyle as any).mockReturnValue({ top: 0, left: 0 });
+    (getEmojiPositionStyle as any).mockReturnValue({ top: 0, insetInlineStart: 0 });
     (shouldVirtualize as any).mockReturnValue(false);
   });
 

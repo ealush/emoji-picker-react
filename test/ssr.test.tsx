@@ -25,6 +25,14 @@ describe('SSR probe', () => {
     expect(html).toContain('EmojiPickerReact');
   });
 
+  it('renders an initial controlled searchValue in SSR markup', () => {
+    const html = renderToString(
+      <EmojiPicker searchValue="heart" onSearchChange={() => {}} />,
+    );
+
+    expect(html).toContain('value="heart"');
+  });
+
   it('renders without the useLayoutEffect SSR warning', () => {
     const consoleError = vi
       .spyOn(console, 'error')

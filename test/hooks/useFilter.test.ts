@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { DataEmoji } from '../../src/dataUtils/DataTypes';
 import {
   FilterDict,
-  filterEmojiObjectByKeyword,
-  findLongestMatch,
   isEmojiFilteredBySearchTerm,
 } from '../../src/hooks/useFilter';
 
@@ -26,55 +24,9 @@ const mockFilterDict: FilterDict = {
 };
 
 describe('useFilter', () => {
-  describe('findLongestMatch', () => {
-    it('returns null if dict is null', () => {
-      expect(findLongestMatch('foo', null)).toBeNull();
-    });
-
-    it('returns exact match if exists', () => {
-      const dict = {
-        foo: mockFilterDict,
-      };
-      expect(findLongestMatch('foo', dict)).toBe(mockFilterDict);
-    });
-
-    it('returns longest matching key', () => {
-      const dict = {
-        f: { '1f600': mockEmoji },
-        fo: mockFilterDict,
-      };
-      // 'foo' contains 'fo' and 'f', should return 'fo' match
-      expect(findLongestMatch('foo', dict)).toBe(mockFilterDict);
-    });
-
-    it('returns null if no match found', () => {
-      const dict = {
-        bar: mockFilterDict,
-      };
-      expect(findLongestMatch('foo', dict)).toBeNull();
-    });
-  });
-
-  describe('filterEmojiObjectByKeyword', () => {
-    it('returns empty object if no emojis match', () => {
-      expect(filterEmojiObjectByKeyword(mockFilterDict, 'xyz')).toEqual({});
-    });
-
-    it('returns matching emojis', () => {
-      const result = filterEmojiObjectByKeyword(mockFilterDict, 'face');
-      expect(result).toEqual({ '1f600': mockEmoji });
-      expect(result['1f431']).toBeUndefined();
-    });
-
-    it('returns all matching emojis', () => {
-      // both have 'a' in their names? 'face' and 'cat'
-      // mockEmoji has 'face', mockEmoji2 has 'cat'. neither has 'a' in 'n' array directly but names contain letters.
-      // names: ['grinning face', ...] and ['cat', ...]
-      // search 'a' -> 'grinning face' has 'a', 'cat' has 'a'.
-      const result = filterEmojiObjectByKeyword(mockFilterDict, 'a');
-      expect(result).toEqual(mockFilterDict);
-    });
-  });
+  // Query matching itself lives in the shared data core; delegation and
+  // result equivalence are covered behaviorally in
+  // test/search-unification-v5.test.tsx.
 
   describe('isEmojiFilteredBySearchTerm', () => {
     it('returns false if filter or searchTerm is missing', () => {
