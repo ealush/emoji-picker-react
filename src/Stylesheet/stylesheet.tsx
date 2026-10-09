@@ -45,7 +45,7 @@ export function finalizeCss(css: string, cssLayer?: string): string {
       return match ? `:where(${match[1]}) {${match[2]}}` : line;
     })
     .join('\n');
-  return cssLayer && /^[a-zA-Z_][\w-]*$/.test(cssLayer)
+  return cssLayer && /^[a-zA-Z_][\w-]*(?:\.[a-zA-Z_][\w-]*)*$/.test(cssLayer)
     ? `@layer ${cssLayer}{${out}}`
     : out;
 }
