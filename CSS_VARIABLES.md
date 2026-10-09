@@ -1,6 +1,8 @@
 # 🎨 CSS Variables
 
-You can customize specific parts of the picker by overriding these CSS variables. Target `.EmojiPickerReact` or `aside.EmojiPickerReact` to apply them.
+You can customize specific parts of the picker by overriding these CSS variables on a class you pass through `className` (or `.EmojiPickerReact`). The picker declares its tokens at zero specificity (`:where()`), so any selector of yours wins — no specificity tricks or `!important`. Want the default look? Change nothing: these variables only fine-tune it.
+
+**Color variables theme the built-in look.** With the `unstyled` prop (or a bare primitives `Root`) the built-in look is removed, so color variables have no effect; style the `[data-epr-part]` selectors directly instead (see the [README](README.md#unstyled-your-design-the-supplied-layout)). Size variables such as `--epr-emoji-size` apply in every mode.
 
 ```css
 .EmojiPickerReact {
@@ -20,11 +22,12 @@ aside.EmojiPickerReact {
 
 | Variable                     | Description                                        | Default   |
 | :--------------------------- | :------------------------------------------------- | :-------- |
+| `--epr-font-family`          | Font family of the picker's text.                  | `sans-serif` |
 | `--epr-emoji-size`           | Size of the emojis.                                | `30px`    |
 | `--epr-emoji-padding`        | Padding around each emoji.                         | `5px`     |
 | `--epr-emoji-gap`            | **Deprecated**. Use `--epr-emoji-padding` instead. | -         |
 | `--epr-bg-color`             | Background color of the picker.                    | `#fff`    |
-| `--epr-text-color`           | Main text color.                                   | `#858585` |
+| `--epr-text-color`           | Main text color.                                   | `#6b6b6b` |
 | `--epr-picker-border-color`  | Border color of the picker container.              | `#e7e7e7` |
 | `--epr-picker-border-radius` | Border radius of the picker.                       | `8px`     |
 | `--epr-horizontal-padding`   | Horizontal padding for various elements.           | `10px`    |
@@ -67,8 +70,15 @@ aside.EmojiPickerReact {
 | Variable                   | Description                            | Default                 |
 | :------------------------- | :------------------------------------- | :---------------------- |
 | `--epr-preview-height`     | Height of the preview area.            | `70px`                  |
+| `--epr-preview-emoji-size` | Size of the preview emoji.             | `45px`                  |
 | `--epr-preview-text-size`  | Font size of text in the preview area. | `14px`                  |
 | `--epr-preview-text-color` | Text color in the preview area.        | `var(--epr-text-color)` |
+
+## 😀 Native Emoji Font
+
+| Variable                 | Description                                                                 | Default                       |
+| :----------------------- | :-------------------------------------------------------------------------- | :---------------------------- |
+| `--epr-emoji-font-family` | Font stack for native emojis (e.g. add a country-flag polyfill font first). Native support detection measures this font. | platform emoji fonts |
 
 ## 🖐️ Skin Tone Picker
 

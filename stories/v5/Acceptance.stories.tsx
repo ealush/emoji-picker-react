@@ -523,3 +523,26 @@ export function MultipleRoots() {
     </>
   );
 }
+
+// Real keystrokes exercise the controlled draft; setting complete input values
+// directly would conceal characters lost between edits.
+export function DelayedControlledSearch() {
+  const [value, setValue] = useState('');
+  const [proposals, setProposals] = useState<string[]>([]);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+  return (
+    <>
+      <Root emojiData={acceptanceData} emojiVersion="1" autoFocusSearch={false}
+        searchValue={value} onSearchChange={(next) => {
+          setProposals((previous) => [...previous, next]);
+          timers.current.push(setTimeout(() => setValue(next), 500));
+        }}>
+        <Search />
+        <Viewport style={{ height: 320 }}><List /></Viewport>
+      </Root>
+      <output data-testid="search-proposals">{JSON.stringify(proposals)}</output>
+      <output data-testid="accepted-search">{value}</output>
+    </>
+  );
+}

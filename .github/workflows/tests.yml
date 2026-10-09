@@ -16,7 +16,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run check:scripts
       - run: npm run check:tooling
+      - run: npm run lint
       - run: npm run check:contracts
       - run: npm run check:storybook-hosts
       - run: npm test
@@ -45,23 +47,15 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps
       - run: npm run test:visual
-
-  # llms.txt is generated from committed docs; fail if it drifts.
-  docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Actual/diff images let environment drift be adjudicated from the CI
+      # image itself (docs/v5/VISUAL_COMPATIBILITY.md).
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
         with:
-          node-version: 24
-      - run: npm ci --ignore-scripts
-      - run: npm run check:docs
-      - run: npm run docs:llms
-      - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
-      - run: npm run recipes
-      - run: npm run registry
-      - run: npm run designs
-      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/designs website/public/r stories/recipes docs/designs README.md
+          name: visual-evidence
+          path: test-results/
+          retention-days: 14
 
   # Real-consumer visual integrations: drives every runnable fixture in
   # stories/consumers/ through open/search/select flows and compares the
@@ -107,6 +101,25 @@ jobs:
       - run: npm run check:package
       - run: npm run check:react16
       - run: npm run check:node18
+
+  # llms.txt is generated from committed docs; fail if it drifts.
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - run: npm run check:docs
+      - run: npm run docs:llms
+      - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
+      # The website gallery, README screenshots and gallery are generated
+      # from stories/recipes; fail if a recipe changed without `npm run designs`.
+      - run: npm run recipes
+      - run: npm run registry
+      - run: npm run designs
+      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/designs website/public/r stories/recipes docs/designs README.md
 
   browser-behavior:
     runs-on: ubuntu-latest

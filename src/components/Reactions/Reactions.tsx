@@ -11,6 +11,7 @@ import {
   useLabels,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useDefaultAppearance } from '../../primitives/appearance';
@@ -20,6 +21,7 @@ import {
   useMergedRefs,
 } from '../../primitives/nativeProps';
 import { useRootScope } from '../../primitives/scope';
+import { EmojiStyle } from '../../types/exposedTypes';
 import { useReactionsRef } from '../context/ElementRefContext';
 import { useReactionsModeState } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
@@ -53,6 +55,7 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
   const getEmojiUrl = useGetEmojiUrlConfig();
   const { emojiByUnified } = usePickerDataContext();
   const labels = useLabels();
+  const isEmojiDisallowed = useIsEmojiDisallowed();
 
   // Registered before the closed-mode early return so collapsing the full
   // picker registers the bar and expanding unregisters it.
@@ -77,7 +80,11 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
           typeof reaction === 'string' ? reaction.trim().toLowerCase() : '';
         const emoji = normalized ? emojiByUnified(normalized) : undefined;
 
-        if (!emoji) {
+        if (
+          !emoji ||
+          (emojiStyle === EmojiStyle.NATIVE &&
+            isEmojiDisallowed(emoji, normalized))
+        ) {
           return null;
         }
 

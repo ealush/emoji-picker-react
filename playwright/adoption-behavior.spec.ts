@@ -226,7 +226,9 @@ for (const mode of ['light', 'dark']) {
     ).toBeVisible();
     // Wait for the applied query, not just a cat cell already visible in
     // the unfiltered list. Active search deliberately routes Down to Grid.
-    await expect(page.locator('[data-epr-part="root"]')).toHaveClass(/epr-search-active/);
+    await expect(page.locator('[data-epr-part="root"]')).toHaveClass(
+      /epr-search-active/,
+    );
     await search.press('ArrowDown');
     await expect(page.locator('[role="gridcell"]:focus')).toHaveCount(1);
     await page.keyboard.press('Enter');
@@ -243,7 +245,10 @@ for (const mode of ['light', 'dark']) {
     await expect(search).toBeVisible();
     // With no query, the standalone tone control is the next DOM region.
     await search.press('ArrowDown');
-    const neutral = page.getByRole('button', { name: 'Skin tone NEUTRAL', exact: true });
+    const neutral = page.getByRole('button', {
+      name: 'Skin tone NEUTRAL',
+      exact: true,
+    });
     await expect(neutral).toBeFocused();
     await search.focus();
     const violations = (
@@ -434,3 +439,78 @@ test('reduced motion: the picker drops transitions and still expands from reacti
     );
   expect(cells).toBeGreaterThan(1);
 });
+
+for (const origin of ['input', 'grid'] as const) {
+  for (const delay of [50, 150]) {
+    test(`delayed controlled search preserves real typing from ${origin} with ${delay}ms gaps`, async ({
+      page,
+    }) => {
+      await page.goto(story('v5-acceptance--delayed-controlled-search'));
+      const input = page.getByRole('textbox');
+      if (origin === 'grid') {
+        await page
+          .getByRole('gridcell', { name: 'grinning face', exact: true })
+          .focus();
+      } else {
+        await input.focus();
+      }
+      await page.keyboard.type('cat', { delay });
+      await expect(page.getByTestId('search-proposals')).toHaveText(
+        '["c","ca","cat"]',
+      );
+      await expect(page.getByTestId('accepted-search')).toHaveText('cat');
+      await expect(input).toHaveValue('cat');
+      await expect(input).toBeFocused();
+    });
+  }
+}
+
+for (const id of [
+  'picker-columns--six-columns',
+  'picker-columns--narrow-container',
+  'picker-columns--primitive-columns',
+]) {
+  test(`columns: ${id} keeps its width and row geometry when preview titles change`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    await page.evaluate(() => document.fonts.ready);
+    const root = page.locator('[data-epr-part="root"]');
+    const preview = page.locator('[data-epr-part="preview"]');
+    const content = page.locator(
+      '[data-epr-category="smileys_people"] [data-epr-part="category-content"]',
+    );
+    await page
+      .getByRole('gridcell', { name: 'grinning face', exact: true })
+      .first()
+      .hover();
+    await expect(preview).toContainText('grinning face');
+    const width = (await root.boundingBox())!.width;
+    const columns = await content.getAttribute('data-epr-emojis-per-row');
+    for (const name of [
+      'beaming face with smiling eyes',
+      'face with open eyes and hand over mouth',
+    ]) {
+      const cell = page.getByRole('gridcell', { name, exact: true }).first();
+      await cell.hover();
+      await expect(preview).toContainText(name);
+      expect((await root.boundingBox())!.width).toBeCloseTo(width, 1);
+      await expect(content).toHaveAttribute(
+        'data-epr-emojis-per-row',
+        columns!,
+      );
+      await page.mouse.move(0, 0);
+      // The previous short emoji may now be virtualized out after hover
+      // scrolled the viewport. Search is always mounted and clears preview.
+      await page.getByRole('textbox').focus();
+      await expect(preview).not.toContainText(name);
+      await cell.focus();
+      await expect(preview).toContainText(name);
+      expect((await root.boundingBox())!.width).toBeCloseTo(width, 1);
+      await expect(content).toHaveAttribute(
+        'data-epr-emojis-per-row',
+        columns!,
+      );
+    }
+  });
+}

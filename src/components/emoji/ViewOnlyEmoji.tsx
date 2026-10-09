@@ -3,9 +3,13 @@ import * as React from 'react';
 import { CustomEmoji } from '../../config/customEmojiConfig';
 import { DataEmoji, EmojiProperties } from '../../dataUtils/DataTypes';
 import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiUtils';
+import { isNativeEmojiSupported } from '../../dataUtils/nativeEmojiSupport';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle } from '../../types/exposedTypes';
-import { useEmojisThatFailedToLoadState } from '../context/PickerContext';
+import {
+  useEmojisThatFailedToLoadState,
+  useNativeEmojiSupport,
+} from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
@@ -23,6 +27,7 @@ export function ViewOnlyEmoji({
 }: BaseEmojiProps) {
   const [, setEmojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
   const { emojiByUnified } = usePickerDataContext();
+  const nativeSupport = useNativeEmojiSupport();
 
   const style = {} as React.CSSProperties;
   if (size) {
@@ -38,37 +43,34 @@ export function ViewOnlyEmoji({
     return null;
   }
 
+  let imageUrl: string;
+  let imageName: string;
+  let imageStyle = emojiStyle;
   if (isCustomEmoji(emojiToRender)) {
-    return (
-      <EmojiImg
-        style={style}
-        // The image's alternative text is the emoji's name, not its id.
-        emojiName={customEmojiName(emojiToRender) || unified}
-        emojiStyle={EmojiStyle.NATIVE}
-        lazyLoad={lazyLoad}
-        imgUrl={emojiToRender.imgUrl}
-        onError={onError}
-        className={className}
-      />
-    );
+    imageUrl = emojiToRender.imgUrl;
+    // Alternative text is the custom emoji's name, not its id.
+    imageName = customEmojiName(emojiToRender) || unified;
+    imageStyle = EmojiStyle.NATIVE;
+  } else if (emojiStyle === EmojiStyle.NATIVE) {
+    // Also covers managed preview/default glyphs outside the grid.
+    return isNativeEmojiSupported(nativeSupport, unified) ? (
+      <NativeEmoji unified={unified} style={style} className={className} />
+    ) : null;
+  } else {
+    imageUrl = getEmojiUrl(unified, emojiStyle);
+    imageName = emojiName(emojiToRender);
   }
 
   return (
-    <>
-      {emojiStyle === EmojiStyle.NATIVE ? (
-        <NativeEmoji unified={unified} style={style} className={className} />
-      ) : (
-        <EmojiImg
-          style={style}
-          emojiName={emojiName(emojiToRender)}
-          emojiStyle={emojiStyle}
-          lazyLoad={lazyLoad}
-          imgUrl={getEmojiUrl(unified, emojiStyle)}
-          onError={onError}
-          className={className}
-        />
-      )}
-    </>
+    <EmojiImg
+      style={style}
+      emojiName={imageName}
+      emojiStyle={imageStyle}
+      lazyLoad={lazyLoad}
+      imgUrl={imageUrl}
+      onError={onError}
+      className={className}
+    />
   );
 
   function onError() {

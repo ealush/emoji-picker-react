@@ -4,6 +4,7 @@ import { dirname, join, resolve } from 'node:path';
 const root = resolve(__dirname, '..');
 const files = [
   'README.md',
+  'CONTRIBUTING.md',
   'PROPS.md',
   'CSS_VARIABLES.md',
   'CUSTOMIZATION.md',

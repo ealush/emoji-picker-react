@@ -63,14 +63,14 @@ function useEmitSearchChange(): (value: string) => void {
  * library reconciles the input back to the latest accepted value once
  * typing goes quiet — unless the parent accepted/transformed it meanwhile
  * (then reconciling is a no-op), the input unmounted, or a composition
- * owns it. This is what makes an ignoring parent show the prop rather
- * than an optimistic value, with no acceptance comparison anywhere.
+ * owns it. This makes an ignoring parent eventually show the prop rather
+ * than leaving an optimistic value visible.
  *
- * The quiet delay (same 100 ms cadence as filtering) is what lets
- * machine-speed bursts accumulate: intermediate keystrokes keep arriving
- * before it fires. See also lastControlledProposal below.
+ * The 500 ms quiet delay is independent of filtering's 100 ms debounce.
+ * It lets ordinary typing bursts accumulate: intermediate keystrokes arrive
+ * before it fires. See also pendingProposals below.
  */
-const RECONCILE_AFTER_QUIET_MS = 100;
+const RECONCILE_AFTER_QUIET_MS = 500;
 
 interface PendingProposal {
   proposal: string;
@@ -191,17 +191,21 @@ export function useSearchInputController() {
   // any later genuine edit (even identical pasted text) takes the normal
   // path, since user input always arrives in a later task.
   const compositionEchoRef = React.useRef<string | null>(null);
+  const displayRef = React.useRef(display);
+  displayRef.current = display;
 
   // Reconcile display with the accepted value whenever it changes
   // externally — but never while an IME composition owns the DOM value.
+  // Draft edits must not trigger this effect: they reconcile only after
+  // the quiet window. Read the current display through a ref instead.
   // The equality guard matters: an unconditional setDisplay schedules a
   // second commit per keystroke (the update bails out, but Profiler and
   // cascading-effect checks still observe it), doubling render work.
   React.useEffect(() => {
-    if (!composing && accepted !== display) {
+    if (!composing && accepted !== displayRef.current) {
       setDisplay(accepted);
     }
-  }, [accepted, composing, display, setDisplay]);
+  }, [accepted, composing, setDisplay]);
 
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
     const raw = event.target.value;
@@ -223,7 +227,7 @@ export function useSearchInputController() {
       }
       // Emit the proposal; the parent decides what becomes accepted.
       // Display tracks the proposal immediately (React-managed, so parent
-      // commits can never clobber it mid-burst); rejections reconcile
+      // acceptance synchronizes it immediately); rejections reconcile
       // back to the prop once typing goes quiet.
       setDisplay(raw);
       emit(raw);

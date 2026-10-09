@@ -5,6 +5,7 @@ import { cx } from 'shipstyles';
 import { ClassNames } from '../../DomUtils/classNames';
 import { focusFirstVisibleEmoji } from '../../DomUtils/keyboardNavigation';
 import {
+  allUnifiedFromEmojiElement,
   buttonFromTarget,
   elementHeight,
   emojiTrueOffsetTop,
@@ -20,7 +21,9 @@ import {
   emojiUnified,
   emojiVariations,
 } from '../../dataUtils/emojiUtils';
+import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useDefaultAppearance } from '../../primitives/appearance';
+import { EmojiStyle } from '../../types/exposedTypes';
 import {
   useAnchoredEmojiRef,
   useBodyRef,
@@ -43,6 +46,7 @@ export function EmojiVariationPicker() {
   const VariationPickerRef = useVariationPickerRef();
   const [emoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
+  const isEmojiDisallowed = useIsEmojiDisallowed();
 
   const { getTop, getMenuDirection } =
     useVariationPickerTop(VariationPickerRef);
@@ -55,6 +59,11 @@ export function EmojiVariationPicker() {
   const visible = Boolean(
     emoji &&
     button &&
+    (emojiStyle !== EmojiStyle.NATIVE ||
+      !isEmojiDisallowed(
+        emoji,
+        allUnifiedFromEmojiElement(button).unified ?? undefined,
+      )) &&
     emojiHasVariations(emoji) &&
     button.classList.contains(ClassNames.emojiHasVariations),
   );
@@ -87,6 +96,11 @@ export function EmojiVariationPicker() {
         ? [emojiUnified(emoji)]
             .concat(emojiVariations(emoji))
             .slice(0, 6)
+            .filter(
+              (unified) =>
+                emojiStyle !== EmojiStyle.NATIVE ||
+                !isEmojiDisallowed(emoji, unified),
+            )
             .map((unified) => (
               <ClickableEmoji
                 key={unified}

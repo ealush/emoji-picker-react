@@ -106,11 +106,9 @@ Before you get started, make sure you have the following requirements in place:
 
 - [Git](https://git-scm.com/downloads)
 
-- [Node.js 16.x](https://nodejs.org/en/download/releases/)
+- [Node.js 24.15 or newer in the 24.x line](https://nodejs.org/en/download/), matching CI
 
-  Use the `node --version` command to check your version.
-
-  > **Notice:** You can use Node.js 18.x or above for building and using the project, but you must test it on Storybook with Node.js 16.x! It's recommended to have a tool like [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm) to change between different Node.js versions.
+  Use `node --version` to check your version. Development tools (including Vitest and jsdom) require newer Node versions than the published library. Consumers need Node 18 or later in their toolchain and React 16.8 or later; contributor requirements do not raise those floors.
 
 #### Setup the Project
 
@@ -147,6 +145,45 @@ Before you get started, make sure you have the following requirements in place:
 2. If all the installation process is succeed, you should be able to see the Storybook webpage on [localhost:6006](http://localhost:6006/).
 
 3. Add features or resolve issues by changing the code, save it, and test it by seeing your changes on Storybook.
+
+4. Before you commit, run the same checks CI runs:
+
+   ```bash
+   npm run lint          # ESLint over src
+   npm test              # Vitest unit, contract and integration suites
+   npm run build         # library build (ESM, CJS, declarations, llms.txt)
+   npm run check:compat  # v4 usage, v5 contract and exports-map type fixtures
+   npm run size          # bundle budgets
+   ```
+
+   Browser coverage (`npm run test:visual`, `npx playwright test --config playwright.behavior.config.ts`) needs `npx playwright install --with-deps` once. Visual baselines are compared against CI renders; see [docs/v5/VISUAL_COMPATIBILITY.md](docs/v5/VISUAL_COMPATIBILITY.md) before updating any snapshot.
+
+5. Generated files must be regenerated, never edited by hand:
+
+   | You changed | Run |
+   | --- | --- |
+   | Any document listed in `scripts/generateLlmsTxt.ts` | `npm run docs:llms` |
+   | A recipe under `stories/recipes/<name>/` (`shell.tsx`, `picker.css`, `recipe.json`) | `npm run recipes`, then `npm run designs` |
+   | `registry/emoji-picker.tsx` | `npm run registry` |
+   | `src/data/*` sources | `npm run build:data` |
+
+   The `docs` CI job fails when any of these drift.
+
+6. Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`); semantic-release derives the version and changelog from them. A breaking change needs a `!` (`feat!:`) or a `BREAKING CHANGE:` footer.
+
+#### Repository map
+
+| Path | What lives there |
+| --- | --- |
+| `src/` | The library. `index.tsx` is the batteries-included entry, `primitives/` the composable entry, `data.ts` the framework-free data entry |
+| `src/components/`, `src/hooks/`, `src/state/` | The shared engine both entries render: grid, search, navigation, virtualization |
+| `test/` | Vitest suites (jsdom); `test/v5-contract/` holds the typed API contract |
+| `playwright/` | Browser suites: visual baselines, behavior, accessibility, recipes |
+| `stories/` | Storybook: `picker/` (default picker), `v5/` (primitives), `integrations/` (styling stacks), `recipes/` (25 designs) |
+| `docs/v5/` | The normative v5 contract (spec, primitives, styling, migration, agent guide) |
+| `example/` | A Vite + React 19 app showing every usage path |
+| `website/` | The Next.js demo site deployed to GitHub Pages |
+| `scripts/` | Build, data generation, packaging checks and doc generators |
 
 #### Commit the Changes to Git
 

@@ -10,7 +10,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `colorScheme`     | `Theme`      | `Theme.LIGHT`      | The color scheme. Options: `'light'`, `'dark'`, `'auto'`. Preferred over `theme`, which CSS-in-JS wrappers (Emotion, styled-components, MUI) reserve. |
 | `theme`           | `Theme`      | `Theme.LIGHT`      | Alias of `colorScheme`, kept for v4 compatibility.                                           |
 | `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
-| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`). When unset with the native style, emojis the platform cannot render are hidden automatically. |
+| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific Unicode emoji version (e.g., `"14.0"`). Native mode additionally filters detected unsupported glyphs, even with this cap set; see [native detection limits](docs/v5/API.md#5c-native-emoji-support-detection). |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
