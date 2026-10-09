@@ -16,6 +16,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run check:contracts
       - run: npm test
       - run: npm run check:data-package
 

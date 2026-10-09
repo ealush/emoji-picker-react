@@ -75,7 +75,10 @@ export function SkinTonePicker({
       style={
         vertical
           ? { flexBasis: expandedSize, height: expandedSize }
-          : { flexBasis: expandedSize }
+          // SkinTone wraps this flex item in a layout host. An explicit
+          // width lets that host reserve the fan's full horizontal span,
+          // so a neighboring Search input shrinks instead of overlapping.
+          : { flexBasis: expandedSize, width: expandedSize }
       }
     >
       <div

@@ -10,6 +10,11 @@ using the scripts. Keep new automation under `scripts/` or `bench/` so the gate
 includes it automatically. Use concrete input types and validate external JSON
 before treating it as a typed record.
 
+`npm run check:contracts` checks the v5 contract fixtures, including public prop
+parity and negative `@ts-expect-error` cases. Unit CI runs it before Vitest,
+which executes tests without checking their TypeScript types. Add public API
+type fixtures under `test/v5-contract/` so this gate includes them automatically.
+
 Use `.ts` for repository scripts, `.mts` for ESM generators and fixtures, and
 `.cts` for CommonJS consumer fixtures. Package and React 16 checks compile
 fixtures to JavaScript inside their scratch installations; peer imports resolve
