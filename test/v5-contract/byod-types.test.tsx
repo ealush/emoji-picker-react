@@ -39,7 +39,10 @@ const textarea = <Picker.SearchInput as="textarea" />;
 const invented = <Picker.SearchInput variant="quiet" />;
 const root = (
   // @ts-expect-error Managed markup cannot be replaced.
-  <Picker.Root dangerouslySetInnerHTML={{ __html: '' }}>content</Picker.Root>
+  <Picker.Root dangerouslySetInnerHTML={{ __html: '' }}>
+    <Picker.Reactions />
+    <Picker.Panel>content</Picker.Panel>
+  </Picker.Root>
 );
 const viewport = (
   // @ts-expect-error Managed markup cannot be replaced.
@@ -67,7 +70,8 @@ describe('BYOD input type contract', () => {
   it('forwards a design-library input ref to its native input', () => {
     render(
       <Picker.Root emojiData={{ categories: {}, emojis: {} }}>
-        {custom}
+        <Picker.Reactions />
+        <Picker.Panel>{custom}</Picker.Panel>
       </Picker.Root>,
     );
     expect(ref.current).toBe(screen.getByRole('textbox'));
@@ -104,7 +108,10 @@ const reactionChildren = (
 const invalidSlots: Picker.PickerComponents = { Item: () => <button /> };
 const invalidAppearance = (
   // @ts-expect-error Appearance is a closed contract.
-  <Picker.Root appearance="unstyled">content</Picker.Root>
+  <Picker.Root appearance="unstyled">
+    <Picker.Reactions />
+    <Picker.Panel>content</Picker.Panel>
+  </Picker.Root>
 );
 void explicit;
 void hiddenPanel;

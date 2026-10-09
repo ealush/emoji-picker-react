@@ -6,16 +6,17 @@ import './composed.css';
 type Props = { onPick: (message: string) => void };
 
 // A design-system input: forwards its ref and native props to one <input>.
-const Field = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
-  function Field(props, ref) {
-    return (
-      <span className="field">
-        <span aria-hidden>🔎</span>
-        <input ref={ref} {...props} />
-      </span>
-    );
-  },
-);
+const Field = forwardRef<
+  HTMLInputElement,
+  InputHTMLAttributes<HTMLInputElement>
+>(function Field(props, ref) {
+  return (
+    <span className="field">
+      <span aria-hidden>🔎</span>
+      <input ref={ref} {...props} />
+    </span>
+  );
+});
 
 // Replacements for the managed controls. Each spreads every managed prop
 // (behavior, ARIA, measured geometry) onto one native element. Defined at
@@ -110,7 +111,6 @@ export function Composed({ onPick }: Props) {
         className="card"
         columns={8}
         components={components}
-        skinTonePickerLocation={Picker.SkinTonePickerLocation.NONE}
         emojiData={french ? loadFrench : undefined}
         labels={
           french
@@ -122,23 +122,28 @@ export function Composed({ onPick }: Props) {
             : undefined
         }
         onEmojiClick={(data) =>
-          onPick(`${data.emoji}  ${data.names[data.names.length - 1]}  (${data.unified})`)
+          onPick(
+            `${data.emoji}  ${data.names[data.names.length - 1]}  (${data.unified})`,
+          )
         }
       >
-        <div className="card-header">
-          <Picker.SearchInput as={Field} />
-          <Picker.SkinTone />
-        </div>
-        <Picker.CategoryNav className="tabs" />
-        <Picker.Viewport>
-          <Picker.List />
-          <Picker.Empty className="notice">
-            {({ search }) => <>Nothing matches “{search}”</>}
-          </Picker.Empty>
-          <Picker.Loading className="notice" />
-          <Picker.LoadError className="notice" />
-        </Picker.Viewport>
-        <Toolbar />
+        <Picker.Reactions />
+        <Picker.Panel>
+          <div className="card-header">
+            <Picker.SearchInput as={Field} />
+            <Picker.SkinTone />
+          </div>
+          <Picker.CategoryNav className="tabs" />
+          <Picker.Viewport>
+            <Picker.List />
+            <Picker.Empty className="notice">
+              {({ search }) => <>Nothing matches “{search}”</>}
+            </Picker.Empty>
+            <Picker.Loading className="notice" />
+            <Picker.LoadError className="notice" />
+          </Picker.Viewport>
+          <Toolbar />
+        </Picker.Panel>
       </Picker.Root>
     </div>
   );
