@@ -27,7 +27,7 @@ export function NativeEmoji({
         styles.nativeEmoji,
         className,
       )}
-      data-unified={unified}
+      data-epr-unified={unified}
       style={style}
     >
       {parseNativeEmoji(unified)}
@@ -35,18 +35,20 @@ export function NativeEmoji({
   );
 }
 
-const styles = stylesheet.create({
-  nativeEmoji: {
-    '.': 'epr-emoji-native',
-    // Rendering and support detection share the consumer token and fallback.
-    fontFamily: `var(--epr-emoji-font-family, ${DEFAULT_NATIVE_EMOJI_FONT})!important`,
-    position: 'relative',
-    lineHeight: '100%',
-    fontSize: 'var(--epr-emoji-size)',
-    textAlign: 'center',
-    alignSelf: 'center',
-    justifySelf: 'center',
-    letterSpacing: '0',
-    padding: 'var(--epr-emoji-padding)',
-  },
-});
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
+    nativeEmoji: {
+      '.': 'epr-emoji-native',
+      // Overridable (e.g. with a country-flag polyfill font); native support
+      // detection probes the same variable.
+      fontFamily: `var(--epr-emoji-font-family, ${DEFAULT_NATIVE_EMOJI_FONT})!important`,
+      position: 'relative',
+      lineHeight: '100%',
+      fontSize: 'var(--epr-emoji-size)',
+      textAlign: 'center',
+      alignSelf: 'center',
+      justifySelf: 'center',
+      letterSpacing: '0',
+      padding: 'var(--epr-emoji-padding)',
+    },
+  }))();

@@ -13,6 +13,7 @@ const sources = [
   'INTERNATIONALIZATION.md',
   'CSS_VARIABLES.md',
   'docs/v5/DATA_API.md',
+  'docs/v5/PRIMITIVES.md',
 ];
 
 const parts = [

@@ -1,10 +1,7 @@
 import * as React from 'react';
 
 import { scrollTo } from '../DomUtils/scrollTo';
-import {
-  usePickerMainRef,
-  useSearchInputRef,
-} from '../components/context/ElementRefContext';
+import { usePickerMainRef } from '../components/context/ElementRefContext';
 import {
   FilterState,
   useFilterQueryOrderRef,
@@ -13,12 +10,9 @@ import {
   useSearchTermState,
 } from '../components/context/PickerContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
-import { useLabels, formatSearchResultsLabel } from '../config/useConfig';
 import { normalizeQuery } from '../data-core/prepare';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiNames } from '../dataUtils/emojiUtils';
-
-import { useVisibleSearchResultCount } from './useSearchResults';
 
 /**
  * Bound on cached per-query filter dicts per Root. Dicts are cheaply
@@ -49,23 +43,12 @@ function useSetFilterRef() {
 }
 
 export function useFilter() {
-  const SearchInputRef = useSearchInputRef();
   const filterRef = useFilterRef();
   const setFilterRef = useSetFilterRef();
   const applySearch = useApplySearch();
   const { queryFilterDict } = usePickerDataContext();
-  const labels = useLabels();
-
-  const [searchTerm] = useSearchTermState();
-  const resultCount = useVisibleSearchResultCount();
-
-  return {
-    onChange,
-    searchTerm,
-    SearchInputRef,
-    statusSearchResults:
-      resultCount === null ? '' : formatSearchResultsLabel(labels, resultCount),
-  };
+  // Managed SearchInput owns announcements; this hook only applies filters.
+  return { onChange };
 
   function onChange(inputValue: string) {
     const filter = filterRef.current;
@@ -85,15 +68,6 @@ export function useFilter() {
     setFilterRef(nextValue, queryFilterDict(nextValue));
     applySearch(nextValue);
   }
-}
-
-export function useClearSearch() {
-  const SearchInputRef = useSearchInputRef();
-  const { onChange } = useFilter();
-  return function clearSearch() {
-    if (SearchInputRef.current) SearchInputRef.current.value = '';
-    onChange('');
-  };
 }
 
 function hasOwnQuery(filter: FilterState, query: string): boolean {

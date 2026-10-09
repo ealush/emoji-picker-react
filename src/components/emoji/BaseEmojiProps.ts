@@ -6,7 +6,8 @@ export type BaseEmojiProps = {
   emoji?: DataEmoji | CustomEmoji;
   emojiStyle: EmojiStyleValue;
   unified: string;
-  size?: number;
+  /** Pixels, or any CSS length (e.g. a `var(--epr-*)` token). */
+  size?: number | string;
   lazyLoad?: boolean;
   getEmojiUrl?: GetEmojiUrl;
   className?: string;

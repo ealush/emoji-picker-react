@@ -137,3 +137,11 @@ These functions work without React and return immutable normalized records.
 Pass `{ emojiData }` to search or look up names in a supplied locale dataset.
 Search results follow dataset order and do not apply picker-specific display
 filters or custom emojis. See the [data API contract](docs/v5/DATA_API.md).
+
+## Compose your own picker
+
+Import managed parts and state/action hooks from `emoji-picker-react/primitives`.
+`Root` renders exactly the parts you supply: omit a part to omit its UI, and
+place `SkinTone` explicitly wherever it belongs. See the
+[primitives guide](docs/v5/PRIMITIVES.md) for working composition, styling,
+controlled-state and default-picker compatibility rules.

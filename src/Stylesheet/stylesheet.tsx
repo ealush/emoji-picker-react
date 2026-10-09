@@ -22,17 +22,28 @@ export const commonStyles = stylesheet.create({
 
 export const PickerStyleTag = React.memo(function PickerStyleTag({
   nonce,
+  cssLayer,
 }: {
   nonce?: string;
+  cssLayer?: string;
 }) {
   return (
     <style
       nonce={nonce}
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: stylesheet.getStyle() }}
+      dangerouslySetInnerHTML={{
+        __html: finalizeCss(stylesheet.getStyle(), cssLayer),
+      }}
     />
   );
 });
+
+export function finalizeCss(css: string, cssLayer?: string): string {
+  if (!cssLayer || !/^[\w.-]+$/.test(cssLayer)) {
+    return css;
+  }
+  return `@layer ${cssLayer}{${css}}`;
+}
 
 export const commonInteractionStyles = stylesheet.create({
   '.epr-main': {

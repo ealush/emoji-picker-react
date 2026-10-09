@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { elementBorderBoxHeight } from '../../DomUtils/selectors';
 import {
   categoryFromCategoryConfig,
   customGroupFromCategoryConfig,
@@ -31,7 +32,12 @@ export function MeasureEmoji() {
 
   useIsomorphicLayoutEffect(() => {
     if (ref.current) {
-      setEmojiSize(ref.current.clientHeight);
+      // Measure the button itself: the wrapper collapses to zero height
+      // because its only child is absolutely positioned, which would
+      // report 0 forever and keep this measurer mounted (STATE.md §10
+      // invalidation and stray-node costs on every render).
+      const button = ref.current.querySelector('button');
+      setEmojiSize(elementBorderBoxHeight(button) || ref.current.clientHeight);
     }
   });
 
@@ -53,7 +59,7 @@ export function MeasureEmoji() {
   }
 
   return (
-    <div ref={ref}>
+    <div ref={ref} aria-hidden="true">
       <ClickableEmoji
         emoji={dummyEmoji}
         unified={unified}
@@ -62,6 +68,7 @@ export function MeasureEmoji() {
         lazyLoad={lazyLoadEmojis}
         showVariations={false}
         hidden={false}
+        tabIndex={-1}
         style={{
           opacity: 0,
           pointerEvents: 'none',

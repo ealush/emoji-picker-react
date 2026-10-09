@@ -1,9 +1,9 @@
-import * as React from 'react';
-
 // The batteries-included entry promises synchronous access to the English
 // dataset. The primitives entry intentionally leaves this unregistered so
 // compositions can load it on demand.
 import './data/registerDefaultEmojiData';
+
+import * as React from 'react';
 
 import EmojiPickerReact from './EmojiPickerReact';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -20,12 +20,11 @@ export {
   SkinTones,
   Theme,
   Categories,
-  EmojiClickData,
   SuggestionMode,
   SkinTonePickerLocation,
-  CategoryIcons,
-  CategoryConfig,
 } from './types/exposedTypes';
+
+export type { EmojiClickData, CategoryIcons, CategoryConfig } from './types/exposedTypes';
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 

@@ -12,6 +12,7 @@
  */
 
 import { expect, test } from '@playwright/test';
+import { categoryLabel } from './helpers/categoryLabel';
 
 /** Constructs a Storybook iframe URL for a given story ID */
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
@@ -52,7 +53,7 @@ test.describe('Advanced Interactions', () => {
 
     // Verify Animals & Nature header is visible (category was selected)
     await expect(
-      page.getByRole('heading', { name: 'Animals & Nature' }),
+      categoryLabel(page, 'Animals & Nature'),
     ).toBeVisible();
   });
 

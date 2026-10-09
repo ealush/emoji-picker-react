@@ -27,6 +27,8 @@ import {
 } from 'node:fs';
 import { join } from 'node:path';
 
+import { minify } from 'terser';
+
 import { bundleDeclarations } from './bundleDeclarations.js';
 
 const repoRoot = join(__dirname, '..');
@@ -45,9 +47,9 @@ const EXTERNALS = [
   '--external:shipstyles',
 ];
 
-const COMMON = [...EXTERNALS, '--bundle', '--loader:.svg=dataurl', '--log-level=warning'];
+const COMMON = [...EXTERNALS, '--bundle', '--log-level=warning'];
 
-function buildCjs(src: string, outfile: string) {
+async function buildCjs(src: string, outfile: string) {
   sh(bin('esbuild'), [
     join(repoRoot, src),
     ...COMMON,
@@ -55,16 +57,28 @@ function buildCjs(src: string, outfile: string) {
     // Ship optimized production CJS without changing public property names.
     '--minify',
     '--platform=node',
-    // Preserve the current runtime syntax target; primitives packaging follows.
+    // Preserve the existing syntax target until the v5 migration commit.
     '--target=es2019',
     `--outfile=${join(repoRoot, outfile)}`,
   ]);
+  // CommonJS top-level bindings are private to this module. Compress them
+  // without property mangling, unsafe transforms or environment substitution.
+  const result = await minify(readFileSync(join(repoRoot, outfile), 'utf8'), {
+    ecma: 2019,
+    toplevel: true,
+    compress: { passes: 3 },
+    mangle: true,
+    format: { comments: false },
+  });
+  if (!result.code) throw new Error(`Empty CommonJS output: ${outfile}`);
+  writeFileSync(join(repoRoot, outfile), result.code + '\n');
 }
 
 function buildEsm() {
   rmSync(join(repoRoot, 'dist', 'esm'), { recursive: true, force: true });
   sh(bin('esbuild'), [
     join(repoRoot, 'src/index.tsx'),
+    join(repoRoot, 'src/primitives/index.ts'),
     join(repoRoot, 'src/data.ts'),
     ...COMMON,
     '--splitting',
@@ -86,6 +100,7 @@ async function buildDeclarations() {
   ]);
   const entries = [
     ['index.d.ts', 'index.d.mts'],
+    [join('primitives', 'index.d.ts'), join('primitives', 'index.d.mts')],
     ['data.d.ts', 'data.d.mts'],
   ];
   for (const [dts, dmts] of entries) {
@@ -107,6 +122,8 @@ function markClientEntries() {
   for (const file of [
     'dist/index.js',
     'dist/esm/index.mjs',
+    'dist/primitives/index.js',
+    'dist/esm/primitives/index.mjs',
   ]) {
     const path = join(repoRoot, file);
     const content = readFileSync(path, 'utf8');
@@ -121,8 +138,9 @@ async function main() {
     throw new Error('esbuild not found; run npm install first.');
   }
   buildEsm();
-  buildCjs('src/index.tsx', 'dist/index.js');
-  buildCjs('src/data.ts', 'dist/data/index.js');
+  await buildCjs('src/index.tsx', 'dist/index.js');
+  await buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
+  await buildCjs('src/data.ts', 'dist/data/index.js');
   markClientEntries();
   await buildDeclarations();
   console.log(
