@@ -55,6 +55,10 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt
+      - run: npm run recipes
+      - run: npm run registry
+      - run: npm run designs
+      - run: git diff --exit-code -- website/src/components/designs website/src/styles/designs website/public/recipes website/public/designs website/public/r stories/recipes docs/designs README.md
 
   # Real-consumer visual integrations: drives every runnable fixture in
   # stories/consumers/ through open/search/select flows and compares the

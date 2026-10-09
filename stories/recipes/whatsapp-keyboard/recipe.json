@@ -1,0 +1,8 @@
+{
+  "title": "Examples/WhatsApp keyboard panel",
+  "name": "WhatsAppKeyboard",
+  "rootClass": "wa-picker",
+  "root": "Picker.Root",
+  "description": "A full-width, short WhatsApp keyboard panel whose grid reflows its columns.",
+  "order": 24
+}

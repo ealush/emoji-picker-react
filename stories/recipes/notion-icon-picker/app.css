@@ -1,0 +1,46 @@
+/* The surrounding mock app (shared by every stack variant). */
+.notion-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 0;
+  border-bottom: 1px solid rgb(55 53 47 / 9%);
+  font-size: 14px;
+}
+.notion-tabs button {
+  padding: 6px 8px 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: rgb(55 53 47 / 82%);
+  font: inherit;
+}
+.notion-tabs button[aria-pressed='true'] {
+  border-color: #37352f;
+  color: #37352f;
+}
+.notion-tabs .notion-remove {
+  margin-left: auto;
+}
+.notion-search-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px 4px;
+}
+.notion-search-row [data-epr-part='search'] {
+  flex: 1;
+}
+.notion-search-row [data-epr-part='search'] > * {
+  padding: 0;
+}
+.notion-random {
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid rgb(55 53 47 / 16%);
+  border-radius: 6px;
+  background: #fff;
+  color: #37352f;
+  font: inherit;
+  font-size: 14px;
+}

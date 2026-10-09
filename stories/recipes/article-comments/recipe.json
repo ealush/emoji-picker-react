@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Article comments",
+  "name": "ArticleComments",
+  "rootClass": "comments-picker",
+  "root": "EmojiPicker",
+  "description": "Reaction count chips plus a compact reactions bar that expands to the full picker.",
+  "order": 2
+}

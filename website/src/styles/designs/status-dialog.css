@@ -1,0 +1,110 @@
+/* Generated from stories/recipes/status-dialog by scripts/portDesigns.mts. */
+/* The host app around the picker (shared by every stack variant). */
+.status-backdrop {
+  display: grid;
+  place-items: center;
+  width: 560px;
+  height: 600px;
+  background: rgb(15 23 42 / 55%);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.status-dialog {
+  width: 440px;
+  padding: 22px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px rgb(15 23 42 / 35%);
+  color: #0f172a;
+}
+.status-title {
+  margin: 0 0 14px;
+  font-size: 18px;
+}
+.status-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+}
+.status-current {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  font-size: 20px;
+}
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  color: #334155;
+  font-size: 14px;
+}
+.status-select {
+  font-weight: 600;
+}
+.status-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+.status-actions button {
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font: inherit;
+  font-weight: 600;
+}
+.status-actions .status-save {
+  border-color: #0f172a;
+  background: #0f172a;
+  color: #ffffff;
+}
+
+/* Set a status — the picker as an inline form section: no tabs, no
+   preview, a bordered well under the status field. */
+.status-picker {
+  --epr-bg-color: #f8fafc;
+  --epr-text-color: #475569;
+  --epr-highlight-color: #0f172a;
+  --epr-hover-bg-color: #e2e8f0;
+  --epr-focus-bg-color: #cbd5e1;
+  --epr-search-input-bg-color: #ffffff;
+  --epr-search-input-bg-color-active: #ffffff;
+  --epr-search-border-color: #cbd5e1;
+  --epr-search-border-color-active: #0f172a;
+  --epr-search-input-height: 34px;
+  --epr-search-input-border-radius: 8px;
+  --epr-search-input-text-color: #0f172a;
+  --epr-search-input-placeholder-color: #64748b;
+  --epr-category-label-bg-color: #f8fafcf2;
+  --epr-category-label-text-color: #475569;
+  --epr-category-label-height: 28px;
+  --epr-emoji-size: 24px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 10px;
+  height: 250px;
+  margin-top: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: var(--epr-bg-color);
+}
+.status-picker [data-epr-part='search'] > * {
+  padding: 10px 10px 4px;
+}
+.status-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+.status-picker [data-epr-part='emoji'] {
+  border-radius: 6px;
+}

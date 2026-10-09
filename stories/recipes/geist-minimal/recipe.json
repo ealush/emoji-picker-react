@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Geist minimal",
+  "name": "GeistMinimal",
+  "rootClass": "geist-picker",
+  "root": "Picker.Root",
+  "description": "A minimal Geist look: default light tokens with a few CSS adjustments.",
+  "order": 20
+}

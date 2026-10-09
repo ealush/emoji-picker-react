@@ -1,0 +1,89 @@
+/* Generated from stories/recipes/video-call-reactions by scripts/portDesigns.mts. */
+/* The host app around the picker (shared by every stack variant). */
+.call-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 680px;
+  height: 460px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #111214;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.call-grid {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.call-tile {
+  position: relative;
+  border-radius: 12px;
+}
+.call-tile-a {
+  background: linear-gradient(140deg, #334155, #0f172a);
+}
+.call-tile-b {
+  background: linear-gradient(140deg, #3f3f46, #18181b);
+}
+.call-name {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgb(0 0 0 / 60%);
+  color: #ffffff;
+  font-size: 12px;
+}
+.call-reactions {
+  position: absolute;
+  bottom: 84px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.call-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 14px;
+}
+.call-controls button {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #2b2d31;
+  color: #ffffff;
+  font-size: 18px;
+}
+.call-controls .call-active {
+  background: #3b82f6;
+}
+.call-controls .call-leave {
+  width: auto;
+  padding: 0 18px;
+  border-radius: 22px;
+  background: #dc2626;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Video call reactions — a translucent dark pill floating over video;
+   the expanded picker keeps the dark color scheme. */
+.call-picker {
+  --epr-reactions-bg-color: rgb(32 33 36 / 82%);
+  --epr-picker-border-color: rgb(255 255 255 / 14%);
+  --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 16%);
+  --epr-emoji-size: 32px;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 45%);
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.call-picker [data-epr-part='reactions'] {
+  gap: 2px;
+  padding: 0 8px;
+}
+.call-picker [data-epr-part='expand-reactions'] {
+  background-color: rgb(255 255 255 / 12%);
+}

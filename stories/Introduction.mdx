@@ -1,0 +1,57 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# emoji-picker-react
+
+**Batteries included. Or bring your own design.** One emoji-picker engine
+with three ways to use it; every story in this Storybook is one of them.
+
+| You want | Use | Stories |
+| --- | --- | --- |
+| A complete picker now | `<EmojiPicker />` | **Picker/** (every prop), **Paths/Batteries included** |
+| Your own design on the supplied layout | `<EmojiPicker unstyled />` | **Paths/Unstyled** |
+| Your own layout and components | `emoji-picker-react/primitives` | **Paths/Composed**, **V5/Design library**, **v5/Primitives** |
+| A styling stack | Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI, plain CSS | **Integrations/** |
+| A product design to copy | 25 recipes × 7 styling stacks | **Recipes/** and **Examples/** |
+
+## The one styling rule
+
+Color variables (`--epr-bg-color`, `--epr-highlight-color`, …) theme the
+*built-in look*. `unstyled` and a bare primitives `Root` remove the built-in
+look, so color variables do nothing there and you style the stable
+`[data-epr-part]` selectors directly. Size variables apply in every mode.
+`Root appearance="default"` brings the built-in look into a composition.
+
+```tsx
+// Theme
+<EmojiPicker colorScheme="auto" className="my-picker" />
+
+// Unstyled: your CSS on [data-epr-part] selectors
+<EmojiPicker unstyled className="my-picker" />
+
+// Composed: your layout, your components
+import * as Picker from 'emoji-picker-react/primitives';
+<Picker.Root columns={8} style={{ height: 400 }} components={{ Emoji: MyCell }}>
+  <Picker.SearchInput as={MyInput} />
+  <Picker.CategoryNav />
+  <Picker.Viewport><Picker.List /><Picker.Empty /><Picker.Loading /><Picker.LoadError /></Picker.Viewport>
+  <Picker.Preview />
+</Picker.Root>
+```
+
+## Where to read more
+
+- [README](https://github.com/ealush/emoji-picker-react#readme) and
+  [Props](https://github.com/ealush/emoji-picker-react/blob/master/PROPS.md)
+- [Styling recipes by library](https://github.com/ealush/emoji-picker-react/blob/master/docs/v5/STYLING_RECIPES.md)
+- [Primitives contract](https://github.com/ealush/emoji-picker-react/blob/master/docs/v5/PRIMITIVES.md)
+- [Migrating from v4](https://github.com/ealush/emoji-picker-react/blob/master/docs/v5/MIGRATION.md)
+- For coding agents: the package ships `llms.txt` and `llms-full.txt`
+
+## How these stories are tested
+
+Stories tagged `visual` are screenshot baselines; `recipe` and `integration`
+stories are compared across styling stacks and checked with axe and
+keyboard navigation; `playwright/adoption-behavior.spec.ts` drives the
+host-integration stories in Chromium, Firefox and WebKit.

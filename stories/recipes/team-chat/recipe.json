@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Team chat composer",
+  "name": "TeamChat",
+  "rootClass": "chat-picker",
+  "root": "Picker.Root",
+  "description": "A popover above a chat composer: search with skin tone, tabs, grid and a slim preview.",
+  "order": 1
+}

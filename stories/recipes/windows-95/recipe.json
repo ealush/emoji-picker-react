@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Windows 95",
+  "name": "Windows95",
+  "rootClass": "w95-picker",
+  "root": "Picker.Root",
+  "description": "Windows 95, with custom markup for every emoji cell and section header.",
+  "order": 25
+}

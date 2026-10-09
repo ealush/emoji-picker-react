@@ -1,0 +1,88 @@
+/* Doc editor insert panel — wide and side by side: vertical rail, grid
+   column and a details pane. */
+.editor-picker {
+  --epr-bg-color: #ffffff;
+  --epr-text-color: #4b5563;
+  --epr-highlight-color: #4338ca;
+  --epr-hover-bg-color: #eef2ff;
+  --epr-focus-bg-color: #e0e7ff;
+  --epr-search-input-bg-color: #f3f4f6;
+  --epr-search-input-bg-color-active: #ffffff;
+  --epr-search-border-color: transparent;
+  --epr-search-border-color-active: #4338ca;
+  --epr-search-input-height: 32px;
+  --epr-search-input-border-radius: 8px;
+  --epr-search-input-text-color: #111827;
+  --epr-search-input-placeholder-color: #6b7280;
+  --epr-category-label-bg-color: #fffffff2;
+  --epr-category-label-text-color: #4b5563;
+  --epr-category-label-height: 28px;
+  --epr-category-icon-active-color: #4338ca;
+  --epr-category-icon-inactive-color: #6b7280;
+  --epr-category-navigation-button-size: 20px;
+  --epr-emoji-size: 24px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 10px;
+  width: 520px;
+  height: 330px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.editor-picker .editor-columns {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.editor-picker [data-epr-part='category-nav'] {
+  border-right: 1px solid #f3f4f6;
+  background: #f9fafb;
+}
+.editor-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  border-radius: 6px;
+  background-color: #e0e7ff;
+}
+.editor-picker .editor-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.editor-picker [data-epr-part='search'] > * {
+  padding: 10px 10px 4px;
+}
+.editor-picker [data-epr-part='category-label'] {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+}
+.editor-picker [data-epr-part='emoji'] {
+  border-radius: 6px;
+}
+.editor-picker .editor-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 140px;
+  padding: 12px;
+  border-left: 1px solid #f3f4f6;
+  text-align: center;
+}
+.editor-picker .editor-details-glyph {
+  font-size: 48px;
+  line-height: 1;
+}
+.editor-picker .editor-details-name {
+  color: #111827;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.editor-picker .editor-details-code {
+  color: #4b5563;
+  font-size: 11px;
+  word-break: break-all;
+}

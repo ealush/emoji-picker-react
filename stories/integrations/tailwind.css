@@ -1,0 +1,22 @@
+/* Declare the picker's layer first so Tailwind utilities override it. */
+@layer epr, theme, base, components, utilities;
+
+/* Theme + utilities only (no preflight), scanning just these stories. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+@source './Tailwind.stories.tsx';
+@source './Shadcn.stories.tsx';
+@source '../recipes';
+
+@source '../../registry';
+
+@theme inline {
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-accent: var(--accent);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+}

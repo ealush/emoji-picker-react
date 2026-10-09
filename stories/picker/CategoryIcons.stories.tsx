@@ -1,14 +1,14 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
 import EmojiPicker, { Categories, CategoryConfig, Theme } from '../../src';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/CategoryIcons',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
     actions: { argTypesRegex: null }, // Disable actions to prevent serialization issues
   },
   argTypes: {
@@ -156,9 +156,6 @@ export const ImageCategoryIcons = () => {
 };
 
 // Set visual test delays
-const storyParameters = {
-  visualTestDelay: 1500,
-};
 
 /**
  * Demonstrates recoloring the default navigation icons with CSS variables.
@@ -220,10 +217,3 @@ export const ThemedDarkIcons = () => {
   );
 };
 
-CategoryIconsProp.parameters = storyParameters;
-CategoryConfigIcon.parameters = storyParameters;
-IconPrecedence.parameters = storyParameters;
-ImageCategoryIcons.parameters = storyParameters;
-ThemedIconColors.parameters = storyParameters;
-MonochromeIcons.parameters = storyParameters;
-ThemedDarkIcons.parameters = storyParameters;

@@ -1,0 +1,8 @@
+{
+  "title": "Examples/iOS bottom sheet",
+  "name": "IosBottomSheet",
+  "rootClass": "ios-sheet",
+  "root": "Picker.Root",
+  "description": "A narrow, touch-first iOS bottom sheet without search.",
+  "order": 23
+}

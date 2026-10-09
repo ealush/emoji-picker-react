@@ -1,0 +1,58 @@
+/* The host app around the picker (shared by every stack variant). */
+.forum-thread {
+  line-height: 1.4;
+  width: 540px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #f4f4f5;
+  color: #18181b;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.forum-post {
+  padding: 16px 18px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.forum-post h2 {
+  margin: 8px 0 4px;
+  font-size: 17px;
+}
+.forum-tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 600;
+}
+.forum-byline {
+  margin: 0;
+  color: #52525b;
+  font-size: 13px;
+}
+.forum-reply {
+  margin-top: 12px;
+  padding: 14px 16px 16px;
+  border: 1px solid #e4e4e7;
+  border-radius: 12px;
+  background: #ffffff;
+}
+.forum-reply-label {
+  color: #3f3f46;
+  font-size: 13px;
+  font-weight: 600;
+}
+.forum-editor {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  resize: none;
+  color: inherit;
+  font: inherit;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid #d4d4d8;
+  border-radius: 8px;
+  font-size: 14px;
+}

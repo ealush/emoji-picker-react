@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Linear command palette",
+  "name": "LinearPalette",
+  "rootClass": "linear-picker",
+  "root": "Picker.Root",
+  "description": "A Linear command palette: search and grid only, no tabs and no preview.",
+  "order": 17
+}

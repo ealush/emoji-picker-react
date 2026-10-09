@@ -1,0 +1,71 @@
+/* Generated from stories/recipes/x-composer by scripts/portDesigns.mts. */
+/* The surrounding mock app (shared by every stack variant). */
+.x-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 6px;
+}
+.x-header [data-epr-part='search'] {
+  flex: 1;
+}
+.x-header [data-epr-part='search'] > * {
+  padding: 0;
+}
+
+/* X — post composer popover: pure black, hairline borders, pill search,
+   the skin tone control next to the search field. */
+/* Picker styles — the source of truth for every stack variant. */
+.x-picker {
+  --epr-bg-color: #000000;
+  --epr-text-color: #e7e9ea;
+  --epr-highlight-color: #1d9bf0;
+  --epr-hover-bg-color: rgb(29 155 240 / 10%);
+  --epr-focus-bg-color: rgb(29 155 240 / 18%);
+  --epr-search-input-bg-color: #000000;
+  --epr-search-input-bg-color-active: #000000;
+  --epr-search-border-color: #2f3336;
+  --epr-search-border-color-active: #1d9bf0;
+  --epr-search-input-height: 40px;
+  --epr-search-input-border-radius: 9999px;
+  --epr-search-input-padding: 0 16px 0 40px;
+  --epr-search-input-text-color: #e7e9ea;
+  --epr-search-input-placeholder-color: #71767b;
+  --epr-category-label-bg-color: rgb(0 0 0 / 85%);
+  --epr-category-label-text-color: #e7e9ea;
+  --epr-category-label-height: 36px;
+  --epr-category-icon-active-color: #1d9bf0;
+  --epr-category-icon-inactive-color: #71767b;
+  --epr-category-navigation-button-size: 22px;
+  --epr-skin-tone-picker-menu-color: rgb(0 0 0 / 90%);
+  --epr-emoji-variation-picker-bg-color: #16181c;
+  --epr-emoji-size: 28px;
+  --epr-emoji-padding: 5px;
+  --epr-horizontal-padding: 14px;
+  width: 360px;
+  height: 420px;
+  border-radius: 16px;
+  background: #000;
+  box-shadow:
+    rgb(255 255 255 / 20%) 0 0 15px,
+    rgb(255 255 255 / 15%) 0 0 3px 1px;
+  font-family: 'TwitterChirp', -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+}
+.x-picker [data-epr-part='category-nav'] {
+  border-bottom: 1px solid #2f3336;
+}
+.x-picker [data-epr-part='category-nav'] > * {
+  padding: 8px 12px;
+}
+.x-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  box-shadow: 0 13px 0 -10px #1d9bf0;
+}
+.x-picker [data-epr-part='category-label'] {
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: none;
+}
+.x-picker [data-epr-part='emoji'] {
+  border-radius: 50%;
+}

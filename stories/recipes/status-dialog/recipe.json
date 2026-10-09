@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Set a status dialog",
+  "name": "StatusDialog",
+  "rootClass": "status-picker",
+  "root": "Picker.Root",
+  "description": "An inline form section with status-friendly suggestions and renamed categories.",
+  "order": 5
+}

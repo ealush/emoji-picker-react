@@ -1,0 +1,74 @@
+/* The host app around the picker (shared by every stack variant). */
+.comments-card {
+  width: 520px;
+  min-height: 330px;
+  padding: 22px 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+.comments-title {
+  margin: 0 0 16px;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 15px;
+}
+.comments-item {
+  display: flex;
+  gap: 12px;
+}
+.comments-avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 50%;
+  background: #0f766e;
+  color: #ffffff;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+}
+.comments-body p {
+  margin: 0 0 8px;
+  font-size: 16px;
+  line-height: 1.55;
+}
+.comments-body .comments-meta {
+  color: #4b5563;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 13px;
+}
+.comments-meta strong {
+  color: #111827;
+}
+.comments-reactions {
+  display: flex;
+  gap: 6px;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.comments-chip {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  background: #f9fafb;
+  color: #374151;
+  font: inherit;
+  font-size: 13px;
+}
+.comments-chip[aria-pressed='true'] {
+  border-color: #99f6e4;
+  background: #f0fdfa;
+  color: #115e59;
+}
+.comments-add {
+  width: 34px;
+  padding: 0;
+  border-style: dashed;
+}
+.comments-popover {
+  margin-top: 8px;
+}

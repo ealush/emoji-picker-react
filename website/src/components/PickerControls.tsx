@@ -2,11 +2,15 @@ import styles from "@/styles/PickerControls.module.css";
 import {
   Categories,
   EmojiStyle,
+  type EmojiStyleValue,
   PickerProps,
   SkinTonePickerLocation,
   SkinTones,
+  type SkinTonesValue,
   SuggestionMode,
+  type SuggestionModeValue,
   Theme,
+  type ThemeValue,
 } from "emoji-picker-react";
 import * as React from "react";
 import emojiDataBn from "emoji-picker-react/dist/data/emojis-bn.json";
@@ -339,8 +343,8 @@ function SelectEmojiStyle({
   emojiStyle,
   setEmojiStyle,
 }: {
-  emojiStyle?: EmojiStyle;
-  setEmojiStyle: (emojiStyle: EmojiStyle) => void;
+  emojiStyle?: EmojiStyleValue;
+  setEmojiStyle: (emojiStyle: EmojiStyleValue) => void;
 }) {
   return (
     <Label text="Emoji Style">
@@ -362,8 +366,8 @@ function SelectTheme({
   theme,
   setTheme,
 }: {
-  theme?: Theme;
-  setTheme: (theme: Theme) => void;
+  theme?: ThemeValue;
+  setTheme: (theme: ThemeValue) => void;
 }) {
   return (
     <Label text="Theme">
@@ -380,8 +384,8 @@ function SelectSuggestionMode({
   suggestionMode,
   setSuggestionMode,
 }: {
-  suggestionMode?: SuggestionMode;
-  setSuggestionMode: (suggestionMode: SuggestionMode) => void;
+  suggestionMode?: SuggestionModeValue;
+  setSuggestionMode: (suggestionMode: SuggestionModeValue) => void;
 }) {
   return (
     <Label text="Suggestions">
@@ -518,8 +522,8 @@ function SelectDefaultSkinTone({
   defaultSkinTone,
   setDefaultSkinTone,
 }: {
-  defaultSkinTone?: SkinTones;
-  setDefaultSkinTone: (defaultSkinTone: SkinTones) => void;
+  defaultSkinTone?: SkinTonesValue;
+  setDefaultSkinTone: (defaultSkinTone: SkinTonesValue) => void;
 }) {
   return (
     <Label text="Default Skin Tone">

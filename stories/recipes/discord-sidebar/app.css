@@ -1,0 +1,21 @@
+/* The surrounding mock app (shared by every stack variant). */
+.discord-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.discord-rail {
+  width: 48px;
+  flex: none;
+  background: #232428;
+  overflow-y: auto;
+}
+.discord-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.discord-main [data-epr-part='search'] > * {
+  padding: 10px 10px 6px;
+}

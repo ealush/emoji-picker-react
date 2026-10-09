@@ -1,0 +1,54 @@
+/* The host app around the picker (shared by every stack variant). */
+.editor-window {
+  width: 680px;
+  height: 520px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1f2937;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+.editor-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+.editor-toolbar button {
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #374151;
+  font: inherit;
+  font-size: 13px;
+}
+.editor-toolbar .editor-insert {
+  margin-left: auto;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+}
+.editor-page {
+  position: relative;
+  padding: 28px 48px;
+}
+.editor-page h1 {
+  margin: 0 0 12px;
+  font-size: 24px;
+}
+.editor-page p {
+  margin: 0;
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.editor-menu {
+  position: absolute;
+  top: 4px;
+  right: 12px;
+  filter: drop-shadow(0 16px 32px rgb(31 41 55 / 18%));
+}

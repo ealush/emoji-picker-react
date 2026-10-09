@@ -5,6 +5,8 @@ const baseURL = process.env.STORYBOOK_URL ?? 'http://127.0.0.1:6006';
 
 export default defineConfig({
   testDir: 'playwright',
+  outputDir: 'test-results/visual',
+  testIgnore: ['touch-behavior.spec.ts'],
   timeout: 60000,
   retries: process.env.CI ? 2 : 0,
   // Use platform-agnostic snapshot names (without -darwin/-linux suffix)
@@ -30,6 +32,6 @@ export default defineConfig({
         command: 'npm run storybook',
         url: baseURL,
         reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
+        timeout: 5 * 60 * 1000,
       },
 });

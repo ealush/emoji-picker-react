@@ -1,0 +1,13 @@
+/* The surrounding mock app (shared by every stack variant). */
+.x-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px 6px;
+}
+.x-header [data-epr-part='search'] {
+  flex: 1;
+}
+.x-header [data-epr-part='search'] > * {
+  padding: 0;
+}

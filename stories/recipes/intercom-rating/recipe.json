@@ -1,0 +1,8 @@
+{
+  "title": "Examples/Intercom rating",
+  "name": "IntercomRating",
+  "rootClass": "intercom-scale",
+  "root": "EmojiPicker",
+  "description": "An Intercom-style satisfaction scale built from a stretched reactions bar.",
+  "order": 22
+}

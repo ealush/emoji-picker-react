@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
 import EmojiPicker, { EmojiStyle, Props, SkinTones } from '../../src';
@@ -6,11 +6,11 @@ import { SkinTonePickerLocation } from '../../src/types/exposedTypes';
 import { Template } from '../utils/pickerStoryUtils';
 
 const meta = {
+  tags: ['visual'],
   title: 'Picker/Skin Tones',
   component: EmojiPicker,
   parameters: {
     controls: { expanded: true },
-    visualTest: true,
   },
 } satisfies Meta<typeof EmojiPicker>;
 
