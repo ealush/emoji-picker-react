@@ -127,6 +127,47 @@ test('skin tone selection updates the picker', async ({ page }) => {
   );
 });
 
+for (const direction of ['ltr', 'rtl'] as const) {
+  test(`opening the skin tone fan reserves search space (${direction})`, async ({
+    page,
+  }) => {
+    await page.goto(storyUrl('picker-skin-tones--skin-tone-change'));
+    const root = page.locator('[data-epr-part="root"]');
+    await root.evaluate((element, dir) => {
+      element.setAttribute('dir', dir);
+    }, direction);
+    const input = page.locator('[data-epr-part="search-input"]');
+    const width = () =>
+      input.evaluate((element) => element.getBoundingClientRect().width);
+    const closedWidth = await width();
+
+    await page.getByLabel('Skin tone NEUTRAL', { exact: true }).click();
+    await expect.poll(width).toBeLessThan(closedWidth - 100);
+
+    const tones = page.locator('[data-epr-part="skin-tone-button"]');
+    await expect(tones).toHaveCount(6);
+    await expect
+      .poll(async () => {
+        const inputBox = (await input.boundingBox())!;
+        const buttons = await tones.evaluateAll((elements) =>
+          elements.map((element) => {
+            const { left, right } = element.getBoundingClientRect();
+            return { left, right };
+          }),
+        );
+        return direction === 'ltr'
+          ? Math.min(...buttons.map((button) => button.left)) -
+              (inputBox.x + inputBox.width)
+          : inputBox.x - Math.max(...buttons.map((button) => button.right));
+      })
+      .toBeGreaterThanOrEqual(10);
+
+    await page.getByLabel('Skin tone MEDIUM', { exact: true }).click();
+    await expect.poll(width).toBeGreaterThan(closedWidth - 1);
+    await expect(input).toBeFocused();
+  });
+}
+
 /**
  * Validates keyboard-only navigation through the picker.
  * - Uses ArrowDown from search to move focus to category tabs

@@ -18,6 +18,7 @@ jobs:
       - run: npm ci
       - run: npm run check:scripts
       - run: npm run lint
+      - run: npm run check:contracts
       - run: npm test
       - run: npm run check:data-package
 

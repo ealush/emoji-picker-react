@@ -271,9 +271,41 @@ describe('v5 search performance invariants', () => {
     expect(core.queryMemo.has('cat')).toBe(true);
   });
 
-  it('repeated identical query avoids a second full dataset scan', () => {
-    const first = searchEmojis('smile');
-    const second = searchEmojis('smile');
+  it('repeated identical query reuses matches without scanning candidates', () => {
+    const dataset: EmojiData = {
+      categories: {},
+      emojis: {
+        smileys_people: [
+          { n: ['smiling face'], u: '1f600', a: '1' },
+          { n: ['cat face'], u: '1f431', a: '1' },
+        ],
+      },
+    };
+    const core = getPreparedCore(dataset);
+    let candidateReads = 0;
+    // Observe actual candidate visits on this fresh dataset. Stable result
+    // records alone cannot distinguish a memo hit from a repeated scan.
+    const buckets = core.byChar as Map<string, typeof core.records>;
+    for (const [char, bucket] of buckets) {
+      buckets.set(
+        char,
+        new Proxy(bucket, {
+          get(target, key, receiver) {
+            if (typeof key === 'string' && /^\d+$/.test(key)) {
+              candidateReads += 1;
+            }
+            return Reflect.get(target, key, receiver);
+          },
+        }),
+      );
+    }
+    const first = searchEmojis('smiling', { emojiData: dataset });
+    const coldReads = candidateReads;
+    expect(coldReads).toBeGreaterThan(0);
+
+    const second = searchEmojis('smiling', { emojiData: dataset });
+    expect(candidateReads).toBe(coldReads);
+    expect(first.map((entry) => entry.unified)).toEqual(['1f600']);
     expect(second.map((entry) => entry.unified)).toEqual(
       first.map((entry) => entry.unified),
     );

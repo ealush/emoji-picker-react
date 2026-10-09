@@ -3,7 +3,7 @@
   // (type aliases, Props aliasing, RootProps coverage, negative
   // @ts-expect-error cases). Vitest executes these files but never
   // type-checks them, so this project closes that gap. Checked by
-  // `npm run check:compat`.
+  // `npm run check:contracts` and `npm run check:compat`.
   "compilerOptions": {
     "target": "ES2019",
     "module": "ESNext",

@@ -201,7 +201,6 @@ export function Composed() {
         className="card"
         columns={8}
         components={components}
-        skinTonePickerLocation={Picker.SkinTonePickerLocation.NONE}
         onEmojiClick={record}
       >
         <div className="card-header">
