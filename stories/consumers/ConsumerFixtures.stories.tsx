@@ -12,7 +12,7 @@
  * load-only screenshots, while these fixtures need real user flows
  * (toggle open, search, select) driven by the dedicated spec.
  */
-import { Meta } from '@storybook/react';
+import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
 import { createPortal } from 'react-dom';
