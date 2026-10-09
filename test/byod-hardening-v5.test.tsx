@@ -235,7 +235,7 @@ describe('BYOD API hardening', () => {
     expect(container).not.toHaveTextContent('replacement');
   });
 
-  it('honors bare Root open state and cancels pending data when closed', async () => {
+  it('loads data with Root presence and cancels pending data when removed', async () => {
     let signal: AbortSignal | undefined;
     const loader = vi.fn(
       ({ signal: current }: Picker.EmojiDataLoaderOptions) => {
@@ -243,10 +243,14 @@ describe('BYOD API hardening', () => {
         return new Promise<Picker.EmojiData>(() => {});
       },
     );
+    // Presence belongs to the caller's JSX: conditional rendering of Root
+    // itself controls whether the picker (and its data loading) exists.
     const tree = (open: boolean) => (
-      <Picker.Root open={open} emojiData={loader}>
-        {grid}
-      </Picker.Root>
+      <>
+        {open ? (
+          <Picker.Root emojiData={loader}>{grid}</Picker.Root>
+        ) : null}
+      </>
     );
     const { container, rerender } = render(tree(false));
     expect(container.querySelector('aside')).toBeNull();

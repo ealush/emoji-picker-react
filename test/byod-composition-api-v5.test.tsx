@@ -134,7 +134,9 @@ describe('BYOD composition API', () => {
         onEmojiClick={selected}
         onSkinToneChange={toneChanged}
       >
-        <Picker.Search />
+        <Picker.Search>
+          <Picker.SkinTone />
+        </Picker.Search>
         <Picker.CategoryNav />
         <Grid />
       </Picker.Root>,
@@ -206,6 +208,7 @@ describe('BYOD composition API', () => {
         reactions={['1f44d']}
         onReactionClick={reaction}
       >
+        <Picker.Reactions />
         <Grid />
         <Actions />
       </Picker.Root>,
@@ -399,7 +402,10 @@ describe('BYOD composition API', () => {
     };
     const { container } = render(
       <Picker.Root emojiData={data} reactionsDefaultOpen components={prevented}>
-        <Grid />
+        <Picker.Reactions />
+        <Picker.Panel>
+          <Grid />
+        </Picker.Panel>
       </Picker.Root>,
     );
     fireEvent.click(screen.getByRole('button', { name: 'Show all Emojis' }));
