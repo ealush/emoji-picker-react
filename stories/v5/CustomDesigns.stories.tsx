@@ -86,7 +86,6 @@ ${scope} {
         previewConfig={{
           defaultEmoji: '1f680',
           defaultCaption: 'Midnight palette — pick an emoji',
-          showPreview: true,
         }}
         onEmojiClick={onEmojiClick}
         className="midnight-palette"
@@ -328,7 +327,6 @@ ${scope} {
         previewConfig={{
           defaultEmoji: '1f50d',
           defaultCaption: 'Browse the library',
-          showPreview: true,
         }}
       >
         <div className="sidebar-body">
