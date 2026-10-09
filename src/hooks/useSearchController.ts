@@ -273,6 +273,7 @@ export function useSearchInputController() {
 export function useTypeToSearchKey() {
   const searchValue = useSearchValueConfig();
   const isControlled = searchValue !== undefined;
+  const [committed] = useSearchCommittedState();
   const SearchInputRef = useSearchInputRef();
   const searchDisabled = useSearchDisabledConfig();
   const commit = useCommitSearch();
@@ -316,18 +317,14 @@ export function useTypeToSearchKey() {
         reconcileControlled();
         return;
       }
-      // Until Search adopts the managed input controller, direct typing
-      // lives in the native field. Append to that current value and seed
-      // the first grid key before handing subsequent keys to the input.
-      const nextValue = `${input.value}${key}`;
-      input.value = nextValue;
-      commit(nextValue);
+      commit(`${committed}${key}`);
     },
     [
       searchDisabled,
       SearchInputRef,
       isControlled,
       searchValue,
+      committed,
       commit,
       emit,
       readProposal,
@@ -354,7 +351,6 @@ export function useSetSearchValue() {
 
 /** Clear-button / Escape transition (STATE.md §6): proposes/commits ''. */
 export function useClearSearchValue() {
-  const controlled = useIsControlledSearch();
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
   const setValue = useSetSearchValue();
@@ -362,10 +358,9 @@ export function useClearSearchValue() {
   return React.useCallback(() => {
     setValue('');
     if (SearchInputRef.current) {
-      // Keep the legacy uncontrolled field in sync; controlled clearing is
-      // only a proposal and must preserve the accepted DOM value.
-      if (!controlled) SearchInputRef.current.value = '';
+      // The managed input follows accepted state. A controlled parent may
+      // reject the empty proposal, so clearing must not mutate the DOM.
       focusSearchInput();
     }
-  }, [controlled, setValue, SearchInputRef, focusSearchInput]);
+  }, [setValue, SearchInputRef, focusSearchInput]);
 }

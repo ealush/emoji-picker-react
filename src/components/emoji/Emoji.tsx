@@ -1,7 +1,13 @@
 import * as React from 'react';
 
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiHasVariations, emojiNames } from '../../dataUtils/emojiUtils';
+import {
+  emojiHasVariations,
+  emojiNames,
+  emojiUrlByUnified,
+} from '../../dataUtils/emojiUtils';
+import { usePickerComponents } from '../../primitives/components';
+import { emojiRenderInfo, useListComponents } from '../body/listComponents';
 
 import { BaseEmojiProps } from './BaseEmojiProps';
 import { ClickableEmojiButton } from './ClickableEmojiButton';
@@ -17,8 +23,9 @@ type ClickableEmojiProps = Readonly<
     buttonClassName?: string;
     noBackground?: boolean;
     style?: React.CSSProperties;
-    role?: string;
-    logicalIndex?: number;
+    tabIndex?: number;
+    role?: 'gridcell';
+    index?: number;
   }
 >;
 
@@ -31,18 +38,25 @@ export function ClickableEmoji({
   showVariations = true,
   size,
   lazyLoad,
-  getEmojiUrl,
+  getEmojiUrl = emojiUrlByUnified,
   className,
   buttonClassName,
   noBackground = false,
   style,
+  tabIndex,
   role,
-  logicalIndex,
+  index,
 }: ClickableEmojiProps) {
   const hasVariations = emojiHasVariations(emoji);
+  const { Emoji: SharedEmoji } = usePickerComponents();
+  const Custom = useListComponents().Emoji ?? SharedEmoji;
+  const info = Custom
+    ? emojiRenderInfo(emoji, unified, emojiStyle, getEmojiUrl)
+    : undefined;
 
   return (
     <ClickableEmojiButton
+      tabIndex={tabIndex}
       hasVariations={hasVariations}
       showVariations={showVariations}
       hidden={hidden}
@@ -51,9 +65,11 @@ export function ClickableEmoji({
       unified={unified}
       noBackground={noBackground}
       style={style}
-      role={role}
-      logicalIndex={logicalIndex}
       className={buttonClassName}
+      as={Custom}
+      emojiInfo={info}
+      role={role}
+      index={index}
     >
       <ViewOnlyEmoji
         unified={unified}

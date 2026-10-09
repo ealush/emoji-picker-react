@@ -9,12 +9,18 @@ import {
   PickerDataProvider,
   usePickerDataContext,
 } from '../src/components/context/PickerDataContext';
+import { formatSearchResultsLabel, useLabels } from '../src/config/useConfig';
+import { useVisibleSearchResultCount } from '../src/hooks/useSearchResults';
 import { useFilter } from '../src/hooks/useFilter';
 import { Categories, EmojiStyle } from '../src/types/exposedTypes';
 
 function Probe() {
   const { queryFilterDict } = usePickerDataContext();
-  const { onChange, statusSearchResults } = useFilter();
+  const { onChange } = useFilter();
+  const count = useVisibleSearchResultCount();
+  const labels = useLabels();
+  const statusSearchResults =
+    count === null ? '' : formatSearchResultsLabel(labels, count);
   return (
     <>
       <input

@@ -16,7 +16,6 @@ import {
   useFocusSearchInput,
   useFocusSkinTonePicker,
 } from '../../src/hooks/useFocus';
-import { useIsSkinToneInSearch } from '../../src/hooks/useShouldShowSkinTonePicker';
 import { NavigationRegistry } from '../../src/state/navigationRegistry';
 
 // Mocks
@@ -77,11 +76,6 @@ vi.mock('../../src/hooks/useSetVariationPicker', () => ({
   default: vi.fn(() => vi.fn()),
 }));
 
-vi.mock('../../src/hooks/useShouldShowSkinTonePicker', () => ({
-  useIsSkinToneInPreview: vi.fn(() => false),
-  useIsSkinToneInSearch: vi.fn(() => false),
-}));
-
 vi.mock('../../src/DomUtils/scrollTo', () => ({
   useScrollTo: vi.fn(() => vi.fn()),
 }));
@@ -138,7 +132,12 @@ describe('useKeyboardNavigation', () => {
       const focusSkinTonePickerMock = vi.fn();
       const setSkinToneFanOpenStateMock = vi.fn();
 
-      (useIsSkinToneInSearch as any).mockReturnValue(true);
+      const region = document.createElement('div');
+      region.setAttribute('data-epr-part', 'search');
+      const tone = document.createElement('div');
+      region.append(searchInput, tone);
+      pickerMain.appendChild(region);
+      (useSkinTonePickerRef as any).mockReturnValue({ current: tone });
       (useSkinToneFanOpenState as any).mockReturnValue([
         false,
         setSkinToneFanOpenStateMock,

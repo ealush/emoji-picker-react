@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+  useSuggestedEmojisConfig,
   useSuggestedEmojisModeConfig,
 } from '../../config/useConfig';
 import { getPickerDataSnapshot } from '../../data-core/pickerData';
@@ -18,6 +19,7 @@ import {
   unifiedWithoutSkinTone,
 } from '../../dataUtils/emojiUtils';
 import { getSuggested } from '../../dataUtils/suggested';
+import { resolveSuggestedRenderIds } from '../../dataUtils/suggestedEmojis';
 import { useDataIdentityStabilityWarning } from '../../hooks/useDataIdentityStabilityWarning';
 import type { FilterDict } from '../../hooks/useFilter';
 import { useIsMounted } from '../../hooks/useIsMounted';
@@ -142,6 +144,7 @@ export function usePickerDataContext() {
 export function useGetEmojisByCategory() {
   const { emojiData, emojiByUnified, customGroups } = usePickerDataContext();
   const suggestedEmojisModeConfig = useSuggestedEmojisModeConfig();
+  const callerSuggestedEmojis = useSuggestedEmojisConfig();
   const [suggestedUpdated] = useUpdateSuggested();
   // Suggestions come from localStorage, which doesn't exist during SSR.
   // Read them only after mount so the first client render matches the server.
@@ -152,6 +155,24 @@ export function useGetEmojisByCategory() {
       return [] as DataEmojis;
     }
 
+    // Caller-defined suggestions fully determine contents/order while the
+    // prop is present; persistence mode is ignored and nothing is written
+    // to localStorage by this path.
+    if (callerSuggestedEmojis !== undefined) {
+      return resolveSuggestedRenderIds(callerSuggestedEmojis, (id) =>
+        emojiByUnified(id),
+      )
+        .map((identity) => {
+          const emoji = emojiByUnified(identity);
+          if (!emoji) return undefined;
+          return {
+            ...emoji,
+            renderUnified: identity,
+          };
+        })
+        .filter(Boolean) as DataEmojis;
+    }
+
     const suggested = getSuggested(suggestedEmojisModeConfig) ?? [];
 
     return suggested
@@ -160,12 +181,18 @@ export function useGetEmojisByCategory() {
         if (!emoji) return undefined;
         return {
           ...emoji,
-          [Keys.unified]: s.unified,
+          fallbackUnified: s.unified,
         };
       })
       .filter(Boolean) as DataEmojis;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMounted, suggestedUpdated, suggestedEmojisModeConfig, emojiByUnified]);
+  }, [
+    isMounted,
+    suggestedUpdated,
+    suggestedEmojisModeConfig,
+    callerSuggestedEmojis,
+    emojiByUnified,
+  ]);
 
   return function getEmojisByCategory(
     category: Categories,

@@ -8,6 +8,7 @@
  */
 
 import { expect, test, type Locator } from '@playwright/test';
+import { categoryLabel } from './helpers/categoryLabel';
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
@@ -42,11 +43,11 @@ test('custom groups render own tabs and navigate to own sections', async ({
   }
 
   await page.getByRole('tab', { name: 'Fun' }).click();
-  await expect(page.getByRole('heading', { name: 'Fun' })).toBeVisible();
+  await expect(categoryLabel(page, 'Fun')).toBeVisible();
   await expect(page.getByLabel('alice in wonderland')).toBeVisible();
 
   await page.getByRole('tab', { name: 'Gear' }).click();
-  await expect(page.getByRole('heading', { name: 'Gear' })).toBeVisible();
+  await expect(categoryLabel(page, 'Gear')).toBeVisible();
 });
 
 test('grouped nav bar matches snapshot', async ({ page }) => {
@@ -62,7 +63,7 @@ test('grouped nav bar matches snapshot', async ({ page }) => {
 test('group section matches snapshot', async ({ page }) => {
   await page.goto(storyUrl('picker-customizations--custom-emojis-grouped'));
   await page.getByRole('tab', { name: 'Fun' }).click();
-  const heading = page.getByRole('heading', { name: 'Fun' });
+  const heading = categoryLabel(page, 'Fun');
   await expect(heading).toBeVisible();
   const section = heading.locator('xpath=ancestor::li[@role="rowgroup"]');
   await waitForSectionImages(section);
@@ -85,7 +86,7 @@ test('dynamic same-length dataset replacement updates everything', async ({
   await expect(page.getByRole('tab', { name: 'animals' })).toHaveCount(0);
   await expect(page.getByRole('tab', { name: 'people' })).toBeVisible();
   await page.getByRole('tab', { name: 'people' }).click();
-  const section = page.getByRole('heading', { name: 'people' });
+  const section = categoryLabel(page, 'people');
   await expect(section).toBeVisible();
   await waitForSectionImages(
     section.locator('xpath=ancestor::li[@role="rowgroup"]'),
@@ -122,7 +123,7 @@ test('dynamic category updates reorder, rename, and re-icon', async ({
   await expect(page.getByRole('tab', { name: 'people' })).toHaveCount(0);
 
   await page.getByRole('tab', { name: 'Crew' }).click();
-  await expect(page.getByRole('heading', { name: 'Crew' })).toBeVisible();
+  await expect(categoryLabel(page, 'Crew')).toBeVisible();
 
   // Final visual state derives from current props.
   await expect(page.locator('.epr-category-nav')).toHaveScreenshot(
@@ -141,7 +142,7 @@ test('dynamic move to ungrouped shifts tabs and sections', async ({
   await expect(page.getByRole('tab', { name: 'people' })).toHaveCount(0);
   await expect(page.getByRole('tab', { name: 'Misc' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: 'Misc' }),
+    categoryLabel(page, 'Misc'),
   ).toBeVisible();
 });
 
@@ -153,7 +154,7 @@ test('new non-first group renders, activates, and screenshots', async ({
 
   // bots is a newly introduced non-first group: navigate to it.
   await page.getByRole('tab', { name: 'bots' }).click();
-  const heading = page.getByRole('heading', { name: 'bots' });
+  const heading = categoryLabel(page, 'bots');
   await expect(heading).toBeVisible();
   const section = heading.locator('xpath=ancestor::li[@role="rowgroup"]');
   await waitForSectionImages(section);
@@ -189,7 +190,7 @@ test('reserved group names render, navigate, and select without errors', async (
     await expect(page.getByRole('tab', { name: tab })).toBeVisible();
     await page.getByRole('tab', { name: tab }).click();
     await expect(
-      page.getByRole('heading', { name: tab }),
+      categoryLabel(page, tab),
     ).toBeVisible();
     await expect(page.getByLabel(emoji, { exact: true })).toBeVisible();
   }

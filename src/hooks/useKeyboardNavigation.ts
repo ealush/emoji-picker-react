@@ -49,10 +49,6 @@ import {
 import useIsSearchMode from './useIsSearchMode';
 import { useClearSearchValue, useTypeToSearchKey } from './useSearchController';
 import useSetVariationPicker from './useSetVariationPicker';
-import {
-  useIsSkinToneInPreview,
-  useIsSkinToneInSearch,
-} from './useShouldShowSkinTonePicker';
 
 export function useKeyboardNavigation() {
   const ref = usePickerMainRef();
@@ -68,10 +64,10 @@ export function useKeyboardNavigation() {
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const focusCategoryNavigation = useFocusCategoryNavigation();
   const focusNextRegionFromSearch = useFocusNextRegionFrom('search');
-  const isSkinToneInSearch = useIsSkinToneInSearch();
   const isSearchMode = useIsSearchMode();
   const SkinTonePickerRef = useSkinTonePickerRef();
-  const isSkinToneInPreview = useIsSkinToneInPreview();
+  const isSkinToneInSearch = () =>
+    !!SkinTonePickerRef.current?.closest('[data-epr-part="search"]');
   const onType = useOnType();
   const CategoryNavigationRef = useCategoryNavigationRef();
   const focusPrevRegionFromCategories = useFocusPrevRegionFrom('categories');
@@ -114,7 +110,7 @@ export function useKeyboardNavigation() {
 
     switch (key) {
       case 'ArrowRight':
-        if (!isSkinToneInSearch) {
+        if (!isSkinToneInSearch()) {
           return;
         }
         event.preventDefault();
@@ -145,10 +141,8 @@ export function useKeyboardNavigation() {
       // horizontal SkinTone primitive move left/right, the preview
       // placement and a vertical primitive move up/down.
       const vertical =
-        isSkinToneInPreview ||
-        (!isSkinToneInSearch &&
-          SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
-            'vertical');
+        SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
+        'vertical';
 
       switch (key) {
         case vertical ? 'ArrowUp' : 'ArrowLeft':

@@ -69,8 +69,9 @@
     "docs:llms": "tsx ./scripts/generateLlmsTxt.ts",
     "check:react-floor": "tsx ./scripts/checkReactApiFloor.ts",
     "check:perf": "tsx ./bench/run.ts",
-    "check:scripts": "tsc --project scripts/tsconfig.json",
     "clean": "tsx ./scripts/clean.ts",
+    "check:scripts": "tsc --project scripts/tsconfig.json",
+    "icons": "tsx ./scripts/buildIcons.ts",
     "check:data-package": "tsx ./scripts/checkDataPackage.ts"
   },
   "peerDependencies": {
@@ -92,13 +93,15 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "95 KB",
-      "gzip": true
+      "limit": "75 KB"
     },
     {
       "path": "dist/esm/index.mjs",
-      "limit": "95 KB",
-      "gzip": true
+      "limit": "75 KB"
+    },
+    {
+      "path": "dist/esm/primitives/index.mjs",
+      "limit": "75 KB"
     },
     {
       "path": "dist/esm/data.mjs",
@@ -157,16 +160,16 @@
     "tslib": "^2.4.0",
     "typescript": "5.9",
     "vitest": "^4.1.11",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.2",
+    "rollup": "^4.64.0",
+    "rollup-plugin-dts": "^6.5.1",
     "tsx": "^4.23.15",
     "@types/jsdom": "^21.1.7",
-    "rollup": "^4.64.0",
-    "rollup-plugin-dts": "^6.5.1"
+    "terser": "5.31.0"
   },
   "dependencies": {
     "shipstyles": "1.0.0"
   },
-  "type": "commonjs",
   "exports": {
     ".": {
       "import": {
@@ -178,6 +181,17 @@
         "default": "./dist/index.js"
       },
       "default": "./dist/index.js"
+    },
+    "./primitives": {
+      "import": {
+        "types": "./dist/primitives/index.d.mts",
+        "default": "./dist/esm/primitives/index.mjs"
+      },
+      "require": {
+        "types": "./dist/primitives/index.d.ts",
+        "default": "./dist/primitives/index.js"
+      },
+      "default": "./dist/primitives/index.js"
     },
     "./data": {
       "import": {
@@ -216,5 +230,6 @@
     "./src/data/*.json": "./src/data/*.json",
     "./package.json": "./package.json",
     "./*": "./*"
-  }
+  },
+  "type": "commonjs"
 }

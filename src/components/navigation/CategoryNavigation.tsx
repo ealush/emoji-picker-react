@@ -9,42 +9,61 @@ import {
   customGroupFromCategoryConfig,
 } from '../../config/categoryConfig';
 import {
+  useLabels,
   useCategoriesConfig,
   useCategoryIconsConfig,
 } from '../../config/useConfig';
-import { useActiveCategoryScrollDetection } from '../../hooks/useActiveCategoryScrollDetection';
 import useIsSearchMode from '../../hooks/useIsSearchMode';
+import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useScrollCategoryIntoView } from '../../hooks/useScrollCategoryIntoView';
 import { useShouldHideCustomEmojis } from '../../hooks/useShouldHideCustomEmojis';
+import { useDefaultAppearance } from '../../primitives/appearance';
 import { isCustomCategory } from '../../typeRefinements/typeRefinements';
 import { Categories } from '../../types/exposedTypes';
 import { useCategoryNavigationRef } from '../context/ElementRefContext';
-import { useVisibleCategoriesState } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 
 import { CategoryButton } from './CategoryButton';
 
-export function CategoryNavigation() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [, setVisibleCategories] = useVisibleCategoriesState();
-  const scrollCategoryIntoView = useScrollCategoryIntoView();
-  const isSearchMode = useIsSearchMode();
+// Active category state lives with the scroll container (Viewport), which
+// owns section observation. The tablist only highlights and scrolls.
+// Keeping observation in the tablist would stop section tracking whenever
+// the bar unmounts (single tab) or is omitted from a composition.
+const ActiveCategoryContext = /* @__PURE__ */ React.createContext<{
+  activeCategory: string | null;
+  setActiveCategory: (category: string | null) => void;
+}>({
+  activeCategory: null,
+  setActiveCategory: () => {},
+});
 
+export function ActiveCategoryProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const value = React.useMemo(
+    () => ({ activeCategory, setActiveCategory }),
+    [activeCategory],
+  );
+  return (
+    <ActiveCategoryContext.Provider value={value}>
+      {children}
+    </ActiveCategoryContext.Provider>
+  );
+}
+
+export function useActiveCategory() {
+  return React.useContext(ActiveCategoryContext);
+}
+
+export function useVisibleCategoryConfigs() {
   const categoriesConfig = useCategoriesConfig();
-  const categoryIcons = useCategoryIconsConfig();
-  const CategoryNavigationRef = useCategoryNavigationRef();
   const hideCustomCategory = useShouldHideCustomEmojis();
   const { customGroups, emojiData } = usePickerDataContext();
 
-  // The observer re-subscribes when the merged categories reference
-  // changes (sections added/removed); the reference is stable otherwise.
-  useActiveCategoryScrollDetection({
-    setActiveCategory,
-    setVisibleCategories,
-    categories: categoriesConfig,
-  });
-
-  const visibleCategories = categoriesConfig.filter(categoryConfig => {
+  return categoriesConfig.filter((categoryConfig) => {
     if (isCustomCategory(categoryConfig) && hideCustomCategory) {
       return false;
     }
@@ -58,6 +77,31 @@ export function CategoryNavigation() {
     }
     return true;
   });
+}
+
+export type NavOrientation = 'horizontal' | 'vertical';
+
+export function CategoryNavigation({
+  orientation = 'horizontal',
+}: {
+  orientation?: NavOrientation;
+} = {}) {
+  const appearance = useDefaultAppearance();
+  const { activeCategory, setActiveCategory } = useActiveCategory();
+  const scrollCategoryIntoView = useScrollCategoryIntoView();
+  const isSearchMode = useIsSearchMode();
+
+  const categoryIcons = useCategoryIconsConfig();
+  const CategoryNavigationRef = useCategoryNavigationRef();
+  const labels = useLabels();
+
+  const visibleCategories = useVisibleCategoryConfigs();
+
+  // Registered before the single-tab early return so the tab bar leaves
+  // the navigation graph when it unmounts.
+  useRegisterRegion('categories', CategoryNavigationRef, [
+    visibleCategories.length,
+  ]);
 
   // A single tab navigates nowhere — hide the bar to reclaim its space.
   // https://github.com/ealush/emoji-picker-react/issues/396
@@ -67,13 +111,18 @@ export function CategoryNavigation() {
 
   return (
     <div
-      className={cx(styles.nav)}
+      className={cx(
+        styles.nav,
+        appearance && styles.appearance,
+        orientation === 'vertical' && styles.vertical,
+      )}
       role="tablist"
-      aria-label="Category navigation"
-      id="epr-category-nav-id"
+      aria-label={labels.categoryNavigation}
+      // Read by the keyboard handler: arrow keys follow the tab axis.
+      aria-orientation={orientation}
       ref={CategoryNavigationRef}
     >
-      {visibleCategories.map(categoryConfig => {
+      {visibleCategories.map((categoryConfig) => {
         const category = categoryFromCategoryConfig(categoryConfig);
         const categoryId = categoryIdFromCategoryConfig(categoryConfig);
         const isActiveCategory = categoryId === activeCategory;
@@ -101,26 +150,38 @@ export function CategoryNavigation() {
   );
 }
 
-const styles = stylesheet.create({
-  nav: {
-    '.': 'epr-category-nav',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    padding: 'var(--epr-header-padding)',
-  },
-  '.epr-search-active': {
+const styles = /* @__PURE__ */ (() =>
+  stylesheet.create({
     nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none',
+      '.': 'epr-category-nav',
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      padding: 'var(--epr-header-padding)',
     },
-  },
-  '.epr-main:has(input:not(:placeholder-shown))': {
-    nav: {
-      opacity: '0.3',
-      cursor: 'default',
-      pointerEvents: 'none',
+    vertical: {
+      '.': 'epr-category-nav-vertical',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+      gap: 'var(--epr-horizontal-padding)',
+      padding: 'var(--epr-horizontal-padding) 0',
     },
-  },
-});
+    appearance: { '.': 'epr-category-nav-appearance' },
+    '.epr-search-active': {
+      nav: { pointerEvents: 'none' },
+      appearance: {
+        opacity: '0.3',
+        cursor: 'default',
+        pointerEvents: 'none',
+      },
+    },
+    '.epr-structural-root:has(input:not(:placeholder-shown))': {
+      nav: { pointerEvents: 'none' },
+      appearance: {
+        opacity: '0.3',
+        cursor: 'default',
+        pointerEvents: 'none',
+      },
+    },
+  }))();
