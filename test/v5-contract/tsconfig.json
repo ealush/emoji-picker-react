@@ -22,6 +22,8 @@
     "./*.test.tsx",
     "../setupTests.ts",
     "../../stories/v5/MuiComposition.tsx",
+    "../../stories/consumers/**/*.tsx",
+    "../../playwright/consumer-integrations.spec.ts",
     "../../src/**/*"
   ],
   // Node types provide `process` here; src/env.d.ts is the library's
