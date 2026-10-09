@@ -24,3 +24,7 @@ Generated data, documentation, icons and recipes remain outputs, not scripts to
 edit. Regenerate them through `build:data`, `docs:llms`, `icons`, `recipes`,
 `designs` and `registry` when changing their inputs. Commit the regenerated
 output with its generator change.
+
+`check:contracts` also compiles the complete `tsx check` examples extracted from
+`docs/v5/API.md` against the current source entries. Keep those examples
+self-contained; this gate catches documentation that still uses removed props.
