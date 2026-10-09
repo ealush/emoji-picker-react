@@ -15,7 +15,7 @@ type MissingFromRoot = Exclude<
 // Compile-time gate (docs/v5/PRIMITIVES.md §5): Root takes every
 // PickerProps behavior prop by subtraction, so a new behavior prop flows
 // to Root automatically. If a behavior prop ever skips Root, this
-// assignment fails type-check (see `npm run type-check`).
+// assignment fails type-check (see `npm run check:contracts`).
 const allBehaviorPropsReachRoot: MissingFromRoot extends never ? true : false =
   true;
 
