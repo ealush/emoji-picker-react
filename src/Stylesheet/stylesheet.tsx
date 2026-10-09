@@ -28,6 +28,8 @@ export const stylesheet = /* @__PURE__ */ createSheet('epr', null);
  * e.g. `@layer epr, theme, base, components, utilities;`.
  */
 const TOKEN_RULE = /^([^{}@][^{}]*?)\s*\{((?:\s*--[\w-]+\s*:[^;{}]*;?)+)\s*\}$/;
+const CSS_LAYER_NAME =
+  /^(?:[a-zA-Z_]|-[a-zA-Z_-])[a-zA-Z0-9_-]*(?:\.(?:[a-zA-Z_]|-[a-zA-Z_-])[a-zA-Z0-9_-]*)*$/;
 
 export function finalizeCss(css: string, cssLayer?: string): string {
   if (!css) {
@@ -45,7 +47,7 @@ export function finalizeCss(css: string, cssLayer?: string): string {
       return match ? `:where(${match[1]}) {${match[2]}}` : line;
     })
     .join('\n');
-  return cssLayer && /^[a-zA-Z_][\w-]*(?:\.[a-zA-Z_][\w-]*)*$/.test(cssLayer)
+  return cssLayer && CSS_LAYER_NAME.test(cssLayer)
     ? `@layer ${cssLayer}{${out}}`
     : out;
 }
