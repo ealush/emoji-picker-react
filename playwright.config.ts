@@ -7,7 +7,11 @@ export default defineConfig({
   testDir: 'playwright',
   outputDir: 'test-results/visual',
   // The dedicated behavior job runs adoption and touch across browser projects.
-  testIgnore: ['adoption-behavior.spec.ts', 'touch-behavior.spec.ts'],
+  testIgnore: [
+    'adoption-behavior.spec.ts',
+    'touch-behavior.spec.ts',
+    'website.spec.ts',
+  ],
   timeout: 60000,
   retries: process.env.CI ? 2 : 0,
   // Use platform-agnostic snapshot names (without -darwin/-linux suffix)

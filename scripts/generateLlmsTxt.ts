@@ -123,6 +123,11 @@ const DOCS: Array<[string, string, string]> = [
     'Migrating from v4',
     'what changed and how to upgrade',
   ],
+  [
+    'website/README.md',
+    'Website examples',
+    'typed customization, locale loading and composition',
+  ],
 ];
 
 const EXAMPLES: Array<[string, string, string]> = [

@@ -34,6 +34,7 @@
 }
 
 .hint code {
+  color: var(--foreground);
   padding: 0 4px;
   border-radius: 4px;
   background: var(--surface-soft);
@@ -126,7 +127,7 @@
 
 @media (max-width: 900px) {
   .form {
-    max-height: none;
+    max-height: min(65vh, 720px);
     border-right: 0;
     border-bottom: 1px solid var(--border);
   }
@@ -152,7 +153,7 @@
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--foreground-faint);
+  color: var(--foreground-muted);
 }
 
 .row {
@@ -172,7 +173,8 @@
 }
 
 .rowChanged .label {
-  color: var(--accent);
+  color: var(--foreground);
+  font-weight: 600;
 }
 
 .label {
@@ -186,7 +188,7 @@
   grid-area: token;
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  color: var(--foreground-faint);
+  color: var(--foreground-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -208,10 +210,18 @@
   border: 1px solid var(--border-strong);
   overflow: hidden;
   background:
-    linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%),
+    linear-gradient(
+      45deg,
+      #ddd 25%,
+      transparent 25%,
+      transparent 75%,
+      #ddd 75%
+    ),
     linear-gradient(45deg, #ddd 25%, #fff 25%, #fff 75%, #ddd 75%);
   background-size: 8px 8px;
-  background-position: 0 0, 4px 4px;
+  background-position:
+    0 0,
+    4px 4px;
 }
 
 .colorWell > span {
@@ -279,13 +289,14 @@
 }
 
 .preview {
+  min-width: 0;
   position: sticky;
   top: calc(var(--header-h) + 12px);
   align-self: start;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  padding: 1.25rem 1.5rem 1.5rem;
+  padding: 1.25rem clamp(0.5rem, 3vw, 1.5rem) 1.5rem;
 }
 
 .previewBar {
@@ -315,7 +326,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--foreground-muted);
+  color: var(--foreground);
   font: inherit;
   font-size: 0.72rem;
   font-weight: 600;
@@ -333,25 +344,28 @@
 }
 
 .stage {
+  min-width: 0;
   display: flex;
   justify-content: center;
-  padding: 1.25rem;
+  padding: clamp(0.25rem, 2vw, 1.25rem);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background:
-    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 16px 16px,
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 /
+      16px 16px,
     var(--background);
 }
 
 .stage[data-scheme='dark'] {
   background:
-    radial-gradient(circle at 1px 1px, #2a2a2e 1px, transparent 0) 0 0 / 16px 16px,
+    radial-gradient(circle at 1px 1px, #2a2a2e 1px, transparent 0) 0 0 / 16px
+      16px,
     #141416;
 }
 
 .output {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
   gap: 0.75rem;
 }
 
@@ -405,22 +419,36 @@
 }
 
 .codeVar {
-  color: #3371b7;
+  color: var(--foreground);
+  font-weight: 600;
 }
 
-.codeValue {
-  color: #c2410c;
-}
-
+.codeValue,
 .codeComment {
-  color: var(--foreground-muted);
+  color: var(--foreground);
 }
 
-@media (prefers-color-scheme: dark) {
-  .codeVar {
-    color: #7cb6ec;
+.copyStatus {
+  min-height: 1.25em;
+  color: var(--foreground);
+  font-size: 0.75rem;
+}
+
+@media (max-width: 540px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'label' 'token' 'control';
+    row-gap: 0.25rem;
   }
-  .codeValue {
-    color: #f59e0b;
+  .control {
+    min-width: 0;
+  }
+  .text {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+  }
+  .previewBar {
+    align-items: flex-start;
   }
 }

@@ -62,6 +62,7 @@ searchEmojis('party'); getEmojiByUnified('1f389');
 - [Accessibility verification](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/ACCESSIBILITY_VERIFICATION.md): keyboard, screen-reader, localization and host focus release protocol
 - [Data API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/DATA_API.md): framework-free search and lookup
 - [Migrating from v4](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/MIGRATION.md): what changed and how to upgrade
+- [Website examples](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/website/README.md): typed customization, locale loading and composition
 
 ## Examples
 

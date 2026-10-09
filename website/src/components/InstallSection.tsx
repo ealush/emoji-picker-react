@@ -1,5 +1,6 @@
 "use client";
 
+import { isV5Preview } from "@/lib/release";
 import { useState } from "react";
 import styles from "@/styles/Home.module.css";
 
@@ -25,7 +26,11 @@ export function InstallSection() {
     <section id="install" className={styles.install}>
       <div className={styles.installContent}>
         <h2 className={styles.sectionTitle}>Quick Start</h2>
-        <p className={styles.sectionSubtitle}>Install and use in minutes</p>
+        <p className={styles.sectionSubtitle}>
+          {isV5Preview
+            ? "These commands install npm latest. To try this unreleased v5 preview, build master-v5 locally; the examples require version 5 or later."
+            : "Install and use in minutes"}
+        </p>
 
         <div
           style={{
