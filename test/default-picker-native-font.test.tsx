@@ -30,7 +30,7 @@ it('binds rendered native glyphs to the same font token and fallback as detectio
   );
   const glyph = container.querySelector('.epr-emoji-native')!;
   expect(glyph).not.toBeNull();
-  expect(probe).toHaveBeenCalledWith('Custom Emoji', false);
+  expect(probe).toHaveBeenCalledWith('Custom Emoji', false, glyph.ownerDocument);
   // jsdom does not resolve custom properties or reliably cascade
   // !important against universal resets. Inspect the matching rule
   // injected for this real glyph; a browser probe covers its computed font.
