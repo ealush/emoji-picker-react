@@ -102,14 +102,20 @@ describe('BYOD composition API', () => {
         components={components}
         emojiData={data}
       >
-        <div data-testid="outer">
-          <Grid />
-        </div>
-        <Picker.Root emojiData={data}>
-          <div data-testid="inner">
+        <Picker.Reactions />
+        <Picker.Panel>
+          <div data-testid="outer">
             <Grid />
           </div>
-        </Picker.Root>
+          <Picker.Root emojiData={data}>
+            <Picker.Reactions />
+            <Picker.Panel>
+              <div data-testid="inner">
+                <Grid />
+              </div>
+            </Picker.Panel>
+          </Picker.Root>
+        </Picker.Panel>
       </Picker.Root>,
     );
     expect(
@@ -134,11 +140,14 @@ describe('BYOD composition API', () => {
         onEmojiClick={selected}
         onSkinToneChange={toneChanged}
       >
-        <Picker.Search>
-          <Picker.SkinTone />
-        </Picker.Search>
-        <Picker.CategoryNav />
-        <Grid />
+        <Picker.Reactions />
+        <Picker.Panel>
+          <Picker.Search>
+            <Picker.SkinTone />
+          </Picker.Search>
+          <Picker.CategoryNav />
+          <Grid />
+        </Picker.Panel>
       </Picker.Root>,
     );
     expect(container.querySelector('[data-custom-header]')).not.toBeNull();
@@ -170,7 +179,10 @@ describe('BYOD composition API', () => {
         components={components}
         onEmojiClick={selected}
       >
-        <Grid />
+        <Picker.Reactions />
+        <Picker.Panel>
+          <Grid />
+        </Picker.Panel>
       </Picker.Root>,
     );
     const medium = screen.getByRole('gridcell', { name: 'thumbs up' });
@@ -209,8 +221,10 @@ describe('BYOD composition API', () => {
         onReactionClick={reaction}
       >
         <Picker.Reactions />
-        <Grid />
-        <Actions />
+        <Picker.Panel>
+          <Grid />
+          <Actions />
+        </Picker.Panel>
       </Picker.Root>,
     );
     fireEvent.click(screen.getByText('Collapse'));
@@ -229,15 +243,18 @@ describe('BYOD composition API', () => {
   it('lets List override one slot while inheriting the remaining Root slots', () => {
     const { container } = render(
       <Picker.Root emojiData={data} components={components}>
-        <Picker.Viewport>
-          <Picker.List
-            components={{
-              Emoji: ({ emoji, ...props }) => (
-                <button {...props} data-list-override={emoji.unified} />
-              ),
-            }}
-          />
-        </Picker.Viewport>
+        <Picker.Reactions />
+        <Picker.Panel>
+          <Picker.Viewport>
+            <Picker.List
+              components={{
+                Emoji: ({ emoji, ...props }) => (
+                  <button {...props} data-list-override={emoji.unified} />
+                ),
+              }}
+            />
+          </Picker.Viewport>
+        </Picker.Panel>
       </Picker.Root>,
     );
     expect(container.querySelector('[data-list-override]')).not.toBeNull();
@@ -253,7 +270,6 @@ describe('BYOD composition API', () => {
     const reactionsRef = React.createRef<HTMLUListElement>();
     const { container } = render(
       <Picker.Root
-        composition="explicit"
         components={components}
         emojiData={data}
         reactions={['1f600']}
@@ -298,7 +314,7 @@ describe('BYOD composition API', () => {
 
   it('supports explicit full-picker-only composition without injecting a reactions bar', () => {
     const { container } = render(
-      <Picker.Root composition="explicit" emojiData={data}>
+      <Picker.Root emojiData={data}>
         <Picker.Panel>
           <Grid />
         </Picker.Panel>
@@ -313,14 +329,11 @@ describe('BYOD composition API', () => {
   it('proposes controlled search without committing a rejected proposal or requiring an input', async () => {
     const changed = vi.fn();
     const { rerender } = render(
-      <Picker.Root
-        composition="explicit"
-        emojiData={data}
-        searchValue="face"
-        onSearchChange={changed}
-      >
+      <Picker.Root emojiData={data} searchValue="face" onSearchChange={changed}>
+<Picker.Reactions /><Picker.Panel>
         <Actions />
-      </Picker.Root>,
+      </Picker.Panel>
+</Picker.Root>,
     );
     fireEvent.click(screen.getByText('Set search'));
     expect(changed).toHaveBeenLastCalledWith('cat');
@@ -329,14 +342,11 @@ describe('BYOD composition API', () => {
     expect(changed).toHaveBeenLastCalledWith('');
     expect(screen.getByTestId('accepted-search')).toHaveTextContent('face');
     rerender(
-      <Picker.Root
-        composition="explicit"
-        emojiData={data}
-        searchValue="cat"
-        onSearchChange={changed}
-      >
+      <Picker.Root emojiData={data} searchValue="cat" onSearchChange={changed}>
+<Picker.Reactions /><Picker.Panel>
         <Actions />
-      </Picker.Root>,
+      </Picker.Panel>
+</Picker.Root>,
     );
     expect(screen.getByTestId('accepted-search')).toHaveTextContent('cat');
     await act(async () => new Promise((resolve) => setTimeout(resolve, 150)));
@@ -351,9 +361,12 @@ describe('BYOD composition API', () => {
         categories={categories}
         onSearchChange={changed}
       >
-        <Picker.SearchInput />
-        <Actions />
-        <Grid />
+        <Picker.Reactions />
+        <Picker.Panel>
+          <Picker.SearchInput />
+          <Actions />
+          <Grid />
+        </Picker.Panel>
       </Picker.Root>,
     );
     fireEvent.click(screen.getByText('Set search'));
@@ -376,7 +389,6 @@ describe('BYOD composition API', () => {
     render(
       <Picker.Root
         emojiData={data}
-        composition="explicit"
         reactionsDefaultOpen
         allowExpandReactions={false}
       >
