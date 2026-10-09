@@ -71,16 +71,17 @@ export function MuiComposition() {
           colorScheme="light"
           aria-label="Choose an emoji"
           style={{ width: 320, height: 400 }}
-          panelProps={{ style: { gap: 8 } }}
           onEmojiClick={(emoji) => setSelected(emoji.emoji)}
         >
-          <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
-          <Picker.Viewport>
-            <Picker.List components={components} />
-            <Picker.Empty />
-            <Picker.Loading />
-            <Picker.LoadError />
-          </Picker.Viewport>
+          <Picker.Panel style={{ gap: 8 }}>
+            <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
+            <Picker.Viewport>
+              <Picker.List components={components} />
+              <Picker.Empty />
+              <Picker.Loading />
+              <Picker.LoadError />
+            </Picker.Viewport>
+          </Picker.Panel>
         </Picker.Root>
         <Typography role="status" aria-label="Selected emoji" sx={{ mt: 1 }}>
           {selected || 'Choose an emoji to insert'}
@@ -134,14 +135,12 @@ export function MuiControls() {
     <ThemeProvider theme={theme}>
       <Paper sx={{ padding: 2, width: 384 }}>
         <Picker.Root
-          composition="explicit"
           components={controlComponents}
           style={{ width: 352, height: 460 }}
           categories={[
             Picker.Categories.SMILEYS_PEOPLE,
             Picker.Categories.ANIMALS_NATURE,
           ]}
-          skinTonePickerLocation={Picker.SkinTonePickerLocation.NONE}
           reactions={['1f600', '1f44d', '1f431']}
           reactionsDefaultOpen
           onEmojiClick={(emoji) => setSelected(emoji.emoji)}

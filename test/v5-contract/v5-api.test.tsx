@@ -25,7 +25,9 @@ import type {
 import {
   CategoryNav,
   List,
+  Panel,
   Preview,
+  Reactions,
   Root,
   Search,
   Viewport,
@@ -1123,7 +1125,7 @@ describe('v5 caller-defined suggestions', () => {
   });
 });
 
-describe('v5 primitive exports and managed-panel grammar', () => {
+describe('v5 primitive exports and explicit composition grammar', () => {
   it('exports Root Search CategoryNav Viewport List Preview', async () => {
     const primitives = (await import('../../src/primitives')) as Record<
       string,
@@ -1157,8 +1159,8 @@ describe('v5 primitive exports and managed-panel grammar', () => {
     expect(primitives.Reactions).toBeDefined();
   });
 
-  it('Root creates exactly one managed panel DOM wrapper', () => {
-    const { container } = render(
+  it('Root renders no panel until Panel is composed, then exactly one', () => {
+    const { container, rerender } = render(
       <Root emojiData={twoCategoryData}>
         <Search />
         <Viewport>
@@ -1166,20 +1168,35 @@ describe('v5 primitive exports and managed-panel grammar', () => {
         </Viewport>
       </Root>,
     );
+    expect(
+      container.querySelectorAll('[data-epr-part="panel"]'),
+    ).toHaveLength(0);
+    rerender(
+      <Root emojiData={twoCategoryData}>
+        <Panel>
+          <Search />
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
+      </Root>,
+    );
     expect(container.querySelectorAll('[data-epr-part="panel"]')).toHaveLength(
       1,
     );
   });
 
-  it('places every direct Root child into the managed panel in caller order', () => {
+  it('places Panel children in caller order', () => {
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <Search />
-        <CategoryNav />
-        <Viewport>
-          <List />
-        </Viewport>
-        <Preview />
+        <Panel>
+          <Search />
+          <CategoryNav />
+          <Viewport>
+            <List />
+          </Viewport>
+          <Preview />
+        </Panel>
       </Root>,
     );
     const order = Array.from(
@@ -1190,16 +1207,18 @@ describe('v5 primitive exports and managed-panel grammar', () => {
     expect(order).toEqual(['search', 'category-nav', 'viewport', 'preview']);
   });
 
-  it('allows arbitrary consumer wrappers and UI in managed panel content', () => {
+  it('allows arbitrary consumer wrappers and UI in panel content', () => {
     const { container } = render(
       <Root emojiData={twoCategoryData}>
-        <div className="my-card">
-          <button type="button">Close</button>
-          <Search />
-          <Viewport>
-            <List />
-          </Viewport>
-        </div>
+        <Panel>
+          <div className="my-card">
+            <button type="button">Close</button>
+            <Search />
+            <Viewport>
+              <List />
+            </Viewport>
+          </div>
+        </Panel>
       </Root>,
     );
     const panel = container.querySelector('[data-epr-part="panel"]');
@@ -1387,8 +1406,8 @@ describe('v5 primitive exports and managed-panel grammar', () => {
     }
   });
 
-  it('renders reactions from props alone with no Reactions child element', () => {
-    const { container } = render(
+  it('renders reactions only for a composed Reactions element', () => {
+    const { container, rerender } = render(
       <Root
         emojiData={twoCategoryData}
         reactionsDefaultOpen
@@ -1397,6 +1416,23 @@ describe('v5 primitive exports and managed-panel grammar', () => {
         <Viewport>
           <List />
         </Viewport>
+      </Root>,
+    );
+    expect(
+      container.querySelector('[data-epr-part="reactions"]'),
+    ).toBeNull();
+    rerender(
+      <Root
+        emojiData={twoCategoryData}
+        reactionsDefaultOpen
+        reactions={['1f600']}
+      >
+        <Reactions />
+        <Panel>
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
       </Root>,
     );
     expect(
@@ -2017,6 +2053,7 @@ describe('v5 navigation', () => {
         reactionsDefaultOpen
       >
         <RegistryCapture box={box} />
+        <Reactions />
         <Viewport>
           <List />
         </Viewport>

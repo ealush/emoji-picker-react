@@ -66,10 +66,7 @@ void list;
 describe('BYOD input type contract', () => {
   it('forwards a design-library input ref to its native input', () => {
     render(
-      <Picker.Root
-        composition="explicit"
-        emojiData={{ categories: {}, emojis: {} }}
-      >
+      <Picker.Root emojiData={{ categories: {}, emojis: {} }}>
         {custom}
       </Picker.Root>,
     );
@@ -88,7 +85,7 @@ const slots: Picker.PickerComponents = {
   ClearButton: (props) => <button {...props} />,
 };
 const explicit = (
-  <Picker.Root composition="explicit" appearance="none" components={slots}>
+  <Picker.Root appearance="none" components={slots}>
     <Picker.Reactions ref={React.createRef<HTMLUListElement>()} />
     <Picker.Panel ref={React.createRef<HTMLDivElement>()}>
       <Picker.SearchInput />
