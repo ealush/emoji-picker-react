@@ -738,6 +738,8 @@ remain meaningful interaction settings, not component-presence switches.
 `CategoryNav` exposes horizontal or vertical tab orientation. `Viewport` owns
 scrolling and variations; `List` owns the managed grid. `Preview` shows hovered
 or focused emoji state. `SkinTone` uses the shared tone selection engine.
+Inside `Search`, a horizontal `SkinTone` reserves space for its expanded fan;
+the input shrinks as the fan opens and regains that space when it closes.
 `Reactions` renders the compact list only while reactions mode is active.
 `Empty`, `Loading` and `LoadError` render according to search/data state and
 accept custom content; LoadError's render function receives `error` and `retry`.
