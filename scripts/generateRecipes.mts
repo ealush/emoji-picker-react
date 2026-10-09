@@ -199,7 +199,7 @@ function generate(slug: string) {
   const rootImport = isDefault
     ? `import EmojiPicker from '../../../src';`
     : `import * as Picker from '../../../src/primitives';`;
-  const root = isDefault ? 'EmojiPicker' : 'Picker.Root';
+  const root = isDefault ? 'RecipePicker' : 'Picker.Root';
   const list = (classes: string[]) =>
     `[\n${classes.map((name) => `  ${quote(name)},`).join('\n')}\n].join(' ')`;
 
@@ -221,7 +221,17 @@ import { Shell } from './shell';
 
 import '../../integrations/tailwind.css';
 import './picker.css';
-
+${
+  isDefault
+    ? `
+// Styling libraries own their object-valued theme. Use colorScheme for the picker.
+function RecipePicker({ theme, ...props }: Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'> & { theme?: unknown }) {
+  void theme;
+  return <EmojiPicker {...props} />;
+}
+`
+    : ''
+}
 const meta = {
   title: 'Recipes/${recipe.title}',
   tags: ['recipe'],

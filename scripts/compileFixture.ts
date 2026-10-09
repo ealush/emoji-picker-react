@@ -11,6 +11,8 @@ export function compileFixture(
     outfile,
     bundle: true,
     packages: 'external',
+    // Repository path aliases must never substitute source for the packed dependency.
+    tsconfigRaw: { compilerOptions: {} },
     platform: 'node',
     target: 'node18',
     format,

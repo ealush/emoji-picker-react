@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react-vite';
 import React, { useEffect, useState } from 'react';
 
-import EmojiPicker, { Props } from '../../src';
+import EmojiPicker, { Props, type CustomEmoji } from '../../src';
 import { Categories } from '../../src/config/categoryConfig';
 import { Template, customEmojis } from '../utils/pickerStoryUtils';
 
@@ -31,8 +31,8 @@ export const CustomEmojisGrouped = (args: Props) => (
   <Template
     {...args}
     customEmojis={[
-      ...customEmojis.slice(0, 2).map(emoji => ({ ...emoji, group: 'fun' })),
-      ...customEmojis.slice(2, 4).map(emoji => ({ ...emoji, group: 'gear' })),
+      ...customEmojis.slice(0, 2).map((emoji) => ({ ...emoji, group: 'fun' })),
+      ...customEmojis.slice(2, 4).map((emoji) => ({ ...emoji, group: 'gear' })),
       ...customEmojis.slice(4),
     ]}
     categories={[
@@ -73,15 +73,16 @@ export const CustomEmojisGroupedDynamic = () => {
   const [ungrouped, setUngrouped] = useState(false);
   const [lastClick, setLastClick] = useState('');
 
-  const customs = (switched ? datasetB : datasetA).map(emoji =>
-    ungrouped && emoji.id === 'ninja'
-      ? { id: emoji.id, names: emoji.names, imgUrl: emoji.imgUrl }
-      : emoji,
+  const customs: CustomEmoji[] = (switched ? datasetB : datasetA).map(
+    (emoji) =>
+      ungrouped && emoji.id === 'ninja'
+        ? { id: emoji.id, names: emoji.names, imgUrl: emoji.imgUrl }
+        : emoji,
   );
-  const groups = [...new Set(customs.map(emoji => emoji.group))].filter(
+  const groups = [...new Set(customs.map((emoji) => emoji.group))].filter(
     (group): group is string => !!group,
   );
-  const entries = groups.map(group =>
+  const entries = groups.map((group) =>
     renamed && group === 'people'
       ? {
           category: Categories.CUSTOM as const,
@@ -105,23 +106,23 @@ export const CustomEmojisGroupedDynamic = () => {
 
   return (
     <div style={{ height: '500px', width: '400px' }}>
-      <button onClick={() => setSwitched(value => !value)}>
+      <button onClick={() => setSwitched((value) => !value)}>
         Switch dataset
       </button>
-      <button onClick={() => setReversed(value => !value)}>
+      <button onClick={() => setReversed((value) => !value)}>
         Reverse categories
       </button>
-      <button onClick={() => setRenamed(value => !value)}>
+      <button onClick={() => setRenamed((value) => !value)}>
         Rename and change icon
       </button>
-      <button onClick={() => setUngrouped(value => !value)}>
+      <button onClick={() => setUngrouped((value) => !value)}>
         Move to ungrouped
       </button>
       <output data-testid="click-result">{lastClick}</output>
       <EmojiPicker
         customEmojis={customs}
         categories={categories}
-        onEmojiClick={emoji => setLastClick(emoji.unified)}
+        onEmojiClick={(emoji) => setLastClick(emoji.unified)}
       />
     </div>
   );

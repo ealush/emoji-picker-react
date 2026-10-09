@@ -43,3 +43,16 @@ const preview: RootProps = {
   previewConfig: { showPreview: false },
 };
 void [search, tone, location, open, composition, panel, preview];
+
+const identifyingAttributes: PickerProps = {
+  id: 'picker',
+  title: 'Choose an emoji',
+  lang: 'en',
+  dir: 'ltr',
+  'aria-label': 'Emoji picker',
+};
+// @ts-expect-error The default picker does not forward arbitrary handlers.
+const handler: PickerProps = { onClick: () => {} };
+// @ts-expect-error Roles belong to the managed engine.
+const role: PickerProps = { role: 'dialog' };
+void [identifyingAttributes, handler, role];

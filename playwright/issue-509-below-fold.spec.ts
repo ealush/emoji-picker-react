@@ -10,13 +10,13 @@
  * @file issue-509-below-fold.spec.ts
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
 type RowKind = 'visible' | 'partial' | 'below';
 
-async function gotoPicker(page) {
+async function gotoPicker(page: Page) {
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto(storyUrl('picker-overview--no-suggested'));
   await expect(
@@ -30,10 +30,7 @@ async function gotoPicker(page) {
  * Retries deeper scroll positions because virtualization only renders a
  * window of rows around the viewport.
  */
-async function prepareVerticalMove(
-  page,
-  kind: RowKind,
-): Promise<string> {
+async function prepareVerticalMove(page: Page, kind: RowKind): Promise<string> {
   for (const scrollTop of [0, 60, 120, 200, 320, 480]) {
     const label = await page.evaluate(
       ({ top, want }) => {
@@ -42,7 +39,7 @@ async function prepareVerticalMove(
         const buttons = Array.from(
           body.querySelectorAll<HTMLButtonElement>('button.epr-emoji'),
         ).filter(
-          b =>
+          (b) =>
             b.getAttribute('aria-label') &&
             b.classList.contains('epr-visible') &&
             window.getComputedStyle(b).opacity !== '0',
@@ -56,9 +53,7 @@ async function prepareVerticalMove(
         const bodyRect = body.getBoundingClientRect();
         const tops = [...rows.keys()].sort((a, b) => a - b);
         for (let i = 1; i < tops.length; i++) {
-          const r = rows
-            .get(tops[i])![0]
-            .getBoundingClientRect();
+          const r = rows.get(tops[i])![0].getBoundingClientRect();
           const matches =
             want === 'visible'
               ? r.bottom <= bodyRect.bottom
@@ -67,9 +62,7 @@ async function prepareVerticalMove(
                 : r.top >= bodyRect.bottom;
           if (matches) {
             rows.get(tops[i - 1])![0].focus();
-            return (
-              rows.get(tops[i])![0].getAttribute('aria-label') ?? ''
-            );
+            return rows.get(tops[i])![0].getAttribute('aria-label') ?? '';
           }
         }
         return '';
@@ -85,7 +78,7 @@ async function prepareVerticalMove(
   return '';
 }
 
-async function expectFocusMovesTo(page, label: string) {
+async function expectFocusMovesTo(page: Page, label: string) {
   // Focus moves via requestAnimationFrame; poll for the change.
   await page.keyboard.press('ArrowDown');
   await expect
@@ -102,9 +95,7 @@ async function expectFocusMovesTo(page, label: string) {
     .toBe(label);
 }
 
-test('ArrowDown moves focus between fully visible emojis', async ({
-  page,
-}) => {
+test('ArrowDown moves focus between fully visible emojis', async ({ page }) => {
   await gotoPicker(page);
   const target = await prepareVerticalMove(page, 'visible');
   expect(target).not.toBe('');
@@ -120,9 +111,7 @@ test('ArrowDown moves focus to a partially-below-fold emoji', async ({
   await expectFocusMovesTo(page, target);
 });
 
-test('ArrowDown moves focus to a fully-below-fold emoji', async ({
-  page,
-}) => {
+test('ArrowDown moves focus to a fully-below-fold emoji', async ({ page }) => {
   await gotoPicker(page);
   const target = await prepareVerticalMove(page, 'below');
   expect(target).not.toBe('');

@@ -7,7 +7,7 @@ import './app.css';
 // Tapback set: love, like, dislike, laugh, emphasize, question.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
-  Root?: React.ComponentType<React.ComponentProps<typeof EmojiPicker>>;
+  Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;
   className?: string;
 };
 

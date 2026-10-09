@@ -80,7 +80,9 @@ function buildEsm() {
     join(repoRoot, 'src/index.tsx'),
     join(repoRoot, 'src/primitives/index.ts'),
     join(repoRoot, 'src/data.ts'),
-    ...COMMON,
+    // ShipStyles 1.0's ESM .js entry lacks module metadata for Node 18.
+    // Bundle it into shared .mjs chunks so native ESM consumers keep working.
+    ...COMMON.filter((arg) => arg !== '--external:shipstyles'),
     '--splitting',
     '--format=esm',
     '--platform=neutral',

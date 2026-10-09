@@ -57,7 +57,13 @@ export type {
 
 export { emojiByUnified } from './dataUtils/emojiSelectors';
 
-export interface PickerProps extends PickerConfig {
+// The default picker forwards identifying attributes, but leaves event handlers
+// and library-owned roles to the primitives or a consumer wrapper.
+export interface PickerProps
+  extends
+    PickerConfig,
+    React.AriaAttributes,
+    Pick<React.HTMLAttributes<HTMLElement>, 'id' | 'title' | 'lang' | 'dir'> {
   /**
    * Color scheme: 'light' | 'dark' | 'auto'. Preferred over `theme`, which
    * Emotion, styled-components and MUI reserve on components they wrap
