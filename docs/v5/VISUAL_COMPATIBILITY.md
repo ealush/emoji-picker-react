@@ -55,6 +55,17 @@ A major version does not automatically authorize visual redesign.
 | default `emojiStyle` (picker and `Emoji`) | Apple images → native OS glyphs | Product decision for v5: instant, offline, no image requests. Fixtures that render images pass `emojiStyle` explicitly, so existing baselines were unaffected. Callers that supply their own images (`getEmojiUrl`, or `Emoji`'s `emojiUrl`) without a style keep the Apple image default, so their output is unchanged; pass `emojiStyle="apple"` to restore images otherwise. Documented in MIGRATION.md. |
 | every fixture showing the emoji grid | columns spread across the row instead of packing left | The category grid's CSS has always declared `justify-content: space-between`, but virtualization positions emojis absolutely at `column × size`, so the whole row remainder (up to one emoji wide: 10px in the default picker, 24–33px in several designs) collected as a gap on the right edge, beside the scrollbar. Columns now share the remainder (first flush left, last flush right, whole pixels), giving equal left/right insets. Guarded by `playwright/grid-geometry.spec.ts` across the default picker and every design; v4 had the same left packing. |
 
+### Consumer gallery presentation
+
+The Cherry Studio and Push Chat `open`, `search` and `selected` snapshots
+intentionally adopt coherent managed colors. Cherry's gallery omits the
+fixture's partial literal light palette so `Theme.AUTO` can style every
+surface consistently. Push's near-black style-forwarding marker is restricted
+to its legacy contract test; the gallery uses the automatic palette. These
+changes affect fixture presentation only, not the default picker palette or
+consumer integration assertions. Their six snapshots are updated explicitly;
+the remaining consumer baselines are preserved.
+
 ### Environment drift adjudicated
 
 | Snapshots | Drift | Resolution |

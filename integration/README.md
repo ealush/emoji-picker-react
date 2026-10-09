@@ -43,7 +43,13 @@ npx playwright test consumer-integrations
 
 Gallery: `stories/consumers/ConsumerFixtures.stories.tsx` (17 stories plus
 `Index`). Spec: `playwright/consumer-integrations.spec.ts` (open / changed /
-selected on the `consumer-shot-<key>` region). Baselines:
+selected on the `consumer-shot-<key>` region). These are contract fixtures,
+not full app replicas: the dataset and host UI are deliberately small.
+Cherry Studio's gallery story keeps its popover geometry but uses the managed
+automatic palette instead of the fixture's literal light-color substitutions.
+Push Chat's conspicuous background is confined to its legacy style-forwarding
+contract test; its gallery uses the managed automatic palette. Both remain
+readable when the OS selects dark mode. Baselines:
 `playwright/consumer-integrations.spec.ts-snapshots/` (51 images). Remote
 emoji images (NextChat's CDN, the Apple style's CDN) are intercepted and
 served a deterministic local image, so the spec needs no network. Contact

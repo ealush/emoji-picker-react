@@ -38,6 +38,14 @@ import {
 
 const meta = {
   title: 'Consumers/Fixtures',
+  parameters: {
+    docs: {
+      description: {
+        component:
+          'Integration contract fixtures with a small deterministic dataset and simplified host UI. These are not full app replicas. Cherry Studio and Push Chat colors follow the OS scheme; literal palette/style probes remain in integration tests.',
+      },
+    },
+  },
 } satisfies Meta;
 
 export default meta;
@@ -92,7 +100,14 @@ export const NextChat = () => (
 
 export const CherryStudio = () => (
   <Shot shotKey="cherry">
-    <CherryStudioPicker />
+    <CherryStudioPicker
+      pickerStyle={
+        {
+          '--epr-picker-border-color': 'transparent',
+          '--epr-picker-border-radius': '10px',
+        } as React.CSSProperties
+      }
+    />
   </Shot>
 );
 
@@ -229,7 +244,10 @@ export const Index = () => (
     <p>
       One story per real-consumer integration, each reproducing the
       consumer's actual code (see integration/manifest.json for sources).
-      The Playwright spec drives each through its real flow.
+      The Playwright spec drives each through its real flow. These are
+      integration contract fixtures with small deterministic datasets and
+      simplified host UI, not full app replicas. Cherry Studio and Push Chat
+      colors follow the OS scheme; the literal style-forwarding probes remain in integration tests.
     </p>
     <ul>
       {indexEntries.map((entry) => (

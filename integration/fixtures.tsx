@@ -185,10 +185,13 @@ export function CherryStudioPicker({
   onInsert,
   initialRecent = ['🧠', '📁'],
   hiddenEmojis = [],
+  pickerStyle = CHERRY_PICKER_STYLE,
 }: {
   onInsert?: (emoji: string) => void;
   initialRecent?: string[];
   hiddenEmojis?: string[];
+  // The gallery can omit the upstream palette's literal light colors.
+  pickerStyle?: React.CSSProperties;
 }) {
   const [text, setText] = React.useState('');
   const [recent, setRecent] = React.useState(initialRecent);
@@ -223,7 +226,7 @@ export function CherryStudioPicker({
           searchDisabled={false}
           searchPlaceholder="Search emoji"
           skinTonesDisabled
-          style={CHERRY_PICKER_STYLE}
+          style={pickerStyle}
           suggestedEmojis={recent}
           suggestedEmojisMode={SuggestionMode.RECENT}
           theme={Theme.AUTO}
@@ -676,7 +679,9 @@ export function MedusaNotesPicker({
  * Push Chat's typebar passes the v3-era `pickerStyle` prop, removed in
  * later v4. Its source is private, so this reproduces only what the live
  * bundle shows: the picker in the composer with a style object. v5 drops
- * the unknown prop (no DOM leak) and `style` is the migration.
+ * the unknown prop (no DOM leak) and `style` is the migration. The legacy
+ * contract test also uses a conspicuous background to prove style forwarding;
+ * the browsable fixture uses the managed automatic color scheme.
  */
 export function PushChatTypebar({
   onSelect,
@@ -694,7 +699,10 @@ export function PushChatTypebar({
       <div data-testid="push-draft">{draft}</div>
       <EmojiPicker
         emojiData={fixtureEmojiData}
-        style={{ backgroundColor: 'rgb(1, 2, 3)' }}
+        colorScheme={Theme.AUTO}
+        style={
+          legacyPickerStyle ? { backgroundColor: 'rgb(1, 2, 3)' } : undefined
+        }
         {...legacy}
         onEmojiClick={(emoji) => {
           setDraft((previous) => previous + emoji.emoji);
