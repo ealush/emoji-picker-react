@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/react-vite';
+import { Meta } from '@storybook/react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import EmojiPicker from '../../src';
@@ -7,7 +7,9 @@ import { focusElement } from '../../src/DomUtils/focusElement';
 import {
   CategoryNav,
   List,
+  Panel,
   Preview,
+  Reactions,
   Root,
   Search,
   Viewport,
@@ -195,19 +197,21 @@ export function ReorderedPrimitives() {
   }
   return (
     <Root emojiData={acceptanceData}>
-      <CategoryNav data-v5-layout-item="categories" />
-      <button
-        type="button"
-        data-v5-layout-item="product-action"
-        onClick={() => setOpen(false)}
-      >
-        Product action
-      </button>
-      <Search data-v5-layout-item="search" />
-      <Viewport data-v5-layout-item="viewport">
-        <List />
-      </Viewport>
-      <Preview data-v5-layout-item="preview" />
+      <Panel>
+        <CategoryNav data-v5-layout-item="categories" />
+        <button
+          type="button"
+          data-v5-layout-item="product-action"
+          onClick={() => setOpen(false)}
+        >
+          Product action
+        </button>
+        <Search data-v5-layout-item="search" />
+        <Viewport data-v5-layout-item="viewport">
+          <List />
+        </Viewport>
+        <Preview data-v5-layout-item="preview" />
+      </Panel>
     </Root>
   );
 }
@@ -417,11 +421,14 @@ export function StaleNavigationReactions() {
         reactionsDefaultOpen
         reactions={['1f600', '1f603']}
       >
-        <Search />
-        <CategoryNav />
-        <Viewport>
-          <List />
-        </Viewport>
+        <Reactions />
+        <Panel>
+          <Search />
+          <CategoryNav />
+          <Viewport>
+            <List />
+          </Viewport>
+        </Panel>
         <DeferredNavigationHarness />
       </Root>
       <MarkUnifiedTarget

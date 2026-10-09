@@ -17,19 +17,21 @@ export type ShellProps = {
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
   return (
     <RootComponent appearance="default" className={className} searchPlaceholder="Find the perfect emoji">
-      <div className="discord-layout">
-        <div className="discord-rail">
-          <Picker.CategoryNav orientation="vertical" />
+      <Picker.Panel>
+        <div className="discord-layout">
+          <div className="discord-rail">
+            <Picker.CategoryNav orientation="vertical" />
+          </div>
+          <div className="discord-main">
+            <Picker.Search />
+            <Picker.Viewport>
+              <Picker.List />
+              <Picker.Empty />
+            </Picker.Viewport>
+          </div>
         </div>
-        <div className="discord-main">
-          <Picker.Search />
-          <Picker.Viewport>
-            <Picker.List />
-            <Picker.Empty />
-          </Picker.Viewport>
-        </div>
-      </div>
-      <Picker.Preview />
+        <Picker.Preview />
+      </Picker.Panel>
     </RootComponent>
   );
 }
