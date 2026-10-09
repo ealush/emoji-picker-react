@@ -167,7 +167,7 @@ Initial required part API:
 
 Part names are public API once released. Renaming/removing one is semver-significant.
 
-A part is not automatically a composition primitive. `category-content`, `variation-picker`, `panel`, and `reactions` are all managed by the library while still exposing stable styling hooks — see [PRIMITIVES.md](./PRIMITIVES.md) §1 for why a part is a weaker commitment than a primitive.
+A part is not automatically a composition primitive. `category-content` and `variation-picker` are internal managed structures with stable styling hooks. Panel and Reactions are exported primitives with those same-named part selectors; see [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
 
 Do not expose private measurement nodes or every implementation wrapper as parts.
 

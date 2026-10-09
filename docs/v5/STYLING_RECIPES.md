@@ -124,7 +124,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 /* …then the same part rules as the unstyled sheet above. */
 ```
 
-A bare Root has no height: give it one so the viewport scrolls and virtualizes. Use `[data-epr-part='panel']` (or `panelProps`) for the flex gap between parts.
+A bare Root has no height: give it one so the viewport scrolls and virtualizes. Render Panel and put flex/gap classes or styles on it directly; `[data-epr-part='panel']` is its stable selector.
 
 ---
 
@@ -224,13 +224,15 @@ const components: Picker.PickerComponents = {
   ),
 };
 
-<Picker.Root cssLayer="epr" components={components} className="h-[420px] w-[352px] rounded-2xl bg-white shadow-xl" panelProps={{ className: 'gap-2' }}>
-  <Picker.SearchInput className="mx-3 mt-3 h-9 rounded-lg border border-zinc-300 px-3" />
-  <Picker.CategoryNav className="border-b border-zinc-100 px-2" />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty className="p-6 text-center text-sm text-zinc-500" />
-  </Picker.Viewport>
+<Picker.Root cssLayer="epr" components={components} className="h-[420px] w-[352px] rounded-2xl bg-white shadow-xl">
+  <Picker.Panel className="gap-2">
+    <Picker.SearchInput className="mx-3 mt-3 h-9 rounded-lg border border-zinc-300 px-3" />
+    <Picker.CategoryNav className="border-b border-zinc-100 px-2" />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty className="p-6 text-center text-sm text-zinc-500" />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>;
 ```
 
@@ -445,15 +447,17 @@ const components: Picker.PickerComponents = {
   ),
 };
 
-<Picker.Root colorScheme="light" components={components} style={{ width: 320, height: 400 }} panelProps={{ style: { gap: 8 } }}>
-  <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
-  <Picker.CategoryNav />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty />
-    <Picker.Loading />
-    <Picker.LoadError />
-  </Picker.Viewport>
+<Picker.Root colorScheme="light" components={components} style={{ width: 320, height: 400 }}>
+  <Picker.Panel style={{ gap: 8 }}>
+    <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
+    <Picker.CategoryNav />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty />
+      <Picker.Loading />
+      <Picker.LoadError />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>;
 ```
 

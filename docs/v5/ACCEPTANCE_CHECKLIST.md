@@ -115,11 +115,11 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] Viewport exported.
 - [x] List exported.
 - [x] Preview exported.
-- [x] explicit composition exposes Panel with native ref and managed hidden/inert presence.
-- [x] explicit composition exposes Reactions with native ref and shared selection/navigation.
-- [x] Root creates exactly one managed `data-epr-part="panel"` wrapper around all children.
-- [x] Root renders `data-epr-part="reactions"` from props alone, with no child element required.
-- [x] ordinary wrappers/headers/buttons are legal Root children and land inside that managed panel.
+- [x] Panel is exported with native ref and managed hidden/inert presence.
+- [x] Reactions is exported with native ref and shared selection/navigation.
+- [x] Root renders exactly its supplied children; an explicitly rendered Panel owns hidden/inert presence.
+- [x] Reactions is rendered explicitly; Root never inserts a reaction bar from props alone.
+- [x] ordinary wrappers/headers/buttons are legal Root children in caller-defined order and placement.
 - [x] there is no child-ordering rule: Root preserves caller order.
 - [x] Viewport is optional and singleton.
 - [x] if rendered, Viewport contains exactly one direct List child.
@@ -152,7 +152,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 
 - [x] default EmojiPicker retains the existing ErrorBoundary behavior.
 - [x] primitive Root does not install a library ErrorBoundary.
-- [x] render/lifecycle errors from arbitrary consumer children inside Root's managed panel propagate to the consumer's surrounding ErrorBoundary.
+- [x] render/lifecycle errors from arbitrary consumer children inside Root propagate to the consumer's surrounding ErrorBoundary.
 - [x] event-handler exceptions are not claimed to be caught by React ErrorBoundaries.
 
 ## 12. One implementation
@@ -317,7 +317,7 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 ## Adoption candidate follow-up (2026-10-04)
 
 - [x] Primitives export runtime constants without eager dataset registration; complete-runtime budget includes ShipStyles.
-- [x] Native SearchInput shares managed Search/IME/navigation behavior; panelProps styles the managed layout boundary.
+- [x] Native SearchInput shares managed Search/IME/navigation behavior; explicit Panel accepts layout props and owns hidden/inert presence.
 - [x] Custom cells expose active state with scoped subscriptions and unrelated-cell render isolation.
 - [x] Dataset failures, retry, abort, stale-source suppression, StrictMode/unmount and search typed before loading are exercised in unit tests.
 - [x] Registry component and gallery React/CSS/CSS Modules source are generated from consumer files.

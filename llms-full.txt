@@ -140,7 +140,6 @@ function ComposerPicker({ onSelect }: {
       columns={8}
       className="composer-picker"
       style={{ height: 400 }}
-      panelProps={{ className: 'composer-picker-panel' }}
       labels={{
         searchLabel: 'Rechercher un emoji',
         searchPlaceholder: 'Rechercher',
@@ -149,13 +148,15 @@ function ComposerPicker({ onSelect }: {
         retryLoading: 'Réessayer',
       }}
     >
-      <Picker.SearchInput as={Input} />
-      <Picker.Viewport>
-        <Picker.List />
-        <Picker.Empty />
-        <Picker.Loading />
-        <Picker.LoadError />
-      </Picker.Viewport>
+      <Picker.Panel className="composer-picker-panel">
+        <Picker.SearchInput as={Input} />
+        <Picker.Viewport>
+          <Picker.List />
+          <Picker.Empty />
+          <Picker.Loading />
+          <Picker.LoadError />
+        </Picker.Viewport>
+      </Picker.Panel>
     </Picker.Root>
   );
 }
@@ -173,9 +174,9 @@ Adapt `Input` and `Button` props to the installed design library.
 
 - One `Root` per picker. One `Viewport` containing one `List`. Wrappers, memo and HOCs around parts are fine.
 - `Search` (input + icon + clear button) and `SearchInput` (only the input, or yours) are alternatives: use one.
-- Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. When rendering `SkinTone` yourself, pass `skinTonePickerLocation="NONE"` to Root.
-- Root wraps children in a managed `Panel` and adds a `Reactions` bar. Use `panelProps` to lay out the panel. With `composition="explicit"`, place one `Panel` (expanded parts) and `Reactions` yourself inside Root.
-- `open={false}` unmounts the picker and cancels loading; reopening starts fresh. Keep state that must survive closing in the host.
+- Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. Search and Preview never insert SkinTone automatically; place it directly where needed.
+- Root renders exactly the supplied children. For compact reactions, place `Reactions` outside `Panel` and put expanded parts inside `Panel`. Put layout props directly on Panel; there is no composition switch or panelProps prop.
+- Conditionally mount Root to control its lifetime; unmounting aborts pending loading. The assembled EmojiPicker keeps its legacy `open` prop. Keep state that must survive closing in the host.
 - Portaling a whole Root (into a popover) works; portaling individual parts out of Root does not.
 
 ## 6. Mistakes to avoid
@@ -1061,20 +1062,22 @@ Choose batteries included or BYOD — bring your own design, design language and
 ```tsx
 import * as Picker from 'emoji-picker-react/primitives';
 
-<Picker.Root panelProps={{ className: 'flex flex-col gap-2' }}>
-  <Picker.SearchInput as={Input} placeholder="Search emoji" />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty />
-    <Picker.Loading />
-    <Picker.LoadError />
-  </Picker.Viewport>
+<Picker.Root style={{ height: 400 }}>
+  <Picker.Panel className="flex flex-col gap-2">
+    <Picker.SearchInput as={Input} placeholder="Search emoji" />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty />
+      <Picker.Loading />
+      <Picker.LoadError />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>
 ```
 
 `Input` must forward its ref and native input props to one `<input>`. Root controls search; use Root’s `searchValue` / `onSearchChange` for controlled state. SearchInput’s ref/className/placeholder address the input directly. Use Search for the managed input/icon/clear-button region instead. They register the same single search region and share IME, filtering and keyboard behavior.
 
-Custom input props are inferred from `as`, including required design-library options (for example `variant`) and native-name overrides such as `size="sm"`. Native search event handlers keep their input event types. Native tags other than `input` are excluded from the API. Use Root’s `panelProps` for layout between parts. Root owns collapsed-panel hidden/inert behavior. Custom emoji cells receive `emoji.isActive` and `data-epr-active`; preserve all managed button props and position styles. Custom cells and category headers own decorative styles; they do not inherit the default button reset or header typography. Provide a visible keyboard focus state.
+Custom input props are inferred from `as`, including required design-library options (for example `variant`) and native-name overrides such as `size="sm"`. Native search event handlers keep their input event types. Native tags other than `input` are excluded from the API. Put layout props on an explicit Panel between Root and its expanded parts. Panel owns its collapsed hidden/inert behavior. Custom emoji cells receive `emoji.isActive` and `data-epr-active`; preserve all managed button props and position styles. Custom cells and category headers own decorative styles; they do not inherit the default button reset or header typography. Provide a visible keyboard focus state.
 
 ### Inputs with a wrapper ref, including MUI
 
@@ -1131,7 +1134,7 @@ const loadFrench = ({ signal }: Picker.EmojiDataLoaderOptions) =>
 }}>{/* SearchInput, Viewport, List, Loading and LoadError */}</Picker.Root>
 ```
 
-Hoist the loader. Retry starts a new attempt; source changes, closing Root and unmount abort the old attempt. Closed Roots do not start loads. Malformed loader payloads enter the same recoverable error state. Late successes or failures cannot overwrite a newer source. `useEmojiDataState()` exposes `{ loading, error, retry }` inside Root when an application owns recovery UI.
+Hoist the loader. Retry starts a new attempt; source changes and unmount abort the old attempt. Conditionally mount Root to control loading lifetime; an unmounted Root starts no loads. Malformed loader payloads enter the same recoverable error state. Late successes or failures cannot overwrite a newer source. `useEmojiDataState()` exposes `{ loading, error, retry }` inside Root when an application owns recovery UI.
 
 Emoji names/categories come from any of the 28 bundled datasets or your own data. Translate the remaining visible and announced strings through `labels`, category names through `categories`, and the preview caption through `previewConfig.defaultCaption`. This includes loading failure and retry text.
 
@@ -2138,7 +2141,7 @@ Initial required part API:
 
 Part names are public API once released. Renaming/removing one is semver-significant.
 
-A part is not automatically a composition primitive. `category-content`, `variation-picker`, `panel`, and `reactions` are all managed by the library while still exposing stable styling hooks — see [PRIMITIVES.md](./PRIMITIVES.md) §1 for why a part is a weaker commitment than a primitive.
+A part is not automatically a composition primitive. `category-content` and `variation-picker` are internal managed structures with stable styling hooks. Panel and Reactions are exported primitives with those same-named part selectors; see [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
 
 Do not expose private measurement nodes or every implementation wrapper as parts.
 
@@ -2334,7 +2337,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 /* …then the same part rules as the unstyled sheet above. */
 ```
 
-A bare Root has no height: give it one so the viewport scrolls and virtualizes. Use `[data-epr-part='panel']` (or `panelProps`) for the flex gap between parts.
+A bare Root has no height: give it one so the viewport scrolls and virtualizes. Render Panel and put flex/gap classes or styles on it directly; `[data-epr-part='panel']` is its stable selector.
 
 ---
 
@@ -2434,13 +2437,15 @@ const components: Picker.PickerComponents = {
   ),
 };
 
-<Picker.Root cssLayer="epr" components={components} className="h-[420px] w-[352px] rounded-2xl bg-white shadow-xl" panelProps={{ className: 'gap-2' }}>
-  <Picker.SearchInput className="mx-3 mt-3 h-9 rounded-lg border border-zinc-300 px-3" />
-  <Picker.CategoryNav className="border-b border-zinc-100 px-2" />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty className="p-6 text-center text-sm text-zinc-500" />
-  </Picker.Viewport>
+<Picker.Root cssLayer="epr" components={components} className="h-[420px] w-[352px] rounded-2xl bg-white shadow-xl">
+  <Picker.Panel className="gap-2">
+    <Picker.SearchInput className="mx-3 mt-3 h-9 rounded-lg border border-zinc-300 px-3" />
+    <Picker.CategoryNav className="border-b border-zinc-100 px-2" />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty className="p-6 text-center text-sm text-zinc-500" />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>;
 ```
 
@@ -2655,15 +2660,17 @@ const components: Picker.PickerComponents = {
   ),
 };
 
-<Picker.Root colorScheme="light" components={components} style={{ width: 320, height: 400 }} panelProps={{ style: { gap: 8 } }}>
-  <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
-  <Picker.CategoryNav />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty />
-    <Picker.Loading />
-    <Picker.LoadError />
-  </Picker.Viewport>
+<Picker.Root colorScheme="light" components={components} style={{ width: 320, height: 400 }}>
+  <Picker.Panel style={{ gap: 8 }}>
+    <Picker.SearchInput as={MuiSearchInput} variant="outlined" />
+    <Picker.CategoryNav />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty />
+      <Picker.Loading />
+      <Picker.LoadError />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>;
 ```
 

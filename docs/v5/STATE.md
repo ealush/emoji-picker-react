@@ -106,7 +106,7 @@ The quiet-time reconciliation compares that accepted stamp before discarding an 
 
 ### Search omitted/disabled
 
-When `searchDisabled` is true or the Search primitive is omitted:
+When the assembled picker has `searchDisabled`, or a primitive composition omits both Search and SearchInput:
 
 - built-in type-to-search does not mutate internal search state;
 - no `onSearchChange` proposal is emitted by that key;

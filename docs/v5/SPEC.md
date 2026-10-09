@@ -74,13 +74,15 @@ A static architecture assertion SHOULD be added when the final source module pat
 Required v5 primitives:
 
 - `Root`
+- `Panel`
+- `Reactions`
 - `Search`
 - `CategoryNav`
 - `Viewport`
 - `List`
 - `Preview`
 
-Root defaults to managed composition, supplying one Panel and Reactions. An explicit composition exports those same parts for independent placement, native refs and presence boundaries. Expanded regions stay inside one Panel; Reactions stays outside it within Root. SkinTone can also be placed explicitly with the built-in location disabled. Variations remain managed in Viewport and use shared Emoji component replacements.
+Root renders exactly the parts supplied by the caller and inserts no managed composition. For compact reactions, expanded regions stay inside Panel and Reactions stays outside it within Root. Put layout props directly on Panel. Presence and placement follow JSX: omit controls to omit their UI, mount SkinTone where needed, and conditionally mount Root to control its lifetime. Legacy visibility/placement switches belong only to the assembled default picker. Variations remain managed in Viewport and use shared Emoji component replacements.
 
 A primitive may earn its boundary through layout, a native ref or managed presence even when its legal placement is constrained. Viewport and List remain separate elements with distinct measurement jobs.
 

@@ -108,9 +108,9 @@ Extract the components named in [DEFAULT_COMPOSITION.md](./DEFAULT_COMPOSITION.m
 The default picker must render those same component modules.
 
 Required implementation checks:
-- Root creates exactly one internal managed full-picker panel around every child, plus the managed reactions region from props alone;
-- managed composition remains automatic; explicit composition exposes the same Panel/Reactions implementation;
-- arbitrary consumer wrappers/controls remain legal Root children and land inside that managed panel;
+- Root renders exactly the supplied children; the default wrapper explicitly supplies exported Panel/Reactions;
+- caller JSX owns primitive presence and placement, without secondary composition/visibility switches;
+- arbitrary consumer wrappers/controls remain legal Root children; callers place expanded content inside Panel when using reactions;
 - Viewport/List grammar is validated;
 - every primitive forwards the documented ref/native props;
 - internal handlers compose according to PRIMITIVES.md;

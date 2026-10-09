@@ -7,20 +7,22 @@ Choose batteries included or BYOD — bring your own design, design language and
 ```tsx
 import * as Picker from 'emoji-picker-react/primitives';
 
-<Picker.Root panelProps={{ className: 'flex flex-col gap-2' }}>
-  <Picker.SearchInput as={Input} placeholder="Search emoji" />
-  <Picker.Viewport>
-    <Picker.List />
-    <Picker.Empty />
-    <Picker.Loading />
-    <Picker.LoadError />
-  </Picker.Viewport>
+<Picker.Root style={{ height: 400 }}>
+  <Picker.Panel className="flex flex-col gap-2">
+    <Picker.SearchInput as={Input} placeholder="Search emoji" />
+    <Picker.Viewport>
+      <Picker.List />
+      <Picker.Empty />
+      <Picker.Loading />
+      <Picker.LoadError />
+    </Picker.Viewport>
+  </Picker.Panel>
 </Picker.Root>
 ```
 
 `Input` must forward its ref and native input props to one `<input>`. Root controls search; use Root’s `searchValue` / `onSearchChange` for controlled state. SearchInput’s ref/className/placeholder address the input directly. Use Search for the managed input/icon/clear-button region instead. They register the same single search region and share IME, filtering and keyboard behavior.
 
-Custom input props are inferred from `as`, including required design-library options (for example `variant`) and native-name overrides such as `size="sm"`. Native search event handlers keep their input event types. Native tags other than `input` are excluded from the API. Use Root’s `panelProps` for layout between parts. Root owns collapsed-panel hidden/inert behavior. Custom emoji cells receive `emoji.isActive` and `data-epr-active`; preserve all managed button props and position styles. Custom cells and category headers own decorative styles; they do not inherit the default button reset or header typography. Provide a visible keyboard focus state.
+Custom input props are inferred from `as`, including required design-library options (for example `variant`) and native-name overrides such as `size="sm"`. Native search event handlers keep their input event types. Native tags other than `input` are excluded from the API. Put layout props on an explicit Panel between Root and its expanded parts. Panel owns its collapsed hidden/inert behavior. Custom emoji cells receive `emoji.isActive` and `data-epr-active`; preserve all managed button props and position styles. Custom cells and category headers own decorative styles; they do not inherit the default button reset or header typography. Provide a visible keyboard focus state.
 
 ### Inputs with a wrapper ref, including MUI
 
@@ -77,7 +79,7 @@ const loadFrench = ({ signal }: Picker.EmojiDataLoaderOptions) =>
 }}>{/* SearchInput, Viewport, List, Loading and LoadError */}</Picker.Root>
 ```
 
-Hoist the loader. Retry starts a new attempt; source changes, closing Root and unmount abort the old attempt. Closed Roots do not start loads. Malformed loader payloads enter the same recoverable error state. Late successes or failures cannot overwrite a newer source. `useEmojiDataState()` exposes `{ loading, error, retry }` inside Root when an application owns recovery UI.
+Hoist the loader. Retry starts a new attempt; source changes and unmount abort the old attempt. Conditionally mount Root to control loading lifetime; an unmounted Root starts no loads. Malformed loader payloads enter the same recoverable error state. Late successes or failures cannot overwrite a newer source. `useEmojiDataState()` exposes `{ loading, error, retry }` inside Root when an application owns recovery UI.
 
 Emoji names/categories come from any of the 28 bundled datasets or your own data. Translate the remaining visible and announced strings through `labels`, category names through `categories`, and the preview caption through `previewConfig.defaultCaption`. This includes loading failure and retry text.
 

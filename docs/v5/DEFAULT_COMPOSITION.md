@@ -29,19 +29,22 @@ function EmojiPicker(props: PickerProps) {
           className={rootClassName}
           style={rootStyle}
         >
-          <DefaultHeaderLayout>
-            <Search />
-            <CategoryNav />
-          </DefaultHeaderLayout>
+          <Reactions />
+          <Panel>
+            <DefaultHeaderLayout>
+              <Search />
+              <CategoryNav />
+            </DefaultHeaderLayout>
 
-          <Viewport>
-            <List />
-            <Empty />
-            <Loading />
-            <LoadError />
-          </Viewport>
+            <Viewport>
+              <List />
+              <Empty />
+              <Loading />
+              <LoadError />
+            </Viewport>
 
-          <Preview />
+            <Preview />
+          </Panel>
         </Root>
       </DefaultAppearance>
     </ErrorBoundary>
@@ -49,7 +52,7 @@ function EmojiPicker(props: PickerProps) {
 }
 ```
 
-`behaviorProps(props)` passes the picker's configuration and callbacks plus identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`). Any other prop is dropped (as in v4) with one development warning, so removed props such as `pickerStyle` never reach the DOM.
+`behaviorProps(props)` passes the picker's engine configuration and callbacks plus identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`). Any other prop is dropped (as in v4) with one development warning, so removed props such as `pickerStyle` never reach the DOM.
 
 Root renders the actual DOM shape conceptually as:
 
@@ -75,7 +78,7 @@ Root renders the actual DOM shape conceptually as:
 </aside>
 ```
 
-Root creates both the compact reactions UI and the managed panel wrapper around its children. Neither is a public primitive, and the default picker passes no extra children to produce them — the reactions props alone do that, exactly as in v4.
+The default wrapper explicitly renders the exported Reactions and Panel parts. Root never inserts them. The wrapper conditionally mounts Root for `open`, omits Search or Preview for its legacy visibility props, and places SkinTone according to its resolved legacy location. Search and Preview do not insert a tone control themselves. The tree above shows the expanded layout; those presence conditions belong to the wrapper’s JSX.
 
 ## Root DOM ownership
 
@@ -165,14 +168,14 @@ If rendered, List is the direct child of Viewport.
 
 ### Preview
 
-Public optional preview region, including preview-position skin-tone control.
+Public optional preview region. The default wrapper explicitly supplies a SkinTone child when its resolved location is Preview.
 
 ## Conditional behavior
 
-- `searchDisabled`: Search renders/registers nothing.
+- Default-picker `searchDisabled`: its wrapper omits Search.
 - Search primitive omitted: no built-in type-to-search capture is active; explicit controlled `searchValue` may still filter List.
-- `previewConfig.showPreview=false`: Preview renders/registers nothing.
-- `skinTonesDisabled`: no skin-tone control participates.
+- Default-picker `previewConfig.showPreview=false`: its wrapper omits Preview.
+- Default-picker `skinTonesDisabled`: its wrapper omits SkinTone and preserves legacy suppression of grid variation affordances. Bare Root has no such switch.
 - compact reactions active: the managed reactions region is interactive; the managed panel and every descendant are hidden/inert/non-focusable as one subtree.
 - `allowExpandReactions={false}`: compact mode may remain terminal, exactly as in v4.
 - Viewport/List omitted: the composition remains valid but has no emoji grid.
@@ -190,4 +193,4 @@ The implementation violates this contract if:
 
 A source-architecture test MUST be added once final module paths exist.
 
-Explicit compositions use the same exported Panel and Reactions implementation with Root composition="explicit". Root appearance="default" supplies the default tree's leaf styling; unstyled selects none. Shared components replacements are documented in PRIMITIVES.md §16.
+Consumer compositions use the same exported Panel and Reactions directly, with no composition switch. Root appearance="default" supplies the default tree’s leaf styling; the assembled picker’s unstyled prop selects none. Shared component replacements are documented in [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).

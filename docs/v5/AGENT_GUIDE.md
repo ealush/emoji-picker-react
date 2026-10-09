@@ -65,7 +65,6 @@ function ComposerPicker({ onSelect }: {
       columns={8}
       className="composer-picker"
       style={{ height: 400 }}
-      panelProps={{ className: 'composer-picker-panel' }}
       labels={{
         searchLabel: 'Rechercher un emoji',
         searchPlaceholder: 'Rechercher',
@@ -74,13 +73,15 @@ function ComposerPicker({ onSelect }: {
         retryLoading: 'Réessayer',
       }}
     >
-      <Picker.SearchInput as={Input} />
-      <Picker.Viewport>
-        <Picker.List />
-        <Picker.Empty />
-        <Picker.Loading />
-        <Picker.LoadError />
-      </Picker.Viewport>
+      <Picker.Panel className="composer-picker-panel">
+        <Picker.SearchInput as={Input} />
+        <Picker.Viewport>
+          <Picker.List />
+          <Picker.Empty />
+          <Picker.Loading />
+          <Picker.LoadError />
+        </Picker.Viewport>
+      </Picker.Panel>
     </Picker.Root>
   );
 }
@@ -98,9 +99,9 @@ Adapt `Input` and `Button` props to the installed design library.
 
 - One `Root` per picker. One `Viewport` containing one `List`. Wrappers, memo and HOCs around parts are fine.
 - `Search` (input + icon + clear button) and `SearchInput` (only the input, or yours) are alternatives: use one.
-- Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. When rendering `SkinTone` yourself, pass `skinTonePickerLocation="NONE"` to Root.
-- Root wraps children in a managed `Panel` and adds a `Reactions` bar. Use `panelProps` to lay out the panel. With `composition="explicit"`, place one `Panel` (expanded parts) and `Reactions` yourself inside Root.
-- `open={false}` unmounts the picker and cancels loading; reopening starts fresh. Keep state that must survive closing in the host.
+- Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. Search and Preview never insert SkinTone automatically; place it directly where needed.
+- Root renders exactly the supplied children. For compact reactions, place `Reactions` outside `Panel` and put expanded parts inside `Panel`. Put layout props directly on Panel; there is no composition switch or panelProps prop.
+- Conditionally mount Root to control its lifetime; unmounting aborts pending loading. The assembled EmojiPicker keeps its legacy `open` prop. Keep state that must survive closing in the host.
 - Portaling a whole Root (into a popover) works; portaling individual parts out of Root does not.
 
 ## 6. Mistakes to avoid
