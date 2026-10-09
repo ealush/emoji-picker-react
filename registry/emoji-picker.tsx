@@ -47,10 +47,7 @@ const components: Picker.PickerComponents = {
 };
 
 /** Compose with your existing Popover; selection returns full EmojiClickData. */
-export type EmojiPickerProps = Omit<Picker.RootProps, 'children'> & {
-  /** Attributes for the composed content panel. */
-  panelProps?: Picker.PanelProps;
-};
+export type EmojiPickerProps = Omit<Picker.RootProps, 'children'>;
 
 const sizes = {
   '--epr-category-navigation-button-size': '28px',
@@ -60,7 +57,7 @@ const sizes = {
 } as React.CSSProperties;
 
 export const EmojiPicker = React.forwardRef<HTMLElement, EmojiPickerProps>(
-  function EmojiPicker({ className, style, panelProps, ...props }, ref) {
+  function EmojiPicker({ className, style, ...props }, ref) {
     return (
       <Picker.Root
         {...props}
@@ -74,10 +71,8 @@ export const EmojiPicker = React.forwardRef<HTMLElement, EmojiPickerProps>(
         )}
         style={{ ...sizes, ...style }}
       >
-        <Picker.Panel
-          {...panelProps}
-          className={cx('min-h-0 gap-2', panelProps?.className)}
-        >
+        <Picker.Reactions />
+        <Picker.Panel className="min-h-0 gap-2">
           <div className="flex items-center gap-2 px-2 pt-2">
             <Picker.SearchInput className="h-9 min-w-0 flex-1 rounded-md border border-input bg-transparent px-3 text-sm text-popover-foreground outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring" />
             <Picker.SkinTone />
