@@ -58,6 +58,12 @@ describe('library CSS cascade', () => {
     }
   });
 
+  it('accepts valid layer identifiers that start with a hyphen', () => {
+    for (const css of serverStyles(<EmojiPicker cssLayer="-app.epr" />)) {
+      expect(css).toMatch(/^@layer -app\.epr\{/);
+    }
+  });
+
   it('ignores an invalid layer name', () => {
     for (const css of serverStyles(
       <EmojiPicker cssLayer={'x;}' as string} />,
