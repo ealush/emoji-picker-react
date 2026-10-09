@@ -133,7 +133,7 @@
     "start": "npm run storybook",
     "build": "npm run check:scripts && npm run clean && npm run build:data:src && npm run type-check && npm run build:data:dist && tsx ./scripts/build.ts && npm run docs:llms",
     "type-check": "tsc --noEmit --incremental --pretty --project tsconfig.json",
-    "check:contracts": "tsc --project test/v5-contract/tsconfig.json --noEmit",
+    "check:contracts": "tsc --project test/v5-contract/tsconfig.json --noEmit && tsx ./scripts/checkApiDocs.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test",
