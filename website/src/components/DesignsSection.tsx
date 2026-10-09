@@ -19,24 +19,82 @@ function scrollBehavior(): ScrollBehavior {
 
 type SourceFile = { name: string; content: string };
 
+function readSourceFiles(result: unknown): SourceFile[] {
+  const files = (result as { files?: unknown } | null)?.files;
+  if (
+    !Array.isArray(files) ||
+    !files.length ||
+    !files.every(
+      (file) =>
+        file &&
+        typeof file.name === 'string' &&
+        file.name.length > 0 &&
+        typeof file.content === 'string',
+    ) ||
+    new Set(files.map((file) => file.name)).size !== files.length
+  )
+    throw new Error('Source unavailable');
+  return files;
+}
+
 function RecipeSource({ id }: { id: string }) {
   const [files, setFiles] = useState<SourceFile[] | null>(null);
   const [name, setName] = useState('emoji-picker.tsx');
   const [status, setStatus] = useState('');
+  const [failed, setFailed] = useState(false);
+  const [request, setRequest] = useState(0);
+  const copyAttempt = useRef(0);
   useEffect(() => {
     const controller = new AbortController();
+    setFiles(null);
+    setStatus('');
+    setFailed(false);
     fetch(`${BASE}/recipes/${id}.json`, { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error('Source unavailable');
         return response.json();
       })
-      .then((result) => setFiles(result.files))
-      .catch((error) => {
-        if (!controller.signal.aborted) setStatus(error.message);
+      .then(readSourceFiles)
+      .then((nextFiles) => {
+        if (controller.signal.aborted) return;
+        setFiles(nextFiles);
+        setName(
+          nextFiles.some((file) => file.name === 'emoji-picker.tsx')
+            ? 'emoji-picker.tsx'
+            : nextFiles[0].name,
+        );
+      })
+      .catch(() => {
+        if (controller.signal.aborted) return;
+        setFailed(true);
+        setStatus('Source unavailable');
       });
-    return () => controller.abort();
-  }, [id]);
+    return () => {
+      controller.abort();
+      copyAttempt.current++;
+    };
+  }, [id, request]);
   const file = files?.find((file) => file.name === name);
+  async function copy(content: string, message: string) {
+    const attempt = ++copyAttempt.current;
+    setStatus('');
+    try {
+      await navigator.clipboard.writeText(content);
+      if (attempt === copyAttempt.current) setStatus(message);
+    } catch {
+      if (attempt === copyAttempt.current)
+        setStatus('Copy unavailable. Select the source or download it.');
+    }
+  }
+  const prompt =
+    files &&
+    [
+      `Implement the emoji-picker-react v5 recipe "${id}" in my application.`,
+      'First inspect my installed package version and framework. These files require v5; do not assume npm latest is v5. If v5 is unavailable, explain the required preview/local setup before changing dependencies.',
+      'Use the following actual recipe files as the implementation reference. Follow README.md for CSS imports and the Shell className. Adapt the sample host content and insertion callback to my app; preserve managed search, keyboard navigation, focus restoration, selection, and accessibility.',
+      'This is the plain CSS implementation. If my app uses another style system, translate its appearance without inventing library APIs or changing structural behavior. Report setup steps, changed files and verification instructions.',
+      ...files.map((source) => `\n--- ${source.name} ---\n${source.content}`),
+    ].join('\n\n');
   return (
     <div className={styles.sourcePanel}>
       <div className={styles.sourceActions}>
@@ -44,7 +102,9 @@ function RecipeSource({ id }: { id: string }) {
           Source file{' '}
           <select
             value={name}
+            disabled={!files}
             onChange={(event) => {
+              copyAttempt.current++;
               setName(event.target.value);
               setStatus('');
             }}
@@ -55,17 +115,18 @@ function RecipeSource({ id }: { id: string }) {
           </select>
         </label>
         <button
+          type="button"
           disabled={!file}
-          onClick={async () => {
-            try {
-              await navigator.clipboard.writeText(file!.content);
-              setStatus('Copied');
-            } catch {
-              setStatus('Copy unavailable. Select the source or download it.');
-            }
-          }}
+          onClick={() => file && copy(file.content, `Copied ${file.name}`)}
         >
           Copy
+        </button>
+        <button
+          type="button"
+          disabled={!prompt}
+          onClick={() => prompt && copy(prompt, 'Copied implementation prompt')}
+        >
+          Copy implementation prompt
         </button>
         {file && (
           <a
@@ -74,6 +135,14 @@ function RecipeSource({ id }: { id: string }) {
           >
             Download file
           </a>
+        )}
+        {failed && (
+          <button
+            type="button"
+            onClick={() => setRequest((value) => value + 1)}
+          >
+            Retry source
+          </button>
         )}
       </div>
       <p role="status">{status || (!files ? 'Loading source…' : '')}</p>

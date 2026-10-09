@@ -259,7 +259,7 @@ test('gallery source files copy/download and report failed requests', async ({
   await expect(source.locator('code')).toContainText('use client');
   await page.getByLabel('Source file').selectOption('picker.css');
   await source.getByRole('button', { name: 'Copy', exact: true }).click();
-  await expect(source.getByRole('status')).toHaveText('Copied');
+  await expect(source.getByRole('status')).toHaveText('Copied picker.css');
   expect(await page.evaluate(() => navigator.clipboard.readText())).toContain(
     'chat-picker',
   );
@@ -273,6 +273,58 @@ test('gallery source files copy/download and report failed requests', async ({
   );
   await tabs(page).nth(1).click();
   await expect(source.getByRole('status')).toHaveText('Source unavailable');
+  await page.unroute('**/recipes/article-comments.json');
+  await source.getByRole('button', { name: 'Retry source' }).click();
+  await expect(source.locator('code')).toContainText('use client');
+  await source
+    .getByRole('button', { name: 'Copy implementation prompt' })
+    .click();
+  await expect(source.getByRole('status')).toHaveText(
+    'Copied implementation prompt',
+  );
+  const prompt = await page.evaluate(() => navigator.clipboard.readText());
+  expect(prompt).toContain('article-comments');
+  expect(prompt).toContain('--- emoji-picker.tsx ---');
+  expect(prompt).toContain('--- app.css ---');
+  expect(prompt).toContain('--- picker.css ---');
+  expect(prompt).toContain('--- README.md ---');
+  expect(prompt).toContain('do not assume npm latest is v5');
+});
+
+test('source handles invalid payloads and ignores stale clipboard feedback', async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await page.route('**/recipes/team-chat.json', (route) =>
+    route.fulfill({ json: { files: [{ name: 'broken.tsx' }] } }),
+  );
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Get the code', exact: true }).click();
+  const source = page.locator('[class*="sourcePanel"]');
+  await expect(source.getByRole('status')).toHaveText('Source unavailable');
+  await expect(
+    source.getByRole('button', { name: 'Copy', exact: true }),
+  ).toBeDisabled();
+  await page.unroute('**/recipes/team-chat.json');
+  await source.getByRole('button', { name: 'Retry source' }).click();
+  await expect(source.locator('code')).toContainText('use client');
+  await page.evaluate(() => {
+    Object.defineProperty(navigator.clipboard, 'writeText', {
+      configurable: true,
+      value: () =>
+        new Promise<void>((resolve) => {
+          Object.assign(window, { finishRecipeCopy: resolve });
+        }),
+    });
+  });
+  await source.getByRole('button', { name: 'Copy', exact: true }).click();
+  await page.getByLabel('Source file').selectOption('picker.css');
+  await page.evaluate(() =>
+    (window as unknown as { finishRecipeCopy: () => void }).finishRecipeCopy(),
+  );
+  await expect(source.getByRole('status')).toBeEmpty();
+  expect(errors).toEqual([]);
 });
 
 test('locale chunks load on demand and Reset synchronizes locale and toggles', async ({
