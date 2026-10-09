@@ -48,6 +48,7 @@ searchEmojis('party'); getEmojiByUnified('1f389');
 
 ## Docs
 
+- [Copyable integration prompts](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/PROMPTS.md): setup, brand styling, design-library composition, recipe adoption and v4-to-v5 migration
 - [README](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/README.md): overview, quick start and choosing an integration path
 - [Props reference](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/PROPS.md): every prop of the default EmojiPicker
 - [CSS variables](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/CSS_VARIABLES.md): the supported design tokens

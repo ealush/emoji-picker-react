@@ -70,6 +70,11 @@ searchEmojis('party'); getEmojiByUnified('1f389');
 // [path, title, description] — the index links; llms-full.txt inlines them.
 const DOCS: Array<[string, string, string]> = [
   [
+    'docs/v5/PROMPTS.md',
+    'Copyable integration prompts',
+    'setup, brand styling, design-library composition, recipe adoption and v4-to-v5 migration',
+  ],
+  [
     'README.md',
     'README',
     'overview, quick start and choosing an integration path',

@@ -2,6 +2,14 @@
 
 v5 is a strategic architecture release, but it intentionally avoids forcing ordinary consumers to rewrite working configuration.
 
+## Copyable migration prompts
+
+Use the [migration audit prompt](PROMPTS.md#audit-a-v4-to-v5-migration) to get a
+file-specific compatibility plan, then the [apply migration prompt](PROMPTS.md#apply-a-v4-to-v5-migration)
+to carry out the chosen upgrade. Specify whether to retain Apple images or
+adopt native emoji rendering. The prompts preserve working default-picker
+APIs and make optional primitive adoption a separate choice.
+
 ## Common case
 
 For many applications, the v4 component continues to work unchanged:
