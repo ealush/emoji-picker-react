@@ -464,3 +464,53 @@ for (const origin of ['input', 'grid'] as const) {
     });
   }
 }
+
+for (const id of [
+  'picker-columns--six-columns',
+  'picker-columns--narrow-container',
+  'picker-columns--primitive-columns',
+]) {
+  test(`columns: ${id} keeps its width and row geometry when preview titles change`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    await page.evaluate(() => document.fonts.ready);
+    const root = page.locator('[data-epr-part="root"]');
+    const preview = page.locator('[data-epr-part="preview"]');
+    const content = page.locator(
+      '[data-epr-category="smileys_people"] [data-epr-part="category-content"]',
+    );
+    await page
+      .getByRole('gridcell', { name: 'grinning face', exact: true })
+      .first()
+      .hover();
+    await expect(preview).toContainText('grinning face');
+    const width = (await root.boundingBox())!.width;
+    const columns = await content.getAttribute('data-epr-emojis-per-row');
+    for (const name of [
+      'beaming face with smiling eyes',
+      'face with open eyes and hand over mouth',
+    ]) {
+      const cell = page.getByRole('gridcell', { name, exact: true }).first();
+      await cell.hover();
+      await expect(preview).toContainText(name);
+      expect((await root.boundingBox())!.width).toBeCloseTo(width, 1);
+      await expect(content).toHaveAttribute(
+        'data-epr-emojis-per-row',
+        columns!,
+      );
+      await page.mouse.move(0, 0);
+      // The previous short emoji may now be virtualized out after hover
+      // scrolled the viewport. Search is always mounted and clears preview.
+      await page.getByRole('textbox').focus();
+      await expect(preview).not.toContainText(name);
+      await cell.focus();
+      await expect(preview).toContainText(name);
+      expect((await root.boundingBox())!.width).toBeCloseTo(width, 1);
+      await expect(content).toHaveAttribute(
+        'data-epr-emojis-per-row',
+        columns!,
+      );
+    }
+  });
+}
