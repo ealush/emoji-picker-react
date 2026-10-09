@@ -224,6 +224,9 @@ for (const mode of ['light', 'dark']) {
     await expect(
       page.getByRole('gridcell', { name: 'cat face', exact: true }),
     ).toBeVisible();
+    // Wait for the applied query, not just a cat cell already visible in
+    // the unfiltered list. Active search deliberately routes Down to Grid.
+    await expect(page.locator('[data-epr-part="root"]')).toHaveClass(/epr-search-active/);
     await search.press('ArrowDown');
     await expect(page.locator('[role="gridcell"]:focus')).toHaveCount(1);
     await page.keyboard.press('Enter');
@@ -238,6 +241,11 @@ for (const mode of ['light', 'dark']) {
     ).not.toBe('Ship it ');
     await page.getByRole('button', { name: 'Insert emoji' }).click();
     await expect(search).toBeVisible();
+    // With no query, the standalone tone control is the next DOM region.
+    await search.press('ArrowDown');
+    const neutral = page.getByRole('button', { name: 'Skin tone NEUTRAL', exact: true });
+    await expect(neutral).toBeFocused();
+    await search.focus();
     const violations = (
       await new AxeBuilder({ page })
         .include('#storybook-root')

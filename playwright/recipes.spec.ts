@@ -245,3 +245,23 @@ test('the default picker passes axe in light, dark and reactions modes', async (
       .toEqual([]);
   }
 });
+
+// These designs include a tone control in their approved baseline. Its
+// disappearance must fail even when a screenshot's pixel tolerance hides it.
+for (const recipe of [
+  'community-custom-emojis',
+  'discord-sidebar',
+  'team-chat-composer',
+  'teams-fluent-2',
+]) {
+  test(`${recipe}: explicitly composed tone control remains usable`, async ({ page }) => {
+    await openStory(page, `recipes-examples-${recipe}--css`);
+    const tone = page.locator('[data-epr-part="skin-tone"]');
+    await expect(tone).toHaveCount(1);
+    await tone.getByRole('button', { name: 'Skin tone NEUTRAL', exact: true }).click();
+    const medium = tone.getByRole('button', { name: 'Skin tone MEDIUM', exact: true });
+    await expect(medium).toBeVisible();
+    await medium.click();
+    await expect(medium).toHaveAttribute('aria-pressed', 'true');
+  });
+}

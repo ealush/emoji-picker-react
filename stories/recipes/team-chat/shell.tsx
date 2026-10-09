@@ -9,7 +9,7 @@ import './app.css';
 // tabs, the grid and a slim preview strip.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -54,7 +54,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           setOpen(false);
           requestAnimationFrame(() => { input.current?.focus(); input.current?.setSelectionRange(start + emoji.emoji.length, start + emoji.emoji.length); });
         }}>
-          <Picker.Search />
+          <Picker.Search><Picker.SkinTone /></Picker.Search>
           <Picker.CategoryNav />
           <Picker.Viewport>
             <Picker.List />

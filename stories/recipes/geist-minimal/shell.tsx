@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -19,7 +18,7 @@ const components = { CategoryHeader: Header };
 // a handful. suggestedEmojis pins a product-specific first row.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -28,7 +27,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
     <RootComponent appearance="default"       className={className}
       colorScheme="light"
       searchPlaceholder="Search…"
-      skinTonePickerLocation={SkinTonePickerLocation.NONE}
       suggestedEmojis={['1f680', '2705', '1f6a7', '1f41b', '1f525', '1f4a1', '1f389', '1f440']}
     >
       <Picker.Search />
