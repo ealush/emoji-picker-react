@@ -7,7 +7,8 @@
   "files": [
     "dist",
     "src",
-    "llms.txt"
+    "llms.txt",
+    "llms-full.txt"
   ],
   "description": "Emoji Picker component for React Applications on the web",
   "keywords": [

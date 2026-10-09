@@ -1,5 +1,8 @@
 # Customization
 
+For an agent-assisted starting point, copy the [brand styling](docs/v5/PROMPTS.md#match-my-brand)
+or [design-library composition](docs/v5/PROMPTS.md#build-with-my-design-library) prompt.
+
 ## Custom Emojis
 
 Pass the `customEmojis` prop to inject image-based emojis. Each entry uses this structure:

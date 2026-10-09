@@ -1,24 +1,31 @@
-import { useEffect } from "react";
-import Head from "next/head";
-import { Inter, Fraunces } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import Link from "next/link";
-import { Header } from "../components/Header";
-import { Footer } from "../components/Footer";
-import { Stats, useNpmVersion } from "../components/Stats";
+import { useEffect } from 'react';
+import Head from 'next/head';
+import { Inter, Fraunces } from 'next/font/google';
+import styles from '@/styles/Home.module.css';
+import Link from 'next/link';
+import { Header } from '../components/Header';
+import { Footer } from '../components/Footer';
+import { Stats, useNpmVersion } from '../components/Stats';
 import {
   DEFAULT_STATS,
   fetchGitHubStars,
   fetchNpmData,
   type StatsData,
-} from "@/lib/stats";
-import { InstallSection } from "../components/InstallSection";
-import { FloatingEmojis } from "../components/FloatingEmojis";
-import PickerDemo from "../components/PickerDemo";
-import { ReactionsSection } from "../components/ReactionsSection";
+} from '@/lib/stats';
+import { InstallSection } from '../components/InstallSection';
+import { FloatingEmojis } from '../components/FloatingEmojis';
+import PickerDemo from '../components/PickerDemo';
+import { isV5Preview } from '@/lib/release';
+import { DesignsSection } from '../components/DesignsSection';
+import { ReactionsSection } from '../components/ReactionsSection';
 
-const inter = Inter({ subsets: ["latin"] });
-const fraunces = Fraunces({ subsets: ["latin"], weight: ["700","800"], display: "swap", variable: "--font-display" });
+const inter = Inter({ subsets: ['latin'] });
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['700', '800'],
+  display: 'swap',
+  variable: '--font-display',
+});
 
 interface HomeProps {
   initialStats: StatsData;
@@ -26,7 +33,9 @@ interface HomeProps {
 
 export default function Home({ initialStats }: HomeProps) {
   const { version, publishedAt } = useNpmVersion();
-  useEffect(() => { document.documentElement.dataset.theme = "switch-clay"; }, []);
+  useEffect(() => {
+    document.documentElement.dataset.theme = 'switch-clay';
+  }, []);
 
   // Scroll to top on initial load (prevents focus-related scroll jump)
   useEffect(() => {
@@ -41,19 +50,34 @@ export default function Home({ initialStats }: HomeProps) {
         <title>emoji-picker-react — The Emoji Picker for React</title>
         <meta
           name="description"
-          content="A lightweight, customizable emoji picker component for React applications. TypeScript support, multiple themes, skin tones, and 1800+ emojis."
+          content="React emoji picker: batteries included, or BYOD — bring your own design, design language and design library."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="./favicon.ico" />
         <meta property="og:title" content="emoji-picker-react" />
         <meta
           property="og:description"
-          content="The most popular emoji picker component for React"
+          content="Emoji picker for React — batteries included, or bring your own design."
         />
         <meta property="og:type" content="website" />
+        {/* Documentation for LLMs and AI assistants (https://llmstxt.org). */}
+        <link
+          rel="alternate"
+          type="text/plain"
+          title="llms.txt"
+          href="./llms.txt"
+        />
+        <link
+          rel="alternate"
+          type="text/plain"
+          title="llms-full.txt"
+          href="./llms-full.txt"
+        />
       </Head>
 
-      <main className={`${styles.main} ${inter.className} ${fraunces.variable}`}>
+      <main
+        className={`${styles.main} ${inter.className} ${fraunces.variable}`}
+      >
         <Header />
 
         {/* Hero Section */}
@@ -61,8 +85,10 @@ export default function Home({ initialStats }: HomeProps) {
           <FloatingEmojis />
           <div className={styles.heroContent}>
             <div className={styles.badge}>
-              <span className={styles.badgeVersion}>v{version}</span>
-              {publishedAt && (
+              <span className={styles.badgeVersion}>
+                {isV5Preview ? 'v5 preview' : `v${version}`}
+              </span>
+              {!isV5Preview && publishedAt && (
                 <>
                   <span>—</span>
                   <span>{publishedAt}</span>
@@ -77,13 +103,26 @@ export default function Home({ initialStats }: HomeProps) {
             </h1>
 
             <p className={styles.heroSubtitle}>
-              Lightweight, customizable, and delightfully simple. Add emoji
-              picking to your app in seconds with full TypeScript support.
+              <strong>Batteries included</strong>: one component, no CSS import,
+              no setup. Or <strong>BYOD — bring your own design</strong>, design
+              language and design library: Tailwind, shadcn/ui, CSS Modules,
+              Emotion, styled-components, MUI or plain CSS.
             </p>
+
+            {isV5Preview && (
+              <p>
+                This site previews v5. The npm latest release may still be v4;
+                these examples require emoji-picker-react 5 or a local build of
+                master-v5.
+              </p>
+            )}
 
             <div className={styles.heroActions}>
               <a href="#playground" className={styles.primaryButton}>
                 Try it out ↓
+              </a>
+              <a href="#designs" className={styles.secondaryButton}>
+                See 25 designs ↓
               </a>
               <Link
                 href="https://github.com/ealush/emoji-picker-react"
@@ -110,6 +149,8 @@ export default function Home({ initialStats }: HomeProps) {
         </section>
 
         <ReactionsSection />
+
+        <DesignsSection />
 
         <InstallSection />
 
