@@ -11,10 +11,14 @@ import * as ts from 'typescript';
 // Compile the examples from Markdown itself, so prose cannot quietly retain
 // an API removed from the implementation while a separate fixture stays green.
 const repoRoot = join(__dirname, '..');
-const examples = ['docs/v5/API.md', 'website/README.md'].flatMap((source) => {
+const examples = Object.entries({
+  'docs/v5/API.md': 5,
+  'website/README.md': 3,
+  'README.md': 1,
+  'docs/v5/MIGRATION.md': 1,
+}).flatMap(([source, minimum]) => {
   const markdown = readFileSync(join(repoRoot, source), 'utf8');
   const blocks = [...markdown.matchAll(/^```tsx check\r?\n([\s\S]*?)^```/gm)];
-  const minimum = source === 'docs/v5/API.md' ? 5 : 3;
   if (blocks.length < minimum)
     throw new Error(`${source} must retain ${minimum} checked examples`);
   return blocks.map(([block, code]) => ({
@@ -59,9 +63,7 @@ try {
     };
     throw new Error(ts.formatDiagnostics(diagnostics, host));
   }
-  console.log(
-    `API/website documentation: ${examples.length} examples type-check`,
-  );
+  console.log(`Public documentation: ${examples.length} examples type-check`);
 } finally {
   rmSync(scratch, { recursive: true, force: true });
 }

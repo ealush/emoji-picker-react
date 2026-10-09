@@ -159,7 +159,11 @@
     "registry": "tsx ./scripts/generateRegistry.mts",
     "check:scripts": "tsc --project scripts/tsconfig.json",
     "icons": "tsx ./scripts/buildIcons.ts",
-    "check:data-package": "tsx ./scripts/checkDataPackage.ts"
+    "check:data-package": "tsx ./scripts/checkDataPackage.ts",
+    "check:tooling": "tsc --project tsconfig.tooling.json --noEmit",
+    "check:docs": "tsx ./scripts/checkDocsLinks.ts",
+    "check:storybook-hosts": "tsx ./scripts/checkStorybookHosts.ts",
+    "check:node18": "tsx ./scripts/node18-fixture/run.ts"
   },
   "peerDependencies": {
     "react": ">=16.8"

@@ -70,6 +70,11 @@ searchEmojis('party'); getEmojiByUnified('1f389');
 // [path, title, description] — the index links; llms-full.txt inlines them.
 const DOCS: Array<[string, string, string]> = [
   [
+    'docs/v5/AGENT_GUIDE.md',
+    'Agent integration guide',
+    'installed-version discovery, batteries included/BYOD, typed input/cell contracts, localization and verification',
+  ],
+  [
     'docs/v5/PROMPTS.md',
     'Copyable integration prompts',
     'setup, brand styling, design-library composition, recipe adoption and v4-to-v5 migration',
@@ -77,23 +82,52 @@ const DOCS: Array<[string, string, string]> = [
   [
     'README.md',
     'README',
-    'overview, quick start and choosing an integration path',
+    'overview, quick start, choosing a path, styling with any solution, common tasks',
   ],
-  ['PROPS.md', 'Props reference', 'every prop of the default EmojiPicker'],
-  ['CSS_VARIABLES.md', 'CSS variables', 'the supported design tokens'],
+  ['PROPS.md', 'Props reference', 'every prop of the default <EmojiPicker />'],
+  ['CSS_VARIABLES.md', 'CSS variables', 'every --epr-* design token'],
   [
     'CUSTOMIZATION.md',
     'Customization',
-    'custom emojis, categories, preview and CSP',
+    'custom emojis and groups, category icons, preview, CSP nonce',
   ],
-  ['INTERNATIONALIZATION.md', 'Internationalization', 'datasets and UI labels'],
-  ['docs/v5/API.md', 'v5 API', 'existing APIs with checked examples'],
+  [
+    'INTERNATIONALIZATION.md',
+    'Internationalization',
+    'locale datasets and labels',
+  ],
+  [
+    'docs/v5/ADOPTION.md',
+    'Adoption',
+    'native input, loading recovery, registry installation and source downloads',
+  ],
+  ['docs/v5/API.md', 'v5 API', 'all v5 additions with examples'],
   [
     'docs/v5/PRIMITIVES.md',
     'Primitives',
-    'caller-owned composition and managed behavior',
+    'composable parts, hooks, custom cells, grammar',
+  ],
+  [
+    'docs/v5/STYLING.md',
+    'Styling contract',
+    'tokens, parts, cascade, structural rules',
+  ],
+  [
+    'docs/v5/STYLING_RECIPES.md',
+    'Styling recipes by library',
+    'theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI',
+  ],
+  [
+    'docs/v5/ACCESSIBILITY_VERIFICATION.md',
+    'Accessibility verification',
+    'keyboard, screen-reader, localization and host focus release protocol',
   ],
   ['docs/v5/DATA_API.md', 'Data API', 'framework-free search and lookup'],
+  [
+    'docs/v5/MIGRATION.md',
+    'Migrating from v4',
+    'what changed and how to upgrade',
+  ],
   [
     'website/README.md',
     'Website examples',

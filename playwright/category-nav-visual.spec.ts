@@ -8,11 +8,11 @@
  * @file category-nav-visual.spec.ts
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
-async function screenshotNav(page, name: string) {
+async function screenshotNav(page: Page, name: string) {
   await expect(
     page.getByRole('tablist', { name: 'Category navigation' }),
   ).toBeVisible();

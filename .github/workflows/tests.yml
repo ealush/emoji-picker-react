@@ -16,7 +16,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - run: npm run check:tooling
       - run: npm run check:contracts
+      - run: npm run check:storybook-hosts
       - run: npm test
       - run: npm run check:data-package
 
@@ -53,6 +55,7 @@ jobs:
         with:
           node-version: 24
       - run: npm ci --ignore-scripts
+      - run: npm run check:docs
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
       - run: npm run recipes
@@ -103,7 +106,24 @@ jobs:
       - run: npm run size
       - run: npm run check:package
       - run: npm run check:react16
+      - run: npm run check:node18
 
+  browser-behavior:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - run: npx playwright test --config playwright.behavior.config.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-behavior-evidence
+          path: test-results/
 
   website-candidate:
     runs-on: ubuntu-latest

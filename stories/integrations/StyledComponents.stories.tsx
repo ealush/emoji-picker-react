@@ -22,7 +22,9 @@ const theme = {
 
 // styled(Root) owns the chrome and explicitly opts into managed leaf
 // appearance for this token-based recipe.
-const ThemedPicker = styled(Picker.Root).attrs({ appearance: 'default' })`
+const ThemedPicker = styled(Picker.Root).attrs({ appearance: 'default' })<{
+  theme: typeof theme;
+}>`
   --epr-bg-color: ${(p) => p.theme.panel};
   --epr-text-color: ${(p) => p.theme.text};
   --epr-highlight-color: ${(p) => p.theme.accent};
@@ -60,7 +62,7 @@ export function StyledComponents() {
   return (
     <ThemeProvider theme={theme}>
       <div style={{ padding: 24, borderRadius: 24, background: theme.bg }}>
-        <ThemedPicker style={{ width: 340, height: 440 }}>
+        <ThemedPicker theme={theme} style={{ width: 340, height: 440 }}>
           <Picker.Search />
           <Picker.CategoryNav />
           <Picker.Viewport>

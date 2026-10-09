@@ -87,8 +87,8 @@ ReactionsMenuAuto.tags = ['!visual'];
 
 export const CollapseToReactions = () => (
   <EmojiPicker
-    onEmojiClick={(emoji, event, { collapseToReactions }) => {
-      collapseToReactions();
+    onEmojiClick={(emoji, event, api) => {
+      api?.collapseToReactions();
       console.log(emoji, event);
     }}
     emojiStyle={EmojiStyle.NATIVE}

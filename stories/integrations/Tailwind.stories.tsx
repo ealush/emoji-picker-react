@@ -1,7 +1,6 @@
 import type { Meta } from '@storybook/react-vite';
 import React from 'react';
 
-import { SkinTonePickerLocation } from '../../src/primitives';
 import * as Picker from '../../src/primitives';
 
 import './tailwind.css';
@@ -23,7 +22,6 @@ export function TailwindCSS() {
     <Picker.Root
       appearance="default"
       cssLayer="epr"
-      skinTonePickerLocation={SkinTonePickerLocation.NONE}
       searchPlaceholder="Search emoji"
       className={[
         'h-[420px] w-[352px] rounded-2xl bg-white font-sans shadow-xl ring-1 ring-zinc-950/10',

@@ -10,6 +10,12 @@ to carry out the chosen upgrade. Specify whether to retain Apple images or
 adopt native emoji rendering. The prompts preserve working default-picker
 APIs and make optional primitive adoption a separate choice.
 
+## Runtime and toolchain requirements
+
+The published package now requires **Node >=18** (v4 declared >=10). Upgrade older build/server environments before installing v5; package managers with strict engine checks reject older Node versions. Browser consumers still need a supported React setup; the React peer floor remains **>=16.8**.
+
+Repository development uses **Node 24.15+ in the 24.x line**, matching CI. Storybook, Vitest, jsdom and release tooling have newer Node requirements than the published library. This contributor requirement does not raise the consumer Node or React floor. The packed-runtime CI smoke check runs the built package on Node 18.
+
 ## Common case
 
 For many applications, the v4 component continues to work unchanged:
@@ -104,9 +110,20 @@ This narrowly addresses application-defined suggested emojis without replacing t
 
 ### Localize every string, control the skin tone
 
-```tsx
-<EmojiPicker labels={{ categoryNavigation: 'Categorías', skinToneNeutral: 'Tono neutro' }} />
-<EmojiPicker skinTone={tone} onSkinToneChange={setTone} />
+```tsx check
+import React, { useState } from 'react';
+import EmojiPicker, { SkinTones, type SkinTonesValue } from 'emoji-picker-react';
+
+export function LocalizedPicker() {
+  const [tone, setTone] = useState<SkinTonesValue>(SkinTones.NEUTRAL);
+  return (
+    <EmojiPicker
+      labels={{ categoryNavigation: 'Categorías', skinToneNeutral: 'Tono neutro' }}
+      skinTone={tone}
+      onSkinToneChange={setTone}
+    />
+  );
+}
 ```
 
 ## Behavior changes to review

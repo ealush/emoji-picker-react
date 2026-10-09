@@ -77,3 +77,10 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `reactionsDefaultOpen` | `boolean`  | `false`         | If true, mounts in "Reactions" mode (single row) instead of full picker. |
 | `reactions`            | `string[]` | _(Default Set)_ | Array of unified IDs to display in the reactions bar.                    |
 | `allowExpandReactions` | `boolean`  | `true`          | If true, shows a `+` button to switch from reactions to full picker.     |
+
+### Default picker root attributes
+
+`EmojiPicker` accepts `id`, `title`, `lang`, `dir`, `aria-*` and `data-*` identifying
+attributes on its root, alongside `className` and `style`. Its public types include
+the named attributes and React ARIA attributes. The library reserves `role` and
+`data-epr-*`; use a wrapper or primitives for other native event handlers.

@@ -30,6 +30,7 @@ import {
   Reactions,
   Root,
   Search,
+  SearchInput,
   Viewport,
 } from '../../src/primitives';
 import type { RootProps } from '../../src/primitives/types';
@@ -1562,26 +1563,21 @@ describe('v5 primitive DOM contracts', () => {
   it('runs internal handlers before consumer handlers', async () => {
     const calls: string[] = [];
     render(
-      <Root emojiData={twoCategoryData} autoFocusSearch={false}>
-        <Search
-          inputProps={{
-            onFocus: () => {
-              calls.push('consumer');
-            },
-          }}
-        />
+      <Root
+        emojiData={twoCategoryData}
+        autoFocusSearch={false}
+        onSearchChange={() => calls.push('library')}
+      >
+        <SearchInput onChange={() => calls.push('consumer')} />
         <Viewport>
           <List />
         </Viewport>
       </Root>,
     );
     const input = (await screen.findByRole('textbox')) as HTMLInputElement;
-    fireEvent.focus(input);
-    expect(calls).toEqual(['consumer']);
-  });
-
-  it('RootProps covers every PickerProps key except the appearance-only list', () => {
-    expect(true).toBe(true);
+    fireEvent.change(input, { target: { value: 'smile' } });
+    expect(calls).toEqual(['library', 'consumer']);
+    expect(input.value).toBe('smile');
   });
 
   it('RootProps requires children and composes native aside attributes', () => {

@@ -17,6 +17,12 @@ import { Shell } from './shell';
 import '../../integrations/tailwind.css';
 import './picker.css';
 
+// Styling libraries own their object-valued theme. Use colorScheme for the picker.
+function RecipePicker({ theme, ...props }: Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'> & { theme?: unknown }) {
+  void theme;
+  return <EmojiPicker {...props} />;
+}
+
 const meta = {
   title: 'Recipes/Examples/Video call reactions',
   tags: ['recipe'],
@@ -32,7 +38,7 @@ export const CSS = () => <Shell className="call-picker" />;
 export const CSSModules = () => <Shell className={modules.picker} />;
 
 /** Emotion: styled() over the picker root. */
-const EmotionRoot = styledEmotion(EmojiPicker)`
+const EmotionRoot = styledEmotion(RecipePicker)`
   --epr-reactions-bg-color: rgb(32 33 36 / 82%);
   --epr-picker-border-color: rgb(255 255 255 / 14%);
   --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 16%);
@@ -53,7 +59,7 @@ const EmotionRoot = styledEmotion(EmojiPicker)`
 export const Emotion = () => <Shell Root={EmotionRoot} />;
 
 /** styled-components: styled() over the picker root. */
-const StyledComponentsRoot = styledComponents(EmojiPicker)`
+const StyledComponentsRoot = styledComponents(RecipePicker)`
   --epr-reactions-bg-color: rgb(32 33 36 / 82%);
   --epr-picker-border-color: rgb(255 255 255 / 14%);
   --epr-hover-bg-color-reduced-opacity: rgb(255 255 255 / 16%);
@@ -74,7 +80,7 @@ const StyledComponentsRoot = styledComponents(EmojiPicker)`
 export const StyledComponents = () => <Shell Root={StyledComponentsRoot} />;
 
 /** MUI: styled() with object styles (plug in theme values as needed). */
-const MuiRoot = styledMui(EmojiPicker)({
+const MuiRoot = styledMui(RecipePicker)({
   "--epr-reactions-bg-color": "rgb(32 33 36 / 82%)",
   "--epr-picker-border-color": "rgb(255 255 255 / 14%)",
   "--epr-hover-bg-color-reduced-opacity": "rgb(255 255 255 / 16%)",
@@ -98,8 +104,8 @@ export const MUI = () => <Shell Root={MuiRoot} />;
  * before Tailwind's (`@layer epr, theme, base, components, utilities;`),
  * so utilities override it.
  */
-const LayeredRoot = (props: React.ComponentProps<typeof EmojiPicker>) => (
-  <EmojiPicker cssLayer="epr" {...props} />
+const LayeredRoot = (props: React.ComponentProps<typeof RecipePicker>) => (
+  <RecipePicker cssLayer="epr" {...props} />
 );
 
 const tailwind = [
