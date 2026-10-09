@@ -2,7 +2,6 @@
 // Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
-import { SkinTonePickerLocation } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 
@@ -10,7 +9,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 // Category tabs move to the bottom just by rendering CategoryNav last.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -18,7 +17,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
   return (
     <RootComponent appearance="default"       className={className}
       searchPlaceholder="Filter…"
-      skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >
       <div className="notion-tabs">
         <button type="button" aria-pressed="true">

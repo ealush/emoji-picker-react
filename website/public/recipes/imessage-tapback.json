@@ -2,7 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n\n// Tapback set: love, like, dislike, laugh, emphasize, question.\nexport type ShellProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ElementType;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = EmojiPicker, className }: ShellProps) {\n  return (\n    <div className=\"imessage-stage\">\n      <RootComponent         className={className}\n        colorScheme=\"dark\"\n        reactionsDefaultOpen\n        reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}\n      />\n      <div className=\"imessage-bubble\">Dinner at 8? I booked the place by the river.</div>\n    </div>\n  );\n}\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n\n// Tapback set: love, like, dislike, laugh, emphasize, question.\nexport type ShellProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ComponentType<React.ComponentProps<typeof EmojiPicker>>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = EmojiPicker, className }: ShellProps) {\n  return (\n    <div className=\"imessage-stage\">\n      <RootComponent         className={className}\n        colorScheme=\"dark\"\n        reactionsDefaultOpen\n        reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}\n      />\n      <div className=\"imessage-bubble\">Dinner at 8? I booked the place by the river.</div>\n    </div>\n  );\n}\n"
     },
     {
       "name": "app.css",

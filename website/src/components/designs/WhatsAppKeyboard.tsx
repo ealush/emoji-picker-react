@@ -2,7 +2,6 @@
 // Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
-import { SkinTonePickerLocation } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 
@@ -10,7 +9,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 // available width, so a wide picker simply shows more per row.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -27,7 +26,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
       </div>
       <RootComponent appearance="default"         className={className}
         searchPlaceholder="Search emoji"
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
       >
         <Picker.Search />
         <Picker.Viewport>

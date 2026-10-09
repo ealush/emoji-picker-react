@@ -9,7 +9,7 @@ import './app.css';
 // Up/Down (announced through aria-orientation).
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -22,7 +22,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
             <Picker.CategoryNav orientation="vertical" />
           </div>
           <div className="discord-main">
-            <Picker.Search />
+            <Picker.Search><Picker.SkinTone /></Picker.Search>
             <Picker.Viewport>
               <Picker.List />
               <Picker.Empty />

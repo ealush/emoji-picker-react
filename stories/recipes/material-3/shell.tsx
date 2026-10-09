@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -9,7 +8,7 @@ import './app.css';
 // ([aria-selected="true"]); circular emoji state layers.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -17,7 +16,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
   return (
     <RootComponent appearance="default"       className={className}
       searchPlaceholder="Search emoji"
-      skinTonePickerLocation={SkinTonePickerLocation.NONE}
     >
       <Picker.Search />
       <Picker.Viewport>
