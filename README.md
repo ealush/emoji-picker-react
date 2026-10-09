@@ -30,6 +30,12 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 
 > **Upgrading from v4?** Most code works unchanged; the one default that changed is the emoji style (now native). See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
 
+## Copyable integration prompts
+
+Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
+to give a coding agent a concrete starting point for your application. Each
+prompt checks the installed version and keeps integration behavior explicit.
+
 ## Quick start (batteries included)
 
 ```bash

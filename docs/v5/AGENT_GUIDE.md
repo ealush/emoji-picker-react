@@ -2,6 +2,10 @@
 
 A decision-first guide for coding agents and the people reviewing their output. Every snippet here matches the shipped API.
 
+For a task to paste into a coding agent, use the [setup, customization, recipe
+adoption and v5 migration prompts](PROMPTS.md). Each is self-contained and
+starts with installed-version discovery; the contracts below remain authoritative.
+
 ## 1. Check the installed version first
 
 Everything below exists from `emoji-picker-react@5.0.0`. A 4.x installation has the same default `<EmojiPicker />` but none of the v5 additions.

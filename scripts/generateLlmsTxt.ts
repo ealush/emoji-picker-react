@@ -75,6 +75,11 @@ const DOCS: Array<[string, string, string]> = [
     'installed-version discovery, batteries included/BYOD, typed input/cell contracts, localization and verification',
   ],
   [
+    'docs/v5/PROMPTS.md',
+    'Copyable integration prompts',
+    'setup, brand styling, design-library composition, recipe adoption and v4-to-v5 migration',
+  ],
+  [
     'README.md',
     'README',
     'overview, quick start, choosing a path, styling with any solution, common tasks',
