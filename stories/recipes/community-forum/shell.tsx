@@ -10,7 +10,7 @@ import './app.css';
 // set. Badges are inline SVG data URIs — no network.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -72,7 +72,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           searchPlaceholder="Search community and standard emoji"
           autoFocusSearch={false}
         >
-          <Picker.Search />
+          <Picker.Search><Picker.SkinTone /></Picker.Search>
           <Picker.CategoryNav />
           <Picker.Viewport>
             <Picker.List />

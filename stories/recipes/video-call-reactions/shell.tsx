@@ -8,7 +8,7 @@ import './app.css';
 // above the call controls; "+" expands to a dark full picker.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<React.ComponentProps<typeof EmojiPicker>>;
   className?: string;
 };
 

@@ -2,7 +2,6 @@
 // Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
-import { SkinTonePickerLocation } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 
@@ -33,7 +32,7 @@ function StatusBar() {
 
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -47,7 +46,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         </button>
       </div>
       <RootComponent appearance="default"         className={className}
-        skinTonePickerLocation={SkinTonePickerLocation.NONE}
       >
         <Picker.CategoryNav />
         <Picker.Viewport>

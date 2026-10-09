@@ -15,13 +15,21 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["node"]
+    "types": ["node"],
+    "baseUrl": "../..",
+    "paths": {
+      "emoji-picker-react": ["src/index.tsx"],
+      "emoji-picker-react/primitives": ["src/primitives/index.ts"],
+      "emoji-picker-react/data": ["src/data.ts"]
+    }
   },
   "include": [
     "./*.test.ts",
     "./*.test.tsx",
     "../setupTests.ts",
     "../../stories/v5/MuiComposition.tsx",
+    "../../stories/recipes/*/shell.tsx",
+    "../../registry/emoji-picker.tsx",
     "../../stories/consumers/**/*.tsx",
     "../../playwright/consumer-integrations.spec.ts",
     "../../src/**/*"

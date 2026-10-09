@@ -2,7 +2,7 @@
 // Do not edit; change the recipe and run `npm run designs`.
 import React from 'react';
 
-import { Categories, SkinTonePickerLocation } from 'emoji-picker-react/primitives';
+import { Categories } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
 
@@ -11,7 +11,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 // (suggestedEmojis) and the category renamed through `categories`.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -31,7 +31,6 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         <RootComponent appearance="default"
           className={className}
           searchPlaceholder="Search for an emoji"
-          skinTonePickerLocation={SkinTonePickerLocation.NONE}
           autoFocusSearch={false}
           suggestedEmojis={['1f334', '1f912', '1f3e0', '1f4c5', '1f68c', '1f3a7', '1f37d-fe0f', '1f319']}
           categories={[

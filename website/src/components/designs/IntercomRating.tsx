@@ -9,7 +9,7 @@ import EmojiPicker from 'emoji-picker-react';
 // card width. onReactionClick receives the chosen point on the scale.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<React.ComponentProps<typeof EmojiPicker>>;
   className?: string;
 };
 

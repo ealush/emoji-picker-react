@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { SkinTonePickerLocation } from '../../../src/primitives';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
@@ -9,7 +8,7 @@ import './app.css';
 // section titles, 34px emojis.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
-  Root?: React.ElementType;
+  Root?: React.ComponentType<Picker.RootProps>;
   className?: string;
 };
 
@@ -22,7 +21,6 @@ export function Shell({
       <div className="ios-sheet-host">
         <RootComponent appearance="default"
           className={className}
-          skinTonePickerLocation={SkinTonePickerLocation.NONE}
         >
           <div className="ios-handle" />
           <Picker.Viewport>
