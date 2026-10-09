@@ -1,8 +1,8 @@
 # Repository automation
 
 Run automation through the named `npm run` commands. Scripts use TypeScript
-and the checked-in `tsx` development dependency, which supports Node 18 and
-later. `tsx` executes TypeScript; it does not check types.
+and the checked-in `tsx` development dependency. Use Node 24.15+ on the 24.x
+line for the contributor toolchain; published consumers support Node 18+. `tsx` executes TypeScript; it does not check types.
 
 `npm run check:scripts` strictly checks every script and benchmark, including
 consumer fixture sources. The library build and unit CI run this gate before
@@ -28,3 +28,15 @@ output with its generator change.
 `check:contracts` also compiles the complete `tsx check` examples extracted from
 `docs/v5/API.md` against the current source entries. Keep those examples
 self-contained; this gate catches documentation that still uses removed props.
+
+`npm run check:tooling` strictly checks Storybook, every story, browser tests,
+and root tool configurations. CSS Module declarations belong to `stories/env.d.ts`.
+`npm run check:storybook-hosts` starts isolated servers to verify host restrictions
+at both Storybook and Vite, including loopback and network bindings.
+
+`npm run check:docs` validates local Markdown links in public guides. The checked
+examples in README, migration, API and website guides are compiled by
+`check:contracts`; add complete `tsx check` blocks when documenting new APIs.
+
+`npm run check:node18` installs the packed library with a real Node 18 binary
+and verifies CommonJS, ESM, locale/data exports and server rendering. Build first.

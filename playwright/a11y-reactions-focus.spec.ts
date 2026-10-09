@@ -15,11 +15,11 @@
  * @file a11y-reactions-focus.spec.ts
  */
 
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, Page } from '@playwright/test';
 
 const storyUrl = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
-async function tabToFirstReaction(page, reactions) {
+async function tabToFirstReaction(page: Page, reactions: Locator) {
   await expect(reactions).toBeVisible();
 
   for (let i = 0; i < 60; i++) {
@@ -68,9 +68,7 @@ test('keyboard focus on a reaction is visibly indicated', async ({ page }) => {
   // button looks identical focused and unfocused).
   await expect
     .poll(async () =>
-      focused.evaluate(
-        (button) => window.getComputedStyle(button).transform,
-      ),
+      focused.evaluate((button) => window.getComputedStyle(button).transform),
     )
     .not.toBe('none');
 

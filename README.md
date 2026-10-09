@@ -28,13 +28,15 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
-> **Upgrading from v4?** Most code works unchanged; the one default that changed is the emoji style (now native). See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
+> **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
 
 ## Copyable integration prompts
 
 Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
 to give a coding agent a concrete starting point for your application. Each
 prompt checks the installed version and keeps integration behavior explicit.
+
+Requires **Node 18 or later** in the consuming toolchain and **React 16.8 or later**. Repository contributors use **Node 24.15 or later in the 24.x line**, matching CI; development tools have newer requirements than the published library.
 
 ## Quick start (batteries included)
 
@@ -236,10 +238,11 @@ Every technique above has a complete, runnable version in [`stories/integrations
 
 `emoji-picker-react/primitives` exposes the picker's parts. Arrange them in your layout and use your design library's components for the input, emoji cells, category headers and controls. Root manages state and navigation; one Viewport owns one List.
 
-```jsx
+```tsx check
+import React from 'react';
 import * as Picker from 'emoji-picker-react/primitives';
 
-function EmojiMenu() {
+export function EmojiMenu({ insert }: { insert: (emoji: string) => void }) {
   return (
     <Picker.Root
       appearance="default"
@@ -264,7 +267,7 @@ function EmojiMenu() {
 
 `appearance="default"` reuses the built-in look, so `colorScheme` and color variables apply. Leave it out to style every part yourself, exactly like `unstyled`. Root has no default height: set one so the list scrolls and virtualizes.
 
-- **Parts:** `Root`, `Search` (input with icon and clear button), `SearchInput` (just the input, or yours), `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`; with `composition="explicit"`, also `Panel` and `Reactions`.
+- **Parts:** `Root`, `Search` (input with icon and clear button), `SearchInput` (just the input, or yours), `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`; `Panel` and `Reactions` manage expanded and compact reaction content when composed. Presence and placement are owned by JSX; Root has no composition switch.
 - **Your components:** `<Picker.SearchInput as={Input} />` accepts your input component's props and forwards its ref to the native input; Root owns its value. `components={{ Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton, ExpandButton }}` on Root or EmojiPicker replaces those elements with yours while the library keeps their behavior and measured geometry. Spread the props you receive onto one native element, and give it a visible focus style.
 - **Hooks for custom UI:** `useActiveEmoji()` (custom previews), `useSkinTone()` (custom tone menus), `useSearchState()` / `useSearchActions()` (custom search UI), `useCategoryNavigation()` (custom tabs), `usePickerMode()` (reactions bar ↔ full picker), `useEmojiDataState()` (loading and retry).
 - **Size:** `columns` sets the emojis per row and fits the width to them; without it, set a width and the columns follow.

@@ -17,6 +17,12 @@ import { Shell } from './shell';
 import '../../integrations/tailwind.css';
 import './picker.css';
 
+// Styling libraries own their object-valued theme. Use colorScheme for the picker.
+function RecipePicker({ theme, ...props }: Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'> & { theme?: unknown }) {
+  void theme;
+  return <EmojiPicker {...props} />;
+}
+
 const meta = {
   title: 'Recipes/Examples/Article comments',
   tags: ['recipe'],
@@ -32,7 +38,7 @@ export const CSS = () => <Shell className="comments-picker" />;
 export const CSSModules = () => <Shell className={modules.picker} />;
 
 /** Emotion: styled() over the picker root. */
-const EmotionRoot = styledEmotion(EmojiPicker)`
+const EmotionRoot = styledEmotion(RecipePicker)`
   --epr-bg-color: #ffffff;
   --epr-reactions-bg-color: #ffffff;
   --epr-text-color: #4b5563;
@@ -61,7 +67,7 @@ const EmotionRoot = styledEmotion(EmojiPicker)`
 export const Emotion = () => <Shell Root={EmotionRoot} />;
 
 /** styled-components: styled() over the picker root. */
-const StyledComponentsRoot = styledComponents(EmojiPicker)`
+const StyledComponentsRoot = styledComponents(RecipePicker)`
   --epr-bg-color: #ffffff;
   --epr-reactions-bg-color: #ffffff;
   --epr-text-color: #4b5563;
@@ -90,7 +96,7 @@ const StyledComponentsRoot = styledComponents(EmojiPicker)`
 export const StyledComponents = () => <Shell Root={StyledComponentsRoot} />;
 
 /** MUI: styled() with object styles (plug in theme values as needed). */
-const MuiRoot = styledMui(EmojiPicker)({
+const MuiRoot = styledMui(RecipePicker)({
   "--epr-bg-color": "#ffffff",
   "--epr-reactions-bg-color": "#ffffff",
   "--epr-text-color": "#4b5563",
@@ -122,8 +128,8 @@ export const MUI = () => <Shell Root={MuiRoot} />;
  * before Tailwind's (`@layer epr, theme, base, components, utilities;`),
  * so utilities override it.
  */
-const LayeredRoot = (props: React.ComponentProps<typeof EmojiPicker>) => (
-  <EmojiPicker cssLayer="epr" {...props} />
+const LayeredRoot = (props: React.ComponentProps<typeof RecipePicker>) => (
+  <RecipePicker cssLayer="epr" {...props} />
 );
 
 const tailwind = [

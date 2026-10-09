@@ -232,7 +232,7 @@ Keep the managed ARIA props. Test keyboard selection, search and IME input, focu
 
 ## 10. Verifying changes in this repository
 
-`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` cover behavior, types and installed-package consumers. Playwright covers browsers and touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. After changing source documents, run `npm run docs:llms` and commit the generated root and website text. Release gates: [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).
+`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` cover behavior, types and installed-package consumers. Playwright covers browsers and touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. After changing source documents, run `npm run docs:llms` and commit the generated root and website text. Release verification also requires the manual [accessibility protocol](./ACCESSIBILITY_VERIFICATION.md); automated axe checks do not replace it. Release gates: [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).
 
 <!-- source: docs/v5/PROMPTS.md -->
 
@@ -483,13 +483,15 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
-> **Upgrading from v4?** Most code works unchanged; the one default that changed is the emoji style (now native). See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
+> **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
 
 ## Copyable integration prompts
 
 Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
 to give a coding agent a concrete starting point for your application. Each
 prompt checks the installed version and keeps integration behavior explicit.
+
+Requires **Node 18 or later** in the consuming toolchain and **React 16.8 or later**. Repository contributors use **Node 24.15 or later in the 24.x line**, matching CI; development tools have newer requirements than the published library.
 
 ## Quick start (batteries included)
 
@@ -691,10 +693,11 @@ Every technique above has a complete, runnable version in [`stories/integrations
 
 `emoji-picker-react/primitives` exposes the picker's parts. Arrange them in your layout and use your design library's components for the input, emoji cells, category headers and controls. Root manages state and navigation; one Viewport owns one List.
 
-```jsx
+```tsx check
+import React from 'react';
 import * as Picker from 'emoji-picker-react/primitives';
 
-function EmojiMenu() {
+export function EmojiMenu({ insert }: { insert: (emoji: string) => void }) {
   return (
     <Picker.Root
       appearance="default"
@@ -719,7 +722,7 @@ function EmojiMenu() {
 
 `appearance="default"` reuses the built-in look, so `colorScheme` and color variables apply. Leave it out to style every part yourself, exactly like `unstyled`. Root has no default height: set one so the list scrolls and virtualizes.
 
-- **Parts:** `Root`, `Search` (input with icon and clear button), `SearchInput` (just the input, or yours), `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`; with `composition="explicit"`, also `Panel` and `Reactions`.
+- **Parts:** `Root`, `Search` (input with icon and clear button), `SearchInput` (just the input, or yours), `CategoryNav` (`orientation="vertical"` for side rails), `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`; `Panel` and `Reactions` manage expanded and compact reaction content when composed. Presence and placement are owned by JSX; Root has no composition switch.
 - **Your components:** `<Picker.SearchInput as={Input} />` accepts your input component's props and forwards its ref to the native input; Root owns its value. `components={{ Emoji, CategoryHeader, CategoryButton, SkinToneButton, ClearButton, ExpandButton }}` on Root or EmojiPicker replaces those elements with yours while the library keeps their behavior and measured geometry. Spread the props you receive onto one native element, and give it a visible focus style.
 - **Hooks for custom UI:** `useActiveEmoji()` (custom previews), `useSkinTone()` (custom tone menus), `useSearchState()` / `useSearchActions()` (custom search UI), `useCategoryNavigation()` (custom tabs), `usePickerMode()` (reactions bar ↔ full picker), `useEmojiDataState()` (loading and retry).
 - **Size:** `columns` sets the emojis per row and fits the width to them; without it, set a width and the columns follow.
@@ -961,6 +964,13 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `reactionsDefaultOpen` | `boolean`  | `false`         | If true, mounts in "Reactions" mode (single row) instead of full picker. |
 | `reactions`            | `string[]` | _(Default Set)_ | Array of unified IDs to display in the reactions bar.                    |
 | `allowExpandReactions` | `boolean`  | `true`          | If true, shows a `+` button to switch from reactions to full picker.     |
+
+### Default picker root attributes
+
+`EmojiPicker` accepts `id`, `title`, `lang`, `dir`, `aria-*` and `data-*` identifying
+attributes on its root, alongside `className` and `style`. Its public types include
+the named attributes and React ARIA attributes. The library reserves `role` and
+`data-epr-*`; use a wrapper or primitives for other native event handlers.
 
 <!-- source: CSS_VARIABLES.md -->
 
@@ -2056,6 +2066,13 @@ export const results: readonly EmojiInfo[] = searchEmojis('gato', { emojiData: e
 export const first = getEmojiByUnified(results[0]?.unified ?? '1f431', { emojiData: es });
 ```
 
+### Default picker root attributes
+
+`EmojiPicker` accepts `id`, `title`, `lang`, `dir`, `aria-*` and `data-*` identifying
+attributes on its root, alongside `className` and `style`. Its public types include
+the named attributes and React ARIA attributes. The library reserves `role` and
+`data-epr-*`; use a wrapper or primitives for other native event handlers.
+
 <!-- source: docs/v5/PRIMITIVES.md -->
 
 <!-- Primitives -->
@@ -3114,6 +3131,12 @@ to carry out the chosen upgrade. Specify whether to retain Apple images or
 adopt native emoji rendering. The prompts preserve working default-picker
 APIs and make optional primitive adoption a separate choice.
 
+## Runtime and toolchain requirements
+
+The published package now requires **Node >=18** (v4 declared >=10). Upgrade older build/server environments before installing v5; package managers with strict engine checks reject older Node versions. Browser consumers still need a supported React setup; the React peer floor remains **>=16.8**.
+
+Repository development uses **Node 24.15+ in the 24.x line**, matching CI. Storybook, Vitest, jsdom and release tooling have newer Node requirements than the published library. This contributor requirement does not raise the consumer Node or React floor. The packed-runtime CI smoke check runs the built package on Node 18.
+
 ## Common case
 
 For many applications, the v4 component continues to work unchanged:
@@ -3208,9 +3231,20 @@ This narrowly addresses application-defined suggested emojis without replacing t
 
 ### Localize every string, control the skin tone
 
-```tsx
-<EmojiPicker labels={{ categoryNavigation: 'Categorías', skinToneNeutral: 'Tono neutro' }} />
-<EmojiPicker skinTone={tone} onSkinToneChange={setTone} />
+```tsx check
+import React, { useState } from 'react';
+import EmojiPicker, { SkinTones, type SkinTonesValue } from 'emoji-picker-react';
+
+export function LocalizedPicker() {
+  const [tone, setTone] = useState<SkinTonesValue>(SkinTones.NEUTRAL);
+  return (
+    <EmojiPicker
+      labels={{ categoryNavigation: 'Categorías', skinToneNeutral: 'Tono neutro' }}
+      skinTone={tone}
+      onSkinToneChange={setTone}
+    />
+  );
+}
 ```
 
 ## Behavior changes to review

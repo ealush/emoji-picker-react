@@ -641,3 +641,10 @@ import es from 'emoji-picker-react/data/emojis-es';
 export const results: readonly EmojiInfo[] = searchEmojis('gato', { emojiData: es });
 export const first = getEmojiByUnified(results[0]?.unified ?? '1f431', { emojiData: es });
 ```
+
+### Default picker root attributes
+
+`EmojiPicker` accepts `id`, `title`, `lang`, `dir`, `aria-*` and `data-*` identifying
+attributes on its root, alongside `className` and `style`. Its public types include
+the named attributes and React ARIA attributes. The library reserves `role` and
+`data-epr-*`; use a wrapper or primitives for other native event handlers.

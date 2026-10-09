@@ -1,0 +1,21 @@
+{
+  "extends": "./test/v5-contract/tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "emoji-picker-react": ["src/index.tsx"],
+      "emoji-picker-react/primitives": ["src/primitives/index.ts"],
+      "emoji-picker-react/data": ["src/data.ts"],
+      "emoji-picker-react/data/emojis-*": ["src/data/emojis-*"]
+    }
+  },
+  "include": [
+    ".storybook/**/*.ts",
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
+    "playwright/**/*.ts",
+    "*.config.ts",
+    "src/svg.d.ts"
+  ],
+  "exclude": ["src/env.d.ts"]
+}

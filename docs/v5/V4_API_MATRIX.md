@@ -72,8 +72,17 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | `searchLabel` | Localizable accessible label for the built-in search input. |
 | `suggestedEmojis` | Ordered caller-defined Suggested-category entries: unified IDs, custom emoji IDs, or the emoji characters themselves. |
 | `onReactionsModeChange` | Observe compact reactions ↔ Root-managed full-picker panel state changes. |
+| `skinTone` | Controlled skin tone; `onSkinToneChange` proposes changes and the parent owns the value. |
+| `columns` | Fit the picker to an explicit column count. |
+| `labels` | Localize UI strings and accessible announcements. |
+| `components` | Replace managed cells, headers and controls while preserving behavior. |
+| `cssLayer` | Place library styles in an explicit cascade layer. |
+| `colorScheme` | Apply light/dark/auto tokens; the default picker also retains its `theme` alias. |
+| `unstyled` | Remove decorative defaults from the default picker; bare Root already starts without appearance. |
 
-Initial v5 intentionally does **not** add `skinTone`, `mode`, `defaultMode`, or `onModeChange`.
+`skinTone`, search state, suggestions, localization, component replacements and cascade-layer configuration are available on both the default picker and Root. `unstyled` is default-picker-only; use Root's `appearance` to opt into built-in styling. Root omits default-picker visibility/placement switches (`open`, `searchDisabled`, `skinTonesDisabled`, `skinTonePickerLocation`, `previewConfig.showPreview`): compose or omit the actual parts instead. `Panel` and `Reactions` are always ordinary composed parts, with no composition switch.
+
+Initial v5 intentionally does **not** add `mode`, `defaultMode`, or `onModeChange`. `onReactionsModeChange` observes the existing reaction state; `usePickerMode()` exposes managed actions for custom UI.
 
 ## 4. Standalone Emoji component
 

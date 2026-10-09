@@ -17,8 +17,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check:scripts
+      - run: npm run check:tooling
       - run: npm run lint
       - run: npm run check:contracts
+      - run: npm run check:storybook-hosts
       - run: npm test
       - run: npm run check:data-package
 
@@ -98,6 +100,7 @@ jobs:
       - run: npm run size
       - run: npm run check:package
       - run: npm run check:react16
+      - run: npm run check:node18
 
   # llms.txt is generated from committed docs; fail if it drifts.
   docs:
@@ -108,6 +111,7 @@ jobs:
         with:
           node-version: 24
       - run: npm ci --ignore-scripts
+      - run: npm run check:docs
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
       # The website gallery, README screenshots and gallery are generated
