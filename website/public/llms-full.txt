@@ -478,9 +478,9 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
-- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
+- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (a 34 KiB min+gz startup budget including ShipStyles; see the consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 > **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
@@ -897,7 +897,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `colorScheme`     | `Theme`      | `Theme.LIGHT`      | The color scheme. Options: `'light'`, `'dark'`, `'auto'`. Preferred over `theme`, which CSS-in-JS wrappers (Emotion, styled-components, MUI) reserve. |
 | `theme`           | `Theme`      | `Theme.LIGHT`      | Alias of `colorScheme`, kept for v4 compatibility.                                           |
 | `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |
-| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific unicode version (e.g., `"14.0"`). When unset with the native style, emojis the platform cannot render are hidden automatically. |
+| `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific Unicode emoji version (e.g., `"14.0"`). Native mode additionally filters detected unsupported glyphs, even with this cap set; see [native detection limits](docs/v5/API.md#5c-native-emoji-support-detection). |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
@@ -1449,7 +1449,7 @@ All 25 designs share a source generator. Their seven styling-stack variants rema
 
 Import runtime constants from `/primitives`. Runtime imports from the main or `/data` entry register the synchronous default dataset, so those mixed graphs intentionally have a larger initial payload.
 
-The configured minimal consumer, bundled from an installed package tarball, measures **34.0 KiB initial gzip including ShipStyles** (34,809 bytes), with the dataset deferred. Unused parts, icons and styles can be removed by the consumer bundler; the default picker retains its complete composition. The complete-runtime regression cap is **34 KiB**, down from 41 KiB after the original 40.5 KiB adoption candidate. Earlier gates that excluded ShipStyles are not comparable. Reducing the runtime toward 25 KiB remains profiling work. Account for initial JavaScript and dataset traffic separately.
+The configured minimal consumer, bundled from an installed package tarball, must stay within **34 KiB initial gzip including ShipStyles**, with the dataset deferred. Unused parts, icons and styles can be removed by the consumer bundler; the default picker retains its complete composition. The complete-runtime regression cap is **34 KiB**, down from 41 KiB after the original 40.5 KiB adoption candidate. Earlier gates that excluded ShipStyles are not comparable. Reducing the runtime toward 25 KiB remains profiling work. Account for initial JavaScript and dataset traffic separately.
 
 <!-- source: docs/v5/API.md -->
 
@@ -1615,12 +1615,19 @@ While `skinTone` is present it is the source of truth (`defaultSkinTone` is igno
 
 ## 5c. Native emoji support detection
 
-`emojiStyle` defaults to `native`. Native glyphs come from the OS font, which lags behind the dataset, so when `emojiVersion` is not set the picker probes the platform after mount, before paint, and hides:
+`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. After mount, before paint, the picker probes that font and hides:
 
 - emojis newer than the platform renders (they would show as empty boxes);
-- country flags where the platform has no flag glyphs (Windows).
+- individual country flags where the installed font has no flag glyph;
+- individual missing glyphs, broken join/modifier sequences, and subdivision flags that fall back to a plain black flag.
 
-SSR and hydration output is unchanged (detection is client-only). Pin `emojiVersion` to opt out. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
+The exact rendered identity is checked, including skin tones and explicit recent/reaction identities. Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
+
+`emojiVersion` remains an additional maximum version: it never disables native detection or makes unsupported glyphs available. SSR and hydration-first output stay deterministic; detection is client-only. The standalone `Emoji` component outside a picker Root does not participate in Root inventory filtering.
+
+Detection is heuristic, not a browser-provided glyph-coverage guarantee. It compares rendered width and canvas artwork under two text colors, which distinguishes ordinary missing-glyph/text fallback from fixed-color emoji artwork, including black-and-white artwork. Unusual fonts may be misclassified. Inconclusive sequence probes preserve those entries. If canvas readback is blocked or no stable emoji artwork baseline is available, the picker preserves the whole inventory rather than hiding everything. Avoid promising complete suppression in those environments.
+
+Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; unchanged inventories reuse cached results. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
 
 Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also refreshes after webfonts finish loading.
 
@@ -3283,7 +3290,7 @@ export function LocalizedPicker() {
 
 ## Behavior changes to review
 
-- **Native support detection.** With the (new default) native style and no `emojiVersion`, emojis the platform cannot render — and country flags where the platform has no flag glyphs, e.g. Windows — are hidden after mount. Pin `emojiVersion` to opt out.
+- **Native support detection.** With the (new default) native style, the picker hides detected unsupported glyphs and broken sequences after mount, including country flags where the platform has no flag glyphs. Filtering covers the grid/search/recents, reactions, skin-tone variants and managed preview. `emojiVersion` is an additional cap, not an opt-out; choose an image style for inventory independent of OS fonts. Detection is heuristic and inconclusive probes leave the inventory visible; see [the detection contract](./API.md#5c-native-emoji-support-detection).
 - **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
 - **Emoji columns fill the row.** Leftover row width is now shared between columns instead of collecting as a gap on the right edge, so a few pixels of horizontal emoji position change (equal left/right insets). Screenshot tests that include the grid may need a refresh.
 - **Fluid widths reflow.** The column count follows the picker's width when its container resizes (it was only recomputed on CSS transitions).
@@ -3380,8 +3387,10 @@ Do not introduce new uses of the legacy casing.
 ## Changed defaults
 
 The default `emojiStyle` is now native instead of Apple: a default
-`<EmojiPicker />` renders OS glyphs with no image loading, so the
-picker paints instantly and works fully offline. Every style remains
+`<EmojiPicker />` renders OS glyphs without standard emoji image requests.
+Native availability follows the installed font; detection filters known
+unsupported glyphs before client paint. Dataset loading and any custom
+images or webfonts still have their own loading requirements. Every style remains
 supported; to keep the previous look, pass it explicitly:
 
 ```tsx

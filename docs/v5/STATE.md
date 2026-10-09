@@ -236,6 +236,7 @@ A pending materialize/scroll/focus operation captures the generation. It MUST ab
 
 - accepted normalized search/filter change;
 - categories/data/custom-emojis change;
+- detected native-font support, version-cap or active skin-tone change;
 - viewport geometry/column-count change;
 - reactions/full-picker transition;
 - Root unmount.

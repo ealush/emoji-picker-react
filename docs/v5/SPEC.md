@@ -225,6 +225,8 @@ In particular:
 
 String literals become accepted wherever v4 enums are accepted, but existing enum exports remain available for migration compatibility.
 
+With native rendering, detected unsupported OS glyphs MUST be excluded from the selectable inventory before grid geometry is calculated. Grid/search/recents, reactions and skin-tone variants use the exact rendered identity; the managed Preview MUST NOT draw a detected unsupported glyph. An explicit `emojiVersion` is an additional cap, never an escape from support filtering. Image styles and image-based custom emojis are independent of OS glyph coverage. Client-only detection MUST preserve SSR/hydration-first output, cache results per document/font/sequence, refresh on observed font changes/loading, and preserve inventory if probing is inconclusive. Detection remains heuristic; see [API.md §5c](./API.md#5c-native-emoji-support-detection).
+
 `lazyLoadEmojis` remains supported in v5. If virtualization later makes the option semantically redundant, deprecate it before removal rather than silently changing its meaning.
 
 ## 10. Styling

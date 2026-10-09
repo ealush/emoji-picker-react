@@ -7,12 +7,15 @@ import { useMutableConfig } from '../../config/mutableConfig';
 import {
   useCategoriesConfig,
   useDefaultSearchValueConfig,
+  useEmojiVersionConfig,
   useSearchValueConfig,
 } from '../../config/useConfig';
 import { useFilter } from '../../hooks/useFilter';
 import {
+  useActiveSkinToneState,
   useEmojiSizeState,
   useNavigationRegistry,
+  useNativeEmojiSupport,
   useReactionsModeState,
 } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
@@ -124,33 +127,44 @@ export const NavigationInvalidation = /* @__PURE__ */ React.memo(
     const [reactionsMode] = useReactionsModeState();
     const { emojiData } = usePickerDataContext();
     const [emojiSize] = useEmojiSizeState();
+    const nativeSupport = useNativeEmojiSupport();
+    const emojiVersion = useEmojiVersionConfig();
+    const [skinTone] = useActiveSkinToneState();
     // Keyed by order/membership, not identity: the merged config is rebuilt
     // for unrelated prop changes, which must not cancel navigation.
-    const categoriesKey = JSON.stringify(
+    const inventoryKey = JSON.stringify([
       useCategoriesConfig().map(categoryIdFromCategoryConfig),
-    );
-    const prevSnapshot = React.useRef<
-      [boolean, unknown, number | null, string]
-    >([reactionsMode, emojiData, emojiSize, categoriesKey]);
+      emojiVersion,
+      skinTone,
+    ]);
+    const prevSnapshot = React.useRef<unknown[]>([
+      reactionsMode,
+      emojiData,
+      emojiSize,
+      inventoryKey,
+      nativeSupport,
+    ]);
 
     React.useEffect(() => {
-      const prev = prevSnapshot.current;
-      if (
-        prev[0] === reactionsMode &&
-        prev[1] === emojiData &&
-        prev[2] === emojiSize &&
-        prev[3] === categoriesKey
-      ) {
-        return;
-      }
-      prevSnapshot.current = [
+      const next = [
         reactionsMode,
         emojiData,
         emojiSize,
-        categoriesKey,
+        inventoryKey,
+        nativeSupport,
       ];
+      if (next.every((value, index) => value === prevSnapshot.current[index]))
+        return;
+      prevSnapshot.current = next;
       registry.invalidate();
-    }, [registry, reactionsMode, emojiData, emojiSize, categoriesKey]);
+    }, [
+      registry,
+      reactionsMode,
+      emojiData,
+      emojiSize,
+      inventoryKey,
+      nativeSupport,
+    ]);
 
     return null;
   },

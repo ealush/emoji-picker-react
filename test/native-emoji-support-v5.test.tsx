@@ -7,29 +7,61 @@ import {
   __resetNativeEmojiSupportForTest,
   detectNativeEmojiSupport,
   isCountryFlagUnified,
+  isNativeEmojiSupported,
 } from '../src/dataUtils/nativeEmojiSupport';
 
 // A fake 2D context: `supported` decides which strings draw as a single
-// color glyph; everything else draws gray-scale and double width.
+// fixed artwork; everything else follows text ink and has double width.
 function installFakeCanvas(supported: (text: string, font: string) => boolean) {
-  let lastText = '';
+  const draws = new Map<
+    string,
+    {
+      text: string;
+      font: string;
+      ink: string;
+      x: number;
+      y: number;
+    }
+  >();
   const context = {
     font: '',
     textBaseline: '',
     fillStyle: '',
-    clearRect: () => undefined,
-    fillText: (text: string) => {
-      lastText = text;
+    canvas: {
+      set width(_value: number) {
+        draws.clear();
+      },
+      set height(_value: number) {
+        draws.clear();
+      },
+    },
+    save: () => undefined,
+    restore: () => undefined,
+    beginPath: () => undefined,
+    rect: () => undefined,
+    clip: () => undefined,
+    fillText: (text: string, x: number, y: number) => {
+      draws.set(`${x},${y}`, {
+        text,
+        x,
+        y,
+        font: context.font,
+        ink: context.fillStyle,
+      });
     },
     measureText: (text: string) => ({
       width: supported(text, context.font) ? 24 : 48,
     }),
-    getImageData: () => {
-      const data = new Uint8ClampedArray(32 * 32 * 4);
-      data[0] = supported(lastText, context.font) ? 250 : 0;
-      data[1] = supported(lastText, context.font) ? 100 : 0;
-      data[2] = 0;
-      data[3] = 255;
+    getImageData: (_x: number, _y: number, width: number, height: number) => {
+      const data = new Uint8ClampedArray(width * height * 4);
+      for (const { text, font, ink, x, y } of draws.values()) {
+        if (x >= width || y >= height) continue;
+        const index = (y * width + x) * 4;
+        const fixed = supported(text, font);
+        data[index] = fixed ? 250 : ink === '#f00' ? 255 : 0;
+        data[index + 1] = fixed ? 100 : 0;
+        data[index + 3] = 255;
+      }
       return { data };
     },
   };
@@ -47,7 +79,7 @@ afterEach(() => {
 });
 
 describe('native emoji support detection', () => {
-  it('reports the newest version whose sample renders', () => {
+  it('checks individual glyphs rather than inferring version-wide support', () => {
     installFakeCanvas(
       (text) =>
         text !== SHAKING_FACE &&
@@ -55,22 +87,19 @@ describe('native emoji support detection', () => {
         !text.startsWith('\u{1F642}‍') &&
         !text.startsWith('\u{1F1FA}'),
     );
-    expect(detectNativeEmojiSupport()).toEqual({
-      maxVersion: 14,
-      countryFlags: false,
-    });
+    const support = detectNativeEmojiSupport();
+    expect(isNativeEmojiSupported(support, '1fae0')).toBe(true);
+    expect(isNativeEmojiSupported(support, '1fae8')).toBe(false);
+    expect(isNativeEmojiSupported(support, '1f1fa-1f1f8')).toBe(false);
   });
 
-  it('is inconclusive without color emoji rendering', () => {
+  it('is inconclusive without fixed emoji artwork', () => {
     installFakeCanvas(() => false);
-    expect(detectNativeEmojiSupport()).toEqual({
-      maxVersion: null,
-      countryFlags: true,
-    });
+    expect(detectNativeEmojiSupport()).toEqual({});
   });
 
   it('is inconclusive under jsdom', () => {
-    expect(detectNativeEmojiSupport().maxVersion).toBeNull();
+    expect(detectNativeEmojiSupport()).toEqual({});
   });
 
   it('recognizes regional-indicator flags only', () => {
@@ -113,11 +142,13 @@ describe('native emoji support detection', () => {
     expect(onRender).toHaveBeenCalledTimes(commits);
   });
 
-  it('does not probe when emojiVersion is pinned', () => {
-    const spy = vi.spyOn(HTMLCanvasElement.prototype, 'getContext');
+  it('still probes when emojiVersion supplies an additional cap', () => {
+    const spy = vi
+      .spyOn(HTMLCanvasElement.prototype, 'getContext')
+      .mockReturnValue(null);
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('test-browser');
     render(<EmojiPicker emojiVersion="15.0" />);
-    expect(spy).not.toHaveBeenCalled();
+    expect(spy).toHaveBeenCalled();
   });
 
   it('reprobes after the native font family changes', async () => {

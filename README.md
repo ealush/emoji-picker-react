@@ -23,9 +23,9 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
-- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode hides emojis the user's OS cannot render.
+- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (34.0 KiB min+gz up front including ShipStyles; see the measured consumer gate); a framework-free data API for search and lookup.
+- **Lean when you want** — the primitives entry loads the dataset on demand (a 34 KiB min+gz startup budget including ShipStyles; see the consumer gate); a framework-free data API for search and lookup.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
 
 > **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.

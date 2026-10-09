@@ -6,7 +6,6 @@ import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
   useCustomEmojisConfig,
-  useEmojiVersionConfig,
   useDefaultSkinToneConfig,
   useSkinToneConfig,
   useDefaultSearchValueConfig,
@@ -14,6 +13,7 @@ import {
   useSearchValueConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import { emojiUnified, emojiVariations } from '../../dataUtils/emojiUtils';
 import {
   UNKNOWN_SUPPORT,
   NativeEmojiSupport,
@@ -25,6 +25,7 @@ import { useMarkInitialLoad } from '../../hooks/useInitialLoad';
 import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { createActiveEmojiStore } from '../../state/activeEmojiStore';
 import { NavigationRegistry } from '../../state/navigationRegistry';
+import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle, SkinTones } from '../../types/exposedTypes';
 
 import { usePickerMainRef } from './ElementRefContext';
@@ -159,21 +160,36 @@ const LoadSliceContext = /* @__PURE__ */ React.createContext<{
 });
 
 // Platform emoji support, probed before paint and refreshed on font changes. `null` means
-// "no filtering": before mount (SSR and the hydration render), for image
-// emoji styles, and whenever the consumer pins `emojiVersion`.
+// "no filtering": before mount (SSR and the hydration render), or for image
+// emoji styles. An explicit emojiVersion is an additional cap, not an opt-out.
 const NativeSupportContext =
   /* @__PURE__ */ React.createContext<NativeEmojiSupport | null>(null);
 
+function primeNativeInventory(
+  support: NativeEmojiSupport,
+  allEmojis: DataEmoji[],
+): void {
+  if (support === UNKNOWN_SUPPORT) return;
+  const identities = allEmojis.flatMap((emoji) =>
+    isCustomEmoji(emoji)
+      ? []
+      : [emojiUnified(emoji), ...emojiVariations(emoji)],
+  );
+  if (support.prime) support.prime(identities);
+}
+
 function useNativeEmojiSupportState(): NativeEmojiSupport | null {
   const emojiStyle = useEmojiStyleConfig();
-  const emojiVersion = useEmojiVersionConfig();
+  const { allEmojis } = usePickerDataContext();
   const PickerMainRef = usePickerMainRef();
-  const shouldDetect = emojiStyle === EmojiStyle.NATIVE && !emojiVersion;
-  const [support, setSupport] = useState<NativeEmojiSupport | null>(null);
+  const shouldDetect = emojiStyle === EmojiStyle.NATIVE;
+  const [snapshot, setSnapshot] = useState<
+    [support: NativeEmojiSupport, data: DataEmoji[]] | null
+  >(null);
 
   useIsomorphicLayoutEffect(() => {
     if (!shouldDetect || isJsdom()) {
-      setSupport(null);
+      setSnapshot(null);
       return;
     }
     // Probe with the font the picker actually renders native emojis in,
@@ -184,7 +200,8 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     if (!root || !view) return;
     let previousFont: string | null = null;
     const probe = (refresh = false) => {
-      const customFont = view.getComputedStyle(root)
+      const customFont = view
+        .getComputedStyle(root)
         .getPropertyValue('--epr-emoji-font-family')
         .trim();
       // Attribute changes often leave the computed font unchanged.
@@ -193,17 +210,23 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       const detected = detectNativeEmojiSupport(
         customFont || undefined,
         refresh,
+        root.ownerDocument,
       );
+      // Batch pixel reads once per document/font/identity, outside render.
+      // Refresh creates a new cache so newly available glyphs can reappear.
+      primeNativeInventory(detected, allEmojis);
       // An inconclusive probe filters nothing, just like the initial null.
       // Avoid another synchronous full-grid render for this no-op result.
-      setSupport(
-        detected === UNKNOWN_SUPPORT ? null : detected,
-      );
+      setSnapshot(detected === UNKNOWN_SUPPORT ? null : [detected, allEmojis]);
     };
     probe();
     // Any root or ancestor attribute can select another emoji font via CSS.
     const observer = new view.MutationObserver(() => probe());
-    for (let element: HTMLElement | null = root; element; element = element.parentElement) {
+    for (
+      let element: HTMLElement | null = root;
+      element;
+      element = element.parentElement
+    ) {
       observer.observe(element, {
         attributes: true,
       });
@@ -215,9 +238,13 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       observer.disconnect();
       fonts?.removeEventListener('loadingdone', refresh);
     };
-  }, [shouldDetect, PickerMainRef]);
+  }, [shouldDetect, PickerMainRef, allEmojis]);
 
-  return shouldDetect ? support : null;
+  // Changed data is primed in the layout effect before publishing
+  // their support snapshot. This avoids thousands of lazy canvas reads
+  // during the first render of a newly loaded dataset. Version caps reuse
+  // the already-primed OS inventory.
+  return shouldDetect && snapshot?.[1] === allEmojis ? snapshot[0] : null;
 }
 
 export function useNativeEmojiSupport(): NativeEmojiSupport | null {

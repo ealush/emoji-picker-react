@@ -158,12 +158,19 @@ While `skinTone` is present it is the source of truth (`defaultSkinTone` is igno
 
 ## 5c. Native emoji support detection
 
-`emojiStyle` defaults to `native`. Native glyphs come from the OS font, which lags behind the dataset, so when `emojiVersion` is not set the picker probes the platform after mount, before paint, and hides:
+`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. After mount, before paint, the picker probes that font and hides:
 
 - emojis newer than the platform renders (they would show as empty boxes);
-- country flags where the platform has no flag glyphs (Windows).
+- individual country flags where the installed font has no flag glyph;
+- individual missing glyphs, broken join/modifier sequences, and subdivision flags that fall back to a plain black flag.
 
-SSR and hydration output is unchanged (detection is client-only). Pin `emojiVersion` to opt out. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
+The exact rendered identity is checked, including skin tones and explicit recent/reaction identities. Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
+
+`emojiVersion` remains an additional maximum version: it never disables native detection or makes unsupported glyphs available. SSR and hydration-first output stay deterministic; detection is client-only. The standalone `Emoji` component outside a picker Root does not participate in Root inventory filtering.
+
+Detection is heuristic, not a browser-provided glyph-coverage guarantee. It compares rendered width and canvas artwork under two text colors, which distinguishes ordinary missing-glyph/text fallback from fixed-color emoji artwork, including black-and-white artwork. Unusual fonts may be misclassified. Inconclusive sequence probes preserve those entries. If canvas readback is blocked or no stable emoji artwork baseline is available, the picker preserves the whole inventory rather than hiding everything. Avoid promising complete suppression in those environments.
+
+Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; unchanged inventories reuse cached results. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
 
 Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also refreshes after webfonts finish loading.
 

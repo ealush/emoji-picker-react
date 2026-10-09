@@ -32,7 +32,7 @@ No existing main-entry symbol may disappear accidentally because an exports map 
 | `open` | **Keep** | Same visibility behavior. |
 | `theme` | **Keep; improve typing** | Enum + literal values. `colorScheme` is the v5 name (CSS-in-JS wrappers reserve `theme`); `theme` stays as an alias. |
 | `emojiStyle` | **Keep; improve typing; default changed** | Enum + literal values. The default is `native` (was Apple); a caller image source (`getEmojiUrl`) without an explicit style keeps the Apple image default. |
-| `emojiVersion` | **Keep** | Same meaning/default. |
+| `emojiVersion` | **Keep** | Same maximum-version meaning/default. Native rendering additionally filters detected unsupported OS glyphs; setting this cap does not disable detection. |
 | `lazyLoadEmojis` | **Keep** | Image lazy loading is distinct from row virtualization. |
 | `autoFocusSearch` | **Keep** | Same default/semantics. |
 | `emojiData` | **Keep** | Existing i18n/data injection remains. |
