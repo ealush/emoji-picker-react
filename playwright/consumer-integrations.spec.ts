@@ -53,7 +53,11 @@ async function settle(page: Page) {
       () =>
         page
           .locator('img')
-          .evaluateAll((elements) => elements.every((image) => image.complete)),
+          .evaluateAll((elements) =>
+            elements.every(
+              (image) => image instanceof HTMLImageElement && image.complete,
+            ),
+          ),
       { timeout: 10000 },
     )
     .toBe(true);
