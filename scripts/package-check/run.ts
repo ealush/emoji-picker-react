@@ -163,8 +163,8 @@ function checkPrimitivesInitialBudget(scratch: string) {
   writeFileSync(
     consumer,
     `import * as React from 'react';
-import { Root, SearchInput, Viewport, List, Loading, LoadError, Empty, SkinTonePickerLocation } from 'emoji-picker-react/primitives';
-export const Picker = props => <Root skinTonePickerLocation={SkinTonePickerLocation.NONE} {...props}><SearchInput /><Viewport><List /><Loading /><LoadError /><Empty /></Viewport></Root>;`,
+import { Root, Panel, SearchInput, Viewport, List, Loading, LoadError, Empty } from 'emoji-picker-react/primitives';
+export const Picker = props => <Root {...props}><Panel><SearchInput /><Viewport><List /><Loading /><LoadError /><Empty /></Viewport></Panel></Root>;`,
   );
   sh(join(repoRoot, 'node_modules', '.bin', 'esbuild'), [
     consumer,
