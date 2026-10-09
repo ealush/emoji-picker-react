@@ -54,7 +54,7 @@ jobs:
           node-version: 24
       - run: npm ci --ignore-scripts
       - run: npm run docs:llms
-      - run: git diff --exit-code -- llms.txt
+      - run: git diff --exit-code -- llms.txt llms-full.txt website/public/llms.txt website/public/llms-full.txt
       - run: npm run recipes
       - run: npm run registry
       - run: npm run designs
@@ -122,6 +122,13 @@ jobs:
         working-directory: website
       - run: npm run build
         working-directory: website
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config playwright.website.config.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: website-browser-evidence
+          path: test-results/website
       - uses: actions/upload-artifact@v4
         with:
           name: website-candidate

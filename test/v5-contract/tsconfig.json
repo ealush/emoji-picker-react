@@ -32,6 +32,8 @@
     "../../registry/emoji-picker.tsx",
     "../../stories/consumers/**/*.tsx",
     "../../playwright/consumer-integrations.spec.ts",
+    "../../playwright/website.spec.ts",
+    "../../playwright.website.config.ts",
     "../../src/**/*"
   ],
   // Node types provide `process` here; src/env.d.ts is the library's

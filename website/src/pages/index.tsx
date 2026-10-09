@@ -15,6 +15,7 @@ import {
 import { InstallSection } from '../components/InstallSection';
 import { FloatingEmojis } from '../components/FloatingEmojis';
 import PickerDemo from '../components/PickerDemo';
+import { isV5Preview } from '@/lib/release';
 import { DesignsSection } from '../components/DesignsSection';
 import { ReactionsSection } from '../components/ReactionsSection';
 
@@ -84,8 +85,10 @@ export default function Home({ initialStats }: HomeProps) {
           <FloatingEmojis />
           <div className={styles.heroContent}>
             <div className={styles.badge}>
-              <span className={styles.badgeVersion}>v{version}</span>
-              {publishedAt && (
+              <span className={styles.badgeVersion}>
+                {isV5Preview ? 'v5 preview' : `v${version}`}
+              </span>
+              {!isV5Preview && publishedAt && (
                 <>
                   <span>—</span>
                   <span>{publishedAt}</span>
@@ -105,6 +108,14 @@ export default function Home({ initialStats }: HomeProps) {
               language and design library: Tailwind, shadcn/ui, CSS Modules,
               Emotion, styled-components, MUI or plain CSS.
             </p>
+
+            {isV5Preview && (
+              <p>
+                This site previews v5. The npm latest release may still be v4;
+                these examples require emoji-picker-react 5 or a local build of
+                master-v5.
+              </p>
+            )}
 
             <div className={styles.heroActions}>
               <a href="#playground" className={styles.primaryButton}>
