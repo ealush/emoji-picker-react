@@ -106,9 +106,9 @@ Before you get started, make sure you have the following requirements in place:
 
 - [Git](https://git-scm.com/downloads)
 
-- [Node.js 20 or newer](https://nodejs.org/en/download/) (CI runs on Node 24)
+- [Node.js 24.15 or newer in the 24.x line](https://nodejs.org/en/download/), matching CI
 
-  Use the `node --version` command to check your version. The generator scripts use `import.meta.dirname`, so Node 20.11 is the floor for development; the published package itself runs on any supported React toolchain.
+  Use `node --version` to check your version. Development tools (including Vitest and jsdom) require newer Node versions than the published library. Consumers need Node 18 or later in their toolchain and React 16.8 or later; contributor requirements do not raise those floors.
 
 #### Setup the Project
 

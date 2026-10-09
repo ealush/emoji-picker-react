@@ -20,7 +20,7 @@ When `searchValue` is present:
 - filtering is scheduled from the value the parent actually supplies, not merely from a rejected proposal;
 - parent-driven `searchValue` changes do not re-emit `onSearchChange`.
 
-If the parent ignores a proposal, the accepted search value remains unchanged. The input keeps a temporary raw draft during a typing burst; after 100 ms without another edit, an outstanding rejected draft reconciles to the latest accepted value. Parent acceptance or transformation synchronizes the display immediately. This draft never drives filtering.
+If the parent ignores a proposal, the accepted search value remains unchanged. The input keeps a temporary raw draft during a typing burst; after 500 ms without another edit, an outstanding rejected draft reconciles to the latest accepted value. Parent acceptance or transformation synchronizes the display immediately. This draft never drives filtering. The 500 ms quiet window is independent of the 100 ms filtering debounce and accommodates ordinary typing gaps. It is a bounded grace period, not an acknowledgement protocol: after a longer pause the accepted prop wins, and any new accepted value synchronizes immediately. Applications should update controlled state promptly and debounce expensive work separately.
 
 ### Uncontrolled
 
@@ -168,7 +168,7 @@ onReactionsModeChange?: (reactionsOpen: boolean) => void;
 Semantics:
 
 - `true`: compact Reactions is active;
-- `false`: Root's managed full-picker panel is active;
+- `false`: the explicitly composed Panel is active;
 - emit only after an actual state change;
 - expansion emits `false`;
 - `collapseToReactions()` emits `true` if it changes state;
@@ -182,14 +182,14 @@ This is observational. Initial v5 does not add controlled `mode/defaultMode`.
 On reactions → full-picker expansion:
 
 - remember the initiating reaction/expand control;
-- activate the managed panel;
+- activate the explicitly composed Panel;
 - after its destination exists, preserve current autofocus semantics;
 - Search is preferred when present and autofocus is enabled;
 - otherwise focus the next valid focusable region from NAVIGATION.md.
 
 On collapse:
 
-- deactivate/inert the managed panel;
+- deactivate/inert the explicitly composed Panel;
 - restore focus to the initiating control when it still exists;
 - otherwise use the first valid Reactions control.
 

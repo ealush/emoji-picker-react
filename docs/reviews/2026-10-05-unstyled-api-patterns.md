@@ -1,5 +1,7 @@
 # Unstyled and composable API research
 
+> Historical assessment at the revisions named below. Branch names, proposed APIs and release processes describe that date. For the current contract, see [the v5 documentation](../v5/README.md).
+
 Research date: 2026-10-05. EPR assessed at `503370b61d99c400df33fe32f6b61f91a0026855` on `v5-implementation`, PR #552. This is a research and design recommendation, not a replacement for the current API contract. Proposed names and examples below are not shipped APIs.
 
 The main finding: v5 supports useful composition, but its BYOD promise is broader than its current replacement surface. The next investment should make appearance ownership consistent and let applications replace the interactive leaves of the picker. General DOM polymorphism helps, but cannot solve inaccessible internal controls or compulsory layout on its own.

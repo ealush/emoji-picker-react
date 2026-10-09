@@ -12,11 +12,11 @@ Initial region kinds:
 | --- | --- | --- |
 | `reactions` | yes | horizontal/vertical sibling reaction navigation |
 | `search` | yes | input + local clear/skin-tone behavior |
-| `categories` | yes | horizontal tab navigation |
+| `categories` | yes | tab navigation along its configured orientation |
 | `grid` | yes | logical 2D emoji navigation |
-| `preview-skin-tone` | yes | skin-tone control when located in preview |
+| `preview-skin-tone` (internal registry name) | yes | explicit SkinTone, wherever composed |
 
-Root's managed panel, `Viewport`, `Preview` itself, category groups, and consumer wrappers are not generic focus regions.
+The explicitly composed Panel, `Viewport`, `Preview` itself, category groups, and consumer wrappers are not generic focus regions.
 
 Each region registration has:
 - an opaque instance ID;
@@ -82,9 +82,8 @@ Only an unhandled edge movement may delegate to cross-region navigation.
 
 ### Categories
 
-- `ArrowLeft` / `ArrowRight`: previous/next category tab;
-- `ArrowDown`: enter the next focusable registered region after Categories in DOM order, normally Grid;
-- `ArrowUp`: enter the previous focusable registered region in DOM order.
+- With horizontal orientation (default), `ArrowLeft` / `ArrowRight` move between tabs; `ArrowDown` / `ArrowUp` enter the next/previous registered region in DOM order.
+- With vertical orientation, `ArrowDown` / `ArrowUp` move between tabs; `ArrowRight` / `ArrowLeft` enter the next/previous region (mirrored in RTL).
 
 ### Grid
 
@@ -147,7 +146,7 @@ Example:
 </Root>
 ```
 
-Root places these children inside its managed panel automatically.
+Place these children inside an explicit Panel when they should hide with expanded content. Root preserves caller JSX and never inserts a panel.
 
 The Close button is reachable by Tab/Shift+Tab. ArrowDown from CategoryNav goes to Search because only picker regions participate in the picker-specific arrow graph.
 

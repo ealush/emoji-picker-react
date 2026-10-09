@@ -6,65 +6,53 @@ Private wrappers may provide appearance/layout only. Search (backed by SearchInp
 
 ## Canonical tree
 
-Conceptually:
+The default wrapper resolves legacy visibility and tone-location props, then renders this tree (private configuration/layout helpers are schematic):
 
 ```tsx
-function EmojiPicker(props: PickerProps) {
-  const rootClassName = mergeDefaultPickerClassName(
-    props.theme,
-    props.className,
-  );
-
-  const rootStyle = mergeDefaultPickerStyle({
-    width: props.width,
-    height: props.height,
-    style: props.style,
-  });
-
-  return (
-    <ErrorBoundary>
-      <DefaultAppearance theme={props.theme} nonce={props.nonce}>
-        <Root
-          {...behaviorProps(props)}
-          className={rootClassName}
-          style={rootStyle}
-        >
-          <Reactions />
-          <Panel>
-            <DefaultHeaderLayout>
-              <Search />
-              <CategoryNav />
-            </DefaultHeaderLayout>
-
-            <Viewport>
-              <List />
-              <Empty />
-              <Loading />
-              <LoadError />
-            </Viewport>
-
-            <Preview />
-          </Panel>
-        </Root>
-      </DefaultAppearance>
-    </ErrorBoundary>
-  );
-}
+open === false ? null : (
+  <DefaultPickerConfiguration.Provider value={defaultConfiguration}>
+    <Root
+      appearance={unstyled ? 'none' : 'default'}
+      components={components}
+      {...behaviorProps}
+      className={defaultRootClassName(colorScheme ?? legacyTheme, className, unstyled)}
+      style={defaultRootStyle({ width, height, style, columns })}
+    >
+      <Reactions />
+      <Panel>
+        <Header />
+        <Viewport>
+          <List />
+          <Empty />
+          <Loading />
+          <LoadError />
+        </Viewport>
+        {showPreview && (
+          <Preview>
+            {!skinTonesDisabled && toneInPreview && <SkinTone orientation="vertical" />}
+          </Preview>
+        )}
+      </Panel>
+    </Root>
+  </DefaultPickerConfiguration.Provider>
+);
 ```
+
+The private Header lays out CategoryNav plus an optional Search. It explicitly supplies a SkinTone child to Search when the resolved tone location is Search. The actual wrapper has no ErrorBoundary or DefaultAppearance component around Root: default root classes/styles and `appearance` select the DOM-less styling layer. `colorScheme` takes precedence over the legacy `theme` alias.
 
 `behaviorProps(props)` passes the picker's engine configuration and callbacks plus identifying attributes (`id`, `title`, `lang`, `dir`, `aria-*`, `data-*`). Any other prop is dropped (as in v4) with one development warning, so removed props such as `pickerStyle` never reach the DOM.
 
-Root renders the actual DOM shape conceptually as:
+For that explicit composition, the resulting DOM shape is conceptually:
 
 ```tsx
 <aside data-epr-part="root">
   <ul data-epr-part="reactions">…</ul>
 
   <div data-epr-part="panel">
-    <DefaultHeaderLayout>
+    <Header>
       <Search />
       <CategoryNav />
-    </DefaultHeaderLayout>
+    </Header>
 
     <Viewport>
       <List />
@@ -91,15 +79,13 @@ Therefore the default picker MUST preserve v4 root ownership:
 - `width` and `height` resolve into the actual Root element's style/layout;
 - default appearance classes/tokens are merged with consumer classes/styles rather than moved onto a wrapper.
 
-`DefaultAppearance` MUST NOT emit an extra DOM wrapper.
-
-It may be implemented as a React context/provider, style-registration component, fragment-like component, or another DOM-less mechanism, but its rendered child is the actual Root `aside`.
+The default appearance layer MUST NOT emit an extra DOM wrapper. Classes/styles and Root’s appearance provider apply styling to the actual Root `aside`.
 
 ## Responsibilities
 
-### DefaultAppearance
+### Default appearance layer
 
-Private and DOM-less.
+Private and DOM-less; selected through Root’s `appearance` and default root classes/styles.
 
 Owns only:
 - official ShipStyles/default visual layer;
@@ -125,30 +111,29 @@ Owns:
 - search transition service;
 - reactions state/observer;
 - navigation generation token;
-- the managed full-picker panel wrapper;
 - configuration shared by child primitives.
 
 ### Managed reactions
 
 Public managed compact-reaction region exposed as `data-epr-part="reactions"`.
 
-Rendered by Root when reactions are configured. It is a sibling of the managed panel, never inside it.
+Rendered explicitly as `<Reactions />` by the default wrapper or consumer. For compact/full mode, place it outside a sibling Panel within Root. Reaction props configure this part; they never cause Root to insert it.
 
 ### Managed panel
 
 Public managed DOM wrapper exposed as `data-epr-part="panel"`.
 
-It contains every Root child and is the single subtree Root hides/inerts when compact reactions are active.
+An explicitly rendered `<Panel>` contains only the children placed inside it. It hides/inerts that subtree when compact reactions are active. Root does not move other children into it.
 
-Consumers may place arbitrary wrappers, close buttons, branding and layout containers inside this managed panel simply by rendering them as normal Root children.
+Consumers place wrappers, close buttons, branding and layout containers inside `<Panel>` when those controls should hide with expanded content. Siblings outside Panel remain outside its presence boundary.
 
-### DefaultHeaderLayout
+### Header
 
 Private appearance/layout wrapper only.
 
 ### Search
 
-Public managed search region, including its input, live status, clear control and search-position skin-tone control.
+Public managed search region, including its input, live status and clear control. A SkinTone control appears only when explicitly supplied as a child.
 
 ### CategoryNav
 
@@ -173,7 +158,7 @@ Public optional preview region. The default wrapper explicitly supplies a SkinTo
 ## Conditional behavior
 
 - Default-picker `searchDisabled`: its wrapper omits Search.
-- Search primitive omitted: no built-in type-to-search capture is active; explicit controlled `searchValue` may still filter List.
+- Search and standalone SearchInput both omitted: no built-in type-to-search capture is active; explicit controlled `searchValue` may still filter List.
 - Default-picker `previewConfig.showPreview=false`: its wrapper omits Preview.
 - Default-picker `skinTonesDisabled`: its wrapper omits SkinTone and preserves legacy suppression of grid variation affordances. Bare Root has no such switch.
 - compact reactions active: the managed reactions region is interactive; the managed panel and every descendant are hidden/inert/non-focusable as one subtree.
@@ -188,9 +173,41 @@ The implementation violates this contract if:
 - default and primitives use different navigation engines;
 - data entry point duplicates search/normalization;
 - fixes must be applied in two behavior implementations;
-- DefaultAppearance inserts a wrapper and moves v4 root props away from Root;
+- the default appearance layer inserts a wrapper and moves v4 root props away from Root;
 - default and explicit Panel/Reactions paths duplicate presence or selection behavior.
 
-A source-architecture test MUST be added once final module paths exist.
+`test/primitives-architecture.test.ts` enforces the shared implementation.
 
 Consumer compositions use the same exported Panel and Reactions directly, with no composition switch. Root appearance="default" supplies the default tree’s leaf styling; the assembled picker’s unstyled prop selects none. Shared component replacements are documented in [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
+
+## Checked consumer composition
+
+This complete example is compiled from this Markdown by `npm run check:contracts`. Reactions and Panel are explicit siblings; the footer belongs to Panel, and SkinTone placement follows JSX. Conditionally mount this component to control its lifetime; Root has no `open` prop.
+
+```tsx check
+import * as React from 'react';
+import {
+  Root, Reactions, Panel, Search, SkinTone, CategoryNav, Viewport,
+  List, Empty, Loading, LoadError, Preview,
+} from 'emoji-picker-react/primitives';
+
+export function ComposedPicker() {
+  return (
+    <Root appearance="default" reactionsDefaultOpen>
+      <Reactions />
+      <Panel>
+        <Search><SkinTone /></Search>
+        <CategoryNav />
+        <Viewport style={{ height: 320 }}>
+          <List />
+          <Empty />
+          <Loading />
+          <LoadError />
+        </Viewport>
+        <Preview />
+        <footer>Choose an emoji</footer>
+      </Panel>
+    </Root>
+  );
+}
+```

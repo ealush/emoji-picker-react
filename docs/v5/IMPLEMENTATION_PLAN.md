@@ -1,5 +1,7 @@
 # v5 Implementation Plan
 
+Historical implementation sequence. Current shipped behavior and release gates are defined in [SPEC.md](SPEC.md), [PRIMITIVES.md](PRIMITIVES.md) and [ACCEPTANCE_CHECKLIST.md](ACCEPTANCE_CHECKLIST.md).
+
 Implementation proceeds from public behavior inward. Each phase must leave the existing plug-and-play picker green.
 
 ## Phase 0 — freeze compatibility and performance baselines
@@ -127,7 +129,7 @@ Expose `emoji-picker-react/primitives` in the build early enough to test the rea
 Create Storybook/consumer fixtures for:
 - default zero-config picker;
 - reordered regions with ordinary consumer wrappers/controls among them;
-- non-region consumer control inside the Root-managed panel;
+- non-region consumer control inside the explicitly composed Panel;
 - omitted CategoryNav;
 - controlled search with stale parent;
 - IME search composition;

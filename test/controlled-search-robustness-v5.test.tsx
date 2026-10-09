@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import * as React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker, { EmojiStyle } from '../src';
 import { Categories } from '../src/config/categoryConfig';
@@ -75,7 +76,126 @@ async function settle(ms = 250) {
   });
 }
 
+afterEach(() => vi.useRealTimers());
+
 describe('v5 controlled search robustness (STATE.md §1)', () => {
+  it.each([5, 50, 150])(
+    'preserves sequential typing with %ims gaps and a delayed parent',
+    async (delay) => {
+      const proposals: string[] = [];
+      function DelayedPicker() {
+        const [value, setValue] = React.useState('');
+        return (
+          <EmojiPicker
+            emojiData={minimalEmojiData}
+            emojiVersion="1"
+            autoFocusSearch={false}
+            searchValue={value}
+            onSearchChange={(next) => {
+              proposals.push(next);
+              setTimeout(() => setValue(next), 500);
+            }}
+          />
+        );
+      }
+      render(<DelayedPicker />);
+      const input = screen.getByRole('textbox');
+      const user = userEvent.setup({
+        delay,
+      });
+      await user.type(input, 'cat');
+      expect(proposals).toEqual(['c', 'ca', 'cat']);
+      expect(input).toHaveValue('cat');
+      await settle(600);
+      expect(input).toHaveValue('cat');
+    },
+  );
+
+  it('keeps a rejected draft for 500ms after the last edit and never filters it', async () => {
+    vi.useFakeTimers();
+    const proposals: string[] = [];
+    render(<IgnoringPicker proposals={proposals} />);
+    const input = screen.getByRole('textbox') as HTMLInputElement;
+    for (const key of 'cat') {
+      fireEvent.change(input, { target: { value: input.value + key } });
+      if (key !== 't') await act(() => vi.advanceTimersByTimeAsync(150));
+    }
+    expect(proposals).toEqual(['c', 'ca', 'cat']);
+    expect(input).toHaveValue('cat');
+    await act(() => vi.advanceTimersByTimeAsync(499));
+    expect(input).toHaveValue('cat');
+    expect(document.querySelector('[data-epr-part="root"]')).not.toHaveClass(
+      'epr-search-active',
+    );
+    await act(() => vi.advanceTimersByTimeAsync(1));
+    expect(input).toHaveValue('');
+  });
+
+  it('synchronizes transformed and external accepted values during a draft', async () => {
+    const proposals: string[] = [];
+    function TransformingPicker() {
+      const [value, setValue] = React.useState('');
+      return (
+        <>
+          <button onClick={() => setValue('dog')}>External search</button>
+          <EmojiPicker
+            emojiData={minimalEmojiData}
+            emojiVersion="1"
+            autoFocusSearch={false}
+            searchValue={value}
+            onSearchChange={(next) => {
+              proposals.push(next);
+              setValue(next.toUpperCase());
+            }}
+          />
+        </>
+      );
+    }
+    render(<TransformingPicker />);
+    const input = screen.getByRole('textbox');
+    const user = userEvent.setup({});
+    await user.type(input, 'cat');
+    expect(proposals).toEqual(['c', 'Ca', 'CAt']);
+    expect(input).toHaveValue('CAT');
+    await user.click(screen.getByRole('button', { name: 'External search' }));
+    expect(input).toHaveValue('dog');
+    await settle(600);
+    expect(input).toHaveValue('dog');
+    expect(proposals).toHaveLength(3);
+  });
+
+  it('continues sequential typing after grid-to-search focus with a delayed parent', async () => {
+    const proposals: string[] = [];
+    function DelayedPicker() {
+      const [value, setValue] = React.useState('');
+      return (
+        <EmojiPicker
+          emojiData={minimalEmojiData}
+          emojiVersion="1"
+          autoFocusSearch={false}
+          searchValue={value}
+          onSearchChange={(next) => {
+            proposals.push(next);
+            setTimeout(() => setValue(next), 500);
+          }}
+        />
+      );
+    }
+    render(<DelayedPicker />);
+    const input = screen.getByRole('textbox');
+    const cell = await screen.findByRole('gridcell', { name: 'grinning face' });
+    act(() => cell.focus());
+    const user = userEvent.setup({
+      delay: 150,
+    });
+    await user.keyboard('cat');
+    expect(input).toHaveFocus();
+    expect(input).toHaveValue('cat');
+    expect(proposals).toEqual(['c', 'ca', 'cat']);
+    await settle(600);
+    expect(input).toHaveValue('cat');
+  });
+
   it('accumulates a machine-speed burst without losing characters', async () => {
     const proposals: string[] = [];
     render(<AcceptingPicker proposals={proposals} />);
@@ -108,9 +228,7 @@ describe('v5 controlled search robustness (STATE.md §1)', () => {
 
     // An unrelated rerender must not bring the dead proposal back: React
     // state and the DOM must agree after reconciliation.
-    rerender(
-      <IgnoringPicker proposals={proposals} searchPlaceholder=" جلد" />,
-    );
+    rerender(<IgnoringPicker proposals={proposals} searchPlaceholder=" جلد" />);
     await settle(150);
     expect(input.value).toBe('');
   });

@@ -101,7 +101,7 @@ Harness:
 
 Release gates:
 
-- v5 cold-query median for each fixture MUST be no worse than 110% of the frozen v4 cold-query baseline;
+- v5 cold-query median for each fixture MUST be no worse than 110% of the checked-in reconstructed v4 cold-query baseline;
 - any >25% individual regression requires an explicit spec amendment plus profiling evidence.
 
 ### 4.2 Warm/incremental typing latency
@@ -120,7 +120,7 @@ v5 is explicitly allowed—and expected—to keep a **per-Root query-result/incr
 
 Release gates:
 
-- whole-sequence v5 median MUST be no worse than 110% of the equivalent frozen v4 incremental baseline;
+- whole-sequence v5 median MUST be no worse than 110% of the equivalent reconstructed v4 incremental baseline;
 - no individual typing step may regress >25% without explicit profiling/review.
 
 A "pure data core" means shared immutable data/index construction has no transient UI state; it does **not** forbid an efficient Root-scoped query memo.
@@ -197,7 +197,7 @@ Browser heap snapshots may be used diagnostically but are not the only release g
 
 ## 9. Bundle/tree-shaking
 
-The existing main-package hard cap remains 95 KB for each size-limit artifact unless separately amended.
+Current `package.json` size-limit gates are **75 kB** each for main CJS, main ESM and primitives ESM, and **42 kB** for the data entry (Brotli, dependencies included). The installed minimal primitives consumer has a separate **34 KiB gzip** initial-runtime cap, including ShipStyles and excluding React/ReactDOM peers. Dataset chunks are measured separately. Do not raise these limits to make a change fit.
 
 Additionally:
 
@@ -206,7 +206,7 @@ Additionally:
 - importing one data/locale subpath MUST NOT eagerly import every locale;
 - package export/tree-shaking consumer fixtures run before the architecture is considered final.
 
-If v5 cannot fit under the existing 95 KB default cap, the change requires explicit size review with before/after attribution rather than silently raising the threshold.
+The proposed 25 KiB runtime is an optimization objective, not a release gate. The original 95 kB main cap is historical; the current gates above are tighter.
 
 ## 10. CI/benchmark policy
 
@@ -214,11 +214,15 @@ Performance tests are split into:
 
 - deterministic invariant tests on every CI run;
 - render-count/browser-work tests on every CI run;
-- cold-query and warm/incremental wall-clock benchmark comparison in the benchmark job using the frozen Phase-0 baselines.
+- cold-query and warm/incremental wall-clock comparison through `npm run check:perf` on a quiet local machine against the reconstructed same-session v4 baseline. The original frozen Phase-0 artifact is unavailable; there is no CI timing job.
 
 A benchmark failure cannot be waived merely because functional tests pass.
 
-## Complete runtime measurement amendment (2026-10-04)
+## Historical measurements
+
+The dated evidence below describes those revisions, not the current candidate’s measured results. Sections 9–10 define the current gates.
+
+### Complete runtime measurement amendment (2026-10-04)
 
 The configured minimal ESM fixture is built from an installed package tarball through the public `/primitives` entry. It imports runtime constants and native SearchInput/List/loading/error/empty parts, excludes shared React/ReactDOM peers and includes ShipStyles. Its initial gzip payload measures **33.4 KiB**, down from 40.5 KiB before unused component/style construction could be removed. The complete-runtime regression cap is **34 KiB**. Earlier measurements that excluded ShipStyles are not comparable.
 

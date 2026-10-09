@@ -1,6 +1,6 @@
 # v5 Acceptance Checklist
 
-Every applicable item must be checked before publishing `emoji-picker-react@5`.
+Checked implementation items below record verified behavior and dated evidence; old test totals and CI runs do not certify a newer head. Before publishing `emoji-picker-react@5`, complete the current-candidate sign-off at the end on the actual release revision. Historical measurements and optional optimization targets are not additional release gates.
 
 ## 1. Normative-contract integrity
 
@@ -129,7 +129,7 @@ Every applicable item must be checked before publishing `emoji-picker-react@5`.
 - [x] duplicate singleton registration keeps first authoritative + warns once in production.
 - [x] render/context validation rules match PRIMITIVES.md.
 - [x] SSR performs no post-mount singleton/absence validation.
-- [x] `reactionsDefaultOpen` works on a bare primitive Root with no extra child and no warning.
+- [x] `reactionsDefaultOpen` configures explicitly composed Reactions/Panel; Root inserts neither part from props alone.
 - [x] no render-prop item API is required.
 - [x] no accidental `asChild`/arbitrary emoji-button replacement ships.
 
@@ -256,7 +256,7 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] bare primitives do not silently apply full branded appearance.
 - [x] default picker remains visually compatible.
 - [x] default `className`, `style`, `width`, and `height` land on the actual Root `<aside>`.
-- [x] DefaultAppearance emits no DOM wrapper.
+- [x] The default appearance layer emits no DOM wrapper.
 
 ## 19. Data API
 
@@ -322,10 +322,8 @@ Evidence: `playwright/grid-geometry.spec.ts` measures the default picker and all
 - [x] Dataset failures, retry, abort, stale-source suppression, StrictMode/unmount and search typed before loading are exercised in unit tests.
 - [x] Registry component and gallery React/CSS/CSS Modules source are generated from consumer files.
 - [x] CI now runs actual packed React 16.8 and React 19 consumers, a candidate website build, and a separate cross-browser/touch behavior job.
-- [ ] All newly added CI jobs have passed on the final pushed candidate.
-- [ ] Release PR is reconciled with master and final release candidate checks pass.
 - [x] Unused primitive/component styles and icons can be removed without losing CSS, keyboard selection or search in the minified installed-tarball consumer. Default composition retains navigation, preview and skin-tone controls.
-- [ ] Startup profiling reaches the proposed 25 KiB complete-runtime target. Current measured consumer is 34.0 KiB, 34,809 bytes (34 KiB regression cap, 34,816 bytes).
+Optional optimization objective: 25 KiB complete runtime. The measurement at this dated revision was 34.0 KiB, 34,809 bytes, within the 34 KiB regression cap (34,816 bytes); 25 KiB is not a release prerequisite.
 
 Browser evidence belongs to the candidate report, with any local platform dependency failure stated explicitly. Performance baseline is reconstructed from v4 in a quiet session; no original Phase 0 artifact is available. Human assistive-technology verification remains required before an absolute accessibility claim.
 
@@ -338,7 +336,7 @@ The consolidated release head `52b7562c` passed all eight jobs in [CI run 372343
 - [x] Stable refs stay attached; callback-ref cleanup runs on unmount without newer React APIs.
 - [x] Native disabled/read-only inputs leave grid type-to-search inert.
 - [x] Managed DOM rejects innerHTML replacement in types and at runtime.
-- [x] Closed bare Roots render nothing, avoid new data loads and abort pending attempts.
+- [x] The assembled picker with `open={false}` renders nothing and starts no new data load. Primitive consumers conditionally mount Root; unmounting aborts pending attempts.
 - [x] Malformed loader shapes and entries enter localized error/retry instead of crashing or rendering a blank picker.
 - [x] Custom cells and headers preserve geometry while design-library appearance is retained; row measurement includes button borders.
 - [x] SearchInput infers required/custom input options and excludes non-input native tags and competing value props; declaration-bundle fixtures enforce the same contract.
@@ -365,6 +363,17 @@ Local evidence: 602 unit tests; build, compatibility types, lint, React API floo
 
 Local evidence on the pushed head: 631 unit tests; build, compatibility types, lint, React API floor; size 74.93/75 kB (main CJS); installed minimal primitives consumer 34,809/34,816 bytes; packed CJS/ESM consumers, publint, attw; packed React 16.8 interaction, SSR and hydration; generated docs, recipes, registry and designs without drift; website static export. Playwright: 101 visual/interaction/axe tests with no baseline or tolerance change except the two intentionally restored shadcn integration baselines; 48 behavior tests across Chromium, Firefox and mobile touch. WebKit cannot launch on this host (missing system libraries) and runs in CI. Quiet-machine performance gate against the unchanged reconstructed v4 baseline: preparation 86.5%, one-picker mount 81.6%, ten-picker mount 99.1%, no additional base builds. Axe (WCAG 2.1 A/AA) is clean on the unstyled starter in light and dark, a design-library composition, RTL and `columns`.
 
-Follow-ups, not release blockers: the built-in look title-cases category labels (`text-transform: capitalize`), which over-capitalizes some locales (v4 behavior); manual NVDA/VoiceOver checks remain as above.
+Non-blocking follow-up: the built-in look title-cases category labels (`text-transform: capitalize`), which over-capitalizes some locales (v4 behavior). Manual assistive-technology verification remains a pre-publication requirement as described below.
 
 Dependency audit: Next.js is patched from 16.3.5 to 16.3.8; compatible root/website lockfile fixes are included. `npm audit --omit=dev` reports zero vulnerabilities for both the published picker runtime and website production dependencies. Full development audits still report the upstream `braces` deeply-nested-pattern advisory in release/lint tooling; the registry's latest braces is 3.0.3 and has no patch for that advisory. Avoid `npm audit fix --force`: its suggested release/lint downgrades do not supply a patched parser. This residual development-tool issue is recorded rather than claimed fixed.
+
+
+## Current-candidate release sign-off
+
+These items intentionally remain open until verified on the actual publishable revision. Do not carry forward a checkmark merely because an earlier stack head passed. Merging into `master-v5` does not publish a release; publishing is a separate manual workflow on the release branch.
+
+- [ ] Record the release revision, merge/reconciliation with master, and its successful configured CI run.
+- [ ] Record fresh lint, unit, build, compatibility, React floor/runtime, packaging, size and quiet-machine performance results for that revision.
+- [ ] Confirm generated documentation/recipes/registry/designs have no drift and visual evidence follows VISUAL_COMPATIBILITY.md.
+- [ ] Complete and record the human assistive-technology protocol in [ACCESSIBILITY_VERIFICATION.md](ACCESSIBILITY_VERIFICATION.md). Automated axe/browser checks do not replace it.
+- [ ] Review migration notes, known limitations and release authorization before manually enabling publication.

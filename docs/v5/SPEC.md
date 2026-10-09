@@ -182,8 +182,8 @@ Required behavior:
 - initial mount does not emit unless separately documented before implementation;
 - existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `onEmojiClick(..., api).collapseToReactions()` remain supported;
 - reaction IDs are normalized through the same unified-code lookup used by the picker;
-- reactions are enabled by those props alone, exactly as in v4 — there is no element to render and therefore no "configured but not rendered" state to normalize;
-- Root's managed panel owns full-picker presence/transition presentation but is not a navigation region.
+- the assembled default picker renders Reactions from its configuration; primitive consumers render Reactions explicitly, with expanded content inside a sibling Panel;
+- the explicitly composed Panel owns hidden/inert presence for its children and is not a navigation region; Root itself does not insert or wrap children.
 
 The branded transition belongs to the official appearance layer. Root owns internal reactions state and focus restoration; bare primitives are not required to use the official motion.
 
@@ -346,7 +346,7 @@ v5 is complete when:
 7. macro composition works without render props;
 8. styling obeys STYLING.md;
 9. every v4 prop **and every current main-entry export** has an explicit disposition;
-10. primitive props/refs/grammar and Root-managed panel behavior match PRIMITIVES.md;
+10. primitive props/refs/grammar and explicit Panel behavior match PRIMITIVES.md;
 11. data/package subpaths match DATA_API.md and packed-consumer validation;
 12. React 16.8 runtime/SSR fixtures pass and initial v5 generates no library-owned DOM IDs;
 13. PERFORMANCE.md gates pass, including data-cache, render-count, scroll-work and bundle budgets;

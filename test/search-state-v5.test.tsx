@@ -242,7 +242,7 @@ describe('v5 controlled search (STATE.md §1–§4)', () => {
     expect(proposals).toEqual(['z']);
 
     // A rejected proposal does not persist visibly: the input reconciles
-    // back to the accepted prop on the next frame.
+    // back to the accepted prop after the quiet window.
     await vi.waitFor(() => {
       expect(input.value).toBe('');
     });

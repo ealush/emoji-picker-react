@@ -1,5 +1,7 @@
 # v5 competitive review — 2026-10-04
 
+> Historical assessment at the revisions named below. Branch names, proposed APIs and release processes describe that date. For the current contract, see [the v5 documentation](../v5/README.md).
+
 Review of the v5 release candidate for [PR #552](https://github.com/ealush/emoji-picker-react/pull/552), with the original assessment made at `d8c7466b` including the existing local recipe/style changes. The consumer-integration branch was a temporary verification branch; its tests and follow-ups have been migrated into `v5-implementation`. All ongoing work belongs to that release branch. The original findings below describe the pre-implementation candidate; the final section records the implemented follow-up.
 
 ## Assessment
