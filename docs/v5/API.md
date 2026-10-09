@@ -35,17 +35,17 @@ type EmojiPickerV5Additions = {
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 
   labels?: Partial<PickerLabels>;   // §5a
-  skinTone?: SkinTones;             // §5b, controlled
+  skinTone?: SkinTonesValue;        // §5b, controlled
   unstyled?: boolean;               // §11
   columns?: number;                 // §11a
-  components?: PickerComponents;    // PRIMITIVES.md §16
+  components?: PickerComponents;    // shared managed-control replacements
   emojiData?: EmojiData | EmojiDataLoader; // §12a, loader form is new
 };
 ```
 
 `skinTonePickerLocation` also accepts `SkinTonePickerLocation.NONE` (§8).
 
-Everything else in the v4 surface follows [V4_API_MATRIX.md](./V4_API_MATRIX.md).
+The assembled picker retains its legacy visibility and placement props; see [PROPS.md](../../PROPS.md). Those switches are not primitive Root props.
 
 ## 3. Literal values without removing enums
 
@@ -92,7 +92,7 @@ Uncontrolled:
 <EmojiPicker defaultSearchValue="party" />
 ```
 
-The visible value and callback use raw user text. Filtering uses a normalized derived query and is debounced as specified in [STATE.md](./STATE.md).
+The visible value and callback use raw user text. Filtering uses a normalized derived query and is debounced; see [primitive state and actions](./PRIMITIVES.md#state-and-actions).
 
 Type-to-search differs slightly between controlled and uncontrolled usage:
 
@@ -209,7 +209,7 @@ Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves
 
 When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
-See [STATE.md](./STATE.md).
+See [primitive state and actions](./PRIMITIVES.md#state-and-actions).
 
 ## 8. Structural primitives
 
@@ -239,9 +239,34 @@ function ProductPicker() {
 }
 ```
 
-Root defaults to managed composition, supplying Panel around children and Reactions beside it. With composition="explicit", callers place those exported parts themselves; presence, selection and navigation use the same implementation. See PRIMITIVES.md §16–17 for appearance, shared component slots and custom actions.
+Root renders exactly the children supplied by the caller. It never inserts Panel, Reactions, Search, Preview or SkinTone. There is no composition switch. A full-picker-only layout may omit Panel. For compact reactions mode, place Reactions outside Panel and put the expanded content inside Panel so its hidden/inert state follows the mode.
 
-That gives reactions mode one subtree to hide/inert without forcing consumers to render a public Panel component in exactly one legal location.
+```tsx check
+import * as React from 'react';
+import * as Picker from 'emoji-picker-react/primitives';
+
+export function ReactionPicker({ open }: { open: boolean }) {
+  if (!open) return null;
+  return (
+    <Picker.Root reactionsDefaultOpen style={{ width: 350, height: 450 }}>
+      <Picker.Reactions />
+      <Picker.Panel className="my-panel" style={{ gap: 8 }}>
+        <Picker.Search><Picker.SkinTone /></Picker.Search>
+        <Picker.CategoryNav />
+        <Picker.Viewport>
+          <Picker.List />
+          <Picker.Empty />
+          <Picker.Loading />
+          <Picker.LoadError />
+        </Picker.Viewport>
+        <Picker.Preview />
+      </Picker.Panel>
+    </Picker.Root>
+  );
+}
+```
+
+Conditional mounting controls whether a Root exists. Omit Search/SearchInput, Preview or SkinTone to omit that UI; `open`, `searchDisabled`, `skinTonesDisabled`, `skinTonePickerLocation` and `previewConfig.showPreview` belong to the assembled default picker. `composition` and `panelProps` are unsupported. Put layout and native attributes directly on Panel.
 
 The full primitive grammar, props, refs, native prop forwarding and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
 
@@ -250,6 +275,8 @@ The full primitive grammar, props, refs, native prop forwarding and validation b
 Parts:
 
 - `Root`
+- `Panel` — expanded content with managed hidden/inert presence
+- `Reactions` — compact reaction controls
 - `Search`
 - `SearchInput` — native input / ref-forwarding design-system input
 - `LoadError` — localized recoverable loader failure
@@ -266,17 +293,14 @@ Hooks (call inside `Root`):
 - `useActiveEmoji()` — the hovered/focused emoji, in `onEmojiClick`'s shape
 - `useSkinTone()` — `[tone, setTone]`; the setter reports `onSkinToneChange`
 - `useSearchState()` — `{ search, resultCount }`
+- `useSearchActions()` — `{ setValue, clear }`
+- `useCategoryNavigation()` — `{ categories, activeCategory, jumpToCategory }`
+- `usePickerMode()` — `{ reactionsOpen, canExpand, expand, collapse }`
+- `useEmojiDataState()` — `{ loading, error, retry }`
 
 Tokens (plain data): `structuralPickerTokens`, `lightPickerTokens`, `darkPickerTokens`, `defaultPickerTokens`.
 
-Two things are deliberately **not** primitives: they carry no behavior of their own and have no meaningful position to choose.
-
-| Not a primitive | Configured by | Styled by |
-| --- | --- | --- |
-| panel | — (Root wraps its children) | `[data-epr-part="panel"]` |
-| reactions | `reactions`, `reactionsDefaultOpen`, `allowExpandReactions`, `onReactionClick`, `onReactionsModeChange` | `[data-epr-part="reactions"]` |
-
-Compact reactions in particular are turned on by props, exactly as in v4 — you do not opt in by rendering an element.
+Panel and Reactions are exported parts. Rendering Reactions opts into the compact UI, while `reactionsDefaultOpen`, `allowExpandReactions` and the mode actions control behavior. Rendering a part never requires a secondary presence switch.
 
 ## 9. Custom emoji cells and category headers
 
@@ -352,7 +376,7 @@ A Viewport without a List renders no grid (development warns).
 
 List must be inside Viewport (ideally its direct child; wrappers from styling libraries are fine), optionally accompanied by `Empty` and `Loading`. A second List is rejected.
 
-There is no child-ordering rule. Root wraps whatever you give it, in the order you gave it.
+There is no child-ordering rule. Root renders whatever you give it, in the order you gave it. Registered parts must remain inside their Root DOM boundary.
 
 ## 10a. Empty state
 
@@ -370,7 +394,7 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 ## 10b. Skin tone anywhere
 
 ```tsx
-<EmojiPicker.Root skinTonePickerLocation={SkinTonePickerLocation.NONE}>
+<EmojiPicker.Root>
   <EmojiPicker.Search />
   <EmojiPicker.Viewport>
     <EmojiPicker.List />
@@ -381,7 +405,7 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 </EmojiPicker.Root>
 ```
 
-`SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root, so set `skinTonePickerLocation` to `NONE` (development warns otherwise). To build a control from scratch instead, use `useSkinTone()`.
+`SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root. Search and Preview never insert one automatically; render it wherever your layout needs it. To build a control from scratch instead, use `useSkinTone()`.
 
 ## 10b2. Vertical category rail
 
@@ -418,7 +442,7 @@ Hooks throw in development when called outside `Root`.
 </EmojiPicker.Root>
 ```
 
-Managed descendants and the internal panel expose the deliberately small stable part API defined in [STYLING.md](./STYLING.md).
+Managed descendants and the internal panel expose the deliberately small stable part API described in [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
 
 Styling is opt-in in both directions:
 
@@ -463,7 +487,7 @@ const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
 ```
 
 - The default `emoji-picker-react` entry bundles the English dataset and is always synchronous.
-- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; the configured minimal consumer currently measures about 40 KiB min+gz up front including ShipStyles), rendering `<Loading>` meanwhile. Pass an object for server rendering.
+- The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; the configured minimal consumer currently measures about 33 KiB min+gz up front including ShipStyles), rendering `<Loading>` meanwhile. Pass an object for server rendering.
 - ESM entries share their implementation chunks, so using the default picker and primitives together ships the implementation once.
 
 Hoist loaders (module scope or `useCallback`): a new function identity loads again. Loaders receive `{ signal?: AbortSignal }`; source changes, retries and unmount abort the previous attempt. Zero-argument import loaders remain valid. Rejection and synchronous throws become recoverable state, not an empty successful result. The default picker displays localized error/retry UI. Primitive consumers compose `<LoadError />` next to List/Loading or read `useEmojiDataState()` (`{ loading, error, retry }`). A custom `LoadError` child can be a function receiving `{ error, retry }`.
@@ -472,7 +496,7 @@ Import runtime `Categories`, `EmojiStyle`, `SkinTones`, `SkinTonePickerLocation`
 
 ## 12b. Exported types
 
-Both the main and the primitives entry export the types a typed consumer needs without reaching into the package: `PickerProps` / `RootProps`, `EmojiClickData`, `EmojiClickHandler` and `OnEmojiClickApi` (the `onEmojiClick` / `onReactionClick` signature and its `collapseToReactions` API), `SkinToneChangeHandler`, `PickerLabels`, `PreviewConfig`, `CustomEmoji`, `CategoryConfig`, `CategoryIcons`, `EmojiData`, `EmojiDataLoader` / `EmojiDataLoaderOptions` / `EmojiDataInput`, `PickerComponents` with `EmojiRenderProps`, `CategoryHeaderRenderProps`, `CategoryButtonRenderProps`, `SkinToneButtonRenderProps` and `ListEmoji`, plus the literal unions `ThemeValue`, `EmojiStyleValue`, `SuggestionModeValue` and `SkinTonesValue`. `defaultSkinTone` and `skinTone` accept `SkinTonesValue` (`'neutral'`, `'1f3fb'`, … or the `SkinTones` enum). The generated `llms.txt` lists the complete export index of every entry.
+Both the main and the primitives entry export the types a typed consumer needs without reaching into the package: `PickerProps` / `RootProps`, `EmojiClickData`, `EmojiClickHandler` and `OnEmojiClickApi` (the `onEmojiClick` / `onReactionClick` signature and its `collapseToReactions` API), `SkinToneChangeHandler`, `PickerLabels`, `PreviewConfig`, `CustomEmoji`, `CategoryConfig`, `CategoryIcons`, `EmojiData`, `EmojiDataLoader` / `EmojiDataLoaderOptions` / `EmojiDataInput`, `PickerComponents` with `EmojiRenderProps`, `CategoryHeaderRenderProps`, `CategoryButtonRenderProps`, `SkinToneButtonRenderProps` and `ListEmoji`, plus the literal unions `ThemeValue`, `EmojiStyleValue`, `SuggestionModeValue` and `SkinTonesValue`. `defaultSkinTone` and `skinTone` accept `SkinTonesValue` (`'neutral'`, `'1f3fb'`, … or the `SkinTones` enum). The main entry exports PickerProps (with Props as its alias); the primitives entry exports RootProps and each part’s prop types. See the entry files for their complete exports.
 
 ## 13. Locale imports
 
@@ -504,7 +528,7 @@ The primitives Root does not install one. Render/lifecycle errors from consumer 
 
 The validation model is intentionally narrow:
 
-- render/context checks catch primitive-outside-Root (and hooks called outside Root), List-outside-Viewport, and invalid Viewport children (mode is driven by Root props and public usePickerMode actions; explicit composition controls Panel/Reactions placement);
+- render/context checks catch primitive-outside-Root (and hooks called outside Root), List-outside-Viewport, and invalid Viewport children (mode is driven by Root props and public usePickerMode actions; caller JSX controls Panel/Reactions placement);
 - singleton duplicates are detected by Root registration after mount;
 - development throws on a second singleton registration;
 - production keeps the first registration authoritative and warns once;
@@ -517,14 +541,103 @@ Exact error text is not semver API.
 
 `SearchInput` forwards its ref and native input props directly to an input. Root owns `searchValue`, `defaultSearchValue` and `onSearchChange`; input `onChange` is an observer. Supply `as={Input}` for a design-system component that forwards its ref and native input props to one real input. Placeholder, autofocus and accessible label can be supplied directly. Use either Search or SearchInput per Root; they share IME handling, region registration and results announcements.
 
-Root’s `panelProps` accepts className, style, native attributes and handlers for the managed panel. Root still owns its hidden/inert presence and children. This is where flex/grid/gap classes arrange Root’s parts.
+Panel accepts className, style, native attributes and handlers directly. Panel owns its hidden/inert presence; its children and layout come from the caller’s JSX. Apply flex/grid/gap classes on Panel itself.
 
 Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
 
 ## Amendment: BYOD hardening (2026-10-05)
 
-Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. `open={false}` on a bare Root renders no picker content, cancels pending loading and starts no new load until reopened. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
+Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. Conditionally unmount Root to remove its content and abort pending loading; mounting it again starts a new lifetime. The assembled EmojiPicker retains its `open` prop. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
 
 Managed markup cannot be replaced through `dangerouslySetInnerHTML`; structural children, roles and reserved picker attributes remain owned by the library. Stable forwarded refs are retained across unrelated renders, and callback-ref cleanup is supported while retaining the React 16.8 runtime floor. Malformed async loader output enters the same localized error/retry path as a rejected load.
 
 SearchInput infers design-library props from its `as` component, including required options, while protecting the Root-owned value and native input contract. Custom List cells and headers receive structural styles without managed decorative appearance. They own their visible focus and design-library styling. Grid row measurement uses the outer border box, so design-library borders do not shrink virtualized row spacing.
+
+## Checked usage examples
+
+The `tsx check` blocks in this reference are compiled from the Markdown itself by `npm run check:contracts`. They use the current source API, including JSX-owned presence and placement.
+
+### Default picker and exported types
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker, {
+  type EmojiClickHandler, type EmojiDataLoader, type PickerLabels,
+} from 'emoji-picker-react';
+
+const labels: Partial<PickerLabels> = { searchPlaceholder: 'Rechercher' };
+const loadFrench: EmojiDataLoader = () => import('emoji-picker-react/data/emojis-fr');
+const onPick: EmojiClickHandler = (data, _event, api) => {
+  data.getImageUrl('apple');
+  api?.collapseToReactions();
+};
+
+export function LocalizedPicker() {
+  const [search, setSearch] = React.useState('');
+  return <EmojiPicker emojiData={loadFrench} labels={labels}
+    searchValue={search} onSearchChange={setSearch} onEmojiClick={onPick}
+    colorScheme="dark" unstyled />;
+}
+```
+
+### Design-system input and replacement cell
+
+```tsx check
+import * as React from 'react';
+import * as Picker from 'emoji-picker-react/primitives';
+
+const Field = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
+  (props, ref) => <input {...props} ref={ref} />,
+);
+function Cell({ emoji, ...props }: Picker.EmojiRenderProps) {
+  return <button {...props} data-active={emoji.isActive} />;
+}
+
+export function CustomPicker() {
+  return <Picker.Root components={{ Emoji: Cell }} style={{ height: 450 }}>
+    <Picker.SearchInput as={Field} aria-label="Find emoji" />
+    <Picker.SkinTone orientation="vertical" />
+    <Picker.Viewport><Picker.List /><Picker.Empty /></Picker.Viewport>
+  </Picker.Root>;
+}
+```
+
+### External search and mode actions
+
+```tsx check
+import * as React from 'react';
+import * as Picker from 'emoji-picker-react/primitives';
+
+function Actions() {
+  const { search, resultCount } = Picker.useSearchState();
+  const { setValue, clear } = Picker.useSearchActions();
+  const { expand, collapse, canExpand } = Picker.usePickerMode();
+  const { categories, jumpToCategory } = Picker.useCategoryNavigation();
+  return <div>
+    <input value={search} onChange={event => setValue(event.target.value)} />
+    <button onClick={clear}>Clear</button>
+    <button disabled={!canExpand} onClick={expand}>Expand</button>
+    <button onClick={collapse}>Collapse</button>
+    {categories.map(category => <button key={category.id}
+      onClick={() => jumpToCategory(category.id)}>{category.name}</button>)}
+    <output>{resultCount}</output>
+  </div>;
+}
+
+export function ExternalSearchPicker() {
+  return <Picker.Root>
+    <Actions /><Picker.Reactions />
+    <Picker.Panel><Picker.Viewport><Picker.List /></Picker.Viewport></Picker.Panel>
+  </Picker.Root>;
+}
+```
+
+### Framework-free data entry
+
+```tsx check
+import { getEmojiByUnified, searchEmojis, type EmojiInfo } from 'emoji-picker-react/data';
+import es from 'emoji-picker-react/data/emojis-es';
+
+export const results: readonly EmojiInfo[] = searchEmojis('gato', { emojiData: es });
+export const first = getEmojiByUnified(results[0]?.unified ?? '1f431', { emojiData: es });
+```
