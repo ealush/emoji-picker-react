@@ -1,0 +1,21 @@
+{
+  // Exports-map resolution gate (no paths): exercises the real consumer
+  // path through package self-reference under node16. The .mts file
+  // resolves the ESM (import) condition, the .ts file the CJS (require)
+  // condition. Prerequisite: `npm run build` so dist/ exists. Checked by
+  // `npm run check:compat`.
+  "compilerOptions": {
+    "target": "ES2019",
+    "jsx": "react",
+    "module": "Node16",
+    "moduleResolution": "node16",
+    "lib": ["dom", "esnext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["react"]
+  },
+  "include": ["./cjs-check.ts", "./esm-check.mts", "../../registry/emoji-picker.tsx"]
+}

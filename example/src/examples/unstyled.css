@@ -1,0 +1,89 @@
+/* A complete design for `<EmojiPicker unstyled />`, written only against the
+   public parts. Nothing here touches structural layout (viewport overflow,
+   cell geometry, category positioning). */
+.paper-picker {
+  --epr-emoji-size: 28px;
+  --epr-emoji-padding: 6px;
+  --epr-category-label-height: 32px;
+  --epr-preview-height: 64px;
+  background: Canvas;
+  color: CanvasText;
+  border: 1px solid #8884;
+  border-radius: 14px;
+  font: 14px/1.4 system-ui, sans-serif;
+  box-shadow: 0 12px 32px #0002;
+}
+
+.paper-picker [data-epr-part='search'] {
+  padding: 12px 12px 8px;
+}
+
+.paper-picker [data-epr-part='search-input'] {
+  padding-inline: 12px 36px;
+  border: 1px solid #8886;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.paper-picker [data-epr-part='search-input']:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -1px;
+}
+
+.paper-picker [data-epr-part='category-nav'] {
+  padding: 0 8px 8px;
+  border-bottom: 1px solid #8883;
+}
+
+.paper-picker
+  :is(
+    [data-epr-part='emoji'],
+    [data-epr-part='category-tab'],
+    [data-epr-part='search-clear'],
+    [data-epr-part='skin-tone-button']
+  ) {
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.paper-picker [data-epr-part='category-tab'] {
+  color: #8888;
+}
+
+.paper-picker [data-epr-part='category-tab'][aria-selected='true'] {
+  color: #2563eb;
+}
+
+.paper-picker [data-epr-part='emoji'][data-epr-active] {
+  background: #8882;
+}
+
+.paper-picker :is(button, input):focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: -2px;
+}
+
+.paper-picker [data-epr-part='category-label'] {
+  background: Canvas;
+  color: #888;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.paper-picker [data-epr-part='variation-picker'] {
+  background: Canvas;
+  border: 1px solid #8884;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px #0003;
+}
+
+.paper-picker [data-epr-part='preview'] {
+  border-top: 1px solid #8883;
+}

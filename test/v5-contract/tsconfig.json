@@ -3,7 +3,7 @@
   // (type aliases, Props aliasing, RootProps coverage, negative
   // @ts-expect-error cases). Vitest executes these files but never
   // type-checks them, so this project closes that gap. Checked by
-  // `npm run check:contracts`.
+  // `npm run check:contracts` and `npm run check:compat`.
   "compilerOptions": {
     "target": "ES2019",
     "module": "ESNext",
@@ -21,6 +21,9 @@
     "./*.test.ts",
     "./*.test.tsx",
     "../setupTests.ts",
+    "../../stories/v5/MuiComposition.tsx",
+    "../../stories/consumers/**/*.tsx",
+    "../../playwright/consumer-integrations.spec.ts",
     "../../src/**/*"
   ],
   // Node types provide `process` here; src/env.d.ts is the library's

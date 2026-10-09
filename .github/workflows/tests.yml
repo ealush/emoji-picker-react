@@ -55,3 +55,76 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run docs:llms
       - run: git diff --exit-code -- llms.txt
+
+  # Real-consumer visual integrations: drives every runnable fixture in
+  # stories/consumers/ through open/search/select flows and compares the
+  # committed baselines in playwright/consumer-integrations.spec.ts-snapshots.
+  consumer-visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - run: npx playwright test consumer-integrations
+      - name: Upload failure evidence
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: consumer-visual-evidence
+          path: |
+            test-results/
+            playwright/consumer-integrations.spec.ts-snapshots/*-actual.png
+            playwright/consumer-integrations.spec.ts-snapshots/*-diff.png
+          retention-days: 14
+
+  # Packaging gates: the build (including the entries build with its
+  # fail-hard declaration emit), the type-compatibility fixtures (v4
+  # usage, v5 contract, exports-map resolution), the size budgets for
+  # every entry, and the packed-consumer checks (publint + attw).
+  packaging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run check:compat
+      - run: npm run size
+      - run: npm run check:package
+      - run: npm run check:react16
+
+
+  website-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            website/package-lock.json
+            example/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: website
+      - run: npm run build
+        working-directory: website
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website-candidate
+          path: website/out
+      # The example app consumes the same local package; it must keep
+      # type-checking and building against every usage path.
+      - run: npm ci
+        working-directory: example
+      - run: npm run build
+        working-directory: example

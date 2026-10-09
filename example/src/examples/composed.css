@@ -1,0 +1,156 @@
+/* A bare Root carries only geometry tokens and layout; every color, border
+   and font below is the application's. */
+.card {
+  --epr-emoji-size: 26px;
+  --epr-emoji-padding: 6px;
+  --epr-category-label-height: 28px;
+  --epr-category-navigation-button-size: 28px;
+  height: 440px;
+  background: #0b1220;
+  color: #e2e8f0;
+  border: 1px solid #1e293b;
+  border-radius: 16px;
+  font: 14px/1.4 system-ui, sans-serif;
+  box-shadow: 0 24px 48px rgb(2 6 23 / 60%);
+}
+
+.card [data-epr-part='panel'] {
+  gap: 8px;
+  padding: 12px 0 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+}
+
+.field {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 12px;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  background: #111c33;
+}
+
+.field input {
+  flex: 1;
+  min-width: 0;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.field:focus-within {
+  border-color: #22d3ee;
+}
+
+.tabs {
+  display: flex;
+  padding: 0 12px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.tab,
+.tone,
+.cell {
+  border: 0;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.tab-active {
+  color: #22d3ee;
+}
+
+.tone {
+  display: grid;
+  place-items: center;
+}
+
+.tone-active {
+  outline: 2px solid #22d3ee;
+}
+
+.cell-active {
+  background: #1e293b;
+}
+
+.card :is(button, input):focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: -2px;
+}
+
+.section {
+  background: #0b1220f2;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.card [data-epr-part='variation-picker'] {
+  background: #111c33;
+  border: 1px solid #1e293b;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgb(2 6 23 / 70%);
+}
+
+.card [data-epr-part='variation-picker'] .cell {
+  color: inherit;
+}
+
+.notice {
+  padding: 24px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.notice button {
+  margin-top: 8px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #1e293b;
+  color: #94a3b8;
+}
+
+.toolbar-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolbar-glyph {
+  font-size: 24px;
+}
+
+.toolbar button,
+.toolbar select {
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  background: #111c33;
+  color: inherit;
+  font: inherit;
+  padding: 4px 10px;
+}
