@@ -13,11 +13,16 @@ import {
   useSearchValueConfig,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiUnified, emojiVariations } from '../../dataUtils/emojiUtils';
 import {
-  UNKNOWN_SUPPORT,
+  addedIn,
+  emojiUnified,
+  emojiVariations,
+} from '../../dataUtils/emojiUtils';
+import { NATIVE_PROBE_BATCH } from '../../dataUtils/nativeEmojiSequenceSupport';
+import {
   NativeEmojiSupport,
   detectNativeEmojiSupport,
+  nativeSupportSnapshot,
 } from '../../dataUtils/nativeEmojiSupport';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
 import { FilterDict } from '../../hooks/useFilter';
@@ -159,24 +164,13 @@ const LoadSliceContext = /* @__PURE__ */ React.createContext<{
   isPastInitialLoad: true,
 });
 
-// Platform emoji support, probed before paint and refreshed on font changes. `null` means
-// "no filtering": before mount (SSR and the hydration render), or for image
-// emoji styles. An explicit emojiVersion is an additional cap, not an opt-out.
+// Platform emoji support: a version prediction before paint, refined with
+// exact per-sequence results in the background, and refreshed on font
+// changes. `null` means "no filtering": before mount (SSR and the
+// hydration render), or for image emoji styles. An explicit emojiVersion
+// is an additional cap, not an opt-out.
 const NativeSupportContext =
   /* @__PURE__ */ React.createContext<NativeEmojiSupport | null>(null);
-
-function primeNativeInventory(
-  support: NativeEmojiSupport,
-  allEmojis: DataEmoji[],
-): void {
-  if (support === UNKNOWN_SUPPORT) return;
-  const identities = allEmojis.flatMap((emoji) =>
-    isCustomEmoji(emoji)
-      ? []
-      : [emojiUnified(emoji), ...emojiVariations(emoji)],
-  );
-  if (support.prime) support.prime(identities);
-}
 
 function useNativeEmojiSupportState(): NativeEmojiSupport | null {
   const emojiStyle = useEmojiStyleConfig();
@@ -198,7 +192,18 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     const root = PickerMainRef.current;
     const view = root?.ownerDocument.defaultView;
     if (!root || !view) return;
+    const inventory: string[] = [];
+    // The first emoji of each version in dataset order is its sample.
+    const samples = new Map<number, string>();
+    allEmojis.forEach((emoji) => {
+      if (isCustomEmoji(emoji)) return;
+      const unified = emojiUnified(emoji);
+      const version = addedIn(emoji);
+      if (!samples.has(version)) samples.set(version, unified);
+      inventory.push(unified, ...emojiVariations(emoji));
+    });
     let previousFont: string | null = null;
+    let timer: ReturnType<typeof setTimeout> | undefined;
     const probe = (refresh = false) => {
       const customFont = view
         .getComputedStyle(root)
@@ -207,17 +212,35 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       // Attribute changes often leave the computed font unchanged.
       if (!refresh && customFont === previousFont) return;
       previousFont = customFont;
+      clearTimeout(timer);
       const detected = detectNativeEmojiSupport(
         customFont || undefined,
         refresh,
         root.ownerDocument,
       );
-      // Batch pixel reads once per document/font/identity, outside render.
-      // Refresh creates a new cache so newly available glyphs can reappear.
-      primeNativeInventory(detected, allEmojis);
       // An inconclusive probe filters nothing, just like the initial null.
       // Avoid another synchronous full-grid render for this no-op result.
-      setSnapshot(detected === UNKNOWN_SUPPORT ? null : [detected, allEmojis]);
+      if (!('snapshot' in detected)) {
+        setSnapshot(null);
+        return;
+      }
+      // Publish before paint: cached exact results plus the prediction.
+      const predicted = nativeSupportSnapshot(detected, samples);
+      setSnapshot([predicted, allEmojis]);
+      // Then check every sequence, one canvas batch per task, so no single
+      // task blocks input. Results are cached per document and font.
+      const queue = inventory.filter(
+        (unified) => predicted.supports(unified) === undefined,
+      );
+      const refine = (offset: number) => {
+        if (offset >= queue.length) {
+          setSnapshot([nativeSupportSnapshot(detected, samples), allEmojis]);
+          return;
+        }
+        detected.prime(queue.slice(offset, offset + NATIVE_PROBE_BATCH));
+        timer = setTimeout(refine, 0, offset + NATIVE_PROBE_BATCH);
+      };
+      if (queue.length) timer = setTimeout(refine, 0, 0);
     };
     probe();
     // Any root or ancestor attribute can select another emoji font via CSS.
@@ -235,15 +258,14 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     const refresh = () => probe(true);
     fonts?.addEventListener('loadingdone', refresh);
     return () => {
+      clearTimeout(timer);
       observer.disconnect();
       fonts?.removeEventListener('loadingdone', refresh);
     };
   }, [shouldDetect, PickerMainRef, allEmojis]);
 
-  // Changed data is primed in the layout effect before publishing
-  // their support snapshot. This avoids thousands of lazy canvas reads
-  // during the first render of a newly loaded dataset. Version caps reuse
-  // the already-primed OS inventory.
+  // A snapshot belongs to the dataset it was computed for; a new dataset
+  // waits for its own layout-effect publication.
   return shouldDetect && snapshot?.[1] === allEmojis ? snapshot[0] : null;
 }
 

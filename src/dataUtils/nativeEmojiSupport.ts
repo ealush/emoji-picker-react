@@ -11,32 +11,57 @@ import { createNativeEmojiSequenceSupport } from './nativeEmojiSequenceSupport';
 // refreshes after emoji font changes or loading. SSR output is unaffected;
 // detected unsupported glyphs are hidden.
 //
-// Every rendered sequence is checked in cached pixel batches, including
-// skin tones and flag tags. One version sample cannot prove font coverage.
+// Detection runs in two phases so it never stalls the first paint.
+// Drawing every sequence costs 0.2-0.8 s of main-thread time, depending
+// on the browser and font, so before paint the picker samples one glyph
+// per emoji version and a country flag, and predicts from that. Every
+// rendered sequence (skin tones and flag tags included) is then checked in
+// cached pixel batches between tasks. Exact results replace predictions:
+// one version sample cannot prove font coverage.
 
 export const DEFAULT_NATIVE_EMOJI_FONT =
   '"Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "EmojiOne Color", "Android Emoji"';
 
 const BASELINE_EMOJI = '\u{1F600}'; // grinning face (Emoji 1.0)
 
-export type NativeEmojiSupport = Partial<
-  ReturnType<typeof createNativeEmojiSequenceSupport>
->;
+const FLAG_SAMPLE = '1f1fa-1f1f8'; // regional indicators U + S
 
-export const UNKNOWN_SUPPORT: NativeEmojiSupport = {};
+type NativeEmojiProbe = ReturnType<typeof createNativeEmojiSequenceSupport>;
 
-let cache = new WeakMap<Document, Map<string, NativeEmojiSupport>>();
+/**
+ * Platform support as filtering reads it. `supports` returns a probed
+ * identity's exact result (null when inconclusive, undefined when not
+ * probed yet); the version and flag fields predict the rest.
+ */
+export type NativeEmojiSupport = {
+  supports: (unified: string) => boolean | null | undefined;
+  maxVersion: number;
+  countryFlags: boolean;
+};
 
+export const UNKNOWN_SUPPORT = {};
+
+let cache = new WeakMap<
+  Document,
+  Map<string, NativeEmojiProbe | typeof UNKNOWN_SUPPORT>
+>();
+
+/**
+ * Probes the font synchronously, sampling versions and flags only.
+ * Exact sequence results accumulate on the returned probe through
+ * `prime`, which pickers call in background batches.
+ */
 export function detectNativeEmojiSupport(
   fontFamily: string = DEFAULT_NATIVE_EMOJI_FONT,
   refresh = false,
   ownerDocument: Document | undefined = typeof document === 'undefined'
     ? undefined
     : document,
-): NativeEmojiSupport {
+): NativeEmojiProbe | typeof UNKNOWN_SUPPORT {
   if (!ownerDocument) return UNKNOWN_SUPPORT;
   const fonts =
-    cache.get(ownerDocument) || new Map<string, NativeEmojiSupport>();
+    cache.get(ownerDocument) ||
+    new Map<string, NativeEmojiProbe | typeof UNKNOWN_SUPPORT>();
   cache.set(ownerDocument, fonts);
   if (refresh) fonts.delete(fontFamily);
   const cached = fonts.get(fontFamily);
@@ -51,11 +76,48 @@ export function detectNativeEmojiSupport(
   return result;
 }
 
+/**
+ * Whether a rendered identity should show. An exact result wins; until
+ * one exists, flags and emojis newer than the sampled version are
+ * predicted unsupported. `addedIn` is the emoji's version, when known.
+ */
 export function isNativeEmojiSupported(
   support: NativeEmojiSupport | null,
   unified: string,
+  addedIn = 0,
 ): boolean {
-  return support?.supports?.(unified) !== false;
+  const exact = support && support.supports(unified);
+  return typeof exact === 'boolean'
+    ? exact
+    : !support ||
+        !(
+          addedIn > support.maxVersion ||
+          (!support.countryFlags && isCountryFlagUnified(unified))
+        );
+}
+
+/** The picker's view of a probe: frozen results, never drawing. */
+/**
+ * The picker's view of a probe: frozen results, never drawing, plus a
+ * prediction for identities not checked yet. `samples` maps each emoji
+ * version to one emoji introduced in it.
+ */
+export function nativeSupportSnapshot(
+  probe: NativeEmojiProbe,
+  samples: Map<number, string>,
+): NativeEmojiSupport {
+  probe.prime([FLAG_SAMPLE, ...samples.values()]);
+  // Every platform that draws color emoji at all covers Emoji 5.
+  let maxVersion = 5;
+  samples.forEach((unified, version) => {
+    if (version > maxVersion && probe.supports(unified)) maxVersion = version;
+  });
+  return {
+    supports: probe.snapshot(),
+    maxVersion,
+    // Only a definite failure predicts missing flags.
+    countryFlags: probe.supports(FLAG_SAMPLE) !== false,
+  };
 }
 
 /** Test-only: forget cached probe results. */
@@ -66,7 +128,7 @@ export function __resetNativeEmojiSupportForTest(): void {
 function probe(
   fontFamily: string,
   ownerDocument: Document,
-): NativeEmojiSupport {
+): NativeEmojiProbe | typeof UNKNOWN_SUPPORT {
   if (isJsdom()) return UNKNOWN_SUPPORT;
   try {
     const canvas = ownerDocument.createElement('canvas');
@@ -87,12 +149,5 @@ function probe(
 
 /** Whether a unified code is a regional-indicator country flag. */
 export function isCountryFlagUnified(unified: string): boolean {
-  const parts = unified.toLowerCase().split('-');
-  return (
-    parts.length === 2 &&
-    parts.every((part) => {
-      const code = parseInt(part, 16);
-      return code >= 0x1f1e6 && code <= 0x1f1ff;
-    })
-  );
+  return /^1f1[ef][\da-f]-1f1[ef][\da-f]$/i.test(unified);
 }

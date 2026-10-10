@@ -1615,19 +1615,19 @@ While `skinTone` is present it is the source of truth (`defaultSkinTone` is igno
 
 ## 5c. Native emoji support detection
 
-`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. After mount, before paint, the picker probes that font and hides:
+`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. The picker probes that font on the client and hides:
 
 - emojis newer than the platform renders (they would show as empty boxes);
 - individual country flags where the installed font has no flag glyph;
 - individual missing glyphs, broken join/modifier sequences, and subdivision flags that fall back to a plain black flag.
 
-The exact rendered identity is checked, including skin tones and explicit recent/reaction identities. Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
+Detection runs in two phases so it never delays the first paint. Before paint, the picker draws one sample per emoji version and a country flag, and hides versions (and flags) the font cannot draw. It then checks every rendered identity, including skin tones and explicit recent/reaction identities, in small batches between tasks; when that check finishes, exact results replace the prediction (usually with no visible change). Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
 
 `emojiVersion` remains an additional maximum version: it never disables native detection or makes unsupported glyphs available. SSR and hydration-first output stay deterministic; detection is client-only. The standalone `Emoji` component outside a picker Root does not participate in Root inventory filtering.
 
 Detection is heuristic, not a browser-provided glyph-coverage guarantee. It compares rendered width and canvas artwork under two text colors, which distinguishes ordinary missing-glyph/text fallback from fixed-color emoji artwork, including black-and-white artwork. Unusual fonts may be misclassified. Inconclusive sequence probes preserve those entries. If canvas readback is blocked or no stable emoji artwork baseline is available, the picker preserves the whole inventory rather than hiding everything. Avoid promising complete suppression in those environments.
 
-Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; unchanged inventories reuse cached results. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
+Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; later pickers on the same page reuse cached results without probing again. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
 
 Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also refreshes after webfonts finish loading.
 
@@ -3290,7 +3290,7 @@ export function LocalizedPicker() {
 
 ## Behavior changes to review
 
-- **Native support detection.** With the (new default) native style, the picker hides detected unsupported glyphs and broken sequences after mount, including country flags where the platform has no flag glyphs. Filtering covers the grid/search/recents, reactions, skin-tone variants and managed preview. `emojiVersion` is an additional cap, not an opt-out; choose an image style for inventory independent of OS fonts. Detection is heuristic and inconclusive probes leave the inventory visible; see [the detection contract](./API.md#5c-native-emoji-support-detection).
+- **Native support detection.** With the (new default) native style, the picker hides detected unsupported glyphs and broken sequences on the client, including country flags where the platform has no flag glyphs. Filtering covers the grid/search/recents, reactions, skin-tone variants and managed preview. `emojiVersion` is an additional cap, not an opt-out; choose an image style for inventory independent of OS fonts. Detection is heuristic and inconclusive probes leave the inventory visible; see [the detection contract](./API.md#5c-native-emoji-support-detection).
 - **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
 - **Emoji columns fill the row.** Leftover row width is now shared between columns instead of collecting as a gap on the right edge, so a few pixels of horizontal emoji position change (equal left/right insets). Screenshot tests that include the grid may need a refresh.
 - **Fluid widths reflow.** The column count follows the picker's width when its container resizes (it was only recomputed on CSS transitions).
@@ -3388,10 +3388,11 @@ Do not introduce new uses of the legacy casing.
 
 The default `emojiStyle` is now native instead of Apple: a default
 `<EmojiPicker />` renders OS glyphs without standard emoji image requests.
-Native availability follows the installed font; detection filters known
-unsupported glyphs before client paint. Dataset loading and any custom
-images or webfonts still have their own loading requirements. Every style remains
-supported; to keep the previous look, pass it explicitly:
+Native availability follows the installed font; detection filters
+unsupported emoji versions before client paint, then individual sequences.
+Dataset loading and any custom images or webfonts still have their own
+loading requirements. Every style remains supported; to keep the previous
+look, pass it explicitly:
 
 ```tsx
 <EmojiPicker

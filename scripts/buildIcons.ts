@@ -26,8 +26,17 @@ const icons = {
 const UNUSED_ROOT_ATTRIBUTES =
   /\s(?:version|id|xmlns:xlink|x|y|enable-background|xml:space)="[^"]*"/g;
 
+// Lossless path data: leading zeros, spaces around commands and
+// separators before a minus sign are not part of the number grammar.
+const minifyPath = (d: string) =>
+  d
+    .replace(/(^|[^\d.])0\./g, '$1.')
+    .replace(/\s*([a-zA-Z])\s*/g, '$1')
+    .replace(/[\s,]+-/g, '-');
+
 const minify = (svg: string) =>
   svg
+    .replace(/\sd="([^"]*)"/g, (_, d: string) => ` d="${minifyPath(d)}"`)
     .replace(/<\?xml[^>]*\?>/g, '')
     .replace(/<!DOCTYPE[^>]*>/gi, '')
     .replace(/<!--[\s\S]*?-->/g, '')

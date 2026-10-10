@@ -128,7 +128,7 @@ export function LocalizedPicker() {
 
 ## Behavior changes to review
 
-- **Native support detection.** With the (new default) native style, the picker hides detected unsupported glyphs and broken sequences after mount, including country flags where the platform has no flag glyphs. Filtering covers the grid/search/recents, reactions, skin-tone variants and managed preview. `emojiVersion` is an additional cap, not an opt-out; choose an image style for inventory independent of OS fonts. Detection is heuristic and inconclusive probes leave the inventory visible; see [the detection contract](./API.md#5c-native-emoji-support-detection).
+- **Native support detection.** With the (new default) native style, the picker hides detected unsupported glyphs and broken sequences on the client, including country flags where the platform has no flag glyphs. Filtering covers the grid/search/recents, reactions, skin-tone variants and managed preview. `emojiVersion` is an additional cap, not an opt-out; choose an image style for inventory independent of OS fonts. Detection is heuristic and inconclusive probes leave the inventory visible; see [the detection contract](./API.md#5c-native-emoji-support-detection).
 - **Grid semantics.** Emoji buttons in the grid carry `role="gridcell"` and category titles are `aria-hidden` (the category rowgroup carries the name). Tests that query grid emojis with `getByRole('button')` or category titles with `getByRole('heading')` should use `getByRole('gridcell')` / `getByRole('rowgroup', { name })`.
 - **Emoji columns fill the row.** Leftover row width is now shared between columns instead of collecting as a gap on the right edge, so a few pixels of horizontal emoji position change (equal left/right insets). Screenshot tests that include the grid may need a refresh.
 - **Fluid widths reflow.** The column count follows the picker's width when its container resizes (it was only recomputed on CSS transitions).
@@ -226,10 +226,11 @@ Do not introduce new uses of the legacy casing.
 
 The default `emojiStyle` is now native instead of Apple: a default
 `<EmojiPicker />` renders OS glyphs without standard emoji image requests.
-Native availability follows the installed font; detection filters known
-unsupported glyphs before client paint. Dataset loading and any custom
-images or webfonts still have their own loading requirements. Every style remains
-supported; to keep the previous look, pass it explicitly:
+Native availability follows the installed font; detection filters
+unsupported emoji versions before client paint, then individual sequences.
+Dataset loading and any custom images or webfonts still have their own
+loading requirements. Every style remains supported; to keep the previous
+look, pass it explicitly:
 
 ```tsx
 <EmojiPicker

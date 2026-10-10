@@ -1,7 +1,7 @@
 import { parseNativeEmoji } from './parseNativeEmoji';
 
 const CELL = 32;
-const BATCH = 64;
+export const NATIVE_PROBE_BATCH = 64;
 type Candidate = [unified: string, text: string, comparison: string];
 
 /** One reusable canvas and result cache per detected document/font. */
@@ -35,8 +35,12 @@ export function createNativeEmojiSequenceSupport(
         // Invalid identities/restricted rendering stay inconclusive.
       }
     }
-    for (let offset = 0; offset < candidates.length; offset += BATCH) {
-      probe(candidates.slice(offset, offset + BATCH));
+    for (
+      let offset = 0;
+      offset < candidates.length;
+      offset += NATIVE_PROBE_BATCH
+    ) {
+      probe(candidates.slice(offset, offset + NATIVE_PROBE_BATCH));
     }
   }
 
@@ -96,10 +100,15 @@ export function createNativeEmojiSequenceSupport(
   return {
     prime,
     supports(unified: string): boolean | null {
-      // Only unusual explicit IDs need a lazy probe during rendering.
-      // Normal inventory is primed in Root's layout effect before filtering.
+      // Direct callers get an answer for any identity. Pickers read
+      // snapshots instead, so rendering never draws on the canvas.
       if (!results.has(unified)) prime([unified]);
       return results.get(unified) as boolean | null;
+    },
+    /** Frozen results so far. Unprobed identities read as undefined. */
+    snapshot(): (unified: string) => boolean | null | undefined {
+      const frozen = new Map(results);
+      return (unified) => frozen.get(unified);
     },
   };
 }

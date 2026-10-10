@@ -158,19 +158,19 @@ While `skinTone` is present it is the source of truth (`defaultSkinTone` is igno
 
 ## 5c. Native emoji support detection
 
-`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. After mount, before paint, the picker probes that font and hides:
+`emojiStyle` defaults to `native`. Native glyphs come from the installed emoji font, which can lag behind the dataset. The picker probes that font on the client and hides:
 
 - emojis newer than the platform renders (they would show as empty boxes);
 - individual country flags where the installed font has no flag glyph;
 - individual missing glyphs, broken join/modifier sequences, and subdivision flags that fall back to a plain black flag.
 
-The exact rendered identity is checked, including skin tones and explicit recent/reaction identities. Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
+Detection runs in two phases so it never delays the first paint. Before paint, the picker draws one sample per emoji version and a country flag, and hides versions (and flags) the font cannot draw. It then checks every rendered identity, including skin tones and explicit recent/reaction identities, in small batches between tasks; when that check finishes, exact results replace the prediction (usually with no visible change). Filtering precedes grid layout, so removed cells leave no gaps; search result counts use the same filtered inventory. Reactions and the variation menu also omit unavailable choices, and the managed Preview does not draw unsupported native glyphs. This applies to both the default picker and primitives. Image styles and image-based custom emojis do not depend on OS glyph support.
 
 `emojiVersion` remains an additional maximum version: it never disables native detection or makes unsupported glyphs available. SSR and hydration-first output stay deterministic; detection is client-only. The standalone `Emoji` component outside a picker Root does not participate in Root inventory filtering.
 
 Detection is heuristic, not a browser-provided glyph-coverage guarantee. It compares rendered width and canvas artwork under two text colors, which distinguishes ordinary missing-glyph/text fallback from fixed-color emoji artwork, including black-and-white artwork. Unusual fonts may be misclassified. Inconclusive sequence probes preserve those entries. If canvas readback is blocked or no stable emoji artwork baseline is available, the picker preserves the whole inventory rather than hiding everything. Avoid promising complete suppression in those environments.
 
-Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; unchanged inventories reuse cached results. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
+Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; later pickers on the same page reuse cached results without probing again. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
 
 Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also refreshes after webfonts finish loading.
 

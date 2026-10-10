@@ -27,9 +27,10 @@ export function useIsEmojiDisallowed() {
     if (unicodeToHide.has(unifiedWithoutSkinTone(emojiUnified(emoji))))
       return true;
     if (isCustomEmoji(emoji)) return false;
+    const version = addedIn(emoji);
     return (
-      addedIn(emoji) > cap ||
-      !isNativeEmojiSupported(nativeSupport, renderedUnified)
+      version > cap ||
+      !isNativeEmojiSupported(nativeSupport, renderedUnified, version)
     );
   };
 }

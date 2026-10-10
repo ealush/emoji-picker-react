@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import { CustomEmoji } from '../../config/customEmojiConfig';
 import { DataEmoji, EmojiProperties } from '../../dataUtils/DataTypes';
-import { emojiName, emojiUrlByUnified } from '../../dataUtils/emojiUtils';
+import {
+  addedIn,
+  emojiName,
+  emojiUrlByUnified,
+} from '../../dataUtils/emojiUtils';
 import { isNativeEmojiSupported } from '../../dataUtils/nativeEmojiSupport';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle } from '../../types/exposedTypes';
@@ -53,7 +57,11 @@ export function ViewOnlyEmoji({
     imageStyle = EmojiStyle.NATIVE;
   } else if (emojiStyle === EmojiStyle.NATIVE) {
     // Also covers managed preview/default glyphs outside the grid.
-    return isNativeEmojiSupported(nativeSupport, unified) ? (
+    return isNativeEmojiSupported(
+      nativeSupport,
+      unified,
+      addedIn(emojiToRender),
+    ) ? (
       <NativeEmoji unified={unified} style={style} className={className} />
     ) : null;
   } else {

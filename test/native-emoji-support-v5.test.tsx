@@ -8,6 +8,7 @@ import {
   detectNativeEmojiSupport,
   isCountryFlagUnified,
   isNativeEmojiSupported,
+  nativeSupportSnapshot,
 } from '../src/dataUtils/nativeEmojiSupport';
 
 // A fake 2D context: `supported` decides which strings draw as a single
@@ -87,10 +88,87 @@ describe('native emoji support detection', () => {
         !text.startsWith('\u{1F642}‍') &&
         !text.startsWith('\u{1F1FA}'),
     );
-    const support = detectNativeEmojiSupport();
-    expect(isNativeEmojiSupported(support, '1fae0')).toBe(true);
-    expect(isNativeEmojiSupported(support, '1fae8')).toBe(false);
-    expect(isNativeEmojiSupported(support, '1f1fa-1f1f8')).toBe(false);
+    const probe = detectNativeEmojiSupport();
+    if (!('snapshot' in probe)) throw new Error('expected a conclusive probe');
+    expect(probe.supports('1fae0')).toBe(true);
+    expect(probe.supports('1fae8')).toBe(false);
+    expect(probe.supports('1f1fa-1f1f8')).toBe(false);
+    // Snapshots answer only what was probed; they never draw.
+    const view = probe.snapshot();
+    expect(view('1fae8')).toBe(false);
+    expect(view('1f970')).toBeUndefined();
+  });
+
+  it('keeps the full sequence check off the mount path', async () => {
+    const drawn: string[] = [];
+    installFakeCanvas((text) => {
+      drawn.push(text);
+      return text !== '\u{1FAE2}';
+    });
+    const { container } = render(<EmojiPicker />);
+    // Before paint: a baseline, version samples and a flag only.
+    expect(new Set(drawn).size).toBeLessThan(40);
+    // Melting face's version renders, so its sibling is predicted visible.
+    expect(
+      container.querySelector('[data-epr-unified="1fae2"]'),
+    ).not.toBeNull();
+    // The background check then finds that one glyph missing.
+    await waitFor(() =>
+      expect(container.querySelector('[data-epr-unified="1fae2"]')).toBeNull(),
+    );
+    expect(new Set(drawn).size).toBeGreaterThan(1000);
+    expect(
+      container.querySelector('[data-epr-unified="1fae0"]'),
+    ).not.toBeNull();
+  });
+
+  it('shows supported glyphs newer than a failing version sample', async () => {
+    installFakeCanvas(
+      (text) =>
+        text !== SHAKING_FACE &&
+        text !== '\u{1FAE9}' &&
+        !text.startsWith('\u{1F642}\u200D'),
+    );
+    const { container } = render(<EmojiPicker />);
+    // Pink heart (15.0) is predicted hidden with its version's sample...
+    expect(container.querySelector('[data-epr-unified="1fa77"]')).toBeNull();
+    // ...until its own probe shows the font draws it.
+    await waitFor(() =>
+      expect(
+        container.querySelector('[data-epr-unified="1fa77"]'),
+      ).not.toBeNull(),
+    );
+    expect(container.querySelector('[data-epr-unified="1fae8"]')).toBeNull();
+  });
+
+  it('predicts missing country flags before checking each flag', () => {
+    installFakeCanvas((text) => !/[\u{1F1E6}-\u{1F1FF}]/u.test(text));
+    const probe = detectNativeEmojiSupport();
+    if (!('snapshot' in probe)) throw new Error('expected a conclusive probe');
+    const samples = new Map([
+      [14, '1fae0'],
+      [16, '1fae9'],
+    ]);
+    expect(nativeSupportSnapshot(probe, samples)).toMatchObject({
+      countryFlags: false,
+      maxVersion: 16,
+    });
+    const predicted = {
+      supports: () => undefined,
+      maxVersion: 14,
+      countryFlags: false,
+    };
+    expect(isNativeEmojiSupported(predicted, '1f1e9-1f1ea')).toBe(false);
+    expect(isNativeEmojiSupported(predicted, '1fae8', 15)).toBe(false);
+    expect(isNativeEmojiSupported(predicted, '1fae0', 14)).toBe(true);
+    expect(
+      isNativeEmojiSupported(
+        { ...predicted, supports: () => true },
+        '1fae8',
+        15,
+      ),
+    ).toBe(true);
+    expect(isNativeEmojiSupported(null, '1fae8', 15)).toBe(true);
   });
 
   it('is inconclusive without fixed emoji artwork', () => {
