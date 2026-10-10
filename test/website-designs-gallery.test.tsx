@@ -44,5 +44,7 @@ describe('DesignsGallery', () => {
         .querySelector('#design-stage')
         ?.getAttribute('aria-labelledby'),
     ).toBe('design-tab-shortcode-typeahead');
-  });
+    // Mounting three full gallery stages takes ~2 s alone and exceeded the
+    // 5 s default on loaded runners.
+  }, 20000);
 });
