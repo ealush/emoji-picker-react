@@ -160,8 +160,7 @@ export function reportDuplicateRegion(kind: string): void {
     warnedDuplicates.add(kind);
     // eslint-disable-next-line no-console
     console.warn(
-      `[emoji-picker-react] Duplicate ${kind} region ignored; the first ` +
-        `one stays active.`,
+      `[emoji-picker-react] Duplicate ${kind} region ignored.`,
     );
   }
 }

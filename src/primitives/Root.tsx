@@ -174,6 +174,29 @@ function assignRootProp(
   asideProps[key] = value;
 }
 
+const useIgnoredCompositionWarning: (
+  props: Omit<RootProps, 'children'>,
+) => void =
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useDevIgnoredCompositionWarning;
+
+function useDevIgnoredCompositionWarning(
+  props: Omit<RootProps, 'children'>,
+): void {
+  const ignoredProps =
+    Object.keys(props).some((key) => COMPOSITION_PROPS.has(key)) ||
+    'showPreview' in ((props.previewConfig ?? {}) as object);
+  React.useEffect(() => {
+    if (ignoredProps) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[emoji-picker-react] Root ignores composition props. Compose parts instead.',
+      );
+    }
+  }, [ignoredProps]);
+}
+
 function isRootBehaviorProp(key: string): boolean {
   return (
     CALLBACK_KEYS.has(key) ||
@@ -194,17 +217,7 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
     const { behaviorProps: rawBehaviorProps, asideProps } =
       splitRootProps(rest);
     const defaultConfiguration = React.useContext(DefaultPickerConfiguration);
-    const ignoredProps =
-      Object.keys(rest).some((key) => COMPOSITION_PROPS.has(key)) ||
-      'showPreview' in ((rest.previewConfig ?? {}) as object);
-    React.useEffect(() => {
-      if (ignoredProps && process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
-        console.warn(
-          '[emoji-picker-react] Root ignores composition props. Compose parts instead.',
-        );
-      }
-    }, [ignoredProps]);
+    useIgnoredCompositionWarning(rest);
     // emojiData may be an object, a loader, or absent; everything below
     // Root only ever sees a synchronous dataset.
     const dataState = useResolvedEmojiData(

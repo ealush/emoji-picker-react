@@ -49,7 +49,16 @@ function freshTracker(): IdentityTracker {
  * diagnostic only. A single/occasional replacement (e.g. locale change)
  * must not warn. No deep-compare or clone is performed.
  */
-export function useDataIdentityStabilityWarning(
+export const useDataIdentityStabilityWarning: (
+  emojiData: EmojiData | undefined,
+  customEmojis: CustomEmoji[] | undefined,
+) => void =
+  // Development only: production bundles drop the trackers entirely.
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useIdentityChurnWarning;
+
+function useIdentityChurnWarning(
   emojiData: EmojiData | undefined,
   customEmojis: CustomEmoji[] | undefined,
 ): void {
@@ -57,9 +66,6 @@ export function useDataIdentityStabilityWarning(
   const customState = React.useRef<IdentityTracker>(freshTracker());
 
   React.useEffect(() => {
-    if (process.env.NODE_ENV === 'production') {
-      return;
-    }
     trackIdentity(
       emojiState.current,
       emojiData,

@@ -57,7 +57,8 @@ async function buildCjs(src: string, outfile: string) {
     // Ship optimized production CJS without changing public property names.
     '--minify',
     '--platform=node',
-    // Preserve the existing syntax target until the v5 migration commit.
+    // ES2019 keeps optional chaining and ?? out of the output for
+    // consumers whose bundlers cannot parse them (e.g. webpack 4).
     '--target=es2019',
     `--outfile=${join(repoRoot, outfile)}`,
   ]);

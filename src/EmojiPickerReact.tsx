@@ -135,9 +135,14 @@ function pickBehaviorProps(props: object): {
   return { behaviorProps, unknownProps: unknown.join(', ') };
 }
 
-function useUnknownPropsWarning(unknownProps: string) {
+const useUnknownPropsWarning: (unknownProps: string) => void =
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useDevUnknownPropsWarning;
+
+function useDevUnknownPropsWarning(unknownProps: string) {
   React.useEffect(() => {
-    if (unknownProps && process.env.NODE_ENV !== 'production') {
+    if (unknownProps) {
       // eslint-disable-next-line no-console
       console.warn(
         `[emoji-picker-react] Ignoring unknown prop(s): ${unknownProps}. ` +

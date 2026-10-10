@@ -51,7 +51,12 @@ const warnedViewportChildren = new Set<string>();
 // that wraps elements — Emotion's css prop, styled(List), memo/HOCs.
 // What remains is a development hint when a Viewport mounts without a
 // List.
-function useWarnWithoutList(): void {
+const useWarnWithoutList =
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useDevWarnWithoutList;
+
+function useDevWarnWithoutList(): void {
   const registry = useNavigationRegistry();
   React.useEffect(() => {
     if (
@@ -72,7 +77,14 @@ function useWarnWithoutList(): void {
 // A Viewport without a height constraint grows to the whole dataset:
 // nothing scrolls, so virtualization renders every emoji (~1,900 buttons).
 // A bare Root has no default height, so this is an easy first mistake.
-function useWarnUnboundedViewport(
+const useWarnUnboundedViewport: (
+  BodyRef: React.MutableRefObject<HTMLElement | null>,
+) => void =
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useDevWarnUnboundedViewport;
+
+function useDevWarnUnboundedViewport(
   BodyRef: React.MutableRefObject<HTMLElement | null>,
 ): void {
   React.useEffect(() => {
