@@ -32,6 +32,22 @@ describe('config updates after mount', () => {
     expect(count()).toBe(before + 1);
   });
 
+  it('accepts reactions as emoji characters, like suggestedEmojis', () => {
+    const { container } = render(
+      <EmojiPicker
+        reactionsDefaultOpen
+        reactions={['👍', '1F602', '❤️', '❤', 'not-an-emoji']}
+      />,
+    );
+    const ids = Array.from(
+      container.querySelectorAll(
+        '[data-epr-part="reaction"] button[data-epr-unified]',
+      ),
+    ).map((button) => button.getAttribute('data-epr-unified'));
+    // "❤" (no variation selector) resolves to the same heart as "❤️".
+    expect(ids).toEqual(['1f44d', '1f602', '2764-fe0f', '2764-fe0f']);
+  });
+
   it('applies hiddenEmojis changes', () => {
     const { container, rerender } = render(<EmojiPicker />);
     expect(

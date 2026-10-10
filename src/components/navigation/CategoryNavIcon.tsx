@@ -25,6 +25,7 @@ const THIN_FILL = {
   strokeMiterlimit: '10',
 } as const;
 const SOLID = { fill: 'currentColor', stroke: 'none' } as const;
+const ROUND = { strokeLinecap: 'round' } as const;
 
 const SHAPES: Record<number, React.ReactNode> = {
   0: (
@@ -50,10 +51,10 @@ const SHAPES: Record<number, React.ReactNode> = {
   1: (
     <>
       <path d="M24.2,11V3.5c.1,.1,.8,.9,2.8,3.1c2.5-1.7,5.6-.7,6.9,0l2.4-3.1v7.1c0,1.2-.1,2.5-.9,3.4c-1,1.2-2.7,2.5-5.3,2.5c-2.9,0-4.5-1.5-5.3-2.9C24.2,12.9,24.2,11.9,24.2,11z" />
-      <path strokeLinecap="round" d="M21.2,10l5.4,1.2" />
-      <path strokeLinecap="round" d="M21.2,14.1l5.4-1.2" />
-      <path strokeLinecap="round" d="M38.8,10l-5.4,1.2" />
-      <path strokeLinecap="round" d="M38.8,14.1l-5.4-1.2" />
+      <path {...ROUND} d="M21.2,10l5.4,1.2" />
+      <path {...ROUND} d="M21.2,14.1l5.4-1.2" />
+      <path {...ROUND} d="M38.8,10l-5.4,1.2" />
+      <path {...ROUND} d="M38.8,14.1l-5.4-1.2" />
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -61,7 +62,7 @@ const SHAPES: Record<number, React.ReactNode> = {
         stroke="none"
         d="M29.5,12.4L29,11.7c-.2-.3,0-.6,.3-.6h1.4c.3,0,.5,.4,.3,.6l-.7,1l0,0c-.7,1.2-2.6,1.1-3.1-.3l-.1-.2c-.1-.2,0-.4,.2-.5s.4,0,.5,.2l.1,.2C28.3,12.7,29.1,12.9,29.5,12.4z"
       />
-      <path strokeLinecap="round" d="M32.4,12.1l-.1,.2c-.4,1-1.8,1.1-2.3,.2" />
+      <path {...ROUND} d="M32.4,12.1l-.1,.2c-.4,1-1.8,1.1-2.3,.2" />
       <ellipse {...SOLID} cx="27.6" cy="9.7" rx="0.7" ry="0.7" />
       <ellipse {...SOLID} cx="32.4" cy="9.7" rx="0.7" ry="0.7" />
     </>
@@ -70,19 +71,19 @@ const SHAPES: Record<number, React.ReactNode> = {
     <>
       <path d="M48.1,3.5h3.7c2.5,0,4.5,2,4.5,4.5c0,.5-.4,.9-.9,.9H44.5c-.5,0-.9-.4-.9-.9C43.6,5.5,45.6,3.5,48.1,3.5z" />
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M43.5,8.7c-.2,.1-.5,1.2,0,1.5c1.4,.9,8.5,.8,11.3,.6c.8-.1,1.6-.4,1.7-1.2c0-.3-.1-.6-.6-.9"
       />
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M43.5,10.6L43.3,11c-.2,.5,.2,1,.7,.9c.3-.1,.5,.1,.7,.3l.1,.2c.3,.5,1,.6,1.5,.2l0,0c.3-.2,.7-.3,1-.2l.8,.3c.4,.1,.8,.1,1.2,0l.5-.2c.4-.2,.9-.2,1.3,0l.5,.2c.4,.2,.8,.1,1.2-.1l.2-.1c.3-.2,.8-.1,1.1,.1l.2,.2c.3,.3,.8,.2,1-.2l.1-.2c.1-.2,0-.3,.2-.4c.5,0,1.2-.3,1.1-.7l-.4-1.1"
       />
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M43.5,12.1c-.1,.2-.3,.8,0,1.1c.3,.4,3,1.1,6.4,1.1c2.2,0,4.6-.3,6-.6c.5-.1,.9-.4,.8-.9c0-.2-.2-.5-.4-.7"
       />
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M43.5,13.3c0,.5,.6,2.4,1.3,2.6c1.8,.8,5.7,.7,8.1,.5c1.3-.1,2.5-.7,3.2-1.8c.3-.5,.5-1,.5-1.4"
       />
       <ellipse {...SOLID} cx="51.6" cy="6.5" rx="0.3" ry="0.4" />
@@ -112,7 +113,7 @@ const SHAPES: Record<number, React.ReactNode> = {
   5: (
     <>
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M116.3,6.8l-1.4,2L114.1,8l-.6-.7l0,.9l-.1,8.2h-6.8l-.1-8.2l0-.9L105.9,8l-.8,.8l-1.4-2l2.6-2.9c.1-.1,.2-.1,.3-.1h1.3l.4,.7c.7,1.3,2.6,1.3,3.3-.1l.3-.6h1.2c.1,0,.2,0,.3,.1l.3-.3l-.3,.3L116.3,6.8z"
       />
       <path d="M110.1,7.7h2v.9c0,.4-.4,.7-1,.7c-.6,0-1-.3-1-.7L110.1,7.7L110.1,7.7z" />
@@ -155,7 +156,7 @@ const SHAPES: Record<number, React.ReactNode> = {
       <ellipse {...SOLID} cx="186" cy="8.9" rx="0.7" ry="0.7" />
       <ellipse {...SOLID} cx="194" cy="6.7" rx="0.7" ry="0.7" />
       <path
-        strokeLinecap="round"
+        {...ROUND}
         d="M186,13.3l.4-.3c.4-.3,1-.3,1.5-.1l1,.4c.5,.2,1,.2,1.5-.1l.8-.5c.4-.3,1-.3,1.5-.1l1.8,.8"
       />
     </>

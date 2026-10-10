@@ -11,6 +11,7 @@ import {
   useLabels,
 } from '../../config/useConfig';
 import { DataEmoji } from '../../dataUtils/DataTypes';
+import { resolveEntryId } from '../../dataUtils/suggestedEmojis';
 import { useIsEmojiDisallowed } from '../../hooks/useDisallowedEmojis';
 import { useMouseDownHandlers } from '../../hooks/useMouseDownHandlers';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
@@ -76,8 +77,10 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
       {reactions.map((reaction, index) => {
         // Reaction identifiers use the same shared Root lookup as the
         // picker, normalized case-insensitively (V4_API_MATRIX.md §2).
-        const normalized =
+        const raw =
           typeof reaction === 'string' ? reaction.trim().toLowerCase() : '';
+        // Emoji characters resolve like suggestedEmojis entries.
+        const normalized = resolveEntryId(raw, emojiByUnified) || raw;
         const emoji = normalized ? emojiByUnified(normalized) : undefined;
 
         if (
@@ -112,6 +115,7 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
   );
 });
 export const Reactions = /* @__PURE__ */ React.memo(ReactionsImpl);
+
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({

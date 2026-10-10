@@ -36,7 +36,11 @@ export function resolveSuggestedRenderIds(
   return result;
 }
 
-function resolveEntryId(
+/**
+ * A lowercased unified ID, custom ID or emoji character, resolved to a
+ * known render identity (see resolveSuggestedRenderIds).
+ */
+export function resolveEntryId(
   id: string,
   lookup: (normalizedId: string) => DataEmoji | undefined,
 ): string | undefined {
