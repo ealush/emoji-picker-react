@@ -7,7 +7,6 @@ import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import {
   getEmojiPositionStyle,
-  isNearViewport,
   shouldVirtualize,
 } from '../../src/virtualization/virtualizationHelpers';
 
@@ -55,7 +54,6 @@ vi.mock('../../src/hooks/preloadEmoji', () => ({
 
 vi.mock('../../src/virtualization/virtualizationHelpers', () => ({
   getEmojiPositionStyle: vi.fn(() => ({ top: 0, insetInlineStart: 0 })),
-  isNearViewport: vi.fn(() => true),
   shouldVirtualize: vi.fn(() => false),
 }));
 
@@ -87,7 +85,6 @@ describe('useEmojiVirtualization', () => {
       insetInlineStart: 0,
     });
     (shouldVirtualize as any).mockReturnValue(false);
-    (isNearViewport as any).mockReturnValue(true);
   });
 
   it('virtualizes emojis that are not in view', () => {
@@ -99,6 +96,7 @@ describe('useEmojiVirtualization', () => {
         onHeightReady: vi.fn(),
         scrollTop: 0,
         isCategoryVisible: true,
+        positioned: true,
       }),
     );
 
@@ -116,6 +114,7 @@ describe('useEmojiVirtualization', () => {
         onHeightReady: vi.fn(),
         scrollTop: 0,
         isCategoryVisible: true,
+        positioned: true,
       }),
     );
 
@@ -123,14 +122,14 @@ describe('useEmojiVirtualization', () => {
     expect(result.current.emojis.length).toBe(0);
   });
 
-  it('requests native glyph checks for near cells and their tones only', () => {
+  it('requests native glyph checks for the rendered cells only', () => {
     const emojis: DataEmojis = [
       { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fb'] },
       { n: ['cat'], u: '1f431', a: '0.6' },
     ];
-    // The second cell is far from the viewport (e.g. virtualized).
-    (isNearViewport as any).mockImplementation(
-      ({ style }: { style: { top: number } }) => style.top === 0,
+    // The second cell is outside the rendered window.
+    (shouldVirtualize as any).mockImplementation(
+      ({ style }: { style: { top: number } }) => style.top > 0,
     );
     (getEmojiPositionStyle as any).mockImplementation(
       (_: unknown, index: number) => ({
@@ -145,11 +144,10 @@ describe('useEmojiVirtualization', () => {
         onHeightReady: vi.fn(),
         scrollTop: 0,
         isCategoryVisible: true,
+        positioned: true,
       }),
     );
-    expect(requestNativeProbe).toHaveBeenLastCalledWith([
-      '1f44d',
-      '1f44d-1f3fb',
-    ]);
+    // Tones wait for the variation menu; virtualized cells wait to render.
+    expect(requestNativeProbe).toHaveBeenLastCalledWith(['1f44d']);
   });
 });

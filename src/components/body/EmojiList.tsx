@@ -48,6 +48,8 @@ export function EmojiList({
   const labelHeight = getLabelHeight(EmojiListRef.current);
 
   let topOffset = 0;
+  // A section's offset is real once every section above it is measured.
+  let positioned = true;
   // role="grid" makes screen readers switch out of virtual-cursor mode so
   // arrow keys reach the picker's keyboard handler. Each category is one
   // rowgroup: visual rows shift under virtualization, so the category is
@@ -72,6 +74,8 @@ export function EmojiList({
         const group = customGroupFromCategoryConfig(categoryConfig);
 
         const currentOffset = topOffset;
+        const isPositioned = positioned;
+        positioned = positioned && categoryId in categoryHeights;
         const categoryHeight = categoryHeights[categoryId];
         if (categoryHeight) {
           topOffset += categoryHeight + labelHeight;
@@ -84,6 +88,7 @@ export function EmojiList({
             categoryConfig={categoryConfig}
             topOffset={currentOffset}
             isFirstCategory={index === 0}
+            positioned={isPositioned}
             onHeightReady={(height) => {
               if (categoryHeights[categoryId] !== height) {
                 setCategoryHeights((prev) => ({
@@ -107,6 +112,7 @@ function RenderCategory({
   onHeightReady,
   scrollTop,
   isFirstCategory,
+  positioned,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
@@ -114,6 +120,7 @@ function RenderCategory({
   onHeightReady: (height: number) => void;
   scrollTop: number;
   isFirstCategory: boolean;
+  positioned: boolean;
 }) {
   const [visibleCategories] = useVisibleCategoriesState();
 
@@ -134,6 +141,7 @@ function RenderCategory({
       onHeightReady,
       scrollTop,
       isCategoryVisible,
+      positioned,
     });
 
   return (

@@ -14,10 +14,9 @@ import {
   useSkinTonesDisabledConfig,
 } from '../config/useConfig';
 import { DataEmojis } from '../dataUtils/DataTypes';
-import { emojiUnified, emojiVariations } from '../dataUtils/emojiUtils';
+import { emojiUnified } from '../dataUtils/emojiUtils';
 import {
   getEmojiPositionStyle,
-  isNearViewport,
   shouldVirtualize,
 } from '../virtualization/virtualizationHelpers';
 
@@ -32,12 +31,15 @@ export function useEmojiVirtualization({
   onHeightReady,
   scrollTop,
   isCategoryVisible,
+  positioned,
 }: {
   categoryEmojis: DataEmojis;
   topOffset: number;
   onHeightReady: (height: number) => void;
   scrollTop: number;
   isCategoryVisible: boolean;
+  /** Whether topOffset is final; unmeasured sections above shift it. */
+  positioned: boolean;
 }) {
   const isEmojiHidden = useIsEmojiHidden();
   const lazyLoadEmojis = useLazyLoadEmojisConfig();
@@ -48,8 +50,8 @@ export function useEmojiVirtualization({
   const showVariations = !useSkinTonesDisabledConfig();
   const BodyRef = useBodyRef();
   const requestNativeProbe = useRequestNativeProbe();
-  // Native glyphs checked exactly before they are shown: cells within a
-  // viewport of the visible rows, with the tones a long press reveals.
+  // Native glyphs checked exactly: the cells this pass renders (visible
+  // rows plus virtualization's margin rows), nothing else.
   const probe: string[] = [];
 
   let virtualizedCounter = 0;
@@ -92,15 +94,9 @@ export function useEmojiVirtualization({
       dimensions,
     });
 
-  const clientHeight = BodyRef.current?.clientHeight ?? 0;
   const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const style = getEmojiPositionStyle(dimensions, index);
-    if (
-      isNearViewport({ scrollTop, clientHeight, topOffset, style, dimensions })
-    ) {
-      probe.push(unified, ...emojiVariations(emoji));
-    }
 
     if (isVirtualized(style)) {
       virtualizedCounter++;
@@ -122,6 +118,10 @@ export function useEmojiVirtualization({
       return accumulator;
     }
 
+    // Wait for layout: an unmeasured pass renders a whole category, and
+    // while sections above are unmeasured this one renders off-screen
+    // cells as if it were at the top.
+    if (dimensions && positioned) probe.push(unified);
     accumulator.push(
       <ClickableEmoji
         showVariations={showVariations}

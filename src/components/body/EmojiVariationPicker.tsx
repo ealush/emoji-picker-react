@@ -30,7 +30,10 @@ import {
   useSetAnchoredEmojiRef,
   useVariationPickerRef,
 } from '../context/ElementRefContext';
-import { useEmojiVariationPickerState } from '../context/PickerContext';
+import {
+  useEmojiVariationPickerState,
+  useRequestNativeProbe,
+} from '../context/PickerContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 import { TRIANGLE_ICON as SVGTriangle } from '../icons/svgIcons';
 
@@ -75,6 +78,14 @@ export function EmojiVariationPicker() {
 
     focusFirstVisibleEmoji(VariationPickerRef.current);
   }, [VariationPickerRef, visible, AnchoredEmojiRef]);
+
+  // Tones are checked when the menu opens, not for every grid cell.
+  const requestNativeProbe = useRequestNativeProbe();
+  useEffect(() => {
+    if (visible && emoji) {
+      requestNativeProbe([emojiUnified(emoji)].concat(emojiVariations(emoji)));
+    }
+  }, [requestNativeProbe, visible, emoji]);
 
   let top, pointerStyle;
 

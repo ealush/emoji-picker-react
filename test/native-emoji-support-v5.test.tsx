@@ -9,7 +9,6 @@ import {
 } from '../src/components/context/PickerContext';
 import { List, Root, Viewport } from '../src/primitives';
 import { NavigationRegistry } from '../src/state/navigationRegistry';
-import { isNearViewport } from '../src/virtualization/virtualizationHelpers';
 import {
   __resetNativeEmojiSupportForTest,
   detectNativeEmojiSupport,
@@ -93,7 +92,7 @@ afterEach(() => {
 });
 
 // jsdom has no layout, so the grid itself requests nothing here; these
-// ask for exact checks the way it does for cells near the viewport.
+// ask for exact checks the way it does for the cells it renders.
 const MELTING_FAMILY = ['1fae0', '1fae2'];
 const PINK_HEART = ['1fa77'];
 
@@ -268,33 +267,6 @@ describe('native emoji support detection', () => {
       ).not.toBeNull(),
     );
     expect(container.querySelector('[data-epr-unified="1fae8"]')).toBeNull();
-  });
-
-  it('treats only measured cells within a viewport as near', () => {
-    const dimensions = { emojiSize: 40, emojisPerRow: 8, categoryHeight: 400 };
-    const near = (top: number, scrollTop = 1000) =>
-      isNearViewport({
-        scrollTop,
-        clientHeight: 300,
-        topOffset: 0,
-        style: { top },
-        dimensions,
-      });
-    expect(near(1100)).toBe(true); // visible
-    expect(near(1550)).toBe(true); // within a viewport below
-    expect(near(700)).toBe(true); // within a viewport above
-    expect(near(1700)).toBe(false);
-    expect(near(600)).toBe(false);
-    // Unmeasured grids request nothing instead of a whole category.
-    expect(
-      isNearViewport({
-        scrollTop: 0,
-        clientHeight: 0,
-        topOffset: 0,
-        style: { top: 0 },
-        dimensions,
-      }),
-    ).toBe(false);
   });
 
   it('predicts flags and each version from its own sample', () => {
