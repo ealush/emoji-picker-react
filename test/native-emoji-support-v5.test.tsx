@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import EmojiPicker from '../src';
 import { useNativeEmojiSupport } from '../src/components/context/PickerContext';
 import { List, Root, Viewport } from '../src/primitives';
+import { NavigationRegistry } from '../src/state/navigationRegistry';
 import {
   __resetNativeEmojiSupportForTest,
   detectNativeEmojiSupport,
@@ -198,6 +199,20 @@ describe('native emoji support detection', () => {
       if (descriptor) Object.defineProperty(document, 'fonts', descriptor);
       else delete (document as { fonts?: FontFaceSet }).fonts;
     }
+  });
+
+  it('lets a corrective background result keep pending navigation', async () => {
+    installFakeCanvas((text) => text !== '\u{1FAE2}');
+    const invalidate = vi.spyOn(NavigationRegistry.prototype, 'invalidate');
+    const { container } = render(<EmojiPicker />);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    const before = invalidate.mock.calls.length;
+    // The exact check hides one glyph the version prediction showed...
+    await waitFor(() =>
+      expect(container.querySelector('[data-epr-unified="1fae2"]')).toBeNull(),
+    );
+    // ...without cancelling a category jump or focus move in flight.
+    expect(invalidate).toHaveBeenCalledTimes(before);
   });
 
   it('shows supported glyphs newer than a failing version sample', async () => {

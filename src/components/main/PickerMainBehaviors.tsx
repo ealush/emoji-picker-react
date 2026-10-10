@@ -15,7 +15,6 @@ import {
   useActiveSkinToneState,
   useEmojiSizeState,
   useNavigationRegistry,
-  useNativeEmojiSupport,
   useReactionsModeState,
 } from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
@@ -125,14 +124,16 @@ export const ReactionsModeObserver = /* @__PURE__ */ React.memo(
 // category order/membership changes, and measured geometry changes each
 // obsolete pending materialize/scroll/focus completions. Column-count
 // changes invalidate from useCategoryHeight, search intent from
-// useApplySearch, unmount from registry disposal.
+// useApplySearch, unmount from registry disposal. Native glyph support is
+// deliberately absent: its background check can finish at any moment
+// after the first paint, and a category jump that it cancelled would
+// never arrive. Jumps read their target's offset when they scroll.
 export const NavigationInvalidation = /* @__PURE__ */ React.memo(
   function NavigationInvalidation() {
     const registry = useNavigationRegistry();
     const [reactionsMode] = useReactionsModeState();
     const { emojiData } = usePickerDataContext();
     const [emojiSize] = useEmojiSizeState();
-    const nativeSupport = useNativeEmojiSupport();
     const emojiVersion = useEmojiVersionConfig();
     const [skinTone] = useActiveSkinToneState();
     // Keyed by order/membership, not identity: the merged config is rebuilt
@@ -147,29 +148,15 @@ export const NavigationInvalidation = /* @__PURE__ */ React.memo(
       emojiData,
       emojiSize,
       inventoryKey,
-      nativeSupport,
     ]);
 
     React.useEffect(() => {
-      const next = [
-        reactionsMode,
-        emojiData,
-        emojiSize,
-        inventoryKey,
-        nativeSupport,
-      ];
+      const next = [reactionsMode, emojiData, emojiSize, inventoryKey];
       if (next.every((value, index) => value === prevSnapshot.current[index]))
         return;
       prevSnapshot.current = next;
       registry.invalidate();
-    }, [
-      registry,
-      reactionsMode,
-      emojiData,
-      emojiSize,
-      inventoryKey,
-      nativeSupport,
-    ]);
+    }, [registry, reactionsMode, emojiData, emojiSize, inventoryKey]);
 
     return null;
   },
