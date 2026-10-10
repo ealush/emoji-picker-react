@@ -287,7 +287,6 @@ export function useTypeToSearchKey() {
   const { record: recordProposal, read: readProposal } = usePendingProposal();
 
   return React.useCallback(
-    // eslint-disable-next-line complexity
     (key: string) => {
       const input = SearchInputRef.current;
       if (searchDisabled || !input || input.disabled || input.readOnly) {

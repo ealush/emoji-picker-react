@@ -133,37 +133,36 @@ export function useKeyboardNavigation() {
         break;
     }
   };
-  const tone = // eslint-disable-next-line complexity
-    function onKeyDown(event: KeyboardEvent) {
-      if (!eventInRegion(event, SkinTonePickerRef)) return;
-      const key = logicalArrowKey(event, SkinTonePickerRef.current);
-      // The fan axis decides the arrow keys: the search placement and a
-      // horizontal SkinTone primitive move left/right, the preview
-      // placement and a vertical primitive move up/down.
-      const vertical =
-        SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
-        'vertical';
+  const tone = function onKeyDown(event: KeyboardEvent) {
+    if (!eventInRegion(event, SkinTonePickerRef)) return;
+    const key = logicalArrowKey(event, SkinTonePickerRef.current);
+    // The fan axis decides the arrow keys: the search placement and a
+    // horizontal SkinTone primitive move left/right, the preview
+    // placement and a vertical primitive move up/down.
+    const vertical =
+      SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
+      'vertical';
 
-      switch (key) {
-        case vertical ? 'ArrowUp' : 'ArrowLeft':
-          event.preventDefault();
-          if (!isOpen) return focusSearchInput();
-          focusNextSkinTone(focusSearchInput);
-          break;
-        case vertical ? 'ArrowDown' : 'ArrowRight':
-          event.preventDefault();
-          if (!isOpen) return focusSearchInput();
-          focusPrevElementSibling(getActiveElement());
-          break;
-        case 'ArrowDown':
-          event.preventDefault();
-          setIsOpen(false);
-          goDownFromSearchInput();
-          break;
-        default:
-          onType(event);
-      }
-    };
+    switch (key) {
+      case vertical ? 'ArrowUp' : 'ArrowLeft':
+        event.preventDefault();
+        if (!isOpen) return focusSearchInput();
+        focusNextSkinTone(focusSearchInput);
+        break;
+      case vertical ? 'ArrowDown' : 'ArrowRight':
+        event.preventDefault();
+        if (!isOpen) return focusSearchInput();
+        focusPrevElementSibling(getActiveElement());
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        setIsOpen(false);
+        goDownFromSearchInput();
+        break;
+      default:
+        onType(event);
+    }
+  };
   const categories = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, CategoryNavigationRef)) return;
     // Arrows along the tab axis move between tabs; arrows across it
@@ -208,7 +207,6 @@ export function useKeyboardNavigation() {
       event.preventDefault();
     }
   };
-  // eslint-disable-next-line complexity
   const body = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, BodyRef)) return;
     const key = logicalArrowKey(event, BodyRef.current);

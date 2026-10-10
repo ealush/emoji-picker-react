@@ -18,7 +18,6 @@ type Props = {
   tabIndex?: number;
 };
 
-// eslint-disable-next-line complexity
 export function BtnSkinToneVariation({
   isOpen,
   onClick,

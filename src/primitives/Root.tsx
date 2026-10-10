@@ -283,7 +283,6 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
   },
 );
 
-// eslint-disable-next-line complexity
 const RootAside = /* @__PURE__ */ React.forwardRef<
   HTMLElement,
   {
@@ -294,7 +293,6 @@ const RootAside = /* @__PURE__ */ React.forwardRef<
     defaultLayout: boolean;
     appearance: 'none' | 'default';
   }
-  // eslint-disable-next-line complexity
 >(function RootAside(
   { asideProps, behaviorNonce, cssLayer, children, defaultLayout, appearance },
   forwardedRef,

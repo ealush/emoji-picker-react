@@ -27,7 +27,6 @@ type Props = {
   customIcon?: React.ReactNode;
 };
 
-// eslint-disable-next-line complexity
 export function CategoryButton({
   isActiveCategory,
   category,

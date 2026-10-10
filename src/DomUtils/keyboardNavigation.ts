@@ -38,7 +38,6 @@ function categoryGeometry(category: HTMLElement) {
   return { content, count, columns };
 }
 
-// eslint-disable-next-line complexity
 export function focusAdjacentEmoji(
   element: NullableElement,
   direction: number,

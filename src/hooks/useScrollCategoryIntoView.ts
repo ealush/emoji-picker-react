@@ -49,7 +49,6 @@ export function useScrollCategoryIntoView() {
     const generation = registry.currentGeneration();
     const deadline = Date.now() + MAX_WAIT_MS;
 
-    // eslint-disable-next-line complexity
     const attempt = () => {
       if (!registry.isCurrent(generation) || !BodyRef.current) {
         return;

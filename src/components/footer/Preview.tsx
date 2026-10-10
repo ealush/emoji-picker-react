@@ -43,7 +43,6 @@ export function Preview({ children }: { children?: React.ReactNode }) {
   );
 }
 
-// eslint-disable-next-line complexity
 export function PreviewBody() {
   const appearance = useDefaultAppearance();
   const previewConfig = usePreviewConfig();

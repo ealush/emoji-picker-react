@@ -85,7 +85,6 @@ export function useCategoryHeight(emojiCount: number):
   }>();
 
   // Helper to compute and store dimensions based on current DOM
-  // eslint-disable-next-line complexity
   const computeAndSetDimensions = React.useCallback(() => {
     const listEl = EmojiListRef.current;
     if (!listEl) return;

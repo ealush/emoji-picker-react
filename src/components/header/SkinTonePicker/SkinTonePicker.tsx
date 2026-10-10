@@ -89,7 +89,6 @@ export function SkinTonePicker({
         // wherever the control is placed.
         data-epr-direction={vertical ? 'vertical' : 'horizontal'}
       >
-        {/* eslint-disable complexity */}
         {skinToneVariations.map((skinToneVariation, i) => {
           const active = skinToneVariation === activeSkinTone;
 
@@ -131,7 +130,6 @@ export function SkinTonePicker({
   );
 }
 
-// eslint-disable-next-line complexity
 function skinToneClassName(
   appearance: boolean,
   vertical: boolean,

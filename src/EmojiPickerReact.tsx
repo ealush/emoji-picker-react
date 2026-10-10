@@ -137,7 +137,6 @@ function pickBehaviorProps(props: object): {
 
 function useUnknownPropsWarning(unknownProps: string) {
   React.useEffect(() => {
-    // eslint-disable-next-line no-undef
     if (unknownProps && process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.warn(

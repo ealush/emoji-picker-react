@@ -101,7 +101,6 @@ export function useEmojiPreviewEvents(
       onMouseOver(e);
     }
 
-    // eslint-disable-next-line complexity
     function onMouseOver(e: MouseEvent) {
       if (!eventBelongsToPicker(e, bodyRef) || isMouseDisallowed()) {
         return;
