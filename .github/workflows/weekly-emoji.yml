@@ -42,11 +42,14 @@ jobs:
       - name: Detect a data change
         id: data
         run: |
-          if git diff --quiet -- src/data package.json package-lock.json; then
+          # Only the generated datasets decide: npm may rewrite package.json
+          # or the lockfile (key order, ranges) without any data change, and
+          # that must not cut a release.
+          if git diff --quiet -- src/data; then
             echo "No emoji data change - nothing to commit"
             echo "changed=false" >> "$GITHUB_OUTPUT"
           else
-            git diff --stat -- src/data package.json package-lock.json
+            git diff --stat -- src/data
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
