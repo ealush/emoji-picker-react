@@ -182,13 +182,13 @@ export function Composed() {
           border: 1px solid #1e293b; border-radius: 10px; background: #111c33; }
         .field input { flex: 1; min-width: 0; height: 36px; border: 0; background: transparent; color: inherit; font: inherit; outline: none; }
         .field:focus-within { border-color: #22d3ee; }
-        .tabs { display: flex; padding: 0 12px; border-bottom: 1px solid #1e293b; }
+        .tabs { padding: 0 12px; border-bottom: 1px solid #1e293b; }
         .tab, .tone, .cell { border: 0; background: transparent; color: #64748b; cursor: pointer; border-radius: 8px; }
         .tab-active { color: #22d3ee; }
         .tone { display: grid; place-items: center; }
         .tone-active { outline: 2px solid #22d3ee; }
         .cell-active { background: #1e293b; }
-        .card :is(button, input):focus-visible { outline: 2px solid #22d3ee; outline-offset: -2px; }
+        .card button:focus-visible { outline: 2px solid #22d3ee; outline-offset: -2px; }
         .section { background: #0b1220f2; color: #94a3b8; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
         .card [data-epr-part='variation-picker'] { background: #111c33; border: 1px solid #1e293b; border-radius: 10px; }
         .card [data-epr-part='variation-picker'] .cell { color: inherit; }

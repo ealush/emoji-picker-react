@@ -53,8 +53,8 @@
   border-color: #22d3ee;
 }
 
+/* The tab bar inside spreads its tabs; keep this wrapper a block. */
 .tabs {
-  display: flex;
   padding: 0 12px;
   border-bottom: 1px solid #1e293b;
 }
@@ -86,7 +86,8 @@
   background: #1e293b;
 }
 
-.card :is(button, input):focus-visible {
+/* The search field shows focus on its border (.field:focus-within). */
+.card button:focus-visible {
   outline: 2px solid #22d3ee;
   outline-offset: -2px;
 }
