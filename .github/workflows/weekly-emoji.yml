@@ -8,6 +8,11 @@ on:
 permissions:
   contents: write
 
+# Never let a manual run and the schedule push competing data commits.
+concurrency:
+  group: weekly-emoji
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -25,32 +30,48 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Update emoji packs to latest
+      - name: Update emoji sources to latest
         run: npm install --save-dev emoji-datasource@latest emojibase-data@latest
 
-      - name: Rebuild emoji data and package
-        run: |
-          npm run build:data:src
-          npm run build:data:dist
-          npm run build
+      # The library build regenerates src/data (build:data:src) and the
+      # packaged datasets with their ESM/CJS twins.
+      - name: Regenerate datasets
+        run: npm run build
 
-      # Versioning and publishing belong to semantic-release now: this job
-      # only lands the data change. The chore(data) scope maps to a patch
-      # release via releaseRules in .releaserc.json. No [skip ci].
-      # A push made with GITHUB_TOKEN does not trigger other workflows.
-      # Publishing remains an explicit maintainer action after verification.
-      - name: Commit data change if data changed
+      - name: Detect a data change
+        id: data
+        run: |
+          if git diff --quiet -- src/data package.json package-lock.json; then
+            echo "No emoji data change - nothing to commit"
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            git diff --stat -- src/data package.json package-lock.json
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # New data must pass the same gates as a code change before it lands
+      # on master: picker behavior, the shipped data entries, public types,
+      # the bundle budgets (the main entry embeds the English dataset) and
+      # packed CJS/ESM consumers. A failure leaves master untouched.
+      - name: Verify the regenerated data
+        if: steps.data.outputs.changed == 'true'
+        run: |
+          npm test
+          npm run check:data-package
+          npm run check:compat
+          npm run size
+          npm run check:package
+
+      # Only the dataset sources and the dependency update are committed;
+      # dist and other build outputs stay out of git. The chore(data) scope
+      # maps to a patch release via releaseRules in .releaserc.json. A push
+      # made with GITHUB_TOKEN does not trigger other workflows, and
+      # publishing stays an explicit Release workflow dispatch.
+      - name: Commit the data update
+        if: steps.data.outputs.changed == 'true'
         run: |
           git config user.name "ealush"
           git config user.email "code@ealush.com"
-          if git diff --quiet && git diff --cached --quiet; then
-            echo "No emoji data change - nothing to commit"
-            exit 0
-          fi
-          git add package.json package-lock.json src/data dist 2>/dev/null || true
-          git add -A
+          git add package.json package-lock.json src/data
           git commit -m "chore(data): weekly emoji data update"
           git push origin HEAD:master
-
-      # Publishing is an explicit maintainer action while the v5 stack lands.
-      # See docs/STACK_LANDING.md before dispatching the Release workflow.
