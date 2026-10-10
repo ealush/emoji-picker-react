@@ -149,5 +149,7 @@ function probe(
 
 /** Whether a unified code is a regional-indicator country flag. */
 export function isCountryFlagUnified(unified: string): boolean {
-  return /^1f1[ef][\da-f]-1f1[ef][\da-f]$/i.test(unified);
+  // Regional-indicator pairs, plus tag-sequence subdivision flags: fonts
+  // without the former lack the latter too.
+  return /^(1f1[ef][\da-f]-1f1[ef][\da-f]$|1f3f4-e00)/i.test(unified);
 }

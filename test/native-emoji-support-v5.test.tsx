@@ -3,6 +3,8 @@ import * as React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker from '../src';
+import { useNativeEmojiSupport } from '../src/components/context/PickerContext';
+import { List, Root, Viewport } from '../src/primitives';
 import {
   __resetNativeEmojiSupportForTest,
   detectNativeEmojiSupport,
@@ -59,7 +61,13 @@ function installFakeCanvas(supported: (text: string, font: string) => boolean) {
         if (x >= width || y >= height) continue;
         const index = (y * width + x) * 4;
         const fixed = supported(text, font);
-        data[index] = fixed ? 250 : ink === '#f00' ? 255 : 0;
+        // Artwork differs per sequence, so a tagged subdivision flag is
+        // distinguishable from its tagless black-flag fallback.
+        data[index] = fixed
+          ? 150 + (text.length % 100)
+          : ink === '#f00'
+            ? 255
+            : 0;
         data[index + 1] = fixed ? 100 : 0;
         data[index + 3] = 255;
       }
@@ -120,6 +128,33 @@ describe('native emoji support detection', () => {
     expect(
       container.querySelector('[data-epr-unified="1fae0"]'),
     ).not.toBeNull();
+  });
+
+  it('keeps one support snapshot when the full check confirms the prediction', async () => {
+    const drawn = new Set<string>();
+    installFakeCanvas((text) => {
+      drawn.add(text);
+      return true;
+    });
+    const seen = new Set<unknown>();
+    function Observe() {
+      seen.add(useNativeEmojiSupport());
+      return null;
+    }
+    render(
+      <Root style={{ height: 400 }}>
+        <Viewport>
+          <List />
+        </Viewport>
+        <Observe />
+      </Root>,
+    );
+    await waitFor(() => expect(drawn.size).toBeGreaterThan(1000));
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    // A second snapshot would rerender the grid and, through
+    // NavigationInvalidation, cancel in-flight keyboard or tab navigation.
+    seen.delete(null);
+    expect(seen.size).toBe(1);
   });
 
   it('shows supported glyphs newer than a failing version sample', async () => {
@@ -184,6 +219,10 @@ describe('native emoji support detection', () => {
     expect(isCountryFlagUnified('1f1fa-1f1f8')).toBe(true);
     expect(isCountryFlagUnified('1f3c1')).toBe(false);
     expect(isCountryFlagUnified('1f3f4-200d-2620-fe0f')).toBe(false);
+    // England: a tag sequence, missing wherever country flags are.
+    expect(
+      isCountryFlagUnified('1f3f4-e0067-e0062-e0065-e006e-e0067-e007f'),
+    ).toBe(true);
   });
 
   it('hides emojis newer than the platform supports in the native picker', () => {
