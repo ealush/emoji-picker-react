@@ -2,7 +2,15 @@ import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
 import EmojiPicker from '../../src';
-import { Root, Search, Viewport, List, Preview } from '../../src/primitives';
+import {
+  CategoryNav,
+  List,
+  Preview,
+  Root,
+  Search,
+  SkinTone,
+  Viewport,
+} from '../../src/primitives';
 
 // Behavior fixture for `columns` (playwright/adoption-behavior.spec.ts).
 const meta = {
@@ -23,6 +31,19 @@ export const NarrowContainer = () => (
 export const PrimitiveColumns = () => (
   <Root columns={6} style={{ height: 450 }}>
     <Search />
+    <Viewport>
+      <List />
+    </Viewport>
+    <Preview />
+  </Root>
+);
+
+export const PrimitiveColumnsWithTones = () => (
+  <Root appearance="default" columns={6} style={{ height: 450 }}>
+    <Search>
+      <SkinTone />
+    </Search>
+    <CategoryNav />
     <Viewport>
       <List />
     </Viewport>

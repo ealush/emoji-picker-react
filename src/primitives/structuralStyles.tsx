@@ -40,9 +40,11 @@ const boxSizingReset =
   // In layout the content box spans the row (columns spread evenly); a
   // narrower container caps it, so fewer columns render.
   ':where([data-epr-columns]){width:fit-content;max-width:100%}' +
-  // Hover/focus text must not contribute to the root's intrinsic width.
-  // The column geometry sizes the picker; Preview fills the resulting row.
-  ':where([data-epr-columns] [data-epr-part=preview]){contain:inline-size}' +
+  // Only the column geometry sizes the picker. Hover/focus titles, the
+  // search row (whose input grows as the skin tone fan opens) and a
+  // horizontal tab bar fill the resulting row instead of widening it; a
+  // vertical tab rail still adds its own width beside the grid.
+  ':where([data-epr-columns] :is([data-epr-part=preview],[data-epr-part=search],[aria-orientation=horizontal])){contain:inline-size}' +
   ':where([data-epr-columns] [data-epr-part=viewport]){scrollbar-gutter:stable}' +
   ':where([data-epr-columns] [data-epr-part=category-content]){width:calc(var(--epr-columns)*var(--epr-emoji-fullsize));min-width:calc(100% - 2*var(--epr-horizontal-padding));max-width:calc(100% - 2*var(--epr-horizontal-padding))}';
 

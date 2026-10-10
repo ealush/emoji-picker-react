@@ -2291,7 +2291,7 @@ The current implementation reserves these declarations:
 - Root: `position: relative`, column flex layout, clipping; panel: flexible column with `min-height: 0` and hidden/inert presence controlled by Root.
 - Viewport: relative flex child with `overflow-y: scroll` and horizontal clipping.
 - List: zero list margin/padding; category content: relative grid using `--epr-emoji-fullsize` columns and `--epr-category-padding`.
-- Preview in a `columns` layout: inline-size containment keeps hover/focus titles out of Root’s intrinsic width calculation. Preview fills the width established by the grid; changing the active emoji must not resize the picker or change its column count.
+- `columns` layouts: only the grid sets Root's width. Search, a horizontal CategoryNav and Preview use inline-size containment and fill the row the grid establishes, so hover/focus titles and an opening skin tone fan never resize the picker or change its column count. A vertical CategoryNav rail still adds its own width beside the grid.
 - Cells: measured width/height/max dimensions from `--epr-emoji-fullsize`; the supplied inline absolute position and offsets place virtualized cells.
 - Category labels: sticky top position, `--epr-category-label-height`, documented padding and stacking tokens.
 

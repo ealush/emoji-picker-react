@@ -467,6 +467,44 @@ for (const origin of ['input', 'grid'] as const) {
 
 for (const id of [
   'picker-columns--six-columns',
+  'picker-columns--primitive-columns-with-tones',
+]) {
+  test(`columns: ${id} hugs its columns and keeps its width while the skin tone fan is open`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    await page.evaluate(() => document.fonts.ready);
+    const root = page.locator('[data-epr-part="root"]');
+    const content = page.locator(
+      '[data-epr-category="smileys_people"] [data-epr-part="category-content"]',
+    );
+    await expect(content).toHaveAttribute('data-epr-emojis-per-row', '6');
+    // The grid alone sizes the picker: search and tabs fill its row.
+    const geometry = () =>
+      content.evaluate((element) => {
+        const cell = element.querySelector('button')!;
+        return {
+          slack:
+            element.getBoundingClientRect().width -
+            6 * cell.getBoundingClientRect().width,
+        };
+      });
+    expect((await geometry()).slack).toBeLessThan(2);
+    const width = (await root.boundingBox())!.width;
+    await page.locator('[data-epr-part="skin-tone-button"]').first().click();
+    await expect(
+      page.locator('[data-epr-part="skin-tone-button"]').nth(5),
+    ).toBeVisible();
+    // Let the fan finish expanding before measuring.
+    await page.waitForTimeout(400);
+    expect((await root.boundingBox())!.width).toBeCloseTo(width, 1);
+    await expect(content).toHaveAttribute('data-epr-emojis-per-row', '6');
+    expect((await geometry()).slack).toBeLessThan(2);
+  });
+}
+
+for (const id of [
+  'picker-columns--six-columns',
   'picker-columns--narrow-container',
   'picker-columns--primitive-columns',
 ]) {
