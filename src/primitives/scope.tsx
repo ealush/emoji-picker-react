@@ -45,8 +45,7 @@ export function useRootScope(primitive: string): boolean {
       warnedOutsideRoot.add(primitive);
       // eslint-disable-next-line no-console
       console.warn(
-        `[emoji-picker-react] <${primitive}> rendered outside <Root>; ` +
-          `picker behavior is unavailable.`,
+        `[emoji-picker-react] <${primitive}> rendered outside <Root>.`,
       );
     }
     return false;
@@ -92,7 +91,7 @@ export function useViewportScope(primitive: string): boolean {
       warnedOutsideViewport.add(primitive);
       // eslint-disable-next-line no-console
       console.warn(
-        `[emoji-picker-react] <${primitive}> must be rendered inside <Viewport>.`,
+        `[emoji-picker-react] <${primitive}> must be inside <Viewport>.`,
       );
     }
     return false;

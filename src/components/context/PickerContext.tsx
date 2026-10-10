@@ -22,6 +22,7 @@ import { NATIVE_PROBE_BATCH } from '../../dataUtils/nativeEmojiSequenceSupport';
 import {
   NativeEmojiSupport,
   detectNativeEmojiSupport,
+  isNativeEmojiSupported,
   nativeSupportSnapshot,
 } from '../../dataUtils/nativeEmojiSupport';
 import { useDebouncedState } from '../../hooks/useDebouncedState';
@@ -192,7 +193,7 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     const root = PickerMainRef.current;
     const view = root?.ownerDocument.defaultView;
     if (!root || !view) return;
-    const inventory: string[] = [];
+    const inventory: [unified: string, version: number][] = [];
     // The first emoji of each version in dataset order is its sample.
     const samples = new Map<number, string>();
     allEmojis.forEach((emoji) => {
@@ -200,7 +201,9 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       const unified = emojiUnified(emoji);
       const version = addedIn(emoji);
       if (!samples.has(version)) samples.set(version, unified);
-      inventory.push(unified, ...emojiVariations(emoji));
+      [unified, ...emojiVariations(emoji)].forEach((id) =>
+        inventory.push([id, version]),
+      );
     });
     let previousFont: string | null = null;
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -230,14 +233,28 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       // Then check every sequence, one canvas batch per task, so no single
       // task blocks input. Results are cached per document and font.
       const queue = inventory.filter(
-        (unified) => predicted.supports(unified) === undefined,
+        ([unified]) => predicted.supports(unified) === undefined,
       );
       const refine = (offset: number) => {
         if (offset >= queue.length) {
-          setSnapshot([nativeSupportSnapshot(detected, samples), allEmojis]);
+          const exact = nativeSupportSnapshot(detected, samples);
+          // Usually the prediction was right. Publishing anyway would
+          // rerender the grid and cancel in-flight navigation for nothing.
+          if (
+            queue.some(
+              ([unified, version]) =>
+                isNativeEmojiSupported(exact, unified, version) !==
+                isNativeEmojiSupported(predicted, unified, version),
+            )
+          )
+            setSnapshot([exact, allEmojis]);
           return;
         }
-        detected.prime(queue.slice(offset, offset + NATIVE_PROBE_BATCH));
+        detected.prime(
+          queue
+            .slice(offset, offset + NATIVE_PROBE_BATCH)
+            .map(([unified]) => unified),
+        );
         timer = setTimeout(refine, 0, offset + NATIVE_PROBE_BATCH);
       };
       if (queue.length) timer = setTimeout(refine, 0, 0);

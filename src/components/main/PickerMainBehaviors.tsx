@@ -36,23 +36,9 @@ export function SearchSync() {
   const searchValue = useSearchValueConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
   const { onChange: commitFilter } = useFilter();
-  const prevMode = React.useRef<'controlled' | 'uncontrolled' | null>(null);
 
   const mode = searchValue !== undefined ? 'controlled' : 'uncontrolled';
-  React.useEffect(() => {
-    if (
-      prevMode.current !== null &&
-      prevMode.current !== mode &&
-      process.env.NODE_ENV !== 'production'
-    ) {
-      // eslint-disable-next-line no-console
-      console.warn(
-        '[emoji-picker-react] Switching between controlled and uncontrolled ' +
-          'search during one mounted lifetime is unsupported.',
-      );
-    }
-    prevMode.current = mode;
-  }, [mode]);
+  useSearchModeSwitchWarning(mode);
 
   // Initial commit only. The stamp (not a first-run flag) makes this
   // StrictMode-safe: the double-invoked mount effect commits once, since
@@ -91,6 +77,25 @@ export function SearchSync() {
   }, [mode, searchValue]);
 
   return null;
+}
+
+const useSearchModeSwitchWarning: (mode: string) => void =
+  process.env.NODE_ENV === 'production'
+    ? () => undefined
+    : useDevSearchModeSwitchWarning;
+
+function useDevSearchModeSwitchWarning(mode: string): void {
+  const prevMode = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (prevMode.current !== null && prevMode.current !== mode) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[emoji-picker-react] Switching between controlled and uncontrolled ' +
+          'search during one mounted lifetime is unsupported.',
+      );
+    }
+    prevMode.current = mode;
+  }, [mode]);
 }
 
 // Reaction-mode observation (docs/v5/STATE.md §7). Emits only after an

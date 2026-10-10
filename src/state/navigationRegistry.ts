@@ -149,7 +149,9 @@ export function duplicateRegionPolicy(): DuplicateRegionPolicy {
 const warnedDuplicates = new Set<string>();
 
 export function reportDuplicateRegion(kind: string): void {
-  if (duplicateRegionPolicy() === 'throw') {
+  // Test NODE_ENV inline (not through duplicateRegionPolicy) so production
+  // bundles drop this branch and its component-name table.
+  if (process.env.NODE_ENV !== 'production') {
     throw new Error(
       `[emoji-picker-react] Duplicate <${regionComponentName(kind)}> region: ` +
         `only one ${kind} region is supported per Root. ` +
@@ -159,9 +161,7 @@ export function reportDuplicateRegion(kind: string): void {
   if (!warnedDuplicates.has(kind)) {
     warnedDuplicates.add(kind);
     // eslint-disable-next-line no-console
-    console.warn(
-      `[emoji-picker-react] Duplicate ${kind} region ignored.`,
-    );
+    console.warn(`[emoji-picker-react] Duplicate ${kind} region ignored.`);
   }
 }
 
@@ -191,7 +191,7 @@ function regionComponentName(kind: string): string {
     case 'grid':
       return 'List';
     case 'preview-skin-tone':
-      return 'SkinTonePicker';
+      return 'SkinTone';
     case 'reactions':
       return 'Reactions';
     case 'viewport':
