@@ -634,3 +634,38 @@ describe('logical navigation through virtualized rows', () => {
     expect(document.activeElement).toBe(first);
   });
 });
+
+function CustomTabs() {
+  const { categories, activeCategory, jumpToCategory } =
+    Picker.useCategoryNavigation();
+  return (
+    <div>
+      {categories.map((category) => (
+        <button
+          key={category.id}
+          aria-pressed={category.id === activeCategory}
+          onClick={() => jumpToCategory(category.id)}
+        >
+          {category.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+describe('custom category navigation', () => {
+  it('highlights the destination of a hook jump like CategoryNav does', async () => {
+    render(
+      <Picker.Root {...rootProps}>
+        <CustomTabs />
+        <Grid />
+      </Picker.Root>,
+    );
+    const tabs = screen.getAllByRole('button', { pressed: false });
+    const last = tabs[tabs.length - 1];
+    fireEvent.click(last);
+    // A trailing section may be too short to reach the viewport top, so
+    // scroll observation alone would leave an earlier tab highlighted.
+    await waitFor(() => expect(last.getAttribute('aria-pressed')).toBe('true'));
+  });
+});

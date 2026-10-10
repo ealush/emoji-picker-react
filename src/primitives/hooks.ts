@@ -8,6 +8,7 @@ import {
 import { usePickerDataContext } from '../components/context/PickerDataContext';
 import {
   useActiveCategory,
+  useJumpToCategory,
   useVisibleCategoryConfigs,
 } from '../components/navigation/CategoryNavigation';
 import {
@@ -26,7 +27,6 @@ import {
   useEmojiDataState as useDataState,
   EmojiDataState,
 } from '../hooks/useResolvedEmojiData';
-import { useScrollCategoryIntoView } from '../hooks/useScrollCategoryIntoView';
 import {
   useAcceptedSearchValue,
   useSetSearchValue,
@@ -138,7 +138,7 @@ export function useCategoryNavigation() {
   useRootScope('useCategoryNavigation');
   const { activeCategory } = useActiveCategory();
   const configs = useVisibleCategoryConfigs();
-  const jumpToCategory = useScrollCategoryIntoView();
+  const jumpToCategory = useJumpToCategory();
   const categories = configs.map((config) => ({
     id: categoryIdFromCategoryConfig(config),
     name: categoryNameFromCategoryConfig(config),

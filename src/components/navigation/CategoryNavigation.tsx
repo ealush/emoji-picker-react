@@ -58,6 +58,22 @@ export function useActiveCategory() {
   return React.useContext(ActiveCategoryContext);
 }
 
+/**
+ * Scroll a section to the top and highlight its tab. The highlight is set
+ * explicitly: trailing sections too short to reach the viewport top would
+ * otherwise leave an earlier section active.
+ */
+export function useJumpToCategory(): (categoryId: string) => void {
+  const { setActiveCategory } = useActiveCategory();
+  const scrollCategoryIntoView = useScrollCategoryIntoView();
+  return (categoryId) => {
+    scrollCategoryIntoView(categoryId);
+    setTimeout(() => {
+      setActiveCategory(categoryId);
+    }, 10);
+  };
+}
+
 export function useVisibleCategoryConfigs() {
   const categoriesConfig = useCategoriesConfig();
   const hideCustomCategory = useShouldHideCustomEmojis();
@@ -87,8 +103,8 @@ export function CategoryNavigation({
   orientation?: NavOrientation;
 } = {}) {
   const appearance = useDefaultAppearance();
-  const { activeCategory, setActiveCategory } = useActiveCategory();
-  const scrollCategoryIntoView = useScrollCategoryIntoView();
+  const { activeCategory } = useActiveCategory();
+  const jumpToCategory = useJumpToCategory();
   const isSearchMode = useIsSearchMode();
 
   const categoryIcons = useCategoryIconsConfig();
@@ -137,12 +153,7 @@ export function CategoryNavigation({
             allowNavigation={allowNavigation}
             categoryConfig={categoryConfig}
             customIcon={categoryIcons[category as Categories]}
-            onClick={() => {
-              scrollCategoryIntoView(categoryId);
-              setTimeout(() => {
-                setActiveCategory(categoryId);
-              }, 10);
-            }}
+            onClick={() => jumpToCategory(categoryId)}
           />
         );
       })}
