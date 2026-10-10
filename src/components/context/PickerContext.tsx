@@ -20,6 +20,7 @@ import {
 } from '../../dataUtils/emojiUtils';
 import { NATIVE_PROBE_BATCH } from '../../dataUtils/nativeEmojiSequenceSupport';
 import {
+  NativeEmojiProbe,
   NativeEmojiSupport,
   detectNativeEmojiSupport,
   isNativeEmojiSupported,
@@ -90,6 +91,7 @@ export interface PickerServices {
   disallowClickRef: React.MutableRefObject<boolean>;
   disallowMouseRef: React.MutableRefObject<boolean>;
   navigationRegistry: NavigationRegistry;
+  requestNativeProbe: RequestNativeProbe;
 }
 
 const PickerServicesContext =
@@ -100,6 +102,7 @@ const PickerServicesContext =
     disallowClickRef: { current: false },
     disallowMouseRef: { current: false },
     navigationRegistry: new NavigationRegistry(),
+    requestNativeProbe: () => undefined,
   });
 
 const SearchSliceContext = /* @__PURE__ */ React.createContext<{
@@ -173,7 +176,20 @@ const LoadSliceContext = /* @__PURE__ */ React.createContext<{
 const NativeSupportContext =
   /* @__PURE__ */ React.createContext<NativeEmojiSupport | null>(null);
 
-function useNativeEmojiSupportState(): NativeEmojiSupport | null {
+type RequestNativeProbe = (unifieds: string[]) => void;
+
+/**
+ * Asks for exact checks of identities about to be shown: grid cells in
+ * and near the viewport, their skin tone variants, and reaction choices.
+ */
+export function useRequestNativeProbe(): RequestNativeProbe {
+  return React.useContext(PickerServicesContext).requestNativeProbe;
+}
+
+function useNativeEmojiSupportState(): [
+  NativeEmojiSupport | null,
+  RequestNativeProbe,
+] {
   const emojiStyle = useEmojiStyleConfig();
   const { allEmojis } = usePickerDataContext();
   const PickerMainRef = usePickerMainRef();
@@ -181,6 +197,16 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
   const [snapshot, setSnapshot] = useState<
     [support: NativeEmojiSupport, data: DataEmoji[]] | null
   >(null);
+  // Every identity shown in this Root's lifetime, re-checked when the
+  // font changes. Requests can arrive before detection starts.
+  const requestedRef = React.useRef(new Set<string>());
+  const requestRef = React.useRef<RequestNativeProbe>((unifieds) => {
+    unifieds.forEach((unified) => requestedRef.current.add(unified));
+  });
+  const request = React.useCallback<RequestNativeProbe>(
+    (unifieds) => requestRef.current(unifieds),
+    [],
+  );
 
   useIsomorphicLayoutEffect(() => {
     if (!shouldDetect || isJsdom()) {
@@ -193,6 +219,7 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     const root = PickerMainRef.current;
     const view = root?.ownerDocument.defaultView;
     if (!root || !view) return;
+    const requested = requestedRef.current;
     const inventory: [unified: string, version: number][] = [];
     // The first emoji of each version in dataset order is its sample.
     const samples = new Map<number, string>();
@@ -208,8 +235,10 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     let previousFont: string | null = null;
     let timer: ReturnType<typeof setTimeout> | undefined;
     let published: NativeEmojiSupport | null = null;
-    // A new snapshot rerenders the grid and cancels in-flight navigation
-    // (NavigationInvalidation), so publish only when a verdict changes.
+    let detected: NativeEmojiProbe | undefined;
+    const pending = new Set<string>();
+    // A new snapshot rerenders the whole grid, so publish only when a
+    // verdict changes.
     const publish = (next: NativeEmojiSupport) => {
       const current = published;
       if (
@@ -224,6 +253,25 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       published = next;
       setSnapshot([next, allEmojis]);
     };
+    // One canvas batch per task, so a fast scroll never blocks input.
+    const flush = () => {
+      timer = undefined;
+      if (!detected) return;
+      const batch = Array.from(pending).slice(0, NATIVE_PROBE_BATCH);
+      batch.forEach((unified) => pending.delete(unified));
+      detected.prime(batch);
+      // Publish once the backlog is checked, so a font refresh never
+      // flashes unchecked glyphs back to their prediction.
+      if (pending.size) timer = setTimeout(flush, 0);
+      else publish(nativeSupportSnapshot(detected, samples));
+    };
+    requestRef.current = (unifieds) => {
+      unifieds.forEach((unified) => {
+        requested.add(unified);
+        if (detected && !detected.has(unified)) pending.add(unified);
+      });
+      if (pending.size && timer === undefined) timer = setTimeout(flush, 0);
+    };
     const probe = (refresh = false) => {
       const customFont = view
         .getComputedStyle(root)
@@ -233,41 +281,28 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       if (!refresh && customFont === previousFont) return;
       previousFont = customFont;
       clearTimeout(timer);
-      const detected = detectNativeEmojiSupport(
+      timer = undefined;
+      pending.clear();
+      const next = detectNativeEmojiSupport(
         customFont || undefined,
         refresh,
         root.ownerDocument,
       );
       // An inconclusive probe filters nothing, just like the initial null.
       // Avoid another synchronous full-grid render for this no-op result.
-      if (!('snapshot' in detected)) {
+      if (!('snapshot' in next)) {
+        detected = undefined;
         published = null;
         setSnapshot(null);
         return;
       }
+      detected = next;
       // Publish before paint: cached exact results plus the prediction. A
       // refresh after webfonts load keeps the current results on screen
-      // until the background check below has new ones.
-      const predicted = nativeSupportSnapshot(detected, samples);
-      if (!refresh) publish(predicted);
-      // Then check every sequence, one canvas batch per task, so no single
-      // task blocks input. Results are cached per document and font.
-      const queue = inventory.filter(
-        ([unified]) => predicted.supports(unified) === undefined,
-      );
-      const refine = (offset: number) => {
-        if (offset >= queue.length) {
-          publish(nativeSupportSnapshot(detected, samples));
-          return;
-        }
-        detected.prime(
-          queue
-            .slice(offset, offset + NATIVE_PROBE_BATCH)
-            .map(([unified]) => unified),
-        );
-        timer = setTimeout(refine, 0, offset + NATIVE_PROBE_BATCH);
-      };
-      if (queue.length) timer = setTimeout(refine, 0, 0);
+      // until the identities shown so far are checked again.
+      if (!refresh) publish(nativeSupportSnapshot(next, samples));
+      requestRef.current(Array.from(requested));
+      if (!pending.size) publish(nativeSupportSnapshot(next, samples));
     };
     probe();
     // Any root or ancestor attribute can select another emoji font via CSS.
@@ -286,6 +321,7 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     fonts?.addEventListener('loadingdone', refresh);
     return () => {
       clearTimeout(timer);
+      detected = undefined;
       observer.disconnect();
       fonts?.removeEventListener('loadingdone', refresh);
     };
@@ -293,7 +329,10 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
 
   // A snapshot belongs to the dataset it was computed for; a new dataset
   // waits for its own layout-effect publication.
-  return shouldDetect && snapshot?.[1] === allEmojis ? snapshot[0] : null;
+  return [
+    shouldDetect && snapshot?.[1] === allEmojis ? snapshot[0] : null,
+    request,
+  ];
 }
 
 export function useNativeEmojiSupport(): NativeEmojiSupport | null {
@@ -301,7 +340,7 @@ export function useNativeEmojiSupport(): NativeEmojiSupport | null {
 }
 
 export function PickerContextProvider({ children }: Props) {
-  const nativeSupport = useNativeEmojiSupportState();
+  const [nativeSupport, requestNativeProbe] = useNativeEmojiSupportState();
   const defaultSkinTone = useDefaultSkinToneConfig();
   const reactionsDefaultOpen = useReactionsOpenConfig();
   const defaultSearchValue = useDefaultSearchValueConfig();
@@ -359,8 +398,10 @@ export function PickerContextProvider({ children }: Props) {
       disallowClickRef,
       disallowMouseRef,
       navigationRegistry: registryRef.current as NavigationRegistry,
+      requestNativeProbe,
     }),
-    // All members are stable refs; this value never changes identity.
+    // All members are stable refs or callbacks; the identity never changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

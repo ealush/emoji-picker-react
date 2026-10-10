@@ -3,9 +3,13 @@ import * as React from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker from '../src';
-import { useNativeEmojiSupport } from '../src/components/context/PickerContext';
+import {
+  useNativeEmojiSupport,
+  useRequestNativeProbe,
+} from '../src/components/context/PickerContext';
 import { List, Root, Viewport } from '../src/primitives';
 import { NavigationRegistry } from '../src/state/navigationRegistry';
+import { isNearViewport } from '../src/virtualization/virtualizationHelpers';
 import {
   __resetNativeEmojiSupportForTest,
   detectNativeEmojiSupport,
@@ -88,6 +92,28 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+// jsdom has no layout, so the grid itself requests nothing here; these
+// ask for exact checks the way it does for cells near the viewport.
+const MELTING_FAMILY = ['1fae0', '1fae2'];
+const PINK_HEART = ['1fa77'];
+
+function Request({ ids }: { ids: string[] }) {
+  const request = useRequestNativeProbe();
+  React.useEffect(() => request(ids), [request, ids]);
+  return null;
+}
+
+function Picker({ children }: { children: React.ReactNode }) {
+  return (
+    <Root style={{ height: 400 }}>
+      <Viewport>
+        <List />
+      </Viewport>
+      {children}
+    </Root>
+  );
+}
+
 describe('native emoji support detection', () => {
   it('checks individual glyphs rather than inferring version-wide support', () => {
     installFakeCanvas(
@@ -108,30 +134,35 @@ describe('native emoji support detection', () => {
     expect(view('1f970')).toBeUndefined();
   });
 
-  it('keeps the full sequence check off the mount path', async () => {
-    const drawn: string[] = [];
+  it('checks only the glyphs it is asked about, after paint', async () => {
+    const drawn = new Set<string>();
     installFakeCanvas((text) => {
-      drawn.push(text);
+      drawn.add(text);
       return text !== '\u{1FAE2}';
     });
-    const { container } = render(<EmojiPicker />);
+    const { container } = render(
+      <Picker>
+        <Request ids={MELTING_FAMILY} />
+      </Picker>,
+    );
     // Before paint: a baseline, version samples and a flag only.
-    expect(new Set(drawn).size).toBeLessThan(40);
+    expect(drawn.size).toBeLessThan(40);
     // Melting face's version renders, so its sibling is predicted visible.
     expect(
       container.querySelector('[data-epr-unified="1fae2"]'),
     ).not.toBeNull();
-    // The background check then finds that one glyph missing.
+    // The requested check then finds that one glyph missing...
     await waitFor(() =>
       expect(container.querySelector('[data-epr-unified="1fae2"]')).toBeNull(),
     );
-    expect(new Set(drawn).size).toBeGreaterThan(1000);
+    // ...without drawing the rest of the inventory.
+    expect(drawn.size).toBeLessThan(60);
     expect(
       container.querySelector('[data-epr-unified="1fae0"]'),
     ).not.toBeNull();
   });
 
-  it('keeps one support snapshot when the full check confirms the prediction', async () => {
+  it('keeps one support snapshot when checks confirm the prediction', async () => {
     const drawn = new Set<string>();
     installFakeCanvas((text) => {
       drawn.add(text);
@@ -143,17 +174,14 @@ describe('native emoji support detection', () => {
       return null;
     }
     render(
-      <Root style={{ height: 400 }}>
-        <Viewport>
-          <List />
-        </Viewport>
+      <Picker>
+        <Request ids={MELTING_FAMILY} />
         <Observe />
-      </Root>,
+      </Picker>,
     );
-    await waitFor(() => expect(drawn.size).toBeGreaterThan(1000));
+    await waitFor(() => expect(drawn.has('\u{1FAE2}')).toBe(true));
     await new Promise((resolve) => setTimeout(resolve, 50));
-    // A second snapshot would rerender the grid and, through
-    // NavigationInvalidation, cancel in-flight keyboard or tab navigation.
+    // A second snapshot would rerender the whole grid for nothing.
     seen.delete(null);
     expect(seen.size).toBe(1);
   });
@@ -201,10 +229,14 @@ describe('native emoji support detection', () => {
     }
   });
 
-  it('lets a corrective background result keep pending navigation', async () => {
+  it('lets a corrective result keep pending navigation', async () => {
     installFakeCanvas((text) => text !== '\u{1FAE2}');
     const invalidate = vi.spyOn(NavigationRegistry.prototype, 'invalidate');
-    const { container } = render(<EmojiPicker />);
+    const { container } = render(
+      <Picker>
+        <Request ids={MELTING_FAMILY} />
+      </Picker>,
+    );
     await new Promise((resolve) => setTimeout(resolve, 0));
     const before = invalidate.mock.calls.length;
     // The exact check hides one glyph the version prediction showed...
@@ -222,16 +254,47 @@ describe('native emoji support detection', () => {
         text !== '\u{1FAE9}' &&
         !text.startsWith('\u{1F642}\u200D'),
     );
-    const { container } = render(<EmojiPicker />);
+    const { container } = render(
+      <Picker>
+        <Request ids={PINK_HEART} />
+      </Picker>,
+    );
     // Pink heart (15.0) is predicted hidden with its version's sample...
     expect(container.querySelector('[data-epr-unified="1fa77"]')).toBeNull();
-    // ...until its own probe shows the font draws it.
+    // ...until its own check shows the font draws it.
     await waitFor(() =>
       expect(
         container.querySelector('[data-epr-unified="1fa77"]'),
       ).not.toBeNull(),
     );
     expect(container.querySelector('[data-epr-unified="1fae8"]')).toBeNull();
+  });
+
+  it('treats only measured cells within a viewport as near', () => {
+    const dimensions = { emojiSize: 40, emojisPerRow: 8, categoryHeight: 400 };
+    const near = (top: number, scrollTop = 1000) =>
+      isNearViewport({
+        scrollTop,
+        clientHeight: 300,
+        topOffset: 0,
+        style: { top },
+        dimensions,
+      });
+    expect(near(1100)).toBe(true); // visible
+    expect(near(1550)).toBe(true); // within a viewport below
+    expect(near(700)).toBe(true); // within a viewport above
+    expect(near(1700)).toBe(false);
+    expect(near(600)).toBe(false);
+    // Unmeasured grids request nothing instead of a whole category.
+    expect(
+      isNearViewport({
+        scrollTop: 0,
+        clientHeight: 0,
+        topOffset: 0,
+        style: { top: 0 },
+        dimensions,
+      }),
+    ).toBe(false);
   });
 
   it('predicts flags and each version from its own sample', () => {

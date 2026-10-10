@@ -25,6 +25,33 @@ export function shouldVirtualize({
   return !isVisible;
 }
 
+/**
+ * Within one viewport above or below the visible rows, so glyphs are
+ * checked before a scroll in either direction reveals them. Nothing is
+ * near until the grid is measured: the first, unmeasured render would
+ * otherwise request a whole category.
+ */
+export function isNearViewport({
+  scrollTop,
+  clientHeight,
+  topOffset,
+  style,
+  dimensions,
+}: {
+  scrollTop: number;
+  clientHeight: number;
+  topOffset: number;
+  style: { top: number } | undefined;
+  dimensions: Dimensions;
+}): boolean {
+  if (!style || !dimensions || !clientHeight) return false;
+  const top = topOffset + style.top;
+  return (
+    top + dimensions.emojiSize >= scrollTop - clientHeight &&
+    top <= scrollTop + 2 * clientHeight
+  );
+}
+
 // Columns spread across the row like the category grid's own
 // `justify-content: space-between`: first column flush with the inline
 // start, last flush with the inline end, leftover width shared evenly

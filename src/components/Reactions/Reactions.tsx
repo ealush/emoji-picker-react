@@ -24,7 +24,10 @@ import {
 import { useRootScope } from '../../primitives/scope';
 import { EmojiStyle } from '../../types/exposedTypes';
 import { useReactionsRef } from '../context/ElementRefContext';
-import { useReactionsModeState } from '../context/PickerContext';
+import {
+  useReactionsModeState,
+  useRequestNativeProbe,
+} from '../context/PickerContext';
 import { usePickerDataContext } from '../context/PickerDataContext';
 import { ClickableEmoji } from '../emoji/Emoji';
 
@@ -57,6 +60,11 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
   const { emojiByUnified } = usePickerDataContext();
   const labels = useLabels();
   const isEmojiDisallowed = useIsEmojiDisallowed();
+  const requestNativeProbe = useRequestNativeProbe();
+  // Filled while rendering: every reaction, including ones the version
+  // prediction hid, gets an exact native glyph check.
+  const shown: string[] = [];
+  React.useEffect(() => requestNativeProbe(shown));
 
   // Registered before the closed-mode early return so collapsing the full
   // picker registers the bar and expanding unregisters it.
@@ -82,6 +90,7 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
         // Emoji characters resolve like suggestedEmojis entries.
         const normalized = resolveEntryId(raw, emojiByUnified) || raw;
         const emoji = normalized ? emojiByUnified(normalized) : undefined;
+        if (emoji) shown.push(normalized);
 
         if (
           !emoji ||
@@ -115,7 +124,6 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
   );
 });
 export const Reactions = /* @__PURE__ */ React.memo(ReactionsImpl);
-
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({

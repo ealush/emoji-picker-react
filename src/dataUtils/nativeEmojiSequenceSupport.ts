@@ -105,6 +105,8 @@ export function createNativeEmojiSequenceSupport(
       if (!results.has(unified)) prime([unified]);
       return results.get(unified) as boolean | null;
     },
+    /** Whether an identity was probed (results may still be null). */
+    has: (unified: string): boolean => results.has(unified),
     /** Frozen results so far. Unprobed identities read as undefined. */
     snapshot(): (unified: string) => boolean | null | undefined {
       const frozen = new Map(results);

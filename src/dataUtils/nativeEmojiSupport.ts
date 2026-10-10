@@ -14,10 +14,11 @@ import { createNativeEmojiSequenceSupport } from './nativeEmojiSequenceSupport';
 // Detection runs in two phases so it never stalls the first paint.
 // Drawing every sequence costs 0.2-0.8 s of main-thread time, depending
 // on the browser and font, so before paint the picker samples one glyph
-// per emoji version and a country flag, and predicts from that. Every
-// rendered sequence (skin tones and flag tags included) is then checked in
-// cached pixel batches between tasks. Exact results replace predictions:
-// one version sample cannot prove font coverage.
+// per emoji version and a country flag, and predicts from that. Sequences
+// about to be shown (cells near the viewport, their skin tones and the
+// reactions) are then checked exactly in cached pixel batches between
+// tasks. Exact results replace predictions: one version sample cannot
+// prove font coverage.
 
 export const DEFAULT_NATIVE_EMOJI_FONT =
   '"Segoe UI Emoji", "Segoe UI Symbol", "Segoe UI", "Apple Color Emoji", "Twemoji Mozilla", "Noto Color Emoji", "EmojiOne Color", "Android Emoji"';
@@ -26,7 +27,9 @@ const BASELINE_EMOJI = '\u{1F600}'; // grinning face (Emoji 1.0)
 
 const FLAG_SAMPLE = '1f1fa-1f1f8'; // regional indicators U + S
 
-type NativeEmojiProbe = ReturnType<typeof createNativeEmojiSequenceSupport>;
+export type NativeEmojiProbe = ReturnType<
+  typeof createNativeEmojiSequenceSupport
+>;
 
 /**
  * Platform support as filtering reads it. `supports` returns a probed

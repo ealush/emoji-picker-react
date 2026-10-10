@@ -2,7 +2,10 @@ import { ReactNode, useEffect } from 'react';
 import * as React from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { useActiveSkinToneState } from '../components/context/PickerContext';
+import {
+  useActiveSkinToneState,
+  useRequestNativeProbe,
+} from '../components/context/PickerContext';
 import { ClickableEmoji } from '../components/emoji/Emoji';
 import {
   useEmojiStyleConfig,
@@ -11,9 +14,10 @@ import {
   useSkinTonesDisabledConfig,
 } from '../config/useConfig';
 import { DataEmojis } from '../dataUtils/DataTypes';
-import { emojiUnified } from '../dataUtils/emojiUtils';
+import { emojiUnified, emojiVariations } from '../dataUtils/emojiUtils';
 import {
   getEmojiPositionStyle,
+  isNearViewport,
   shouldVirtualize,
 } from '../virtualization/virtualizationHelpers';
 
@@ -43,6 +47,10 @@ export function useEmojiVirtualization({
   const getEmojiUrl = useGetEmojiUrlConfig();
   const showVariations = !useSkinTonesDisabledConfig();
   const BodyRef = useBodyRef();
+  const requestNativeProbe = useRequestNativeProbe();
+  // Native glyphs checked exactly before they are shown: cells within a
+  // viewport of the visible rows, with the tones a long press reveals.
+  const probe: string[] = [];
 
   let virtualizedCounter = 0;
 
@@ -84,9 +92,15 @@ export function useEmojiVirtualization({
       dimensions,
     });
 
+  const clientHeight = BodyRef.current?.clientHeight ?? 0;
   const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
     const unified = emojiUnified(emoji, activeSkinTone);
     const style = getEmojiPositionStyle(dimensions, index);
+    if (
+      isNearViewport({ scrollTop, clientHeight, topOffset, style, dimensions })
+    ) {
+      probe.push(unified, ...emojiVariations(emoji));
+    }
 
     if (isVirtualized(style)) {
       virtualizedCounter++;
@@ -129,6 +143,9 @@ export function useEmojiVirtualization({
     );
     return accumulator;
   }, [] as ReactNode[]);
+
+  // Every commit: requests for already-checked glyphs are free.
+  useEffect(() => requestNativeProbe(probe));
 
   return {
     virtualizedCounter,

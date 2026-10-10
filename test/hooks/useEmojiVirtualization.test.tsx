@@ -7,6 +7,7 @@ import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import {
   getEmojiPositionStyle,
+  isNearViewport,
   shouldVirtualize,
 } from '../../src/virtualization/virtualizationHelpers';
 
@@ -15,8 +16,10 @@ vi.mock('../../src/components/context/ElementRefContext', () => ({
   useBodyRef: vi.fn(() => ({ current: { clientHeight: 300 } })),
 }));
 
+const requestNativeProbe = vi.fn();
 vi.mock('../../src/components/context/PickerContext', () => ({
   useActiveSkinToneState: vi.fn(() => ['neutral']),
+  useRequestNativeProbe: () => requestNativeProbe,
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
@@ -52,6 +55,7 @@ vi.mock('../../src/hooks/preloadEmoji', () => ({
 
 vi.mock('../../src/virtualization/virtualizationHelpers', () => ({
   getEmojiPositionStyle: vi.fn(() => ({ top: 0, insetInlineStart: 0 })),
+  isNearViewport: vi.fn(() => true),
   shouldVirtualize: vi.fn(() => false),
 }));
 
@@ -78,8 +82,12 @@ describe('useEmojiVirtualization', () => {
     // ... (other mocks) ...
 
     // Virtualization mocks
-    (getEmojiPositionStyle as any).mockReturnValue({ top: 0, insetInlineStart: 0 });
+    (getEmojiPositionStyle as any).mockReturnValue({
+      top: 0,
+      insetInlineStart: 0,
+    });
     (shouldVirtualize as any).mockReturnValue(false);
+    (isNearViewport as any).mockReturnValue(true);
   });
 
   it('virtualizes emojis that are not in view', () => {
@@ -113,5 +121,35 @@ describe('useEmojiVirtualization', () => {
 
     expect(result.current.virtualizedCounter).toBe(3); // All 3 virtualized
     expect(result.current.emojis.length).toBe(0);
+  });
+
+  it('requests native glyph checks for near cells and their tones only', () => {
+    const emojis: DataEmojis = [
+      { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fb'] },
+      { n: ['cat'], u: '1f431', a: '0.6' },
+    ];
+    // The second cell is far from the viewport (e.g. virtualized).
+    (isNearViewport as any).mockImplementation(
+      ({ style }: { style: { top: number } }) => style.top === 0,
+    );
+    (getEmojiPositionStyle as any).mockImplementation(
+      (_: unknown, index: number) => ({
+        top: index * 1000,
+        insetInlineStart: 0,
+      }),
+    );
+    renderHook(() =>
+      useEmojiVirtualization({
+        categoryEmojis: emojis,
+        topOffset: 0,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+      }),
+    );
+    expect(requestNativeProbe).toHaveBeenLastCalledWith([
+      '1f44d',
+      '1f44d-1f3fb',
+    ]);
   });
 });
