@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 # Never let a manual run and the schedule push competing data commits.
 concurrency:
@@ -64,9 +65,7 @@ jobs:
 
       # Only the dataset sources and the dependency update are committed;
       # dist and other build outputs stay out of git. The chore(data) scope
-      # maps to a patch release via releaseRules in .releaserc.json. A push
-      # made with GITHUB_TOKEN does not trigger other workflows, and
-      # publishing stays an explicit Release workflow dispatch.
+      # maps to a patch release via releaseRules in .releaserc.json.
       - name: Commit the data update
         if: steps.data.outputs.changed == 'true'
         run: |
@@ -75,3 +74,11 @@ jobs:
           git add package.json package-lock.json src/data
           git commit -m "chore(data): weekly emoji data update"
           git push origin HEAD:master
+
+      # A push made with GITHUB_TOKEN does not trigger other workflows, so
+      # dispatch the Release workflow explicitly (dispatches do run).
+      - name: Release the data update
+        if: steps.data.outputs.changed == 'true'
+        run: gh workflow run release.yml --ref master
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

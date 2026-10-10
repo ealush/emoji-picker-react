@@ -171,6 +171,8 @@ Before you get started, make sure you have the following requirements in place:
 
 6. Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`); semantic-release derives the version and changelog from them. A breaking change needs a `!` (`feat!:`) or a `BREAKING CHANGE:` footer.
 
+7. Releases are automatic. When the `tests` workflow passes on a push to `master`, the `Release` workflow runs semantic-release, publishes to npm, writes the changelog and redeploys the website. The weekly emoji data job commits `chore(data)` updates and triggers a patch release the same way. Maintainers can also run `Release` manually from the Actions tab.
+
 #### Repository map
 
 | Path | What lives there |

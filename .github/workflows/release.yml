@@ -1,13 +1,17 @@
 name: Release
 
+# Releases are cut from master by semantic-release (conventional commits
+# decide the version; `.releaserc.json`). The release runs only after the
+# `tests` workflow has passed for the exact commit at the tip of master, so
+# every published version has been through the full CI matrix. The weekly
+# data job dispatches this workflow itself, because its token-authored push
+# does not trigger `tests`.
 on:
+  workflow_run:
+    workflows: [tests]
+    types: [completed]
+    branches: [master]
   workflow_dispatch:
-    inputs:
-      publish:
-        description: 'Publish to npm (semantic-release decides the version)'
-        type: boolean
-        required: true
-        default: false
 
 # Avoid overlapping releases when several commits land on master at once.
 concurrency:
@@ -16,8 +20,13 @@ concurrency:
 
 jobs:
   release:
-    if: ${{ inputs.publish }}
+    # A manual or weekly-data run, or a green `tests` run for a push.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
       issues: write
@@ -25,10 +34,21 @@ jobs:
       id-token: write
       actions: write
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
         with:
+          ref: master
           fetch-depth: 0
+
+      # Never publish a commit the tests did not see: if master moved on,
+      # that newer commit's own tests run will trigger the release.
+      - name: Require the tested commit to be the tip of master
+        if: github.event_name == 'workflow_run'
+        run: |
+          if [ "$(git rev-parse HEAD)" != "${{ github.event.workflow_run.head_sha }}" ]; then
+            echo "master moved past the tested commit; its own run will release."
+            exit 1
+          fi
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -48,6 +68,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # A manual or data-triggered run has no preceding `tests` run: apply
+      # the gates that decide whether a package is publishable.
+      - name: Verify the package
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          npm test
+          npm run check:compat
+          npm run size
+          npm run check:package
+
       - name: Release
         run: npx semantic-release
         env:
@@ -56,8 +86,8 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # The version commit is [skip ci], so the website would keep the
-      # previous package version (and, before 5.0.0, its "v5 preview"
-      # notices). A workflow dispatched with GITHUB_TOKEN does run.
+      # previous package version. A workflow dispatched with GITHUB_TOKEN
+      # does run.
       - name: Redeploy the website with the released version
         run: gh workflow run website.yml --ref master
         env:

@@ -1,10 +1,20 @@
 name: tests
 
+# The `Release` workflow runs after this one succeeds on master; keep the
+# workflow name in sync with its `workflow_run` trigger.
 on:
   pull_request:
   push:
     branches:
       - master
+
+permissions:
+  contents: read
+
+# A newer push to the same PR or branch supersedes a running one.
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
   unit:
@@ -45,7 +55,9 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps
+      - run: npx playwright install --with-deps chromium
+      # Includes the real-consumer integrations in stories/consumers/
+      # (playwright/consumer-integrations.spec.ts).
       - run: npm run test:visual
       # Actual/diff images let environment drift be adjudicated from the CI
       # image itself.
@@ -55,31 +67,6 @@ jobs:
         with:
           name: visual-evidence
           path: test-results/
-          retention-days: 14
-
-  # Real-consumer visual integrations: drives every runnable fixture in
-  # stories/consumers/ through open/search/select flows and compares the
-  # committed baselines in playwright/consumer-integrations.spec.ts-snapshots.
-  consumer-visual:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps
-      - run: npx playwright test consumer-integrations
-      - name: Upload failure evidence
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: consumer-visual-evidence
-          path: |
-            test-results/
-            playwright/consumer-integrations.spec.ts-snapshots/*-actual.png
-            playwright/consumer-integrations.spec.ts-snapshots/*-diff.png
           retention-days: 14
 
   # Packaging gates: the build (including the entries build with its
