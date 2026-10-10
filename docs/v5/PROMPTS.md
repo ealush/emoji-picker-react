@@ -5,11 +5,10 @@ leave them blank to use your application's existing conventions. Attach a
 screenshot or selected recipe's implementation files when asking for a design.
 Each prompt includes version discovery so it also works in an existing project.
 
-The v5 APIs below require a verified v5 release or an explicitly supplied local
-v5 build. A 4.x installation does not provide primitives, `unstyled`, `columns`,
-`components`, `labels` or loader `emojiData`. Read the installed `llms-full.txt`
-when available; it describes that installed version. Repository examples can
-preview unreleased work. Do not assume `npm latest` contains v5.
+The prompts target emoji-picker-react 5. A 4.x installation does not provide
+primitives, `unstyled`, `columns`, `components`, `labels` or loader
+`emojiData`, so each prompt checks the installed version first. The installed
+package's `llms-full.txt` describes that exact version.
 
 ## Quick setup
 
@@ -19,10 +18,9 @@ Use this when you want a working picker with its built-in appearance.
 Integrate emoji-picker-react into this application's emoji entry flow.
 
 Inspect package.json, the lockfile, the resolved package version and exports,
-and the installed llms-full.txt when available. Use the existing package
-manager and framework conventions. Target a verified v5 release or the local
-v5 build supplied for this project; if neither is available, explain what is
-available before using v5 APIs.
+and the installed llms-full.txt. Use the existing package manager and
+framework conventions. If the installed version is below 5, upgrade to
+emoji-picker-react@5 (or explain why you cannot) before using v5 APIs.
 
 Start with the default EmojiPicker component. It needs no stylesheet import
 or primitives. Prefer colorScheme="auto" for v5. Connect onEmojiClick's data
@@ -50,8 +48,8 @@ Customize this application's emoji-picker-react to match:
 [brand colors, typography, light/dark requirements, or attached screenshot]
 
 Inspect the installed version, exports and matching llms-full.txt before
-choosing APIs. Use a verified v5 release or supplied local v5 build for v5
-features. Preserve the existing integration, callbacks and state ownership.
+choosing APIs; v5 features need emoji-picker-react 5 or later. Preserve the
+existing integration, callbacks and state ownership.
 
 Keep the default EmojiPicker and theme its built-in appearance using a scoped
 className and documented --epr-* variables. Use this application's existing
@@ -82,7 +80,7 @@ Build an emoji picker matching [design or attached screenshot] using
 
 Inspect the installed emoji-picker-react version, exports and llms-full.txt,
 and the styling library's installed version and existing configuration. Use
-verified v5 APIs and real library APIs. Include any necessary setup changes.
+documented v5 APIs and real library APIs. Include any necessary setup changes.
 
 Choose the smallest supported approach: theme EmojiPicker for its existing
 look, use EmojiPicker unstyled for its supplied layout with my appearance, or
@@ -120,7 +118,7 @@ Integration target: [composer, comment field, status dialog, or other surface]
 Read the attached source and inspect the application's installed versions,
 package exports and matching llms-full.txt. Keep the recipe's actual picker
 composition, interaction behavior and styling in the selected library. Use
-verified v5 APIs. If the supplied files do not include the requested variant,
+documented v5 APIs. If the supplied files do not include the requested variant,
 identify that gap and implement it using the installed styling library's APIs.
 
 Replace mock application chrome and state with our real components and data.
@@ -145,9 +143,8 @@ Produce a file-specific plan before making implementation changes.
 
 Inventory picker imports, resolved versions, props, callbacks, controlled
 state, locale datasets, custom emojis, CSS selectors and interaction tests.
-Read documentation matching the proposed v5 target, its installed/package
-llms-full.txt when available, and its migration/API compatibility contract.
-Verify the target release or supplied local build actually exists.
+Read documentation matching the v5 target version, its package
+llms-full.txt, and its migration/API compatibility contract.
 
 Separate required compatibility work from optional adoption of new features.
 Keep the default EmojiPicker where it already meets our needs. Existing enums,
@@ -173,8 +170,8 @@ Use this after choosing a target and reviewing the audit. State whether you
 want to keep the previous image appearance or adopt native emoji rendering.
 
 ```text
-Migrate this application to the verified emoji-picker-react v5 target:
-[target release or supplied local build]
+Migrate this application to emoji-picker-react v5:
+[target version, e.g. latest 5.x]
 Appearance policy: [retain Apple images / adopt native emoji rendering]
 Approved audit or requirements: [attach or describe]
 

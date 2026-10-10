@@ -170,7 +170,7 @@ The library still owns navigation, accessibility semantics, virtualization, vari
 
 ## Package subpaths
 
-v4 documentation currently uses deep locale imports such as:
+v4's documentation used deep locale imports such as:
 
 ```ts
 import es from 'emoji-picker-react/dist/data/emojis-es';
@@ -252,7 +252,7 @@ is still called with `"apple"` as the style.
 
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
 
-v5 also removes the current fixed document-global ARIA IDs. Initial v5 does not replace them with generated IDs or an `idPrefix` API; the initial implementation is required to avoid library-owned DOM IDs entirely.
+v5 also removes v4's fixed, document-global IDs (`epr-search-id`, `epr-category-nav-id`), which collided when a page rendered two pickers. The picker renders no library-owned DOM IDs and has no `idPrefix` API. Tests or styles that targeted those IDs should use roles or `[data-epr-part]` selectors (`search-input`, `category-nav`).
 
 See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 

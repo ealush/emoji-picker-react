@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 // Generates the LLM-facing documentation (https://llmstxt.org):
 //   llms.txt       a concise index: what the library is, when to choose it,
 //                  key facts, the export index of every entry (read from the

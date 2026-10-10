@@ -35,8 +35,8 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 
 | Prop                    | Type                                                     | Description                                                                        |
 | ----------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `onEmojiClick`          | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks an emoji.                                    |
-| `onReactionClick`       | `(emojiData: EmojiClickData, event: MouseEvent) => void` | Callback triggered when a user clicks a reaction (in reaction mode).               |
+| `onEmojiClick`          | `(emojiData: EmojiClickData, event: MouseEvent, api: OnEmojiClickApi) => void` | Called when the user selects an emoji (click, or Enter/Space on a focused emoji). `api.collapseToReactions()` returns to the reactions bar. |
+| `onReactionClick`       | `(emojiData: EmojiClickData, event: MouseEvent, api: OnEmojiClickApi) => void` | Called when the user selects a reaction in reactions mode.                          |
 | `onSkinToneChange`      | `(skinTone: SkinTones) => void`                          | Callback triggered when the user selects a new skin tone.                          |
 | `onSearchChange`        | `(value: string) => void`                                | Emitted synchronously with each user search edit (committed, or proposed when `searchValue` is controlled). |
 | `onReactionsModeChange` | `(reactionsOpen: boolean) => void`                       | Callback triggered when the picker transitions between reactions mode and the full picker. |
@@ -51,7 +51,7 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `searchClearButtonLabel` | `string`                 | `"Clear"`                 | Aria label for the search clear button.                              |
 | `searchValue`            | `string`                 | `undefined`               | Controlled search value (raw text). User edits emit `onSearchChange` proposals; the parent decides what is accepted. |
 | `defaultSearchValue`     | `string`                 | `undefined`               | Uncontrolled initial search value, read once per mounted lifetime.   |
-| `categories`             | `CategoryConfig[]`       | _(All)_                   | Array of category objects to customize order or visibility.          |
+| `categories`             | `(Categories \| CategoryConfig)[]` | _(All)_         | Categories to show, in order: `Categories` values or `{ category, name, icon?, group? }` objects. |
 | `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
 | `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order (unified or custom IDs). While present, `suggestedEmojisMode` is ignored for contents. |
 | `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |

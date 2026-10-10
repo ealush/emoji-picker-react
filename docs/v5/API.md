@@ -21,7 +21,7 @@ Consumers do not need primitives to upgrade to v5.
 
 ## 2. Additions to the default picker
 
-Initial v5 adds:
+v5 adds:
 
 ```ts
 type EmojiPickerV5Additions = {
@@ -104,7 +104,7 @@ If Search is omitted, built-in type-to-search behaves like `searchDisabled`, whi
 
 ## 5. Search accessibility label
 
-The current hard-coded English input label becomes configurable:
+The search input's accessible label, an English constant in v4, is configurable:
 
 ```tsx
 <EmojiPicker
@@ -113,7 +113,7 @@ The current hard-coded English input label becomes configurable:
 />
 ```
 
-`searchLabel` defaults to the current English accessible label, preserving plug-and-play behavior.
+`searchLabel` defaults to the v4 English label, so plug-and-play behavior is unchanged.
 
 Primitive consumers may also supply a consumer `aria-label` through Search `inputProps`; when supplied there, that explicit primitive-level label wins for that Search instance.
 
@@ -507,7 +507,7 @@ Both the main and the primitives entry export the types a typed consumer needs w
 
 ## 13. Locale imports
 
-v4 documentation currently uses:
+v4's documentation used:
 
 ```ts
 import es from 'emoji-picker-react/dist/data/emojis-es';

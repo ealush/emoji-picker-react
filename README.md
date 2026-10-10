@@ -36,13 +36,13 @@ Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5
 to give a coding agent a concrete starting point for your application. Each
 prompt checks the installed version and keeps integration behavior explicit.
 
-Requires **Node 18 or later** in the consuming toolchain and **React 16.8 or later**. Repository contributors use **Node 24.15 or later in the 24.x line**, matching CI; development tools have newer requirements than the published library.
-
 ## Quick start (batteries included)
 
 ```bash
 npm install emoji-picker-react
 ```
+
+Requires **React 16.8 or later** and **Node 18 or later** in your build toolchain. (Contributors to this repository use Node 24; see [CONTRIBUTING.md](CONTRIBUTING.md).)
 
 ```jsx
 import EmojiPicker from 'emoji-picker-react';
@@ -332,6 +332,8 @@ searchEmojis('sourire', { emojiData: fr }); // locale dataset
 getEmojiByUnified('1f600'); // { unified: '1f600', emoji: '😀', name: 'grinning face', names, variations, addedIn }
 ```
 
+Both work without React (including in Server Components) and return immutable records. Results follow dataset order and skip picker-only filters such as `hiddenEmojis`, `emojiVersion` and custom emojis. See the [data API contract](docs/v5/DATA_API.md).
+
 ## Internationalization
 
 28 emoji datasets ship with the package. Import one and pass it as `emojiData`; translate the remaining UI strings with `labels`. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
@@ -403,25 +405,3 @@ Building complex forms? Check out [**Vest**](https://vestjs.dev) — a validatio
 Contributions are welcome — see the [Contributing Guide](https://github.com/ealush/emoji-picker-react/blob/master/CONTRIBUTING.md).
 
 Design inspiration by [Pavel Bolo](https://pavelbolo.com).
-
-## Data-only search and lookup
-
-```ts
-import { getEmojiByUnified, searchEmojis } from 'emoji-picker-react/data';
-
-const matches = searchEmojis('smile');
-const emoji = getEmojiByUnified('1F600');
-```
-
-These functions work without React and return immutable normalized records.
-Pass `{ emojiData }` to search or look up names in a supplied locale dataset.
-Search results follow dataset order and do not apply picker-specific display
-filters or custom emojis. See the [data API contract](docs/v5/DATA_API.md).
-
-## Compose your own picker
-
-Import managed parts and state/action hooks from `emoji-picker-react/primitives`.
-`Root` renders exactly the parts you supply: omit a part to omit its UI, and
-place `SkinTone` explicitly wherever it belongs. See the
-[primitives guide](docs/v5/PRIMITIVES.md) for working composition, styling,
-controlled-state and default-picker compatibility rules.

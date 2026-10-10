@@ -378,7 +378,7 @@ export type MouseDownEvent = (
   event: MouseEvent,
   api?: OnEmojiClickApi,
 ) => void;
-export type OnSkinToneChange = (emoji: SkinTones) => void;
+export type OnSkinToneChange = (skinTone: SkinTones) => void;
 
 /** The `onEmojiClick` / `onReactionClick` callback signature. */
 export type EmojiClickHandler = MouseDownEvent;

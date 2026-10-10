@@ -51,8 +51,8 @@ export function EmojiList({
   // role="grid" makes screen readers switch out of virtual-cursor mode so
   // arrow keys reach the picker's keyboard handler. Each category is one
   // rowgroup: visual rows shift under virtualization, so the category is
-  // the only stable row unit. Emoji buttons intentionally keep their
-  // native button role for activation semantics.
+  // the only stable row unit. Emoji buttons are gridcells; as native
+  // buttons they still activate with Enter and Space.
   // https://github.com/ealush/emoji-picker-react/issues/508
   // The list markup is kept for a backwards-compatible DOM structure;
   // the grid role override is intentional.

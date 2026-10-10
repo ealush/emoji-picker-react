@@ -59,11 +59,15 @@ export type RootProps = Omit<
     colorScheme?: ThemeValue;
   };
 
+/**
+ * Children are trailing controls, e.g. <SkinTone />; nothing is inserted
+ * automatically.
+ */
 export type SearchProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
   'role' | 'dangerouslySetInnerHTML'
 > & {
-  /** Trailing controls, e.g. <SkinTone />. Nothing is inserted automatically. */
+  /** Native attributes for the managed input; Root owns its value. */
   inputProps?: Omit<
     React.InputHTMLAttributes<HTMLInputElement>,
     | 'type'
