@@ -35,7 +35,8 @@ type NativeEmojiProbe = ReturnType<typeof createNativeEmojiSequenceSupport>;
  */
 export type NativeEmojiSupport = {
   supports: (unified: string) => boolean | null | undefined;
-  maxVersion: number;
+  /** Emoji versions whose sample the font cannot draw. */
+  failedVersions: Set<number>;
   countryFlags: boolean;
 };
 
@@ -78,7 +79,7 @@ export function detectNativeEmojiSupport(
 
 /**
  * Whether a rendered identity should show. An exact result wins; until
- * one exists, flags and emojis newer than the sampled version are
+ * one exists, flags and emojis of a version whose sample failed are
  * predicted unsupported. `addedIn` is the emoji's version, when known.
  */
 export function isNativeEmojiSupported(
@@ -91,7 +92,7 @@ export function isNativeEmojiSupported(
     ? exact
     : !support ||
         !(
-          addedIn > support.maxVersion ||
+          support.failedVersions.has(addedIn) ||
           (!support.countryFlags && isCountryFlagUnified(unified))
         );
 }
@@ -100,21 +101,22 @@ export function isNativeEmojiSupported(
 /**
  * The picker's view of a probe: frozen results, never drawing, plus a
  * prediction for identities not checked yet. `samples` maps each emoji
- * version to one emoji introduced in it.
+ * version to one emoji introduced in it. Versions are judged one by one:
+ * fonts often draw a newer version's single glyphs but not an older
+ * version's sequences.
  */
 export function nativeSupportSnapshot(
   probe: NativeEmojiProbe,
   samples: Map<number, string>,
 ): NativeEmojiSupport {
   probe.prime([FLAG_SAMPLE, ...samples.values()]);
-  // Every platform that draws color emoji at all covers Emoji 5.
-  let maxVersion = 5;
+  const failedVersions = new Set<number>();
   samples.forEach((unified, version) => {
-    if (version > maxVersion && probe.supports(unified)) maxVersion = version;
+    if (probe.supports(unified) === false) failedVersions.add(version);
   });
   return {
     supports: probe.snapshot(),
-    maxVersion,
+    failedVersions,
     // Only a definite failure predicts missing flags.
     countryFlags: probe.supports(FLAG_SAMPLE) !== false,
   };

@@ -172,7 +172,7 @@ Detection is heuristic, not a browser-provided glyph-coverage guarantee. It comp
 
 Results are cached per document, font and sequence. Bounded canvas batches share pixel readbacks; later pickers on the same page reuse cached results without probing again. A flag polyfill font can be supplied through `--epr-emoji-font-family`; detection measures that same font.
 
-Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also refreshes after webfonts finish loading.
+Detection follows font changes selected by attributes on Root or its ancestors (including `class`, `style`, and `data-theme`), even when those fonts are already loaded. It also re-checks in the background after webfonts finish loading, keeping the current results on screen until the new ones are ready.
 
 ## 6. Observe reactions/full-picker mode
 

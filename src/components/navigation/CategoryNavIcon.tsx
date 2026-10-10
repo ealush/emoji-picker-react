@@ -18,31 +18,31 @@ const COLUMNS: Record<string, number> = {
   custom: 9,
 };
 
+// Shared paint for filled shapes.
+const THIN_FILL = {
+  fill: 'currentColor',
+  strokeWidth: '0.1',
+  strokeMiterlimit: '10',
+} as const;
+const SOLID = { fill: 'currentColor', stroke: 'none' } as const;
+
 const SHAPES: Record<number, React.ReactNode> = {
   0: (
     <>
       <path
-        fill="currentColor"
-        strokeWidth="0.1"
-        strokeMiterlimit="10"
+        {...THIN_FILL}
         d="M12.8,9.5c.6,0,1.1-.5,1.1-1.2c0-.6-.5-1.1-1.1-1.1c-.6,0-1.2,.5-1.2,1.1S12.2,9.5,12.8,9.5zM12.8,7.9c.2,0,.4,.2,.4,.4c0,.2-.2,.4-.4,.4c-.2,0-.4-.2-.4-.4C12.4,8.1,12.6,7.9,12.8,7.9z"
       />
       <path
-        fill="currentColor"
-        strokeWidth="0.1"
-        strokeMiterlimit="10"
+        {...THIN_FILL}
         d="M7.2,9.5c.6,0,1.2-.5,1.2-1.2c0-.6-.5-1.1-1.2-1.1c-.6,0-1.1,.5-1.1,1.1S6.6,9.5,7.2,9.5zM7.2,7.9c.2,0,.4,.2,.4,.4c0,.2-.2,.4-.4,.4C7,8.7,6.8,8.5,6.8,8.3C6.8,8.1,7,7.9,7.2,7.9z"
       />
       <path
-        fill="currentColor"
-        strokeWidth="0.1"
-        strokeMiterlimit="10"
+        {...THIN_FILL}
         d="M14.6,11.2c-.1-.1-.2-.2-.3-.2H5.7c-.1,0-.2,.1-.3,.2c-.1,.1-.1,.2,0,.4c.7,2,2.5,3.3,4.6,3.3s3.9-1.3,4.6-3.3C14.7,11.4,14.7,11.3,14.6,11.2zM10,14.1c-1.6,0-3-.9-3.7-2.2h7.3C13,13.2,11.6,14.1,10,14.1z"
       />
       <path
-        fill="currentColor"
-        strokeWidth="0.1"
-        strokeMiterlimit="10"
+        {...THIN_FILL}
         d="M10,3c-3.8,0-7,3.1-7,7s3.1,7,7,7s7-3.1,7-7S13.8,3,10,3zM10,16.2c-3.4,0-6.2-2.8-6.2-6.2S6.6,3.8,10,3.8s6.2,2.8,6.2,6.2S13.4,16.2,10,16.2z"
       />
     </>
@@ -62,22 +62,8 @@ const SHAPES: Record<number, React.ReactNode> = {
         d="M29.5,12.4L29,11.7c-.2-.3,0-.6,.3-.6h1.4c.3,0,.5,.4,.3,.6l-.7,1l0,0c-.7,1.2-2.6,1.1-3.1-.3l-.1-.2c-.1-.2,0-.4,.2-.5s.4,0,.5,.2l.1,.2C28.3,12.7,29.1,12.9,29.5,12.4z"
       />
       <path strokeLinecap="round" d="M32.4,12.1l-.1,.2c-.4,1-1.8,1.1-2.3,.2" />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="27.6"
-        cy="9.7"
-        rx="0.7"
-        ry="0.7"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="32.4"
-        cy="9.7"
-        rx="0.7"
-        ry="0.7"
-      />
+      <ellipse {...SOLID} cx="27.6" cy="9.7" rx="0.7" ry="0.7" />
+      <ellipse {...SOLID} cx="32.4" cy="9.7" rx="0.7" ry="0.7" />
     </>
   ),
   2: (
@@ -99,46 +85,11 @@ const SHAPES: Record<number, React.ReactNode> = {
         strokeLinecap="round"
         d="M43.5,13.3c0,.5,.6,2.4,1.3,2.6c1.8,.8,5.7,.7,8.1,.5c1.3-.1,2.5-.7,3.2-1.8c.3-.5,.5-1,.5-1.4"
       />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="51.6"
-        cy="6.5"
-        rx="0.3"
-        ry="0.4"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="53"
-        cy="4.9"
-        rx="0.3"
-        ry="0.4"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="53"
-        cy="7.2"
-        rx="0.3"
-        ry="0.4"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="54.3"
-        cy="6.5"
-        rx="0.3"
-        ry="0.4"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="50.9"
-        cy="4.9"
-        rx="0.3"
-        ry="0.4"
-      />
+      <ellipse {...SOLID} cx="51.6" cy="6.5" rx="0.3" ry="0.4" />
+      <ellipse {...SOLID} cx="53" cy="4.9" rx="0.3" ry="0.4" />
+      <ellipse {...SOLID} cx="53" cy="7.2" rx="0.3" ry="0.4" />
+      <ellipse {...SOLID} cx="54.3" cy="6.5" rx="0.3" ry="0.4" />
+      <ellipse {...SOLID} cx="50.9" cy="4.9" rx="0.3" ry="0.4" />
     </>
   ),
   3: (
@@ -147,22 +98,8 @@ const SHAPES: Record<number, React.ReactNode> = {
       <path d="M73.5,13.4h2.4c.2,0,.4,.2,.4,.4v2.1c0,.2-.2,.4-.4,.4h-2.4c-.2,0-.4-.2-.4-.4l0-2.1C73.1,13.6,73.3,13.4,73.5,13.4z" />
       <path fill="none" stroke="currentColor" d="M63.7,8.4h12.6v5H63.7V8.4z" />
       <path d="M65.5,3.6h8.9c1,0,1.9,.8,1.9,1.9v3.1H63.7V5.5C63.7,4.4,64.5,3.6,65.5,3.6z" />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="66.2"
-        cy="10.9"
-        rx="0.9"
-        ry="0.9"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="73.8"
-        cy="10.9"
-        rx="0.9"
-        ry="0.9"
-      />
+      <ellipse {...SOLID} cx="66.2" cy="10.9" rx="0.9" ry="0.9" />
+      <ellipse {...SOLID} cx="73.8" cy="10.9" rx="0.9" ry="0.9" />
     </>
   ),
   4: (
@@ -203,13 +140,11 @@ const SHAPES: Record<number, React.ReactNode> = {
   8: (
     <>
       <path
-        fill="currentColor"
-        stroke="none"
+        {...SOLID}
         d="M170.8,3.1L170.8,3.1c-.3,0-.5,0-.8,0c-2.1,0-4,1-5.3,2.5l-.1,0l-.1-.1l-1-1.2l-.3,3.4l3.4,.3l-1.1-1.3l-.1-.1l.1-.1c1.1-1.4,3-2.3,5-2.1l0,0c3.2,.3,5.5,3.1,5.2,6.3c-.3,3-3.1,5.3-6.1,5.1c-3.1-.2-5.4-2.9-5.3-6L163,9.5c-.2,3.8,2.6,7.1,6.3,7.4c3.9,.4,7.3-2.6,7.6-6.5C177.2,6.8,174.4,3.5,170.8,3.1z"
       />
       <path
-        fill="currentColor"
-        stroke="none"
+        {...SOLID}
         d="M170.3,7.4c0-.3-.3-.6-.6-.6S169,7.1,169,7.4v3.2c0,.2,.1,.3,.2,.4c.1,.1,.3,.2,.4,.2h2.4c.4,0,.6-.3,.6-.6s-.3-.6-.6-.6h-1.6h-.2V9.8L170.3,7.4L170.3,7.4z"
       />
     </>
@@ -217,22 +152,8 @@ const SHAPES: Record<number, React.ReactNode> = {
   9: (
     <>
       <path d="M186.2,3.4h7.7c1.5,0,2.7,1.2,2.7,2.7v7.7c0,1.5-1.2,2.7-2.7,2.7h-7.7c-1.5,0-2.7-1.2-2.7-2.7V6.1C183.4,4.6,184.7,3.4,186.2,3.4z" />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="186"
-        cy="8.9"
-        rx="0.7"
-        ry="0.7"
-      />
-      <ellipse
-        fill="currentColor"
-        stroke="none"
-        cx="194"
-        cy="6.7"
-        rx="0.7"
-        ry="0.7"
-      />
+      <ellipse {...SOLID} cx="186" cy="8.9" rx="0.7" ry="0.7" />
+      <ellipse {...SOLID} cx="194" cy="6.7" rx="0.7" ry="0.7" />
       <path
         strokeLinecap="round"
         d="M186,13.3l.4-.3c.4-.3,1-.3,1.5-.1l1,.4c.5,.2,1,.2,1.5-.1l.8-.5c.4-.3,1-.3,1.5-.1l1.8,.8"

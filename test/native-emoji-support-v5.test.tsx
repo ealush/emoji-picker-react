@@ -157,6 +157,49 @@ describe('native emoji support detection', () => {
     expect(seen.size).toBe(1);
   });
 
+  it('keeps its snapshot when a webfont load changes no result', async () => {
+    let probes = 0;
+    installFakeCanvas((text) => {
+      if (text === '\u{1F600}') probes += 1;
+      return true;
+    });
+    const descriptor = Object.getOwnPropertyDescriptor(document, 'fonts');
+    const fonts = new EventTarget();
+    Object.defineProperty(document, 'fonts', {
+      configurable: true,
+      value: fonts,
+    });
+    try {
+      const seen = new Set<unknown>();
+      function Observe() {
+        seen.add(useNativeEmojiSupport());
+        return null;
+      }
+      render(
+        <Root style={{ height: 400 }}>
+          <Viewport>
+            <List />
+          </Viewport>
+          <Observe />
+        </Root>,
+      );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      const before = probes;
+      act(() => {
+        fonts.dispatchEvent(new Event('loadingdone'));
+      });
+      // The refresh re-probes the font in the background...
+      await waitFor(() => expect(probes).toBeGreaterThan(before));
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      // ...and, with identical results, publishes nothing new.
+      seen.delete(null);
+      expect(seen.size).toBe(1);
+    } finally {
+      if (descriptor) Object.defineProperty(document, 'fonts', descriptor);
+      else delete (document as { fonts?: FontFaceSet }).fonts;
+    }
+  });
+
   it('shows supported glyphs newer than a failing version sample', async () => {
     installFakeCanvas(
       (text) =>
@@ -176,31 +219,37 @@ describe('native emoji support detection', () => {
     expect(container.querySelector('[data-epr-unified="1fae8"]')).toBeNull();
   });
 
-  it('predicts missing country flags before checking each flag', () => {
-    installFakeCanvas((text) => !/[\u{1F1E6}-\u{1F1FF}]/u.test(text));
+  it('predicts flags and each version from its own sample', () => {
+    // Draws the 16.0 sample but not 15.1 sequences or flags, like
+    // Firefox's bundled font misses 15.1 while drawing 16.0.
+    installFakeCanvas(
+      (text) =>
+        !/[\u{1F1E6}-\u{1F1FF}]/u.test(text) &&
+        !text.startsWith('\u{1F642}\u200D'),
+    );
     const probe = detectNativeEmojiSupport();
     if (!('snapshot' in probe)) throw new Error('expected a conclusive probe');
     const samples = new Map([
       [14, '1fae0'],
+      [15.1, '1f642-200d-2194-fe0f'],
       [16, '1fae9'],
     ]);
-    expect(nativeSupportSnapshot(probe, samples)).toMatchObject({
-      countryFlags: false,
-      maxVersion: 16,
-    });
-    const predicted = {
-      supports: () => undefined,
-      maxVersion: 14,
-      countryFlags: false,
-    };
+    const snapshot = nativeSupportSnapshot(probe, samples);
+    expect(snapshot.countryFlags).toBe(false);
+    expect(Array.from(snapshot.failedVersions)).toEqual([15.1]);
+    const predicted = { ...snapshot, supports: () => undefined };
     expect(isNativeEmojiSupported(predicted, '1f1e9-1f1ea')).toBe(false);
-    expect(isNativeEmojiSupported(predicted, '1fae8', 15)).toBe(false);
-    expect(isNativeEmojiSupported(predicted, '1fae0', 14)).toBe(true);
+    expect(
+      isNativeEmojiSupported(predicted, '1f6b6-200d-27a1-fe0f', 15.1),
+    ).toBe(false);
+    expect(isNativeEmojiSupported(predicted, '1fac6', 16)).toBe(true);
+    expect(isNativeEmojiSupported(predicted, '1fae2', 14)).toBe(true);
+    // An exact result always wins over the prediction.
     expect(
       isNativeEmojiSupported(
         { ...predicted, supports: () => true },
-        '1fae8',
-        15,
+        '1f6b6-200d-27a1-fe0f',
+        15.1,
       ),
     ).toBe(true);
     expect(isNativeEmojiSupported(null, '1fae8', 15)).toBe(true);

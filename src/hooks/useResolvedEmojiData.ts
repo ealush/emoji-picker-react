@@ -90,7 +90,7 @@ function normalize(result: EmojiData | { default: EmojiData }): EmojiData {
     !Object.values(data.categories).every(isCategory)
   ) {
     throw new Error(
-      '[emoji-picker-react] emojiData loader must resolve an EmojiData dataset or { default: EmojiData }.',
+      '[emoji-picker-react] emojiData loader must resolve a dataset or { default: dataset }.',
     );
   }
   return data as EmojiData;

@@ -207,6 +207,23 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
     });
     let previousFont: string | null = null;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let published: NativeEmojiSupport | null = null;
+    // A new snapshot rerenders the grid and cancels in-flight navigation
+    // (NavigationInvalidation), so publish only when a verdict changes.
+    const publish = (next: NativeEmojiSupport) => {
+      const current = published;
+      if (
+        current &&
+        inventory.every(
+          ([unified, version]) =>
+            isNativeEmojiSupported(next, unified, version) ===
+            isNativeEmojiSupported(current, unified, version),
+        )
+      )
+        return;
+      published = next;
+      setSnapshot([next, allEmojis]);
+    };
     const probe = (refresh = false) => {
       const customFont = view
         .getComputedStyle(root)
@@ -224,12 +241,15 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       // An inconclusive probe filters nothing, just like the initial null.
       // Avoid another synchronous full-grid render for this no-op result.
       if (!('snapshot' in detected)) {
+        published = null;
         setSnapshot(null);
         return;
       }
-      // Publish before paint: cached exact results plus the prediction.
+      // Publish before paint: cached exact results plus the prediction. A
+      // refresh after webfonts load keeps the current results on screen
+      // until the background check below has new ones.
       const predicted = nativeSupportSnapshot(detected, samples);
-      setSnapshot([predicted, allEmojis]);
+      if (!refresh) publish(predicted);
       // Then check every sequence, one canvas batch per task, so no single
       // task blocks input. Results are cached per document and font.
       const queue = inventory.filter(
@@ -237,17 +257,7 @@ function useNativeEmojiSupportState(): NativeEmojiSupport | null {
       );
       const refine = (offset: number) => {
         if (offset >= queue.length) {
-          const exact = nativeSupportSnapshot(detected, samples);
-          // Usually the prediction was right. Publishing anyway would
-          // rerender the grid and cancel in-flight navigation for nothing.
-          if (
-            queue.some(
-              ([unified, version]) =>
-                isNativeEmojiSupported(exact, unified, version) !==
-                isNativeEmojiSupported(predicted, unified, version),
-            )
-          )
-            setSnapshot([exact, allEmojis]);
+          publish(nativeSupportSnapshot(detected, samples));
           return;
         }
         detected.prime(
