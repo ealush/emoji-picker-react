@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import styles from '@/styles/DesignsSection.module.css';
 import { writeToClipboard } from '@/lib/clipboard';
+import { isV5Preview } from '@/lib/release';
 
 import { DESIGN_EXAMPLES } from './designs';
 import { GalleryStage } from './GalleryPicker';
@@ -91,7 +92,9 @@ function RecipeSource({ id }: { id: string }) {
     files &&
     [
       `Implement the emoji-picker-react v5 picker "${id}" in my application.`,
-      'First inspect my installed package version and framework. These files require v5; do not assume npm latest is v5. If v5 is unavailable, explain the required preview/local setup before changing dependencies.',
+      isV5Preview
+        ? 'First inspect my installed package version and framework. These files require v5; do not assume npm latest is v5. If v5 is unavailable, explain the required preview/local setup before changing dependencies.'
+        : 'First inspect my installed package version and framework. These files require emoji-picker-react 5 or later; upgrade it with the existing package manager if needed.',
       'Use the following actual picker files as the implementation reference. Implement ONLY the emoji picker composition they describe: the picker parts, their arrangement, and the picker/panel styles. Do not rebuild any surrounding demo UI — no chat windows, messages, toolbars, dialogs, phones, or other app chrome; none is included below. Follow README.md for CSS imports and the PickerExample className. Wire onEmojiClick to insert the chosen emoji into my app; preserve managed search, keyboard navigation, focus restoration, selection, and accessibility.',
       'This is the plain CSS implementation. If my app uses another style system, translate its appearance without inventing library APIs or changing structural behavior. Report setup steps, changed files and verification instructions.',
       ...files.map((source) => `\n--- ${source.name} ---\n${source.content}`),

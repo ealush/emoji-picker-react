@@ -1,6 +1,11 @@
 import { AxeBuilder } from '@axe-core/playwright';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+import { version } from '../package.json';
+
+// The site advertises a preview until the package itself is version 5.
+const isV5Preview = Number(version.split('.')[0]) < 5;
+
 const tabs = (page: Page) =>
   page
     .getByRole('tablist', { name: 'Custom design examples', exact: true })
@@ -296,7 +301,11 @@ test('gallery source files copy/download and report failed requests', async ({
   expect(prompt).not.toContain('--- app.css ---');
   expect(prompt).toContain('PickerExample');
   expect(prompt).not.toContain('comments-card');
-  expect(prompt).toContain('do not assume npm latest is v5');
+  expect(prompt).toContain(
+    isV5Preview
+      ? 'do not assume npm latest is v5'
+      : 'require emoji-picker-react 5 or later',
+  );
 });
 
 test('source handles invalid payloads and ignores stale clipboard feedback', async ({
