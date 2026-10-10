@@ -27,7 +27,10 @@ const THIN_FILL = {
 const SOLID = { fill: 'currentColor', stroke: 'none' } as const;
 const ROUND = { strokeLinecap: 'round' } as const;
 
-const SHAPES: Record<number, React.ReactNode> = {
+// Pure: compositions without CategoryNav must be able to drop the icons,
+// and spreading shared paint into JSX would otherwise count as a side
+// effect.
+const SHAPES: Record<number, React.ReactNode> = /* @__PURE__ */ (() => ({
   0: (
     <>
       <path
@@ -161,7 +164,7 @@ const SHAPES: Record<number, React.ReactNode> = {
       />
     </>
   ),
-};
+}))();
 
 export function CategoryNavIcon({ category }: { category: string }) {
   const column = COLUMNS[category] ?? 0;
