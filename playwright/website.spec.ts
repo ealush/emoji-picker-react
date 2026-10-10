@@ -56,8 +56,8 @@ test('initial page focus stays outside the gallery and published guidance matche
   await expect(tabs(page)).toHaveCount(0);
   await gallery(page);
   await expect(tabs(page)).toHaveCount(25);
-  await expect(
-    page.evaluate(() =>
+  expect(
+    await page.evaluate(() =>
       Boolean(document.activeElement?.closest('#design-stage')),
     ),
   ).toBe(false);
