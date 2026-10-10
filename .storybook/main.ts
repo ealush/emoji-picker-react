@@ -19,6 +19,12 @@ const config: StorybookConfig = {
   },
   typescript: {
     reactDocgen: 'react-docgen-typescript',
+    // Docgen-only project: the library tsconfig stays scoped to src, so
+    // without this every story, registry entry, and integration fixture
+    // is skipped as "not included in the active TypeScript project".
+    reactDocgenTypescriptOptions: {
+      tsconfigPath: './tsconfig.storybook.json',
+    },
   },
   // Tailwind v4 for the integration stories (stories/integrations).
   async viteFinal(viteConfig) {

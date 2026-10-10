@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.tooling.json",
+  "include": [
+    "src",
+    "types",
+    ".storybook/**/*.ts",
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
+    "registry/**/*.ts",
+    "registry/**/*.tsx",
+    "integration/**/*.ts",
+    "integration/**/*.tsx",
+    "playwright/**/*.ts",
+    "*.config.ts",
+    "src/svg.d.ts"
+  ],
+  "exclude": ["src/env.d.ts", "**/*.test.ts", "**/*.test.tsx"]
+}
