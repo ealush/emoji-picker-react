@@ -70,32 +70,31 @@ function EmojiPicker(props: PickerProps) {
     skinTonesDisabled,
     skinTonePickerLocation: resolvedLocation,
     previewConfig,
+    // Closed, as in v4, keeps the picker's state (skin tone, search,
+    // reactions mode) and renders nothing.
+    open: open !== false,
   };
   const { behaviorProps, unknownProps } = pickBehaviorProps(rest);
   useUnknownPropsWarning(unknownProps);
 
   return (
-    <>
-      {open === false ? null : (
-        <DefaultPickerConfiguration.Provider value={defaultConfiguration}>
-          <Root
-            appearance={unstyled ? 'none' : 'default'}
-            components={components}
-            {...(behaviorProps as RootBehaviorProps)}
-            className={defaultRootClassName(theme, className, unstyled)}
-            style={defaultRootStyle({
-              width,
-              height,
-              style,
-              columns: validColumns(props.columns),
-            })}
-          >
-            <Reactions />
-            <Panel>{CONTENT}</Panel>
-          </Root>
-        </DefaultPickerConfiguration.Provider>
-      )}
-    </>
+    <DefaultPickerConfiguration.Provider value={defaultConfiguration}>
+      <Root
+        appearance={unstyled ? 'none' : 'default'}
+        components={components}
+        {...(behaviorProps as RootBehaviorProps)}
+        className={defaultRootClassName(theme, className, unstyled)}
+        style={defaultRootStyle({
+          width,
+          height,
+          style,
+          columns: validColumns(props.columns),
+        })}
+      >
+        <Reactions />
+        <Panel>{CONTENT}</Panel>
+      </Root>
+    </DefaultPickerConfiguration.Provider>
   );
 }
 

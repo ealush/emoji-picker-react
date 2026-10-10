@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker from '../src';
@@ -139,6 +139,24 @@ describe('composition owns primitive presence', () => {
     expect(container.querySelector('[data-epr-part="skin-tone"]')).toBeNull();
     rerender(<EmojiPicker emojiData={data} open={false} />);
     expect(container.querySelector('[data-epr-part="root"]')).toBeNull();
+  });
+
+  it('keeps the chosen skin tone while closed through `open`, as in v4', () => {
+    const pressed = (container: HTMLElement) =>
+      container
+        .querySelector(
+          '[data-epr-part="skin-tone-button"][aria-pressed="true"]',
+        )
+        ?.getAttribute('aria-label');
+    const { container, rerender } = render(<EmojiPicker emojiData={data} />);
+    // The first click opens the tone fan, the second chooses.
+    fireEvent.click(screen.getByRole('button', { name: 'Skin tone NEUTRAL' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Skin tone DARK' }));
+    expect(pressed(container)).toBe('Skin tone DARK');
+    rerender(<EmojiPicker emojiData={data} open={false} />);
+    expect(container.innerHTML).toBe('');
+    rerender(<EmojiPicker emojiData={data} open />);
+    expect(pressed(container)).toBe('Skin tone DARK');
   });
 });
 

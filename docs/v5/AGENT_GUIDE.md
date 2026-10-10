@@ -105,7 +105,7 @@ Adapt `Input` and `Button` props to the installed design library.
 - `Search` (input + icon + clear button) and `SearchInput` (only the input, or yours) are alternatives: use one.
 - Optional parts: `CategoryNav` (`orientation="vertical"` for rails), `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`. Search and Preview never insert SkinTone automatically; place it directly where needed.
 - Root renders exactly the supplied children. For compact reactions, place `Reactions` outside `Panel` and put expanded parts inside `Panel`. Put layout props directly on Panel; there is no composition switch or panelProps prop.
-- Conditionally mount Root to control its lifetime; unmounting aborts pending loading. The assembled EmojiPicker keeps its legacy `open` prop. Keep state that must survive closing in the host.
+- Conditionally mount Root to control its lifetime; unmounting aborts pending loading and discards picker state. The assembled EmojiPicker keeps its legacy `open` prop, which, as in v4, keeps search, skin tone and reactions mode while closed.
 - Portaling a whole Root (into a popover) works; portaling individual parts out of Root does not.
 
 ## 6. Mistakes to avoid

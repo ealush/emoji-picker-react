@@ -554,7 +554,7 @@ Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or
 
 ## Amendment: BYOD hardening (2026-10-05)
 
-Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. Conditionally unmount Root to remove its content and abort pending loading; mounting it again starts a new lifetime. The assembled EmojiPicker retains its `open` prop. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
+Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. Conditionally unmount Root to remove its content and abort pending loading; mounting it again starts a new lifetime. The assembled EmojiPicker retains its `open` prop: closed, it renders nothing but keeps its state, as in v4. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
 
 Managed markup cannot be replaced through `dangerouslySetInnerHTML`; structural children, roles and reserved picker attributes remain owned by the library. Stable forwarded refs are retained across unrelated renders, and callback-ref cleanup is supported while retaining the React 16.8 runtime floor. Malformed async loader output enters the same localized error/retry path as a rejected load.
 

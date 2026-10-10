@@ -6,7 +6,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 
 | Prop              | Type         | Default            | Description                                                                                  |
 | ----------------- | ------------ | ------------------ | -------------------------------------------------------------------------------------------- |
-| `open`            | `boolean`    | `true`             | Controls the visibility of the picker.                                                       |
+| `open`            | `boolean`    | `true`             | Controls the visibility of the picker. While closed it renders nothing but keeps its search, skin tone and reactions-mode state. |
 | `colorScheme`     | `Theme`      | `Theme.LIGHT`      | The color scheme. Options: `'light'`, `'dark'`, `'auto'`. Preferred over `theme`, which CSS-in-JS wrappers (Emotion, styled-components, MUI) reserve. |
 | `theme`           | `Theme`      | `Theme.LIGHT`      | Alias of `colorScheme`, kept for v4 compatibility.                                           |
 | `emojiStyle`      | `EmojiStyle` | `EmojiStyle.NATIVE` | The emoji set to use. Options: `'apple'`, `'google'`, `'facebook'`, `'twitter'`, `'native'`. |

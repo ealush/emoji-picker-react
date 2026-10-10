@@ -267,20 +267,22 @@ export const Root = /* @__PURE__ */ React.forwardRef<HTMLElement, RootProps>(
                           value={components ?? EMPTY_COMPONENTS}
                         >
                           <ActiveCategoryProvider>
-                            <RootAside
-                              defaultLayout={defaultConfiguration !== null}
-                              appearance={appearance}
-                              ref={forwardedRef}
-                              asideProps={asideProps}
-                              behaviorNonce={
-                                behaviorProps.nonce as string | undefined
-                              }
-                              cssLayer={
-                                behaviorProps.cssLayer as string | undefined
-                              }
-                            >
-                              {children}
-                            </RootAside>
+                            {defaultConfiguration?.open === false ? null : (
+                              <RootAside
+                                defaultLayout={defaultConfiguration !== null}
+                                appearance={appearance}
+                                ref={forwardedRef}
+                                asideProps={asideProps}
+                                behaviorNonce={
+                                  behaviorProps.nonce as string | undefined
+                                }
+                                cssLayer={
+                                  behaviorProps.cssLayer as string | undefined
+                                }
+                              >
+                                {children}
+                              </RootAside>
+                            )}
                           </ActiveCategoryProvider>
                         </PickerComponentsContext.Provider>
                       </AppearanceContext.Provider>
