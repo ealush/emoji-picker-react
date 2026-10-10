@@ -11,6 +11,12 @@ export type EmojiInfo = Readonly<{
   /** Canonical/base lowercase unified code. */
   unified: string;
 
+  /** The native emoji text for `unified`, ready to insert or render. */
+  emoji: string;
+
+  /** Display name: the dataset's full name (the last of `names`). */
+  name: string;
+
   /** Search/display names in dataset order. */
   names: readonly string[];
 

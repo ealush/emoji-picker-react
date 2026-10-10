@@ -329,7 +329,7 @@ import fr from 'emoji-picker-react/data/emojis-fr';
 
 searchEmojis('smile'); // default dataset
 searchEmojis('sourire', { emojiData: fr }); // locale dataset
-getEmojiByUnified('1f600');
+getEmojiByUnified('1f600'); // { unified: '1f600', emoji: '😀', name: 'grinning face', names, variations, addedIn }
 ```
 
 ## Internationalization

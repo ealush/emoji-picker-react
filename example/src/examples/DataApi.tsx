@@ -3,13 +3,6 @@ import { useMemo, useState } from 'react';
 
 type Props = { onPick: (message: string) => void };
 
-// Unified codes are hyphen-separated hex code points.
-const toNative = (unified: string) =>
-  String.fromCodePoint(...unified.split('-').map((hex) => parseInt(hex, 16)));
-
-// Names are search keywords in dataset order; the full name comes last.
-const displayName = (names: readonly string[]) => names[names.length - 1];
-
 /**
  * No React component, no styles: the same index the picker uses, as plain
  * functions. Works in a Server Component, a route handler or a worker.
@@ -37,12 +30,12 @@ export function DataApi({ onPick }: Props) {
               onClick={() => {
                 const info = getEmojiByUnified(emoji.unified);
                 onPick(
-                  `${toNative(emoji.unified)}  ${displayName(info?.names ?? emoji.names)}  (${emoji.unified}, Emoji ${info?.addedIn})`,
+                  `${emoji.emoji}  ${emoji.name}  (${emoji.unified}, Emoji ${info?.addedIn})`,
                 );
               }}
             >
-              <span aria-hidden>{toNative(emoji.unified)}</span>
-              {displayName(emoji.names)}
+              <span aria-hidden>{emoji.emoji}</span>
+              {emoji.name}
             </button>
           </li>
         ))}

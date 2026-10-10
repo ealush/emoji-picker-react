@@ -467,7 +467,7 @@ Styling is opt-in in both directions:
 
 ## 12. Data API
 
-The exact initial data entry point is defined in [DATA_API.md](./DATA_API.md):
+The data entry point is defined in [DATA_API.md](./DATA_API.md):
 
 ```ts
 import {
@@ -481,7 +481,7 @@ The existing top-level `emojiByUnified` export remains unchanged and is **not** 
 
 `searchEmojis` is dataset search, not "the exact results currently visible in one picker instance." Picker-only filters such as `emojiVersion`, `hiddenEmojis`, and `customEmojis` remain Root configuration.
 
-Initial v5 does not promise Slack-shortcode conversion because the current dataset does not establish canonical Slack alias semantics.
+Each record carries the ready-to-insert `emoji` text and a display `name`. v5 does not promise Slack-shortcode conversion because the dataset does not establish canonical Slack alias semantics.
 
 ## 12a. Dataset loading and bundle size
 
@@ -647,6 +647,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 export const results: readonly EmojiInfo[] = searchEmojis('gato', { emojiData: es });
 export const first = getEmojiByUnified(results[0]?.unified ?? '1f431', { emojiData: es });
+export const label = first ? `${first.emoji} ${first.name}` : '';
 ```
 
 ### Default picker root attributes

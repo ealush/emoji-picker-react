@@ -64,7 +64,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 
 // Data only (no React): search and lookup.
 import { searchEmojis, getEmojiByUnified } from 'emoji-picker-react/data';
-searchEmojis('party'); getEmojiByUnified('1f389');
+searchEmojis('party'); getEmojiByUnified('1f389'); // { emoji: '🎉', name: 'party popper', unified, names, … }
 \`\`\``;
 
 // [path, title, description] — the index links; llms-full.txt inlines them.

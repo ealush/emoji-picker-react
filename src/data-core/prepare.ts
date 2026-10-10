@@ -10,6 +10,7 @@
 // - no React / ShipStyles imports in this module graph.
 
 import { defaultEmojiDataOrEmpty } from '../data/defaultEmojiData';
+import { parseNativeEmoji } from '../dataUtils/parseNativeEmoji';
 import type { EmojiData } from '../types/exposedTypes';
 
 import type { EmojiInfo } from './types';
@@ -69,6 +70,8 @@ function toEmojiInfo(
 ): EmojiInfo {
   return Object.freeze({
     unified,
+    emoji: parseNativeEmoji(unified),
+    name: names[names.length - 1] || '',
     names: Object.freeze([...names]),
     variations: Object.freeze([...(variations ?? [])]),
     addedIn,

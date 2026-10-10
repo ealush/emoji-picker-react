@@ -45,7 +45,7 @@ import * as Picker from 'emoji-picker-react/primitives';
 
 // Data only (no React): search and lookup.
 import { searchEmojis, getEmojiByUnified } from 'emoji-picker-react/data';
-searchEmojis('party'); getEmojiByUnified('1f389');
+searchEmojis('party'); getEmojiByUnified('1f389'); // { emoji: '🎉', name: 'party popper', unified, names, … }
 ```
 
 Contents:
@@ -784,7 +784,7 @@ import fr from 'emoji-picker-react/data/emojis-fr';
 
 searchEmojis('smile'); // default dataset
 searchEmojis('sourire', { emojiData: fr }); // locale dataset
-getEmojiByUnified('1f600');
+getEmojiByUnified('1f600'); // { unified: '1f600', emoji: '😀', name: 'grinning face', names, variations, addedIn }
 ```
 
 ## Internationalization
@@ -1924,7 +1924,7 @@ Styling is opt-in in both directions:
 
 ## 12. Data API
 
-The exact initial data entry point is defined in [DATA_API.md](./DATA_API.md):
+The data entry point is defined in [DATA_API.md](./DATA_API.md):
 
 ```ts
 import {
@@ -1938,7 +1938,7 @@ The existing top-level `emojiByUnified` export remains unchanged and is **not** 
 
 `searchEmojis` is dataset search, not "the exact results currently visible in one picker instance." Picker-only filters such as `emojiVersion`, `hiddenEmojis`, and `customEmojis` remain Root configuration.
 
-Initial v5 does not promise Slack-shortcode conversion because the current dataset does not establish canonical Slack alias semantics.
+Each record carries the ready-to-insert `emoji` text and a display `name`. v5 does not promise Slack-shortcode conversion because the dataset does not establish canonical Slack alias semantics.
 
 ## 12a. Dataset loading and bundle size
 
@@ -2104,6 +2104,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 export const results: readonly EmojiInfo[] = searchEmojis('gato', { emojiData: es });
 export const first = getEmojiByUnified(results[0]?.unified ?? '1f431', { emojiData: es });
+export const label = first ? `${first.emoji} ${first.name}` : '';
 ```
 
 ### Default picker root attributes
@@ -3045,6 +3046,12 @@ export type EmojiInfo = Readonly<{
   /** Canonical/base lowercase unified code. */
   unified: string;
 
+  /** The native emoji text for `unified`, ready to insert or render. */
+  emoji: string;
+
+  /** Display name: the dataset's full name (the last of `names`). */
+  name: string;
+
   /** Search/display names in dataset order. */
   names: readonly string[];
 
@@ -3081,7 +3088,7 @@ A JavaScript consumer mutating a returned record or nested array must fail/no-op
 
 This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
 
-## 3. Exact initial functions
+## 3. Functions
 
 ```ts
 export function getEmojiByUnified(
@@ -3095,7 +3102,7 @@ export function searchEmojis(
 ): readonly EmojiInfo[];
 ```
 
-No additional data helpers are required for initial v5.
+No other data helpers are part of v5.
 
 ### getEmojiByUnified
 
@@ -3132,11 +3139,11 @@ Consumers who need exact picker-visible results should use the picker rather tha
 
 Issue #430 also asks about Slack-style shortcodes.
 
-Initial v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
+v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
 
 Reason: the current dataset names/aliases do not by themselves establish a contract for Slack's canonical alias choices or `:skin-tone-N:` syntax. Shipping an approximate converter would create a misleading compatibility promise.
 
-The exposed `names`, `unified`, and `variations` data enables consumers to build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
+The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
 
 ## 5. Shared implementation
 

@@ -21,6 +21,12 @@ export type EmojiInfo = Readonly<{
   /** Canonical/base lowercase unified code. */
   unified: string;
 
+  /** The native emoji text for `unified`, ready to insert or render. */
+  emoji: string;
+
+  /** Display name: the dataset's full name (the last of `names`). */
+  name: string;
+
   /** Search/display names in dataset order. */
   names: readonly string[];
 
@@ -57,7 +63,7 @@ A JavaScript consumer mutating a returned record or nested array must fail/no-op
 
 This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
 
-## 3. Exact initial functions
+## 3. Functions
 
 ```ts
 export function getEmojiByUnified(
@@ -71,7 +77,7 @@ export function searchEmojis(
 ): readonly EmojiInfo[];
 ```
 
-No additional data helpers are required for initial v5.
+No other data helpers are part of v5.
 
 ### getEmojiByUnified
 
@@ -108,11 +114,11 @@ Consumers who need exact picker-visible results should use the picker rather tha
 
 Issue #430 also asks about Slack-style shortcodes.
 
-Initial v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
+v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
 
 Reason: the current dataset names/aliases do not by themselves establish a contract for Slack's canonical alias choices or `:skin-tone-N:` syntax. Shipping an approximate converter would create a misleading compatibility promise.
 
-The exposed `names`, `unified`, and `variations` data enables consumers to build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
+The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
 
 ## 5. Shared implementation
 

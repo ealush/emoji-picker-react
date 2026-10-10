@@ -2154,8 +2154,17 @@ describe('v5 data API', () => {
   it('returns the exact EmojiInfo shape', () => {
     const found = getEmojiByUnified('1f600');
     expect(Object.keys(found ?? {}).sort()).toEqual(
-      ['addedIn', 'names', 'unified', 'variations'].sort(),
+      ['addedIn', 'emoji', 'name', 'names', 'unified', 'variations'].sort(),
     );
+  });
+
+  it('returns ready-to-use emoji text and display name', () => {
+    const found = getEmojiByUnified('1f600');
+    expect(found?.emoji).toBe('😀');
+    expect(found?.name).toBe('grinning face');
+    expect(searchEmojis('grinning face')[0].emoji).toBe('😀');
+    expect(getEmojiByUnified('1f1fa-1f1f8')?.emoji).toBe('🇺🇸');
+    expect(JSON.parse(JSON.stringify(found)).emoji).toBe('😀');
   });
 
   it('returns runtime-frozen EmojiInfo records', () => {
