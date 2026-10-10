@@ -26,7 +26,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
 - **Custom emojis** — image-based emojis, optionally in their own named groups.
 - **Lean when you want** — the primitives entry loads the dataset on demand (a 34 KiB min+gz startup budget including ShipStyles; see the consumer gate); a framework-free data API for search and lookup.
-- **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included.
+- **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included; ships ES2020 for every browser since 2020 and any modern bundler.
 
 > **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
 

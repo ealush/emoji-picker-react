@@ -14,6 +14,8 @@ APIs and make optional primitive adoption a separate choice.
 
 The published package now requires **Node >=18** (v4 declared >=10). Upgrade older build/server environments before installing v5; package managers with strict engine checks reject older Node versions. Browser consumers still need a supported React setup; the React peer floor remains **>=16.8**.
 
+The published JavaScript targets **ES2020**: it ships optional chaining (`?.`) and nullish coalescing (`??`) untranspiled. Every browser released since 2020 runs it (Chrome/Edge 80, Firefox 74, Safari 13.1), as do Vite, esbuild, Rollup, Turbopack, Parcel and webpack 5. webpack 4's parser cannot read that syntax unless `node_modules` pass through Babel first; if your webpack 4 setup does not transpile dependencies, add `emoji-picker-react` to `babel-loader` or upgrade the bundler. Supporting older browsers is the application's transpilation step, as for any modern dependency.
+
 Repository development uses **Node 24.15+ in the 24.x line**, matching CI. Storybook, Vitest, jsdom and release tooling have newer Node requirements than the published library. This contributor requirement does not raise the consumer Node or React floor. The packed-runtime CI smoke check runs the built package on Node 18.
 
 ## Common case

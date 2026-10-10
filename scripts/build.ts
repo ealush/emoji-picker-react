@@ -57,15 +57,16 @@ async function buildCjs(src: string, outfile: string) {
     // Ship optimized production CJS without changing public property names.
     '--minify',
     '--platform=node',
-    // ES2019 keeps optional chaining and ?? out of the output for
-    // consumers whose bundlers cannot parse them (e.g. webpack 4).
-    '--target=es2019',
+    // ES2020: native optional chaining and ??, supported by every
+    // browser since 2020 (Chrome 80, Firefox 74, Safari 13.1), Node 14+
+    // and webpack 5. Newer syntax is lowered so the floor cannot creep.
+    '--target=es2020',
     `--outfile=${join(repoRoot, outfile)}`,
   ]);
   // CommonJS top-level bindings are private to this module. Compress them
   // without property mangling, unsafe transforms or environment substitution.
   const result = await minify(readFileSync(join(repoRoot, outfile), 'utf8'), {
-    ecma: 2019,
+    ecma: 2020,
     toplevel: true,
     compress: { passes: 3 },
     mangle: true,
@@ -87,7 +88,7 @@ function buildEsm() {
     '--splitting',
     '--format=esm',
     '--platform=neutral',
-    '--target=es2019',
+    '--target=es2020',
     `--outbase=${join(repoRoot, 'src')}`,
     `--outdir=${join(repoRoot, 'dist', 'esm')}`,
     '--entry-names=[dir]/[name]',
