@@ -4,9 +4,9 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './NotionIconPickerPicker';
 
-// App chrome (tabs, Remove, Random) is ordinary consumer UI inside Root.
-// Category tabs move to the bottom just by rendering CategoryNav last.
+// Notion-style icon picker panel.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -14,35 +14,5 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
-  return (
-    <RootComponent appearance="default"       className={className}
-      searchPlaceholder="Filter…"
-    >
-      <div className="notion-tabs">
-        <button type="button" aria-pressed="true">
-          Emoji
-        </button>
-        <button type="button" aria-pressed="false">
-          Icons
-        </button>
-        <button type="button" aria-pressed="false">
-          Upload
-        </button>
-        <button type="button" className="notion-remove">
-          Remove
-        </button>
-      </div>
-      <div className="notion-search-row">
-        <Picker.Search />
-        <button type="button" className="notion-random">
-          🎲 Random
-        </button>
-      </div>
-      <Picker.Viewport>
-        <Picker.List />
-        <Picker.Empty />
-      </Picker.Viewport>
-      <Picker.CategoryNav />
-    </RootComponent>
-  );
+  return <PickerExample Root={RootComponent} className={className} />;
 }

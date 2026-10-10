@@ -4,7 +4,9 @@
 //
 // For each recipe:
 //   shell.tsx            -> website/src/components/designs/<Name>.tsx
-//   app.css + picker.css -> website/src/styles/designs/<dir>.css
+//   picker.tsx           -> website/src/components/designs/<Name>Picker.tsx
+//   app.css + panel.css + picker.css -> website/src/styles/designs/<dir>.css
+//   picker.tsx + panel.css + picker.css -> website/public/recipes/<dir>.json
 // plus the gallery index (designs/index.ts, styles/designs/index.css),
 // ordered and described by each recipe.json.
 //
@@ -46,20 +48,35 @@ const recipes = fs
 
 // Library imports resolve to the package the website installs; the
 // stylesheet is bundled through styles/designs/index.css instead.
-function portShell(source: string, dir: string) {
-  const ported = source
+function rewriteImports(source: string) {
+  return source
     .replace(
       /from '\.\.\/\.\.\/\.\.\/src\/primitives'/g,
       "from 'emoji-picker-react/primitives'",
     )
-    .replace(/from '\.\.\/\.\.\/\.\.\/src'/g, "from 'emoji-picker-react'")
-    .replace(/^import '\.\/app\.css';\n/m, '');
+    .replace(/from '\.\.\/\.\.\/\.\.\/src'/g, "from 'emoji-picker-react'");
+}
+
+// Ports one recipe module for the website gallery: package imports are
+// rewritten and raw CSS imports are stripped (gallery styles arrive
+// through styles/designs/index.css). Relative imports beyond the
+// allow-list fail the port.
+function portModule(
+  source: string,
+  dir: string,
+  file: string,
+  allow: string[] = [],
+) {
+  const ported = rewriteImports(source).replace(
+    /^import '\.\/(app|panel)\.css';\n/m,
+    '',
+  );
   const leftover = ported.match(
     /from '\.{1,2}\/[^']*'|^import '\.{1,2}\/[^']*'/m,
   );
-  if (leftover) {
+  if (leftover && !allow.includes(leftover[0])) {
     throw new Error(
-      `stories/recipes/${dir}/shell.tsx: unported import ${leftover[0]}`,
+      `stories/recipes/${dir}/${file}: unported import ${leftover[0]}`,
     );
   }
   return (
@@ -67,6 +84,22 @@ function portShell(source: string, dir: string) {
     `// Do not edit; change the recipe and run \`npm run designs\`.\n` +
     ported
   );
+}
+
+// Ports picker.tsx for the snippet payload: same import rewrite, but the
+// sibling panel.css import stays (consumers download it alongside).
+function portSnippet(source: string, dir: string) {
+  const ported = rewriteImports(source);
+  const relativeImports =
+    ported.match(/^import .* from '\.[^']*'|^import '\.[^']*'/gm) ?? [];
+  for (const statement of relativeImports) {
+    if (statement.replace(/;$/, '') !== `import './panel.css'`) {
+      throw new Error(
+        `stories/recipes/${dir}/picker.tsx: unported import ${statement}`,
+      );
+    }
+  }
+  return ported;
 }
 
 // Validate every input before replacing any generated output. A missing
@@ -78,16 +111,30 @@ if (!markers.test(readme)) {
     'README.md: missing <!-- DESIGNS:START --> / <!-- DESIGNS:END --> markers',
   );
 }
-const sources = new Map<string, Record<string, string>>();
+const sources = new Map<string, Record<string, string | undefined>>();
 const screenshots = new Map<string, Buffer>();
 for (const recipe of recipes) {
-  const files = Object.fromEntries(
-    ['shell.tsx', 'app.css', 'picker.css', 'picker.module.css'].map((file) => [
-      file,
-      fs.readFileSync(path.join(recipesDir, recipe.dir, file), 'utf8'),
-    ]),
+  const read = (file: string, optional = false) => {
+    const filePath = path.join(recipesDir, recipe.dir, file);
+    if (optional && !fs.existsSync(filePath)) return undefined;
+    return fs.readFileSync(filePath, 'utf8');
+  };
+  const files: Record<string, string | undefined> = Object.fromEntries(
+    ['shell.tsx', 'picker.tsx', 'picker.css', 'picker.module.css'].map(
+      (file) => [file, read(file)],
+    ),
   );
-  portShell(files['shell.tsx'], recipe.dir);
+  for (const file of ['app.css', 'panel.css']) {
+    files[file] = read(file, true);
+  }
+  portModule(
+    shellForGallery(recipe, files['shell.tsx']!),
+    recipe.dir,
+    'shell.tsx',
+    [`from './${recipe.name}Picker'`],
+  );
+  portModule(files['picker.tsx']!, recipe.dir, 'picker.tsx');
+  portSnippet(files['picker.tsx']!, recipe.dir);
   sources.set(recipe.dir, files);
   const baseline = path.join(baselinesDir, `${storySlug(recipe.title)}.png`);
   if (!fs.existsSync(baseline)) {
@@ -103,24 +150,49 @@ fs.rmSync(stylesDir, { recursive: true, force: true });
 fs.mkdirSync(componentsDir, { recursive: true });
 fs.mkdirSync(stylesDir, { recursive: true });
 
+// The gallery shell renders the recipe's PickerExample, which lives in
+// the sibling <Name>Picker module after porting.
+function shellForGallery(recipe: Recipe & { dir: string }, source: string) {
+  return source.replace("from './picker'", `from './${recipe.name}Picker'`);
+}
+
 fs.mkdirSync(sourcesDir, { recursive: true });
 for (const recipe of recipes) {
-  const from = (file: string) => sources.get(recipe.dir)![file];
+  const from = (file: string) => sources.get(recipe.dir)![file]!;
+  const maybe = (file: string) => sources.get(recipe.dir)![file];
   fs.writeFileSync(
     path.join(componentsDir, `${recipe.name}.tsx`),
-    portShell(from('shell.tsx'), recipe.dir),
+    portModule(
+      shellForGallery(recipe, from('shell.tsx')),
+      recipe.dir,
+      'shell.tsx',
+      [`from './${recipe.name}Picker'`],
+    ),
   );
-  const composition = portShell(from('shell.tsx'), recipe.dir)
-    .replace(/^\/\/ Generated[^\n]*\n\/\/ Do not edit[^\n]*\n/, '')
-    .replace("import './app.css';\n", '');
+  fs.writeFileSync(
+    path.join(componentsDir, `${recipe.name}Picker.tsx`),
+    portModule(from('picker.tsx'), recipe.dir, 'picker.tsx'),
+  );
+  // The snippet is picker-only: the composition plus the picker and panel
+  // styles. Host app chrome (app.css) stays out of the payload.
+  const imports = [`'./picker.css'`];
+  if (maybe('panel.css') !== undefined) {
+    imports.unshift(`'./panel.css'`);
+  }
   const files = [
-    { name: 'emoji-picker.tsx', content: "'use client';\n" + composition },
-    { name: 'app.css', content: from('app.css') },
+    { name: 'emoji-picker.tsx', content: "'use client';\n" + portSnippet(from('picker.tsx'), recipe.dir) },
+    ...(maybe('panel.css') !== undefined
+      ? [{ name: 'panel.css', content: maybe('panel.css')! }]
+      : []),
     { name: 'picker.css', content: from('picker.css') },
     { name: 'picker.module.css', content: from('picker.module.css') },
     {
       name: 'README.md',
-      content: `# ${recipe.title}\n\n${recipe.description}\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className="${recipe.rootClass}" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n`,
+      content:
+        `# ${recipe.title}\n\n${recipe.description}\n\n` +
+        `Install emoji-picker-react 5 or later, import ${imports.join(' and ')}, then render <PickerExample className="${recipe.rootClass}" />. ` +
+        `Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. ` +
+        `This snippet is the picker only; the surrounding demo app chrome is not included.\n`,
     },
   ];
   fs.writeFileSync(
@@ -130,9 +202,9 @@ for (const recipe of recipes) {
   fs.writeFileSync(
     path.join(stylesDir, `${recipe.dir}.css`),
     `/* Generated from stories/recipes/${recipe.dir} by scripts/portDesigns.mts. */\n` +
-      from('app.css') +
-      '\n' +
-      from('picker.css'),
+      [maybe('app.css'), maybe('panel.css'), from('picker.css')]
+        .filter((content) => content !== undefined)
+        .join('\n'),
   );
 }
 

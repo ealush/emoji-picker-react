@@ -4,9 +4,9 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './Material3Picker';
 
-// Bottom navigation bar with the M3 pill indicator on the active tab
-// ([aria-selected="true"]); circular emoji state layers.
+// Material 3 picker: bottom tab bar with a pill indicator.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -14,16 +14,5 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
-  return (
-    <RootComponent appearance="default"       className={className}
-      searchPlaceholder="Search emoji"
-    >
-      <Picker.Search />
-      <Picker.Viewport>
-        <Picker.List />
-        <Picker.Empty />
-      </Picker.Viewport>
-      <Picker.CategoryNav />
-    </RootComponent>
-  );
+  return <PickerExample Root={RootComponent} className={className} />;
 }

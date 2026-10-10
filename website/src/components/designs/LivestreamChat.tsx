@@ -4,10 +4,10 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './LivestreamChatPicker';
 
 // In context: a live stream with a chat column. The picker docks under
-// the chat log at the column's full width — a short panel with tabs on
-// top and a compact grid.
+// the chat log at the column's full width.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -40,18 +40,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
             </li>
           ))}
         </ul>
-        <RootComponent appearance="default"
-          className={className}
-          searchPlaceholder="Search emotes and emoji"
-          autoFocusSearch={false}
-        >
-          <Picker.CategoryNav />
-          <Picker.Search />
-          <Picker.Viewport>
-            <Picker.List />
-            <Picker.Empty />
-          </Picker.Viewport>
-        </RootComponent>
+        <PickerExample Root={RootComponent} className={className} />
         <div className="stream-input" role="textbox" aria-label="Send a message">
           Send a message
         </div>

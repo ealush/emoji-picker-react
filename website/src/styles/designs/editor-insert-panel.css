@@ -94,6 +94,8 @@
 .editor-picker [data-epr-part='category-nav'] {
   border-right: 1px solid #f3f4f6;
   background: #f9fafb;
+  padding-left: 6px;
+  padding-right: 6px;
 }
 .editor-picker [data-epr-part='category-tab'][aria-selected='true'] {
   border-radius: 6px;

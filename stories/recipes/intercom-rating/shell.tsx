@@ -3,9 +3,9 @@ import React from 'react';
 import EmojiPicker from '../../../src';
 
 import './app.css';
+import { PickerExample } from './picker';
 
-// Reactions as a rating scale: a terminal bar (no "+") stretched to the
-// card width. onReactionClick receives the chosen point on the scale.
+// In context: a support chat widget asking for a rating.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
   Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;
@@ -21,12 +21,7 @@ export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellPro
       </div>
       <div className="intercom-card">
         <strong>How would you rate the conversation?</strong>
-        <RootComponent           className={className}
-          reactionsDefaultOpen
-          allowExpandReactions={false}
-          reactions={['1f620', '1f641', '1f610', '1f603', '1f929']}
-          onReactionClick={() => undefined}
-        />
+        <PickerExample Root={RootComponent} className={className} />
       </div>
     </div>
   );

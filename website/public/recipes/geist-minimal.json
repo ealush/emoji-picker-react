@@ -2,11 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n\nfunction Header({ category, className, ...props }: Picker.CategoryHeaderRenderProps) {\n  return (\n    <h3 {...props} className={`${className} geist-header`}>\n      {category.name}\n    </h3>\n  );\n}\n\nconst components = { CategoryHeader: Header };\n\n// colorScheme=\"light\" supplies the default color tokens; the CSS only adjusts\n// a handful. suggestedEmojis pins a product-specific first row.\nexport type ShellProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {\n  return (\n    <RootComponent appearance=\"default\"       className={className}\n      colorScheme=\"light\"\n      searchPlaceholder=\"Search…\"\n      suggestedEmojis={['1f680', '2705', '1f6a7', '1f41b', '1f525', '1f4a1', '1f389', '1f440']}\n    >\n      <Picker.Search />\n      <Picker.CategoryNav />\n      <Picker.Viewport>\n        <Picker.List components={components} />\n        <Picker.Empty />\n      </Picker.Viewport>\n    </RootComponent>\n  );\n}\n"
-    },
-    {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\nfunction Header({ category, className, ...props }: Picker.CategoryHeaderRenderProps) {\n  return (\n    <h3 {...props} className={`${className} geist-header`}>\n      {category.name}\n    </h3>\n  );\n}\n\nconst components = { CategoryHeader: Header };\n\n// colorScheme=\"light\" supplies the default color tokens; the CSS only adjusts\n// a handful. suggestedEmojis pins a product-specific first row.\nexport type PickerExampleProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = Picker.Root,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      appearance=\"default\"\n      className={className}\n      colorScheme=\"light\"\n      searchPlaceholder=\"Search…\"\n      suggestedEmojis={['1f680', '2705', '1f6a7', '1f41b', '1f525', '1f4a1', '1f389', '1f440']}\n    >\n      <Picker.Search />\n      <Picker.CategoryNav />\n      <Picker.Viewport>\n        <Picker.List components={components} />\n        <Picker.Empty />\n      </Picker.Viewport>\n    </RootComponent>\n  );\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +14,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Geist minimal\n\nA minimal Geist look: default light tokens with a few CSS adjustments.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"geist-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Geist minimal\n\nA minimal Geist look: default light tokens with a few CSS adjustments.\n\nInstall emoji-picker-react 5 or later, import './picker.css', then render <PickerExample className=\"geist-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import styles from '@/styles/DesignsSection.module.css';
+import { writeToClipboard } from '@/lib/clipboard';
 
 import { DESIGN_EXAMPLES } from './designs';
 import { GalleryStage } from './GalleryPicker';
@@ -79,7 +80,7 @@ function RecipeSource({ id }: { id: string }) {
     const attempt = ++copyAttempt.current;
     setStatus('');
     try {
-      await navigator.clipboard.writeText(content);
+      await writeToClipboard(content);
       if (attempt === copyAttempt.current) setStatus(message);
     } catch {
       if (attempt === copyAttempt.current)
@@ -89,18 +90,19 @@ function RecipeSource({ id }: { id: string }) {
   const prompt =
     files &&
     [
-      `Implement the emoji-picker-react v5 recipe "${id}" in my application.`,
+      `Implement the emoji-picker-react v5 picker "${id}" in my application.`,
       'First inspect my installed package version and framework. These files require v5; do not assume npm latest is v5. If v5 is unavailable, explain the required preview/local setup before changing dependencies.',
-      'Use the following actual recipe files as the implementation reference. Follow README.md for CSS imports and the Shell className. Adapt the sample host content and insertion callback to my app; preserve managed search, keyboard navigation, focus restoration, selection, and accessibility.',
+      'Use the following actual picker files as the implementation reference. Implement ONLY the emoji picker composition they describe: the picker parts, their arrangement, and the picker/panel styles. Do not rebuild any surrounding demo UI — no chat windows, messages, toolbars, dialogs, phones, or other app chrome; none is included below. Follow README.md for CSS imports and the PickerExample className. Wire onEmojiClick to insert the chosen emoji into my app; preserve managed search, keyboard navigation, focus restoration, selection, and accessibility.',
       'This is the plain CSS implementation. If my app uses another style system, translate its appearance without inventing library APIs or changing structural behavior. Report setup steps, changed files and verification instructions.',
       ...files.map((source) => `\n--- ${source.name} ---\n${source.content}`),
     ].join('\n\n');
   return (
     <div className={styles.sourcePanel}>
       <div className={styles.sourceActions}>
-        <label>
-          Source file{' '}
+        <label className={styles.sourceField}>
+          <span className={styles.sourceFieldLabel}>Source file</span>
           <select
+            className={styles.sourceSelect}
             value={name}
             disabled={!files}
             onChange={(event) => {
@@ -116,6 +118,7 @@ function RecipeSource({ id }: { id: string }) {
         </label>
         <button
           type="button"
+          className={styles.actionButton}
           disabled={!file}
           onClick={() => file && copy(file.content, `Copied ${file.name}`)}
         >
@@ -123,6 +126,7 @@ function RecipeSource({ id }: { id: string }) {
         </button>
         <button
           type="button"
+          className={styles.actionButton}
           disabled={!prompt}
           onClick={() => prompt && copy(prompt, 'Copied implementation prompt')}
         >
@@ -130,6 +134,7 @@ function RecipeSource({ id }: { id: string }) {
         </button>
         {file && (
           <a
+            className={styles.actionButton}
             download={file.name}
             href={`data:text/plain;charset=utf-8,${encodeURIComponent(file.content)}`}
           >
@@ -139,13 +144,16 @@ function RecipeSource({ id }: { id: string }) {
         {failed && (
           <button
             type="button"
+            className={styles.actionButton}
             onClick={() => setRequest((value) => value + 1)}
           >
             Retry source
           </button>
         )}
       </div>
-      <p role="status">{status || (!files ? 'Loading source…' : '')}</p>
+      <p role="status" className={styles.sourceStatus}>
+        {status || (!files ? 'Loading source…' : '')}
+      </p>
       <pre tabIndex={0} aria-label={`${name} source`}>
         <code>{file?.content}</code>
       </pre>
@@ -160,8 +168,11 @@ function RecipeSource({ id }: { id: string }) {
  * CSS Modules, Emotion, styled-components, MUI, Tailwind and shadcn/ui.
  * The selector is a thumbnail carousel: scroll, page with the arrows, or
  * use the arrow keys on a focused card.
+ *
+ * Rendered inside the playground's Designs tab; the section wrapper below
+ * keeps the standalone `#designs` anchor available.
  */
-export function DesignsSection() {
+export function DesignsGallery() {
   const [showSource, setShowSource] = useState(false);
   const [index, setIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -211,24 +222,16 @@ export function DesignsSection() {
   }
 
   return (
-    <section
-      id="designs"
-      className={styles.designsSection}
-      aria-labelledby="designs-title"
-    >
-      <div className={styles.designsContent}>
-        <h2 id="designs-title" className={styles.sectionTitle}>
-          Bring your own style system
-        </h2>
-        <p className={styles.sectionSubtitle}>
-          Plug and play by default — or make it yours. Theme it with{' '}
-          <code>--epr-*</code> variables, or go <code>unstyled</code> and
-          compose the parts yourself, styled with whatever your app already
-          uses: CSS, CSS Modules, Emotion, styled-components, MUI, Tailwind or
-          shadcn/ui. Every design below is the same picker — try them.
-        </p>
+    <div className={styles.galleryEmbed}>
+      <p className={styles.sectionSubtitle}>
+        The same picker, composed and styled for real product surfaces. Theme
+        it with <code>--epr-*</code> variables, or go <code>unstyled</code>{' '}
+        and compose the parts yourself — every custom design example below
+        is available in plain CSS, CSS Modules, Emotion, styled-components,
+        MUI, Tailwind and shadcn/ui.
+      </p>
 
-        <div className={styles.carousel}>
+      <div className={styles.carousel}>
           <button
             type="button"
             className={styles.arrow}
@@ -241,7 +244,7 @@ export function DesignsSection() {
             ref={trackRef}
             className={styles.track}
             role="tablist"
-            aria-label="Design examples"
+            aria-label="Custom design examples"
             onKeyDown={onKeyDown}
           >
             {DESIGN_EXAMPLES.map((design, i) => (
@@ -288,7 +291,7 @@ export function DesignsSection() {
           <span>{example.description}</span>
         </p>
         <GalleryStage
-          key={example.id}
+          key={`stage-${example.id}`}
           className={styles.designStage}
           labelledBy={`design-tab-${example.id}`}
         >
@@ -302,7 +305,25 @@ export function DesignsSection() {
         >
           {showSource ? 'Hide source' : 'Get the code'}
         </button>
-        {showSource && <RecipeSource key={example.id} id={example.id} />}
+        {showSource && (
+          <RecipeSource key={`source-${example.id}`} id={example.id} />
+        )}
+    </div>
+  );
+}
+
+export function DesignsSection() {
+  return (
+    <section
+      id="designs"
+      className={styles.designsSection}
+      aria-labelledby="designs-title"
+    >
+      <div className={styles.designsContent}>
+        <h2 id="designs-title" className={styles.sectionTitle}>
+          Bring your own style system
+        </h2>
+        <DesignsGallery />
       </div>
     </section>
   );

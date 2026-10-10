@@ -4,10 +4,9 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './DiscordSidebarPicker';
 
-// A vertical category rail: CategoryNav is placed in its own column and
-// orientation="vertical" stacks the tabs and moves keyboard navigation to
-// Up/Down (announced through aria-orientation).
+// Dark picker with a vertical category rail on the left.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -15,23 +14,5 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
-  return (
-    <RootComponent appearance="default" className={className} searchPlaceholder="Find the perfect emoji">
-      <Picker.Panel>
-        <div className="discord-layout">
-          <div className="discord-rail">
-            <Picker.CategoryNav orientation="vertical" />
-          </div>
-          <div className="discord-main">
-            <Picker.Search><Picker.SkinTone /></Picker.Search>
-            <Picker.Viewport>
-              <Picker.List />
-              <Picker.Empty />
-            </Picker.Viewport>
-          </div>
-        </div>
-        <Picker.Preview />
-      </Picker.Panel>
-    </RootComponent>
-  );
+  return <PickerExample Root={RootComponent} className={className} />;
 }

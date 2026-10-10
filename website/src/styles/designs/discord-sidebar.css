@@ -1,5 +1,5 @@
 /* Generated from stories/recipes/discord-sidebar by scripts/portDesigns.mts. */
-/* The surrounding mock app (shared by every stack variant). */
+/* Picker panel chrome (shared by every stack variant). */
 .discord-layout {
   display: flex;
   flex: 1;

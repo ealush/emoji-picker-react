@@ -2,11 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n\n// Tabs first, then search: an order the default picker does not offer.\n// SkinTone is composed inside Search to share its header and keyboard flow.\nexport type ShellProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {\n  return (\n    <RootComponent appearance=\"default\" className={className} searchPlaceholder=\"Search emoji\">\n      <Picker.CategoryNav />\n      <Picker.Search><Picker.SkinTone /></Picker.Search>\n      <Picker.Viewport>\n        <Picker.List />\n        <Picker.Empty />\n      </Picker.Viewport>\n      <Picker.Preview />\n    </RootComponent>\n  );\n}\n"
-    },
-    {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n// Tabs first, then search: an order the default picker does not offer.\n// SkinTone is composed inside Search to share its header and keyboard flow.\nexport type PickerExampleProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = Picker.Root,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      appearance=\"default\"\n      className={className}\n      searchPlaceholder=\"Search emoji\"\n    >\n      <Picker.CategoryNav />\n      <Picker.Search>\n        <Picker.SkinTone />\n      </Picker.Search>\n      <Picker.Viewport>\n        <Picker.List />\n        <Picker.Empty />\n      </Picker.Viewport>\n      <Picker.Preview />\n    </RootComponent>\n  );\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +14,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Teams (Fluent 2)\n\nMicrosoft Teams in Fluent 2: tabs first, then search.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"teams-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Teams (Fluent 2)\n\nMicrosoft Teams in Fluent 2: tabs first, then search.\n\nInstall emoji-picker-react 5 or later, import './picker.css', then render <PickerExample className=\"teams-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }

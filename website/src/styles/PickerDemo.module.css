@@ -65,6 +65,11 @@
   align-items: stretch;
 }
 
+.designsTab {
+  width: 100%;
+  min-width: 0;
+}
+
 .pickerWrapper {
   background: var(--surface);
   border-radius: 12px;

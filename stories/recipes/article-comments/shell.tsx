@@ -3,6 +3,7 @@ import React from 'react';
 import EmojiPicker from '../../../src';
 
 import './app.css';
+import { PickerExample } from './picker';
 
 // In context: a comment thread under an article. Existing reactions show
 // as count chips; "+" opens the compact reactions bar, which expands to
@@ -52,13 +53,7 @@ export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellPro
             </button>
           </div>
           <div className="comments-popover">
-            <RootComponent
-              className={className}
-              reactionsDefaultOpen
-              reactions={['1f44d', '2764-fe0f', '1f602', '1f389', '1f914', '1f440', '1f525']}
-              width={360}
-              height={400}
-            />
+            <PickerExample Root={RootComponent} className={className} />
           </div>
         </div>
       </div>

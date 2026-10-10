@@ -2,11 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n\n// A full-width, short panel: the grid recomputes columns from the\n// available width, so a wide picker simply shows more per row.\nexport type ShellProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {\n  return (\n    <div className=\"wa-stage\">\n      <div className=\"wa-chat\">\n        <div className=\"wa-bubble\">Are we still on for the trip? 🏕️</div>\n        <div className=\"wa-bubble wa-out\">Yes! Bringing the tent and snacks</div>\n      </div>\n      <div className=\"wa-composer\">\n        <span aria-hidden>😊</span>\n        <div className=\"wa-input\">Type a message</div>\n      </div>\n      <RootComponent appearance=\"default\"         className={className}\n        searchPlaceholder=\"Search emoji\"\n      >\n        <Picker.Search />\n        <Picker.Viewport>\n          <Picker.List />\n          <Picker.Empty />\n        </Picker.Viewport>\n        <Picker.CategoryNav />\n      </RootComponent>\n    </div>\n  );\n}\n"
-    },
-    {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n.wa-stage {\n  width: 680px;\n  border-radius: 12px;\n  overflow: hidden;\n  background: #efeae2;\n  font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;\n}\n.wa-chat {\n  display: flex;\n  flex-direction: column;\n  gap: 6px;\n  padding: 16px 20px;\n}\n.wa-bubble {\n  align-self: flex-start;\n  max-width: 60%;\n  padding: 6px 9px 8px;\n  border-radius: 7.5px;\n  background: #fff;\n  color: #111b21;\n  font-size: 14.2px;\n  box-shadow: 0 1px 0.5px rgb(11 20 26 / 13%);\n}\n.wa-bubble.wa-out {\n  align-self: flex-end;\n  background: #d9fdd3;\n}\n.wa-composer {\n  display: flex;\n  align-items: center;\n  gap: 10px;\n  padding: 8px 16px;\n  background: #f0f2f5;\n}\n.wa-input {\n  flex: 1;\n  padding: 9px 12px;\n  border-radius: 8px;\n  background: #fff;\n  color: #3b4a54;\n  font-size: 15px;\n}\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n// Full-width, short panel: the grid recomputes columns from the\n// available width, so a wide picker simply shows more per row.\nexport type PickerExampleProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = Picker.Root,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      appearance=\"default\"\n      className={className}\n      searchPlaceholder=\"Search emoji\"\n    >\n      <Picker.Search />\n      <Picker.Viewport>\n        <Picker.List />\n        <Picker.Empty />\n      </Picker.Viewport>\n      <Picker.CategoryNav />\n    </RootComponent>\n  );\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +14,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/WhatsApp keyboard panel\n\nA full-width, short WhatsApp keyboard panel whose grid reflows its columns.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"wa-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/WhatsApp keyboard panel\n\nA full-width, short WhatsApp keyboard panel whose grid reflows its columns.\n\nInstall emoji-picker-react 5 or later, import './picker.css', then render <PickerExample className=\"wa-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }

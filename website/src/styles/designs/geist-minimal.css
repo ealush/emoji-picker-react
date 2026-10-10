@@ -1,7 +1,4 @@
 /* Generated from stories/recipes/geist-minimal by scripts/portDesigns.mts. */
-/* The surrounding mock app (shared by every stack variant). */
-
-
 /* Vercel Geist — built-in light tokens via <Root theme="light">, then a
    minimal monochrome layer: hairlines, mono section headers, square
    focus rings, caller-defined suggestions first. */

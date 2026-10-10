@@ -1,0 +1,8 @@
+/* Picker panel chrome (shared by every stack variant). */
+.ios-handle {
+  width: 36px;
+  height: 5px;
+  margin: 8px auto 6px;
+  border-radius: 3px;
+  background: #c7c7cc;
+}

@@ -10,13 +10,6 @@
   font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',
     Arial, sans-serif;
 }
-.ios-handle {
-  width: 36px;
-  height: 5px;
-  margin: 8px auto 6px;
-  border-radius: 3px;
-  background: #c7c7cc;
-}
 /* No section titles: hide them (the label-height token above is 0, so
    measurement and virtualization agree). */
 

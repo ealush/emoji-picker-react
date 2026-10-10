@@ -17,6 +17,7 @@ function fixture({
   baseline = true,
   markers = true,
   shell = 'export function Shell() { return null; }',
+  picker = 'export function PickerExample() { return null; }',
   metadata = {},
 } = {}) {
   const root = mkdtempSync(join(tmpdir(), 'epr-designs-'));
@@ -52,13 +53,14 @@ function fixture({
   );
   for (const file of [
     'shell.tsx',
+    'picker.tsx',
     'app.css',
     'picker.css',
     'picker.module.css',
   ])
     writeFileSync(
       join(root, 'stories/recipes/example', file),
-      file === 'shell.tsx' ? shell : '/* fixture */',
+      file === 'shell.tsx' ? shell : file === 'picker.tsx' ? picker : '/* fixture */',
     );
   writeFileSync(
     join(root, 'README.md'),
@@ -116,9 +118,15 @@ it('skips helper directories and produces stable gallery output on reruns', () =
   try {
     expect(run().status).toBe(0);
     const generated = join(root, 'website/src/components/designs/Example.tsx');
+    const generatedPicker = join(
+      root,
+      'website/src/components/designs/ExamplePicker.tsx',
+    );
     const first = readFileSync(generated, 'utf8');
+    const firstPicker = readFileSync(generatedPicker, 'utf8');
     expect(run().status).toBe(0);
     expect(readFileSync(generated, 'utf8')).toBe(first);
+    expect(readFileSync(generatedPicker, 'utf8')).toBe(firstPicker);
     expect(readFileSync(join(root, 'docs/designs/example.png'), 'utf8')).toBe(
       'fixture baseline',
     );

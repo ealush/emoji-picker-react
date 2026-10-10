@@ -3,9 +3,9 @@ import React from 'react';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
+import { PickerExample } from './picker';
 
-// Narrow, touch-first: no Search (type-to-search is off with it), no
-// section titles, 34px emojis.
+// In context: a phone showing the picker as a bottom sheet.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -19,15 +19,7 @@ export function Shell({
   return (
     <div className="ios-phone">
       <div className="ios-sheet-host">
-        <RootComponent appearance="default"
-          className={className}
-        >
-          <div className="ios-handle" />
-          <Picker.Viewport>
-            <Picker.List />
-          </Picker.Viewport>
-          <Picker.CategoryNav />
-        </RootComponent>
+        <PickerExample Root={RootComponent} className={className} />
       </div>
     </div>
   );

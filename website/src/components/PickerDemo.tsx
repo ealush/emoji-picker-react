@@ -9,6 +9,7 @@ import { EmojiStyle, PickerProps } from "emoji-picker-react";
 import React, { useState } from "react";
 import { PickerControls } from "./PickerControls";
 import { PickerCustomizer } from "./PickerCustomizer";
+import { DesignsGallery } from "./DesignsSection";
 import styles from "@/styles/PickerDemo.module.css";
 
 const DEFAULT_SKIN_TONES_DISABLED = false;
@@ -37,9 +38,9 @@ export default function PickerDemo() {
   const [pickerProps, setPickerProps] = useState<PickerProps>(defaultProps);
   const [now, setNow] = useState(Date.now());
   const [textareaValue, setTextareaValue] = useState("");
-  const [activeTab, setActiveTab] = useState<"playground" | "customize">(
-    "playground",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "playground" | "customize" | "designs"
+  >("playground");
 
   return (
     <div className={styles.pickerDemoWrapper}>
@@ -61,6 +62,15 @@ export default function PickerDemo() {
           onClick={() => setActiveTab("customize")}
         >
           Customize
+        </button>
+        <button
+          className={`${styles.tabButton} ${
+            activeTab === "designs" ? styles.tabButtonActive : ""
+          }`}
+          type="button"
+          onClick={() => setActiveTab("designs")}
+        >
+          Custom examples
         </button>
       </div>
 
@@ -105,8 +115,12 @@ export default function PickerDemo() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : activeTab === "customize" ? (
         <PickerCustomizer />
+      ) : (
+        <div className={styles.designsTab}>
+          <DesignsGallery />
+        </div>
       )}
     </div>
   );

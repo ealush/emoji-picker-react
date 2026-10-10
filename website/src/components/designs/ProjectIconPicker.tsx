@@ -5,10 +5,10 @@ import React from 'react';
 import { Categories } from 'emoji-picker-react/primitives';
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './ProjectIconPickerPicker';
 
 // In context: a project settings form. Picking an emoji sets the
-// project's icon (live preview tile); categories are narrowed to the ones
-// that make sense as icons.
+// project's icon (live preview tile).
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -30,29 +30,11 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         </div>
       </div>
       <p className="project-field-label">Icon</p>
-      <RootComponent appearance="default"
+      <PickerExample
+        Root={RootComponent}
         className={className}
-        searchPlaceholder="Search icons"
-        autoFocusSearch={false}
-        onEmojiClick={(emoji: { emoji: string }) => setIcon(emoji.emoji)}
-        categories={[
-          Categories.OBJECTS,
-          Categories.ACTIVITIES,
-          Categories.TRAVEL_PLACES,
-          Categories.ANIMALS_NATURE,
-          Categories.FOOD_DRINK,
-          Categories.SYMBOLS,
-        ]}
-      >
-        <div className="project-toolbar">
-          <Picker.Search />
-          <Picker.CategoryNav />
-        </div>
-        <Picker.Viewport>
-          <Picker.List />
-          <Picker.Empty />
-        </Picker.Viewport>
-      </RootComponent>
+        onEmojiClick={(emoji) => setIcon(emoji.emoji)}
+      />
     </form>
   );
 }

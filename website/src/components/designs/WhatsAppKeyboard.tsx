@@ -4,9 +4,9 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './WhatsAppKeyboardPicker';
 
-// A full-width, short panel: the grid recomputes columns from the
-// available width, so a wide picker simply shows more per row.
+// In context: a chat with a keyboard panel.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -24,16 +24,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         <span aria-hidden>😊</span>
         <div className="wa-input">Type a message</div>
       </div>
-      <RootComponent appearance="default"         className={className}
-        searchPlaceholder="Search emoji"
-      >
-        <Picker.Search />
-        <Picker.Viewport>
-          <Picker.List />
-          <Picker.Empty />
-        </Picker.Viewport>
-        <Picker.CategoryNav />
-      </RootComponent>
+      <PickerExample Root={RootComponent} className={className} />
     </div>
   );
 }

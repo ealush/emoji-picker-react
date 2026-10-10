@@ -3,9 +3,9 @@ import React from 'react';
 import EmojiPicker from '../../../src';
 
 import './app.css';
+import { PickerExample } from './picker';
 
-// In context: a video call. Reactions float in a translucent dark pill
-// above the call controls; "+" expands to a dark full picker.
+// In context: a video call.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
   Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;
@@ -24,14 +24,7 @@ export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellPro
         </div>
       </div>
       <div className="call-reactions">
-        <RootComponent
-          className={className}
-          colorScheme="dark"
-          reactionsDefaultOpen
-          reactions={['1f44f', '1f44d', '2764-fe0f', '1f602', '1f62e', '1f389']}
-          width={360}
-          height={380}
-        />
+        <PickerExample Root={RootComponent} className={className} />
       </div>
       <div className="call-controls" role="toolbar" aria-label="Call controls">
         <button type="button" aria-label="Mute">🎙️</button>

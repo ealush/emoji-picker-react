@@ -3,10 +3,10 @@ import React, { useRef, useState } from 'react';
 import * as Picker from '../../../src/primitives';
 
 import './app.css';
+import { PickerExample } from './picker';
 
 // In context: a team chat channel. The picker opens as a popover anchored
-// above the composer's emoji button — search with the skin tone control,
-// tabs, the grid and a slim preview strip.
+// above the composer's emoji button.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -18,6 +18,19 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
   const [open, setOpen] = useState(true);
   const trigger = useRef<HTMLButtonElement>(null);
   const input = useRef<HTMLInputElement>(null);
+  function insertEmoji(emoji: Picker.EmojiClickData) {
+    const start = input.current?.selectionStart ?? message.length;
+    const end = input.current?.selectionEnd ?? start;
+    setMessage(message.slice(0, start) + emoji.emoji + message.slice(end));
+    setOpen(false);
+    requestAnimationFrame(() => {
+      input.current?.focus();
+      input.current?.setSelectionRange(
+        start + emoji.emoji.length,
+        start + emoji.emoji.length,
+      );
+    });
+  }
   return (
     <div className="chat-window">
       <header className="chat-header">
@@ -44,34 +57,48 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           </div>
         </li>
       </ul>
-      {open && <div className="chat-popover" onKeyDown={(event) => {
-        if (event.key === 'Escape') { setOpen(false); trigger.current?.focus(); }
-      }}>
-        <RootComponent appearance="default" className={className} onEmojiClick={(emoji: Picker.EmojiClickData) => {
-          const start = input.current?.selectionStart ?? message.length;
-          const end = input.current?.selectionEnd ?? start;
-          setMessage(message.slice(0, start) + emoji.emoji + message.slice(end));
-          setOpen(false);
-          requestAnimationFrame(() => { input.current?.focus(); input.current?.setSelectionRange(start + emoji.emoji.length, start + emoji.emoji.length); });
-        }}>
-          <Picker.Search><Picker.SkinTone /></Picker.Search>
-          <Picker.CategoryNav />
-          <Picker.Viewport>
-            <Picker.List />
-            <Picker.Empty />
-          </Picker.Viewport>
-          <Picker.Preview />
-        </RootComponent>
-      </div>}
+      {open && (
+        <div
+          className="chat-popover"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              setOpen(false);
+              trigger.current?.focus();
+            }
+          }}
+        >
+          <PickerExample
+            Root={RootComponent}
+            className={className}
+            onEmojiClick={insertEmoji}
+          />
+        </div>
+      )}
       <div className="chat-composer">
-        <input ref={input} className="chat-input" aria-label="Message #design-crit"
-          value={message} onChange={(event) => setMessage(event.target.value)} />
+        <input
+          ref={input}
+          className="chat-input"
+          aria-label="Message #design-crit"
+          value={message}
+          onChange={(event) => setMessage(event.target.value)}
+        />
         <div className="chat-tools">
-          <button type="button" aria-label="Attach file">＋</button>
-          <button ref={trigger} type="button" aria-label="Emoji" aria-expanded={open} className="chat-emoji-button" onClick={() => setOpen(!open)}>
+          <button type="button" aria-label="Attach file">
+            ＋
+          </button>
+          <button
+            ref={trigger}
+            type="button"
+            aria-label="Emoji"
+            aria-expanded={open}
+            className="chat-emoji-button"
+            onClick={() => setOpen(!open)}
+          >
             ☺
           </button>
-          <button type="button" className="chat-send">Send</button>
+          <button type="button" className="chat-send">
+            Send
+          </button>
         </div>
       </div>
     </div>

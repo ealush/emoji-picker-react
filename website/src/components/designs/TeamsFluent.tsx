@@ -4,9 +4,9 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './TeamsFluentPicker';
 
-// Tabs first, then search: an order the default picker does not offer.
-// SkinTone is composed inside Search to share its header and keyboard flow.
+// Fluent-style picker: tabs first, then search.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -14,15 +14,5 @@ export type ShellProps = {
 };
 
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
-  return (
-    <RootComponent appearance="default" className={className} searchPlaceholder="Search emoji">
-      <Picker.CategoryNav />
-      <Picker.Search><Picker.SkinTone /></Picker.Search>
-      <Picker.Viewport>
-        <Picker.List />
-        <Picker.Empty />
-      </Picker.Viewport>
-      <Picker.Preview />
-    </RootComponent>
-  );
+  return <PickerExample Root={RootComponent} className={className} />;
 }

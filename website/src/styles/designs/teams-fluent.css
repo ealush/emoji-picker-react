@@ -1,7 +1,4 @@
 /* Generated from stories/recipes/teams-fluent by scripts/portDesigns.mts. */
-/* The surrounding mock app (shared by every stack variant). */
-
-
 /* Microsoft Teams (Fluent 2) — compact flyout: Segoe type, 4px radii,
    underlined segmented tabs on top, Teams brand purple. */
 /* Picker styles — the source of truth for every stack variant. */

@@ -153,9 +153,10 @@ const EXAMPLES: Array<[string, string, string]> = [
   ],
 ];
 
-// One complete worked example inlined into llms-full.txt.
+// One complete worked example inlined into llms-full.txt: the picker-only
+// composition plus its styles, never the surrounding demo app chrome.
 const WORKED_EXAMPLE = [
-  'stories/recipes/team-chat/shell.tsx',
+  'stories/recipes/team-chat/picker.tsx',
   'stories/recipes/team-chat/picker.css',
 ];
 
@@ -267,7 +268,7 @@ const full = [
     ([file, title, description], i) =>
       `${i + 1}. ${title} (${file}): ${description}`,
   ),
-  `${sections.length + 1}. Worked example: team chat composer (stories/recipes/team-chat)`,
+  `${sections.length + 1}. Worked example: team chat picker composition (stories/recipes/team-chat/picker.tsx; picker only, demo app chrome excluded)`,
 ];
 for (const [file, title] of sections) {
   full.push(
@@ -281,7 +282,7 @@ for (const [file, title] of sections) {
 }
 full.push(
   '',
-  '<!-- worked example: team chat composer (stories/recipes/team-chat) -->',
+  '<!-- worked example: team chat picker composition (stories/recipes/team-chat/picker.tsx; picker only, demo app chrome excluded) -->',
 );
 for (const file of WORKED_EXAMPLE) {
   const lang = file.endsWith('.css') ? 'css' : 'tsx';

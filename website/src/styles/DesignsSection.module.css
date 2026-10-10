@@ -164,7 +164,28 @@
   text-align: left;
 }
 
+/* Fixed-width demo hosts (e.g. a 680px editor window) are flex items of
+   the stage: keep their width and scroll instead of squeezing, which
+   used to crush the host and clip the picker on narrow screens. */
+.designStage > * {
+  flex-shrink: 0;
+}
+
+/* The gallery embedded in the playground tab: full-width column without
+   the standalone section band. */
+.galleryEmbed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+.galleryEmbed .sectionSubtitle {
+  margin-bottom: 24px;
+}
+
 .codeButton {
+  align-self: center;
   padding: 8px 16px;
   border: 1px solid #cbd5e1;
   border-radius: 999px;
@@ -187,28 +208,105 @@
 .sourceActions {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 8px 10px;
   align-items: center;
+}
+
+.sourceField {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.sourceFieldLabel {
+  font-size: 13px;
+  color: var(--foreground-muted);
+  white-space: nowrap;
+}
+
+.sourceSelect {
+  max-width: min(240px, 100%);
+  padding: 7px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+
+.sourceSelect:disabled {
+  opacity: 0.55;
+}
+
+.actionButton {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+a.actionButton {
+  color: var(--foreground);
+}
+
+.actionButton:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-soft);
+}
+
+.actionButton:focus-visible,
+.sourceSelect:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.actionButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.actionButton:disabled:hover {
+  border-color: var(--border);
+  background: var(--surface);
+}
+
+.sourceStatus {
+  min-height: 20px;
+  margin: 8px 2px 0;
+  font-size: 13px;
+  color: var(--foreground-muted);
 }
 
 .sourcePanel pre {
   max-height: 420px;
   overflow: auto;
+  margin: 8px 0 0;
   padding: 20px;
+  border: 1px solid var(--border);
   border-radius: 12px;
   background: #0f172a;
   color: #e2e8f0;
 }
 
-.sourcePanel button,
-.sourcePanel select {
-  padding: 6px 10px;
-  font: inherit;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .card,
-  .arrow {
+  .arrow,
+  .actionButton {
     transition: none;
   }
   .card:hover {

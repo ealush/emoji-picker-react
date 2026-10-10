@@ -4,10 +4,10 @@ import React from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './HabitTrackerMobilePicker';
 
 // In context: a mobile app's "New habit" screen. Choosing an icon opens
-// a bottom sheet with a header row, a horizontal tab strip and large
-// tile-style emojis.
+// a bottom sheet.
 export type ShellProps = {
   /** The picker root: Picker.Root, or a styled() wrapper of it. */
   Root?: React.ComponentType<Picker.RootProps>;
@@ -34,18 +34,7 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
           <h3>Choose an icon</h3>
           <button type="button">Done</button>
         </div>
-        <RootComponent appearance="default"
-          className={className}
-          searchPlaceholder="Search"
-          autoFocusSearch={false}
-        >
-          <Picker.Search />
-          <Picker.CategoryNav />
-          <Picker.Viewport>
-            <Picker.List />
-            <Picker.Empty />
-          </Picker.Viewport>
-        </RootComponent>
+        <PickerExample Root={RootComponent} className={className} />
       </div>
     </div>
   );

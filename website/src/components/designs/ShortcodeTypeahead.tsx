@@ -4,17 +4,9 @@ import React, { useRef, useState } from 'react';
 
 import * as Picker from 'emoji-picker-react/primitives';
 
+import { PickerExample } from './ShortcodeTypeaheadPicker';
 
 export type ShellProps = { Root?: React.ComponentType<Picker.RootProps>; className?: string };
-
-function Hint() {
-  const active = Picker.useActiveEmoji();
-  const { search } = Picker.useSearchState();
-  return <div className="typeahead-hint">
-    <span className="typeahead-name">{active ? active.names[active.names.length - 1] : `Emoji matching “${search}”`}</span>
-    <span>↵ insert · esc dismiss</span>
-  </div>;
-}
 
 // Name autocomplete triggered by ':', not a Slack shortcode resolver.
 export function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {
@@ -59,11 +51,12 @@ export function Shell({ Root: RootComponent = Picker.Root, className }: ShellPro
         }
       }} />
     {open && <div ref={picker}>
-      <RootComponent appearance="default" className={className} searchValue={query}
-        autoFocusSearch={false} onEmojiClick={insert}>
-        <Picker.Viewport><Picker.List /><Picker.Empty /></Picker.Viewport>
-        <Hint />
-      </RootComponent>
+      <PickerExample
+        Root={RootComponent}
+        className={className}
+        searchValue={query}
+        onEmojiClick={insert}
+      />
     </div>}
   </div>;
 }

@@ -3,8 +3,18 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const tabs = (page: Page) =>
   page
-    .getByRole('tablist', { name: 'Design examples', exact: true })
+    .getByRole('tablist', { name: 'Custom design examples', exact: true })
     .getByRole('tab');
+
+const gallery = async (page: Page) => {
+  await page
+    .getByRole('button', { name: 'Custom examples', exact: true })
+    .click();
+  await expect(
+    page.locator('#design-stage [data-epr-part="emoji"]').first(),
+  ).toBeVisible();
+  return tabs(page);
+};
 const customizer = (page: Page) =>
   page.locator('[class*="customizer"]').first();
 const preview = (page: Page) => page.locator('.my-picker');
@@ -38,19 +48,12 @@ test('initial page focus stays outside the gallery and published guidance matche
   request,
 }) => {
   await page.goto('./');
+  await expect(tabs(page)).toHaveCount(0);
+  await gallery(page);
   await expect(tabs(page)).toHaveCount(25);
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        Boolean(
-          document.querySelector('#design-stage [data-epr-part="emoji"]'),
-        ),
-      ),
-    )
-    .toBe(true);
-  expect(
-    await page.evaluate(() =>
-      Boolean(document.activeElement?.closest('#designs')),
+  await expect(
+    page.evaluate(() =>
+      Boolean(document.activeElement?.closest('#design-stage')),
     ),
   ).toBe(false);
   await page.keyboard.type('cat');
@@ -182,6 +185,7 @@ test('gallery keyboard selection keeps focus, names its panel and respects reduc
     };
   });
   await page.goto('./');
+  await gallery(page);
   await tabs(page).first().focus();
   for (const [key, index] of [
     ['ArrowRight', 1],
@@ -215,6 +219,7 @@ test('all gallery examples render and explicit reopening may focus search', asyn
   page,
 }) => {
   await page.goto('./');
+  await gallery(page);
   const errors: string[] = [];
   page.on('pageerror', (error) => errors.push(error.message));
   for (let i = 0; i < 25; i++) {
@@ -254,6 +259,7 @@ test('gallery source files copy/download and report failed requests', async ({
 }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   await page.goto('./');
+  await gallery(page);
   await page.getByRole('button', { name: 'Get the code', exact: true }).click();
   const source = page.locator('[class*="sourcePanel"]');
   await expect(source.locator('code')).toContainText('use client');
@@ -285,9 +291,11 @@ test('gallery source files copy/download and report failed requests', async ({
   const prompt = await page.evaluate(() => navigator.clipboard.readText());
   expect(prompt).toContain('article-comments');
   expect(prompt).toContain('--- emoji-picker.tsx ---');
-  expect(prompt).toContain('--- app.css ---');
   expect(prompt).toContain('--- picker.css ---');
   expect(prompt).toContain('--- README.md ---');
+  expect(prompt).not.toContain('--- app.css ---');
+  expect(prompt).toContain('PickerExample');
+  expect(prompt).not.toContain('comments-card');
   expect(prompt).toContain('do not assume npm latest is v5');
 });
 
@@ -300,6 +308,7 @@ test('source handles invalid payloads and ignores stale clipboard feedback', asy
     route.fulfill({ json: { files: [{ name: 'broken.tsx' }] } }),
   );
   await page.goto('./');
+  await gallery(page);
   await page.getByRole('button', { name: 'Get the code', exact: true }).click();
   const source = page.locator('[class*="sourcePanel"]');
   await expect(source.getByRole('status')).toHaveText('Source unavailable');

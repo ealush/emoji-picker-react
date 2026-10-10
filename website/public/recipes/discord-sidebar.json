@@ -2,11 +2,11 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\n\n// A vertical category rail: CategoryNav is placed in its own column and\n// orientation=\"vertical\" stacks the tabs and moves keyboard navigation to\n// Up/Down (announced through aria-orientation).\nexport type ShellProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = Picker.Root, className }: ShellProps) {\n  return (\n    <RootComponent appearance=\"default\" className={className} searchPlaceholder=\"Find the perfect emoji\">\n      <Picker.Panel>\n        <div className=\"discord-layout\">\n          <div className=\"discord-rail\">\n            <Picker.CategoryNav orientation=\"vertical\" />\n          </div>\n          <div className=\"discord-main\">\n            <Picker.Search><Picker.SkinTone /></Picker.Search>\n            <Picker.Viewport>\n              <Picker.List />\n              <Picker.Empty />\n            </Picker.Viewport>\n          </div>\n        </div>\n        <Picker.Preview />\n      </Picker.Panel>\n    </RootComponent>\n  );\n}\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport * as Picker from 'emoji-picker-react/primitives';\n\nimport './panel.css';\n\n// A vertical category rail: CategoryNav is placed in its own column and\n// orientation=\"vertical\" stacks the tabs and moves keyboard navigation to\n// Up/Down (announced through aria-orientation).\nexport type PickerExampleProps = {\n  /** The picker root: Picker.Root, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Picker.RootProps>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = Picker.Root,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      appearance=\"default\"\n      className={className}\n      searchPlaceholder=\"Find the perfect emoji\"\n    >\n      <Picker.Panel>\n        <div className=\"discord-layout\">\n          <div className=\"discord-rail\">\n            <Picker.CategoryNav orientation=\"vertical\" />\n          </div>\n          <div className=\"discord-main\">\n            <Picker.Search>\n              <Picker.SkinTone />\n            </Picker.Search>\n            <Picker.Viewport>\n              <Picker.List />\n              <Picker.Empty />\n            </Picker.Viewport>\n          </div>\n        </div>\n        <Picker.Preview />\n      </Picker.Panel>\n    </RootComponent>\n  );\n}\n"
     },
     {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n.discord-layout {\n  display: flex;\n  flex: 1;\n  min-height: 0;\n}\n.discord-rail {\n  width: 48px;\n  flex: none;\n  background: #232428;\n  overflow-y: auto;\n}\n.discord-main {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  min-width: 0;\n}\n.discord-main [data-epr-part='search'] > * {\n  padding: 10px 10px 6px;\n}\n"
+      "name": "panel.css",
+      "content": "/* Picker panel chrome (shared by every stack variant). */\n.discord-layout {\n  display: flex;\n  flex: 1;\n  min-height: 0;\n}\n.discord-rail {\n  width: 48px;\n  flex: none;\n  background: #232428;\n  overflow-y: auto;\n}\n.discord-main {\n  display: flex;\n  flex-direction: column;\n  flex: 1;\n  min-width: 0;\n}\n.discord-main [data-epr-part='search'] > * {\n  padding: 10px 10px 6px;\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +18,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/Discord sidebar\n\nA Discord-style picker with the category rail in its own vertical column.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"discord-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/Discord sidebar\n\nA Discord-style picker with the category rail in its own vertical column.\n\nInstall emoji-picker-react 5 or later, import './panel.css' and './picker.css', then render <PickerExample className=\"discord-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }

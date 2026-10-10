@@ -1,4 +1,4 @@
-/* The surrounding mock app (shared by every stack variant). */
+/* Picker panel chrome (shared by every stack variant). */
 .linear-footer {
   display: flex;
   gap: 16px;

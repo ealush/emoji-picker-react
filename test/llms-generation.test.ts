@@ -21,7 +21,7 @@ it('generates stable website copies from the current sources and actual exports'
       'stories/recipes/README.md',
       'stories/integrations/README.md',
       'example/README.md',
-      'stories/recipes/team-chat/shell.tsx',
+      'stories/recipes/team-chat/picker.tsx',
       'stories/recipes/team-chat/picker.css',
       'src/index.tsx',
       'src/primitives/index.ts',

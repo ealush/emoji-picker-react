@@ -16,7 +16,6 @@ import { InstallSection } from '../components/InstallSection';
 import { FloatingEmojis } from '../components/FloatingEmojis';
 import PickerDemo from '../components/PickerDemo';
 import { isV5Preview } from '@/lib/release';
-import { DesignsSection } from '../components/DesignsSection';
 import { ReactionsSection } from '../components/ReactionsSection';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -121,9 +120,6 @@ export default function Home({ initialStats }: HomeProps) {
               <a href="#playground" className={styles.primaryButton}>
                 Try it out ↓
               </a>
-              <a href="#designs" className={styles.secondaryButton}>
-                See 25 designs ↓
-              </a>
               <Link
                 href="https://github.com/ealush/emoji-picker-react"
                 target="_blank"
@@ -142,15 +138,14 @@ export default function Home({ initialStats }: HomeProps) {
           <div className={styles.playgroundContent}>
             <h2 className={styles.sectionTitle}>Interactive Playground</h2>
             <p className={styles.sectionSubtitle}>
-              Tweak the settings and see the magic happen in real-time
+              Tweak the props, theme it with CSS variables, or browse
+              custom design examples — all running live
             </p>
             <PickerDemo />
           </div>
         </section>
 
         <ReactionsSection />
-
-        <DesignsSection />
 
         <InstallSection />
 

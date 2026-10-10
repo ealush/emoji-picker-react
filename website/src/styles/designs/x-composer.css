@@ -1,5 +1,5 @@
 /* Generated from stories/recipes/x-composer by scripts/portDesigns.mts. */
-/* The surrounding mock app (shared by every stack variant). */
+/* Picker panel chrome (shared by every stack variant). */
 .x-header {
   display: flex;
   align-items: center;

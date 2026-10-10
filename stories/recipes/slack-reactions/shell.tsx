@@ -3,9 +3,9 @@ import React from 'react';
 import EmojiPicker from '../../../src';
 
 import './app.css';
+import { PickerExample } from './picker';
 
-// The default picker in reactions mode with Slack's common reaction set.
-// The "+" expands to the full picker in place.
+// In context: a chat message with Slack's reaction set under it.
 export type ShellProps = {
   /** The picker root: EmojiPicker, or a styled() wrapper of it. */
   Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;
@@ -22,12 +22,7 @@ export function Shell({ Root: RootComponent = EmojiPicker, className }: ShellPro
           <div>Shipped the release notes — take a look before standup 🚀</div>
         </div>
       </div>
-      <RootComponent         className={className}
-        reactionsDefaultOpen
-        reactions={['2705', '1f440', '1f64c', '1f525', '1f389', '1f44d']}
-        width={420}
-        height={380}
-      />
+      <PickerExample Root={RootComponent} className={className} />
     </div>
   );
 }

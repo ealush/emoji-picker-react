@@ -2,11 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n\n// GitHub's fixed reaction set. allowExpandReactions={false} makes the\n// compact bar terminal: there is no \"+\" and no full picker.\nexport type ShellProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = EmojiPicker, className }: ShellProps) {\n  return (\n    <div className=\"gh-stage\">\n      <div className=\"gh-comment-header\">\n        <strong>octocat</strong> commented 3 hours ago\n      </div>\n      Repro is attached. Happens on every cold start since 2.4.0.\n      <div className=\"gh-popover-label\">Pick your reaction</div>\n      <RootComponent         className={className}\n        reactionsDefaultOpen\n        allowExpandReactions={false}\n        reactions={[\n          '1f44d',\n          '1f44e',\n          '1f604',\n          '1f389',\n          '1f615',\n          '2764-fe0f',\n          '1f680',\n          '1f440',\n        ]}\n      />\n    </div>\n  );\n}\n"
-    },
-    {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n.gh-stage {\n  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans',\n    Helvetica, Arial, sans-serif;\n  width: 420px;\n  padding: 16px;\n  border: 1px solid #d0d7de;\n  border-radius: 6px;\n  background: #ffffff;\n  color: #1f2328;\n  font-size: 14px;\n}\n.gh-comment-header {\n  margin: -16px -16px 12px;\n  padding: 8px 16px;\n  border-bottom: 1px solid #d0d7de;\n  border-radius: 6px 6px 0 0;\n  background: #f6f8fa;\n  color: #59636e;\n}\n.gh-comment-header strong {\n  color: #1f2328;\n}\n.gh-popover-label {\n  margin: 14px 0 6px;\n  color: #59636e;\n  font-size: 12px;\n}\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n// GitHub's fixed reaction set. allowExpandReactions={false} makes the\n// compact bar terminal: there is no \"+\" and no full picker.\nexport type PickerExampleProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = EmojiPicker,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      className={className}\n      reactionsDefaultOpen\n      allowExpandReactions={false}\n      reactions={[\n        '1f44d',\n        '1f44e',\n        '1f604',\n        '1f389',\n        '1f615',\n        '2764-fe0f',\n        '1f680',\n        '1f440',\n      ]}\n    />\n  );\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +14,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/GitHub reactions\n\nGitHub's fixed reaction set as a compact bar that never expands.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"gh-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/GitHub reactions\n\nGitHub's fixed reaction set as a compact bar that never expands.\n\nInstall emoji-picker-react 5 or later, import './picker.css', then render <PickerExample className=\"gh-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }

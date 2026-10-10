@@ -1,5 +1,5 @@
 /* Generated from stories/recipes/notion-icon-picker by scripts/portDesigns.mts. */
-/* The surrounding mock app (shared by every stack variant). */
+/* Picker panel chrome (shared by every stack variant). */
 .notion-tabs {
   display: flex;
   align-items: center;

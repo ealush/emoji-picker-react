@@ -57,7 +57,7 @@ export function ComposedPicker() {
 
 ## Recipe source and prompts
 
-Each gallery example exposes its actual component, host styles, picker styles and setup README. Copy a file or download it, or use **Copy implementation prompt** to include all of those files plus version-aware setup and adaptation instructions. The prompt describes the plain CSS source currently shown; other style systems require adaptation. Failed or invalid source responses offer a retry, and copy feedback belongs to the currently selected file.
+Each gallery example exposes its picker-only component (`PickerExample`), picker and panel styles and setup README — never the surrounding demo app chrome. Copy a file or download it, or use **Copy implementation prompt** to include all of those files plus version-aware setup and adaptation instructions. The prompt describes the plain CSS source currently shown; other style systems require adaptation. Failed or invalid source responses offer a retry, and copy feedback belongs to the currently selected file.
 
 ## Generation and verification
 

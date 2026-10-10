@@ -2,11 +2,7 @@
   "files": [
     {
       "name": "emoji-picker.tsx",
-      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n\n// Tapback set: love, like, dislike, laugh, emphasize, question.\nexport type ShellProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;\n  className?: string;\n};\n\nexport function Shell({ Root: RootComponent = EmojiPicker, className }: ShellProps) {\n  return (\n    <div className=\"imessage-stage\">\n      <RootComponent         className={className}\n        colorScheme=\"dark\"\n        reactionsDefaultOpen\n        reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}\n      />\n      <div className=\"imessage-bubble\">Dinner at 8? I booked the place by the river.</div>\n    </div>\n  );\n}\n"
-    },
-    {
-      "name": "app.css",
-      "content": "/* The surrounding mock app (shared by every stack variant). */\n.imessage-stage {\n  width: 420px;\n  padding: 40px 24px 24px;\n  border-radius: 24px;\n  background: linear-gradient(160deg, #1c1c1e, #000);\n  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue',\n    Arial, sans-serif;\n}\n.imessage-bubble {\n  max-width: 280px;\n  margin: 10px 0 0 auto;\n  padding: 9px 14px;\n  border-radius: 20px;\n  background: #0066d6;\n  color: #fff;\n  font-size: 16px;\n  line-height: 1.35;\n}\n"
+      "content": "'use client';\nimport React from 'react';\n\nimport EmojiPicker from 'emoji-picker-react';\n\n// Tapback set: love, like, dislike, laugh, emphasize, question.\nexport type PickerExampleProps = {\n  /** The picker root: EmojiPicker, or a styled() wrapper of it. */\n  Root?: React.ComponentType<Omit<React.ComponentProps<typeof EmojiPicker>, 'theme'>>;\n  className?: string;\n};\n\nexport function PickerExample({\n  Root: RootComponent = EmojiPicker,\n  className,\n}: PickerExampleProps) {\n  return (\n    <RootComponent\n      className={className}\n      colorScheme=\"dark\"\n      reactionsDefaultOpen\n      reactions={['2764-fe0f', '1f44d', '1f44e', '1f602', '203c-fe0f', '2753']}\n    />\n  );\n}\n"
     },
     {
       "name": "picker.css",
@@ -18,7 +14,7 @@
     },
     {
       "name": "README.md",
-      "content": "# Examples/iMessage tapback\n\nAn iMessage tapback bubble: love, like, dislike, laugh, emphasize, question.\n\nInstall emoji-picker-react 5 or later, import app.css and picker.css, then render <Shell className=\"imessage-picker\" />. For CSS Modules, import picker.module.css and pass styles.picker as className. The component includes its app context; adapt its insertion callback to your product.\n"
+      "content": "# Examples/iMessage tapback\n\nAn iMessage tapback bubble: love, like, dislike, laugh, emphasize, question.\n\nInstall emoji-picker-react 5 or later, import './picker.css', then render <PickerExample className=\"imessage-picker\" />. Pass onEmojiClick to insert the chosen emoji into your app. For CSS Modules, import picker.module.css and pass styles.picker as className. This snippet is the picker only; the surrounding demo app chrome is not included.\n"
     }
   ]
 }
