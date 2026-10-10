@@ -1,6 +1,6 @@
 import { DEFAULT_LABEL_HEIGHT } from '../components/main/labelHeight';
 
-// Design tokens (docs/v5/PRIMITIVES.md §3, docs/v5/STYLING.md §1). The
+// Design tokens. The
 // documented `--epr-*` variable defaults as plain data: no styles, no side
 // effects.
 //

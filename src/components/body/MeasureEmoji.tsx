@@ -34,7 +34,7 @@ export function MeasureEmoji() {
     if (ref.current) {
       // Measure the button itself: the wrapper collapses to zero height
       // because its only child is absolutely positioned, which would
-      // report 0 forever and keep this measurer mounted (STATE.md §10
+      // report 0 forever and keep this measurer mounted (navigation
       // invalidation and stray-node costs on every render).
       const button = ref.current.querySelector('button');
       setEmojiSize(elementBorderBoxHeight(button) || ref.current.clientHeight);

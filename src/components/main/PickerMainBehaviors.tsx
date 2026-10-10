@@ -20,9 +20,9 @@ import {
 import { usePickerDataContext } from '../context/PickerDataContext';
 
 // Root-scoped behavior companions shared by the default picker and the
-// public Root primitive (single implementation, docs/v5/DEFAULT_COMPOSITION.md).
+// public Root primitive (single implementation).
 
-// Accepted-search synchronization (docs/v5/STATE.md §3).
+// Accepted-search synchronization.
 //
 // Controlled mode: filtering is scheduled only when a new accepted
 // `searchValue` prop is observed — a rejected `onSearchChange` proposal
@@ -97,7 +97,7 @@ function useDevSearchModeSwitchWarning(mode: string): void {
   }, [mode]);
 }
 
-// Reaction-mode observation (docs/v5/STATE.md §7). Emits only after an
+// Reaction-mode observation. Emits only after an
 // actual state change; initial mount never emits. A previous-value ref
 // (not a first-run flag) makes this StrictMode-safe: the double-invoked
 // mount effect observes an unchanged value both times and stays silent.
@@ -119,7 +119,7 @@ export const ReactionsModeObserver = /* @__PURE__ */ React.memo(
   },
 );
 
-// Root-scoped navigation generation (STATE.md §10 / PERFORMANCE.md §7).
+// Root-scoped navigation generation.
 // Reactions transitions, dataset identity changes (custom emojis included),
 // category order/membership changes, and measured geometry changes each
 // obsolete pending materialize/scroll/focus completions. Column-count

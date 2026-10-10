@@ -22,7 +22,7 @@ export function useOnScroll(BodyRef: ElementRef) {
     });
 
     // High-frequency geometry work coalesces to at most one scheduled
-    // virtualization update per animation frame (PERFORMANCE.md §6).
+    // virtualization update per animation frame.
     // Toggle dismissal stays immediate: those setters bail out when
     // nothing is open, so unrelated regions never rerender for it.
     function onScroll() {

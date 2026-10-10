@@ -355,7 +355,7 @@ export function StaleNavigation() {
 }
 
 // Each scenario changes one input the navigation generation must track
-// (NAVIGATION.md §11) between beginning and resolving a deferred move.
+// between beginning and resolving a deferred move.
 type StaleScenario = 'none' | 'resize' | 'categories' | 'data' | 'unmount';
 
 export function StaleNavigationScenarios() {

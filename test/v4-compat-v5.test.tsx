@@ -26,9 +26,9 @@ const minimalEmojiData: EmojiData = {
   },
 };
 
-// V4_API_MATRIX.md §2: enum exports remain, and readable literals are
+// Enum exports remain, and readable literals are
 // accepted wherever the v4 enums are. Runtime behavior must be identical.
-describe('v5 literal acceptance (V4_API_MATRIX.md)', () => {
+describe('v5 literal acceptance', () => {
   it('literal theme behaves like the enum', () => {
     const { container: enumTree } = render(
       <EmojiPicker emojiData={minimalEmojiData} theme={Theme.DARK} />,

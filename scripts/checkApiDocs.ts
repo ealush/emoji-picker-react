@@ -16,7 +16,7 @@ const examples = Object.entries({
   'website/README.md': 3,
   'README.md': 1,
   'docs/v5/MIGRATION.md': 1,
-  'docs/v5/DEFAULT_COMPOSITION.md': 1,
+  'docs/v5/PRIMITIVES.md': 1,
   'INTERNATIONALIZATION.md': 3,
 }).flatMap(([source, minimum]) => {
   const markdown = readFileSync(join(repoRoot, source), 'utf8');

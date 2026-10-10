@@ -1,9 +1,8 @@
-// Imperative Root-scoped navigation registry (v5 Phase 3 shell).
+// Imperative Root-scoped navigation registry.
 //
-// Cross-region keyboard navigation (docs/v5/NAVIGATION.md, implemented in
-// Phase 4) traverses registered semantic regions rather than hard-coded DOM
-// siblings. This module owns registration bookkeeping plus the navigation
-// generation token from docs/v5/STATE.md §10: every pending
+// Cross-region keyboard navigation traverses registered semantic regions
+// rather than hard-coded DOM siblings. This module owns registration
+// bookkeeping plus the navigation generation token: every pending
 // materialize/scroll/focus operation captures the generation and aborts when
 // it changes. One instance lives in the Root services slice, so multiple
 // Roots are isolated by construction.
@@ -35,7 +34,7 @@ export class NavigationRegistry {
 
   /**
    * Register a region root. Returns an unregister function for unmount.
-   * Duplicate singleton validation lives in the primitive layer (Phase 6);
+   * Duplicate singleton validation lives in the primitive layer;
    * the registry keeps every registration so that layer can adjudicate.
    */
   register(kind: NavigationRegionKind, element: Element): () => void {
@@ -56,7 +55,7 @@ export class NavigationRegistry {
     };
   }
 
-  /** Registrations in mount order. Phase 4 orders traversal by DOM document order instead. */
+  /** Registrations in mount order; traversal follows DOM document order instead. */
   getRegions(): readonly RegisteredRegion[] {
     return [...this.regions];
   }
@@ -66,7 +65,7 @@ export class NavigationRegistry {
   }
 
   /**
-   * First registration wins (PRIMITIVES.md §4 / NAVIGATION.md §2). Later
+   * First registration wins. Later
    * duplicates are ignored by picker behavior.
    */
   getAuthoritativeRegion(
@@ -114,7 +113,7 @@ export class NavigationRegistry {
   }
 
   /**
-   * Claim a singleton primitive slot (PRIMITIVES.md §4 / NAVIGATION.md §2).
+   * Claim a singleton primitive slot.
    * Returns true for the first claimant; later claimants are ignored by
    * picker behavior (dev throws, production warns once via
    * reportDuplicateRegion).
@@ -132,7 +131,7 @@ export class NavigationRegistry {
   }
 }
 
-// Duplicate singleton policy (NAVIGATION.md §2, PRIMITIVES.md §4).
+// Duplicate singleton policy.
 //
 // Duplicate compositions are unsupported in every environment; production
 // merely avoids turning a configuration mistake into a hard crash. Pure

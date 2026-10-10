@@ -12,7 +12,7 @@ import {
 } from '../../src/primitives';
 import type { EmojiClickData } from '../../src/types/exposedTypes';
 
-// Custom designs over public primitives (docs/v5/PRIMITIVES.md §2).
+// Custom designs over public primitives.
 //
 // Each composition below reassembles the same behavioral modules the
 // default picker uses — no private imports — with a completely different
@@ -25,7 +25,7 @@ import type { EmojiClickData } from '../../src/types/exposedTypes';
 // (geometry tokens are always present) and overrides a small per-design
 // delta.
 // Custom CSS targets documented data-epr-part hooks and stays within
-// appearance-safe declarations (STYLING.md §2): colors, backgrounds,
+// appearance-safe declarations: colors, backgrounds,
 // borders, radii, typography, shadows and padding tokens. Structural
 // properties (viewport overflow, list/category layout, emoji geometry)
 // are never overridden, so virtualization, measurement and keyboard

@@ -4,7 +4,7 @@ import type { PickerProps } from '../../src/index';
 import type { EmojiClickData, EmojiData } from '../../src/types/exposedTypes';
 import type { EmojiRenderProps } from '../../src/components/body/listComponents';
 import process from 'node:process';
-// React 16.8 runtime fixture (docs/v5/REACT_COMPATIBILITY.md §2).
+// React 16.8 runtime fixture.
 // Consumes the bundled picker with react@16.8 + react-dom@16.8 only:
 // mount/unmount, click selection, keyboard smoke path, SSR render,
 // hydration, and zero library-owned DOM IDs. Run from this directory:

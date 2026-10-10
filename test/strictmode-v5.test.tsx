@@ -42,7 +42,7 @@ const renderPicker = (props: Partial<Props> = {}, strict = false) => {
   return render(strict ? <React.StrictMode>{tree}</React.StrictMode> : tree);
 };
 
-describe('v5 StrictMode mount (STATE.md §7–§8)', () => {
+describe('v5 StrictMode mount', () => {
   it('does not emit onReactionsModeChange on StrictMode mount', async () => {
     const onReactionsModeChange = vi.fn();
     renderPicker({ onReactionsModeChange }, true);

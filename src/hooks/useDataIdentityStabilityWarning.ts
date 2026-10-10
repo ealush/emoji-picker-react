@@ -40,7 +40,7 @@ function freshTracker(): IdentityTracker {
 }
 
 /**
- * Dev-only diagnostic per docs/v5/PERFORMANCE.md §2.
+ * Dev-only diagnostic.
  *
  * Identity caching only helps when callers keep data props referentially
  * stable. If a non-default `emojiData` (or `customEmojis`) changes identity

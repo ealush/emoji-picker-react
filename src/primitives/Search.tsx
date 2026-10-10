@@ -6,7 +6,7 @@ import { filterPrimitiveProps } from './nativeProps';
 import { useRootScope } from './scope';
 import type { SearchProps } from './types';
 
-// Public Search primitive (docs/v5/PRIMITIVES.md §9).
+// Public Search primitive.
 //
 // Managed search region: input, status live region, clear control and icon.
 // Additional controls are supplied as children. Ref addresses the region

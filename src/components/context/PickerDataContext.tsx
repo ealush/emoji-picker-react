@@ -63,7 +63,7 @@ export function PickerDataProvider({
 
   useDataIdentityStabilityWarning(genericEmojiData, customEmojis);
 
-  // Phase 2 shared derivation: no per-Root JSON clone of the full dataset,
+  // Shared derivation: no per-Root JSON clone of the full dataset,
   // caller data never mutated, base index shared by dataset identity, custom
   // derivation cached separately by customEmojis identity. emojiVersion /
   // hiddenEmojis remain per-Root filtering layers elsewhere and never force

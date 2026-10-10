@@ -31,7 +31,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 import esLegacy from 'emoji-picker-react/dist/data/emojis-es';
 import * as Primitives from 'emoji-picker-react/primitives';
 
-// Representative v4 consumer usage (docs/v5/V4_API_MATRIX.md). This file
+// Representative v4 consumer usage. This file
 // must compile against the packed v5 declarations under both node16 and
 // bundler module resolution. It is type-checked by `npm run check:compat`
 // after `npm run build`; it never executes.

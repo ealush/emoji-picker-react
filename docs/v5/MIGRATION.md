@@ -202,7 +202,7 @@ That is an intentional package-boundary breaking change. Only documented/support
 
 v5 does **not** remove useful v4 props merely to clean up the surface.
 
-The authoritative disposition of every current prop is in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
+Every v4 prop keeps working; [PROPS.md](../../PROPS.md) lists them all with their v5 defaults.
 
 Notably retained:
 - `open`
@@ -255,8 +255,6 @@ is still called with `"apple"` as the style.
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
 
 v5 also removes v4's fixed, document-global IDs (`epr-search-id`, `epr-category-nav-id`), which collided when a page rendered two pickers. The picker renders no library-owned DOM IDs and has no `idPrefix` API. Tests or styles that targeted those IDs should use roles or `[data-epr-part]` selectors (`search-input`, `category-nav`).
-
-See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
 ## Styling
 

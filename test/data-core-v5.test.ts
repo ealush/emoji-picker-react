@@ -8,7 +8,7 @@ import { getEmojiByUnified, searchEmojis } from '../src/data-core/search';
 import defaultEmojiData from '../src/data/emojis';
 import type { EmojiData } from '../src/types/exposedTypes';
 
-describe('v5 data core (Phase 2 slice)', () => {
+describe('v5 data core', () => {
   it('normalizes unified lookup case-insensitively and trims', () => {
     const lower = getEmojiByUnified('1f600');
     expect(lower).toBeDefined();

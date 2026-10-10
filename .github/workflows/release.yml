@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish after all 12 v5 PRs have landed and passed their checks'
+        description: 'Publish to npm (semantic-release decides the version)'
         type: boolean
         required: true
         default: false
@@ -29,11 +29,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Require the complete v5 release contract
-        run: |
-          test -f docs/v5/ACCEPTANCE_CHECKLIST.md
-          test -f docs/v5/MIGRATION.md
 
       - name: Setup Node
         uses: actions/setup-node@v4

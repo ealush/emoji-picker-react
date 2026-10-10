@@ -51,7 +51,7 @@ import { RootScopeProvider } from './scope';
 import { StructuralStyleTag, structuralStyles } from './structuralStyles';
 import type { RootProps } from './types';
 
-// Public Root primitive (docs/v5/PRIMITIVES.md §5, docs/v5/DEFAULT_COMPOSITION.md).
+// Public Root primitive.
 //
 // Root owns behavior/configuration and renders the actual `aside`. It does
 // not own the branded default appearance: theme/width/height stay with the

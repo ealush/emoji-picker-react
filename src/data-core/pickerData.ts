@@ -1,6 +1,6 @@
-// Shared picker-data derivation for v5 Phase 2.
+// Shared picker-data derivation.
 //
-// Requirements (docs/v5/PERFORMANCE.md §1, docs/v5/IMPLEMENTATION_PLAN.md Phase 2):
+// Requirements:
 // - prepare/search-index immutable emoji data outside transient UI state;
 // - cache prepared base data by `emojiData` object identity (WeakMap);
 // - default packaged data shares one prepared base core across Roots;
@@ -92,8 +92,8 @@ export function getPickerDataSnapshot(
 
   // Warm the shared prepared core the picker actually searches through
   // (queryFilterDict in PickerDataContext). One construction per dataset
-  // identity backs the PERFORMANCE.md "one base index for 10
-  // same-dataset Roots" invariant; there is no second per-snapshot index.
+  // identity backs the "one base index for 10 same-dataset Roots"
+  // invariant; there is no second per-snapshot index.
   getPreparedCore(source);
 
   const hasCustoms = !!customEmojis && customEmojis.length > 0;

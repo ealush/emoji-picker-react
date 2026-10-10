@@ -18,7 +18,7 @@ import { PickerDataProvider } from '../src/components/context/PickerDataContext'
 import { NavigationRegistry } from '../src/state/navigationRegistry';
 import { SkinTones } from '../src/types/exposedTypes';
 
-// PERFORMANCE.md §3 render isolation gates.
+// Render isolation gates.
 //
 // Each probe mirrors the exact slice subscriptions of its real region
 // component (Search subscribes to search + skin-tone slices, Preview to

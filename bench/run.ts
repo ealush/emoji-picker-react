@@ -1,5 +1,6 @@
 import process from 'node:process';
-// Performance gate runner (docs/v5/PERFORMANCE.md §4, §5, §10).
+// Performance gate runner: search, preparation and mount budgets against
+// bench/baseline.json.
 //
 // Run on a quiet machine: close other load first. Medians absorb spikes,
 // but persistent contention (builds, test watchers, browser tabs) skews
@@ -74,7 +75,7 @@ function parseArgs(argv: string[]) {
     ref: 'master',
     probe: null,
     runs: 5,
-    samples: 50, // PERFORMANCE.md §4.1: at least 50 per query
+    samples: 50, // at least 50 per query
     mountSamples: 8,
   };
   for (let i = 0; i < argv.length; i += 1) {
@@ -333,7 +334,7 @@ function gate(current: Metrics, baseline: Metrics) {
       `cold query "${query}"`,
       baseline.cold[query],
       current.cold[query],
-      // PERFORMANCE.md §4.1: each fixture MUST be <=110% (hard gate).
+      // Each fixture must stay within 110% of the baseline (hard gate).
       1.1,
       1.1,
     );
@@ -356,7 +357,7 @@ function gate(current: Metrics, baseline: Metrics) {
       );
     });
   });
-  // PERFORMANCE.md §1 / ACCEPTANCE_CHECKLIST §16: cold preparation <=110%.
+  // Cold preparation must stay within 110% of the baseline.
   checkRow(
     'cold data preparation',
     baseline.prepare,

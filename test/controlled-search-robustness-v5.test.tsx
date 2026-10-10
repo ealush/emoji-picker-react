@@ -78,7 +78,7 @@ async function settle(ms = 250) {
 
 afterEach(() => vi.useRealTimers());
 
-describe('v5 controlled search robustness (STATE.md §1)', () => {
+describe('v5 controlled search robustness', () => {
   it.each([5, 50, 150])(
     'preserves sequential typing with %ims gaps and a delayed parent',
     async (delay) => {

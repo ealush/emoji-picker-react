@@ -3,7 +3,7 @@ import {
   installGlobals,
   FixtureIntersectionObserver,
 } from '../scripts/fixtureDom.js';
-// Shared benchmark utilities (PERFORMANCE.md §4, §10).
+// Shared benchmark utilities.
 // Wall-clock comparison only; deterministic invariants (single base-index
 // construction, render isolation, cancellation) live in unit tests.
 function median(values: number[]): number {
@@ -18,11 +18,11 @@ function mean(values: number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-// Representative queries per PERFORMANCE.md §4.1: lengths 1, 2, 4, 8 plus
+// Representative queries: lengths 1, 2, 4, 8 plus
 // a no-match query. All match the packaged English dataset.
 const COLD_QUERIES = ['a', 'sm', 'cat', 'birthday', 'zzz-no-match'];
 
-// Realistic typing prefixes per PERFORMANCE.md §4.2, plus a
+// Realistic typing prefixes, plus a
 // backspace/retype tail.
 const INCREMENTAL_SEQUENCES = [
   ['c', 'ca', 'cat'],

@@ -58,7 +58,7 @@ function buildTree(): {
   return { root, search, categories, grid };
 }
 
-describe('region traversal (NAVIGATION.md §3)', () => {
+describe('region traversal', () => {
   it('orders by DOM document order, not registration order', () => {
     const { root, search, categories, grid } = buildTree();
     const registry = new NavigationRegistry();
@@ -155,7 +155,7 @@ describe('region traversal (NAVIGATION.md §3)', () => {
   });
 });
 
-describe('duplicate region policy (NAVIGATION.md §2)', () => {
+describe('duplicate region policy', () => {
   it('throws in development', () => {
     expect(duplicateRegionPolicy()).toBe('throw');
     expect(() => reportDuplicateRegion('search')).toThrow(
@@ -317,7 +317,7 @@ async function waitForFocus(label: RegExp | string) {
   });
 }
 
-describe('cross-region keyboard regression (NAVIGATION.md §4)', () => {
+describe('cross-region keyboard regression', () => {
   it('Search ArrowDown enters the next DOM-order region (categories)', async () => {
     renderPicker();
     const input = await screen.findByRole('textbox');
@@ -348,7 +348,7 @@ describe('cross-region keyboard regression (NAVIGATION.md §4)', () => {
   });
 });
 
-describe('stale grid navigation cancellation (NAVIGATION.md §11)', () => {
+describe('stale grid navigation cancellation', () => {
   it('aborts a pending arrow-key focus after the filter changes', async () => {
     renderPicker();
     const buttons = await screen.findAllByRole('gridcell', {

@@ -60,16 +60,15 @@ Contents:
 8. Adoption (docs/v5/ADOPTION.md): native input, loading recovery, registry installation and source downloads
 9. v5 API (docs/v5/API.md): all v5 additions with examples
 10. Primitives (docs/v5/PRIMITIVES.md): composable parts, hooks, custom cells, grammar
-11. Styling contract (docs/v5/STYLING.md): tokens, parts, cascade, structural rules
+11. Styling (docs/v5/STYLING.md): tokens, parts, cascade, structural rules
 12. Styling recipes by library (docs/v5/STYLING_RECIPES.md): theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI
-13. Accessibility verification (docs/v5/ACCESSIBILITY_VERIFICATION.md): keyboard, screen-reader, localization and host focus release protocol
-14. Data API (docs/v5/DATA_API.md): framework-free search and lookup
-15. Migrating from v4 (docs/v5/MIGRATION.md): what changed and how to upgrade
-16. Website examples (website/README.md): typed customization, locale loading and composition
-17. Design recipes (stories/recipes/README.md): 25 designs, each in seven styling stacks
-18. Styling integrations (stories/integrations/README.md): shadcn/ui, Tailwind, Emotion, styled-components, CSS Modules, CSS, MUI
-19. Example app (example/README.md): Vite + React 19 app running the batteries-included, unstyled, composed and data-API paths
-20. Worked example: team chat picker composition (stories/recipes/team-chat/picker.tsx; picker only, demo app chrome excluded)
+13. Data API (docs/v5/DATA_API.md): framework-free search and lookup
+14. Migrating from v4 (docs/v5/MIGRATION.md): what changed and how to upgrade
+15. Website examples (website/README.md): typed customization, locale loading and composition
+16. Design recipes (stories/recipes/README.md): 25 designs, each in seven styling stacks
+17. Styling integrations (stories/integrations/README.md): shadcn/ui, Tailwind, Emotion, styled-components, CSS Modules, CSS, MUI
+18. Example app (example/README.md): Vite + React 19 app running the batteries-included, unstyled, composed and data-API paths
+19. Worked example: team chat picker composition (stories/recipes/team-chat/picker.tsx; picker only, demo app chrome excluded)
 
 <!-- source: docs/v5/AGENT_GUIDE.md -->
 
@@ -228,11 +227,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
-Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category. Automated axe checks do not replace the manual screen-reader checks in [ACCESSIBILITY_VERIFICATION.md](./ACCESSIBILITY_VERIFICATION.md).
-
-## 10. Verifying changes in this repository
-
-`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` cover behavior, types and installed-package consumers. Playwright covers browsers and touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. After changing source documents, run `npm run docs:llms` and commit the generated root and website text. Release verification also requires the manual [accessibility protocol](./ACCESSIBILITY_VERIFICATION.md); automated axe checks do not replace it. Release gates: [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).
+Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
 
 <!-- source: docs/v5/PROMPTS.md -->
 
@@ -472,7 +467,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 
 - **Batteries included** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
 - **BYOD** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks. [Screen-reader release checks](docs/v5/ACCESSIBILITY_VERIFICATION.md) document manual verification.
+- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks.
 - **Reactions mode** — a compact reactions bar that expands to the full picker.
 - **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
 - **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
@@ -1433,7 +1428,7 @@ The configured minimal consumer, bundled from an installed package tarball, must
 
 <!-- v5 API -->
 
-# v5 Public API Design
+# v5 API reference
 
 Choose batteries included or BYOD (bring your own design, design language and design library). Both use the same behavior engine. The v5 public API is designed from the consumer inward:
 
@@ -1611,8 +1606,6 @@ Detection follows font changes selected by attributes on Root or its ancestors (
 
 ## 6. Observe reactions/full-picker mode
 
-Issue #504 asks for surrounding-layout adaptation when reactions expand/collapse.
-
 ```tsx
 <EmojiPicker
   reactionsDefaultOpen
@@ -1627,8 +1620,6 @@ This is an observer, not a second controlled mode API.
 Existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `collapseToReactions()` remain.
 
 ## 7. Caller-defined suggestions
-
-Issue #277 asks for a custom ordered Suggested list.
 
 ```tsx
 <EmojiPicker
@@ -1710,7 +1701,7 @@ export function ReactionPicker({ open }: { open: boolean }) {
 
 Conditional mounting controls whether a Root exists. Omit Search/SearchInput, Preview or SkinTone to omit that UI; `open`, `searchDisabled`, `skinTonesDisabled`, `skinTonePickerLocation` and `previewConfig.showPreview` belong to the assembled default picker. `composition` and `panelProps` are unsupported. Put layout and native attributes directly on Panel.
 
-The full primitive grammar, props, refs, native prop forwarding and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+The full primitive grammar, props, refs, native prop forwarding and validation behavior are documented in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### Exports
 
@@ -1987,7 +1978,7 @@ Panel accepts className, style, native attributes and handlers directly. Panel o
 
 Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
 
-## Amendment: BYOD hardening (2026-10-05)
+## Lifetimes, ownership and design-library inputs
 
 Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. Conditionally unmount Root to remove its content and abort pending loading; mounting it again starts a new lifetime. The assembled EmojiPicker retains its `open` prop: closed, it renders nothing but keeps its state, as in v4. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
 
@@ -2108,26 +2099,42 @@ and appearance without duplicating filtering, virtualization or selection.
 inserts a `Panel`, `Reactions`, search input, preview or skin-tone control.
 There is no managed/explicit composition switch.
 
-```tsx
+```tsx check
+import * as React from 'react';
 import {
   Root, Panel, Reactions, Search, SkinTone, CategoryNav,
   Viewport, List, Preview, Empty, Loading, LoadError,
+  type EmojiClickData,
 } from 'emoji-picker-react/primitives';
 
-<Root style={{ width: 350, height: 450 }} onEmojiClick={handleSelection}>
-  <Reactions />
-  <Panel className="my-picker">
-    <Search><SkinTone /></Search>
-    <CategoryNav />
-    <Viewport>
-      <List />
-      <Empty />
-      <Loading />
-      <LoadError />
-    </Viewport>
-    <Preview />
-  </Panel>
-</Root>
+export function ComposedPicker({
+  onSelect,
+}: {
+  onSelect: (emoji: EmojiClickData) => void;
+}) {
+  return (
+    <Root
+      appearance="default"
+      reactionsDefaultOpen
+      style={{ width: 350, height: 450 }}
+      onEmojiClick={onSelect}
+    >
+      <Reactions />
+      <Panel className="my-picker">
+        <Search><SkinTone /></Search>
+        <CategoryNav />
+        <Viewport>
+          <List />
+          <Empty />
+          <Loading />
+          <LoadError />
+        </Viewport>
+        <Preview />
+        <footer>Choose an emoji</footer>
+      </Panel>
+    </Root>
+  );
+}
 ```
 
 - Omit `Search`/`SearchInput` to omit the built-in search UI. Type-to-search
@@ -2236,9 +2243,9 @@ assembled picker and do not add secondary visibility switches to primitives.
 
 <!-- source: docs/v5/STYLING.md -->
 
-<!-- Styling contract -->
+<!-- Styling -->
 
-# v5 Styling Contract
+# Styling
 
 Choose batteries included or BYOD (bring your own design, design language and design library): every mode below keeps the same behavior, accessibility and virtualization, and only changes who owns the appearance.
 
@@ -2290,11 +2297,7 @@ The current implementation reserves these declarations:
 
 Change supported size tokens to alter dimensions; preserve the supplied position styles when wrapping design-library buttons.
 
-Consumers MUST NOT be told that every value of `display`, `position`, `overflow`, row height, or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container is outside the keyboard/virtualization guarantee.
-
-When a dimension affects measurement, the library must either measure the resulting DOM or expose/document the dimension as a supported structural token. Do not keep a hidden geometry constant that can disagree with a documented customization variable.
-
-Variation UI must have a supported library-owned positioning strategy. Consumers must not need to break Viewport overflow merely to keep the variation picker visible.
+Not every value of `display`, `position`, `overflow`, row height or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container breaks keyboard navigation and virtualization. Dimensions that affect layout are either measured from the DOM or exposed as the size tokens above, and the variation menu positions itself inside the Viewport, so you never need to change its overflow.
 
 ## 3. Appearance CSS
 
@@ -2404,13 +2407,9 @@ Initial required part API:
 - `loading` (v5, the `Loading` primitive)
 - `load-error` (v5, the `LoadError` primitive)
 
-`test/parts-contract.test.ts` fails when this list and the `data-epr-part` values emitted by `src/` drift apart.
-
-Part names are public API once released. Renaming/removing one is semver-significant.
+Part names are public API: renaming or removing one is a breaking change.
 
 A part is not automatically a composition primitive. `category-content` and `variation-picker` are internal managed structures with stable styling hooks. Panel and Reactions are exported primitives with those same-named part selectors; see [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
-
-Do not expose private measurement nodes or every implementation wrapper as parts.
 
 ### Library data attributes
 
@@ -2425,13 +2424,11 @@ Beyond `data-epr-part`, the library emits a small set of value-carrying data att
 
 State is exposed through ARIA where ARIA has a word for it: the active category tab is `[data-epr-part="category-tab"][aria-selected="true"]`, a vertical tab bar is `[role="tablist"][aria-orientation="vertical"]`.
 
-These replace v4's unnamespaced `data-unified`, `data-name` and `data-emojis-per-row`. The v4 names were undocumented and are not part of the compatibility matrix, so this is an internal rename.
-
-Like part names, these are public API once released and semver-significant to change.
+These replace v4's undocumented `data-unified`, `data-name` and `data-emojis-per-row`. Like part names, they are public API.
 
 ## 6. Emoji item boundary
 
-Emoji cells and category headers can be replaced through `List components={{ Emoji, CategoryHeader }}` (see API.md §9). The library keeps owning their behavior: each component receives the library-owned props (type, role, class, position style, tabIndex, aria-label, `data-epr-*`) and must spread them onto its element. Ordering, virtualization and grid semantics stay library-owned; there is no render prop over the whole list.
+Emoji cells and category headers can be replaced through `List components={{ Emoji, CategoryHeader }}` (see [API.md](./API.md#9-custom-emoji-cells-and-category-headers)). The library keeps owning their behavior: each component receives the library-owned props (type, role, class, position style, tabIndex, aria-label, `data-epr-*`) and must spread them onto its element. Ordering, virtualization and grid semantics stay library-owned; there is no render prop over the whole list.
 
 ### Hiding category titles
 
@@ -2451,28 +2448,11 @@ Rules:
 
 - structural correctness must not depend on Tailwind/CSS Modules being loaded in a particular order;
 - cosmetic consumer overrides should win through ordinary cascade without requiring `!important`;
-- broad `!important` usage is not a substitute for a clear structural boundary;
-- the default appearance may continue using ShipStyles unless implementation deliberately changes it.
+- broad `!important` usage is not needed for cosmetic overrides.
 
-## 8. Structural failure policy
+## 8. Structural failures
 
-When a consumer supplies CSS that breaks documented structural invariants, the library does not guarantee virtualization/navigation behavior.
-
-Where a failure can be detected cheaply (for example a required Viewport has become `display: contents`), development builds may warn with:
-- the invalid condition;
-- the likely impact;
-- a link/reference to the styling contract.
-
-Do not use `!important` broadly as a substitute for a clear structural contract.
-
-
-## 9. Required styling tests
-
-Before v5 ships, executable coverage must prove:
-- a custom primitive composition can apply cosmetic classes without the branded default appearance;
-- changing supported emoji size/padding variables updates measurement and keyboard row math correctly;
-- cosmetic overrides do not break virtualization;
-- the variation picker remains visible and keyboard-operable in a custom primitive composition.
+CSS that breaks the structural rules in section 2 voids the virtualization and keyboard navigation guarantees. Change size tokens or `columns` instead.
 
 <!-- source: docs/v5/STYLING_RECIPES.md -->
 
@@ -2955,53 +2935,11 @@ The complete, browser-tested version is [`stories/v5/MuiComposition.tsx`](../../
 - **Use `colorScheme`, not `theme`,** on anything wrapped by Emotion, styled-components or MUI `styled()`.
 - **Layered CSS:** with Tailwind v4 or any `@layer` setup, pass `cssLayer="epr"` and declare the layer first.
 
-<!-- source: docs/v5/ACCESSIBILITY_VERIFICATION.md -->
-
-<!-- Accessibility verification -->
-
-# Manual accessibility release verification
-
-Automated axe, keyboard, focus, localization and browser checks are regression evidence. Complete this protocol on the release candidate before claiming verified screen-reader coverage. No manual screen-reader pass is recorded here yet.
-
-## Environments
-
-Record the candidate commit, OS, browser and assistive-technology versions for each run.
-
-| Environment | Required compositions |
-| --- | --- |
-| NVDA with Chrome on Windows | Default picker; registry popover; custom-cell picker |
-| VoiceOver with Safari on macOS | Default picker; registry popover; typeahead textarea |
-| VoiceOver with Safari on iOS | Mobile picker; touch variations; scrolling |
-
-Repeat the desktop core flow with localized emoji data and UI labels, and with an RTL host. Record actual announcements and focus destinations, not just whether the picker opens.
-
-## Core keyboard and announcements
-
-1. Open the picker from its host trigger. Confirm an accessible name, predictable initial focus and no focus in the hidden reactions panel.
-2. Navigate Search, category tabs, grid and skin-tone regions using their documented keys. Confirm visible focus, category context and emoji names. Verify arrow movement after scrolling the virtualized list.
-3. Search for a known term, a nonexistent term and an IME-composed term. Confirm one final composed search, correct result/empty announcements and no stale empty announcement during data loading.
-4. Select with Enter/Space. Confirm the callback inserts at the host caret, retains the suffix and restores focus as the host example specifies.
-5. Open variations or the skin-tone fan. The first Escape closes that menu; the next Escape dismisses the host popover. Focus returns to its trigger. Confirm the closed fan's hidden options are outside Tab order.
-6. Collapse to reactions and expand again. Confirm hidden/inert content is unreachable, reaction names and the expansion button are announced, and focus lands in the visible region.
-7. Repeat with a custom image cell. Confirm its accessible name, keyboard selection and active focus indication survive consumer markup replacement.
-
-## Localization, loading and presentation
-
-1. Use localized data, categories, preview caption and all `labels` fields. Confirm search, results, loading/error/retry, reaction controls and tone names have no unexpected English fallback. Omitted labels intentionally use English defaults.
-2. Force an async dataset failure. Confirm the alert and retry control are announced and reachable. Retry, then replace the source during loading; confirm recovery without duplicate or stale announcements.
-3. At 200% zoom and a narrow viewport, verify search, tabs, grid, tones and host dismissal remain reachable. Repeat in RTL and confirm focus order matches the documented region order.
-4. On iOS, scroll without selecting an emoji or opening variations. Long press a variation-enabled emoji, release without selecting accidentally, then choose a variation and verify the announced name.
-5. Check default and custom light/dark compositions for text contrast and visible focus. A consumer's custom styling requires its own review.
-
-## Result record
-
-For each flow, record pass/fail, the environment, exact announcement/focus mismatch and a reproducible story or consumer. File any blocker as a release issue with reproduction steps; do not mark this protocol passed based on automated axe alone.
-
 <!-- source: docs/v5/DATA_API.md -->
 
 <!-- Data API -->
 
-# v5 Data API Contract
+# Data API
 
 The v5 data entry point solves issue #430 without replacing the existing top-level `emojiByUnified` export.
 
@@ -3062,7 +3000,7 @@ The readonly TypeScript surface is backed by runtime immutability:
 - `getEmojiByUnified` may return a shared frozen record directly;
 - caller-provided `emojiData` is never frozen or mutated by the library; normalized prepared records are separate internal objects.
 
-A JavaScript consumer mutating a returned record or nested array must fail/no-op according to normal frozen-object semantics and MUST NOT corrupt later lookup/search results.
+Mutating a returned record or nested array fails (or is a no-op outside strict mode) and never corrupts later lookups or searches.
 
 This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
 
@@ -3115,31 +3053,17 @@ Consumers who need exact picker-visible results should use the picker rather tha
 
 ## 4. Shortcodes
 
-Issue #430 also asks about Slack-style shortcodes.
-
 v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
 
 Reason: the current dataset names/aliases do not by themselves establish a contract for Slack's canonical alias choices or `:skin-tone-N:` syntax. Shipping an approximate converter would create a misleading compatibility promise.
 
-The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
+The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping.
 
-## 5. Shared implementation
+## 5. Server and bundle use
 
-`getEmojiByUnified` and `searchEmojis` MUST call the same pure normalization/prepared-data modules used by the picker.
+`emoji-picker-react/data` imports neither React nor ShipStyles, so it runs in Server Components, route handlers and workers, and it shares the picker's own search index and normalization.
 
-The `/data` entry MUST NOT:
-- import React;
-- import ShipStyles;
-- duplicate the search algorithm;
-- mutate the legacy global emoji registry.
-
-## 6. Bundle behavior
-
-Importing `emoji-picker-react/data` includes (and registers) the default packaged dataset. The picker core no longer imports it statically: the main and data entries register it, while `emoji-picker-react/primitives` loads it on demand (its own chunk in the ESM build) unless `emojiData` is supplied. The package check gates both directions.
-
-Importing a specific locale dataset must not import all locales.
-
-Tree-shaking/package tests must prove that `/data` does not drag the React UI/appearance runtime into a data-only consumer.
+Importing it includes (and registers) the default English dataset. The main entry registers it too, while `emoji-picker-react/primitives` loads it on demand unless `emojiData` is supplied. Importing one locale dataset does not pull in the others.
 
 <!-- source: docs/v5/MIGRATION.md -->
 
@@ -3349,7 +3273,7 @@ That is an intentional package-boundary breaking change. Only documented/support
 
 v5 does **not** remove useful v4 props merely to clean up the surface.
 
-The authoritative disposition of every current prop is in [V4_API_MATRIX.md](./V4_API_MATRIX.md).
+Every v4 prop keeps working; [PROPS.md](../../PROPS.md) lists them all with their v5 defaults.
 
 Notably retained:
 - `open`
@@ -3402,8 +3326,6 @@ is still called with `"apple"` as the style.
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
 
 v5 also removes v4's fixed, document-global IDs (`epr-search-id`, `epr-category-nav-id`), which collided when a page rendered two pickers. The picker renders no library-owned DOM IDs and has no `idPrefix` API. Tests or styles that targeted those IDs should use roles or `[data-epr-part]` selectors (`search-input`, `category-nav`).
-
-See [REACT_COMPATIBILITY.md](./REACT_COMPATIBILITY.md).
 
 ## Styling
 

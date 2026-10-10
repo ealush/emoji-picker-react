@@ -84,7 +84,7 @@ const ReactionsImpl = /* @__PURE__ */ React.forwardRef<
     >
       {reactions.map((reaction, index) => {
         // Reaction identifiers use the same shared Root lookup as the
-        // picker, normalized case-insensitively (V4_API_MATRIX.md §2).
+        // picker, normalized case-insensitively.
         const raw =
           typeof reaction === 'string' ? reaction.trim().toLowerCase() : '';
         // Emoji characters resolve like suggestedEmojis entries.

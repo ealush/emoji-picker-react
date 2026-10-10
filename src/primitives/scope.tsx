@@ -2,7 +2,7 @@ import * as React from 'react';
 
 /* global process: readonly */
 
-// Primitive scope validation (docs/v5/PRIMITIVES.md §4).
+// Primitive scope validation.
 //
 // Render-time context validation fails immediately in development:
 // - any primitive outside Root;

@@ -5,8 +5,7 @@ import { describe, expect, it } from 'vitest';
 
 import EmojiPicker from '../src';
 
-// docs/v5/REACT_COMPATIBILITY.md §3 + §6: initial v5 generates no
-// library-owned DOM IDs and no IDREF relationships. Consumer-supplied `id`
+// v5 generates no library-owned DOM IDs and no IDREF relationships. Consumer-supplied `id`
 // props remain allowed, so these fixtures pass none.
 
 describe('v5 SSR identity (no library-owned IDs)', () => {

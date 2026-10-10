@@ -7,7 +7,7 @@ import { filterPrimitiveProps } from './nativeProps';
 import { useRootScope } from './scope';
 import type { PreviewProps } from './types';
 
-// Public Preview primitive (docs/v5/PRIMITIVES.md §11).
+// Public Preview primitive.
 //
 // Managed preview region. Additional controls are supplied as children;
 // omit Preview itself to omit the preview region.

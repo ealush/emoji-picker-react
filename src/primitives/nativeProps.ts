@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-// Native prop forwarding for public primitives (docs/v5/PRIMITIVES.md §7).
+// Native prop forwarding for public primitives.
 //
 // Every primitive forwards ordinary native props valid for its root
 // element (id, non-reserved aria-*, non-reserved data-*, title, className,
@@ -32,7 +32,7 @@ export function filterPrimitiveProps(
 }
 
 /**
- * Handler composition (PRIMITIVES.md §8): the library behavioral handler
+ * Handler composition: the library behavioral handler
  * runs first, the consumer handler second with the same event. Consumer
  * `preventDefault()` is not a supported way to disable required behavior.
  * Event-handler exceptions propagate per normal React/browser behavior;

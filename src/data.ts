@@ -2,7 +2,7 @@
 //
 // Additive to the existing top-level `emojiByUnified` export. Presents a
 // normalized, documented shape and shares the pure data core with the picker.
-// MUST NOT import React or ShipStyles (see docs/v5/DATA_API.md §5).
+// Must not import React or ShipStyles (enforced by npm run check:package).
 
 import './data/registerDefaultEmojiData';
 

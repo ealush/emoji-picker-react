@@ -25,8 +25,7 @@ function importersOf(matcher: RegExp): string[] {
     .map((file) => file.slice(SRC.length + 1));
 }
 
-// Source-architecture assertion (docs/v5/DEFAULT_COMPOSITION.md,
-// IMPLEMENTATION_PLAN.md Phase 6): the default picker must be assembled
+// Source-architecture assertion: the default picker must be assembled
 // from the exported primitive modules. Private parallel Search/List/
 // Reactions renderers must not exist or be used by the default tree.
 describe('v5 one-implementation architecture', () => {
@@ -65,7 +64,7 @@ describe('v5 one-implementation architecture', () => {
 
   it('keeps default appearance out of the primitives closure', () => {
     // The primitives bundle must not drag in the branded default
-    // appearance (PERFORMANCE.md §9, Phase 7 packed checks). Anything the
+    // appearance. Anything the
     // primitives need from the default tree must move to a side-effect-free
     // module (see labelHeight.ts).
     const offenders = importersOf(

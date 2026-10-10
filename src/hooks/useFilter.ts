@@ -53,7 +53,7 @@ export function useFilter() {
   function onChange(inputValue: string) {
     const filter = filterRef.current;
 
-    // Normalized derived query (STATE.md §2): the visible/callback value
+    // Normalized derived query: the visible/callback value
     // stays raw, filtering folds case and trims surrounding whitespace.
     // Matching itself runs in the single shared prepared core.
     const nextValue = normalizeQuery(inputValue);

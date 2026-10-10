@@ -6,7 +6,7 @@ import type { ThemeValue } from '../types/exposedTypes';
 
 import type { PickerComponents } from './components';
 
-// Public primitive prop contracts (docs/v5/PRIMITIVES.md §5, §9–§11).
+// Public primitive prop contracts (docs/v5/PRIMITIVES.md).
 // React-16.8-compatible types only (no React-18-only type helpers).
 
 /**

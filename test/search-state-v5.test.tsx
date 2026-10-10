@@ -80,7 +80,7 @@ async function settle(ms = 250) {
   });
 }
 
-describe('v5 uncontrolled search (STATE.md §1–§3)', () => {
+describe('v5 uncontrolled search', () => {
   it('uses defaultSearchValue for initial filtering without emitting', async () => {
     const onSearchChange = vi.fn();
     renderPicker({
@@ -213,7 +213,7 @@ function IgnoringPicker({ proposals }: { proposals: string[] }) {
   );
 }
 
-describe('v5 controlled search (STATE.md §1–§4)', () => {
+describe('v5 controlled search', () => {
   it('accepting parent: proposal flows to the prop and filters after debounce', async () => {
     const proposals: string[] = [];
     render(<AcceptingPicker proposals={proposals} />);
@@ -309,7 +309,7 @@ describe('v5 controlled search (STATE.md §1–§4)', () => {
   });
 });
 
-describe('v5 type-to-search (STATE.md §4)', () => {
+describe('v5 type-to-search', () => {
   it('uncontrolled: grid key appends, commits, emits, and focuses Search', async () => {
     const onSearchChange = vi.fn();
     renderPicker({ onSearchChange });
@@ -460,7 +460,7 @@ describe('v5 type-to-search (STATE.md §4)', () => {
   });
 });
 
-describe('v5 IME composition (STATE.md §5)', () => {
+describe('v5 IME composition', () => {
   it('uncontrolled: intermediate input neither emits nor filters; end commits once', async () => {
     const onSearchChange = vi.fn();
     renderPicker({ onSearchChange });
@@ -505,7 +505,7 @@ describe('v5 IME composition (STATE.md §5)', () => {
   });
 });
 
-describe('v5 reaction-mode observation (STATE.md §7)', () => {
+describe('v5 reaction-mode observation', () => {
   function ReactionsHarness({ onModeChange }: { onModeChange: (open: boolean) => void }) {
     return (
       <EmojiPicker
@@ -573,7 +573,7 @@ const variationEmojiData: EmojiData = {
   },
 };
 
-describe('v5 caller-defined suggestions (STATE.md §9)', () => {
+describe('v5 caller-defined suggestions', () => {
   it('normalizes case, preserves variations, ignores unknowns, dedupes', async () => {
     const { container } = render(
       <EmojiPicker
@@ -660,7 +660,7 @@ describe('suggestedEmojis accepts native characters', () => {
   });
 });
 
-describe('v5 search label (API.md §5)', () => {
+describe('v5 search label', () => {
   it('defaults to the English accessible label', async () => {
     renderPicker();
     expect(await screen.findByRole('textbox')).toHaveAttribute(

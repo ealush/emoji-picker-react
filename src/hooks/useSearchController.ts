@@ -16,7 +16,7 @@ import {
 import { useFilter } from './useFilter';
 import { useFocusSearchInput } from './useFocus';
 
-// Controlled/uncontrolled search transition (docs/v5/STATE.md §1–§6).
+// Controlled/uncontrolled search transition.
 //
 // - The visible/callback value is raw user text; filtering derives a
 //   normalized query and is debounced 100 ms through the shared
@@ -181,7 +181,7 @@ export function useSearchInputController() {
   const emit = useEmitSearchChange();
   const reconcileControlled = useControlledReconcile();
   const { record: recordProposal } = usePendingProposal();
-  // Same-task echo of a just-finalized composition (STATE.md §5): the
+  // Same-task echo of a just-finalized composition: the
   // browser reports the committed text through a trailing input event
   // after compositionend already emitted and synced it. Treating that
   // echo as a fresh proposal would resurrect a dead value into display
@@ -273,7 +273,7 @@ export function useSearchInputController() {
   };
 }
 
-/** Grid type-to-search transition (STATE.md §4). */
+/** Grid type-to-search transition. */
 export function useTypeToSearchKey() {
   const searchValue = useSearchValueConfig();
   const isControlled = searchValue !== undefined;
@@ -352,7 +352,7 @@ export function useSetSearchValue() {
   );
 }
 
-/** Clear-button / Escape transition (STATE.md §6): proposes/commits ''. */
+/** Clear-button / Escape transition: proposes/commits ''. */
 export function useClearSearchValue() {
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();

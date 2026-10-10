@@ -1,6 +1,6 @@
 import { gzipSync } from 'node:zlib';
 import { readFileSync, readdirSync } from 'node:fs';
-// Packed package checks (IMPLEMENTATION_PLAN.md Phase 7).
+// Packed package checks.
 //
 // Validates the REAL packed output (run after `npm run build`):
 // - main / primitives / data / locale subpaths resolve (CJS + ESM) with

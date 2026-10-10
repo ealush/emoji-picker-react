@@ -12,7 +12,7 @@ vi.mock('../src/hooks/useCloseAllOpenToggles', () => ({
   useCloseAllOpenToggles: () => closeAllOpenToggles,
 }));
 
-describe('v5 scroll commit coalescing (PERFORMANCE.md §6)', () => {
+describe('v5 scroll commit coalescing', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });

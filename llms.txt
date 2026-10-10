@@ -58,9 +58,8 @@ searchEmojis('party'); getEmojiByUnified('1f389'); // { emoji: '🎉', name: 'pa
 - [Adoption](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/ADOPTION.md): native input, loading recovery, registry installation and source downloads
 - [v5 API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/API.md): all v5 additions with examples
 - [Primitives](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/PRIMITIVES.md): composable parts, hooks, custom cells, grammar
-- [Styling contract](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING.md): tokens, parts, cascade, structural rules
+- [Styling](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING.md): tokens, parts, cascade, structural rules
 - [Styling recipes by library](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING_RECIPES.md): theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI
-- [Accessibility verification](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/ACCESSIBILITY_VERIFICATION.md): keyboard, screen-reader, localization and host focus release protocol
 - [Data API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/DATA_API.md): framework-free search and lookup
 - [Migrating from v4](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/MIGRATION.md): what changed and how to upgrade
 - [Website examples](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/website/README.md): typed customization, locale loading and composition

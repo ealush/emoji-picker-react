@@ -20,7 +20,7 @@ The default picker is assembled from the primitives (`src/EmojiPickerReact.tsx`)
 - `src/primitives/`: the public composition layer; `types.ts` is the prop contract, `nativeProps.ts` the forwarding rules, `scope.tsx` the development validation.
 - `src/Stylesheet/`: ShipStyles sheets, zero-specificity tokens, cascade-layer support, once-per-document injection (`DedupedStyle.tsx`).
 - `src/data/`, `src/data-core/`: generated datasets (`src/data/emojis-*.ts|json`, do not edit) and the pure search core.
-- `docs/v5/`: the normative contract. `SPEC.md`, `PRIMITIVES.md`, `STYLING.md`, `STATE.md`, `NAVIGATION.md` and `V4_API_MATRIX.md` are authoritative; change them in the same commit as the behavior they describe.
+- `docs/v5/` and the root `*.md` guides: user documentation (API, primitives, styling, data, migration, agent guide and prompts). Update them in the same commit as the behavior they describe; `npm run check:contracts` type-checks their `tsx check` examples.
 - `test/` (Vitest, jsdom), `playwright/` (browser, visual, a11y), `stories/` (Storybook; `recipes/` are the 25 designs), `integration/` (real-consumer fixtures), `compat/` (type fixtures), `bench/`, `scripts/`.
 - `example/`: Vite + React 19 app covering every usage path. `website/`: the Next.js demo site; `website/src/components/designs` and `website/public/recipes` are generated.
 
@@ -31,7 +31,7 @@ The default picker is assembled from the primitives (`src/EmojiPickerReact.tsx`)
 - **Data entry is framework-free.** `src/data.ts` and `src/data-core/` never import React or ShipStyles.
 - **Reserved attributes.** The library owns `role` and every `data-epr-*` attribute on managed elements; consumer props with those names are filtered.
 - **Size and performance budgets.** `size-limit` caps every entry; `npm run check:perf` compares against `bench/baseline.json`. Do not raise a budget to make a change fit.
-- **Visual baselines are evidence.** Never bulk-update screenshots; read `docs/v5/VISUAL_COMPATIBILITY.md` first.
+- **Visual baselines are evidence.** Never bulk-update screenshots: review each actual/expected/diff image and update only the ones a deliberate change explains.
 
 ## Verify before you commit
 
@@ -48,7 +48,7 @@ Generated files are regenerated, never edited: `npm run docs:llms` (after any do
 ## Conventions
 
 - Conventional Commits; a breaking change needs `feat!:` or a `BREAKING CHANGE:` footer (semantic-release cuts the version).
-- Public prop and part names are semver API. Adding a behavior prop to `PickerProps` makes it reach `Root` automatically (`RootBehaviorProps` subtracts appearance props); update `PROPS.md`, `docs/v5/API.md` and `V4_API_MATRIX.md`.
+- Public prop and part names are semver API. Adding a behavior prop to `PickerProps` makes it reach `Root` automatically (`RootBehaviorProps` subtracts appearance props); update `PROPS.md` and `docs/v5/API.md`.
 - Prefer `colorScheme` over `theme` in docs and examples (CSS-in-JS libraries reserve `theme`).
 - Every user-facing string goes through `labels` (`src/config/config.ts`); never hard-code English in a component.
 - Keep structural CSS (viewport overflow, cell geometry, category positioning) out of consumer-overridable surfaces; appearance goes through `--epr-*` tokens or `[data-epr-part]` selectors.

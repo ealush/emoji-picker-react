@@ -54,10 +54,10 @@ async function waitForFocus(label: RegExp | string) {
   });
 }
 
-// STATE.md §8: expansion activates the managed panel and moves focus to
+// Expansion activates the managed panel and moves focus to
 // Search when present and autofocus is enabled; collapse restores focus to
 // a valid reactions control. Mounts never steal focus.
-describe('v5 reactions focus management (STATE.md §8)', () => {
+describe('v5 reactions focus management', () => {
   it('does not steal focus on compact mount', async () => {
     renderCompact();
     await new Promise((resolve) => setTimeout(resolve, 100));

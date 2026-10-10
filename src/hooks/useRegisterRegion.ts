@@ -10,7 +10,7 @@ import {
 
 /**
  * Register a semantic focus region root with the Root-scoped navigation
- * registry (docs/v5/NAVIGATION.md §1–§3).
+ * registry.
  *
  * - Registers after mount and unregisters on unmount; omitted regions
  *   (null element) stay absent from the graph — there are no placeholder
@@ -74,7 +74,7 @@ export function useRegisterRegion(
 }
 
 /**
- * Claim a structural singleton slot (Viewport/Preview, PRIMITIVES.md §4)
+ * Claim a structural singleton slot (Viewport/Preview)
  * without registering a focus region. Same duplicate policy as regions.
  */
 export function useSingletonClaim(kind: string): void {

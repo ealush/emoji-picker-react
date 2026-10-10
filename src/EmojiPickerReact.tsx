@@ -32,7 +32,7 @@ import { SkinTonePickerLocation } from './types/exposedTypes';
 
 import { PickerProps } from './index';
 
-// Canonical default composition (docs/v5/DEFAULT_COMPOSITION.md): the
+// Canonical default composition: the
 // default picker is assembled from the same exported primitive modules
 // advanced consumers use. Private wrappers provide appearance/layout only;
 // all behavior lives in the shared primitives below.

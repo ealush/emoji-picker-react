@@ -120,7 +120,7 @@ export function __resetViewportWarningsForTest(): void {
   warnedViewportChildren.clear();
 }
 
-// Public Viewport primitive (docs/v5/PRIMITIVES.md §10).
+// Public Viewport primitive.
 //
 // Scroll/measurement container: owns the scroll position, dismissal of
 // transient toggles on scroll, and the managed variation-picker overlay.

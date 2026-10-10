@@ -48,7 +48,7 @@ jobs:
       - run: npx playwright install --with-deps
       - run: npm run test:visual
       # Actual/diff images let environment drift be adjudicated from the CI
-      # image itself (docs/v5/VISUAL_COMPATIBILITY.md).
+      # image itself.
       - name: Upload failure evidence
         if: failure()
         uses: actions/upload-artifact@v4

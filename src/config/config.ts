@@ -294,7 +294,7 @@ export type PickerConfigInternal = {
   /**
    * Controlled search value (raw user text). When present, it is the
    * accepted visible source of truth; user edits emit `onSearchChange`
-   * proposals instead of committing locally. See docs/v5/STATE.md.
+   * proposals instead of committing locally.
    */
   searchValue?: string;
   /** Uncontrolled initial search value, read once per mounted lifetime. */

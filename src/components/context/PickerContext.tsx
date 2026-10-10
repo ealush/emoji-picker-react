@@ -38,7 +38,7 @@ import { EmojiStyle, SkinTones } from '../../types/exposedTypes';
 import { usePickerMainRef } from './ElementRefContext';
 import { usePickerDataContext } from './PickerDataContext';
 
-// v5 Phase 3 — one Root-scoped controller, narrowly sliced.
+// One Root-scoped controller, narrowly sliced.
 //
 // The v4 provider exposed a single omnibus context whose value identity
 // changed for unrelated state, so every subscriber rerendered on every
@@ -54,8 +54,7 @@ import { usePickerDataContext } from './PickerDataContext';
 // slice could provide.
 //
 // Only React-16.8-compatible runtime APIs are used here; the React floor
-// scan (npm run check:react-floor) guards against newer hook APIs per
-// docs/v5/REACT_COMPATIBILITY.md.
+// scan (npm run check:react-floor) guards against newer hook APIs.
 
 type ReactState<T> = [T, React.Dispatch<React.SetStateAction<T>>];
 
@@ -113,7 +112,7 @@ const SearchSliceContext = /* @__PURE__ */ React.createContext<{
   suggestedUpdateState: [Date.now(), () => {}],
 });
 
-// Raw input/display state for the search transition (docs/v5/STATE.md).
+// Raw input/display state for the search transition.
 // Kept separate from the debounced accepted query above so keystrokes only
 // rerender input subscribers, while commits flow through the query slice.
 const SearchInputSliceContext = /* @__PURE__ */ React.createContext<{

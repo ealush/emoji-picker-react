@@ -10,8 +10,7 @@ import {
 import { defaultPickerTokens } from '../../primitives/tokens';
 import { Theme, ThemeValue } from '../../types/exposedTypes';
 
-// Official default appearance (docs/v5/STYLING.md §1,
-// docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: classes are merged
+// Official default appearance. Private and DOM-less: classes are merged
 // onto the actual Root `aside` via its native `className` prop, so consumer
 // `className`/`style`/`width`/`height` keep v4 root ownership. The component
 // itself renders no DOM wrapper.
@@ -19,9 +18,8 @@ export function DefaultAppearance({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-// Official default appearance for the picker root (docs/v5/STYLING.md §1,
-// docs/v5/DEFAULT_COMPOSITION.md). Private and DOM-less: these classes are
-// merged onto the actual Root `aside` via its native `className` prop, so
+// Official default appearance for the picker root. Private and DOM-less:
+// these classes are merged onto the actual Root `aside` via its native `className` prop, so
 // consumer `className`/`style`/`width`/`height` keep v4 root ownership.
 // Selector names are unchanged from v4, keeping pixel compatibility.
 export function defaultRootClassName(

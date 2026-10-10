@@ -124,7 +124,7 @@ test.describe('v5 acceptance', () => {
     expect(buttonFocused).toBe(true);
   });
 
-  // NAVIGATION.md §6: omitted regions are absent from the graph, so every
+  // Omitted regions are absent from the graph, so every
   // arrow move at their former boundary lands on a real control.
   const focusedPart = (page: import('@playwright/test').Page) =>
     page.evaluate(
@@ -552,7 +552,7 @@ test.describe('v5 acceptance', () => {
     await expect(page.getByLabel('Type to search for an emoji')).toBeFocused();
   });
 
-  // NAVIGATION.md §11: every generation input, plus a control proving the
+  // Every generation input, plus a control proving the
   // harness does complete when nothing changed.
   const deferred = {
     begin: (page: import('@playwright/test').Page) =>

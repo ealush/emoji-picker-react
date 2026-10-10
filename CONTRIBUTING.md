@@ -156,7 +156,7 @@ Before you get started, make sure you have the following requirements in place:
    npm run size          # bundle budgets
    ```
 
-   Browser coverage (`npm run test:visual`, `npx playwright test --config playwright.behavior.config.ts`) needs `npx playwright install --with-deps` once. Visual baselines are compared against CI renders; see [docs/v5/VISUAL_COMPATIBILITY.md](docs/v5/VISUAL_COMPATIBILITY.md) before updating any snapshot.
+   Browser coverage (`npm run test:visual`, `npx playwright test --config playwright.behavior.config.ts`) needs `npx playwright install --with-deps` once. Visual baselines are compared against CI renders. Treat a failing screenshot as evidence: compare the actual and expected images, and update only the baselines you have reviewed (never bulk-update).
 
 5. Generated files must be regenerated, never edited by hand:
 

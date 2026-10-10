@@ -1,4 +1,4 @@
-# v5 Data API Contract
+# Data API
 
 The v5 data entry point solves issue #430 without replacing the existing top-level `emojiByUnified` export.
 
@@ -59,7 +59,7 @@ The readonly TypeScript surface is backed by runtime immutability:
 - `getEmojiByUnified` may return a shared frozen record directly;
 - caller-provided `emojiData` is never frozen or mutated by the library; normalized prepared records are separate internal objects.
 
-A JavaScript consumer mutating a returned record or nested array must fail/no-op according to normal frozen-object semantics and MUST NOT corrupt later lookup/search results.
+Mutating a returned record or nested array fails (or is a no-op outside strict mode) and never corrupts later lookups or searches.
 
 This protects the shared prepared-data cache from JavaScript consumers mutating a returned record or nested array. Defensive record copies on every lookup are not required and would work against the performance contract.
 
@@ -112,28 +112,14 @@ Consumers who need exact picker-visible results should use the picker rather tha
 
 ## 4. Shortcodes
 
-Issue #430 also asks about Slack-style shortcodes.
-
 v5 does **not** promise `emojiToShortcode` / `shortcodeToEmoji`.
 
 Reason: the current dataset names/aliases do not by themselves establish a contract for Slack's canonical alias choices or `:skin-tone-N:` syntax. Shipping an approximate converter would create a misleading compatibility promise.
 
-The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping. A dedicated shortcode API requires its own tested mapping source/RFC.
+The exposed `emoji`, `name`, `names`, `unified` and `variations` data lets consumers build their own mapping.
 
-## 5. Shared implementation
+## 5. Server and bundle use
 
-`getEmojiByUnified` and `searchEmojis` MUST call the same pure normalization/prepared-data modules used by the picker.
+`emoji-picker-react/data` imports neither React nor ShipStyles, so it runs in Server Components, route handlers and workers, and it shares the picker's own search index and normalization.
 
-The `/data` entry MUST NOT:
-- import React;
-- import ShipStyles;
-- duplicate the search algorithm;
-- mutate the legacy global emoji registry.
-
-## 6. Bundle behavior
-
-Importing `emoji-picker-react/data` includes (and registers) the default packaged dataset. The picker core no longer imports it statically: the main and data entries register it, while `emoji-picker-react/primitives` loads it on demand (its own chunk in the ESM build) unless `emojiData` is supplied. The package check gates both directions.
-
-Importing a specific locale dataset must not import all locales.
-
-Tree-shaking/package tests must prove that `/data` does not drag the React UI/appearance runtime into a data-only consumer.
+Importing it includes (and registers) the default English dataset. The main entry registers it too, while `emoji-picker-react/primitives` loads it on demand unless `emojiData` is supplied. Importing one locale dataset does not pull in the others.

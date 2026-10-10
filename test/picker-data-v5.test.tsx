@@ -25,7 +25,7 @@ function makeDataset(tag: string): EmojiData {
   };
 }
 
-describe('v5 picker data derivation (Phase 2)', () => {
+describe('v5 picker data derivation', () => {
   it('shares one snapshot and one base index across 10 same-identity callers', () => {
     const dataset = makeDataset('aa');
     __resetPrepareCount();

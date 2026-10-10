@@ -119,7 +119,7 @@ export function useKeyboardNavigation() {
         break;
       case 'ArrowDown':
         event.preventDefault();
-        // The active-search Search↔Grid exception (NAVIGATION.md §5)
+        // The active-search Search↔Grid exception
         // wins over generic DOM-order traversal.
         if (isSearchMode) {
           goDownFromSearchInput();
@@ -216,7 +216,7 @@ export function useKeyboardNavigation() {
     // buttons issue grid commands.
     if (!activeElement) return;
 
-    // Navigation-generation guard (STATE.md §10): a pending
+    // Navigation-generation guard: a pending
     // materialize/scroll/focus completion aborts when search, data,
     // geometry, or reactions state changed underneath it.
     const generation = registry.currentGeneration();

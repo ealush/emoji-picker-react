@@ -12,14 +12,14 @@ type MissingFromRoot = Exclude<
   keyof RootProps | PickerAppearanceProps | PickerCompositionProps
 >;
 
-// Compile-time gate (docs/v5/PRIMITIVES.md §5): Root takes every
+// Compile-time gate: Root takes every
 // PickerProps behavior prop by subtraction, so a new behavior prop flows
 // to Root automatically. If a behavior prop ever skips Root, this
 // assignment fails type-check (see `npm run check:contracts`).
 const allBehaviorPropsReachRoot: MissingFromRoot extends never ? true : false =
   true;
 
-describe('v5 Root prop contract (PRIMITIVES.md §5)', () => {
+describe('v5 Root prop contract', () => {
   it('covers every PickerProps behavior prop except appearance and composition switches', () => {
     expect(allBehaviorPropsReachRoot).toBe(true);
   });

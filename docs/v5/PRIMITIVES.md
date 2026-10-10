@@ -10,26 +10,42 @@ and appearance without duplicating filtering, virtualization or selection.
 inserts a `Panel`, `Reactions`, search input, preview or skin-tone control.
 There is no managed/explicit composition switch.
 
-```tsx
+```tsx check
+import * as React from 'react';
 import {
   Root, Panel, Reactions, Search, SkinTone, CategoryNav,
   Viewport, List, Preview, Empty, Loading, LoadError,
+  type EmojiClickData,
 } from 'emoji-picker-react/primitives';
 
-<Root style={{ width: 350, height: 450 }} onEmojiClick={handleSelection}>
-  <Reactions />
-  <Panel className="my-picker">
-    <Search><SkinTone /></Search>
-    <CategoryNav />
-    <Viewport>
-      <List />
-      <Empty />
-      <Loading />
-      <LoadError />
-    </Viewport>
-    <Preview />
-  </Panel>
-</Root>
+export function ComposedPicker({
+  onSelect,
+}: {
+  onSelect: (emoji: EmojiClickData) => void;
+}) {
+  return (
+    <Root
+      appearance="default"
+      reactionsDefaultOpen
+      style={{ width: 350, height: 450 }}
+      onEmojiClick={onSelect}
+    >
+      <Reactions />
+      <Panel className="my-picker">
+        <Search><SkinTone /></Search>
+        <CategoryNav />
+        <Viewport>
+          <List />
+          <Empty />
+          <Loading />
+          <LoadError />
+        </Viewport>
+        <Preview />
+        <footer>Choose an emoji</footer>
+      </Panel>
+    </Root>
+  );
+}
 ```
 
 - Omit `Search`/`SearchInput` to omit the built-in search UI. Type-to-search

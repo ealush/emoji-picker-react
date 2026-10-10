@@ -7,7 +7,7 @@ import type { EmojiData } from '../src/types/exposedTypes';
 
 // DATA_API.md: locale-aware search operates on the supplied dataset, and
 // the initial data surface promises no shortcode conversion helpers.
-describe('v5 locale-aware data (Phase 9)', () => {
+describe('v5 locale-aware data', () => {
   it('searches locale names when emojiData is supplied', () => {
     const results = searchEmojis('sonrisa', {
       emojiData: es as unknown as EmojiData,

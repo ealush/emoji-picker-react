@@ -108,18 +108,13 @@ const DOCS: Array<[string, string, string]> = [
   ],
   [
     'docs/v5/STYLING.md',
-    'Styling contract',
+    'Styling',
     'tokens, parts, cascade, structural rules',
   ],
   [
     'docs/v5/STYLING_RECIPES.md',
     'Styling recipes by library',
     'theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI',
-  ],
-  [
-    'docs/v5/ACCESSIBILITY_VERIFICATION.md',
-    'Accessibility verification',
-    'keyboard, screen-reader, localization and host focus release protocol',
   ],
   ['docs/v5/DATA_API.md', 'Data API', 'framework-free search and lookup'],
   [

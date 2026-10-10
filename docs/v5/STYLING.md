@@ -1,4 +1,4 @@
-# v5 Styling Contract
+# Styling
 
 Choose batteries included or BYOD (bring your own design, design language and design library): every mode below keeps the same behavior, accessibility and virtualization, and only changes who owns the appearance.
 
@@ -50,11 +50,7 @@ The current implementation reserves these declarations:
 
 Change supported size tokens to alter dimensions; preserve the supplied position styles when wrapping design-library buttons.
 
-Consumers MUST NOT be told that every value of `display`, `position`, `overflow`, row height, or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container is outside the keyboard/virtualization guarantee.
-
-When a dimension affects measurement, the library must either measure the resulting DOM or expose/document the dimension as a supported structural token. Do not keep a hidden geometry constant that can disagree with a documented customization variable.
-
-Variation UI must have a supported library-owned positioning strategy. Consumers must not need to break Viewport overflow merely to keep the variation picker visible.
+Not every value of `display`, `position`, `overflow`, row height or containment is safe to override. For example, forcing `overflow: visible` on Viewport or `display: contents` on a measured grid container breaks keyboard navigation and virtualization. Dimensions that affect layout are either measured from the DOM or exposed as the size tokens above, and the variation menu positions itself inside the Viewport, so you never need to change its overflow.
 
 ## 3. Appearance CSS
 
@@ -164,13 +160,9 @@ Initial required part API:
 - `loading` (v5, the `Loading` primitive)
 - `load-error` (v5, the `LoadError` primitive)
 
-`test/parts-contract.test.ts` fails when this list and the `data-epr-part` values emitted by `src/` drift apart.
-
-Part names are public API once released. Renaming/removing one is semver-significant.
+Part names are public API: renaming or removing one is a breaking change.
 
 A part is not automatically a composition primitive. `category-content` and `variation-picker` are internal managed structures with stable styling hooks. Panel and Reactions are exported primitives with those same-named part selectors; see [PRIMITIVES.md](./PRIMITIVES.md#parts-and-replacements).
-
-Do not expose private measurement nodes or every implementation wrapper as parts.
 
 ### Library data attributes
 
@@ -185,13 +177,11 @@ Beyond `data-epr-part`, the library emits a small set of value-carrying data att
 
 State is exposed through ARIA where ARIA has a word for it: the active category tab is `[data-epr-part="category-tab"][aria-selected="true"]`, a vertical tab bar is `[role="tablist"][aria-orientation="vertical"]`.
 
-These replace v4's unnamespaced `data-unified`, `data-name` and `data-emojis-per-row`. The v4 names were undocumented and are not part of the compatibility matrix, so this is an internal rename.
-
-Like part names, these are public API once released and semver-significant to change.
+These replace v4's undocumented `data-unified`, `data-name` and `data-emojis-per-row`. Like part names, they are public API.
 
 ## 6. Emoji item boundary
 
-Emoji cells and category headers can be replaced through `List components={{ Emoji, CategoryHeader }}` (see API.md §9). The library keeps owning their behavior: each component receives the library-owned props (type, role, class, position style, tabIndex, aria-label, `data-epr-*`) and must spread them onto its element. Ordering, virtualization and grid semantics stay library-owned; there is no render prop over the whole list.
+Emoji cells and category headers can be replaced through `List components={{ Emoji, CategoryHeader }}` (see [API.md](./API.md#9-custom-emoji-cells-and-category-headers)). The library keeps owning their behavior: each component receives the library-owned props (type, role, class, position style, tabIndex, aria-label, `data-epr-*`) and must spread them onto its element. Ordering, virtualization and grid semantics stay library-owned; there is no render prop over the whole list.
 
 ### Hiding category titles
 
@@ -211,25 +201,8 @@ Rules:
 
 - structural correctness must not depend on Tailwind/CSS Modules being loaded in a particular order;
 - cosmetic consumer overrides should win through ordinary cascade without requiring `!important`;
-- broad `!important` usage is not a substitute for a clear structural boundary;
-- the default appearance may continue using ShipStyles unless implementation deliberately changes it.
+- broad `!important` usage is not needed for cosmetic overrides.
 
-## 8. Structural failure policy
+## 8. Structural failures
 
-When a consumer supplies CSS that breaks documented structural invariants, the library does not guarantee virtualization/navigation behavior.
-
-Where a failure can be detected cheaply (for example a required Viewport has become `display: contents`), development builds may warn with:
-- the invalid condition;
-- the likely impact;
-- a link/reference to the styling contract.
-
-Do not use `!important` broadly as a substitute for a clear structural contract.
-
-
-## 9. Required styling tests
-
-Before v5 ships, executable coverage must prove:
-- a custom primitive composition can apply cosmetic classes without the branded default appearance;
-- changing supported emoji size/padding variables updates measurement and keyboard row math correctly;
-- cosmetic overrides do not break virtualization;
-- the variation picker remains visible and keyboard-operable in a custom primitive composition.
+CSS that breaks the structural rules in section 2 voids the virtualization and keyboard navigation guarantees. Change size tokens or `columns` instead.

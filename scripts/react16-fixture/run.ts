@@ -1,4 +1,4 @@
-// React 16.8 fixture runner (docs/v5/REACT_COMPATIBILITY.md §2, Phase 4).
+// React 16.8 fixture runner.
 //
 // Installs the actual tarball with
 // react@16.8 + react-dom@16.8 + jsdom into a scratch directory under the

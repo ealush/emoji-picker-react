@@ -16,7 +16,7 @@ import { getActiveRegionsInDomOrder } from '../state/regionTraversal';
 import { useFocusSearchInput } from './useFocus';
 import { useFocusRegion } from './useKeyboardNavigation';
 
-// Reactions ↔ full-picker focus management (docs/v5/STATE.md §8).
+// Reactions ↔ full-picker focus management.
 //
 // - On expansion (compact → full): the managed panel activates; after its
 //   destination exists, Search is preferred when present and autofocus is

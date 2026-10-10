@@ -45,7 +45,7 @@ function firstVisibleContentWidth(
 }
 
 // A column-count change obsoletes rows computed by pending keyboard
-// navigation (NAVIGATION.md §11).
+// navigation.
 function trackColumnCount(
   previousRef: React.MutableRefObject<number | undefined>,
   emojisPerRow: number,

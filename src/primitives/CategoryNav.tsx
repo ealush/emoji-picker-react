@@ -9,7 +9,7 @@ import { filterPrimitiveProps } from './nativeProps';
 import { useRootScope } from './scope';
 import type { CategoryNavProps } from './types';
 
-// Public CategoryNav primitive (docs/v5/PRIMITIVES.md §11).
+// Public CategoryNav primitive.
 //
 // Managed tablist region. Renders nothing when fewer than two tabs would
 // be visible (mirroring the internal single-tab rule).

@@ -1,4 +1,4 @@
-# v5 Public API Design
+# v5 API reference
 
 Choose batteries included or BYOD (bring your own design, design language and design library). Both use the same behavior engine. The v5 public API is designed from the consumer inward:
 
@@ -176,8 +176,6 @@ Detection follows font changes selected by attributes on Root or its ancestors (
 
 ## 6. Observe reactions/full-picker mode
 
-Issue #504 asks for surrounding-layout adaptation when reactions expand/collapse.
-
 ```tsx
 <EmojiPicker
   reactionsDefaultOpen
@@ -192,8 +190,6 @@ This is an observer, not a second controlled mode API.
 Existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactionClick`, and `collapseToReactions()` remain.
 
 ## 7. Caller-defined suggestions
-
-Issue #277 asks for a custom ordered Suggested list.
 
 ```tsx
 <EmojiPicker
@@ -275,7 +271,7 @@ export function ReactionPicker({ open }: { open: boolean }) {
 
 Conditional mounting controls whether a Root exists. Omit Search/SearchInput, Preview or SkinTone to omit that UI; `open`, `searchDisabled`, `skinTonesDisabled`, `skinTonePickerLocation` and `previewConfig.showPreview` belong to the assembled default picker. `composition` and `panelProps` are unsupported. Put layout and native attributes directly on Panel.
 
-The full primitive grammar, props, refs, native prop forwarding and validation behavior are normative in [PRIMITIVES.md](./PRIMITIVES.md).
+The full primitive grammar, props, refs, native prop forwarding and validation behavior are documented in [PRIMITIVES.md](./PRIMITIVES.md).
 
 ### Exports
 
@@ -552,7 +548,7 @@ Panel accepts className, style, native attributes and handlers directly. Panel o
 
 Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
 
-## Amendment: BYOD hardening (2026-10-05)
+## Lifetimes, ownership and design-library inputs
 
 Root owns its callback scope even when Roots are nested. The default wrapper may supply fresh callbacks across its memo boundary only to its own Root. Conditionally unmount Root to remove its content and abort pending loading; mounting it again starts a new lifetime. The assembled EmojiPicker retains its `open` prop: closed, it renders nothing but keeps its state, as in v4. Native disabled/read-only search inputs do not accept grid type-to-search proposals.
 

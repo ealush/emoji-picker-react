@@ -10,7 +10,7 @@ import { filterPrimitiveProps, useMergedRefs } from './nativeProps';
 import { useRootScope, useViewportScope, useViewportScrollTop } from './scope';
 import type { ListProps } from './types';
 
-// Public List primitive (docs/v5/PRIMITIVES.md §10).
+// Public List primitive.
 //
 // Managed grid region: owns category rows/groups, managed emoji buttons
 // and virtualization. Accepts no consumer children; when rendered it must

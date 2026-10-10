@@ -182,7 +182,7 @@ describe('v5 main-entry compatibility', () => {
     expect(emojiByUnified()).toBeUndefined();
   });
 
-  it('keeps existing default-picker props from V4_API_MATRIX', () => {
+  it('keeps existing v4 default-picker props', () => {
     // open=false renders nothing.
     const closed = renderPicker({ open: false });
     expect(closed.container.querySelector('aside')).toBeNull();

@@ -1,6 +1,6 @@
 {
   // Representative v4 consumer compiled against the PACKED v5
-  // declarations (IMPLEMENTATION_PLAN.md Phase 8). Prerequisite: run
+  // declarations. Prerequisite: run
   // `npm run build` first so dist/ exists. Checked by
   // `npm run check:compat` under node16 and bundler resolution.
   "compilerOptions": {

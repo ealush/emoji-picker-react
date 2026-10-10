@@ -151,8 +151,4 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
-Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category. Automated axe checks do not replace the manual screen-reader checks in [ACCESSIBILITY_VERIFICATION.md](./ACCESSIBILITY_VERIFICATION.md).
-
-## 10. Verifying changes in this repository
-
-`npm test`, `npm run build`, `npm run check:compat`, `npm run lint`, `npm run check:react-floor`, `npm run check:package` and `npm run check:react16` cover behavior, types and installed-package consumers. Playwright covers browsers and touch, host integrations, 25 recipes across seven styling stacks, visual regressions and axe. After changing source documents, run `npm run docs:llms` and commit the generated root and website text. Release verification also requires the manual [accessibility protocol](./ACCESSIBILITY_VERIFICATION.md); automated axe checks do not replace it. Release gates: [ACCEPTANCE_CHECKLIST.md](./ACCEPTANCE_CHECKLIST.md).
+Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category.

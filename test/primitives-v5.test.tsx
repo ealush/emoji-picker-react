@@ -93,7 +93,7 @@ function Composition({
   );
 }
 
-describe('v5 primitive composition (PRIMITIVES.md §2)', () => {
+describe('v5 primitive composition', () => {
   it('renders one managed panel containing every child in caller order', () => {
     const { container } = render(<Composition />);
     const root = container.querySelector(
@@ -209,7 +209,7 @@ describe('v5 primitive composition (PRIMITIVES.md §2)', () => {
   });
 });
 
-describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
+describe('v5 primitive grammar validation', () => {
   function silenceErrors() {
     return vi.spyOn(console, 'error').mockImplementation(() => {});
   }
@@ -370,7 +370,7 @@ describe('v5 primitive grammar validation (PRIMITIVES.md §4)', () => {
   });
 });
 
-describe('v5 primitive DOM contracts (PRIMITIVES.md §6–§7)', () => {
+describe('v5 primitive DOM contracts', () => {
   it('forwards documented refs to the specified elements', () => {
     const rootRef = React.createRef<HTMLElement>();
     const searchRef = React.createRef<HTMLDivElement>();

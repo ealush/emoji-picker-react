@@ -1,4 +1,4 @@
-// DOM-document-order region traversal (docs/v5/NAVIGATION.md §3).
+// DOM-document-order region traversal.
 //
 // Generic previous/next-region movement uses DOM document order of the
 // currently active/focusable registered region roots — never registration

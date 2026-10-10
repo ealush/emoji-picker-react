@@ -1,6 +1,6 @@
 import { DataEmoji, EmojiProperties } from './DataTypes';
 
-// Caller-defined Suggested contents (docs/v5/STATE.md §9).
+// Caller-defined Suggested contents.
 //
 // While `suggestedEmojis` is present it fully determines the Suggested
 // category contents/order and `suggestedEmojisMode` is ignored for

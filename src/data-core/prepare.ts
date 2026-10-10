@@ -1,6 +1,6 @@
 // Pure immutable prepared-data core for v5.
 //
-// Requirements (docs/v5/PERFORMANCE.md §1, docs/v5/DATA_API.md):
+// Requirements (see also docs/v5/DATA_API.md):
 // - prepare/search-index immutable emoji data outside transient UI state;
 // - cache prepared base data by `emojiData` object identity (WeakMap);
 // - default packaged data shares one prepared core across Roots;
