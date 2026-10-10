@@ -270,10 +270,10 @@ Map the picker's variables to shadcn's semantic variables once; light, dark and 
 
 ### Composed: the registry component
 
-[`registry/emoji-picker.tsx`](../../registry/emoji-picker.tsx) is a full shadcn-style component: a bare `Root`, your theme classes (`bg-popover`, `bg-accent`, `border-input`, `text-muted-foreground`), a `components` map for cells, headers, tabs and the tone button, and the `SearchInput` styled like shadcn's `Input`. Install it from the generated registry item (`website/public/r/emoji-picker.json`):
+[`registry/emoji-picker.tsx`](../../registry/emoji-picker.tsx) is a full shadcn-style component: a bare `Root`, your theme classes (`bg-popover`, `bg-accent`, `border-input`, `text-muted-foreground`), a `components` map for cells, headers, tabs and the tone button, and the `SearchInput` styled like shadcn's `Input`. Install it from the registry item the website publishes (generated into `website/public/r/emoji-picker.json`):
 
 ```sh
-npx shadcn@latest add <registry-item-url>
+npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json
 ```
 
 Or copy the file into `components/ui/emoji-picker.tsx` and compose it with your `Popover`; the host owns insertion and dismissal, and Escape closes an open variation menu before it reaches the popover.

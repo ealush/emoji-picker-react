@@ -350,7 +350,7 @@ The picker renders on the server with its styles inlined — no setup. The main 
 
 Use the [live gallery](https://ealush.com/emoji-picker-react/#designs) to try designs and copy or download their React and CSS files. Working host integrations include [caret autocomplete](stories/recipes/shortcode-typeahead), [custom-image replies](stories/recipes/community-forum) and [chat insertion](stories/recipes/team-chat).
 
-The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Its generated registry item is `website/public/r/emoji-picker.json`; serve that file and install it with `npx shadcn@latest add <registry-item-url>`. It requires `emoji-picker-react@5` or later. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
+The [shadcn registry component](registry/emoji-picker.tsx) uses your theme, a native search input, custom cells and the same keyboard engine. Install it with `npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json` (the item is generated into `website/public/r/emoji-picker.json`). It requires `emoji-picker-react@5` or later. See [the adoption guide](docs/v5/ADOPTION.md) for setup and popup focus behavior.
 
 ## Design examples
 

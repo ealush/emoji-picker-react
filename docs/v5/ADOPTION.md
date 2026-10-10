@@ -85,10 +85,10 @@ Emoji names/categories come from any of the 28 bundled datasets or your own data
 
 ## shadcn registry
 
-`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json`. Serve that item, then install using:
+`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json`, which the website publishes. Install it with:
 
 ```sh
-npx shadcn@latest add <registry-item-url>
+npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json
 ```
 
 The registry item depends on `emoji-picker-react@^5.0.0`. The registry component styles its search input, tabs, emoji cells, headers, tone button and variations menu with your shadcn theme classes (`bg-popover`, `bg-accent`, `border-input`, …) through `components` and `[data-epr-part]` variants, so it follows light, dark and custom themes. The picker keeps behavior and cell geometry. Wrap it in your existing Popover:
