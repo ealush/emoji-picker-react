@@ -21,6 +21,7 @@ import {
   existsSync,
   mkdirSync,
   readdirSync,
+  readFileSync,
   rmSync,
   statSync,
   writeFileSync,
@@ -141,6 +142,16 @@ function assertFreshBuild() {
   }
 }
 
+/** The `tsx check` block in `doc` that defines `name`. */
+function guideExample(doc: string, name: string): string {
+  const markdown = readFileSync(join(repoRoot, doc), 'utf8');
+  const block = [...markdown.matchAll(/^```tsx check\r?\n([\s\S]*?)^```/gm)]
+    .map((match) => match[1])
+    .find((code) => code.includes(`function ${name}`));
+  if (!block) throw new Error(`${doc} has no checked example defining ${name}`);
+  return block;
+}
+
 async function main() {
   assertFreshBuild();
 
@@ -187,6 +198,16 @@ async function main() {
   const appDir = join(scratch, 'app');
   const outDir = join(scratch, 'dist');
   cpSync(join(__dirname, 'app'), appDir, { recursive: true });
+  // The emoji-mart guide's adapter runs as documented: its checked example
+  // is extracted from the Markdown, not copied by hand.
+  cpSync(join(__dirname, 'guide'), join(appDir, 'guide'), { recursive: true });
+  writeFileSync(
+    join(appDir, 'guide', 'adapter.tsx'),
+    guideExample(
+      'docs/v5/MIGRATING_FROM_EMOJI_MART.md',
+      'toEmojiMartSelection',
+    ),
+  );
 
   // The repository's Vite builds the scratch app; every import resolves
   // from the scratch install because the sources live there. The config is
@@ -199,7 +220,16 @@ async function main() {
       logLevel: 'warn',
       base: './',
       oxc: { jsx: { runtime: 'automatic' } },
-      build: { outDir, emptyOutDir: true },
+      build: {
+        outDir,
+        emptyOutDir: true,
+        rolldownOptions: {
+          input: [
+            join(appDir, 'index.html'),
+            join(appDir, 'guide', 'index.html'),
+          ],
+        },
+      },
     })};\n`,
   );
   run(
@@ -241,7 +271,7 @@ async function main() {
     unpackedBytes: pack.unpackedSize,
     files: pack.entryCount,
   });
-  for (const dir of [outDir, shadcnOut]) {
+  for (const dir of [outDir, join(outDir, 'guide'), shadcnOut]) {
     writeFileSync(join(dir, 'e2e-manifest.json'), manifest);
   }
   console.log(

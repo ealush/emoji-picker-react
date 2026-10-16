@@ -62,6 +62,7 @@ searchEmojis('party'); getEmojiByUnified('1f389'); // { emoji: '🎉', name: 'pa
 - [Styling recipes by library](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/STYLING_RECIPES.md): theme, unstyled and composed snippets for plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components and MUI
 - [Data API](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/DATA_API.md): framework-free search and lookup
 - [Migrating from v4](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/MIGRATION.md): what changed and how to upgrade
+- [Migrating from emoji-mart](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/docs/v5/MIGRATING_FROM_EMOJI_MART.md): prop and payload mapping, size comparison, CSP
 - [Website examples](https://raw.githubusercontent.com/ealush/emoji-picker-react/master/website/README.md): typed customization, locale loading and composition
 
 ## Examples

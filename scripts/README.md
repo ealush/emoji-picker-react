@@ -43,7 +43,14 @@ and verifies CommonJS, ESM, locale/data exports and server rendering. Build firs
 
 `npm run test:e2e` installs the packed library into a scratch Vite app, a
 CommonJS require() bundle and a shadcn/ui app created by the real `shadcn add`
-command against the locally generated registry (`scripts/e2e-consumer`), serves both under a strict
+command against the locally generated registry, plus a page running the
+emoji-mart migration guide's adapter extracted from its Markdown
+(`scripts/e2e-consumer`), serves both under a strict
 Content Security Policy and drives them with `playwright/packed-consumer.spec.ts`.
 Every test is recorded to `test-results/e2e`; CI uploads the recordings as the
 `e2e-consumer-recordings` artifact. Build first.
+
+`npm run compare:sizes` installs this checkout's tarball next to emoji-mart and
+frimousse in a scratch directory, bundles the smallest working picker for each
+with esbuild and prints the Markdown size table used in
+`docs/v5/MIGRATING_FROM_EMOJI_MART.md`. Build first; it needs network access.
