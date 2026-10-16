@@ -451,43 +451,31 @@ These prompts guide integration; the API contracts remain authoritative:
 
 One emoji-picker engine, with two ways to build your UI: use the complete picker, or bring your own design, design language and design library.
 
-> **Batteries included:** `npm install emoji-picker-react`, render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
+> **Batteries included:** `npm install emoji-picker-react` (or `npx shadcn@latest add` the [registry component](#quick-start)), render `<EmojiPicker />`, done — a complete, accessible, themed picker with search, categories, skin tones, recents and keyboard navigation. No CSS import, no configuration, no design work.
 >
 > **BYOD (bring your own design):** pass `unstyled`, or compose your own layout from `emoji-picker-react/primitives`, and style it with whatever your app already uses — Tailwind, shadcn/ui, CSS Modules, Emotion, styled-components, MUI or plain CSS. Accessibility, keyboard navigation and virtualization stay built in.
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live demo](https://ealush.com/emoji-picker-react)** · **[Props](PROPS.md)** · **[BYOD](#byod-bring-your-own-design)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
+**[Live demo](https://ealush.com/emoji-picker-react)** · **[Quick start](#quick-start)** · **[Props](PROPS.md)** · **[BYOD](#byod-bring-your-own-design)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
 ![reactions](https://github.com/ealush/emoji-picker-react/assets/11255103/c28cc954-dc1d-4d82-91a8-64a74cf1d598)
 
-## Features
-
-- **Batteries included** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
-- **BYOD** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
-- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks.
-- **Reactions mode** — a compact reactions bar that expands to the full picker.
-- **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
-- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
-- **Custom emojis** — image-based emojis, optionally in their own named groups.
-- **Lean when you want** — the primitives entry loads the dataset on demand (a 34 KiB min+gz startup budget including ShipStyles; see the consumer gate); a framework-free data API for search and lookup.
-- **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included; ships ES2020 for every browser since 2020 and any modern bundler.
-
-> **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
-
-## Copyable integration prompts
-
-Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
-to give a coding agent a concrete starting point for your application. Each
-prompt checks the installed version and keeps integration behavior explicit.
-
-## Quick start (batteries included)
+## Quick start
 
 ```bash
 npm install emoji-picker-react
 ```
+
+Using shadcn/ui? Add the registry component instead. It installs the package and renders with your theme tokens (`bg-popover`, `bg-accent`, `border-input`), so light, dark and custom themes follow automatically:
+
+```bash
+npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json
+```
+
+Then `import { EmojiPicker } from '@/components/ui/emoji-picker'` and wrap it in your Popover ([setup and focus behavior](docs/v5/ADOPTION.md#shadcn-registry)).
 
 Requires **React 16.8 or later** and **Node 18 or later** in your build toolchain. (Contributors to this repository use Node 24; see [CONTRIBUTING.md](CONTRIBUTING.md).)
 
@@ -508,6 +496,32 @@ That is the whole setup. `onEmojiClick` receives an `EmojiClickData` object (`em
 ```
 
 See [PROPS.md](PROPS.md) for every prop.
+
+## Offline, CSP-safe, no CDN
+
+- **No network at runtime.** Emoji data for 28 languages ships in the package and native emoji are the default, so the picker makes no requests. Image styles (Apple, Google, Facebook, Twitter) load from jsDelivr unless [`getEmojiUrl`](PROPS.md) points at your own host.
+- **Strict Content Security Policy.** Styles are injected once per document; pass your policy's [`nonce`](CUSTOMIZATION.md) and nothing needs `'unsafe-inline'`.
+- **Tested as installed.** Every pull request installs the packed tarball into fresh Vite, CommonJS and shadcn/ui apps, serves them under a strict CSP, and fails on any third-party request or CSP violation ([`playwright/packed-consumer.spec.ts`](playwright/packed-consumer.spec.ts)).
+
+## Features
+
+- **Batteries included** — one component, sensible defaults, light/dark/auto themes, no stylesheet to import.
+- **BYOD** — `unstyled` drops the chrome and composable primitives let you build any layout, styled with plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components or MUI. See [25 designs](#design-examples) built this way.
+- **Accessible** — full keyboard navigation, ARIA grid semantics, localizable labels, right-to-left layouts, reduced-motion support and automated axe checks.
+- **Reactions mode** — a compact reactions bar that expands to the full picker.
+- **Localized** — 28 emoji datasets; translate search, categories, previews, reactions, skin tones, loading errors and retry controls, including accessible announcements.
+- **Emoji styles** — native (default), Apple, Google, Facebook, Twitter; native mode filters detected unsupported OS glyphs, including individual sequences and skin tones. See [detection limits](docs/v5/API.md#5c-native-emoji-support-detection).
+- **Custom emojis** — image-based emojis, optionally in their own named groups.
+- **Lean when you want** — the primitives entry loads the dataset on demand (a 34 KiB min+gz startup budget including ShipStyles; see the consumer gate); a framework-free data API for search and lookup.
+- **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included; ships ES2020 for every browser since 2020 and any modern bundler.
+
+> **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
+
+## Copyable integration prompts
+
+Use the [setup, customization, recipe adoption and v5 migration prompts](docs/v5/PROMPTS.md)
+to give a coding agent a concrete starting point for your application. Each
+prompt checks the installed version and keeps integration behavior explicit.
 
 ## Choose your path
 
@@ -660,7 +674,7 @@ Map the picker's variables to shadcn's theme variables once; light, dark and cus
 </PopoverContent>
 ```
 
-For a component that uses your shadcn input and buttons directly, install the [registry component](#ready-to-adapt-starters).
+For a component that uses your shadcn theme classes directly, install the [registry component](#quick-start).
 
 ### Emotion, styled-components and MUI
 
@@ -1386,7 +1400,7 @@ Emoji names/categories come from any of the 28 bundled datasets or your own data
 
 ## shadcn registry
 
-`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json`, which the website publishes. Install it with:
+`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json` and lists it in the flat registry index `website/public/r/registry.json`, both of which the website publishes. Install it with:
 
 ```sh
 npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json
@@ -1406,7 +1420,7 @@ The registry item depends on `emoji-picker-react@^5.0.0`. The registry component
 </Popover>
 ```
 
-The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
+The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules. `npm run test:e2e` also runs the install command itself: the shadcn CLI adds the item from the locally generated registry into a fresh Tailwind v4 app, which must render with the app's theme tokens under a strict CSP.
 
 ## Working starter sources
 
