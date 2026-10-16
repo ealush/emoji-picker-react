@@ -150,15 +150,39 @@ check('locale isolation', () => {
   );
 });
 
-// Locale datasets are pure data: no locale file may statically depend on
-// another module at all (single-locale consumers stay lean).
-check('locale files have no static dependencies', () => {
+// Locale datasets are pure data: a locale's CommonJS twin depends on its
+// own JSON file and nothing else (single-locale consumers stay lean, and
+// the dataset ships once per format instead of again as a JS literal).
+check('locale files depend only on their own JSON', () => {
   const dir = pkgDir + 'dist/data';
   const locales = readdirSync(dir).filter((entry) =>
     /^emojis-.*\.js$/.test(entry),
   );
   assert.ok(locales.length > 1, 'expected multiple locale files');
   for (const entry of locales) {
+    const content = read(`dist/data/${entry}`);
+    const own = entry.replace(/\.js$/, '.json');
+    const requires = [
+      ...content.matchAll(/\brequire\s*\(\s*(['"])(.*?)\1/g),
+    ].map((match) => match[2]);
+    assert.deepStrictEqual(
+      requires,
+      [`./${own}`],
+      `${entry} must require only ./${own}`,
+    );
+    assert.ok(
+      !/\bimport\s+[^'"]*?\sfrom\s+['"]/.test(content),
+      `${entry} contains a static import`,
+    );
+  }
+});
+
+// The ESM twins are self-contained module literals.
+check('locale ESM twins have no static dependencies', () => {
+  const dir = pkgDir + 'dist/data';
+  for (const entry of readdirSync(dir).filter((name) =>
+    /^emojis-.*\.mjs$/.test(name),
+  )) {
     const content = read(`dist/data/${entry}`);
     assert.ok(
       !/\brequire\s*\(|\bimport\s+[^'"]*?\sfrom\s+['"]/.test(content),
@@ -269,7 +293,9 @@ check('icon data URIs are encoded SVG XML', () => {
       )
       .flatMap((value) => {
         if (typeof value !== 'string') return [];
-        const cssUrl = /^url\((["'])(data:image\/svg\+xml,[\s\S]*)\1\)$/.exec(value);
+        const cssUrl = /^url\((["'])(data:image\/svg\+xml,[\s\S]*)\1\)$/.exec(
+          value,
+        );
         const uri = cssUrl?.[2] ?? value;
         return uri.startsWith('data:image/svg+xml,')
           ? [uri.slice('data:image/svg+xml,'.length)]
