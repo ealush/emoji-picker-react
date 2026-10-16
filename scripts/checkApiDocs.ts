@@ -16,6 +16,7 @@ const examples = Object.entries({
   'website/README.md': 3,
   'README.md': 1,
   'docs/v5/MIGRATION.md': 1,
+  'docs/v5/MIGRATING_FROM_EMOJI_MART.md': 2,
   'docs/v5/PRIMITIVES.md': 1,
   'INTERNATIONALIZATION.md': 3,
 }).flatMap(([source, minimum]) => {

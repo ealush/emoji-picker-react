@@ -205,3 +205,33 @@ test('shadcn registry component installs with the README command and follows the
 
   await expectSelfContained(page, seen);
 });
+
+test('emoji-mart migration guide: adapter delivers the emoji-mart payload', async ({
+  page,
+}) => {
+  const seen = await watch(page);
+  await page.goto('/guide/');
+
+  const search = page.getByLabel('Type to search for an emoji');
+  await search.fill('thumbs up');
+  await pause(page);
+  // defaultSkinTone="1f3fc" (emoji-mart `skin={3}`) applies to the grid.
+  await cell(page, '👍🏼').click();
+  await pause(page);
+
+  const payload: unknown = JSON.parse(
+    await page.getByTestId('emoji-mart-payload').innerText(),
+  );
+  expect(payload).toMatchObject({
+    native: '👍🏼',
+    unified: '1f44d-1f3fc',
+    skin: 3,
+  });
+  expect(payload).toHaveProperty('name', expect.any(String));
+  expect(payload).toHaveProperty(
+    'keywords',
+    expect.arrayContaining(['thumbs up']),
+  );
+
+  await expectSelfContained(page, seen);
+});
