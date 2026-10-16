@@ -40,3 +40,9 @@ examples in README, migration, API and website guides are compiled by
 
 `npm run check:node18` installs the packed library with a real Node 18 binary
 and verifies CommonJS, ESM, locale/data exports and server rendering. Build first.
+
+`npm run test:e2e` installs the packed library into a scratch Vite app and a
+CommonJS require() bundle (`scripts/e2e-consumer`), serves both under a strict
+Content Security Policy and drives them with `playwright/packed-consumer.spec.ts`.
+Every test is recorded to `test-results/e2e`; CI uploads the recordings as the
+`e2e-consumer-recordings` artifact. Build first.

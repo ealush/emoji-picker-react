@@ -27,6 +27,7 @@
     "./**/*.ts",
     "./**/*.cts",
     "./**/*.mts",
+    "./e2e-consumer/app/**/*.tsx",
     "../bench/**/*.ts",
     "../src/svg.d.ts",
     "../bench/**/*.cts",

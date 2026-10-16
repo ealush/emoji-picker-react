@@ -39,7 +39,7 @@ The default picker is assembled from the primitives (`src/EmojiPickerReact.tsx`)
 npm run check:scripts && npm run lint && npm test && npm run build && npm run check:compat && npm run size
 ```
 
-Browser suites: `npm run test:visual` and `npx playwright test --config playwright.behavior.config.ts` (after `npx playwright install --with-deps`). Packaging: `npm run check:package`, `npm run check:react16`.
+Browser suites: `npm run test:visual` and `npx playwright test --config playwright.behavior.config.ts` (after `npx playwright install --with-deps`). Packaging: `npm run check:package`, `npm run check:react16`. Packed-consumer e2e: `npm run test:e2e` (after `npm run build`) installs the tarball into a fresh Vite app and a CommonJS bundle under a strict CSP and records every test (`E2E_SLOWMO=250` paces recordings for review).
 
 Repository automation is TypeScript and is checked by `npm run check:scripts`; see [scripts/README.md](scripts/README.md).
 
