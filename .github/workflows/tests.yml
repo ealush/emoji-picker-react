@@ -126,8 +126,8 @@ jobs:
           name: browser-behavior-evidence
           path: test-results/
 
-  # The packed tarball installed into a fresh Vite app and a CommonJS
-  # bundle, served under a strict CSP (scripts/e2e-consumer). `npm ci` runs
+  # The packed tarball installed into a fresh Vite app, a CommonJS bundle
+  # and a shadcn/ui app (the real `shadcn add` of website/public/r), served under a strict CSP (scripts/e2e-consumer). `npm ci` runs
   # `prepare`, which builds. Every run uploads the recordings, so a PR can
   # link its e2e evidence.
   e2e-consumer:

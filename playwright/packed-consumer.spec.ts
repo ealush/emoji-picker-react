@@ -167,3 +167,41 @@ test('CommonJS require() consumer renders a required locale', async ({
 
   await expectSelfContained(page, seen);
 });
+
+test('shadcn registry component installs with the README command and follows the app theme', async ({
+  page,
+}) => {
+  const seen = await watch(page);
+  await page.goto('/shadcn/');
+  await expect(page.getByTestId('artifact')).toContainText('Installed from');
+
+  // The picker paints with the app's --popover token, not its own palette.
+  const root = page.locator('[data-epr-part="root"]');
+  const [actual, expected] = await root.evaluate((element) => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--popover)';
+    document.body.append(probe);
+    const colors = [
+      getComputedStyle(element).backgroundColor,
+      getComputedStyle(probe).backgroundColor,
+    ];
+    probe.remove();
+    return colors;
+  });
+  expect(actual).toBe(expected);
+
+  const search = page.getByLabel('Type to search for an emoji');
+  await search.fill('sparkles');
+  await pause(page);
+  await cell(page, '✨').click();
+  await expectSelected(page, '✨');
+  await pause(page);
+
+  await search.fill('party');
+  await search.focus();
+  const glyph = await selectFirstResultWithKeyboard(page);
+  await expectSelected(page, glyph);
+  await pause(page);
+
+  await expectSelfContained(page, seen);
+});

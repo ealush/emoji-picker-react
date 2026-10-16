@@ -5,7 +5,9 @@
 // no import can fall back to the repository's node_modules), and builds the
 // consumer app in ./app twice:
 // - Vite (ESM `import` condition, code-split locale chunk);
-// - esbuild IIFE from require() calls (CommonJS `require` condition).
+// - esbuild IIFE from require() calls (CommonJS `require` condition);
+// - the shadcn/ui registry component, installed by the shadcn CLI
+//   (shadcn.ts).
 // serve.ts then serves the output under a strict Content Security Policy
 // and playwright/packed-consumer.spec.ts drives it with video recording.
 //
@@ -26,6 +28,7 @@ import { join } from 'node:path';
 import { buildSync } from 'esbuild';
 
 import { e2eConsumerDir } from './paths';
+import { buildShadcnConsumer } from './shadcn';
 
 const repoRoot = join(__dirname, '..', '..');
 
@@ -63,7 +66,7 @@ function isPackEntry(value: unknown): value is PackEntry {
   );
 }
 
-function main() {
+async function main() {
   if (!existsSync(join(repoRoot, 'dist', 'esm', 'index.mjs'))) {
     throw new Error(
       'e2e consumer requires built artifacts; run `npm run build` first.',
@@ -86,6 +89,8 @@ function main() {
   if (!isPackEntry(pack))
     throw new Error('unexpected `npm pack --json` output');
 
+  // Saved dependencies: `shadcn add` runs its own npm install, which would
+  // prune anything installed with --no-save.
   writeFileSync(
     join(scratch, 'package.json'),
     JSON.stringify({ name: 'epr-e2e-consumer', private: true }),
@@ -96,11 +101,12 @@ function main() {
       'install',
       '--no-audit',
       '--no-fund',
-      '--no-save',
       '--ignore-scripts',
       join(scratch, pack.filename),
       'react@19',
       'react-dom@19',
+      'tailwindcss@4',
+      '@tailwindcss/vite@4',
     ],
     { cwd: scratch, stdio: 'inherit' },
   );
@@ -148,20 +154,30 @@ function main() {
   });
   copyFileSync(join(appDir, 'cjs.html'), join(outDir, 'cjs.html'));
 
-  writeFileSync(
-    join(outDir, 'e2e-manifest.json'),
-    JSON.stringify({
-      version: pack.version,
-      tarball: pack.filename,
-      packedBytes: pack.size,
-      unpackedBytes: pack.unpackedSize,
-      files: pack.entryCount,
-    }),
-  );
+  const shadcnOut = join(outDir, 'shadcn');
+  await buildShadcnConsumer({
+    scratch,
+    tarball: join(scratch, pack.filename),
+    outDir: shadcnOut,
+  });
+
+  const manifest = JSON.stringify({
+    version: pack.version,
+    tarball: pack.filename,
+    packedBytes: pack.size,
+    unpackedBytes: pack.unpackedSize,
+    files: pack.entryCount,
+  });
+  for (const dir of [outDir, shadcnOut]) {
+    writeFileSync(join(dir, 'e2e-manifest.json'), manifest);
+  }
   console.log(
     `e2e consumer built from ${pack.filename} ` +
       `(${pack.size} B packed, ${pack.unpackedSize} B unpacked, ${pack.entryCount} files)`,
   );
 }
 
-main();
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});

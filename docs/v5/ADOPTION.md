@@ -85,7 +85,7 @@ Emoji names/categories come from any of the 28 bundled datasets or your own data
 
 ## shadcn registry
 
-`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json`, which the website publishes. Install it with:
+`registry/emoji-picker.tsx` is the consumer component; `npm run registry` embeds it in `website/public/r/emoji-picker.json` and lists it in the flat registry index `website/public/r/registry.json`, both of which the website publishes. Install it with:
 
 ```sh
 npx shadcn@latest add https://ealush.com/emoji-picker-react/r/emoji-picker.json
@@ -105,7 +105,7 @@ The registry item depends on `emoji-picker-react@^5.0.0`. The registry component
 </Popover>
 ```
 
-The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
+The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules. `npm run test:e2e` also runs the install command itself: the shadcn CLI adds the item from the locally generated registry into a fresh Tailwind v4 app, which must render with the app's theme tokens under a strict CSP.
 
 ## Working starter sources
 

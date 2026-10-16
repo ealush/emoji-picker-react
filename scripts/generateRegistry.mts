@@ -22,10 +22,34 @@ const registry = {
     },
   ],
 };
+// The registry index, served flat beside its items as the shadcn registry
+// directory requires (`/r/registry.json` + `/r/{name}.json`). Index entries
+// list files without `content`; the item JSON carries the source.
+const index = {
+  $schema: 'https://ui.shadcn.com/schema/registry.json',
+  name: 'emoji-picker-react',
+  homepage: 'https://ealush.com/emoji-picker-react',
+  items: [
+    {
+      ...registry,
+      $schema: undefined,
+      files: registry.files.map(({ path: file, type }) => ({
+        path: file,
+        type,
+      })),
+    },
+  ],
+};
 const out = path.join(root, 'website/public/r');
 fs.mkdirSync(out, { recursive: true });
 fs.writeFileSync(
   path.join(out, 'emoji-picker.json'),
   JSON.stringify(registry, null, 2) + '\n',
 );
-console.log('registry: generated website/public/r/emoji-picker.json');
+fs.writeFileSync(
+  path.join(out, 'registry.json'),
+  JSON.stringify(index, null, 2) + '\n',
+);
+console.log(
+  'registry: generated website/public/r/emoji-picker.json and registry.json',
+);
