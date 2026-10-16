@@ -84,7 +84,7 @@ The picker needs no stylesheet import. Its CSS is injected automatically, once p
 How overrides work, so you never fight specificity:
 
 - **Design variables (`--epr-*`) always yield to your CSS.** Their defaults are emitted at zero specificity, so a single class wins in any load order.
-- **Parts are targetable** with stable `[data-epr-part="…"]` selectors: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State is exposed as `[data-epr-active]` (hovered or focused emoji, active tab or tone), `[aria-selected="true"]` (current tab) and `[aria-pressed="true"]` (current tone). The full contract: [docs/v5/STYLING.md](docs/v5/STYLING.md).
+- **Parts are targetable** with stable `[data-epr-part="…"]` selectors: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State is exposed as `[data-epr-active]` (hovered or focused emoji, active tab or tone), `[data-epr-highlighted]` (the keyboard highlight with `keepSearchFocus`), `[aria-selected="true"]` (current tab) and `[aria-pressed="true"]` (current tone). The full contract: [docs/v5/STYLING.md](docs/v5/STYLING.md).
 - **CSS ownership is explicit.** Library classes protect layout from ordinary element/universal resets. More specific rules and `!important` can still override geometry; preserve the [structural contract](docs/v5/STYLING.md).
 - **Layered frameworks:** with Tailwind v4 (or any `@layer`-based setup), pass `cssLayer="epr"` and declare the layer first — `@layer epr, theme, base, components, utilities;` — so utilities override the picker.
 
@@ -303,13 +303,13 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Only some categories** — `categories={[Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE]}`.
 
-**Your own suggested emojis** — `suggestedEmojis={['1f44d', '1f389', '1f680']}`.
+**Your own suggested emojis** — `suggestedEmojis={['1f44d', '1f389', '1f680']}`. The picker then records nothing in `localStorage`; update your list from `onEmojiClick`.
 
 **Controlled search** — `searchValue` + `onSearchChange`, like an ordinary controlled input.
 
 **Controlled skin tone** — `skinTone` + `onSkinToneChange`.
 
-**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`.
+**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`. For no skin-tone variations at all (no long press), add `variationsDisabled`.
 
 **Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 

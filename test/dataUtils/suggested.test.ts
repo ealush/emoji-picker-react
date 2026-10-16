@@ -115,6 +115,26 @@ describe('setSuggested', () => {
     ]);
   });
 
+  it('records the exact rendered identity of a mixed-tone emoji', () => {
+    const storage = mockLocalStorage();
+    const mixed = '1faf1-1f3fb-200d-1faf2-1f3ff';
+
+    setSuggested(
+      {
+        n: ['handshake'],
+        u: '1f91d',
+        a: '14',
+        v: [mixed],
+        renderUnified: mixed,
+      },
+      SkinTones.DARK,
+    );
+
+    expect(JSON.parse(storage.setItem.mock.calls[0][1])).toEqual([
+      { unified: mixed, original: '1f91d', count: 1 },
+    ]);
+  });
+
   it('moves an existing emoji to the front and increments its count', () => {
     const storage = mockLocalStorage({ [LS_KEY]: JSON.stringify(storedList) });
 

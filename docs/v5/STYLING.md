@@ -177,6 +177,8 @@ Beyond `data-epr-part`, the library emits a small set of value-carrying data att
 
 State is exposed through ARIA where ARIA has a word for it: the active category tab is `[data-epr-part="category-tab"][aria-selected="true"]`, a vertical tab bar is `[role="tablist"][aria-orientation="vertical"]`.
 
+With `keepSearchFocus`, the emoji the arrow keys highlight carries `[data-epr-highlighted]` while focus stays in the search input (which names it through `aria-activedescendant`). Give it the same look as keyboard focus; the default appearance does.
+
 These replace v4's undocumented `data-unified`, `data-name` and `data-emojis-per-row`. Like part names, they are public API.
 
 ## 6. Emoji item boundary

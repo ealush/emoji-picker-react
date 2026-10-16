@@ -20,6 +20,8 @@ import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
   useOnEmojiClickConfig,
+  useSuggestedEmojisConfig,
+  useVariationsDisabledConfig,
 } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
@@ -59,6 +61,9 @@ export function useMouseDownHandlers(
   const getEmojiUrl = useGetEmojiUrlConfig();
   const activeEmojiStyle = useEmojiStyleConfig();
   const { emojiByUnified } = usePickerDataContext();
+  const variationsDisabled = useVariationsDisabledConfig();
+  // While the app owns Suggested (suggestedEmojis), picks are its to record.
+  const suggestedEmojis = useSuggestedEmojisConfig();
 
   const onClick = React.useCallback(
     function onClick(event: MouseEvent) {
@@ -80,8 +85,10 @@ export function useMouseDownHandlers(
       const emoji = { ...record, renderUnified: unified };
       const skinToneToUse = skinToneFromEmoji(emoji, unified, activeSkinTone);
 
-      updateSuggested();
-      setSuggested(emoji, skinToneToUse);
+      if (!suggestedEmojis) {
+        updateSuggested();
+        setSuggested(emoji, skinToneToUse);
+      }
       onEmojiClick(
         emojiClickOutput(emoji, skinToneToUse, activeEmojiStyle, getEmojiUrl),
         event,
@@ -94,6 +101,7 @@ export function useMouseDownHandlers(
       disallowClickRef,
       emojiByUnified,
       onEmojiClick,
+      suggestedEmojis,
       updateSuggested,
       getEmojiUrl,
       activeEmojiStyle,
@@ -109,7 +117,7 @@ export function useMouseDownHandlers(
 
       const [emoji] = emojiFromEvent(event, emojiByUnified);
 
-      if (!emoji || !emojiHasVariations(emoji)) {
+      if (!emoji || variationsDisabled || !emojiHasVariations(emoji)) {
         return;
       }
 
@@ -129,6 +137,7 @@ export function useMouseDownHandlers(
       disallowClickRef,
       emojiByUnified,
       closeAllOpenToggles,
+      variationsDisabled,
       setVariationPicker,
       setEmojiVariationPicker,
     ],

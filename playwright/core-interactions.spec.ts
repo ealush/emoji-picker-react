@@ -87,9 +87,7 @@ test('category navigation and scrolling work together', async ({ page }) => {
   await page.goto(storyUrl('picker-overview--default'));
 
   await page.getByRole('tab', { name: 'Animals & Nature' }).click();
-  await expect(
-    categoryLabel(page, 'Animals & Nature'),
-  ).toBeVisible();
+  await expect(categoryLabel(page, 'Animals & Nature')).toBeVisible();
 
   const body = page.locator('.epr-body');
   await body.evaluate((el) => {
@@ -173,7 +171,8 @@ for (const direction of ['ltr', 'rtl'] as const) {
  * - Uses ArrowDown from search to move focus to category tabs
  * - Uses ArrowRight to navigate between category tabs
  * - Uses ArrowDown to move focus into the emoji grid
- * - Verifies focus lands on the "grinning face" emoji
+ * - Verifies focus lands on the emoji below the focused tab
+ *   ("grinning face with big eyes" sits under "Animals & Nature")
  * - Uses the NoSuggested story to ensure consistent category order
  */
 test('keyboard navigation moves focus across controls and emojis', async ({
@@ -196,9 +195,9 @@ test('keyboard navigation moves focus across controls and emojis', async ({
 
   await page.keyboard.press('ArrowDown');
 
-  // Wait for focus to move to emoji grid by checking for visible focused element
+  // Arrows enter the grid next to where focus was: below the tab.
   const focusedElement = page.locator(
-    'button:focus[aria-label="grinning face"]',
+    'button:focus[aria-label="grinning face with big eyes"]',
   );
   await expect(focusedElement).toBeVisible();
 

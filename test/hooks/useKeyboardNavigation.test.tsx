@@ -1,5 +1,5 @@
 import { fireEvent, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   useBodyRef,
@@ -9,8 +9,12 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../../src/components/context/ElementRefContext';
-import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
+import {
+  useNavigationRegistry,
+  useSkinToneFanOpenState,
+} from '../../src/components/context/PickerContext';
 import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
+import { useAcceptedSearchValue } from '../../src/hooks/useSearchController';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
@@ -33,10 +37,13 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useReactionsModeState: vi.fn(() => [false, vi.fn()]),
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
   useSearchComposingState: vi.fn(() => [false, vi.fn()]),
+  useSetActiveEmoji: vi.fn(() => vi.fn()),
+  useSearchTermState: vi.fn(() => ['', vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
   useSearchDisabledConfig: vi.fn(() => false),
+  useKeepSearchFocusConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({
@@ -60,6 +67,7 @@ vi.mock('../../src/hooks/useFilter', () => ({
 vi.mock('../../src/hooks/useSearchController', () => ({
   useTypeToSearchKey: vi.fn(() => vi.fn()),
   useClearSearchValue: vi.fn(() => vi.fn()),
+  useAcceptedSearchValue: vi.fn(() => ''),
 }));
 
 vi.mock('../../src/hooks/useFocus', () => ({
@@ -83,14 +91,21 @@ vi.mock('../../src/DomUtils/scrollTo', () => ({
 describe('useKeyboardNavigation', () => {
   let pickerMain: HTMLDivElement;
   let searchInput: HTMLInputElement;
+  let registry: NavigationRegistry;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // One registry per picker: regions registered here are what arrow
+    // keys traverse (DOM order, since jsdom has no layout).
+    registry = new NavigationRegistry();
+    (useNavigationRegistry as any).mockReturnValue(registry);
 
     pickerMain = document.createElement('div');
     searchInput = document.createElement('input');
 
     pickerMain.appendChild(searchInput);
+    // Traversal only considers regions connected to the document.
+    document.body.appendChild(pickerMain);
     (usePickerMainRef as any).mockReturnValue({ current: pickerMain });
     (useSearchInputRef as any).mockReturnValue({ current: searchInput });
     (useBodyRef as any).mockReturnValue({
@@ -107,6 +122,8 @@ describe('useKeyboardNavigation', () => {
     });
   });
 
+  afterEach(() => pickerMain.remove());
+
   it('attaches event listeners to picker main', () => {
     const addEventListenerSpy = vi.spyOn(pickerMain, 'addEventListener');
     renderHook(() => useKeyboardNavigation());
@@ -116,15 +133,27 @@ describe('useKeyboardNavigation', () => {
     );
   });
 
-  it('focuses search input on Escape if toggles are closed', () => {
+  it('clears the search and focuses it on Escape if toggles are closed', () => {
     const focusSearchInputMock = vi.fn();
     (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+    (useAcceptedSearchValue as any).mockReturnValue('cat');
 
     renderHook(() => useKeyboardNavigation());
 
-    fireEvent.keyDown(pickerMain, { key: 'Escape' });
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(false);
 
     expect(focusSearchInputMock).toHaveBeenCalled();
+  });
+
+  it('leaves Escape to the host with nothing to undo', () => {
+    const focusSearchInputMock = vi.fn();
+    (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+    (useAcceptedSearchValue as any).mockReturnValue('');
+
+    renderHook(() => useKeyboardNavigation());
+
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(true);
+    expect(focusSearchInputMock).not.toHaveBeenCalled();
   });
 
   describe('Search Input Navigation', () => {
@@ -158,6 +187,10 @@ describe('useKeyboardNavigation', () => {
       (useFocusCategoryNavigation as any).mockReturnValue(
         focusCategoryNavigationMock,
       );
+      const categoryNav = document.createElement('div');
+      pickerMain.appendChild(categoryNav);
+      registry.register('search', searchInput);
+      registry.register('categories', categoryNav);
 
       renderHook(() => useKeyboardNavigation());
 
@@ -181,6 +214,8 @@ describe('useKeyboardNavigation', () => {
     it('focuses search input on ArrowUp', () => {
       const focusSearchInputMock = vi.fn();
       (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+      registry.register('search', searchInput);
+      registry.register('categories', categoryNav);
 
       renderHook(() => useKeyboardNavigation());
 

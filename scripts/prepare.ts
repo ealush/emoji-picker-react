@@ -233,10 +233,16 @@ const cleanEmoji = (emoji: EmojiRecord): CleanEmoji => {
       unicodeToUnified(emoji.emoji),
   );
 
+  // Keywords shortest first; the CLDR short name ("rocket", not
+  // "rockets") last, where emojiName and every aria-label read it.
+  const names = [...new Set(getNames(emoji))].sort(
+    (a, b) => a.length - b.length,
+  );
+  const [name] = getNames({ label: emoji.label });
+  if (name) names.push(...names.splice(names.indexOf(name), 1));
+
   const clean: CleanEmoji = {
-    [keys.EMOJI_PROPERTY_NAME]: [...new Set(getNames(emoji))].sort(
-      (a, b) => a.length - b.length,
-    ),
+    [keys.EMOJI_PROPERTY_NAME]: names,
     [keys.EMOJI_PROPERTY_UNIFIED]: unified,
   };
 

@@ -30,7 +30,9 @@ type EmojiPickerV5Additions = {
   onSearchChange?: (value: string) => void;
   searchLabel?: string;
 
-  suggestedEmojis?: string[];
+  suggestedEmojis?: string[];       // §7
+  keepSearchFocus?: boolean;        // §4a
+  variationsDisabled?: boolean;     // §10b
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 
@@ -101,6 +103,25 @@ Type-to-search differs slightly between controlled and uncontrolled usage:
 - focus transfer is never conditional on acceptance.
 
 If Search is omitted, built-in type-to-search behaves like `searchDisabled`, while an external application input may still drive filtering through controlled `searchValue`.
+
+## 4a. Keep focus in search
+
+By default, the arrow key toward the grid moves focus from the search input into it. With `keepSearchFocus`, focus stays in the input and the arrow keys move a highlight instead, so the user can keep typing:
+
+```tsx
+<EmojiPicker keepSearchFocus />
+```
+
+- The arrow toward the grid highlights the first emoji in view (the first result while searching): ArrowDown when the grid is below the input, ArrowUp when it is above. The arrow keys then move the highlight through the grid, including rows that are not rendered yet. Left and Right edit the text until an emoji is highlighted.
+- Enter selects the highlighted emoji, or the first result when nothing is highlighted. Focus stays in the input.
+- Once started, the highlight follows the results: when the search changes, it moves to the first result.
+- Moving past the grid edge that faces the input (ArrowUp from the first row when the input is above), Escape, or leaving the input removes the highlight. With nothing highlighted, Escape clears the search as usual.
+- Hovering an emoji previews it without taking focus from the input (true in both modes: hover never takes focus from the search input).
+- Space types a space, so it does not open skin tone variations in this mode.
+
+The input becomes an ARIA combobox with a grid popup: `aria-activedescendant` names the highlighted cell. That cell carries `data-epr-highlighted` and is the active emoji for Preview, `useActiveEmoji()` and `emoji.isActive`. The default appearance styles it like keyboard focus; with `unstyled` or custom cells, style `[data-epr-highlighted]` as well.
+
+Primitive compositions pass the same prop to `Root`.
 
 ## 5. Search accessibility label
 
@@ -210,7 +231,7 @@ Custom emoji IDs use the same case-insensitive rule — `customEmojis` are alrea
 
 Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
 
-When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
+When `suggestedEmojis` is supplied, it determines the Suggested category contents/order, and the picker records nothing: picks are not written to the browser's recents (`localStorage`), so an app that owns its recents updates them from `onEmojiClick`. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
 See [primitive state and actions](./PRIMITIVES.md#state-and-actions).
 
@@ -330,7 +351,7 @@ function Header({ category, ...props }: EmojiPicker.CategoryHeaderRenderProps) {
 ```
 
 - `Emoji` must render a `<button>` carrying the provided `type`, `className`, `style` (virtualized position), `tabIndex`, `aria-label` and `data-epr-*` props. Its content may nest arbitrarily; clicks anywhere inside select the emoji.
-- `emoji` (`ListEmoji`): `unified` (the exact rendered identity), `names`, `emoji` (native text), `isCustom`, `imageUrl` (undefined for standard native emojis; active image style URL otherwise, custom `imgUrl` for custom emojis), `hasVariations`.
+- `emoji` (`ListEmoji`): `unified` (the exact rendered identity), `names` (search keywords, shortest first, with the emoji's name last: `names[names.length - 1]` is "rocket" for 🚀 and is its accessible name), `emoji` (native text), `isCustom`, `imageUrl` (undefined for standard native emojis; active image style URL otherwise, custom `imgUrl` for custom emojis), `hasVariations`.
 - `CategoryHeader` receives the sticky, measured label's `className` and `data-epr-part`; `category` is `{ id, name }`.
 
 There is still no render-prop over the whole list: virtualization, ordering and grid semantics stay library-owned.
@@ -365,6 +386,20 @@ Also valid:
 
 Here Search is omitted, so built-in type-to-search is disabled, but the controlled `searchValue` still filters List.
 
+App actions such as "Add emoji" are your own elements, next to the grid or inside the Viewport after the List (they scroll in after the last section):
+
+```tsx
+<EmojiPicker.Root customEmojis={custom}>
+  <EmojiPicker.Search />
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+    <button type="button" onClick={openUpload}>Add emoji</button>
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
+They are not emojis: search, the results count, recents and `onEmojiClick` never see them. They are ordinary tab stops, not cells, so the arrow keys do not reach them.
+
 Invalid:
 
 ```tsx
@@ -380,6 +415,17 @@ A Viewport without a List renders no grid (development warns).
 List must be inside Viewport (ideally its direct child; wrappers from styling libraries are fine), optionally accompanied by `Empty` and `Loading`. A second List is rejected.
 
 There is no child-ordering rule. Root renders whatever you give it, in the order you gave it. Registered parts must remain inside their Root DOM boundary.
+
+Arrow keys follow the layout you compose. Inside a part they move as usual: between cells, tabs or tones, or the caret in the search input. When a key has nowhere to go inside a part, focus moves to the nearest part in that direction on screen. That happens:
+
+- past the first or last row of the grid, and from its first or last column when a part sits beside the grid (otherwise Left/Right keep wrapping through the rows);
+- past the first or last tab, and with the arrows across the tab bar;
+- with the caret at the edge of the search text, and with Up/Down in the input;
+- from a closed skin tone control.
+
+"Nearest" is measured from the focused element, and focus lands next to it: from a rail tab, the row beside that tab; from a cell, the tab beside or above it. From the search input the grid starts at the first result. A tab bar above, below or beside the grid (a vertical rail, mirrored under `dir="rtl"`), a search input below the grid, or parts reordered with CSS need no configuration. While a search is active, the input and the results are each other's neighbors in whichever direction they face, skipping parts between them. Tab order is unchanged.
+
+Escape undoes one thing at a time: it closes an open variation or tone menu, then a `keepSearchFocus` highlight, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes.
 
 ## 10a. Empty state
 
@@ -410,6 +456,16 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 
 `SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root. Search and Preview never insert one automatically; render it wherever your layout needs it. To build a control from scratch instead, use `useSkinTone()`.
 
+Leaving SkinTone out does not remove variations from the grid. For no skin tones at all, also pass `variationsDisabled`: no long press, no Space menu, no variation marker, and `hasVariations: false` in custom cells. The active skin tone (`skinTone` / `defaultSkinTone`) still applies.
+
+```tsx
+<EmojiPicker.Root variationsDisabled>
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
 ## 10b2. Vertical category rail
 
 ```tsx
@@ -423,7 +479,7 @@ Stacks the tabs and switches keyboard navigation to Up/Down between tabs (Left/R
 ```tsx
 function MyPreview() {
   const emoji = EmojiPicker.useActiveEmoji();
-  return <div className="my-preview">{emoji ? `${emoji.emoji} ${emoji.names[0]}` : 'Pick one'}</div>;
+  return <div className="my-preview">{emoji ? `${emoji.emoji} ${emoji.names[emoji.names.length - 1]}` : 'Pick one'}</div>;
 }
 
 function MyStatus() {
@@ -546,7 +602,7 @@ Exact error text is not semver API.
 
 Panel accepts className, style, native attributes and handlers directly. Panel owns its hidden/inert presence; its children and layout come from the caller’s JSX. Apply flex/grid/gap classes on Panel itself.
 
-Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
+Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus (with `keepSearchFocus`, the keyboard highlight, which also carries `data-epr-highlighted`). Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
 
 ## Lifetimes, ownership and design-library inputs
 

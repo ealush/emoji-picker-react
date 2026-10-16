@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
@@ -243,14 +243,21 @@ for (const mode of ['light', 'dark']) {
     ).not.toBe('Ship it ');
     await page.getByRole('button', { name: 'Insert emoji' }).click();
     await expect(search).toBeVisible();
-    // With no query, the standalone tone control is the next DOM region.
+    // With no query, arrows follow the layout: the tab bar is below the
+    // input, the standalone tone control beside it.
     await search.press('ArrowDown');
+    await expect(
+      page.locator('[data-epr-part="category-tab"]:focus'),
+    ).toHaveCount(1);
+    await search.focus();
+    await search.press('ArrowRight');
     const neutral = page.getByRole('button', {
       name: 'Skin tone NEUTRAL',
       exact: true,
     });
     await expect(neutral).toBeFocused();
-    await search.focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(search).toBeFocused();
     const violations = (
       await new AxeBuilder({ page })
         .include('#storybook-root')
@@ -552,3 +559,268 @@ for (const id of [
     }
   });
 }
+
+test('keepSearchFocus: arrows highlight cells while typing continues in search', async ({
+  page,
+}) => {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(story('picker-behavior--keep-search-focus'));
+  const search = page.getByRole('combobox', {
+    name: 'Type to search for an emoji',
+  });
+  const highlighted = page.locator('[data-epr-highlighted]');
+  await search.focus();
+
+  // Deep into the virtualized grid: the highlight scrolls into view and
+  // clears the sticky category label.
+  for (let row = 0; row < 12; row++) await search.press('ArrowDown');
+  await expect(search).toBeFocused();
+  await expect(highlighted).toHaveCount(1);
+  await expect
+    .poll(() =>
+      highlighted.evaluate((cell) => {
+        const viewport = cell.closest('[data-epr-part="viewport"]')!;
+        const label = cell
+          .closest('[data-epr-part="category"]')!
+          .querySelector('[data-epr-part="category-label"]')!;
+        const c = cell.getBoundingClientRect();
+        return (
+          viewport.scrollTop > 0 &&
+          c.top >= label.getBoundingClientRect().bottom - 1 &&
+          c.bottom <= viewport.getBoundingClientRect().bottom + 1
+        );
+      }),
+    )
+    .toBe(true);
+  await expect(search).toHaveAttribute(
+    'aria-activedescendant',
+    (await highlighted.getAttribute('id'))!,
+  );
+  await expect
+    .poll(() =>
+      highlighted.evaluate((cell) => getComputedStyle(cell).backgroundColor),
+    )
+    .not.toBe('rgba(0, 0, 0, 0)');
+
+  // Typing continues in the input; the highlight follows the results to
+  // their first cell, and the arrows keep moving it.
+  await page.keyboard.type('cat');
+  await expect(search).toHaveValue('cat');
+  const firstResult = page.getByRole('gridcell').first();
+  await expect(firstResult).toHaveAttribute('data-epr-highlighted', '');
+  await search.press('ArrowRight');
+  await expect(page.getByRole('gridcell').nth(1)).toHaveAttribute(
+    'data-epr-highlighted',
+    '',
+  );
+  await expect(search).toBeFocused();
+
+  // Hover previews without taking focus from the input.
+  await page.getByRole('gridcell').first().hover();
+  await expect(search).toBeFocused();
+
+  await search.press('Enter');
+  await expect(search).toBeFocused();
+  await expect(page.locator('input[type="text"]').first()).not.toHaveValue('');
+});
+
+// Arrow keys between parts follow the order on screen.
+const focusedPart = (page: Page) =>
+  page.evaluate(
+    () =>
+      document.activeElement
+        ?.closest('[data-epr-part]')
+        ?.getAttribute('data-epr-part') ?? 'none',
+  );
+
+async function openRegionOrder(page: Page, id: string, query?: string) {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(story(`v5-region-order--${id}`));
+  // Primitives load the dataset on demand: wait for the grid to exist.
+  await page.getByRole('gridcell').first().waitFor();
+  const search = page.locator('[data-epr-part="search-input"]');
+  await search.focus();
+  if (query) {
+    await page.keyboard.type(query);
+    await page
+      .getByRole('gridcell', { name: 'cat face', exact: true })
+      .waitFor();
+  }
+  return search;
+}
+
+// Presses `key` until focus reaches `part` (crossing the grid's rows).
+async function pressUntil(page: Page, key: string, part: string) {
+  for (let i = 0; i < 12 && (await focusedPart(page)) !== part; i++) {
+    await page.keyboard.press(key);
+    await page.waitForTimeout(60);
+  }
+  await expect.poll(() => focusedPart(page)).toBe(part);
+}
+
+test('region order nav, search, grid: arrows follow the stack', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'nav-search-grid');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+test('region order search, grid, nav: the tab bar is below the grid', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'search-grid-nav', 'cat');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressUntil(page, 'ArrowDown', 'category-tab');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+});
+
+test('region order grid, search, nav: search below the grid enters it with ArrowUp', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'grid-search-nav', 'cat');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressUntil(page, 'ArrowDown', 'search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+test('region order grid, search, nav with keepSearchFocus: ArrowUp starts the highlight', async ({
+  page,
+}) => {
+  const search = await openRegionOrder(
+    page,
+    'grid-search-nav-keep-search-focus',
+    'cat',
+  );
+  const highlighted = page.locator('[data-epr-highlighted]');
+  await page.keyboard.press('ArrowUp');
+  await expect(highlighted).toHaveCount(1);
+  await expect(search).toBeFocused();
+  // Down through the rows and past the edge facing the input.
+  for (let i = 0; i < 12 && (await highlighted.count()); i++) {
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(60);
+  }
+  await expect(highlighted).toHaveCount(0);
+  await expect(search).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+});
+
+test('region order follows CSS reordering, not DOM order', async ({ page }) => {
+  await openRegionOrder(page, 'css-reordered');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+// Vertical center of the focused element.
+const focusedCenterY = (page: Page) =>
+  page.evaluate(() => {
+    const box = document.activeElement!.getBoundingClientRect();
+    return (box.top + box.bottom) / 2;
+  });
+
+for (const [id, towardRail, awayFromRail] of [
+  ['rail-beside-grid', 'ArrowLeft', 'ArrowRight'],
+  ['rail-beside-grid-rtl', 'ArrowRight', 'ArrowLeft'],
+] as const) {
+  test(`${id}: arrows move between the rail and the row beside it`, async ({
+    page,
+  }) => {
+    await openRegionOrder(page, id);
+    // Search spans both; the grid lies straight below its middle.
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => focusedPart(page)).toBe('emoji');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(150);
+    const cellY = await focusedCenterY(page);
+
+    // First column: the tab beside this row.
+    await page.keyboard.press(towardRail);
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
+    expect(Math.abs((await focusedCenterY(page)) - cellY)).toBeLessThan(40);
+
+    // Down the rail, then back: the cell beside that tab.
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(150);
+    const tabY = await focusedCenterY(page);
+    await page.keyboard.press(awayFromRail);
+    await expect.poll(() => focusedPart(page)).toBe('emoji');
+    expect(Math.abs((await focusedCenterY(page)) - tabY)).toBeLessThan(40);
+
+    // Nothing lies beyond the grid's other side: the arrow keeps wrapping.
+    for (let i = 0; i < 12; i++) await page.keyboard.press(awayFromRail);
+    await page.waitForTimeout(150);
+    expect(await focusedPart(page)).toBe('emoji');
+
+    // The first tab leads up to the search input above the rail.
+    await page.locator('[data-epr-part="category-tab"]').first().focus();
+    await page.keyboard.press('ArrowUp');
+    await expect.poll(() => focusedPart(page)).toBe('search-input');
+  });
+}
+
+test('hovering results keeps focus and the caret in the search input', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  const cell = page.getByRole('gridcell', { name: 'cat face', exact: true });
+  await cell.hover();
+  await page.mouse.move(5, 5, { steps: 2 });
+  await cell.hover();
+  // The hover still previews the emoji...
+  await expect(page.locator('[data-epr-part="preview"]')).toContainText(
+    'cat face',
+  );
+  // ...but typing continues where it was.
+  await expect(search).toBeFocused();
+  await page.keyboard.type('s');
+  await expect(search).toHaveValue('cats');
+});
+
+test('Escape reaches the host untouched when there is nothing to undo', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  await page.evaluate(() => {
+    const seen: boolean[] = [];
+    (window as unknown as { escapes: boolean[] }).escapes = seen;
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') seen.push(event.defaultPrevented);
+    });
+  });
+  const escapes = () =>
+    page.evaluate(() => (window as unknown as { escapes: boolean[] }).escapes);
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  await page.keyboard.press('Escape');
+  await expect(search).toHaveValue('');
+  await page.getByRole('gridcell').first().focus();
+  await page.keyboard.press('Escape');
+  // Clearing the search consumed the first; the second was the host's.
+  expect(await escapes()).toEqual([true, false]);
+});

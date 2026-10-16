@@ -114,6 +114,15 @@ export function useAutoFocusSearchConfig(): boolean {
   return autoFocusSearch;
 }
 
+export function useVariationsDisabledConfig(): boolean {
+  return usePickerConfig().variationsDisabled;
+}
+
+export function useKeepSearchFocusConfig(): boolean {
+  const { keepSearchFocus } = usePickerConfig();
+  return keepSearchFocus;
+}
+
 export function useCategoriesConfig(): CategoriesConfig {
   const { categories } = usePickerConfig();
   return categories;

@@ -573,6 +573,11 @@ export function useActiveEmojiState(): ReactState<ActiveEmojiState> {
   return [value, store.set];
 }
 
+/** Writes the active emoji without subscribing the caller to it. */
+export function useSetActiveEmoji(): ReactState<ActiveEmojiState>[1] {
+  return React.useContext(PickerServicesContext).activeEmojiStore.set;
+}
+
 export function useIsActiveEmoji(unified?: string): boolean {
   const { activeEmojiStore: store } = React.useContext(PickerServicesContext);
   const read = React.useCallback(

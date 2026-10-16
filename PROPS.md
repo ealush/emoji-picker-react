@@ -13,6 +13,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific Unicode emoji version (e.g., `"14.0"`). Native mode additionally filters detected unsupported glyphs, even with this cap set; see [native detection limits](docs/v5/API.md#5c-native-emoji-support-detection). |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
+| `keepSearchFocus` | `boolean`    | `false`            | Keeps focus in the search input while the arrow keys move a highlight through the emojis, so typing can continue. Enter selects the highlighted emoji. By default the arrow keys move focus into the grid. See [API.md](docs/v5/API.md#4a-keep-focus-in-search). |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
 | `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). |
 
@@ -53,10 +54,11 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `defaultSearchValue`     | `string`                 | `undefined`               | Uncontrolled initial search value, read once per mounted lifetime.   |
 | `categories`             | `(Categories \| CategoryConfig)[]` | _(All)_         | Categories to show, in order: `Categories` values or `{ category, name, icon?, group? }` objects. |
 | `suggestedEmojisMode`    | `SuggestionMode`         | `SuggestionMode.FREQUENT` | Logic for "Suggested" category. Options: `'recent'`, `'frequent'`.   |
-| `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order: unified IDs, custom emoji IDs or emoji characters. While present, `suggestedEmojisMode` is ignored for contents. |
+| `suggestedEmojis`        | `string[]`               | `undefined`               | Caller-defined Suggested category contents/order: unified IDs, custom emoji IDs or emoji characters. While present, `suggestedEmojisMode` is ignored for contents and picks are not recorded in the browser's recents (`localStorage`); record them from `onEmojiClick`. |
 | `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |
 | `skinTone`               | `SkinTonesValue`         | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
+| `variationsDisabled`     | `boolean`                | `false`                   | Turns off skin-tone variations in the grid: no long press, no Space menu, no variation marker. The active skin tone still applies. Also a `Root` prop. |
 | `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. When the chosen region is absent (`searchDisabled`, or `previewConfig.showPreview: false`) the control moves to the other region, or is off when neither exists. |
 
 ## Customization & Advanced
