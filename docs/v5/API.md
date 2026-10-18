@@ -396,6 +396,15 @@ List must be inside Viewport (ideally its direct child; wrappers from styling li
 
 There is no child-ordering rule. Root renders whatever you give it, in the order you gave it. Registered parts must remain inside their Root DOM boundary.
 
+Arrow keys follow the layout you compose. Inside a part they move as usual: between cells, tabs or tones, or the caret in the search input. When a key has nowhere to go inside a part, focus moves to the nearest part in that direction on screen. That happens:
+
+- past the first or last row of the grid, and from its first or last column when a part sits beside the grid (otherwise Left/Right keep wrapping through the rows);
+- past the first or last tab, and with the arrows across the tab bar;
+- with the caret at the edge of the search text, and with Up/Down in the input;
+- from a closed skin tone control.
+
+"Nearest" is measured from the focused element, and focus lands next to it: from a rail tab, the row beside that tab; from a cell, the tab beside or above it. From the search input the grid starts at the first result. A tab bar above, below or beside the grid (a vertical rail, mirrored under `dir="rtl"`), a search input below the grid, or parts reordered with CSS need no configuration. While a search is active, the input and the results are each other's neighbors in whichever direction they face, skipping parts between them. Tab order is unchanged.
+
 Escape undoes one thing at a time: it closes an open variation or tone menu, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes. The same goes for an Escape right after a controlled parent rejected the clear (its `searchValue` and the input are unchanged): the next Escape reaches the host.
 
 ## 10a. Empty state

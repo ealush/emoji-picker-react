@@ -1,5 +1,5 @@
 import { fireEvent, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   useBodyRef,
@@ -9,7 +9,10 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../../src/components/context/ElementRefContext';
-import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
+import {
+  useNavigationRegistry,
+  useSkinToneFanOpenState,
+} from '../../src/components/context/PickerContext';
 import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
 import { useAcceptedSearchValue } from '../../src/hooks/useSearchController';
 import {
@@ -87,14 +90,21 @@ vi.mock('../../src/DomUtils/scrollTo', () => ({
 describe('useKeyboardNavigation', () => {
   let pickerMain: HTMLDivElement;
   let searchInput: HTMLInputElement;
+  let registry: NavigationRegistry;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    // One registry per picker: regions registered here are what arrow
+    // keys traverse (DOM order, since jsdom has no layout).
+    registry = new NavigationRegistry();
+    (useNavigationRegistry as any).mockReturnValue(registry);
 
     pickerMain = document.createElement('div');
     searchInput = document.createElement('input');
 
     pickerMain.appendChild(searchInput);
+    // Traversal only considers regions connected to the document.
+    document.body.appendChild(pickerMain);
     (usePickerMainRef as any).mockReturnValue({ current: pickerMain });
     (useSearchInputRef as any).mockReturnValue({ current: searchInput });
     (useBodyRef as any).mockReturnValue({
@@ -110,6 +120,8 @@ describe('useKeyboardNavigation', () => {
       current: document.createElement('div'),
     });
   });
+
+  afterEach(() => pickerMain.remove());
 
   it('attaches event listeners to picker main', () => {
     const addEventListenerSpy = vi.spyOn(pickerMain, 'addEventListener');
@@ -174,6 +186,10 @@ describe('useKeyboardNavigation', () => {
       (useFocusCategoryNavigation as any).mockReturnValue(
         focusCategoryNavigationMock,
       );
+      const categoryNav = document.createElement('div');
+      pickerMain.appendChild(categoryNav);
+      registry.register('search', searchInput);
+      registry.register('categories', categoryNav);
 
       renderHook(() => useKeyboardNavigation());
 
@@ -197,6 +213,8 @@ describe('useKeyboardNavigation', () => {
     it('focuses search input on ArrowUp', () => {
       const focusSearchInputMock = vi.fn();
       (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+      registry.register('search', searchInput);
+      registry.register('categories', categoryNav);
 
       renderHook(() => useKeyboardNavigation());
 

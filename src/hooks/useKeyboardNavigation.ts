@@ -9,6 +9,7 @@ import {
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import { isRtl } from '../DomUtils/isRtl';
 import {
+  emojisInView,
   focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
@@ -38,7 +39,7 @@ import {
   NavigationRegionKind,
   RegisteredRegion,
 } from '../state/navigationRegistry';
-import { getNextRegion, getPrevRegion } from '../state/regionTraversal';
+import { getRegionInDirection, nearestTo } from '../state/regionTraversal';
 
 import {
   useCloseAllOpenToggles,
@@ -70,18 +71,13 @@ export function useKeyboardNavigation() {
   const BodyRef = useBodyRef();
   const SearchInputRef = useSearchInputRef();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
-  const focusCategoryNavigation = useFocusCategoryNavigation();
-  const focusNextRegionFromSearch = useFocusNextRegionFrom('search');
-  const isSearchMode = useIsSearchMode();
+  const leave = useLeaveRegion();
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isSkinToneInSearch = () =>
     !!SkinTonePickerRef.current?.closest('[data-epr-part="search"]');
   const onType = useOnType();
   const CategoryNavigationRef = useCategoryNavigationRef();
-  const focusPrevRegionFromCategories = useFocusPrevRegionFrom('categories');
-  const focusNextRegionFromCategories = useFocusNextRegionFrom('categories');
   const ReactionsRef = useReactionsRef();
-  const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
   const setVariationPicker = useSetVariationPicker();
   const variationsDisabled = useVariationsDisabledConfig();
   const registry = useNavigationRegistry();
@@ -94,14 +90,6 @@ export function useKeyboardNavigation() {
   useEffect(() => {
     clearProposed.current = false;
   }, [searchValue, displayed]);
-  const goDownFromSearchInput = () => {
-    if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
-    focusCategoryNavigation();
-  };
-  const goUpFromBody = () => {
-    if (isSearchMode) return focusSearchInput();
-    focusPrevRegionFromGrid(focusCategoryNavigation);
-  };
   const main = function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
@@ -133,65 +121,56 @@ export function useKeyboardNavigation() {
     if (!eventInRegion(event, SearchInputRef)) return;
     const key = logicalArrowKey(event, SearchInputRef.current);
 
-    switch (key) {
-      case 'ArrowRight':
-        if (!isSkinToneInSearch()) {
-          return;
-        }
-        event.preventDefault();
-        setIsOpen(true);
-        focusSkinTonePicker();
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        // The active-search Search↔Grid exception
-        // wins over generic DOM-order traversal.
-        if (isSearchMode) {
-          goDownFromSearchInput();
-        } else {
-          focusNextRegionFromSearch(goDownFromSearchInput);
-        }
-        break;
-      case 'Enter':
-        event.preventDefault();
-        focusAndClickFirstVisibleEmoji(BodyRef.current);
-        break;
+    if (key === 'Enter') {
+      event.preventDefault();
+      focusAndClickFirstVisibleEmoji(BodyRef.current);
+    } else if (key === 'ArrowRight' && isSkinToneInSearch()) {
+      event.preventDefault();
+      setIsOpen(true);
+      focusSkinTonePicker();
+    } else if (reactionFocusDelta(key)) {
+      leaveSearch(event, key);
     }
+  };
+  // Left/Right edit the text; at its edge they leave for the part beside
+  // the input. Up/Down leave for the part above or below it.
+  const leaveSearch = (event: KeyboardEvent, key: string) => {
+    const sideways = key === 'ArrowLeft' || key === 'ArrowRight';
+    if (sideways && !caretAtEdge(SearchInputRef.current, key === 'ArrowRight'))
+      return;
+    if (leave('search', event.key)) event.preventDefault();
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
     const key = logicalArrowKey(event, SkinTonePickerRef.current);
+    const direction = reactionFocusDelta(key);
+    if (!direction) return onType(event);
+    event.preventDefault();
     // The fan axis decides the arrow keys: the search placement and a
     // horizontal SkinTone primitive move left/right, the preview
     // placement and a vertical primitive move up/down.
     const vertical =
       SkinTonePickerRef.current?.getAttribute('data-epr-direction') ===
       'vertical';
-
-    switch (key) {
-      case vertical ? 'ArrowUp' : 'ArrowLeft':
-        event.preventDefault();
-        if (!isOpen) return focusSearchInput();
-        focusNextSkinTone(focusSearchInput);
-        break;
-      case vertical ? 'ArrowDown' : 'ArrowRight':
-        event.preventDefault();
-        if (!isOpen) return focusSearchInput();
-        focusPrevElementSibling(getActiveElement());
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        setIsOpen(false);
-        goDownFromSearchInput();
-        break;
-      default:
-        onType(event);
+    // A tone control inside Search returns to the input beside it; one
+    // elsewhere leaves for the part in the arrow's direction.
+    const inSearch = isSkinToneInSearch();
+    if (vertical !== (key === 'ArrowUp' || key === 'ArrowDown')) {
+      // Across the fan: close it and leave (from Search, as the input would).
+      setIsOpen(false);
+      leave(inSearch ? 'search' : 'preview-skin-tone', event.key);
+      return;
     }
+    const exit = () =>
+      inSearch ? focusSearchInput() : leave('preview-skin-tone', event.key);
+    if (!isOpen) return exit();
+    if (direction < 0) focusNextSkinTone(exit);
+    else focusPrevElementSibling(getActiveElement());
   };
   const categories = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, CategoryNavigationRef)) return;
     // Arrows along the tab axis move between tabs; arrows across it
-    // leave for the previous/next region. A vertical tablist (e.g. a
+    // leave for the part in that direction. A vertical tablist (e.g. a
     // side rail) therefore uses Up/Down for tabs, per the ARIA tabs
     // pattern, and Left/Right to leave.
     const vertical =
@@ -205,17 +184,13 @@ export function useKeyboardNavigation() {
       return;
     }
     event.preventDefault();
-    if (vertical === (key === 'ArrowUp' || key === 'ArrowDown')) {
-      const focusSibling =
-        direction > 0 ? focusNextElementSibling : focusPrevElementSibling;
-      focusSibling(getActiveElement());
-    } else if (direction < 0) {
-      focusPrevRegionFromCategories(focusSearchInput);
-    } else {
-      focusNextRegionFromCategories(() =>
-        focusFirstVisibleEmoji(BodyRef.current),
-      );
-    }
+    const tab = getActiveElement();
+    const sibling =
+      vertical === (key === 'ArrowUp' || key === 'ArrowDown') &&
+      (direction > 0 ? tab?.nextElementSibling : tab?.previousElementSibling);
+    // Past the first or last tab, or across the bar: the part that way.
+    if (sibling) focusElement(sibling as HTMLElement);
+    else leave('categories', event.key);
   };
   const reactions = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, ReactionsRef)) return;
@@ -255,7 +230,9 @@ export function useKeyboardNavigation() {
       else
         focusAdjacentEmoji(activeElement, direction, row, {
           shouldFocus: focusGuard,
-          exitUp: row ? goUpFromBody : undefined,
+          // Past the top or bottom row, or sideways from the first or last
+          // column: the part in that direction, if any.
+          exit: () => leave('grid', event.key),
         });
       return;
     }
@@ -315,6 +292,13 @@ export function useKeyboardNavigation() {
   }, [ref]);
 }
 
+// Whether the caret sits at the end (or start) of the text, with nothing
+// selected: a further arrow that way cannot move inside the input.
+function caretAtEdge(input: HTMLInputElement | null, end: boolean): boolean {
+  if (!input || input.selectionStart !== input.selectionEnd) return false;
+  return input.selectionStart === (end ? input.value.length : 0);
+}
+
 function eventInRegion(event: KeyboardEvent, ref: ElementRef): boolean {
   return !!ref.current?.contains(event.target as Node);
 }
@@ -351,9 +335,9 @@ function focusReactionSibling(root: HTMLElement, delta: number): boolean {
 }
 
 // Cross-region focus through the registered semantic graph. Returns true
-// when a region handled the move; callers keep their legacy direct target
-// as fallback so unregistered trees behave exactly as before. Exported for
-// focus-restoration flows (reactions transitions) that target regions.
+// when a region took focus. An arrow `entry` lands on the cell or tab
+// nearest to where focus came from. Exported for focus-restoration flows
+// (reactions transitions) that target regions.
 export function useFocusRegion() {
   const focusSearchInput = useFocusSearchInput();
   const focusCategoryNavigation = useFocusCategoryNavigation();
@@ -363,23 +347,38 @@ export function useFocusRegion() {
   const registry = useNavigationRegistry();
 
   return useCallback(
-    function focusRegion(region: RegisteredRegion | undefined): boolean {
+    function focusRegion(
+      region: RegisteredRegion | undefined,
+      entry?: { from: Element; key: string },
+    ): boolean {
       if (!region) {
         return false;
       }
+
       // Grid entry is a materialize/scroll/focus operation: capture the
       // navigation generation so a stale completion cannot steal focus.
       const generation = registry.currentGeneration();
       const focusGuard = () => registry.isCurrent(generation);
+      // An arrow entry lands on the candidate nearest to where it came from.
+      const focusNear = (candidates: Element[], fallback: () => void) => {
+        const target = entry && nearestTo(entry.from, candidates, entry.key);
+        if (target) focusElement(target as HTMLElement, focusGuard);
+        else fallback();
+      };
       switch (region.kind as NavigationRegionKind) {
         case 'search':
           focusSearchInput();
           return true;
         case 'categories':
-          focusCategoryNavigation();
+          focusNear(
+            Array.from(region.element.children),
+            focusCategoryNavigation,
+          );
           return true;
         case 'grid':
-          focusFirstVisibleEmoji(BodyRef.current, focusGuard);
+          focusNear(emojisInView(BodyRef.current), () =>
+            focusFirstVisibleEmoji(BodyRef.current, focusGuard),
+          );
           return true;
         case 'reactions': {
           const firstButton = ReactionsRef.current?.querySelector('button');
@@ -402,22 +401,33 @@ export function useFocusRegion() {
   );
 }
 
-function useFocusNextRegionFrom(from: NavigationRegionKind) {
-  return useFocusAdjacentRegion(from, 1);
-}
+const FACING: { [kind: string]: NavigationRegionKind } = {
+  search: 'grid',
+  grid: 'search',
+};
 
-function useFocusPrevRegionFrom(from: NavigationRegionKind) {
-  return useFocusAdjacentRegion(from, -1);
-}
-
-function useFocusAdjacentRegion(from: NavigationRegionKind, direction: number) {
+// Moves focus to the part in the arrow's direction on screen (see
+// regionTraversal). While searching, the input and the results face each
+// other directly, skipping any part between them. Returns whether a part
+// took focus.
+function useLeaveRegion() {
   const registry = useNavigationRegistry();
   const PickerMainRef = usePickerMainRef();
   const focusRegion = useFocusRegion();
-  return (fallback?: () => void) => {
-    const getRegion = direction > 0 ? getNextRegion : getPrevRegion;
-    if (!focusRegion(getRegion(registry, PickerMainRef.current, from)))
-      fallback?.();
+  const isSearchMode = useIsSearchMode();
+  return (from: NavigationRegionKind, key: string): boolean => {
+    const focused = getActiveElement();
+    const region = getRegionInDirection(registry, PickerMainRef.current, from, {
+      key,
+      focused,
+      prefer: isSearchMode ? FACING[from] : undefined,
+    });
+    // Entry lands next to where focus was; from the search input the grid
+    // starts at the first result instead, so the best match comes first.
+    return focusRegion(
+      region,
+      from === 'search' || !focused ? undefined : { from: focused, key },
+    );
   };
 }
 
