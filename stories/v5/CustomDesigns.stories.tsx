@@ -343,7 +343,7 @@ ${scope} {
         </div>
         <Preview />
         <div className="sidebar-foot" aria-live="polite">
-          {last ? `Selected ${last.emoji} (${last.names[0]})` : 'Hover or navigate to preview'}
+          {last ? `Selected ${last.emoji} (${last.names[last.names.length - 1]})` : 'Hover or navigate to preview'}
         </div>
       </Root>
     </div>
