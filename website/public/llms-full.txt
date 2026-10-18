@@ -774,7 +774,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Controlled skin tone** — `skinTone` + `onSkinToneChange`.
 
-**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`.
+**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`. For no skin-tone variations at all (no long press), add `variationsDisabled`.
 
 **Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 
@@ -938,6 +938,7 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |
 | `skinTone`               | `SkinTonesValue`         | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
+| `variationsDisabled`     | `boolean`                | `false`                   | Turns off skin-tone variations in the grid: no long press, no Space menu, no variation marker. The active skin tone still applies. Also a `Root` prop. |
 | `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. When the chosen region is absent (`searchDisabled`, or `previewConfig.showPreview: false`) the control moves to the other region, or is off when neither exists. |
 
 ## Customization & Advanced
@@ -1482,7 +1483,8 @@ type EmojiPickerV5Additions = {
   onSearchChange?: (value: string) => void;
   searchLabel?: string;
 
-  suggestedEmojis?: string[];
+  suggestedEmojis?: string[];       // §7
+  variationsDisabled?: boolean;     // §10b
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 
@@ -1878,6 +1880,16 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 
 `SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root. Search and Preview never insert one automatically; render it wherever your layout needs it. To build a control from scratch instead, use `useSkinTone()`.
 
+Leaving SkinTone out does not remove variations from the grid. For no skin tones at all, also pass `variationsDisabled`: no long press, no Space menu, no variation marker, and `hasVariations: false` in custom cells. The active skin tone (`skinTone` / `defaultSkinTone`) still applies.
+
+```tsx
+<EmojiPicker.Root variationsDisabled>
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
 ## 10b2. Vertical category rail
 
 ```tsx
@@ -2268,7 +2280,9 @@ All public hooks require Root:
 Omitting search UI does not disable filtering: a controlled searchValue or
 custom action can still filter the list. Likewise, omitting SkinTone does not
 remove emoji variants or prevent controlled/programmatic tone selection.
-These are engine behaviors, distinct from the existence of their controls.
+These are engine behaviors, distinct from the existence of their controls;
+`variationsDisabled` on Root turns the grid's variations off (no long
+press, Space menu or marker).
 
 ## Default-picker compatibility
 

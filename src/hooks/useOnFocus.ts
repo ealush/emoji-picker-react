@@ -7,7 +7,11 @@ import {
 } from '../DomUtils/selectors';
 import { useBodyRef } from '../components/context/ElementRefContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
-import { useEmojiStyleConfig, useGetEmojiUrlConfig } from '../config/useConfig';
+import {
+  useEmojiStyleConfig,
+  useGetEmojiUrlConfig,
+  useVariationsDisabledConfig,
+} from '../config/useConfig';
 import { emojiHasVariations } from '../dataUtils/emojiUtils';
 import { EmojiStyle } from '../types/exposedTypes';
 
@@ -19,9 +23,11 @@ export function useOnFocus() {
   const getEmojiUrl = useGetEmojiUrlConfig();
   // Root-scoped lookup: honors localized emojiData and custom emojis.
   const { emojiByUnified } = usePickerDataContext();
+  // Focus preloads a cell's variation images, unless there are none to open.
+  const variationsDisabled = useVariationsDisabledConfig();
 
   useEffect(() => {
-    if (emojiStyle === EmojiStyle.NATIVE) {
+    if (emojiStyle === EmojiStyle.NATIVE || variationsDisabled) {
       return;
     }
 
@@ -52,5 +58,5 @@ export function useOnFocus() {
         preloadEmoji(getEmojiUrl, emoji, emojiStyle);
       }
     }
-  }, [BodyRef, emojiStyle, getEmojiUrl, emojiByUnified]);
+  }, [BodyRef, emojiStyle, getEmojiUrl, emojiByUnified, variationsDisabled]);
 }

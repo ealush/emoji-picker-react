@@ -21,6 +21,7 @@ import {
   useGetEmojiUrlConfig,
   useOnEmojiClickConfig,
   useSuggestedEmojisConfig,
+  useVariationsDisabledConfig,
 } from '../config/useConfig';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
@@ -60,6 +61,7 @@ export function useMouseDownHandlers(
   const getEmojiUrl = useGetEmojiUrlConfig();
   const activeEmojiStyle = useEmojiStyleConfig();
   const { emojiByUnified } = usePickerDataContext();
+  const variationsDisabled = useVariationsDisabledConfig();
   // While the app owns Suggested (suggestedEmojis, even an empty list),
   // picks are its to record. Matches how the Suggested category reads it.
   const suggestedEmojis = useSuggestedEmojisConfig();
@@ -116,7 +118,7 @@ export function useMouseDownHandlers(
 
       const [emoji] = emojiFromEvent(event, emojiByUnified);
 
-      if (!emoji || !emojiHasVariations(emoji)) {
+      if (!emoji || variationsDisabled || !emojiHasVariations(emoji)) {
         return;
       }
 
@@ -136,6 +138,7 @@ export function useMouseDownHandlers(
       disallowClickRef,
       emojiByUnified,
       closeAllOpenToggles,
+      variationsDisabled,
       setVariationPicker,
       setEmojiVariationPicker,
     ],

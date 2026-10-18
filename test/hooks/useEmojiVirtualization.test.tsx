@@ -26,6 +26,7 @@ vi.mock('../../src/config/useConfig', () => ({
   useGetEmojiUrlConfig: vi.fn(() => () => ''),
   useLazyLoadEmojisConfig: vi.fn(() => false),
   useSkinTonesDisabledConfig: vi.fn(() => false),
+  useVariationsDisabledConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCategoryHeight', () => ({

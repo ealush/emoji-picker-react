@@ -189,3 +189,51 @@ describe('suggestedEmojis owns the recents', () => {
     expect(window.localStorage.getItem('epr_suggested')).toContain('1f44d');
   });
 });
+
+describe('variationsDisabled', () => {
+  it('turns off the long press, Space menu and marker under Root', () => {
+    vi.useFakeTimers();
+    const onEmojiClick = vi.fn();
+    const { container } = render(
+      <Picker.Root
+        emojiData={data}
+        variationsDisabled
+        onEmojiClick={onEmojiClick}
+      >
+        {grid}
+      </Picker.Root>,
+    );
+    const cell = screen.getByRole('gridcell', { name: 'thumbs up' });
+    expect(cell.className).not.toContain('epr-emoji-has-variations');
+
+    fireEvent.mouseDown(cell);
+    act(() => vi.advanceTimersByTime(600));
+    fireEvent.mouseUp(cell);
+    expect(variationMenu(container)).toHaveLength(0);
+    // The release still picks the emoji.
+    fireEvent.click(cell);
+    expect(onEmojiClick.mock.calls[0][0]).toMatchObject({ unified: '1f44d' });
+
+    fireEvent.keyDown(cell, { key: ' ' });
+    act(() => vi.advanceTimersByTime(100));
+    expect(variationMenu(container)).toHaveLength(0);
+  });
+
+  it('reports hasVariations: false to a custom cell', () => {
+    const seen: boolean[] = [];
+    const Emoji: NonNullable<Picker.PickerComponents['Emoji']> = ({
+      emoji,
+      ...props
+    }) => {
+      if (emoji.unified === '1f44d') seen.push(emoji.hasVariations);
+      return <button {...props}>{emoji.emoji}</button>;
+    };
+    render(
+      <Picker.Root emojiData={data} variationsDisabled components={{ Emoji }}>
+        {grid}
+      </Picker.Root>,
+    );
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((has) => !has)).toBe(true);
+  });
+});

@@ -30,7 +30,8 @@ type EmojiPickerV5Additions = {
   onSearchChange?: (value: string) => void;
   searchLabel?: string;
 
-  suggestedEmojis?: string[];
+  suggestedEmojis?: string[];       // §7
+  variationsDisabled?: boolean;     // §10b
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 
@@ -425,6 +426,16 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 ```
 
 `SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root. Search and Preview never insert one automatically; render it wherever your layout needs it. To build a control from scratch instead, use `useSkinTone()`.
+
+Leaving SkinTone out does not remove variations from the grid. For no skin tones at all, also pass `variationsDisabled`: no long press, no Space menu, no variation marker, and `hasVariations: false` in custom cells. The active skin tone (`skinTone` / `defaultSkinTone`) still applies.
+
+```tsx
+<EmojiPicker.Root variationsDisabled>
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
 
 ## 10b2. Vertical category rail
 
