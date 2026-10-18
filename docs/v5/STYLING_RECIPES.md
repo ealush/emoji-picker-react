@@ -10,7 +10,7 @@ Copyable starting points for every styling stack, for each of the three ways to 
 | **Unstyled** supplied layout | `<EmojiPicker unstyled className="…" />` | a stylesheet for every part |
 | **Composed** layout | `emoji-picker-react/primitives` | layout, parts and (optionally) your own components |
 
-Parts you can target: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`. State: `[data-epr-active]` on the hovered or focused emoji, active tab and active tone; `[aria-selected="true"]` on the current tab; `[aria-pressed="true"]` on the current tone.
+Parts you can target: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`. State: `[data-epr-active]` on the hovered or focused emoji, active tab and active tone; `[data-epr-highlighted]` on the keyboard-highlighted emoji with `keepSearchFocus`; `[aria-selected="true"]` on the current tab; `[aria-pressed="true"]` on the current tone.
 
 Two surfaces are transparent under `unstyled` or a bare Root until you give them a background: the sticky `category-label` and the `variation-picker` overlay. Always keep a visible `:focus-visible` style on buttons and the input.
 

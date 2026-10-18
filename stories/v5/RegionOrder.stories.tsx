@@ -8,7 +8,13 @@ export default { title: 'v5/Region order' };
 
 type Part = 'nav' | 'search' | 'grid';
 
-function Stack({ order }: { order: Part[] }) {
+function Stack({
+  order,
+  keepSearchFocus,
+}: {
+  order: Part[];
+  keepSearchFocus?: boolean;
+}) {
   const parts: Record<Part, React.ReactNode> = {
     nav: <Picker.CategoryNav key="nav" />,
     search: <Picker.Search key="search" />,
@@ -22,6 +28,7 @@ function Stack({ order }: { order: Part[] }) {
     <Picker.Root
       appearance="default"
       colorScheme="light"
+      keepSearchFocus={keepSearchFocus}
       autoFocusSearch={false}
       style={{
         height: 420,
@@ -38,6 +45,9 @@ function Stack({ order }: { order: Part[] }) {
 export const NavSearchGrid = () => <Stack order={['nav', 'search', 'grid']} />;
 export const SearchGridNav = () => <Stack order={['search', 'grid', 'nav']} />;
 export const GridSearchNav = () => <Stack order={['grid', 'search', 'nav']} />;
+export const GridSearchNavKeepSearchFocus = () => (
+  <Stack order={['grid', 'search', 'nav']} keepSearchFocus />
+);
 // DOM order search, grid, nav; CSS puts the tab bar on top.
 export const CssReordered = () => (
   <div className="epr-css-reordered">

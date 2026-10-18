@@ -10,12 +10,20 @@ import { getActiveElement } from '../DomUtils/getActiveElement';
 import { isRtl } from '../DomUtils/isRtl';
 import {
   emojisInView,
-  focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
+  highlightedEmoji,
+  highlightEmoji,
+  moveToFirstEmoji,
+  ACTIVE_DESCENDANT,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
-import { buttonFromTarget } from '../DomUtils/selectors';
+import {
+  allUnifiedFromEmojiElement,
+  buttonFromTarget,
+  firstVisibleEmoji,
+  NullableElement,
+} from '../DomUtils/selectors';
 import {
   ElementRef,
   useBodyRef,
@@ -26,12 +34,16 @@ import {
   useSkinTonePickerRef,
 } from '../components/context/ElementRefContext';
 import {
+  ActiveEmojiState,
   useNavigationRegistry,
   useSearchComposingState,
   useSearchDisplayState,
+  useSearchTermState,
+  useSetActiveEmoji,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 import {
+  useKeepSearchFocusConfig,
   useSearchDisabledConfig,
   useVariationsDisabledConfig,
 } from '../config/useConfig';
@@ -72,6 +84,7 @@ export function useKeyboardNavigation() {
   const SearchInputRef = useSearchInputRef();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const leave = useLeaveRegion();
+  const isSearchMode = useIsSearchMode();
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isSkinToneInSearch = () =>
     !!SkinTonePickerRef.current?.closest('[data-epr-part="search"]');
@@ -81,6 +94,9 @@ export function useKeyboardNavigation() {
   const setVariationPicker = useSetVariationPicker();
   const variationsDisabled = useVariationsDisabledConfig();
   const registry = useNavigationRegistry();
+  const highlight = useHighlightEmoji();
+  const keepSearchFocus = useKeepSearchFocusConfig();
+  const [searchTerm] = useSearchTermState();
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
@@ -90,15 +106,23 @@ export function useKeyboardNavigation() {
   useEffect(() => {
     clearProposed.current = false;
   }, [searchValue, displayed]);
+  // A highlight follows the results: once a new result set commits, it
+  // moves to the first result (also when an arrow key landed on the old
+  // results inside the filter debounce).
+  useEffect(() => {
+    highlight();
+    // Per committed result set; the highlighter reads live refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
   const main = function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
     disallowMouseMove();
     switch (key) {
       case 'Escape':
-        // Escape undoes one thing: an open menu, then the search text. With
-        // nothing to undo it stays untouched for the host (closing a
-        // popover or dialog).
+        // Escape undoes one thing: an open menu, a highlight
+        // (keepSearchFocus), then the search text. With nothing to undo it
+        // stays untouched for the host (closing a popover or dialog).
         if (hasOpenToggles()) {
           event.preventDefault();
           closeAllOpenToggles();
@@ -107,7 +131,9 @@ export function useKeyboardNavigation() {
           event.stopPropagation();
           return;
         }
-        if ((searchValue || displayed) && !clearProposed.current) {
+        if (highlight(null)) {
+          event.preventDefault();
+        } else if ((searchValue || displayed) && !clearProposed.current) {
           event.preventDefault();
           clearProposed.current = true;
           clearSearch();
@@ -121,9 +147,10 @@ export function useKeyboardNavigation() {
     if (!eventInRegion(event, SearchInputRef)) return;
     const key = logicalArrowKey(event, SearchInputRef.current);
 
+    if (keepSearchFocus && moveHighlight(event, key)) return;
     if (key === 'Enter') {
       event.preventDefault();
-      focusAndClickFirstVisibleEmoji(BodyRef.current);
+      selectFromSearch();
     } else if (arrowDelta(event, key)) {
       leaveSearch(event, key);
     }
@@ -140,6 +167,57 @@ export function useKeyboardNavigation() {
       setIsOpen(true);
       focusSkinTonePicker();
     } else if (leave('search', event.key)) event.preventDefault();
+  };
+  // Enter in search selects the first result; with keepSearchFocus, the
+  // highlighted one, without moving focus.
+  const selectFromSearch = () => {
+    const body = BodyRef.current;
+    const emoji = highlightedEmoji(body) ?? firstVisibleEmoji(body);
+    if (!keepSearchFocus) focusElement(emoji);
+    emoji?.click();
+  };
+  // The arrow that points from the search input toward the grid.
+  const arrowTowardGrid = () =>
+    getRegionInDirection(registry, ref.current, 'search', {
+      key: 'ArrowUp',
+      prefer: 'grid',
+    })?.kind === 'grid'
+      ? 'ArrowUp'
+      : 'ArrowDown';
+  // Nothing highlighted, or its cell left the DOM (new results or
+  // virtualization): start from the first result, or without a search
+  // from the first cell in view.
+  const startHighlight = () => {
+    SearchInputRef.current?.setAttribute(ACTIVE_DESCENDANT, '');
+    highlight(isSearchMode ? undefined : firstVisibleEmoji(BodyRef.current));
+  };
+  // Search-keeps-focus mode: arrows move a highlight through the grid
+  // instead of focus, so the caret stays in the input. The arrow toward
+  // the grid starts it (ArrowUp when the grid is above the input);
+  // Left/Right edit text until a cell is highlighted. Returns whether the
+  // key was taken.
+  const moveHighlight = (event: KeyboardEvent, key: string): boolean => {
+    const current = highlightedEmoji(BodyRef.current);
+    const direction = reactionFocusDelta(key);
+    const towardGrid = arrowTowardGrid();
+    // The input keeps its active descendant while new results replace the
+    // highlighted cell, so arrows stay with the highlight meanwhile.
+    const active = SearchInputRef.current?.hasAttribute(ACTIVE_DESCENDANT);
+    if (!direction || (!active && key !== towardGrid)) return false;
+    event.preventDefault();
+    if (!current) {
+      startHighlight();
+      return true;
+    }
+    const generation = registry.currentGeneration();
+    const row = key === 'ArrowDown' || key === 'ArrowUp';
+    focusAdjacentEmoji(current, direction, row, {
+      shouldFocus: () => registry.isCurrent(generation),
+      // Past the grid edge that faces the input, the highlight ends.
+      exit: row && key !== towardGrid ? () => highlight(null) : undefined,
+      moveTo: highlight,
+    });
+    return true;
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
@@ -295,12 +373,22 @@ export function useKeyboardNavigation() {
       if (event.key === 'Escape' && eventBelongsToPicker(event, current))
         handler.current(event, true);
     };
+    // Leaving the search input ends a keepSearchFocus highlight.
+    const leave = (event: FocusEvent) => {
+      const input = SearchInputRef.current;
+      if (event.target === input && input?.hasAttribute(ACTIVE_DESCENDANT))
+        highlight(null);
+    };
     current.addEventListener('keydown', scoped);
+    current.addEventListener('focusout', leave);
     window.addEventListener('keydown', capture, true);
     return () => {
       current.removeEventListener('keydown', scoped);
+      current.removeEventListener('focusout', leave);
       window.removeEventListener('keydown', capture, true);
     };
+    // The highlighter reads refs that are stable for the Root's lifetime.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);
 }
 
@@ -420,6 +508,38 @@ export function useFocusRegion() {
       registry,
     ],
   );
+}
+
+// Highlights `emoji`, clears the highlight (null), or highlights the
+// first result (no argument), and mirrors it to the active emoji so
+// Preview and useActiveEmoji follow the keyboard. The first-result form
+// runs only while the input's active descendant marks a highlight as
+// wanted; typing, Escape or blur remove it and cancel a pending move.
+function useHighlightEmoji() {
+  const BodyRef = useBodyRef();
+  const SearchInputRef = useSearchInputRef();
+  const setActiveEmoji = useSetActiveEmoji();
+  const registry = useNavigationRegistry();
+  const wanted = () =>
+    !!SearchInputRef.current?.hasAttribute(ACTIVE_DESCENDANT);
+  const highlight = (emoji?: NullableElement): boolean => {
+    if (emoji === undefined) {
+      const generation = registry.currentGeneration();
+      return (
+        wanted() &&
+        (moveToFirstEmoji(BodyRef.current, {
+          moveTo: highlight,
+          shouldFocus: () => registry.isCurrent(generation) && wanted(),
+        }) ||
+          highlight(null))
+      );
+    }
+    setActiveEmoji(
+      emoji && (allUnifiedFromEmojiElement(emoji) as ActiveEmojiState),
+    );
+    return highlightEmoji(BodyRef.current, SearchInputRef.current, emoji);
+  };
+  return highlight;
 }
 
 const FACING: { [kind: string]: NavigationRegionKind } = {
