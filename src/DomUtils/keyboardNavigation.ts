@@ -32,10 +32,6 @@ function categoryGeometry(category: HTMLElement) {
   return { content, count, columns };
 }
 
-type MoveTarget = (emoji: HTMLElement) => void;
-
-const focusNow: MoveTarget = (emoji) => emoji.focus();
-
 type MoveOptions = {
   shouldFocus?: () => boolean;
   /**
@@ -45,7 +41,7 @@ type MoveOptions = {
    */
   exit?: () => boolean | void;
   /** Receives the destination cell; focuses it by default. */
-  moveTo?: MoveTarget;
+  moveTo?: (emoji: HTMLElement) => void;
 };
 
 export function focusAdjacentEmoji(
@@ -76,25 +72,19 @@ function moveInGrid(
   options: MoveOptions,
 ) {
   const { exit } = options;
+  const { columns } = categoryGeometry(category);
   // Left/Right at the first/last column leave for a part beside the grid.
-  if (!row && atRowEdge(category, element, direction) && exit?.()) return;
+  if (
+    !row &&
+    Number(element.dataset.eprIndex) % columns ===
+      (direction < 0 ? 0 : columns - 1) &&
+    exit?.()
+  )
+    return;
   const destination = logicalDestination(category, element, direction, row);
   if (destination)
     focusLogicalEmoji(destination.category, destination.index, options);
   else exit?.();
-}
-
-// Whether a Left/Right move starts at the first/last column of its row.
-function atRowEdge(
-  category: HTMLElement,
-  element: HTMLElement,
-  direction: number,
-): boolean {
-  const { columns } = categoryGeometry(category);
-  return (
-    Number(element.dataset.eprIndex) % columns ===
-    (direction < 0 ? 0 : columns - 1)
-  );
 }
 
 /** Cells fully in view: inside the scroll container, below the sticky label. */
@@ -166,7 +156,7 @@ function adjacentDestination(
 function focusLogicalEmoji(
   category: HTMLElement,
   index: number,
-  { shouldFocus, moveTo = focusNow }: MoveOptions,
+  { shouldFocus, moveTo = (emoji) => emoji.focus() }: MoveOptions,
 ) {
   const { content, columns, count } = categoryGeometry(category);
   const body = closestScrollBody(category);

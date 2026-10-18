@@ -120,52 +120,52 @@ export function getPrevRegion(
 
 type Box = Pick<DOMRect, 'top' | 'bottom' | 'left' | 'right'>;
 
+const rect = (element: Element): Box => element.getBoundingClientRect();
+
 // The visible box of a region. The grid list is as tall as all its rows,
 // so it is measured by the scroll container that clips it.
-function regionBox(element: Element): Box {
-  return (
-    element.closest('[data-epr-part="viewport"]') ?? element
-  ).getBoundingClientRect();
-}
+const regionBox = (element: Element) =>
+  rect(element.closest('[data-epr-part="viewport"]') ?? element);
 
 const laidOut = (box: Box) => box.right > box.left || box.bottom > box.top;
 
-// Boxes that touch or overlap by a border still count as separated.
-const TOLERANCE = 2;
+// Vertical separation wins over horizontal.
+const ARROWS = ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'];
+
+// A box in the arrow's frame: [start, end] along the arrow (growing in its
+// direction), then [start, end] across it.
+function along(box: Box, key: string): number[] {
+  const { top, bottom, left, right } = box;
+  const [start, end, ...across] =
+    key === 'ArrowUp' || key === 'ArrowDown'
+      ? [top, bottom, left, right]
+      : [left, right, top, bottom];
+  return key === 'ArrowUp' || key === 'ArrowLeft'
+    ? [-end, -start, ...across]
+    : [start, end, ...across];
+}
 
 /**
- * The arrow key that points from region `a` to region `b` on screen
- * (vertical separation wins over horizontal), or undefined when the boxes
- * overlap. Without layout: ArrowDown when `b` follows `a` in the DOM,
- * otherwise ArrowUp.
+ * The arrow key that points from box `a` to box `b` on screen, or undefined
+ * when they overlap. Boxes that touch or overlap by a border still count as
+ * separated.
  */
-export function arrowBetween(a: Element, b: Element): string | undefined {
-  const from = regionBox(a);
-  const to = regionBox(b);
-  if (!laidOut(from) || !laidOut(to))
-    return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING
-      ? 'ArrowDown'
-      : 'ArrowUp';
-  if (to.top >= from.bottom - TOLERANCE) return 'ArrowDown';
-  if (to.bottom <= from.top + TOLERANCE) return 'ArrowUp';
-  if (to.left >= from.right - TOLERANCE) return 'ArrowRight';
-  if (to.right <= from.left + TOLERANCE) return 'ArrowLeft';
-  return undefined;
+export function arrowBetween(a: Box, b: Box): string | undefined {
+  return ARROWS.find((key) => along(b, key)[0] >= along(a, key)[1] - 2);
 }
 
 // Distance from `a` to `b` along the arrow, plus a heavier penalty for
-// sideways offset, so a region straight ahead beats a nearer diagonal one.
+// sideways offset, so a box straight ahead beats a nearer diagonal one.
 // Among equally near boxes, the one whose center lines up best wins (a rail
 // tab spanning two cell rows enters the row it is centered on).
 function distance(a: Box, b: Box, key: string): number {
-  const vertical = key === 'ArrowUp' || key === 'ArrowDown';
-  const [near, far, start, end] = vertical
-    ? (['top', 'bottom', 'left', 'right'] as const)
-    : (['left', 'right', 'top', 'bottom'] as const);
-  const ahead = Math.max(0, b[near] - a[far], a[near] - b[far]);
-  const sideways = Math.max(0, b[start] - a[end], a[start] - b[end]);
-  const centers = Math.abs(b[start] + b[end] - a[start] - a[end]) / 2;
-  return ahead + 2 * sideways + centers / 1000;
+  const [aStart, aEnd, aFrom, aTo] = along(a, key);
+  const [bStart, bEnd, bFrom, bTo] = along(b, key);
+  return (
+    Math.max(0, bStart - aEnd, aStart - bEnd) +
+    2 * Math.max(0, bFrom - aTo, aFrom - bTo) +
+    Math.abs(bFrom + bTo - aFrom - aTo) / 2000
+  );
 }
 
 /**
@@ -178,18 +178,18 @@ export function nearestTo(
   candidates: Element[],
   key: string,
 ): Element | undefined {
-  const origin = from.getBoundingClientRect();
+  const origin = rect(from);
   let best: Element | undefined;
-  let bestDistance = Infinity;
-  if (!laidOut(origin)) return undefined;
-  candidates.forEach((candidate) => {
-    const box = candidate.getBoundingClientRect();
-    const gap = laidOut(box) ? distance(origin, box, key) : Infinity;
-    if (gap < bestDistance) {
-      best = candidate;
-      bestDistance = gap;
-    }
-  });
+  let bestGap = Infinity;
+  if (laidOut(origin))
+    candidates.forEach((candidate) => {
+      const box = rect(candidate);
+      const gap = laidOut(box) ? distance(origin, box, key) : Infinity;
+      if (gap < bestGap) {
+        best = candidate;
+        bestGap = gap;
+      }
+    });
   return best;
 }
 
@@ -200,6 +200,8 @@ export function nearestTo(
  * `from`, so a full-height rail tab leads to what is beside that tab. When
  * `prefer` lies in that direction at all it wins, even if another region
  * is closer (search and results face each other while searching).
+ * Without layout: Down/Right is the next region in DOM order, Up/Left the
+ * previous one.
  */
 export function getRegionInDirection(
   registry: NavigationRegistry,
@@ -215,52 +217,33 @@ export function getRegionInDirection(
   const index = active.findIndex((region) => region.kind === from);
   const origin = active[index];
   if (!origin) return undefined;
-  const geometric = laidOut(regionBox(origin.element));
-  const box =
-    focused && origin.element.contains(focused)
-      ? focused.getBoundingClientRect()
-      : regionBox(origin.element);
-  // DOM-order fallback: a vertical tab rail leaves with Left/Right.
-  const wanted = geometric
-    ? key
-    : key === 'ArrowRight'
-      ? 'ArrowDown'
-      : key === 'ArrowLeft'
-        ? 'ArrowUp'
-        : key;
+  const box = regionBox(origin.element);
+  if (!laidOut(box)) {
+    const step = key === 'ArrowDown' || key === 'ArrowRight' ? 1 : -1;
+    const preferred = active.findIndex((region) => region.kind === prefer);
+    return active[
+      preferred >= 0 && (preferred - index) * step > 0
+        ? preferred
+        : index + step
+    ];
+  }
+  const start =
+    focused && origin.element.contains(focused) ? rect(focused) : box;
   let best: RegisteredRegion | undefined;
-  let bestDistance = Infinity;
-  active.forEach((region, position) => {
+  let bestGap = Infinity;
+  active.forEach((region) => {
     const target = regionBox(region.element);
     if (
       region === origin ||
-      (geometric && !laidOut(target)) ||
-      arrowBetween(origin.element, region.element) !== wanted
+      !laidOut(target) ||
+      arrowBetween(box, target) !== key
     )
       return;
-    const gap =
-      region.kind === prefer
-        ? -1
-        : geometric
-          ? distance(box, target, key)
-          : Math.abs(position - index);
-    if (gap < bestDistance) {
+    const gap = region.kind === prefer ? -1 : distance(start, target, key);
+    if (gap < bestGap) {
       best = region;
-      bestDistance = gap;
+      bestGap = gap;
     }
   });
   return best;
-}
-
-/** The arrow key pointing from one active region to another, if both are active. */
-export function getArrowBetweenRegions(
-  registry: NavigationRegistry,
-  rootElement: Element | null,
-  from: NavigationRegionKind,
-  to: NavigationRegionKind,
-): string | undefined {
-  const active = getActiveRegionsInDomOrder(registry, rootElement);
-  const a = findRegion(active, from);
-  const b = findRegion(active, to);
-  return a && b ? arrowBetween(a.element, b.element) : undefined;
 }

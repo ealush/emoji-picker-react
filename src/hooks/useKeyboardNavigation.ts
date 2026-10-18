@@ -49,11 +49,7 @@ import {
   NavigationRegionKind,
   RegisteredRegion,
 } from '../state/navigationRegistry';
-import {
-  getArrowBetweenRegions,
-  getRegionInDirection,
-  nearestTo,
-} from '../state/regionTraversal';
+import { getRegionInDirection, nearestTo } from '../state/regionTraversal';
 
 import {
   useCloseAllOpenToggles,
@@ -96,7 +92,6 @@ export function useKeyboardNavigation() {
   const setVariationPicker = useSetVariationPicker();
   const registry = useNavigationRegistry();
   const highlight = useHighlightEmoji();
-  const setActiveEmoji = useSetActiveEmoji();
   const keepSearchFocus = useKeepSearchFocusConfig();
   const [searchTerm] = useSearchTermState();
   const searchValue = useAcceptedSearchValue();
@@ -170,8 +165,10 @@ export function useKeyboardNavigation() {
   };
   // The arrow that points from the search input toward the grid.
   const arrowTowardGrid = () =>
-    getArrowBetweenRegions(registry, ref.current, 'search', 'grid') ===
-    'ArrowUp'
+    getRegionInDirection(registry, ref.current, 'search', {
+      key: 'ArrowUp',
+      prefer: 'grid',
+    })?.kind === 'grid'
       ? 'ArrowUp'
       : 'ArrowDown';
   // Nothing highlighted, or its cell left the DOM (new results or
@@ -353,10 +350,8 @@ export function useKeyboardNavigation() {
     // Leaving the search input ends a keepSearchFocus highlight.
     const leave = (event: FocusEvent) => {
       const input = SearchInputRef.current;
-      if (event.target === input && input?.hasAttribute(ACTIVE_DESCENDANT)) {
-        highlightEmoji(BodyRef.current, input, null);
-        setActiveEmoji(null);
-      }
+      if (event.target === input && input?.hasAttribute(ACTIVE_DESCENDANT))
+        highlight(null);
     };
     current.addEventListener('keydown', scoped);
     current.addEventListener('focusout', leave);
@@ -366,7 +361,7 @@ export function useKeyboardNavigation() {
       current.removeEventListener('focusout', leave);
       window.removeEventListener('keydown', capture, true);
     };
-    // Refs and the active emoji setter are stable for the Root's lifetime.
+    // The highlighter reads refs that are stable for the Root's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);
 }
@@ -438,22 +433,24 @@ export function useFocusRegion() {
       // navigation generation so a stale completion cannot steal focus.
       const generation = registry.currentGeneration();
       const focusGuard = () => registry.isCurrent(generation);
-      const focusOr = (
-        target: HTMLElement | undefined,
-        fallback: () => void,
-      ) => (target ? focusElement(target, focusGuard) : fallback());
+      // An arrow entry lands on the candidate nearest to where it came from.
+      const focusNear = (candidates: Element[], fallback: () => void) => {
+        const target = entry && nearestTo(entry.from, candidates, entry.key);
+        if (target) focusElement(target as HTMLElement, focusGuard);
+        else fallback();
+      };
       switch (region.kind as NavigationRegionKind) {
         case 'search':
           focusSearchInput();
           return true;
         case 'categories':
-          focusOr(
-            nearEntry(entry, Array.from(region.element.children)),
+          focusNear(
+            Array.from(region.element.children),
             focusCategoryNavigation,
           );
           return true;
         case 'grid':
-          focusOr(nearEntry(entry, emojisInView(BodyRef.current)), () =>
+          focusNear(emojisInView(BodyRef.current), () =>
             focusFirstVisibleEmoji(BodyRef.current, focusGuard),
           );
           return true;
@@ -510,13 +507,10 @@ function useHighlightEmoji() {
   return highlight;
 }
 
-// The candidate nearest to where an arrow entry came from, if any.
-function nearEntry(
-  entry: { from: Element; key: string } | undefined,
-  candidates: Element[],
-): HTMLElement | undefined {
-  return entry && (nearestTo(entry.from, candidates, entry.key) as HTMLElement);
-}
+const FACING: { [kind: string]: NavigationRegionKind } = {
+  search: 'grid',
+  grid: 'search',
+};
 
 // Moves focus to the part in the arrow's direction on screen (see
 // regionTraversal). While searching, the input and the results face each
@@ -532,13 +526,7 @@ function useLeaveRegion() {
     const region = getRegionInDirection(registry, PickerMainRef.current, from, {
       key,
       focused,
-      prefer: isSearchMode
-        ? from === 'search'
-          ? 'grid'
-          : from === 'grid'
-            ? 'search'
-            : undefined
-        : undefined,
+      prefer: isSearchMode ? FACING[from] : undefined,
     });
     // Entry lands next to where focus was; from the search input the grid
     // starts at the first result instead, so the best match comes first.

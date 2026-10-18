@@ -4,11 +4,7 @@ import {
   NavigationRegionKind,
   NavigationRegistry,
 } from '../src/state/navigationRegistry';
-import {
-  getArrowBetweenRegions,
-  getRegionInDirection,
-  nearestTo,
-} from '../src/state/regionTraversal';
+import { getRegionInDirection, nearestTo } from '../src/state/regionTraversal';
 
 type Box = { top: number; bottom: number; left: number; right: number };
 
@@ -198,22 +194,20 @@ describe('spatial region traversal', () => {
     expect(move('search', 'ArrowUp')).toBeUndefined();
   });
 
-  it('reports which arrow points from the search input to the grid', () => {
+  it('finds the grid above or below the search input', () => {
+    // keepSearchFocus starts the highlight with the arrow toward the grid.
     const above = layout([
       ['search', row(0, 40)],
       ['grid', row(40, 340)],
     ]);
-    expect(getArrowBetweenRegions(above.registry, root, 'search', 'grid')).toBe(
-      'ArrowDown',
-    );
+    expect(above.move('search', 'ArrowUp', 'grid')).toBeUndefined();
     root.remove();
     const below = layout([
       ['grid', row(0, 300)],
       ['search', row(300, 340)],
+      ['categories', row(340, 380)],
     ]);
-    expect(getArrowBetweenRegions(below.registry, root, 'search', 'grid')).toBe(
-      'ArrowUp',
-    );
+    expect(below.move('search', 'ArrowUp', 'grid')).toBe('grid');
   });
 });
 
