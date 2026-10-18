@@ -18,7 +18,10 @@ async function watch(page: Page): Promise<Watch> {
   page.on('request', (request) => {
     const url = request.url();
     seen.requests.push(url);
-    if (!url.startsWith(ORIGIN) && !url.startsWith('data:')) {
+    // Exact origin: a prefix check would accept http://127.0.0.1:60300.
+    // data: URLs carry no origin; a blob: URL's origin is its creator's.
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'data:' && parsed.origin !== ORIGIN) {
       seen.foreign.push(url);
     }
   });

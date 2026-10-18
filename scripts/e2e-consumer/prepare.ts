@@ -18,10 +18,13 @@ import {
   cpSync,
   existsSync,
   mkdirSync,
+  readdirSync,
   rmSync,
+  statSync,
   writeFileSync,
 } from 'node:fs';
-import { join } from 'node:path';
+import { homedir } from 'node:os';
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 import { buildSync } from 'esbuild';
 
@@ -63,16 +66,86 @@ function isPackEntry(value: unknown): value is PackEntry {
   );
 }
 
-function main() {
-  if (!existsSync(join(repoRoot, 'dist', 'esm', 'index.mjs'))) {
+// Written into the scratch directory. A directory named by EPR_E2E_DIR is
+// deleted only when it carries the marker or is empty, so a mistaken value
+// cannot wipe data; the default temp dir is this script's by name.
+const MARKER = '.epr-e2e-scratch';
+
+/** Refuses any scratch path whose recursive delete could reach user data. */
+function assertDisposable(scratch: string, requireMarker: boolean) {
+  // Whether `child` is `parent` or lies inside it.
+  const within = (parent: string, child: string) => {
+    const path = relative(parent, child);
+    return (
+      path === '' ||
+      (path !== '..' && !path.startsWith(`..${sep}`) && !isAbsolute(path))
+    );
+  };
+  if (
+    scratch === dirname(scratch) || // the filesystem root
+    within(scratch, homedir()) ||
+    within(scratch, repoRoot) || // the repository or an ancestor
+    within(repoRoot, scratch) // inside it, imports would reach node_modules
+  ) {
+    throw new Error(
+      `refusing to use ${scratch} as the e2e scratch dir (EPR_E2E_DIR): ` +
+        'it is the filesystem root, the home directory, or the repository, ' +
+        'one of their ancestors, or inside the repository.',
+    );
+  }
+  if (
+    requireMarker &&
+    existsSync(scratch) &&
+    readdirSync(scratch).length > 0 &&
+    !existsSync(join(scratch, MARKER))
+  ) {
+    throw new Error(
+      `refusing to delete ${scratch}: it is not empty and was not created ` +
+        `by this script (no ${MARKER}). Point EPR_E2E_DIR at a new ` +
+        'directory, or remove this one yourself.',
+    );
+  }
+}
+
+// Newest modification time under `dir`, in milliseconds.
+function newestMtime(dir: string): number {
+  return readdirSync(dir, { withFileTypes: true }).reduce((newest, entry) => {
+    const path = join(dir, entry.name);
+    const time = entry.isDirectory()
+      ? newestMtime(path)
+      : statSync(path).mtimeMs;
+    return Math.max(newest, time);
+  }, 0);
+}
+
+// npm pack runs with --ignore-scripts, so the tarball is whatever dist
+// holds: fail rather than test a build older than the sources.
+function assertFreshBuild() {
+  const entries = [
+    join(repoRoot, 'dist', 'esm', 'index.mjs'),
+    join(repoRoot, 'dist', 'index.js'),
+  ];
+  if (!entries.every((entry) => existsSync(entry))) {
     throw new Error(
       'e2e consumer requires built artifacts; run `npm run build` first.',
     );
   }
+  const built = Math.min(...entries.map((entry) => statSync(entry).mtimeMs));
+  if (newestMtime(join(repoRoot, 'src')) > built) {
+    throw new Error(
+      'dist is older than src/; run `npm run build` before `npm run test:e2e`.',
+    );
+  }
+}
 
-  const scratch = e2eConsumerDir();
+function main() {
+  assertFreshBuild();
+
+  const scratch = resolve(e2eConsumerDir());
+  assertDisposable(scratch, process.env.EPR_E2E_DIR !== undefined);
   rmSync(scratch, { recursive: true, force: true });
   mkdirSync(scratch, { recursive: true });
+  writeFileSync(join(scratch, MARKER), '');
   console.log(`e2e consumer scratch dir: ${scratch}`);
 
   const packed: unknown = JSON.parse(
