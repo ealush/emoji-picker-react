@@ -369,9 +369,9 @@ describe('release review identity and recovery regressions', () => {
       unified: mixed,
       unifiedWithoutSkinTone: '1f91d',
     });
-    expect(JSON.parse(localStorage.getItem('epr_suggested')!)[0]).toMatchObject(
-      { unified: mixed, original: '1f91d' },
-    );
+    // suggestedEmojis owns Suggested, so the pick is not recorded here
+    // (recording the mixed identity: test/dataUtils/suggested.test.ts).
+    expect(localStorage.getItem('epr_suggested')).toBeNull();
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'handshake' },
     });

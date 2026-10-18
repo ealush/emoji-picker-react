@@ -105,11 +105,8 @@ describe('below-fold hover never takes focus', () => {
 
   it('still takes focus when the hovered emoji is fully visible', async () => {
     renderPicker();
-
-    const search = screen.getByLabelText(
-      'Type to search for an emoji',
-    ) as HTMLInputElement;
-    search.focus();
+    // Focus is nowhere in particular (search keeps it from hover).
+    (document.activeElement as HTMLElement | null)?.blur();
 
     const buttons = await screen.findAllByLabelText('grinning face');
     const emojiButton = buttons[buttons.length - 1];

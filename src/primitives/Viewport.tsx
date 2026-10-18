@@ -179,7 +179,7 @@ function ViewportObservers() {
   const [, setActiveEmoji] = useActiveEmojiState();
   // Hover/focus tracking for Preview and useActiveEmoji lives with the
   // scroll container too, so it works whether or not Preview is rendered.
-  useEmojiPreviewEvents(true, setActiveEmoji);
+  useEmojiPreviewEvents(setActiveEmoji);
   const [, setVisibleCategories] = useVisibleCategoriesState();
   const categoriesConfig = useCategoriesConfig();
   // The observer re-subscribes when the merged categories reference

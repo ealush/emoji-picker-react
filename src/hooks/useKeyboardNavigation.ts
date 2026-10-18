@@ -47,7 +47,11 @@ import {
   useFocusSkinTonePicker,
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
-import { useClearSearchValue, useTypeToSearchKey } from './useSearchController';
+import {
+  useAcceptedSearchValue,
+  useClearSearchValue,
+  useTypeToSearchKey,
+} from './useSearchController';
 import useSetVariationPicker from './useSetVariationPicker';
 
 export function useKeyboardNavigation() {
@@ -76,6 +80,7 @@ export function useKeyboardNavigation() {
   const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
   const setVariationPicker = useSetVariationPicker();
   const registry = useNavigationRegistry();
+  const searchValue = useAcceptedSearchValue();
   const goDownFromSearchInput = () => {
     if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
     focusCategoryNavigation();
@@ -90,17 +95,23 @@ export function useKeyboardNavigation() {
     disallowMouseMove();
     switch (key) {
       case 'Escape':
-        event.preventDefault();
+        // Escape undoes one thing: an open menu, then the search text. With
+        // nothing to undo it stays untouched for the host (closing a
+        // popover or dialog).
         if (hasOpenToggles()) {
+          event.preventDefault();
           closeAllOpenToggles();
           // A nested variation/tone menu consumes Escape before the
           // host popover or autocomplete dismisses the whole picker.
           event.stopPropagation();
           return;
         }
-        clearSearch();
-        scrollTo(0);
-        focusSearchInput();
+        if (searchValue) {
+          event.preventDefault();
+          clearSearch();
+          scrollTo(0);
+          focusSearchInput();
+        }
         break;
     }
   };

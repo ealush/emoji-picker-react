@@ -375,12 +375,10 @@ describe('v5 render isolation', () => {
     await vi.waitFor(() => {
       expect(previewOf(container)).toContain('grinning face');
     });
-    // ...without touching search state or callbacks (hover intentionally
-    // moves DOM focus to the hovered button for arrow-key continuity).
+    // ...without touching search state, callbacks or focus (hover moves
+    // focus to a cell for arrow-key continuity, but never out of search).
     expect(input.value).toBe('');
-    await vi.waitFor(() => {
-      expect(document.activeElement).toBe(button);
-    });
+    expect(document.activeElement).toBe(input);
     expect(onSearchChange).not.toHaveBeenCalled();
     // ...and hover state is Root-local: a second picker neither shows
     // the hover nor disturbs the first picker's preview (its autofocus

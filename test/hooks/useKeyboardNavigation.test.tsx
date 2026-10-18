@@ -11,6 +11,7 @@ import {
 } from '../../src/components/context/ElementRefContext';
 import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
 import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
+import { useAcceptedSearchValue } from '../../src/hooks/useSearchController';
 import {
   useFocusCategoryNavigation,
   useFocusSearchInput,
@@ -60,6 +61,7 @@ vi.mock('../../src/hooks/useFilter', () => ({
 vi.mock('../../src/hooks/useSearchController', () => ({
   useTypeToSearchKey: vi.fn(() => vi.fn()),
   useClearSearchValue: vi.fn(() => vi.fn()),
+  useAcceptedSearchValue: vi.fn(() => ''),
 }));
 
 vi.mock('../../src/hooks/useFocus', () => ({
@@ -116,15 +118,27 @@ describe('useKeyboardNavigation', () => {
     );
   });
 
-  it('focuses search input on Escape if toggles are closed', () => {
+  it('clears the search and focuses it on Escape if toggles are closed', () => {
     const focusSearchInputMock = vi.fn();
     (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+    (useAcceptedSearchValue as any).mockReturnValue('cat');
 
     renderHook(() => useKeyboardNavigation());
 
-    fireEvent.keyDown(pickerMain, { key: 'Escape' });
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(false);
 
     expect(focusSearchInputMock).toHaveBeenCalled();
+  });
+
+  it('leaves Escape to the host with nothing to undo', () => {
+    const focusSearchInputMock = vi.fn();
+    (useFocusSearchInput as any).mockReturnValue(focusSearchInputMock);
+    (useAcceptedSearchValue as any).mockReturnValue('');
+
+    renderHook(() => useKeyboardNavigation());
+
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(true);
+    expect(focusSearchInputMock).not.toHaveBeenCalled();
   });
 
   describe('Search Input Navigation', () => {

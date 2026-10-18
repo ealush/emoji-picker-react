@@ -552,3 +552,50 @@ for (const id of [
     }
   });
 }
+
+test('hovering results keeps focus and the caret in the search input', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  const cell = page.getByRole('gridcell', { name: 'cat face', exact: true });
+  await cell.hover();
+  await page.mouse.move(5, 5, { steps: 2 });
+  await cell.hover();
+  // The hover still previews the emoji...
+  await expect(page.locator('[data-epr-part="preview"]')).toContainText(
+    'cat face',
+  );
+  // ...but typing continues where it was.
+  await expect(search).toBeFocused();
+  await page.keyboard.type('s');
+  await expect(search).toHaveValue('cats');
+});
+
+test('Escape reaches the host untouched when there is nothing to undo', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  await page.evaluate(() => {
+    const seen: boolean[] = [];
+    (window as unknown as { escapes: boolean[] }).escapes = seen;
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') seen.push(event.defaultPrevented);
+    });
+  });
+  const escapes = () =>
+    page.evaluate(() => (window as unknown as { escapes: boolean[] }).escapes);
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  await page.keyboard.press('Escape');
+  await expect(search).toHaveValue('');
+  await page.getByRole('gridcell').first().focus();
+  await page.keyboard.press('Escape');
+  // Clearing the search consumed the first; the second was the host's.
+  expect(await escapes()).toEqual([true, false]);
+});

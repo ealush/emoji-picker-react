@@ -318,7 +318,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Only some categories** — `categories={[Categories.SMILEYS_PEOPLE, Categories.ANIMALS_NATURE]}`.
 
-**Your own suggested emojis** — `suggestedEmojis={['1f44d', '1f389', '1f680']}`.
+**Your own suggested emojis** — `suggestedEmojis={['1f44d', '1f389', '1f680']}`. The picker then records nothing in `localStorage`; update your list from `onEmojiClick`.
 
 **Controlled search** — `searchValue` + `onSearchChange`, like an ordinary controlled input.
 
