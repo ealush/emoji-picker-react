@@ -52,63 +52,33 @@ exercise keyboard focus and axe checks.
 Native-glyph detection is heuristic in every picker; see v5's
 [detection limits](./API.md#5c-native-emoji-support-detection).
 
-## What v5 changes for Frimousse users
+## Capabilities in v5
 
-The core reasons to choose Frimousse—unstyled composition, custom list cells,
-virtualization, controlled search, localized data, skin tones and active-emoji
-state—are also supported by emoji-picker-react v5. v5 adds a complete default
-picker on the same engine, custom image emoji and groups, suggestions,
-category navigation, reactions and a framework-free search API.
+v5 provides a complete styled picker and composable primitives backed by the
+same engine. Choose the supplied layout, remove its appearance with `unstyled`,
+or compose your own controls and layout. Search, virtualization, keyboard
+navigation and localization stay built in across these paths.
 
-| Frimousse use case | emoji-picker-react v5 equivalent |
+| Capability | emoji-picker-react v5 API |
 | --- | --- |
-| Compose Root, Search, Viewport and List | Compose `Root`, `SearchInput` (or `Search`), `Viewport` and `List` from `/primitives` |
-| Supply classes/styles or use a shadcn starter | Style `[data-epr-part]` selectors or use the [shadcn registry component](./ADOPTION.md#shadcn-registry) |
-| Replace List Emoji and CategoryHeader | Supply `List components` or shared Root `components`; preserve managed props, refs and geometry |
-| Control Search's value | Control Root's `searchValue` / `onSearchChange`; use `SearchInput as={Input}` for a design-system input |
-| Render active emoji or custom tone controls | Use `useActiveEmoji()` and `useSkinTone()` inside Root |
-| Supply localized or asynchronous data | Supply an `emojiData` object or abortable loader; translate remaining strings through `labels` |
-| Customize loading/empty content | Compose `Loading` and `Empty`; `LoadError` also exposes retry |
-| Look up emoji metadata | Use `getEmojiByUnified` from `/data`, passing a localized dataset when needed |
+| Complete styled picker | Render `<EmojiPicker />`; theme it with `colorScheme` and `--epr-*` tokens |
+| Custom layout | Compose `Root`, `SearchInput` (or `Search`), `Viewport` and `List` from `/primitives` |
+| Design-system styling | Use classes, styles and `[data-epr-part]` selectors, or install the [shadcn registry component](./ADOPTION.md#shadcn-registry) |
+| Custom input, emoji cells and headers | Use `SearchInput as={Input}`, Root `components` or `List components`; preserve managed props, refs and geometry |
+| Controlled search | Use Root's `searchValue` / `onSearchChange`, or `useSearchActions()` for custom controls |
+| Active-emoji previews | Compose `Preview` or build a custom preview with `useActiveEmoji()` |
+| Skin-tone controls | Compose `SkinTone`, control `skinTone` / `onSkinToneChange`, or use `useSkinTone()` |
+| Localized and asynchronous data | Supply an `emojiData` object or abortable loader; translate remaining strings through `labels` |
+| Loading, empty and error states | Compose `Loading`, `Empty` and `LoadError`; access loading state and retry through `useEmojiDataState()` |
+| Custom image emoji and groups | Supply `customEmojis` with image URLs and optional named groups |
+| Recent/frequent emoji and supplied suggestions | Configure `suggestedEmojisMode`, or supply `suggestedEmojis` |
+| Category navigation | Compose `CategoryNav` or build controls with `useCategoryNavigation()` |
+| Compact reactions with expansion | Use reactions mode on `<EmojiPicker />`, or compose `Reactions` and `Panel` with `usePickerMode()` |
+| Search and metadata outside React | Use `searchEmojis` and `getEmojiByUnified` from `/data`, passing a localized dataset when needed |
 
 See the [primitives contract](./PRIMITIVES.md), [input adapters and data
 recovery](./ADOPTION.md), [styling recipes](./STYLING_RECIPES.md) and
-[data API](./DATA_API.md) for the corresponding implementation patterns.
-Migration requires adapting callbacks, data shapes and styling selectors.
-
-## Tradeoffs that still matter
-
-- **Data freshness and caching:** Frimousse's default resolver fetches current
-  Emojibase data and persists it locally; its 0.4 release also supports custom
-  resolvers and a reusable cache. emoji-picker-react ships versioned datasets
-  and supports remote loaders, but a remote dataset's persistent cache and
-  revalidation policy belong to the application. This is a difference in
-  defaults and provided utilities. Frimousse's custom resolver uses supplied
-  data as-is, bypassing its default version/flag filtering. See its
-  [resolver][frimousse-data] and [cache][frimousse-cache].
-- **Metadata APIs:** Frimousse 0.4's [metadata helpers][frimousse-details] include
-  lookup by native emoji and a Suspense hook. v5's `/data` API uses unified
-  codes and explicit datasets. These APIs serve related needs with different
-  loading contracts.
-- **Shortcodes:** Emoji Mart supports shortcode rendering and native-to-data
-  lookup; emoji-picker-element provides shortcode lookup through its database.
-  v5 provides name search and unified lookup, but does not promise canonical
-  Slack shortcode conversion. The [data API explains that boundary](./DATA_API.md#4-shortcodes).
-- **Framework choice:** Emoji Mart and emoji-picker-element expose web
-  components. emoji-picker-react's picker UI requires React; only its data
-  entry is framework-free. Emoji Mart's React wrapper's declared peer range
-  does not include React 19; that is a package contract, not evidence that
-  React 19 cannot run it.
-- **Payload and runtime cost:** Frimousse has no runtime dependencies;
-  emoji-picker-react depends on ShipStyles. This audit does not establish a
-  size or speed ranking. Published runtime-only sizes, bundles with emoji
-  data and initial chunks with deferred datasets measure different things.
-  v5's [34 KiB initial-gzip consumer budget](./ADOPTION.md#startup-accounting)
-  includes ShipStyles and defers the dataset; it is a regression limit, not a
-  competitor benchmark. Compare the same rendered UI, React accounting,
-  locale, data, assets, cold/warm cache and compression before quoting totals.
-  The [emoji-mart migration guide](./MIGRATING_FROM_EMOJI_MART.md#size) includes
-  a separate, reproducible size comparison with its versions and methodology.
+[data API](./DATA_API.md) for implementation patterns.
 
 ## Audit sources and maintenance
 

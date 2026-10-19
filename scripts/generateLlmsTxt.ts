@@ -86,7 +86,7 @@ const DOCS: Array<[string, string, string]> = [
   [
     'docs/v5/COMPARISON.md',
     'Emoji picker comparison',
-    'v5 versus Emoji Mart, Frimousse and emoji-picker-element: capabilities, composition equivalents, tradeoffs and audited sources',
+    'v5 versus Emoji Mart, Frimousse and emoji-picker-element: capabilities, v5 APIs and audited sources',
   ],
   ['PROPS.md', 'Props reference', 'every prop of the default <EmojiPicker />'],
   ['CSS_VARIABLES.md', 'CSS variables', 'every --epr-* design token'],

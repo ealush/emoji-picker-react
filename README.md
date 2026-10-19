@@ -73,9 +73,8 @@ See [PROPS.md](PROPS.md) for every prop.
 
 ## Compare emoji pickers
 
-v5 supports both a complete styled picker and the unstyled, composable React
-approach offered by Frimousse, with custom image emoji, recents, category
-navigation and reactions built in.
+v5 supports both a complete styled picker and unstyled React composition,
+with custom image emoji, recents, category navigation and reactions built in.
 
 | Capability | emoji-picker-react v5 | Emoji Mart + React wrapper | Frimousse | emoji-picker-element |
 | --- | --- | --- | --- | --- |
@@ -98,7 +97,7 @@ emoji-picker-react and Emoji Mart can be used offline without a remote cache.
 Audited October 20, 2026 against Emoji Mart 5.6.0 / React wrapper 1.1.1,
 Frimousse 0.4.0 and emoji-picker-element 1.29.1. See the
 [full comparison and sources](docs/v5/COMPARISON.md) for API details,
-Frimousse-to-v5 equivalents, native-detection limits and data-loading tradeoffs.
+v5 capabilities, native-detection limits and data-loading APIs.
 
 ## Copyable integration prompts
 
