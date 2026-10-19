@@ -3,6 +3,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker, { Props } from '../src';
+import * as Picker from '../src/primitives';
 import { Categories } from '../src/config/categoryConfig';
 import { EmojiData } from '../src/types/exposedTypes';
 
@@ -138,6 +139,27 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
     await flushFocus();
 
     expect(document.activeElement).toBe(search);
+  });
+
+  it('keeps focus in a textarea composed into the picker when hovering an emoji', async () => {
+    // The guard covers any text field inside the picker, not only search.
+    render(
+      <Picker.Root emojiData={minimalEmojiData}>
+        <textarea aria-label="Caption" />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>,
+    );
+    const caption = screen.getByLabelText('Caption');
+    caption.focus();
+
+    const emojiButton = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(emojiButton);
+    fireEvent.mouseMove(emojiButton);
+    await flushFocus();
+
+    expect(document.activeElement).toBe(caption);
   });
 
   it('continues arrows from the first emoji hovered after keyboard navigation', async () => {

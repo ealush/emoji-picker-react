@@ -60,7 +60,8 @@ export function useMouseDownHandlers(
   const getEmojiUrl = useGetEmojiUrlConfig();
   const activeEmojiStyle = useEmojiStyleConfig();
   const { emojiByUnified } = usePickerDataContext();
-  // While the app owns Suggested (suggestedEmojis), picks are its to record.
+  // While the app owns Suggested (suggestedEmojis, even an empty list),
+  // picks are its to record. Matches how the Suggested category reads it.
   const suggestedEmojis = useSuggestedEmojisConfig();
 
   const onClick = React.useCallback(
@@ -83,7 +84,7 @@ export function useMouseDownHandlers(
       const emoji = { ...record, renderUnified: unified };
       const skinToneToUse = skinToneFromEmoji(emoji, unified, activeSkinTone);
 
-      if (!suggestedEmojis) {
+      if (suggestedEmojis === undefined) {
         updateSuggested();
         setSuggested(emoji, skinToneToUse);
       }

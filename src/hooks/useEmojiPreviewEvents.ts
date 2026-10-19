@@ -123,8 +123,9 @@ export function useEmojiPreviewEvents(
 
       // Let arrow-key navigation continue from the hovered emoji, but only
       // when focus is already inside the picker (or nowhere meaningful)
-      // and not in its search field. Taking focus from a text field drops
-      // the caret and any IME composition (issue #320 for host inputs).
+      // and not in a text field: the search input or any input or textarea
+      // composed into the picker. Taking focus from a text field drops the
+      // caret and any IME composition (issue #320 for host inputs).
       // The guard runs again inside the deferred callback in case focus
       // moved after this event.
       // Partially visible buttons are never focused: focusing would make

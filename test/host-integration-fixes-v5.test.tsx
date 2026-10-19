@@ -106,6 +106,31 @@ describe('suggestedEmojis owns the recents', () => {
     expect(window.localStorage.getItem('epr_suggested')).toBeNull();
   });
 
+  it('treats an empty suggestedEmojis as app-owned: empty Suggested, nothing recorded', async () => {
+    const recents = JSON.stringify([
+      { unified: '1f600', original: '1f600', count: 3 },
+    ]);
+    window.localStorage.setItem('epr_suggested', recents);
+    const { container } = render(
+      <EmojiPicker
+        emojiData={data}
+        emojiStyle={EmojiStyle.NATIVE}
+        suggestedEmojis={[]}
+      />,
+    );
+    fireEvent.click(await screen.findByRole('gridcell', { name: 'thumbs up' }));
+    // The stored recents neither show up in Suggested nor gain the pick.
+    expect(
+      container.querySelectorAll(
+        '[data-epr-category="suggested"] [data-epr-part="emoji"]',
+      ),
+    ).toHaveLength(0);
+    expect(
+      screen.getAllByRole('gridcell', { name: 'grinning face' }),
+    ).toHaveLength(1);
+    expect(window.localStorage.getItem('epr_suggested')).toBe(recents);
+  });
+
   it('records picks without suggestedEmojis', async () => {
     render(<EmojiPicker emojiData={data} emojiStyle={EmojiStyle.NATIVE} />);
     fireEvent.click(await screen.findByRole('gridcell', { name: 'thumbs up' }));

@@ -81,9 +81,9 @@ test('hovering an emoji with picker focus continues keyboard navigation from it'
   await page.addInitScript(() => window.localStorage.clear());
   await page.goto(storyUrl('picker-overview--no-suggested'));
 
-  // Focus is inside the picker (on a tab, not in the search field, which
-  // keeps it), so hover hands focus to the emoji and arrow keys proceed
-  // from there (pre-#320-fix continuity, preserved).
+  // Focus is inside the picker (on a tab, not in a text field such as the
+  // search input, which keeps it), so hover hands focus to the emoji and
+  // arrow keys proceed from there (pre-#320-fix continuity, preserved).
   const tab = page.getByRole('tab').first();
   await tab.focus();
   await expect(tab).toBeFocused();
