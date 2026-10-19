@@ -34,6 +34,7 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useReactionsModeState: vi.fn(() => [false, vi.fn()]),
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
   useSearchComposingState: vi.fn(() => [false, vi.fn()]),
+  useSearchDisplayState: vi.fn(() => ['', vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({

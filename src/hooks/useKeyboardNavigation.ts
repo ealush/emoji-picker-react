@@ -27,6 +27,7 @@ import {
 import {
   useNavigationRegistry,
   useSearchComposingState,
+  useSearchDisplayState,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 import { useSearchDisabledConfig } from '../config/useConfig';
@@ -81,6 +82,8 @@ export function useKeyboardNavigation() {
   const setVariationPicker = useSetVariationPicker();
   const registry = useNavigationRegistry();
   const searchValue = useAcceptedSearchValue();
+  // A controlled parent may not have accepted what the input shows yet.
+  const [displayed] = useSearchDisplayState();
   const goDownFromSearchInput = () => {
     if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
     focusCategoryNavigation();
@@ -106,7 +109,7 @@ export function useKeyboardNavigation() {
           event.stopPropagation();
           return;
         }
-        if (searchValue) {
+        if (searchValue || displayed) {
           event.preventDefault();
           clearSearch();
           scrollTo(0);

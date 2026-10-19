@@ -61,6 +61,23 @@ describe('Escape belongs to the host when there is nothing to undo', () => {
     expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(true);
   });
 
+  it('clears text a controlled parent has not accepted yet', () => {
+    const proposals: string[] = [];
+    // The parent lags: the input shows "cat" while searchValue is still "".
+    render(
+      <EmojiPicker
+        emojiData={data}
+        searchValue=""
+        onSearchChange={(next) => proposals.push(next)}
+      />,
+    );
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'cat' } });
+    expect(input).toHaveValue('cat');
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
+    expect(proposals).toEqual(['cat', '']);
+  });
+
   it('still consumes Escape that closes the variation menu', () => {
     vi.useFakeTimers();
     const { container } = render(
