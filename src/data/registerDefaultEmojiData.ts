@@ -6,3 +6,8 @@ import { registerDefaultEmojiData } from './defaultEmojiData';
 import emojis from './emojis';
 
 registerDefaultEmojiData(emojis as unknown as EmojiData);
+
+// Marks the file as an ES module. Without an export, esbuild treats this
+// side-effect file as CommonJS ("type": "commonjs") and wraps it and the
+// dataset modules in lazy initializers that every ESM consumer ships.
+export {};

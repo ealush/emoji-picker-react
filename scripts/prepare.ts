@@ -12,7 +12,8 @@
  *    c. Group emojis into internal categories (e.g., 'smileys_people', 'animals_nature').
  *    d. Construct a localized category map, merging `messages.json` with internal UI keys.
  *    e. Write the output to `src/data/emojis-<lang>.ts`.
- * 3. For English ('en'), also update `src/data/emojis.ts` as the default export.
+ * 3. For English ('en'), also update `src/data/emojis.ts` as the default export
+ *    (with compact skin-tone variations, see compactVariations.ts).
  */
 
 import { join } from 'path';
@@ -104,6 +105,7 @@ import {
   internalCategoryNames,
   keys,
 } from './constants';
+import { compactVariations } from './compactVariations';
 import { orderNames } from './emojiNames';
 
 const emojiDataSourceUnifieds = new Set<string>(
@@ -386,9 +388,10 @@ export default data;`;
   // If English, write the default file for backward compatibility or main entry
   if (lang === 'en') {
     writeJSONSync('./src/data/emojis.json', data, 'utf8');
+    // Rule-shaped variation lists are stored compactly and restored on load.
     writeFileSync(
       './src/data/emojis.ts',
-      `export default ${JSON.stringify(data)}`,
+      `import { expandVariations } from './expandVariations';\nexport default expandVariations(${JSON.stringify(compactVariations(data))});`,
       'utf8',
     );
   }
