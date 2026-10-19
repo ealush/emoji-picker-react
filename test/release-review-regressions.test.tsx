@@ -369,9 +369,9 @@ describe('release review identity and recovery regressions', () => {
       unified: mixed,
       unifiedWithoutSkinTone: '1f91d',
     });
-    expect(JSON.parse(localStorage.getItem('epr_suggested')!)[0]).toMatchObject(
-      { unified: mixed, original: '1f91d' },
-    );
+    // suggestedEmojis owns Suggested, so the pick is not recorded here
+    // (recording the mixed identity: test/dataUtils/suggested.test.ts).
+    expect(localStorage.getItem('epr_suggested')).toBeNull();
     fireEvent.change(screen.getByRole('textbox'), {
       target: { value: 'handshake' },
     });
@@ -379,6 +379,61 @@ describe('release review identity and recovery regressions', () => {
     expect(screen.getByRole('gridcell', { name: 'handshake' })).toHaveAttribute(
       'data-epr-unified',
       mixed,
+    );
+  });
+
+  it('records a clicked mixed-tone variation in recents with its identity', async () => {
+    const mixed = '1faf1-1f3fb-200d-1faf2-1f3fd';
+    const select = vi.fn();
+    const mixedData: EmojiData = {
+      ...data,
+      emojis: {
+        ...data.emojis,
+        [Categories.SMILEYS_PEOPLE]: [
+          {
+            u: '1f91d',
+            n: ['handshake'],
+            a: '14',
+            v: ['1faf1-1f3fb-200d-1faf2-1f3fc', mixed],
+          },
+        ],
+      },
+    };
+    // No suggestedEmojis: the picker records the pick itself. A dark
+    // active tone must not replace the clicked mixed tones.
+    const { container } = render(
+      <Picker.Root
+        {...rootProps}
+        emojiData={mixedData}
+        categories={[Categories.SMILEYS_PEOPLE]}
+        skinTone={SkinTones.DARK}
+        onEmojiClick={select}
+      >
+        <Grid />
+      </Picker.Root>,
+    );
+    // A long press opens the variations; the release must not pick.
+    const cell = screen.getByRole('gridcell', { name: 'handshake' });
+    fireEvent.mouseDown(cell);
+    const variation = await waitFor(() => {
+      const button = container.querySelector<HTMLElement>(
+        `[data-epr-part="variation-picker"] [data-epr-unified="${mixed}"]`,
+      );
+      expect(button).not.toBeNull();
+      return button!;
+    });
+    fireEvent.mouseUp(cell);
+    await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    expect(select).not.toHaveBeenCalled();
+    fireEvent.click(variation);
+    expect(select.mock.calls[0][0]).toMatchObject({
+      unified: mixed,
+      unifiedWithoutSkinTone: '1f91d',
+      // The clicked emoji's tone (its first), not the picker's dark one.
+      activeSkinTone: SkinTones.LIGHT,
+    });
+    expect(JSON.parse(localStorage.getItem('epr_suggested')!)[0]).toMatchObject(
+      { unified: mixed, original: '1f91d' },
     );
   });
 

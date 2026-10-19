@@ -19,11 +19,9 @@ import {
   useIsMouseDisallowed,
 } from './useDisallowMouseMove';
 
-// Tracks the hovered/focused emoji. `focusOnHover` additionally moves
-// focus to the hovered emoji so arrow keys continue from it (enabled
-// together with the preview, as in v4).
+// Tracks the hovered/focused emoji. Hover also moves focus to the hovered
+// emoji so arrow keys continue from it, unless focus is in a text field.
 export function useEmojiPreviewEvents(
-  focusOnHover: boolean,
   setPreviewEmoji: React.Dispatch<React.SetStateAction<ActiveEmojiState>>,
 ) {
   const BodyRef = useBodyRef();
@@ -124,19 +122,17 @@ export function useEmojiPreviewEvents(
       });
 
       // Let arrow-key navigation continue from the hovered emoji, but only
-      // when focus is already inside the picker (or nowhere meaningful).
-      // Pulling focus out of an external element steals the caret from
-      // host-app inputs (issue #320). The guard runs again inside the
-      // deferred callback in case focus moved out after this event.
+      // when focus is already inside the picker (or nowhere meaningful)
+      // and not in a text field: the search input or any input or textarea
+      // composed into the picker. Taking focus from a text field drops the
+      // caret and any IME composition (issue #320 for host inputs).
+      // The guard runs again inside the deferred callback in case focus
+      // moved after this event.
       // Partially visible buttons are never focused: focusing would make
       // the browser scroll them into view, yanking the scroll position
       // while the user is browsing (see also PR #509).
-      if (
-        focusOnHover &&
-        !isExternalElementFocused() &&
-        !isPartiallyBelowFold(button, bodyRef)
-      ) {
-        focusElement(button, () => !isExternalElementFocused());
+      if (!isFocusTaken() && !isPartiallyBelowFold(button, bodyRef)) {
+        focusElement(button, () => !isFocusTaken());
       }
     }
 
@@ -148,7 +144,7 @@ export function useEmojiPreviewEvents(
       return belowFoldByPx < button.getBoundingClientRect().height;
     }
 
-    function isExternalElementFocused(): boolean {
+    function isFocusTaken(): boolean {
       const active = document.activeElement as HTMLElement | null;
 
       if (
@@ -159,7 +155,10 @@ export function useEmojiPreviewEvents(
         return false;
       }
 
-      return !PickerMainRef.current?.contains(active);
+      return (
+        !PickerMainRef.current?.contains(active) ||
+        active.matches('input,textarea')
+      );
     }
 
     return () => {
@@ -173,7 +172,6 @@ export function useEmojiPreviewEvents(
   }, [
     BodyRef,
     PickerMainRef,
-    focusOnHover,
     setPreviewEmoji,
     isMouseDisallowed,
     allowMouseMove,

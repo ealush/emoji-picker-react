@@ -3,6 +3,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 import EmojiPicker, { Props } from '../src';
+import * as Picker from '../src/primitives';
 import { Categories } from '../src/config/categoryConfig';
 import { EmojiData } from '../src/types/exposedTypes';
 
@@ -112,24 +113,60 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
   it('moves focus to the hovered emoji when focus is already inside the picker', async () => {
     renderPickerWithExternalInput();
 
-    // Interacting with the picker: focus is inside, so hovering an emoji
+    // Interacting with the grid: focus is inside, so hovering an emoji
     // hands focus to it and arrow-key navigation continues from there.
-    const search = screen.getByLabelText('Type to search for an emoji');
-    (search as HTMLInputElement).focus();
-    expect(document.activeElement).toBe(search);
-
     const emojiButton = await findEmojiButton('grinning face');
+    const other = await findEmojiButton('grinning face with big eyes');
+    other.focus();
+
     fireEvent.mouseOver(emojiButton);
     await flushFocus();
 
     expect(document.activeElement).toBe(emojiButton);
   });
 
+  it("keeps focus in the picker's own search field when hovering an emoji", async () => {
+    renderPickerWithExternalInput();
+
+    // Typing, then moving the mouse over the results, must not take the
+    // caret (or an IME composition) out of the search field.
+    const search = screen.getByLabelText('Type to search for an emoji');
+    search.focus();
+
+    const emojiButton = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(emojiButton);
+    fireEvent.mouseMove(emojiButton);
+    await flushFocus();
+
+    expect(document.activeElement).toBe(search);
+  });
+
+  it('keeps focus in a textarea composed into the picker when hovering an emoji', async () => {
+    // The guard covers any text field inside the picker, not only search.
+    render(
+      <Picker.Root emojiData={minimalEmojiData}>
+        <textarea aria-label="Caption" />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>,
+    );
+    const caption = screen.getByLabelText('Caption');
+    caption.focus();
+
+    const emojiButton = await findEmojiButton('grinning face');
+    fireEvent.mouseOver(emojiButton);
+    fireEvent.mouseMove(emojiButton);
+    await flushFocus();
+
+    expect(document.activeElement).toBe(caption);
+  });
+
   it('continues arrows from the first emoji hovered after keyboard navigation', async () => {
     renderPickerWithExternalInput();
-    screen.getByLabelText('Type to search for an emoji').focus();
     const first = await findEmojiButton('grinning face');
     const second = await findEmojiButton('grinning face with big eyes');
+    second.focus();
 
     fireEvent.mouseOver(first);
     await flushFocus();
@@ -153,8 +190,8 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
 
   it('keeps an external editor focused when pointer movement resumes after keyboard input', async () => {
     renderPickerWithExternalInput();
-    screen.getByLabelText('Type to search for an emoji').focus();
     const first = await findEmojiButton('grinning face');
+    (await findEmojiButton('grinning face with big eyes')).focus();
     fireEvent.mouseOver(first);
     await flushFocus();
     fireEvent.keyDown(first, { key: 'ArrowRight' });
@@ -171,10 +208,8 @@ describe('issue #320: hovering emojis must not steal external focus', () => {
   it('does not steal focus that moved outside between hover and the deferred callback', async () => {
     renderPickerWithExternalInput();
 
-    const search = screen.getByLabelText('Type to search for an emoji');
-    (search as HTMLInputElement).focus();
-
     const emojiButton = await findEmojiButton('grinning face');
+    (await findEmojiButton('grinning face with big eyes')).focus();
     fireEvent.mouseOver(emojiButton);
 
     // Focus leaves the picker before the requestAnimationFrame callback

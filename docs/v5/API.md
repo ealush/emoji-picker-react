@@ -210,7 +210,7 @@ Custom emoji IDs use the same case-insensitive rule — `customEmojis` are alrea
 
 Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
 
-When `suggestedEmojis` is supplied, it determines the Suggested category contents/order. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
+When `suggestedEmojis` is supplied, it determines the Suggested category contents/order, and the picker records nothing: picks are not written to the browser's recents (`localStorage`), so an app that owns its recents updates them from `onEmojiClick`. `suggestedEmojisMode` remains relevant only when `suggestedEmojis` is absent.
 
 See [primitive state and actions](./PRIMITIVES.md#state-and-actions).
 
@@ -365,6 +365,20 @@ Also valid:
 
 Here Search is omitted, so built-in type-to-search is disabled, but the controlled `searchValue` still filters List.
 
+App actions such as "Add emoji" are your own elements, next to the grid or inside the Viewport after the List (they scroll in after the last section):
+
+```tsx
+<EmojiPicker.Root customEmojis={custom}>
+  <EmojiPicker.Search />
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+    <button type="button" onClick={openUpload}>Add emoji</button>
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
+
+They are not emojis: search, the results count, recents and `onEmojiClick` never see them. They are ordinary tab stops, not cells, so the arrow keys do not reach them.
+
 Invalid:
 
 ```tsx
@@ -380,6 +394,8 @@ A Viewport without a List renders no grid (development warns).
 List must be inside Viewport (ideally its direct child; wrappers from styling libraries are fine), optionally accompanied by `Empty` and `Loading`. A second List is rejected.
 
 There is no child-ordering rule. Root renders whatever you give it, in the order you gave it. Registered parts must remain inside their Root DOM boundary.
+
+Escape undoes one thing at a time: it closes an open variation or tone menu, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes. The same goes for an Escape right after a controlled parent rejected the clear (its `searchValue` and the input are unchanged): the next Escape reaches the host.
 
 ## 10a. Empty state
 

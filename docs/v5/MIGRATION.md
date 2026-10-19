@@ -108,7 +108,7 @@ This addresses applications that need to adapt surrounding layout when the compa
 />
 ```
 
-This narrowly addresses application-defined suggested emojis without replacing the existing recent/frequent localStorage behavior.
+This narrowly addresses application-defined suggested emojis. Without the prop, the recent/frequent localStorage behavior is unchanged; with it, the app owns the list and the picker records nothing.
 
 ### Localize every string, control the skin tone
 

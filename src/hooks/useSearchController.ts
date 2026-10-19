@@ -357,13 +357,30 @@ export function useClearSearchValue() {
   const SearchInputRef = useSearchInputRef();
   const focusSearchInput = useFocusSearchInput();
   const setValue = useSetSearchValue();
+  const accepted = useAcceptedSearchValue();
+  const [, setDisplay] = useSearchDisplayState();
+  const { record: recordProposal } = usePendingProposal();
 
   return React.useCallback(() => {
     setValue('');
+    // Clearing a draft a lagging controlled parent never accepted: its
+    // value is already '', so no update will sync the input. Drop the
+    // draft now rather than after the quiet window.
+    if (!accepted) {
+      setDisplay('');
+      recordProposal(null);
+    }
     if (SearchInputRef.current) {
       // The managed input follows accepted state. A controlled parent may
       // reject the empty proposal, so clearing must not mutate the DOM.
       focusSearchInput();
     }
-  }, [setValue, SearchInputRef, focusSearchInput]);
+  }, [
+    setValue,
+    accepted,
+    setDisplay,
+    recordProposal,
+    SearchInputRef,
+    focusSearchInput,
+  ]);
 }

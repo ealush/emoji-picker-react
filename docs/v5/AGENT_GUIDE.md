@@ -151,4 +151,6 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
-Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
+Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host, and clears a non-empty search; with nothing to undo it reaches the host untouched. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
+
+An "Add emoji" or other app action is the app's own button, composed next to the grid or inside `Viewport` after `List`; never a fake custom emoji, which search, recents and screen readers would treat as an emoji. See [API.md](API.md#10-valid-composition).
