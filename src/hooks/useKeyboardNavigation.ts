@@ -172,18 +172,31 @@ export function useKeyboardNavigation() {
   // highlighted one, without moving focus.
   const selectFromSearch = () => {
     const body = BodyRef.current;
-    const emoji = highlightedEmoji(body) ?? firstVisibleEmoji(body);
+    const highlighted = highlightedEmoji(body);
+    // The first result by its place in the results, wherever the grid is
+    // scrolled.
+    if (keepSearchFocus && isSearchMode && !highlighted) {
+      const generation = registry.currentGeneration();
+      moveToFirstEmoji(body, {
+        shouldFocus: () => registry.isCurrent(generation),
+        moveTo: (emoji) => emoji.click(),
+      });
+      return;
+    }
+    const emoji = highlighted ?? firstVisibleEmoji(body);
     if (!keepSearchFocus) focusElement(emoji);
     emoji?.click();
   };
-  // The arrow that points from the search input toward the grid.
+  // The arrow that points from the search input toward the grid (physical
+  // keys, as layout is measured): above, below or beside it.
   const arrowTowardGrid = () =>
-    getRegionInDirection(registry, ref.current, 'search', {
-      key: 'ArrowUp',
-      prefer: 'grid',
-    })?.kind === 'grid'
-      ? 'ArrowUp'
-      : 'ArrowDown';
+    ARROWS.find(
+      (key) =>
+        getRegionInDirection(registry, ref.current, 'search', {
+          key,
+          prefer: 'grid',
+        })?.kind === 'grid',
+    ) ?? 'ArrowDown';
   // Nothing highlighted, or its cell left the DOM (new results or
   // virtualization): start from the first result, or without a search
   // from the first cell in view.
@@ -193,28 +206,38 @@ export function useKeyboardNavigation() {
   };
   // Search-keeps-focus mode: arrows move a highlight through the grid
   // instead of focus, so the caret stays in the input. The arrow toward
-  // the grid starts it (ArrowUp when the grid is above the input);
+  // the grid starts it (ArrowUp when the grid is above the input; Left or
+  // Right beside it, with the caret at that edge of the text); otherwise
   // Left/Right edit text until a cell is highlighted. Returns whether the
   // key was taken.
   const moveHighlight = (event: KeyboardEvent, key: string): boolean => {
+    const input = SearchInputRef.current;
     const current = highlightedEmoji(BodyRef.current);
     const direction = reactionFocusDelta(key);
     const towardGrid = arrowTowardGrid();
+    const row = key === 'ArrowDown' || key === 'ArrowUp';
     // The input keeps its active descendant while new results replace the
     // highlighted cell, so arrows stay with the highlight meanwhile.
-    const active = SearchInputRef.current?.hasAttribute(ACTIVE_DESCENDANT);
-    if (!direction || (!active && key !== towardGrid)) return false;
+    const wanted = () => !!input?.hasAttribute(ACTIVE_DESCENDANT);
+    if (
+      !direction ||
+      (!wanted() &&
+        (event.key !== towardGrid ||
+          (!row && !caretAtEdge(input, key === 'ArrowRight'))))
+    )
+      return false;
     event.preventDefault();
     if (!current) {
       startHighlight();
       return true;
     }
     const generation = registry.currentGeneration();
-    const row = key === 'ArrowDown' || key === 'ArrowUp';
     focusAdjacentEmoji(current, direction, row, {
-      shouldFocus: () => registry.isCurrent(generation),
+      // Escape, blur or typing ended the highlight before the move landed.
+      shouldFocus: () => registry.isCurrent(generation) && wanted(),
       // Past the grid edge that faces the input, the highlight ends.
-      exit: row && key !== towardGrid ? () => highlight(null) : undefined,
+      exit:
+        event.key === OPPOSITE[towardGrid] ? () => highlight(null) : undefined,
       moveTo: highlight,
     });
     return true;
@@ -541,6 +564,14 @@ function useHighlightEmoji() {
   };
   return highlight;
 }
+
+const ARROWS = ['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft'];
+const OPPOSITE: { [key: string]: string } = {
+  ArrowDown: 'ArrowUp',
+  ArrowUp: 'ArrowDown',
+  ArrowRight: 'ArrowLeft',
+  ArrowLeft: 'ArrowRight',
+};
 
 const FACING: { [kind: string]: NavigationRegionKind } = {
   search: 'grid',

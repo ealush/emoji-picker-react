@@ -112,14 +112,14 @@ By default, the arrow key toward the grid moves focus from the search input into
 <EmojiPicker keepSearchFocus />
 ```
 
-- The arrow toward the grid highlights the first emoji in view (the first result while searching): ArrowDown when the grid is below the input, ArrowUp when it is above. The arrow keys then move the highlight through the grid, including rows that are not rendered yet. Left and Right edit the text until an emoji is highlighted.
-- Enter selects the highlighted emoji, or the first result when nothing is highlighted. Focus stays in the input.
+- The arrow toward the grid highlights the first emoji in view (the first result while searching): ArrowDown when the grid is below the input, ArrowUp when it is above, and Left or Right when it is beside the input (with the caret at that end of the text). The arrow keys then move the highlight through the grid, including rows that are not rendered yet. Otherwise Left and Right edit the text until an emoji is highlighted.
+- Enter selects the highlighted emoji, or the first result when nothing is highlighted, even if the results are scrolled. Focus stays in the input.
 - Once started, the highlight follows the results: when the search changes, it moves to the first result.
-- Moving past the grid edge that faces the input (ArrowUp from the first row when the input is above), Escape, or leaving the input removes the highlight. With nothing highlighted, Escape clears the search as usual.
+- Moving past the grid edge that faces the input (ArrowUp from the first row when the input is above, Left from the first column when it is on the left), Escape, or leaving the input removes the highlight, and cancels a move that has not landed yet. With nothing highlighted, Escape clears the search as usual.
 - Hovering an emoji previews it without taking focus from the input (true in both modes: hover never takes focus from the search input).
 - Space types a space, so it does not open skin tone variations in this mode.
 
-The input becomes an ARIA combobox with a grid popup: `aria-activedescendant` names the highlighted cell. That cell carries `data-epr-highlighted` and is the active emoji for Preview, `useActiveEmoji()` and `emoji.isActive`. The default appearance styles it like keyboard focus; with `unstyled` or custom cells, style `[data-epr-highlighted]` as well.
+The input becomes an ARIA combobox with a grid popup: `aria-controls` names the grid while both are mounted, and `aria-activedescendant` names the highlighted cell (it is empty while virtualization has the highlighted cell scrolled out). That cell carries `data-epr-highlighted` and is the active emoji for Preview, `useActiveEmoji()` and `emoji.isActive`. The default appearance styles it like keyboard focus; with `unstyled` or custom cells, style `[data-epr-highlighted]` as well.
 
 Primitive compositions pass the same prop to `Root`.
 

@@ -42,9 +42,12 @@ const hundred: EmojiData = {
 let cellsOutOfView = false;
 // Lays the search input out below the grid instead of above it.
 let searchBelow = false;
+// Lays the search input out to the left of the grid.
+let searchBeside = false;
 afterEach(() => {
   cellsOutOfView = false;
   searchBelow = false;
+  searchBeside = false;
 });
 
 // 6 columns of 40px cells under a 40px label, in an 80px viewport.
@@ -87,7 +90,15 @@ function mockGridGeometry() {
         ({ top, bottom: top + height, height, left: 0, right: 240 }) as DOMRect;
       if (element === viewport) return box(0, 80);
       if (element.getAttribute('data-epr-part') === 'search-input')
-        return box(searchBelow ? 100 : -40, 30);
+        return searchBeside
+          ? ({
+              top: 0,
+              bottom: 30,
+              height: 30,
+              left: -200,
+              right: -10,
+            } as DOMRect)
+          : box(searchBelow ? 100 : -40, 30);
       return box(
         40 +
           (parseFloat(element.style.top) || 0) -
@@ -138,14 +149,80 @@ async function expectHighlight(input: HTMLElement, name: string) {
 }
 
 describe('keepSearchFocus', () => {
-  it('makes the search input a combobox that controls the grid', () => {
+  it('makes the search input a combobox that controls the grid', async () => {
     const { input } = renderPicker();
     expect(input.getAttribute('aria-haspopup')).toBe('grid');
     expect(input.getAttribute('aria-expanded')).toBe('true');
+    // The grid is linked before anything is highlighted, and stays linked.
+    const grid = screen.getByRole('grid');
+    expect(grid.id).not.toBe('');
+    expect(input.getAttribute('aria-controls')).toBe(grid.id);
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(input.getAttribute('aria-controls')).toBe(
-      screen.getByRole('grid').id,
-    );
+    await expectHighlight(input, 'emoji 0');
+    fireEvent.keyDown(input, { key: 'Escape' });
+    expect(input.hasAttribute('aria-activedescendant')).toBe(false);
+    expect(input.getAttribute('aria-controls')).toBe(grid.id);
+  });
+
+  it('cancels a pending highlight move on Escape and on blur', async () => {
+    const frame = () =>
+      act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    const { input } = renderPicker();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+    // The move lands on the next frame; Escape comes first.
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    fireEvent.keyDown(input, { key: 'Escape' });
+    await frame();
+    await frame();
+    expect(highlighted()).toBeNull();
+    expect(input.hasAttribute('aria-activedescendant')).toBe(false);
+
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    act(() => input.blur());
+    await frame();
+    await frame();
+    expect(highlighted()).toBeNull();
+    expect(input.hasAttribute('aria-activedescendant')).toBe(false);
+  });
+
+  it('starts with ArrowRight when the search input is beside the grid', async () => {
+    searchBeside = true;
+    const { input } = renderPicker();
+    // ArrowDown points away from the grid: nothing to highlight.
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(highlighted()).toBeNull();
+
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 0');
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 1');
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    await expectHighlight(input, 'emoji 0');
+    // The left edge faces the input: the highlight ends there.
+    fireEvent.keyDown(input, { key: 'ArrowLeft' });
+    expect(highlighted()).toBeNull();
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('drops the active descendant when virtualization unmounts its cell', async () => {
+    const { input } = renderPicker();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+    const body = document.querySelector<HTMLElement>(
+      '[data-epr-part="viewport"]',
+    )!;
+    body.scrollTop = 600;
+    await waitFor(() => {
+      fireEvent.scroll(body);
+      expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull();
+    });
+    const id = input.getAttribute('aria-activedescendant');
+    expect(id ? document.getElementById(id) : null).toBeNull();
+    expect(id).toBe('');
   });
 
   it('moves a highlight with the arrow keys while focus stays in search', async () => {
@@ -231,6 +308,24 @@ describe('keepSearchFocus', () => {
     const { input, onEmojiClick } = renderPicker();
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onEmojiClick.mock.calls[0][0].names).toContain('emoji 0');
+    expect(document.activeElement).toBe(input);
+  });
+
+  it('selects the first result on Enter even when the results are scrolled', async () => {
+    const { input, onEmojiClick } = renderPicker();
+    fireEvent.change(input, { target: { value: 'emoji 1' } });
+    await waitFor(() =>
+      expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
+    );
+    const body = document.querySelector<HTMLElement>(
+      '[data-epr-part="viewport"]',
+    )!;
+    // The first row of results scrolls under the label.
+    body.scrollTop = 40;
+    fireEvent.scroll(body);
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await waitFor(() => expect(onEmojiClick).toHaveBeenCalledTimes(1));
+    expect(onEmojiClick.mock.calls[0][0].names).toContain('emoji 1');
     expect(document.activeElement).toBe(input);
   });
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { linkComboboxToGrid } from '../DomUtils/idRef';
 import { usePickerMainRef } from '../components/context/ElementRefContext';
 import { useNavigationRegistry } from '../components/context/PickerContext';
 import {
@@ -42,6 +43,13 @@ export function useRegisterRegion(
     }
 
     let unregister: (() => void) | undefined;
+    // A keepSearchFocus input controls the grid whenever both are mounted.
+    const link = () => {
+      if (kind !== 'search' && kind !== 'grid') return;
+      const [search] = registry.getRegionsByKind('search');
+      const [grid] = registry.getRegionsByKind('grid');
+      linkComboboxToGrid(search?.element, grid?.element);
+    };
     const attach = () => {
       unregister?.();
       unregister = undefined;
@@ -60,12 +68,14 @@ export function useRegisterRegion(
       )
         return;
       unregister = registry.register(kind, element);
+      link();
     };
     attach();
     const unsubscribe = ref.subscribe?.(attach);
     return () => {
       unsubscribe?.();
       unregister?.();
+      link();
       registry.releaseSingleton(kind);
     };
     // presenceDeps reruns the effect when region presence may have changed.

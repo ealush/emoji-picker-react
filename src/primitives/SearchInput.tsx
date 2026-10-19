@@ -62,7 +62,8 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
   const { loading, error } = useEmojiDataState();
   const controller = useSearchInputController();
   const keepFocus = useKeepSearchFocusConfig();
-  useRegisterRegion('search', inputRef);
+  // Rerun on keepFocus so the combobox links to (or unlinks from) the grid.
+  useRegisterRegion('search', inputRef, [keepFocus]);
   const {
     as: Input = 'input',
     onChange,
