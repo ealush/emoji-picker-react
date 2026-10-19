@@ -104,6 +104,7 @@ import {
   internalCategoryNames,
   keys,
 } from './constants';
+import { orderNames } from './emojiNames';
 
 const emojiDataSourceUnifieds = new Set<string>(
   emojiDataSource.map((emoji) => emoji.unified),
@@ -197,21 +198,6 @@ const resolveGroupName = (emoji: EmojiRecord): string => {
   return String(emoji.group || emoji.groupKey || emoji.group_key || '');
 };
 
-/**
- * Transforms an `EmojiRecord` from emojibase into an optimized `CleanEmoji` object.
- */
-const getNames = (emoji: EmojiRecord): string[] => {
-  return [
-    emoji.label,
-    emoji.annotation,
-    ...(emoji.shortcodes || []),
-    ...(emoji.shortcode ? [emoji.shortcode] : []),
-    ...(emoji.tags || []),
-  ]
-    .filter(Boolean)
-    .map((name) => String(name).replace(/[_-]/g, ' '));
-};
-
 const getSkins = (emoji: EmojiRecord): string[] => {
   return (emoji.skins || [])
     .map((skin) =>
@@ -225,6 +211,9 @@ const getSkins = (emoji: EmojiRecord): string[] => {
     .filter(Boolean);
 };
 
+/**
+ * Transforms an `EmojiRecord` from emojibase into an optimized `CleanEmoji` object.
+ */
 const cleanEmoji = (emoji: EmojiRecord): CleanEmoji => {
   const unified = toUnified(
     emoji.hexcode ||
@@ -233,16 +222,8 @@ const cleanEmoji = (emoji: EmojiRecord): CleanEmoji => {
       unicodeToUnified(emoji.emoji),
   );
 
-  // Keywords shortest first; the CLDR short name ("rocket", not
-  // "rockets") last, where emojiName and every aria-label read it.
-  const names = [...new Set(getNames(emoji))].sort(
-    (a, b) => a.length - b.length,
-  );
-  const [name] = getNames({ label: emoji.label });
-  if (name) names.push(...names.splice(names.indexOf(name), 1));
-
   const clean: CleanEmoji = {
-    [keys.EMOJI_PROPERTY_NAME]: names,
+    [keys.EMOJI_PROPERTY_NAME]: orderNames(emoji),
     [keys.EMOJI_PROPERTY_UNIFIED]: unified,
   };
 
