@@ -30,13 +30,13 @@ The default picker is assembled from the primitives (`src/EmojiPickerReact.tsx`)
 - **No default appearance in primitives.** Nothing under `src/primitives/` imports `components/main/defaultAppearance` or `EmojiPickerReact`; the packed primitives bundle is scanned for it.
 - **Data entry is framework-free.** `src/data.ts` and `src/data-core/` never import React or ShipStyles.
 - **Reserved attributes.** The library owns `role` and every `data-epr-*` attribute on managed elements; consumer props with those names are filtered.
-- **Size and performance budgets.** `size-limit` caps every entry; `npm run check:perf` compares against `bench/baseline.json`. Do not raise a budget to make a change fit.
+- **Size and performance budgets.** `size-limit` caps every entry; `npm run check:pack-size` caps the published package (each dataset ships once as JSON and once as an ES module; no raw `.ts` sources); `npm run check:perf` compares against `bench/baseline.json`. Do not raise a budget to make a change fit.
 - **Visual baselines are evidence.** Never bulk-update screenshots: review each actual/expected/diff image and update only the ones a deliberate change explains.
 
 ## Verify before you commit
 
 ```sh
-npm run check:scripts && npm run lint && npm test && npm run build && npm run check:compat && npm run size
+npm run check:scripts && npm run lint && npm test && npm run build && npm run check:compat && npm run size && npm run check:pack-size
 ```
 
 Browser suites: `npm run test:visual` and `npx playwright test --config playwright.behavior.config.ts` (after `npx playwright install --with-deps`). Packaging: `npm run check:package`, `npm run check:react16`. Packed-consumer e2e: `npm run test:e2e` (after `npm run build`) installs the tarball into a fresh Vite app and a CommonJS bundle under a strict CSP and records every test (`E2E_SLOWMO=250` paces recordings for review).

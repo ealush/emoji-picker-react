@@ -1,20 +1,20 @@
 import { copyFileSync, mkdirSync, readdirSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Internal runtime modules are compiled, never shipped as raw sources: a
-// raw .ts beside its .d.ts would win declaration resolution.
-const INTERNAL = new Set([
-  'defaultEmojiData.ts',
-  'registerDefaultEmojiData.ts',
-]);
+// Datasets ship as JSON (the legacy `dist/data/emojis-*.json` paths and the
+// source of each locale's module twins, buildDataTwins.ts). TypeScript
+// sources are compiled, never shipped raw: a .ts beside its .d.ts would win
+// declaration resolution and type-check the whole dataset in consumers.
 
 const source = join(__dirname, '..', 'src', 'data');
 const target = join(__dirname, '..', 'dist', 'data');
 mkdirSync(target, { recursive: true });
-// A previous incremental build may have copied these sources before they
-// became internal. Remove them without deleting compiled modules/datasets.
-for (const file of INTERNAL) rmSync(join(target, file), { force: true });
+// An incremental build may still hold raw sources an earlier version of this
+// script copied. Remove them without deleting declarations.
+readdirSync(target)
+  .filter((file) => file.endsWith('.ts') && !file.endsWith('.d.ts'))
+  .forEach((file) => rmSync(join(target, file), { force: true }));
 
 readdirSync(source)
-  .filter((file) => /\.(json|ts)$/.test(file) && !INTERNAL.has(file))
+  .filter((file) => file.endsWith('.json'))
   .forEach((file) => copyFileSync(join(source, file), join(target, file)));
