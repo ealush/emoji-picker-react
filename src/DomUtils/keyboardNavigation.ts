@@ -1,3 +1,4 @@
+import { getLabelHeight } from './elementPositionInRow';
 import { focusElement } from './focusElement';
 import { scrollEmojiAboveLabel } from './scrollTo';
 import {
@@ -38,12 +39,23 @@ function categoryGeometry(category: HTMLElement) {
   return { content, count, columns };
 }
 
+type MoveOptions = {
+  shouldFocus?: () => boolean;
+  /**
+   * Called when the move leaves the grid: no cell in that direction, or
+   * Left/Right at the first/last column. A sideways exit that returns
+   * false (nothing beside the grid) keeps wrapping through the rows.
+   */
+  exit?: () => boolean | void;
+};
+
 export function focusAdjacentEmoji(
   element: NullableElement,
   direction: number,
   row: boolean,
-  { shouldFocus, exitUp }: { shouldFocus?: () => boolean; exitUp?: () => void },
+  options: MoveOptions,
 ) {
+  const { shouldFocus } = options;
   if (!element || (shouldFocus && !shouldFocus())) return;
   const category = closestCategory(element);
   if (!category || element.dataset.eprIndex === undefined) {
@@ -55,10 +67,39 @@ export function focusAdjacentEmoji(
     );
     return;
   }
+  moveInGrid(category, element, { direction, row }, options);
+}
+
+function moveInGrid(
+  category: HTMLElement,
+  element: HTMLElement,
+  { direction, row }: { direction: number; row: boolean },
+  options: MoveOptions,
+) {
+  const { exit } = options;
+  const { columns } = categoryGeometry(category);
+  // Left/Right at the first/last column leave for a part beside the grid.
+  const edge =
+    !row &&
+    Number(element.dataset.eprIndex) % columns ===
+      (direction < 0 ? 0 : columns - 1);
+  if (edge && exit?.()) return;
   const destination = logicalDestination(category, element, direction, row);
   if (destination)
-    focusLogicalEmoji(destination.category, destination.index, shouldFocus);
-  else if (direction < 0) exitUp?.();
+    focusLogicalEmoji(destination.category, destination.index, options);
+  // One exit per key: a sideways edge already asked.
+  else if (!edge) exit?.();
+}
+
+/** Cells fully in view: inside the scroll container, below the sticky label. */
+export function emojisInView(body: NullableElement): HTMLElement[] {
+  if (!body) return [];
+  const { top, bottom } = body.getBoundingClientRect();
+  const visibleTop = top + getLabelHeight(body);
+  return allVisibleEmojis(body).filter((emoji) => {
+    const box = emoji.getBoundingClientRect();
+    return box.top >= visibleTop - 1 && box.bottom <= bottom + 1;
+  });
 }
 
 function logicalDestination(
@@ -105,7 +146,7 @@ function adjacentDestination(
 function focusLogicalEmoji(
   category: HTMLElement,
   index: number,
-  shouldFocus?: () => boolean,
+  { shouldFocus }: MoveOptions,
 ) {
   const { content, columns, count } = categoryGeometry(category);
   const body = closestScrollBody(category);

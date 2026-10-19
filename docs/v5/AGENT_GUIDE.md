@@ -107,6 +107,7 @@ Adapt `Input` and `Button` props to the installed design library.
 - Root renders exactly the supplied children. For compact reactions, place `Reactions` outside `Panel` and put expanded parts inside `Panel`. Put layout props directly on Panel; there is no composition switch or panelProps prop.
 - Conditionally mount Root to control its lifetime; unmounting aborts pending loading and discards picker state. The assembled EmojiPicker keeps its legacy `open` prop, which, as in v4, keeps search, skin tone and reactions mode while closed.
 - Portaling a whole Root (into a popover) works; portaling individual parts out of Root does not.
+- Order and place parts freely (search below the grid, a tab bar at the bottom or as a side rail, CSS reordering): arrow keys between parts follow their positions on screen. See [API.md](API.md#10-valid-composition).
 
 ## 6. Mistakes to avoid
 

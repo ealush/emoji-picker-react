@@ -23,8 +23,7 @@ import {
 } from '../src/state/navigationRegistry';
 import {
   getActiveRegionsInDomOrder,
-  getNextRegion,
-  getPrevRegion,
+  getRegionInDirection,
 } from '../src/state/regionTraversal';
 import { EmojiData } from '../src/types/exposedTypes';
 
@@ -136,20 +135,22 @@ describe('region traversal', () => {
     root.remove();
   });
 
-  it('resolves next/previous regions with undefined at the edges', () => {
+  it('falls back to DOM order without layout, undefined at the edges', () => {
     const { root, search, categories, grid } = buildTree();
     const registry = new NavigationRegistry();
     registry.register('search', search);
     registry.register('categories', categories);
     registry.register('grid', grid);
+    const move = (from: 'grid' | 'search' | 'categories', key: string) =>
+      getRegionInDirection(registry, root, from, { key })?.kind;
 
-    // DOM order: grid, search, categories.
-    expect(getNextRegion(registry, root, 'grid')?.kind).toBe('search');
-    expect(getNextRegion(registry, root, 'search')?.kind).toBe('categories');
-    expect(getNextRegion(registry, root, 'categories')).toBeUndefined();
-    expect(getPrevRegion(registry, root, 'grid')).toBeUndefined();
-    expect(getPrevRegion(registry, root, 'search')?.kind).toBe('grid');
-    expect(getPrevRegion(registry, root, 'categories')?.kind).toBe('search');
+    // jsdom has no boxes. DOM order: grid, search, categories.
+    expect(move('grid', 'ArrowDown')).toBe('search');
+    expect(move('search', 'ArrowRight')).toBe('categories');
+    expect(move('categories', 'ArrowDown')).toBeUndefined();
+    expect(move('grid', 'ArrowUp')).toBeUndefined();
+    expect(move('search', 'ArrowLeft')).toBe('grid');
+    expect(move('categories', 'ArrowUp')).toBe('search');
 
     root.remove();
   });
@@ -198,10 +199,7 @@ function RegionHost({
   React.useEffect(() => {
     onRegistry(registry);
   }, [onRegistry, registry]);
-  useRegisterRegion(
-    kind,
-    externalElement ? { current: externalElement } : ref,
-  );
+  useRegisterRegion(kind, externalElement ? { current: externalElement } : ref);
   return externalElement ? null : <div ref={ref} />;
 }
 
@@ -256,12 +254,9 @@ describe('useRegisterRegion', () => {
     document.body.appendChild(outside);
 
     try {
-      renderRegionHost(
-        { kind: 'grid', externalElement: outside },
-        (next) => {
-          registry = next;
-        },
-      );
+      renderRegionHost({ kind: 'grid', externalElement: outside }, (next) => {
+        registry = next;
+      });
 
       expect(warn).toHaveBeenCalledTimes(1);
       expect(registry?.getRegionsByKind('grid')).toHaveLength(0);

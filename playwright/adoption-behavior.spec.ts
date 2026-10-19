@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
@@ -243,14 +243,21 @@ for (const mode of ['light', 'dark']) {
     ).not.toBe('Ship it ');
     await page.getByRole('button', { name: 'Insert emoji' }).click();
     await expect(search).toBeVisible();
-    // With no query, the standalone tone control is the next DOM region.
+    // With no query, arrows follow the layout: the tab bar is below the
+    // input, the standalone tone control beside it.
     await search.press('ArrowDown');
+    await expect(
+      page.locator('[data-epr-part="category-tab"]:focus'),
+    ).toHaveCount(1);
+    await search.focus();
+    await search.press('ArrowRight');
     const neutral = page.getByRole('button', {
       name: 'Skin tone NEUTRAL',
       exact: true,
     });
     await expect(neutral).toBeFocused();
-    await search.focus();
+    await page.keyboard.press('ArrowLeft');
+    await expect(search).toBeFocused();
     const violations = (
       await new AxeBuilder({ page })
         .include('#storybook-root')
@@ -552,6 +559,310 @@ for (const id of [
     }
   });
 }
+
+// Arrow keys between parts follow the order on screen.
+const focusedPart = (page: Page) =>
+  page.evaluate(
+    () =>
+      document.activeElement
+        ?.closest('[data-epr-part]')
+        ?.getAttribute('data-epr-part') ?? 'none',
+  );
+
+async function openRegionOrder(page: Page, id: string, query?: string) {
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(story(`v5-region-order--${id}`));
+  // Primitives load the dataset on demand: wait for the grid to exist.
+  await page.getByRole('gridcell').first().waitFor();
+  const search = page.locator('[data-epr-part="search-input"]');
+  await search.focus();
+  if (query) {
+    await page.keyboard.type(query);
+    await page
+      .getByRole('gridcell', { name: 'cat face', exact: true })
+      .waitFor();
+  }
+  return search;
+}
+
+// Presses `key` and waits for focus to move (grid moves land a frame or
+// more later, after scrolling a row into view).
+async function pressAndMove(page: Page, key: string) {
+  await page.evaluate(() => {
+    (window as unknown as { from: Element | null }).from =
+      document.activeElement;
+  });
+  await page.keyboard.press(key);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document.activeElement !==
+          (window as unknown as { from: Element | null }).from,
+      ),
+    )
+    .toBe(true);
+}
+
+// Presses `key` until focus reaches `part` (crossing the grid's rows).
+async function pressUntil(page: Page, key: string, part: string) {
+  for (let i = 0; i < 12 && (await focusedPart(page)) !== part; i++)
+    await pressAndMove(page, key);
+  await expect.poll(() => focusedPart(page)).toBe(part);
+}
+
+test('region order nav, search, grid: arrows follow the stack', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'nav-search-grid');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+test('region order search, grid, nav: the tab bar is below the grid', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'search-grid-nav', 'cat');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressUntil(page, 'ArrowDown', 'category-tab');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+});
+
+test('region order grid, search, nav: search below the grid enters it with ArrowUp', async ({
+  page,
+}) => {
+  await openRegionOrder(page, 'grid-search-nav', 'cat');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressUntil(page, 'ArrowDown', 'search-input');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+test('region order follows CSS reordering, not DOM order', async ({ page }) => {
+  await openRegionOrder(page, 'css-reordered');
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('category-tab');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+// Vertical center of the focused element, once scrolling has settled:
+// the same for three frames in a row.
+const focusedCenterY = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        let last = NaN;
+        let same = 0;
+        const frame = () => {
+          const box = document.activeElement!.getBoundingClientRect();
+          const y = (box.top + box.bottom) / 2;
+          same = y === last ? same + 1 : 0;
+          last = y;
+          if (same >= 3) resolve(y);
+          else requestAnimationFrame(frame);
+        };
+        frame();
+      }),
+  );
+
+for (const [id, towardRail, awayFromRail] of [
+  ['rail-beside-grid', 'ArrowLeft', 'ArrowRight'],
+  ['rail-beside-grid-rtl', 'ArrowRight', 'ArrowLeft'],
+  // Each tab wrapped in a span: entry and moves find the tabs themselves.
+  ['rail-wrapped-tabs', 'ArrowLeft', 'ArrowRight'],
+] as const) {
+  test(`${id}: arrows move between the rail and the row beside it`, async ({
+    page,
+  }) => {
+    await openRegionOrder(page, id);
+    // Search spans both; the grid lies straight below its middle.
+    await page.keyboard.press('ArrowDown');
+    await expect.poll(() => focusedPart(page)).toBe('emoji');
+    await pressAndMove(page, 'ArrowDown');
+    await pressAndMove(page, 'ArrowDown');
+    const cellY = await focusedCenterY(page);
+
+    // First column: the tab beside this row.
+    await page.keyboard.press(towardRail);
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
+    expect(Math.abs((await focusedCenterY(page)) - cellY)).toBeLessThan(40);
+
+    // Down the rail, then back: the cell beside that tab.
+    await pressAndMove(page, 'ArrowDown');
+    await pressAndMove(page, 'ArrowDown');
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
+    const tabY = await focusedCenterY(page);
+    await page.keyboard.press(awayFromRail);
+    await expect.poll(() => focusedPart(page)).toBe('emoji');
+    expect(Math.abs((await focusedCenterY(page)) - tabY)).toBeLessThan(40);
+
+    // Nothing lies beyond the grid's other side: the arrow keeps wrapping.
+    for (let i = 0; i < 12; i++) {
+      await pressAndMove(page, awayFromRail);
+      expect(await focusedPart(page)).toBe('emoji');
+    }
+
+    // The first tab leads up to the search input above the rail.
+    await page.locator('[data-epr-part="category-tab"]').first().focus();
+    await page.keyboard.press('ArrowUp');
+    await expect.poll(() => focusedPart(page)).toBe('search-input');
+  });
+}
+
+// Lets a key that should do nothing settle: grid moves land a frame or
+// more after the key.
+const settle = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let frames = 4;
+        const frame = () =>
+          --frames ? requestAnimationFrame(frame) : resolve();
+        requestAnimationFrame(frame);
+      }),
+  );
+
+test('modified arrows never leave the grid or the rail', async ({ page }) => {
+  await openRegionOrder(page, 'rail-beside-grid');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressAndMove(page, 'ArrowDown');
+  await pressAndMove(page, 'ArrowDown');
+  // A first-column cell: plain ArrowLeft would enter the rail.
+  await page.evaluate(() => {
+    (window as unknown as { cell: Element | null }).cell =
+      document.activeElement;
+  });
+  const tab = page.locator('[data-epr-part="category-tab"]').nth(2);
+  for (const modifier of ['Shift', 'Control', 'Alt', 'Meta']) {
+    await page.evaluate(() =>
+      (window as unknown as { cell: HTMLElement }).cell.focus(),
+    );
+    await page.keyboard.press(`${modifier}+ArrowLeft`);
+    await settle(page);
+    expect(await focusedPart(page), modifier).toBe('emoji');
+
+    // Plain ArrowRight would leave the vertical rail for the grid.
+    await tab.focus();
+    await page.keyboard.press(`${modifier}+ArrowRight`);
+    await settle(page);
+    expect(await focusedPart(page), modifier).toBe('category-tab');
+  }
+});
+
+test('the open preview tone fan closes when an arrow leaves along it', async ({
+  page,
+}) => {
+  await page.goto(
+    `${story('picker-overview--default')}&args=skinTonePickerLocation:PREVIEW`,
+  );
+  const fan = page.locator('[data-epr-part="skin-tone"]');
+  const shown = () => fan.locator('button[tabindex="0"]').count();
+  await page.locator('[data-epr-part="skin-tone-button"]').first().focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(shown).toBe(6);
+  // Up runs through the tones, then past the last one into the grid.
+  await pressUntil(page, 'ArrowUp', 'emoji');
+  await expect.poll(shown).toBe(1);
+});
+
+test('search ArrowRight moves the caret, and opens the tones only at its end', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  await search.press('Home');
+  await search.press('ArrowRight');
+  await expect(search).toBeFocused();
+  expect(
+    await search.evaluate((input: HTMLInputElement) => input.selectionStart),
+  ).toBe(1);
+  await search.press('End');
+  await search.press('ArrowRight');
+  await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
+});
+
+test('the closed tone control in Search keeps the arrow direction', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const fan = page.locator('[data-epr-part="skin-tone"]');
+  const shown = () => fan.locator('button[tabindex="0"]').count();
+  await page.locator('[data-epr-part="skin-tone-button"]').first().focus();
+  expect(await shown()).toBe(1);
+  // Nothing lies right of the control: Right stays, closed.
+  await page.keyboard.press('ArrowRight');
+  await settle(page);
+  expect(await focusedPart(page)).toBe('skin-tone-button');
+  expect(await shown()).toBe(1);
+  // The input lies to its left.
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
+test('the closed tone control in the preview leaves along its vertical fan', async ({
+  page,
+}) => {
+  await page.goto(
+    `${story('picker-overview--default')}&args=skinTonePickerLocation:PREVIEW`,
+  );
+  const tone = page.locator('[data-epr-part="skin-tone-button"]').first();
+  await expect(page.locator('[data-epr-part="skin-tone"]')).toHaveAttribute(
+    'data-epr-direction',
+    'vertical',
+  );
+  await tone.focus();
+  // Up runs along the fan; closed, it leaves for the grid above.
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+});
+
+test('an arrow across the open tone fan with nowhere to go keeps it open', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.focus();
+  await search.press('ArrowRight');
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
+  // Nothing is above the search row.
+  await page.keyboard.press('ArrowUp');
+  // The focused tone stays shown once the fan's transition settles.
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const tone = document.activeElement as HTMLElement;
+        const fan = tone.closest('[data-epr-part="skin-tone"]');
+        return {
+          part: fan ? 'skin-tone' : 'none',
+          opacity: getComputedStyle(tone).opacity,
+          tabIndex: tone.tabIndex,
+          open: fan?.querySelectorAll('button[tabindex="0"]').length,
+        };
+      }),
+    )
+    .toEqual({ part: 'skin-tone', opacity: '1', tabIndex: 0, open: 6 });
+});
 
 test('hovering results keeps focus and the caret in the search input', async ({
   page,
