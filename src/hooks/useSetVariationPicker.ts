@@ -6,7 +6,6 @@ import {
 import { useSetAnchoredEmojiRef } from '../components/context/ElementRefContext';
 import { useEmojiVariationPickerState } from '../components/context/PickerContext';
 import { usePickerDataContext } from '../components/context/PickerDataContext';
-import { useVariationsDisabledConfig } from '../config/useConfig';
 
 export default function useSetVariationPicker() {
   const setAnchoredEmojiRef = useSetAnchoredEmojiRef();
@@ -15,13 +14,12 @@ export default function useSetVariationPicker() {
   // The legacy global lookup only knows the default English dataset.
   // https://github.com/ealush/emoji-picker-react/issues/503
   const { emojiByUnified } = usePickerDataContext();
-  const disabled = useVariationsDisabledConfig();
 
   return function setVariationPicker(element: NullableElement) {
     const { unified, originalUnified } = allUnifiedFromEmojiElement(element);
     const resolvedUnified = unified ?? originalUnified;
 
-    if (!resolvedUnified || disabled) {
+    if (!resolvedUnified) {
       return;
     }
 

@@ -39,6 +39,7 @@ vi.mock('../../src/components/context/PickerContext', () => ({
 
 vi.mock('../../src/config/useConfig', () => ({
   useSearchDisabledConfig: vi.fn(() => false),
+  useVariationsDisabledConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({

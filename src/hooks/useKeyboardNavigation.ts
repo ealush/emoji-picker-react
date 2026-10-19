@@ -30,7 +30,10 @@ import {
   useSearchDisplayState,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
-import { useSearchDisabledConfig } from '../config/useConfig';
+import {
+  useSearchDisabledConfig,
+  useVariationsDisabledConfig,
+} from '../config/useConfig';
 import {
   NavigationRegionKind,
   RegisteredRegion,
@@ -80,6 +83,7 @@ export function useKeyboardNavigation() {
   const ReactionsRef = useReactionsRef();
   const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
   const setVariationPicker = useSetVariationPicker();
+  const variationsDisabled = useVariationsDisabledConfig();
   const registry = useNavigationRegistry();
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
@@ -257,6 +261,8 @@ export function useKeyboardNavigation() {
     }
     switch (key) {
       case ' ':
+        // With no menu to open, Space is the button's own: it selects.
+        if (variationsDisabled) break;
         event.preventDefault();
         setVariationPicker(event.target as HTMLElement);
         break;

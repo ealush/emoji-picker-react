@@ -60,11 +60,14 @@ export function preloadEmoji(
   }
 
   const unified = emojiUnified(emoji);
+  // A base-only preload is marked apart from a full one, so a picker with
+  // variations on still fetches the skin tones; a full one covers both.
+  const key = variations ? unified : unified + '/base';
 
-  if (preloadedEmojs.has(unified)) {
+  if (preloadedEmojs.has(unified) || preloadedEmojs.has(key)) {
     return;
   }
-  preloadedEmojs.add(unified);
+  preloadedEmojs.add(key);
 
   // Skin-tone images only when the variation menu can open.
   (variations ? emojiVariations(emoji) : [])

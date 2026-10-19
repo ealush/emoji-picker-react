@@ -30,4 +30,27 @@ describe('preloadEmoji', () => {
       '1f44d',
     ]);
   });
+
+  it('still requests the variations after a base-only preload', () => {
+    // The cache is page-wide: another picker, or this one after the prop
+    // flips, must not inherit a base-only preload as a full one.
+    const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
+    expect(getEmojiUrl.mock.calls.map(([unified]) => unified)).toEqual([
+      '1f44d',
+      '1f44d-1f3fb',
+      '1f44d-1f3fc',
+      '1f44d',
+    ]);
+  });
+
+  it('skips a base-only preload after a full one', () => {
+    const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    expect(getEmojiUrl).toHaveBeenCalledTimes(3);
+  });
 });

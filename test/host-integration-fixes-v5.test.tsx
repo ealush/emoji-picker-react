@@ -214,7 +214,8 @@ describe('variationsDisabled', () => {
     fireEvent.click(cell);
     expect(onEmojiClick.mock.calls[0][0]).toMatchObject({ unified: '1f44d' });
 
-    fireEvent.keyDown(cell, { key: ' ' });
+    // Space is left to the native button, which selects on keyup.
+    expect(fireEvent.keyDown(cell, { key: ' ' })).toBe(true);
     act(() => vi.advanceTimersByTime(100));
     expect(variationMenu(container)).toHaveLength(0);
   });
@@ -239,20 +240,34 @@ describe('variationsDisabled', () => {
     expect(fireEvent.keyDown(cell, { key: 'Escape' })).toBe(true);
   });
 
-  it('reports hasVariations: false to a custom cell', () => {
+  type CustomEmoji = NonNullable<Picker.PickerComponents['Emoji']>;
+  it.each([
+    [
+      'variationsDisabled under Root',
+      (Emoji: CustomEmoji) => (
+        <Picker.Root emojiData={data} variationsDisabled components={{ Emoji }}>
+          {grid}
+        </Picker.Root>
+      ),
+    ],
+    [
+      // Matches the built-in marker, which skinTonesDisabled also hides.
+      'skinTonesDisabled on the default picker',
+      (Emoji: CustomEmoji) => (
+        <EmojiPicker
+          emojiData={data}
+          skinTonesDisabled
+          components={{ Emoji }}
+        />
+      ),
+    ],
+  ])('reports hasVariations: false to a custom cell: %s', (_, picker) => {
     const seen: boolean[] = [];
-    const Emoji: NonNullable<Picker.PickerComponents['Emoji']> = ({
-      emoji,
-      ...props
-    }) => {
+    const Emoji: CustomEmoji = ({ emoji, ...props }) => {
       if (emoji.unified === '1f44d') seen.push(emoji.hasVariations);
       return <button {...props}>{emoji.emoji}</button>;
     };
-    render(
-      <Picker.Root emojiData={data} variationsDisabled components={{ Emoji }}>
-        {grid}
-      </Picker.Root>,
-    );
+    render(picker(Emoji));
     expect(seen.length).toBeGreaterThan(0);
     expect(seen.every((has) => !has)).toBe(true);
   });

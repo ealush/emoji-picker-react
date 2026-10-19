@@ -69,6 +69,7 @@ const mockEmojis: DataEmojis = [
 describe('useEmojiVirtualization', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useVariationsDisabledConfig as any).mockReturnValue(false);
 
     // Default mocks
     (useBodyRef as any).mockReturnValue({
@@ -141,7 +142,6 @@ describe('useEmojiVirtualization', () => {
     expect(preloadEmojiIfNeeded).toHaveBeenCalled();
     for (const call of (preloadEmojiIfNeeded as any).mock.calls)
       expect(call.at(-1)).toBe(false);
-    (useVariationsDisabledConfig as any).mockReturnValue(false);
   });
 
   it('requests native glyph checks for the rendered cells only', () => {

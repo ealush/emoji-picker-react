@@ -143,7 +143,7 @@ custom action can still filter the list. Likewise, omitting SkinTone does not
 remove emoji variants or prevent controlled/programmatic tone selection.
 These are engine behaviors, distinct from the existence of their controls;
 `variationsDisabled` on Root turns the grid's variations off (no long
-press, Space menu or marker).
+press or marker; Space selects instead of opening a menu).
 
 ## Default-picker compatibility
 

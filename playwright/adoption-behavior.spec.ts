@@ -599,3 +599,25 @@ test('Escape reaches the host untouched when there is nothing to undo', async ({
   // Clearing the search consumed the first; the second was the host's.
   expect(await escapes()).toEqual([true, false]);
 });
+
+test('with variationsDisabled, Space selects an emoji like a native button', async ({
+  page,
+}) => {
+  await page.goto(
+    `${story('picker-overview--default')}&args=variationsDisabled:!true`,
+  );
+  await page
+    .getByRole('textbox', { name: 'Type to search for an emoji' })
+    .fill('thumbs up');
+  const cell = page
+    .getByRole('gridcell', { name: 'thumbs up', exact: true })
+    .first();
+  await expect(cell).not.toHaveClass(/epr-emoji-has-variations/);
+  await cell.focus();
+  await page.keyboard.press('Space');
+  // The story appends each pick to its own text field.
+  await expect(page.locator('input[type="text"]').first()).toHaveValue('👍');
+  await expect(
+    page.locator('[data-epr-part="variation-picker"] button'),
+  ).toHaveCount(0);
+});
