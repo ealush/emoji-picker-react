@@ -2,7 +2,10 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useBodyRef } from '../../src/components/context/ElementRefContext';
+import { useActiveSkinToneState } from '../../src/components/context/PickerContext';
 import { DataEmojis } from '../../src/dataUtils/DataTypes';
+import { useVariationsDisabledConfig } from '../../src/config/useConfig';
+import { preloadEmojiIfNeeded } from '../../src/hooks/preloadEmoji';
 import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import {
@@ -26,6 +29,7 @@ vi.mock('../../src/config/useConfig', () => ({
   useGetEmojiUrlConfig: vi.fn(() => () => ''),
   useLazyLoadEmojisConfig: vi.fn(() => false),
   useSkinTonesDisabledConfig: vi.fn(() => false),
+  useVariationsDisabledConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCategoryHeight', () => ({
@@ -66,6 +70,8 @@ const mockEmojis: DataEmojis = [
 describe('useEmojiVirtualization', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    (useVariationsDisabledConfig as any).mockReturnValue(false);
+    (useActiveSkinToneState as any).mockReturnValue(['neutral']);
 
     // Default mocks
     (useBodyRef as any).mockReturnValue({
@@ -120,6 +126,48 @@ describe('useEmojiVirtualization', () => {
 
     expect(result.current.virtualizedCounter).toBe(3); // All 3 virtualized
     expect(result.current.emojis.length).toBe(0);
+  });
+
+  it('preloads only the rendered image with variationsDisabled', () => {
+    (shouldVirtualize as any).mockReturnValue(true);
+    (useVariationsDisabledConfig as any).mockReturnValue(true);
+    (useActiveSkinToneState as any).mockReturnValue(['1f3fc']);
+    renderHook(() =>
+      useEmojiVirtualization({
+        categoryEmojis: [
+          { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fc'] },
+          ...mockEmojis,
+        ],
+        topOffset: 5000,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      }),
+    );
+    // The active tone's image for emojis that have it, else the base.
+    expect(
+      (preloadEmojiIfNeeded as any).mock.calls.map((call: unknown[]) =>
+        call.at(-1),
+      ),
+    ).toEqual(['1f44d-1f3fc', '1f600', '1f431', '1f436']);
+  });
+
+  it('leaves the full preload to variations when they are on', () => {
+    (shouldVirtualize as any).mockReturnValue(true);
+    renderHook(() =>
+      useEmojiVirtualization({
+        categoryEmojis: mockEmojis,
+        topOffset: 5000,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      }),
+    );
+    expect(preloadEmojiIfNeeded).toHaveBeenCalled();
+    for (const call of (preloadEmojiIfNeeded as any).mock.calls)
+      expect(call.at(-1)).toBeUndefined();
   });
 
   it('requests native glyph checks for the rendered cells only', () => {

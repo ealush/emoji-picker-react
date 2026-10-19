@@ -57,6 +57,7 @@ Theme the built-in look via [CSS variables](CSS_VARIABLES.md). With `unstyled`, 
 | `defaultSkinTone`        | `SkinTonesValue`         | `'neutral'`               | The initial skin tone: `SkinTones` enum or its value (`'neutral'`, `'1f3fb'`, `'1f3fc'`, `'1f3fd'`, `'1f3fe'`, `'1f3ff'`). |
 | `skinTone`               | `SkinTonesValue`         | `undefined`               | Controlled skin tone (pair with `onSkinToneChange`).                 |
 | `skinTonesDisabled`      | `boolean`                | `false`                   | If true, users cannot change the skin tone.                          |
+| `variationsDisabled`     | `boolean`                | `false`                   | Turns off skin-tone variations in the grid: no long press, no variation marker, and Space selects the emoji instead of opening a menu. The active skin tone still applies. Also a `Root` prop. |
 | `skinTonePickerLocation` | `SkinTonePickerLocation` | `SEARCH`                  | Location of the skin tone trigger. Options: `'SEARCH'`, `'PREVIEW'`, `'NONE'`. When the chosen region is absent (`searchDisabled`, or `previewConfig.showPreview: false`) the control moves to the other region, or is off when neither exists. |
 
 ## Customization & Advanced

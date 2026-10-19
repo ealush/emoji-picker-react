@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { DataEmoji } from '../../dataUtils/DataTypes';
-import { emojiNames, emojiHasVariations } from '../../dataUtils/emojiUtils';
+import { emojiNames } from '../../dataUtils/emojiUtils';
 import { parseNativeEmoji } from '../../dataUtils/parseNativeEmoji';
 import { isCustomEmoji } from '../../typeRefinements/typeRefinements';
 import { EmojiStyle, EmojiStyleValue } from '../../types/exposedTypes';
@@ -62,7 +62,7 @@ export function emojiRenderInfo(
   unified: string,
   emojiStyle: EmojiStyleValue,
   getEmojiUrl: (unified: string, style: EmojiStyleValue) => string,
-): Omit<ListEmoji, 'isActive'> {
+): Omit<ListEmoji, 'isActive' | 'hasVariations'> {
   const isCustom = isCustomEmoji(emoji);
   return {
     unified,
@@ -74,6 +74,5 @@ export function emojiRenderInfo(
       : emojiStyle === EmojiStyle.NATIVE
         ? undefined
         : getEmojiUrl(unified, emojiStyle),
-    hasVariations: emojiHasVariations(emoji),
   };
 }

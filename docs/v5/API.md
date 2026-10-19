@@ -30,7 +30,8 @@ type EmojiPickerV5Additions = {
   onSearchChange?: (value: string) => void;
   searchLabel?: string;
 
-  suggestedEmojis?: string[];
+  suggestedEmojis?: string[];       // §7
+  variationsDisabled?: boolean;     // §10b
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
 
@@ -330,7 +331,7 @@ function Header({ category, ...props }: EmojiPicker.CategoryHeaderRenderProps) {
 ```
 
 - `Emoji` must render a `<button>` carrying the provided `type`, `className`, `style` (virtualized position), `tabIndex`, `aria-label` and `data-epr-*` props. Its content may nest arbitrarily; clicks anywhere inside select the emoji.
-- `emoji` (`ListEmoji`): `unified` (the exact rendered identity), `names` (search keywords, shortest first, with the emoji's name last: `names[names.length - 1]` is "rocket" for 🚀 and is its accessible name), `emoji` (native text), `isCustom`, `imageUrl` (undefined for standard native emojis; active image style URL otherwise, custom `imgUrl` for custom emojis), `hasVariations`.
+- `emoji` (`ListEmoji`): `unified` (the exact rendered identity), `names` (search keywords, shortest first, with the emoji's name last: `names[names.length - 1]` is "rocket" for 🚀 and is its accessible name), `emoji` (native text), `isCustom`, `imageUrl` (undefined for standard native emojis; active image style URL otherwise, custom `imgUrl` for custom emojis), `hasVariations` (true only where the built-in cell shows the variation marker, so false under `variationsDisabled` or `skinTonesDisabled`).
 - `CategoryHeader` receives the sticky, measured label's `className` and `data-epr-part`; `category` is `{ id, name }`.
 
 There is still no render-prop over the whole list: virtualization, ordering and grid semantics stay library-owned.
@@ -425,6 +426,16 @@ Renders only while an applied search shows no emojis (counting exactly what the 
 ```
 
 `SkinTone` is the managed control (keyboard, focus region, callbacks). Only one skin tone control may exist per Root. Search and Preview never insert one automatically; render it wherever your layout needs it. To build a control from scratch instead, use `useSkinTone()`.
+
+Leaving SkinTone out does not remove variations from the grid. For no skin tones at all, also pass `variationsDisabled`: no long press, no variation marker, and `hasVariations: false` in custom cells. Space selects the emoji, as Enter does, instead of opening a menu. The active skin tone (`skinTone` / `defaultSkinTone`) still applies.
+
+```tsx
+<EmojiPicker.Root variationsDisabled>
+  <EmojiPicker.Viewport>
+    <EmojiPicker.List />
+  </EmojiPicker.Viewport>
+</EmojiPicker.Root>
+```
 
 ## 10b2. Vertical category rail
 

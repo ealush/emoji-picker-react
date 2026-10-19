@@ -50,9 +50,11 @@ export function ClickableEmoji({
   const hasVariations = emojiHasVariations(emoji);
   const { Emoji: SharedEmoji } = usePickerComponents();
   const Custom = useListComponents().Emoji ?? SharedEmoji;
-  const info = Custom
-    ? emojiRenderInfo(emoji, unified, emojiStyle, getEmojiUrl)
-    : undefined;
+  // A custom cell marks variations only where the built-in one would.
+  const info = Custom && {
+    ...emojiRenderInfo(emoji, unified, emojiStyle, getEmojiUrl),
+    hasVariations: hasVariations && showVariations,
+  };
 
   return (
     <ClickableEmojiButton

@@ -225,6 +225,7 @@ export function basePickerConfig(): PickerConfigInternal {
     getEmojiUrl: emojiUrlByUnified,
     height: DEFAULT_PICKER_HEIGHT,
     lazyLoadEmojis: false,
+    variationsDisabled: false,
     previewConfig: {
       ...basePreviewConfig,
     },
@@ -268,6 +269,11 @@ export type PickerConfigInternal = {
   defaultSkinTone: SkinTonesValue;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
+  /**
+   * Turns off skin-tone variations in the grid: no long press, no Space
+   * menu, no variation marker. The active skin tone still applies.
+   */
+  variationsDisabled: boolean;
   emojiStyle: EmojiStyleValue;
   categories: CategoriesConfig;
   theme: ThemeValue;

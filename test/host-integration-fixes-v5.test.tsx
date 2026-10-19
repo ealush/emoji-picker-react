@@ -189,3 +189,92 @@ describe('suggestedEmojis owns the recents', () => {
     expect(window.localStorage.getItem('epr_suggested')).toContain('1f44d');
   });
 });
+
+describe('variationsDisabled', () => {
+  it('turns off the long press, Space menu and marker under Root', () => {
+    vi.useFakeTimers();
+    const onEmojiClick = vi.fn();
+    const { container } = render(
+      <Picker.Root
+        emojiData={data}
+        variationsDisabled
+        onEmojiClick={onEmojiClick}
+      >
+        {grid}
+      </Picker.Root>,
+    );
+    const cell = screen.getByRole('gridcell', { name: 'thumbs up' });
+    expect(cell.className).not.toContain('epr-emoji-has-variations');
+
+    fireEvent.mouseDown(cell);
+    act(() => vi.advanceTimersByTime(600));
+    fireEvent.mouseUp(cell);
+    expect(variationMenu(container)).toHaveLength(0);
+    // The release still picks the emoji.
+    fireEvent.click(cell);
+    expect(onEmojiClick.mock.calls[0][0]).toMatchObject({ unified: '1f44d' });
+
+    // Space is left to the native button, which selects on keyup.
+    expect(fireEvent.keyDown(cell, { key: ' ' })).toBe(true);
+    act(() => vi.advanceTimersByTime(100));
+    expect(variationMenu(container)).toHaveLength(0);
+  });
+
+  it('closes an open menu when variations are turned off', () => {
+    vi.useFakeTimers();
+    const { container, rerender } = render(
+      <Picker.Root emojiData={data}>{grid}</Picker.Root>,
+    );
+    const cell = screen.getByRole('gridcell', { name: 'thumbs up' });
+    fireEvent.mouseDown(cell);
+    act(() => vi.advanceTimersByTime(500));
+    expect(variationMenu(container)).toHaveLength(2);
+    // Focus is on a tone (jsdom has no layout to focus one on open).
+    act(() => (variationMenu(container)[1] as HTMLElement).focus());
+    expect(variationMenu(container)).toContain(document.activeElement);
+
+    rerender(
+      <Picker.Root emojiData={data} variationsDisabled>
+        {grid}
+      </Picker.Root>,
+    );
+    expect(variationMenu(container)).toHaveLength(0);
+    // Focus goes back to the emoji instead of falling to the page.
+    act(() => vi.advanceTimersByTime(100));
+    expect(document.activeElement).toBe(cell);
+    // No menu is left open to swallow Escape.
+    expect(fireEvent.keyDown(cell, { key: 'Escape' })).toBe(true);
+  });
+
+  type CustomEmoji = NonNullable<Picker.PickerComponents['Emoji']>;
+  it.each([
+    [
+      'variationsDisabled under Root',
+      (Emoji: CustomEmoji) => (
+        <Picker.Root emojiData={data} variationsDisabled components={{ Emoji }}>
+          {grid}
+        </Picker.Root>
+      ),
+    ],
+    [
+      // Matches the built-in marker, which skinTonesDisabled also hides.
+      'skinTonesDisabled on the default picker',
+      (Emoji: CustomEmoji) => (
+        <EmojiPicker
+          emojiData={data}
+          skinTonesDisabled
+          components={{ Emoji }}
+        />
+      ),
+    ],
+  ])('reports hasVariations: false to a custom cell: %s', (_, picker) => {
+    const seen: boolean[] = [];
+    const Emoji: CustomEmoji = ({ emoji, ...props }) => {
+      if (emoji.unified === '1f44d') seen.push(emoji.hasVariations);
+      return <button {...props}>{emoji.emoji}</button>;
+    };
+    render(picker(Emoji));
+    expect(seen.length).toBeGreaterThan(0);
+    expect(seen.every((has) => !has)).toBe(true);
+  });
+});

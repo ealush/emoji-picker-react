@@ -12,6 +12,7 @@ import {
   useGetEmojiUrlConfig,
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig,
+  useVariationsDisabledConfig,
 } from '../config/useConfig';
 import { DataEmojis } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiUtils';
@@ -47,7 +48,9 @@ export function useEmojiVirtualization({
   const [activeSkinTone] = useActiveSkinToneState();
   const isEmojiDisallowed = useIsEmojiDisallowed();
   const getEmojiUrl = useGetEmojiUrlConfig();
-  const showVariations = !useSkinTonesDisabledConfig();
+  const skinTonesDisabled = useSkinTonesDisabledConfig();
+  const variationsDisabled = useVariationsDisabledConfig();
+  const showVariations = !skinTonesDisabled && !variationsDisabled;
   const BodyRef = useBodyRef();
   const requestNativeProbe = useRequestNativeProbe();
   // Native glyphs checked exactly: the cells this pass renders (visible
@@ -109,6 +112,8 @@ export function useEmojiVirtualization({
         style,
         dimensions,
         getEmojiUrl,
+        // Without the variation menu only the rendered image is needed.
+        variationsDisabled ? unified : undefined,
       );
       return accumulator;
     }

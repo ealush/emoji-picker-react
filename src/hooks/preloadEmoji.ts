@@ -14,6 +14,7 @@ export function preloadEmojiIfNeeded(
   style: { top: number } | undefined,
   dimensions: Dimensions,
   getEmojiUrl: GetEmojiUrl,
+  rendered: string | undefined,
 ): void {
   if (!emoji) {
     return;
@@ -43,7 +44,7 @@ export function preloadEmojiIfNeeded(
       emojiTop < viewportBottom + dimensions.emojiSize * 2;
 
     if (isJustBelowViewport) {
-      preloadEmoji(getEmojiUrl, emoji, emojiStyles);
+      preloadEmoji(getEmojiUrl, emoji, emojiStyles, rendered);
     }
   });
 }
@@ -52,24 +53,30 @@ export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
   emojiStyle: EmojiStyleValue,
+  rendered?: string,
 ): void {
   if (!emoji) {
     return;
   }
 
   const unified = emojiUnified(emoji);
+  // Without the variation menu, only the image the cell renders (the
+  // active tone's, or the base) is fetched. It is marked apart from a full
+  // preload, so a picker with variations on still fetches every tone; a
+  // full one covers it.
+  const key = rendered ? rendered + '/only' : unified;
 
-  if (preloadedEmojs.has(unified)) {
+  if (preloadedEmojs.has(unified) || preloadedEmojs.has(key)) {
     return;
   }
-  preloadedEmojs.add(unified);
+  preloadedEmojs.add(key);
 
-  emojiVariations(emoji)
-    .concat(unified)
-    .forEach((variation) => {
+  (rendered ? [rendered] : emojiVariations(emoji).concat(unified)).forEach(
+    (variation) => {
       const emojiUrl = getEmojiUrl(variation, emojiStyle);
       preloadImage(emojiUrl);
-    });
+    },
+  );
 }
 
 export const preloadedEmojs: Set<string> = new Set();

@@ -15,6 +15,7 @@ import { darkMode, stylesheet } from '../../Stylesheet/stylesheet';
 import {
   useEmojiStyleConfig,
   useGetEmojiUrlConfig,
+  useVariationsDisabledConfig,
 } from '../../config/useConfig';
 import {
   emojiHasVariations,
@@ -47,8 +48,9 @@ export function EmojiVariationPicker() {
   const appearance = useDefaultAppearance();
   const AnchoredEmojiRef = useAnchoredEmojiRef();
   const VariationPickerRef = useVariationPickerRef();
-  const [emoji] = useEmojiVariationPickerState();
+  const [emoji, setEmoji] = useEmojiVariationPickerState();
   const emojiStyle = useEmojiStyleConfig();
+  const variationsDisabled = useVariationsDisabledConfig();
   const isEmojiDisallowed = useIsEmojiDisallowed();
 
   const { getTop, getMenuDirection } =
@@ -61,6 +63,7 @@ export function EmojiVariationPicker() {
 
   const visible = Boolean(
     emoji &&
+    !variationsDisabled &&
     button &&
     (emojiStyle !== EmojiStyle.NATIVE ||
       !isEmojiDisallowed(
@@ -70,6 +73,11 @@ export function EmojiVariationPicker() {
     emojiHasVariations(emoji) &&
     button.classList.contains(ClassNames.emojiHasVariations),
   );
+
+  // Turning variations off closes an open menu, so Escape goes back to the host.
+  useEffect(() => {
+    if (variationsDisabled && emoji) setEmoji(null);
+  }, [variationsDisabled, emoji, setEmoji]);
 
   useEffect(() => {
     if (!visible) {

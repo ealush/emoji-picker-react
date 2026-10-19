@@ -324,7 +324,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Controlled skin tone** — `skinTone` + `onSkinToneChange`.
 
-**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`.
+**Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`. For no skin-tone variations at all (no long press), add `variationsDisabled`.
 
 **Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 
