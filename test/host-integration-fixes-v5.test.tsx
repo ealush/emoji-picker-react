@@ -76,6 +76,26 @@ describe('Escape belongs to the host when there is nothing to undo', () => {
     expect(input).toHaveValue('cat');
     expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
     expect(proposals).toEqual(['cat', '']);
+    // The draft is gone at once, so the next Escape reaches the host.
+    expect(input).toHaveValue('');
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(true);
+    expect(proposals).toEqual(['cat', '']);
+  });
+
+  it('leaves the text to a controlled parent that holds a value', () => {
+    const proposals: string[] = [];
+    // The parent ignores proposals: "dog" stays accepted.
+    render(
+      <EmojiPicker
+        emojiData={data}
+        searchValue="dog"
+        onSearchChange={(next) => proposals.push(next)}
+      />,
+    );
+    const input = screen.getByRole('textbox');
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
+    expect(proposals).toEqual(['']);
+    expect(input).toHaveValue('dog');
   });
 
   it('still consumes Escape that closes the variation menu', () => {
