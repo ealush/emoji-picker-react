@@ -382,6 +382,61 @@ describe('release review identity and recovery regressions', () => {
     );
   });
 
+  it('records a clicked mixed-tone variation in recents with its identity', async () => {
+    const mixed = '1faf1-1f3fb-200d-1faf2-1f3fd';
+    const select = vi.fn();
+    const mixedData: EmojiData = {
+      ...data,
+      emojis: {
+        ...data.emojis,
+        [Categories.SMILEYS_PEOPLE]: [
+          {
+            u: '1f91d',
+            n: ['handshake'],
+            a: '14',
+            v: ['1faf1-1f3fb-200d-1faf2-1f3fc', mixed],
+          },
+        ],
+      },
+    };
+    // No suggestedEmojis: the picker records the pick itself. A dark
+    // active tone must not replace the clicked mixed tones.
+    const { container } = render(
+      <Picker.Root
+        {...rootProps}
+        emojiData={mixedData}
+        categories={[Categories.SMILEYS_PEOPLE]}
+        skinTone={SkinTones.DARK}
+        onEmojiClick={select}
+      >
+        <Grid />
+      </Picker.Root>,
+    );
+    // A long press opens the variations; the release must not pick.
+    const cell = screen.getByRole('gridcell', { name: 'handshake' });
+    fireEvent.mouseDown(cell);
+    const variation = await waitFor(() => {
+      const button = container.querySelector<HTMLElement>(
+        `[data-epr-part="variation-picker"] [data-epr-unified="${mixed}"]`,
+      );
+      expect(button).not.toBeNull();
+      return button!;
+    });
+    fireEvent.mouseUp(cell);
+    await act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
+    expect(select).not.toHaveBeenCalled();
+    fireEvent.click(variation);
+    expect(select.mock.calls[0][0]).toMatchObject({
+      unified: mixed,
+      unifiedWithoutSkinTone: '1f91d',
+      // The clicked emoji's tone (its first), not the picker's dark one.
+      activeSkinTone: SkinTones.LIGHT,
+    });
+    expect(JSON.parse(localStorage.getItem('epr_suggested')!)[0]).toMatchObject(
+      { unified: mixed, original: '1f91d' },
+    );
+  });
+
   it('recovers failed images when the resolver or rendering mode changes', () => {
     const broken = () => 'broken.png';
     const working = () => 'working.png';

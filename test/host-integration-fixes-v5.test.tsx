@@ -96,6 +96,38 @@ describe('Escape belongs to the host when there is nothing to undo', () => {
     expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
     expect(proposals).toEqual(['']);
     expect(input).toHaveValue('dog');
+    // The parent rejected the clear: the next Escape reaches the host.
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(true);
+    expect(proposals).toEqual(['']);
+  });
+
+  it('clears again after a rejected clear once the search changes', () => {
+    const proposals: string[] = [];
+    function Parent() {
+      const [value, setValue] = React.useState('dog');
+      return (
+        <>
+          <button onClick={() => setValue('cat')}>set cat</button>
+          <EmojiPicker
+            emojiData={data}
+            searchValue={value}
+            // Rejects clears, accepts anything else.
+            onSearchChange={(next) => {
+              proposals.push(next);
+              if (next) setValue(next);
+            }}
+          />
+        </>
+      );
+    }
+    render(<Parent />);
+    const input = screen.getByRole('textbox');
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(true);
+    // A new value is a new search: Escape tries to clear it first.
+    fireEvent.click(screen.getByRole('button', { name: 'set cat' }));
+    expect(fireEvent.keyDown(input, { key: 'Escape' })).toBe(false);
+    expect(proposals).toEqual(['', '']);
   });
 
   it('still consumes Escape that closes the variation menu', () => {

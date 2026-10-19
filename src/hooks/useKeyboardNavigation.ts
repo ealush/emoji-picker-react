@@ -84,6 +84,12 @@ export function useKeyboardNavigation() {
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
+  // An Escape proposed clearing the search, and nothing has changed since:
+  // a controlled parent rejected the clear, so the next Escape is the host's.
+  const clearProposed = useRef(false);
+  useEffect(() => {
+    clearProposed.current = false;
+  }, [searchValue, displayed]);
   const goDownFromSearchInput = () => {
     if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
     focusCategoryNavigation();
@@ -109,8 +115,9 @@ export function useKeyboardNavigation() {
           event.stopPropagation();
           return;
         }
-        if (searchValue || displayed) {
+        if ((searchValue || displayed) && !clearProposed.current) {
           event.preventDefault();
+          clearProposed.current = true;
           clearSearch();
           scrollTo(0);
           focusSearchInput();

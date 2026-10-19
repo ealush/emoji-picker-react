@@ -1847,7 +1847,7 @@ List must be inside Viewport (ideally its direct child; wrappers from styling li
 
 There is no child-ordering rule. Root renders whatever you give it, in the order you gave it. Registered parts must remain inside their Root DOM boundary.
 
-Escape undoes one thing at a time: it closes an open variation or tone menu, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes.
+Escape undoes one thing at a time: it closes an open variation or tone menu, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes. The same goes for an Escape right after a controlled parent rejected the clear (its `searchValue` and the input are unchanged): the next Escape reaches the host.
 
 ## 10a. Empty state
 
