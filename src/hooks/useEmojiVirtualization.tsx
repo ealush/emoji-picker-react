@@ -112,7 +112,8 @@ export function useEmojiVirtualization({
         style,
         dimensions,
         getEmojiUrl,
-        !variationsDisabled,
+        // Without the variation menu only the rendered image is needed.
+        variationsDisabled ? unified : undefined,
       );
       return accumulator;
     }

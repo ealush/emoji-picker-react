@@ -229,6 +229,9 @@ describe('variationsDisabled', () => {
     fireEvent.mouseDown(cell);
     act(() => vi.advanceTimersByTime(500));
     expect(variationMenu(container)).toHaveLength(2);
+    // Focus is on a tone (jsdom has no layout to focus one on open).
+    act(() => (variationMenu(container)[1] as HTMLElement).focus());
+    expect(variationMenu(container)).toContain(document.activeElement);
 
     rerender(
       <Picker.Root emojiData={data} variationsDisabled>
@@ -236,6 +239,9 @@ describe('variationsDisabled', () => {
       </Picker.Root>,
     );
     expect(variationMenu(container)).toHaveLength(0);
+    // Focus goes back to the emoji instead of falling to the page.
+    act(() => vi.advanceTimersByTime(100));
+    expect(document.activeElement).toBe(cell);
     // No menu is left open to swallow Escape.
     expect(fireEvent.keyDown(cell, { key: 'Escape' })).toBe(true);
   });

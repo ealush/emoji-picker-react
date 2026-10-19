@@ -23,11 +23,14 @@ describe('preloadEmoji', () => {
     ]);
   });
 
-  it('requests only the emoji when variations are off', () => {
+  it('requests only the rendered image when variations are off', () => {
     const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
-    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d');
+    // With an active skin tone the cell renders that tone's image.
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d-1f3fc');
     expect(getEmojiUrl.mock.calls.map(([unified]) => unified)).toEqual([
       '1f44d',
+      '1f44d-1f3fc',
     ]);
   });
 
@@ -35,9 +38,9 @@ describe('preloadEmoji', () => {
     // The cache is page-wide: another picker, or this one after the prop
     // flips, must not inherit a base-only preload as a full one.
     const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
-    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d');
     preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
-    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d');
     preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
     expect(getEmojiUrl.mock.calls.map(([unified]) => unified)).toEqual([
       '1f44d',
@@ -50,7 +53,8 @@ describe('preloadEmoji', () => {
   it('skips a base-only preload after a full one', () => {
     const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
     preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE);
-    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, false);
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d');
+    preloadEmoji(getEmojiUrl, thumbsUp, EmojiStyle.APPLE, '1f44d-1f3fc');
     expect(getEmojiUrl).toHaveBeenCalledTimes(3);
   });
 });
