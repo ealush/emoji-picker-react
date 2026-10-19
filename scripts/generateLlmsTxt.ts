@@ -123,6 +123,11 @@ const DOCS: Array<[string, string, string]> = [
     'what changed and how to upgrade',
   ],
   [
+    'docs/v5/MIGRATING_FROM_EMOJI_MART.md',
+    'Migrating from emoji-mart',
+    'prop and payload mapping, size comparison, CSP',
+  ],
+  [
     'website/README.md',
     'Website examples',
     'typed customization, locale loading and composition',

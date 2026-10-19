@@ -38,11 +38,14 @@ export function Shell({
   title,
   detail,
   picked,
+  aside,
   children,
 }: {
   title: string;
   detail: string;
   picked: EmojiClickData[];
+  /** Replaces the selection log (a page that reports selections itself). */
+  aside?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const [manifest, setManifest] = React.useState<PackManifest | null>(null);
@@ -61,17 +64,23 @@ export function Shell({
       </header>
       <section aria-label="Picker">{children}</section>
       <aside>
-        <h2>Selected</h2>
-        <output data-testid="selected">
-          {latest ? `${latest.emoji} U+${latest.unified.toUpperCase()}` : '—'}
-        </output>
-        <ol data-testid="history">
-          {picked.map((emoji, index) => (
-            <li key={index}>
-              {emoji.emoji} <code>{emoji.unified}</code>
-            </li>
-          ))}
-        </ol>
+        {aside ?? (
+          <>
+            <h2>Selected</h2>
+            <output data-testid="selected">
+              {latest
+                ? `${latest.emoji} U+${latest.unified.toUpperCase()}`
+                : '—'}
+            </output>
+            <ol data-testid="history">
+              {picked.map((emoji, index) => (
+                <li key={index}>
+                  {emoji.emoji} <code>{emoji.unified}</code>
+                </li>
+              ))}
+            </ol>
+          </>
+        )}
       </aside>
       <footer data-testid="artifact">
         {manifest

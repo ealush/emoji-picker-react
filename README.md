@@ -54,6 +54,7 @@ See [PROPS.md](PROPS.md) for every prop.
 
 - **No third-party requests.** Emoji data for 28 languages ships in the package and native emoji are the default, so the picker never contacts a CDN. A dataset the primitives entry defers is a chunk your bundler serves from your own origin. Image styles (Apple, Google, Facebook, Twitter) load from jsDelivr unless [`getEmojiUrl`](PROPS.md) points at your own host.
 - **Strict Content Security Policy.** Styles are injected once per document; pass your policy's [`nonce`](CUSTOMIZATION.md) and nothing needs `'unsafe-inline'`.
+- **Coming from emoji-mart?** No `@emoji-mart/data` to bundle by hand, React 19 support and a `nonce`: see [Migrating from emoji-mart](docs/v5/MIGRATING_FROM_EMOJI_MART.md).
 - **Tested as installed.** Every pull request installs the packed tarball into fresh Vite, CommonJS and shadcn/ui apps, serves them under a strict CSP, and fails on any third-party request or CSP violation ([`playwright/packed-consumer.spec.ts`](playwright/packed-consumer.spec.ts)).
 
 ## Features
@@ -389,6 +390,10 @@ Every design below is the same picker, recomposed and restyled. [Try them live](
 ## Migrating from v4
 
 Most v4 code works unchanged. See [docs/v5/MIGRATION.md](docs/v5/MIGRATION.md).
+
+## Migrating from emoji-mart
+
+[docs/v5/MIGRATING_FROM_EMOJI_MART.md](docs/v5/MIGRATING_FROM_EMOJI_MART.md) maps every emoji-mart prop, the `onEmojiSelect` payload, theme variables and `SearchIndex` to their equivalents, with a size comparison you can rerun (`npm run compare:sizes`).
 
 ## For AI assistants
 

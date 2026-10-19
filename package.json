@@ -143,6 +143,7 @@
     "prepare": "husky && npm run build",
     "size": "size-limit",
     "check:pack-size": "tsx ./scripts/checkPackSize.ts",
+    "compare:sizes": "tsx ./scripts/compareSizes.ts",
     "analyze": "size-limit --why",
     "build:data:src": "tsc --project ./scripts/tsconfig.build.json && node ./scripts/dist/prepare.js",
     "build:data:dist": "tsc --project tsconfig.data.json && tsx ./scripts/copyData.ts && tsx ./scripts/buildDataTwins.ts",
