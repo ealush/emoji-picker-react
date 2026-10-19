@@ -1,14 +1,17 @@
 // Id references between picker parts (keepSearchFocus combobox). Kept
 // apart from keyboardNavigation so region registration stays light.
-let nextId = 0;
-
-/** Points `name` on `input` at `target`, assigning it an id, or removes it. */
+/**
+ * Points `name` on `input` at `target`, assigning it an id, or removes it.
+ * A random id, not a module counter: two copies of this module (CJS and
+ * ESM builds, micro-frontends) or a host's own `epr-<n>` ids cannot collide
+ * with it.
+ */
 export function idRef(
   input: Element | null,
   name: string,
   target?: Element | null,
 ) {
-  if (target) input?.setAttribute(name, (target.id ||= `epr-${++nextId}`));
+  if (target) input?.setAttribute(name, (target.id ||= `epr-${Math.random()}`));
   else input?.removeAttribute(name);
 }
 

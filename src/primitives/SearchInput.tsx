@@ -90,7 +90,7 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
         placeholder={placeholder}
         aria-label={label}
         {...nativeProps}
-        {...(keepFocus ? combobox : undefined)}
+        {...(keepFocus && combobox)}
         type="text"
         value={controller.value}
         data-epr-part="search-input"

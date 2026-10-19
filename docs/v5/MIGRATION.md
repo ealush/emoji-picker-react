@@ -254,7 +254,7 @@ is still called with `"apple"` as the style.
 
 v5 retains the existing React peer floor of `>=16.8`. The implementation is verified against a real React 16.8 consumer, not just a static source scan.
 
-v5 also removes v4's fixed, document-global IDs (`epr-search-id`, `epr-category-nav-id`), which collided when a page rendered two pickers. The picker renders no library-owned DOM IDs and has no `idPrefix` API. Tests or styles that targeted those IDs should use roles or `[data-epr-part]` selectors (`search-input`, `category-nav`).
+v5 also removes v4's fixed, document-global IDs (`epr-search-id`, `epr-category-nav-id`), which collided when a page rendered two pickers. The picker renders no fixed DOM IDs and has no `idPrefix` API. Only with `keepSearchFocus` does it give the grid and the highlighted cell generated IDs (random `epr-…` values, for `aria-controls` and `aria-activedescendant`), and it keeps an ID they already have. They are not stable across renders or pickers, so do not target them. Tests or styles that targeted those IDs should use roles or `[data-epr-part]` selectors (`search-input`, `category-nav`).
 
 ## Styling
 
