@@ -186,7 +186,9 @@ export function useKeyboardNavigation() {
   const selectFromSearch = () => {
     const engine = highlighter.current;
     if (keepSearchFocus && engine?.selectFirst(isSearchMode)) return;
-    const emoji = engine?.highlighted() ?? firstVisibleEmoji(BodyRef.current);
+    const emoji =
+      (keepSearchFocus && engine?.highlighted()) ||
+      firstVisibleEmoji(BodyRef.current);
     if (!keepSearchFocus) focusElement(emoji);
     emoji?.click();
   };
@@ -480,8 +482,7 @@ export function useFocusRegion() {
 
 // keepSearchFocus's highlight engine loads on demand, once per page, the
 // first time a picker with the prop mounts; pickers without it never load
-// it. It stays loaded (and keeps ending a highlight on Escape or blur) if
-// the prop is turned off.
+// it. Turning the prop off ends the highlight; the engine stays loaded.
 let engineModule: Promise<typeof import('./searchHighlight')> | undefined;
 export function loadSearchHighlight() {
   return (engineModule ||= import('./searchHighlight').catch((error) => {
@@ -498,6 +499,8 @@ function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
   // undefined while loading, null once loading failed.
   const engine = useRef<SearchHighlight | null | undefined>(undefined);
   useEffect(() => {
+    // Turned off: end the highlight, which also cancels a pending move.
+    if (!enabled) engine.current?.highlight(null);
     if (!enabled || engine.current) return;
     let live = true;
     loadSearchHighlight().then(

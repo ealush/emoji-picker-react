@@ -1580,7 +1580,7 @@ The input becomes an ARIA combobox with a grid popup: `aria-controls` names the 
 
 Primitive compositions pass the same prop to `Root`.
 
-The highlight code is a separate chunk that the first picker with `keepSearchFocus` loads when it mounts, so pickers without the prop never load it. Until it arrives, the arrow keys stay in the input; typing and Enter work from the start. If it fails to load (offline, a Content Security Policy, or a deploy that removed it), the arrow keys move focus into the grid as they do without the prop; the next picker mount tries again.
+The highlight code is a separate chunk that the first picker with `keepSearchFocus` loads when it mounts, so pickers without the prop never load it. Until it arrives, the arrow keys stay in the input; typing and Enter work from the start. If it fails to load (offline, a Content Security Policy, or a deploy that removed it), the arrow keys move focus into the grid as they do without the prop; the next picker mount tries again. Turning `keepSearchFocus` off ends a highlight, and Enter then selects the first result in view, as without the prop.
 
 ## 5. Search accessibility label
 

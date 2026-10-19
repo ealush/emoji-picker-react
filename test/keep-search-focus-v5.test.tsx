@@ -394,6 +394,40 @@ describe('keepSearchFocus', () => {
     await expectHighlight(input, 'emoji 0');
   });
 
+  it('ends the highlight when keepSearchFocus is turned off', async () => {
+    mockGridGeometry();
+    const onEmojiClick = vi.fn();
+    const picker = (keepSearchFocus: boolean) => (
+      <Picker.Root
+        emojiData={hundred}
+        categories={[Categories.SMILEYS_PEOPLE]}
+        autoFocusSearch={false}
+        keepSearchFocus={keepSearchFocus}
+        onEmojiClick={onEmojiClick}
+      >
+        <Picker.Search />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>
+    );
+    const { rerender } = render(picker(true));
+    const input = screen.getByRole('combobox');
+    act(() => input.focus());
+    await engineLoaded();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 1');
+
+    rerender(picker(false));
+    expect(highlighted()).toBeNull();
+    expect(input.hasAttribute('aria-activedescendant')).toBe(false);
+    // Enter selects the first result, as without the prop.
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await waitFor(() => expect(onEmojiClick).toHaveBeenCalled());
+    expect(onEmojiClick.mock.calls[0][0].names).toContain('emoji 0');
+  });
+
   it('does not pull focus out of search on hover', async () => {
     const { input } = await renderPicker();
     const cell = screen.getByRole('gridcell', { name: 'emoji 2' });
