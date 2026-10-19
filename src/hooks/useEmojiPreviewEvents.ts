@@ -72,17 +72,18 @@ export function useEmojiPreviewEvents(
         originalUnified,
       });
     }
+    // Hover previews the hovered cell; once it leaves, a keepSearchFocus
+    // highlight (still the one Enter selects) is shown again.
     function onLeave(e?: FocusEvent | MouseEvent) {
       if (e && !eventBelongsToPicker(e, bodyRef)) return;
-      if (e) {
-        const relatedTarget = e.relatedTarget as HTMLElement;
-
-        if (!buttonFromTarget(relatedTarget)) {
-          return setPreviewEmoji(null);
-        }
-      }
-
-      setPreviewEmoji(null);
+      const highlighted = bodyRef?.querySelector<HTMLElement>(
+        '[data-epr-highlighted]',
+      );
+      setPreviewEmoji(
+        highlighted
+          ? (allUnifiedFromEmojiElement(highlighted) as ActiveEmojiState)
+          : null,
+      );
     }
     function onEscape(e: KeyboardEvent) {
       if (!eventBelongsToPicker(e, bodyRef)) return;

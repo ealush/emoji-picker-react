@@ -170,15 +170,15 @@ export function useKeyboardNavigation() {
     } else if (leave('search', event.key)) event.preventDefault();
   };
   // keepSearchFocus: arrows move a highlight instead of focus. Until its
-  // code has loaded they stay in the input. Returns whether the key was
-  // taken.
+  // code has loaded they stay in the input; if it failed to load (null),
+  // they navigate as without the prop. Returns whether the key was taken.
   const moveHighlight = (
     event: KeyboardEvent,
     key: string,
     direction: number,
   ): boolean => {
-    if (!direction) return false;
     const engine = highlighter.current;
+    if (!direction || engine === null) return false;
     return !engine || engine.move(event, key, direction, isSearchMode);
   };
   // Enter in search selects the first result; with keepSearchFocus, the
@@ -345,13 +345,14 @@ export function useKeyboardNavigation() {
         handler.current(event, true);
     };
     // Leaving the search input ends a keepSearchFocus highlight.
-    const leave = (event: FocusEvent) => highlighter.current?.blur(event);
+    const endHighlight = (event: FocusEvent) =>
+      highlighter.current?.blur(event);
     current.addEventListener('keydown', scoped);
-    current.addEventListener('focusout', leave);
+    current.addEventListener('focusout', endHighlight);
     window.addEventListener('keydown', capture, true);
     return () => {
       current.removeEventListener('keydown', scoped);
-      current.removeEventListener('focusout', leave);
+      current.removeEventListener('focusout', endHighlight);
       window.removeEventListener('keydown', capture, true);
     };
     // The highlighter ref is stable for the Root's lifetime.
@@ -479,8 +480,8 @@ export function useFocusRegion() {
 
 // keepSearchFocus's highlight engine loads on demand, once per page, the
 // first time a picker with the prop mounts; pickers without it never load
-// it. It stays loaded (and keeps ending a highlight on Escape, blur or new
-// results) if the prop is turned off.
+// it. It stays loaded (and keeps ending a highlight on Escape or blur) if
+// the prop is turned off.
 let engineModule: Promise<typeof import('./searchHighlight')> | undefined;
 export function loadSearchHighlight() {
   return (engineModule ||= import('./searchHighlight').catch((error) => {
@@ -494,7 +495,8 @@ function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
   const body = useBodyRef();
   const input = useSearchInputRef();
   const setActiveEmoji = useSetActiveEmoji();
-  const engine = useRef<SearchHighlight | undefined>(undefined);
+  // undefined while loading, null once loading failed.
+  const engine = useRef<SearchHighlight | null | undefined>(undefined);
   useEffect(() => {
     if (!enabled || engine.current) return;
     let live = true;
@@ -518,7 +520,9 @@ function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
           );
       },
       // A failed load leaves the default navigation; a remount retries.
-      () => {},
+      () => {
+        if (live) engine.current = null;
+      },
     );
     return () => {
       live = false;

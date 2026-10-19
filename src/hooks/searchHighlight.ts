@@ -73,8 +73,9 @@ export function createSearchHighlight(
     focusLogicalEmoji,
   ]: SearchHighlightHost
 ) {
-  // The input's active descendant marks a highlight as wanted; typing,
-  // Escape or blur remove it and cancel a pending move.
+  // The input's active descendant marks a highlight as wanted, even while
+  // its cell is unmounted. Escape and blur remove it and cancel a pending
+  // move; new results keep it and move it to the first result.
   const wanted = () => !!input.current?.hasAttribute(ACTIVE_DESCENDANT);
   const highlighted = () => highlightedEmoji(body.current);
 
@@ -93,8 +94,8 @@ export function createSearchHighlight(
 
   // Highlights `emoji`, clears the highlight (null), or highlights the
   // first result (no argument), and mirrors it to the active emoji so
-  // Preview and useActiveEmoji follow the keyboard. Returns whether a cell
-  // was highlighted before.
+  // Preview and useActiveEmoji follow the keyboard. Returns whether a
+  // highlight was wanted before.
   const highlight = (emoji?: NullableElement): boolean => {
     if (emoji === undefined) {
       const generation = registry.currentGeneration();
@@ -113,11 +114,11 @@ export function createSearchHighlight(
     return highlightEmoji(emoji);
   };
 
-  // Moves the highlight to `emoji`, or clears it. Returns whether a cell
-  // was highlighted.
+  // Moves the highlight to `emoji`, or clears it. Returns whether a
+  // highlight was wanted, also when virtualization has unmounted its cell.
   const highlightEmoji = (emoji: NullableElement): boolean => {
-    const previous = highlighted();
-    previous?.removeAttribute(HIGHLIGHTED);
+    const before = wanted();
+    highlighted()?.removeAttribute(HIGHLIGHTED);
     emoji?.setAttribute(HIGHLIGHTED, '');
     // Focus would scroll the cell into view; a highlight has to ask.
     emoji?.scrollIntoView?.({ block: 'nearest' });
@@ -125,7 +126,7 @@ export function createSearchHighlight(
     // highlighted cell. Ids are assigned lazily.
     idRef(input.current, ACTIVE_DESCENDANT, emoji);
     watchUnmount(body.current, input.current, emoji);
-    return !!previous;
+    return before;
   };
 
   // The arrow that points from the search input toward the grid (physical
@@ -177,7 +178,8 @@ export function createSearchHighlight(
       }
       const generation = registry.currentGeneration();
       focusAdjacentEmoji(current, direction, row, {
-        // Escape, blur or typing ended the highlight before the move landed.
+        // Escape or blur ended the highlight, or new results replaced the
+        // grid, before the move landed.
         shouldFocus: () => registry.isCurrent(generation) && wanted(),
         // Past the grid edge that faces the input, the highlight ends.
         exit:
