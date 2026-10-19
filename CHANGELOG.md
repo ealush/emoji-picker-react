@@ -1,3 +1,20 @@
+## [5.1.0](https://github.com/ealush/emoji-picker-react/compare/5.0.0...5.1.0) (2026-10-19)
+
+### Features
+
+* add keepSearchFocus for typing while choosing with the keyboard ([#582](https://github.com/ealush/emoji-picker-react/issues/582)) ([7790c84](https://github.com/ealush/emoji-picker-react/commit/7790c84144363964d4e78aa21b10806ad8dc6149))
+* add variationsDisabled to turn off skin-tone variations ([#580](https://github.com/ealush/emoji-picker-react/issues/580)) ([0267d85](https://github.com/ealush/emoji-picker-react/commit/0267d8524a82a76aa2b2fc20cb0b86bb62e8558b))
+* move arrow keys between parts by their position on screen ([#581](https://github.com/ealush/emoji-picker-react/issues/581)) ([57dbb1e](https://github.com/ealush/emoji-picker-react/commit/57dbb1ea6d77539f4bc784c40ce3bbcb77aaed43))
+
+### Bug Fixes
+
+* **data:** name each emoji by its CLDR short name ([#578](https://github.com/ealush/emoji-picker-react/issues/578)) ([508cc9c](https://github.com/ealush/emoji-picker-react/commit/508cc9cfb6c3280e608f3c82b0996ec7f2d21669))
+* leave focus, Escape and recents to the host ([#579](https://github.com/ealush/emoji-picker-react/issues/579)) ([ac071dc](https://github.com/ealush/emoji-picker-react/commit/ac071dca7667d1f4b3d65fa5f850a25517bc680b))
+
+### Performance Improvements
+
+* **data:** store standard skin-tone variations compactly in the bundled dataset ([#585](https://github.com/ealush/emoji-picker-react/issues/585)) ([9f3c196](https://github.com/ealush/emoji-picker-react/commit/9f3c1963e880cfe429d7cf47f06bb7c46481b35d))
+
 ## [5.0.0](https://github.com/ealush/emoji-picker-react/compare/4.22.3...5.0.0) (2026-10-10)
 
 ### ⚠ BREAKING CHANGES
