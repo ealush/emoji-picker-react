@@ -79,17 +79,16 @@ function moveInGrid(
   const { exit } = options;
   const { columns } = categoryGeometry(category);
   // Left/Right at the first/last column leave for a part beside the grid.
-  if (
+  const edge =
     !row &&
     Number(element.dataset.eprIndex) % columns ===
-      (direction < 0 ? 0 : columns - 1) &&
-    exit?.()
-  )
-    return;
+      (direction < 0 ? 0 : columns - 1);
+  if (edge && exit?.()) return;
   const destination = logicalDestination(category, element, direction, row);
   if (destination)
     focusLogicalEmoji(destination.category, destination.index, options);
-  else exit?.();
+  // One exit per key: a sideways edge already asked.
+  else if (!edge) exit?.();
 }
 
 /** Cells fully in view: inside the scroll container, below the sticky label. */

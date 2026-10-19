@@ -124,30 +124,27 @@ export function useKeyboardNavigation() {
     if (key === 'Enter') {
       event.preventDefault();
       focusAndClickFirstVisibleEmoji(BodyRef.current);
-    } else if (
-      key === 'ArrowRight' &&
-      isSkinToneInSearch() &&
-      caretAtEdge(SearchInputRef.current, true)
-    ) {
-      event.preventDefault();
-      setIsOpen(true);
-      focusSkinTonePicker();
-    } else if (reactionFocusDelta(key)) {
+    } else if (arrowDelta(event, key)) {
       leaveSearch(event, key);
     }
   };
   // Left/Right edit the text; at its edge they leave for the part beside
-  // the input. Up/Down leave for the part above or below it.
+  // the input (the tones, when they sit in Search). Up/Down leave for the
+  // part above or below it.
   const leaveSearch = (event: KeyboardEvent, key: string) => {
     const sideways = key === 'ArrowLeft' || key === 'ArrowRight';
     if (sideways && !caretAtEdge(SearchInputRef.current, key === 'ArrowRight'))
       return;
-    if (leave('search', event.key)) event.preventDefault();
+    if (key === 'ArrowRight' && isSkinToneInSearch()) {
+      event.preventDefault();
+      setIsOpen(true);
+      focusSkinTonePicker();
+    } else if (leave('search', event.key)) event.preventDefault();
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
     const key = logicalArrowKey(event, SkinTonePickerRef.current);
-    const direction = reactionFocusDelta(key);
+    const direction = arrowDelta(event, key);
     if (!direction) return onType(event);
     event.preventDefault();
     // The fan axis decides the arrow keys: the search placement and a
@@ -189,12 +186,13 @@ export function useKeyboardNavigation() {
       return;
     }
     event.preventDefault();
-    const tab = getActiveElement();
+    // Tabs, not the bar's children: a custom tab may be wrapped.
+    const tabs = tabsOf(CategoryNavigationRef.current);
     const sibling =
       vertical === (key === 'ArrowUp' || key === 'ArrowDown') &&
-      (direction > 0 ? tab?.nextElementSibling : tab?.previousElementSibling);
+      tabs[tabs.indexOf(getActiveElement() as HTMLElement) + direction];
     // Past the first or last tab, or across the bar: the part that way.
-    if (sibling) focusElement(sibling as HTMLElement);
+    if (sibling) focusElement(sibling);
     else leave('categories', event.key);
   };
   const reactions = function onKeyDown(event: KeyboardEvent) {
@@ -304,6 +302,14 @@ function caretAtEdge(input: HTMLInputElement | null, end: boolean): boolean {
   return input.selectionStart === (end ? input.value.length : 0);
 }
 
+const tabsOf = (bar: Element | null) =>
+  Array.from(bar?.querySelectorAll<HTMLElement>('[role="tab"]') ?? []);
+
+// An arrow's step, or 0. Shift extends a selection and Ctrl/Alt move by
+// word: modified arrows are never navigation.
+const arrowDelta = (event: KeyboardEvent, key: string) =>
+  event.shiftKey || hasModifier(event) ? 0 : reactionFocusDelta(key);
+
 function eventInRegion(event: KeyboardEvent, ref: ElementRef): boolean {
   return !!ref.current?.contains(event.target as Node);
 }
@@ -375,10 +381,7 @@ export function useFocusRegion() {
           focusSearchInput();
           return true;
         case 'categories':
-          focusNear(
-            Array.from(region.element.children),
-            focusCategoryNavigation,
-          );
+          focusNear(tabsOf(region.element), focusCategoryNavigation);
           return true;
         case 'grid':
           focusNear(emojisInView(BodyRef.current), () =>

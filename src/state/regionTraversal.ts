@@ -90,34 +90,6 @@ export function findRegion(
   return regions.find((region) => region.kind === kind);
 }
 
-/** Next focusable region after `from` in DOM order, if any. */
-export function getNextRegion(
-  registry: NavigationRegistry,
-  rootElement: Element | null,
-  from: NavigationRegionKind,
-): RegisteredRegion | undefined {
-  const active = getActiveRegionsInDomOrder(registry, rootElement);
-  const index = active.findIndex((region) => region.kind === from);
-  if (index === -1) {
-    return undefined;
-  }
-  return active[index + 1];
-}
-
-/** Previous focusable region before `from` in DOM order, if any. */
-export function getPrevRegion(
-  registry: NavigationRegistry,
-  rootElement: Element | null,
-  from: NavigationRegionKind,
-): RegisteredRegion | undefined {
-  const active = getActiveRegionsInDomOrder(registry, rootElement);
-  const index = active.findIndex((region) => region.kind === from);
-  if (index <= 0) {
-    return undefined;
-  }
-  return active[index - 1];
-}
-
 type Box = Pick<DOMRect, 'top' | 'bottom' | 'left' | 'right'>;
 
 const rect = (element: Element): Box => element.getBoundingClientRect();
@@ -171,7 +143,9 @@ function distance(a: Box, b: Box, key: string): number {
 /**
  * The element of `candidates` nearest to `from` along the arrow, or
  * undefined without layout. Used to enter a region next to where focus
- * came from (the cell beside a rail tab, the tab above a cell).
+ * came from (the cell beside a rail tab, the tab above a cell). Not
+ * directional: callers pass the candidates of a region that already lies
+ * in the arrow's direction (getRegionInDirection).
  */
 export function nearestTo(
   from: Element,

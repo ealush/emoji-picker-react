@@ -171,8 +171,8 @@ for (const direction of ['ltr', 'rtl'] as const) {
  * - Uses ArrowDown from search to move focus to category tabs
  * - Uses ArrowRight to navigate between category tabs
  * - Uses ArrowDown to move focus into the emoji grid
- * - Verifies focus lands on the emoji below the focused tab
- *   ("grinning face with big eyes" sits under "Animals & Nature")
+ * - Verifies focus lands on a cell below the focused tab, overlapping
+ *   its horizontal range
  * - Uses the NoSuggested story to ensure consistent category order
  */
 test('keyboard navigation moves focus across controls and emojis', async ({
@@ -193,13 +193,19 @@ test('keyboard navigation moves focus across controls and emojis', async ({
     page.getByRole('tab', { name: 'Animals & Nature' }),
   ).toBeFocused();
 
+  const tabBox = (await page
+    .getByRole('tab', { name: 'Animals & Nature' })
+    .boundingBox())!;
   await page.keyboard.press('ArrowDown');
 
-  // Arrows enter the grid next to where focus was: below the tab.
-  const focusedElement = page.locator(
-    'button:focus[aria-label="grinning face with big eyes"]',
-  );
+  // Arrows enter the grid next to where focus was: the cell below the tab,
+  // whichever emoji the width and column count put there.
+  const focusedElement = page.locator('[data-epr-part="emoji"]:focus');
   await expect(focusedElement).toBeVisible();
+  const cellBox = (await focusedElement.boundingBox())!;
+  expect(cellBox.y).toBeGreaterThan(tabBox.y + tabBox.height);
+  expect(cellBox.x).toBeLessThan(tabBox.x + tabBox.width);
+  expect(cellBox.x + cellBox.width).toBeGreaterThan(tabBox.x);
 
   await page.keyboard.press('ArrowRight');
 

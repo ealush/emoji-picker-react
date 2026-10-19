@@ -585,12 +585,29 @@ async function openRegionOrder(page: Page, id: string, query?: string) {
   return search;
 }
 
+// Presses `key` and waits for focus to move (grid moves land a frame or
+// more later, after scrolling a row into view).
+async function pressAndMove(page: Page, key: string) {
+  await page.evaluate(() => {
+    (window as unknown as { from: Element | null }).from =
+      document.activeElement;
+  });
+  await page.keyboard.press(key);
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document.activeElement !==
+          (window as unknown as { from: Element | null }).from,
+      ),
+    )
+    .toBe(true);
+}
+
 // Presses `key` until focus reaches `part` (crossing the grid's rows).
 async function pressUntil(page: Page, key: string, part: string) {
-  for (let i = 0; i < 12 && (await focusedPart(page)) !== part; i++) {
-    await page.keyboard.press(key);
-    await page.waitForTimeout(60);
-  }
+  for (let i = 0; i < 12 && (await focusedPart(page)) !== part; i++)
+    await pressAndMove(page, key);
   await expect.poll(() => focusedPart(page)).toBe(part);
 }
 
@@ -642,16 +659,31 @@ test('region order follows CSS reordering, not DOM order', async ({ page }) => {
   await expect.poll(() => focusedPart(page)).toBe('search-input');
 });
 
-// Vertical center of the focused element.
+// Vertical center of the focused element, once scrolling has settled:
+// the same for three frames in a row.
 const focusedCenterY = (page: Page) =>
-  page.evaluate(() => {
-    const box = document.activeElement!.getBoundingClientRect();
-    return (box.top + box.bottom) / 2;
-  });
+  page.evaluate(
+    () =>
+      new Promise<number>((resolve) => {
+        let last = NaN;
+        let same = 0;
+        const frame = () => {
+          const box = document.activeElement!.getBoundingClientRect();
+          const y = (box.top + box.bottom) / 2;
+          same = y === last ? same + 1 : 0;
+          last = y;
+          if (same >= 3) resolve(y);
+          else requestAnimationFrame(frame);
+        };
+        frame();
+      }),
+  );
 
 for (const [id, towardRail, awayFromRail] of [
   ['rail-beside-grid', 'ArrowLeft', 'ArrowRight'],
   ['rail-beside-grid-rtl', 'ArrowRight', 'ArrowLeft'],
+  // Each tab wrapped in a span: entry and moves find the tabs themselves.
+  ['rail-wrapped-tabs', 'ArrowLeft', 'ArrowRight'],
 ] as const) {
   test(`${id}: arrows move between the rail and the row beside it`, async ({
     page,
@@ -660,9 +692,8 @@ for (const [id, towardRail, awayFromRail] of [
     // Search spans both; the grid lies straight below its middle.
     await page.keyboard.press('ArrowDown');
     await expect.poll(() => focusedPart(page)).toBe('emoji');
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(150);
+    await pressAndMove(page, 'ArrowDown');
+    await pressAndMove(page, 'ArrowDown');
     const cellY = await focusedCenterY(page);
 
     // First column: the tab beside this row.
@@ -671,18 +702,19 @@ for (const [id, towardRail, awayFromRail] of [
     expect(Math.abs((await focusedCenterY(page)) - cellY)).toBeLessThan(40);
 
     // Down the rail, then back: the cell beside that tab.
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowDown');
-    await page.waitForTimeout(150);
+    await pressAndMove(page, 'ArrowDown');
+    await pressAndMove(page, 'ArrowDown');
+    await expect.poll(() => focusedPart(page)).toBe('category-tab');
     const tabY = await focusedCenterY(page);
     await page.keyboard.press(awayFromRail);
     await expect.poll(() => focusedPart(page)).toBe('emoji');
     expect(Math.abs((await focusedCenterY(page)) - tabY)).toBeLessThan(40);
 
     // Nothing lies beyond the grid's other side: the arrow keeps wrapping.
-    for (let i = 0; i < 12; i++) await page.keyboard.press(awayFromRail);
-    await page.waitForTimeout(150);
-    expect(await focusedPart(page)).toBe('emoji');
+    for (let i = 0; i < 12; i++) {
+      await pressAndMove(page, awayFromRail);
+      expect(await focusedPart(page)).toBe('emoji');
+    }
 
     // The first tab leads up to the search input above the rail.
     await page.locator('[data-epr-part="category-tab"]').first().focus();
@@ -708,6 +740,23 @@ test('search ArrowRight moves the caret, and opens the tones only at its end', a
   await search.press('End');
   await search.press('ArrowRight');
   await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
+});
+
+test('the closed tone control in the preview leaves along its vertical fan', async ({
+  page,
+}) => {
+  await page.goto(
+    `${story('picker-overview--default')}&args=skinTonePickerLocation:PREVIEW`,
+  );
+  const tone = page.locator('[data-epr-part="skin-tone-button"]').first();
+  await expect(page.locator('[data-epr-part="skin-tone"]')).toHaveAttribute(
+    'data-epr-direction',
+    'vertical',
+  );
+  await tone.focus();
+  // Up runs along the fan; closed, it leaves for the grid above.
+  await page.keyboard.press('ArrowUp');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
 });
 
 test('an arrow across the open tone fan with nowhere to go keeps it open', async ({
