@@ -124,7 +124,11 @@ export function useKeyboardNavigation() {
     if (key === 'Enter') {
       event.preventDefault();
       focusAndClickFirstVisibleEmoji(BodyRef.current);
-    } else if (key === 'ArrowRight' && isSkinToneInSearch()) {
+    } else if (
+      key === 'ArrowRight' &&
+      isSkinToneInSearch() &&
+      caretAtEdge(SearchInputRef.current, true)
+    ) {
       event.preventDefault();
       setIsOpen(true);
       focusSkinTonePicker();
@@ -156,9 +160,10 @@ export function useKeyboardNavigation() {
     // elsewhere leaves for the part in the arrow's direction.
     const inSearch = isSkinToneInSearch();
     if (vertical !== (key === 'ArrowUp' || key === 'ArrowDown')) {
-      // Across the fan: close it and leave (from Search, as the input would).
-      setIsOpen(false);
-      leave(inSearch ? 'search' : 'preview-skin-tone', event.key);
+      // Across the fan: leave (from Search, as the input would) and close
+      // it. With nowhere to go, the fan stays open around the focused tone.
+      if (leave(inSearch ? 'search' : 'preview-skin-tone', event.key))
+        setIsOpen(false);
       return;
     }
     const exit = () =>

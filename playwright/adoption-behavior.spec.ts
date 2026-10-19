@@ -691,6 +691,55 @@ for (const [id, towardRail, awayFromRail] of [
   });
 }
 
+test('search ArrowRight moves the caret, and opens the tones only at its end', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('cat');
+  await search.press('Home');
+  await search.press('ArrowRight');
+  await expect(search).toBeFocused();
+  expect(
+    await search.evaluate((input: HTMLInputElement) => input.selectionStart),
+  ).toBe(1);
+  await search.press('End');
+  await search.press('ArrowRight');
+  await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
+});
+
+test('an arrow across the open tone fan with nowhere to go keeps it open', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.focus();
+  await search.press('ArrowRight');
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
+  // Nothing is above the search row.
+  await page.keyboard.press('ArrowUp');
+  // The focused tone stays shown once the fan's transition settles.
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const tone = document.activeElement as HTMLElement;
+        const fan = tone.closest('[data-epr-part="skin-tone"]');
+        return {
+          part: fan ? 'skin-tone' : 'none',
+          opacity: getComputedStyle(tone).opacity,
+          tabIndex: tone.tabIndex,
+          open: fan?.querySelectorAll('button[tabindex="0"]').length,
+        };
+      }),
+    )
+    .toEqual({ part: 'skin-tone', opacity: '1', tabIndex: 0, open: 6 });
+});
+
 test('hovering results keeps focus and the caret in the search input', async ({
   page,
 }) => {
