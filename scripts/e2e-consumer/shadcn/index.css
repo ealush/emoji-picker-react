@@ -1,0 +1,34 @@
+@import 'tailwindcss';
+/* The installed component and the page that renders it. */
+@source './components';
+@source '../shadcn';
+
+/* A violet brand theme, so the recording shows the component following the
+   app's shadcn tokens rather than the picker's own palette. */
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.985 0.006 300);
+  --foreground: oklch(0.2 0.03 300);
+  --popover: oklch(0.97 0.025 300);
+  --popover-foreground: oklch(0.25 0.05 300);
+  --accent: oklch(0.88 0.08 300);
+  --accent-foreground: oklch(0.25 0.05 300);
+  --muted-foreground: oklch(0.5 0.06 300);
+  --border: oklch(0.86 0.04 300);
+  --input: oklch(0.82 0.05 300);
+  --ring: oklch(0.6 0.2 300);
+}
+
+@theme inline {
+  --radius-md: calc(var(--radius) - 2px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}

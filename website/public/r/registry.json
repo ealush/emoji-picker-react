@@ -1,0 +1,22 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "emoji-picker-react",
+  "homepage": "https://ealush.com/emoji-picker-react",
+  "items": [
+    {
+      "name": "emoji-picker",
+      "type": "registry:ui",
+      "title": "Emoji Picker React",
+      "description": "Composable emoji picker with keyboard navigation, localized labels, custom emoji and reactions.",
+      "dependencies": [
+        "emoji-picker-react@^5.0.0"
+      ],
+      "files": [
+        {
+          "path": "registry/emoji-picker.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    }
+  ]
+}
