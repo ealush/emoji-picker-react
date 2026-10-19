@@ -164,10 +164,15 @@ export function useKeyboardNavigation() {
       return;
     }
     // Focusing search closes the fan; leaving elsewhere closes it here.
+    // In Search the fan opens toward the input, so only that arrow
+    // returns to it; the other leaves Search that way, if anything lies
+    // there (only reachable while the fan is closed).
     const exit = () =>
-      inSearch
-        ? focusSearchInput()
-        : leave('preview-skin-tone', event.key) && setIsOpen(false);
+      !inSearch
+        ? leave('preview-skin-tone', event.key) && setIsOpen(false)
+        : direction > 0
+          ? leave('search', event.key)
+          : focusSearchInput();
     if (!isOpen) return exit();
     if (direction < 0) focusNextSkinTone(exit);
     else focusPrevElementSibling(getActiveElement());

@@ -799,6 +799,24 @@ test('search ArrowRight moves the caret, and opens the tones only at its end', a
   await expect.poll(() => focusedPart(page)).toBe('skin-tone-button');
 });
 
+test('the closed tone control in Search keeps the arrow direction', async ({
+  page,
+}) => {
+  await page.goto(story('picker-overview--default'));
+  const fan = page.locator('[data-epr-part="skin-tone"]');
+  const shown = () => fan.locator('button[tabindex="0"]').count();
+  await page.locator('[data-epr-part="skin-tone-button"]').first().focus();
+  expect(await shown()).toBe(1);
+  // Nothing lies right of the control: Right stays, closed.
+  await page.keyboard.press('ArrowRight');
+  await settle(page);
+  expect(await focusedPart(page)).toBe('skin-tone-button');
+  expect(await shown()).toBe(1);
+  // The input lies to its left.
+  await page.keyboard.press('ArrowLeft');
+  await expect.poll(() => focusedPart(page)).toBe('search-input');
+});
+
 test('the closed tone control in the preview leaves along its vertical fan', async ({
   page,
 }) => {
