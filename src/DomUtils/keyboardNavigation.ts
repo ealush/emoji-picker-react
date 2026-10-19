@@ -1,6 +1,5 @@
 import { getLabelHeight } from './elementPositionInRow';
 import { focusElement } from './focusElement';
-import { idRef } from './idRef';
 import { scrollEmojiAboveLabel } from './scrollTo';
 import {
   closestCategory,
@@ -24,7 +23,7 @@ export function focusFirstVisibleEmoji(
 
 // Logical coordinates include unmounted cells. The DOM carries only the
 // filtered count, column geometry and each mounted cell's logical index.
-function categoryGeometry(category: HTMLElement) {
+export function categoryGeometry(category: HTMLElement) {
   const content = category.querySelector<HTMLElement>(
     '[data-epr-part="category-content"]',
   );
@@ -33,7 +32,7 @@ function categoryGeometry(category: HTMLElement) {
   return { content, count, columns };
 }
 
-type MoveOptions = {
+export type MoveOptions = {
   shouldFocus?: () => boolean;
   /**
    * Called when the move leaves the grid: no cell in that direction, or
@@ -98,20 +97,6 @@ export function emojisInView(body: NullableElement): HTMLElement[] {
   });
 }
 
-// The first cell of the first section with emojis (the first search
-// result), wherever the grid is scrolled and whichever rows are rendered.
-// Returns false when no section has emojis.
-export function moveToFirstEmoji(
-  body: NullableElement,
-  options: MoveOptions,
-): boolean {
-  const category = Array.from(
-    body?.querySelectorAll<HTMLElement>('[data-epr-part="category"]') ?? [],
-  ).find((section) => categoryGeometry(section).count > 0);
-  if (category) focusLogicalEmoji(category, 0, options);
-  return !!category;
-}
-
 function logicalDestination(
   category: HTMLElement,
   element: HTMLElement,
@@ -153,7 +138,7 @@ function adjacentDestination(
   return { category: adjacent, count, index };
 }
 
-function focusLogicalEmoji(
+export function focusLogicalEmoji(
   category: HTMLElement,
   index: number,
   { shouldFocus, moveTo = (emoji) => emoji.focus() }: MoveOptions,
@@ -185,54 +170,4 @@ function focusLogicalEmoji(
     requestAnimationFrame(attempt);
   };
   requestAnimationFrame(attempt);
-}
-
-// Search-keeps-focus mode: the input stays focused and points at one
-// highlighted cell through aria-activedescendant. The marker is a DOM
-// attribute rather than state so moving it rerenders nothing; a cell that
-// virtualization unmounts drops the highlight, and the input keeps an
-// empty active descendant so arrows stay with the highlight.
-const HIGHLIGHTED = 'data-epr-highlighted';
-export const ACTIVE_DESCENDANT = 'aria-activedescendant';
-const unmountWatchers = new WeakMap<Element, MutationObserver>();
-
-export function highlightedEmoji(body: NullableElement): NullableElement {
-  return body?.querySelector<HTMLElement>(`[${HIGHLIGHTED}]`) ?? null;
-}
-
-/** Moves the highlight to `emoji`, or clears it. Returns whether a cell was highlighted. */
-export function highlightEmoji(
-  body: NullableElement,
-  input: NullableElement,
-  emoji: NullableElement,
-): boolean {
-  const previous = highlightedEmoji(body);
-  previous?.removeAttribute(HIGHLIGHTED);
-  emoji?.setAttribute(HIGHLIGHTED, '');
-  // Focus would scroll the cell into view; a highlight has to ask.
-  emoji?.scrollIntoView?.({ block: 'nearest' });
-  // Combobox with a grid popup (ARIA 1.2): the input names the
-  // highlighted cell. Ids are assigned lazily.
-  idRef(input, ACTIVE_DESCENDANT, emoji);
-  watchUnmount(body, input, emoji);
-  return !!previous;
-}
-
-// Clears the input's reference once virtualization removes the cell.
-function watchUnmount(
-  body: NullableElement,
-  input: NullableElement,
-  emoji: NullableElement,
-) {
-  if (!input) return;
-  unmountWatchers.get(input)?.disconnect();
-  if (!body || !emoji || typeof MutationObserver === 'undefined') return;
-  const watcher = new MutationObserver(() => {
-    if (emoji.isConnected) return;
-    watcher.disconnect();
-    if (input.getAttribute(ACTIVE_DESCENDANT) === emoji.id)
-      input.setAttribute(ACTIVE_DESCENDANT, '');
-  });
-  watcher.observe(body, { childList: true, subtree: true });
-  unmountWatchers.set(input, watcher);
 }

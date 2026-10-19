@@ -123,6 +123,8 @@ The input becomes an ARIA combobox with a grid popup: `aria-controls` names the 
 
 Primitive compositions pass the same prop to `Root`.
 
+The highlight code is a separate chunk that the first picker with `keepSearchFocus` loads when it mounts, so pickers without the prop never load it. Until it arrives, the arrow keys stay in the input; typing and Enter work from the start.
+
 ## 5. Search accessibility label
 
 The search input's accessible label, an English constant in v4, is configurable:

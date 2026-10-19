@@ -45,7 +45,6 @@ export function useRegisterRegion(
     let unregister: (() => void) | undefined;
     // A keepSearchFocus input controls the grid whenever both are mounted.
     const link = () => {
-      if (kind !== 'search' && kind !== 'grid') return;
       const [search] = registry.getRegionsByKind('search');
       const [grid] = registry.getRegionsByKind('grid');
       linkComboboxToGrid(search?.element, grid?.element);

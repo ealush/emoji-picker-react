@@ -11,7 +11,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import EmojiPicker from '../src';
 import * as Picker from '../src/primitives';
 import { Categories } from '../src/config/categoryConfig';
+import { loadSearchHighlight } from '../src/hooks/useKeyboardNavigation';
 import { EmojiData, EmojiStyle } from '../src/types/exposedTypes';
+
+// Counts loads of the keepSearchFocus highlight engine, which pickers
+// import on demand.
+const engine = vi.hoisted(() => ({ loads: 0 }));
+vi.mock('../src/hooks/searchHighlight', async (importOriginal) => {
+  engine.loads += 1;
+  return importOriginal();
+});
 
 vi.mock('../src/hooks/preloadEmoji', () => ({
   preloadEmojiIfNeeded: () => undefined,
@@ -110,7 +119,7 @@ function mockGridGeometry() {
   );
 }
 
-function renderPicker(
+function renderPickerNow(
   props: Partial<Picker.RootProps> = {},
   searchChildren?: React.ReactNode,
 ) {
@@ -137,6 +146,21 @@ function renderPicker(
   return { input, onEmojiClick };
 }
 
+// keepSearchFocus loads its highlight engine once the picker mounts.
+const engineLoaded = () =>
+  act(async () => {
+    await loadSearchHighlight();
+  });
+
+async function renderPicker(
+  props: Partial<Picker.RootProps> = {},
+  searchChildren?: React.ReactNode,
+) {
+  const rendered = renderPickerNow(props, searchChildren);
+  await engineLoaded();
+  return rendered;
+}
+
 const highlighted = () =>
   document.querySelector<HTMLElement>('[data-epr-highlighted]');
 
@@ -148,9 +172,35 @@ async function expectHighlight(input: HTMLElement, name: string) {
   expect(document.activeElement).toBe(input);
 }
 
+// These run first: the engine stays loaded for the rest of the file.
+describe('keepSearchFocus loading', () => {
+  it('is not loaded by pickers without keepSearchFocus', async () => {
+    renderPickerWithoutKeepFocus();
+    fireEvent.keyDown(screen.getByRole('textbox'), { key: 'ArrowDown' });
+    await waitFor(() =>
+      expect(document.activeElement).toBe(
+        screen.getByRole('gridcell', { name: 'emoji 0' }),
+      ),
+    );
+    expect(engine.loads).toBe(0);
+  });
+
+  it('keeps arrows in the search input until it has loaded', async () => {
+    const { input } = renderPickerNow();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(document.activeElement).toBe(input);
+    expect(highlighted()).toBeNull();
+    await engineLoaded();
+    expect(engine.loads).toBe(1);
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+  });
+});
+
 describe('keepSearchFocus', () => {
   it('makes the search input a combobox that controls the grid', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     expect(input.getAttribute('aria-haspopup')).toBe('grid');
     expect(input.getAttribute('aria-expanded')).toBe('true');
     // The grid is linked before anything is highlighted, and stays linked.
@@ -167,7 +217,7 @@ describe('keepSearchFocus', () => {
   it('cancels a pending highlight move on Escape and on blur', async () => {
     const frame = () =>
       act(() => new Promise((resolve) => requestAnimationFrame(resolve)));
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     // The move lands on the next frame; Escape comes first.
@@ -190,7 +240,7 @@ describe('keepSearchFocus', () => {
 
   it('starts with ArrowRight when the search input is beside the grid', async () => {
     searchBeside = true;
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     // ArrowDown points away from the grid: nothing to highlight.
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -209,7 +259,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('drops the active descendant when virtualization unmounts its cell', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     const body = document.querySelector<HTMLElement>(
@@ -226,7 +276,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('moves a highlight with the arrow keys while focus stays in search', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     // Left/Right edit text until a cell is highlighted.
     fireEvent.keyDown(input, { key: 'ArrowRight' });
     expect(highlighted()).toBeNull();
@@ -244,7 +294,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('highlights rows that virtualization has not rendered yet', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     const body = document.querySelector<HTMLElement>(
       '[data-epr-part="viewport"]',
     )!;
@@ -265,7 +315,7 @@ describe('keepSearchFocus', () => {
 
   it('starts with ArrowUp when the search input is below the grid', async () => {
     searchBelow = true;
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     // ArrowDown points away from the grid: nothing to highlight.
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -284,7 +334,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('clears the highlight on ArrowUp from the first row', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     fireEvent.keyDown(input, { key: 'ArrowUp' });
@@ -294,7 +344,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('selects the highlighted emoji on Enter without moving focus', async () => {
-    const { input, onEmojiClick } = renderPicker();
+    const { input, onEmojiClick } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     fireEvent.keyDown(input, { key: 'ArrowRight' });
     await expectHighlight(input, 'emoji 1');
@@ -304,15 +354,15 @@ describe('keepSearchFocus', () => {
     expect(document.activeElement).toBe(input);
   });
 
-  it('selects the first emoji on Enter when nothing is highlighted', () => {
-    const { input, onEmojiClick } = renderPicker();
+  it('selects the first emoji on Enter when nothing is highlighted', async () => {
+    const { input, onEmojiClick } = await renderPicker();
     fireEvent.keyDown(input, { key: 'Enter' });
     expect(onEmojiClick.mock.calls[0][0].names).toContain('emoji 0');
     expect(document.activeElement).toBe(input);
   });
 
   it('selects the first result on Enter even when the results are scrolled', async () => {
-    const { input, onEmojiClick } = renderPicker();
+    const { input, onEmojiClick } = await renderPicker();
     fireEvent.change(input, { target: { value: 'emoji 1' } });
     await waitFor(() =>
       expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
@@ -330,7 +380,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('dismisses the highlight on Escape before clearing the search', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.change(input, { target: { value: 'emoji' } });
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
@@ -342,7 +392,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('moves the highlight to the first result when the search changes', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     fireEvent.keyDown(input, { key: 'ArrowRight' });
     await expectHighlight(input, 'emoji 1');
@@ -351,7 +401,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('does not start a highlight from typing alone', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.change(input, { target: { value: 'emoji 5' } });
     await waitFor(() =>
       expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
@@ -362,7 +412,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('drops the highlight when focus leaves the search input', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     act(() => input.blur());
@@ -371,7 +421,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('moves an arrow pressed during the search debounce to the new first result', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     fireEvent.change(input, { target: { value: 'emoji 5' } });
     // Filtering is debounced: this lands on the old results first.
     fireEvent.keyDown(input, { key: 'ArrowDown' });
@@ -380,7 +430,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('highlights the first result wherever the grid is scrolled', async () => {
-    const { input } = renderPicker({}, <Picker.SkinTone />);
+    const { input } = await renderPicker({}, <Picker.SkinTone />);
     fireEvent.change(input, { target: { value: 'emoji 5' } });
     await waitFor(() =>
       expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
@@ -395,7 +445,7 @@ describe('keepSearchFocus', () => {
   });
 
   it('keeps arrows on the highlight while its cell is replaced', async () => {
-    const { input } = renderPicker({}, <Picker.SkinTone />);
+    const { input } = await renderPicker({}, <Picker.SkinTone />);
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     // New results or virtualization removed the highlighted cell; the
@@ -429,12 +479,13 @@ describe('keepSearchFocus', () => {
     );
     const input = screen.getByRole('combobox');
     act(() => input.focus());
+    await engineLoaded();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await waitFor(() => expect(active?.names).toContain('emoji 0'));
   });
 
   it('does not pull focus out of search on hover', async () => {
-    const { input } = renderPicker();
+    const { input } = await renderPicker();
     const cell = screen.getByRole('gridcell', { name: 'emoji 2' });
     fireEvent.mouseOver(cell);
     await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -453,6 +504,7 @@ describe('keepSearchFocus', () => {
     );
     const input = screen.getByRole('combobox');
     act(() => input.focus());
+    await engineLoaded();
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     await expectHighlight(input, 'emoji 0');
     const css = Array.from(document.querySelectorAll('style'))
