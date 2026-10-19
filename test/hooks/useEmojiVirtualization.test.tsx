@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useBodyRef } from '../../src/components/context/ElementRefContext';
 import { DataEmojis } from '../../src/dataUtils/DataTypes';
+import { useVariationsDisabledConfig } from '../../src/config/useConfig';
+import { preloadEmojiIfNeeded } from '../../src/hooks/preloadEmoji';
 import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import {
@@ -121,6 +123,25 @@ describe('useEmojiVirtualization', () => {
 
     expect(result.current.virtualizedCounter).toBe(3); // All 3 virtualized
     expect(result.current.emojis.length).toBe(0);
+  });
+
+  it('preloads only the base image with variationsDisabled', () => {
+    (shouldVirtualize as any).mockReturnValue(true);
+    (useVariationsDisabledConfig as any).mockReturnValue(true);
+    renderHook(() =>
+      useEmojiVirtualization({
+        categoryEmojis: mockEmojis,
+        topOffset: 5000,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      }),
+    );
+    expect(preloadEmojiIfNeeded).toHaveBeenCalled();
+    for (const call of (preloadEmojiIfNeeded as any).mock.calls)
+      expect(call.at(-1)).toBe(false);
+    (useVariationsDisabledConfig as any).mockReturnValue(false);
   });
 
   it('requests native glyph checks for the rendered cells only', () => {

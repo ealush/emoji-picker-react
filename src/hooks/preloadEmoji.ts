@@ -14,6 +14,7 @@ export function preloadEmojiIfNeeded(
   style: { top: number } | undefined,
   dimensions: Dimensions,
   getEmojiUrl: GetEmojiUrl,
+  variations: boolean,
 ): void {
   if (!emoji) {
     return;
@@ -43,7 +44,7 @@ export function preloadEmojiIfNeeded(
       emojiTop < viewportBottom + dimensions.emojiSize * 2;
 
     if (isJustBelowViewport) {
-      preloadEmoji(getEmojiUrl, emoji, emojiStyles);
+      preloadEmoji(getEmojiUrl, emoji, emojiStyles, variations);
     }
   });
 }
@@ -52,6 +53,7 @@ export function preloadEmoji(
   getEmojiUrl: GetEmojiUrl,
   emoji: undefined | DataEmoji,
   emojiStyle: EmojiStyleValue,
+  variations = true,
 ): void {
   if (!emoji) {
     return;
@@ -64,7 +66,8 @@ export function preloadEmoji(
   }
   preloadedEmojs.add(unified);
 
-  emojiVariations(emoji)
+  // Skin-tone images only when the variation menu can open.
+  (variations ? emojiVariations(emoji) : [])
     .concat(unified)
     .forEach((variation) => {
       const emojiUrl = getEmojiUrl(variation, emojiStyle);

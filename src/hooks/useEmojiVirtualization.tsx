@@ -112,6 +112,7 @@ export function useEmojiVirtualization({
         style,
         dimensions,
         getEmojiUrl,
+        !variationsDisabled,
       );
       return accumulator;
     }

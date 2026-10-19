@@ -219,6 +219,26 @@ describe('variationsDisabled', () => {
     expect(variationMenu(container)).toHaveLength(0);
   });
 
+  it('closes an open menu when variations are turned off', () => {
+    vi.useFakeTimers();
+    const { container, rerender } = render(
+      <Picker.Root emojiData={data}>{grid}</Picker.Root>,
+    );
+    const cell = screen.getByRole('gridcell', { name: 'thumbs up' });
+    fireEvent.mouseDown(cell);
+    act(() => vi.advanceTimersByTime(500));
+    expect(variationMenu(container)).toHaveLength(2);
+
+    rerender(
+      <Picker.Root emojiData={data} variationsDisabled>
+        {grid}
+      </Picker.Root>,
+    );
+    expect(variationMenu(container)).toHaveLength(0);
+    // No menu is left open to swallow Escape.
+    expect(fireEvent.keyDown(cell, { key: 'Escape' })).toBe(true);
+  });
+
   it('reports hasVariations: false to a custom cell', () => {
     const seen: boolean[] = [];
     const Emoji: NonNullable<Picker.PickerComponents['Emoji']> = ({
