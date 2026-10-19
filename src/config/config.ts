@@ -216,6 +216,7 @@ export function resolveSkinTonePickerLocation(
 export function basePickerConfig(): PickerConfigInternal {
   return {
     autoFocusSearch: true,
+    keepSearchFocus: false,
     categories: baseCategoriesConfig(),
     className: '',
     customEmojis: [],
@@ -269,6 +270,12 @@ export type PickerConfigInternal = {
   defaultSkinTone: SkinTonesValue;
   skinTonesDisabled: boolean;
   autoFocusSearch: boolean;
+  /**
+   * Keep focus in the search input while the arrow keys move a highlight
+   * through the grid, so typing continues; Enter selects the highlighted
+   * emoji. Default: arrows move focus into the grid.
+   */
+  keepSearchFocus: boolean;
   /**
    * Turns off skin-tone variations in the grid: no long press, no Space
    * menu, no variation marker. The active skin tone still applies.

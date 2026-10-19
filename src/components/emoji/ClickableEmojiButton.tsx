@@ -167,6 +167,10 @@ const styles = /* @__PURE__ */ (() =>
       ':focus': {
         backgroundColor: 'var(--epr-focus-bg-color)',
       },
+      // keepSearchFocus: the keyboard highlight looks like focus.
+      ':is([data-epr-highlighted])': {
+        backgroundColor: 'var(--epr-focus-bg-color)',
+      },
     },
     noBackground: {
       background: 'none',

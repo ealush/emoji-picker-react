@@ -13,6 +13,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `emojiVersion`    | `string`     | `null`             | Limit emojis to a specific Unicode emoji version (e.g., `"14.0"`). Native mode additionally filters detected unsupported glyphs, even with this cap set; see [native detection limits](docs/v5/API.md#5c-native-emoji-support-detection). |
 | `lazyLoadEmojis`  | `boolean`    | `false`            | If true, emoji images are loaded only when they scroll into view.                            |
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
+| `keepSearchFocus` | `boolean`    | `false`            | Keeps focus in the search input while the arrow keys move a highlight through the emojis, so typing can continue. Enter selects the highlighted emoji. By default the arrow keys move focus into the grid. See [API.md](docs/v5/API.md#4a-keep-focus-in-search). |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
 | `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). |
 

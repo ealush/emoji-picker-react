@@ -21,16 +21,9 @@ export function focusFirstVisibleEmoji(
   scrollEmojiAboveLabel(emoji, shouldFocus);
 }
 
-export function focusAndClickFirstVisibleEmoji(parent: NullableElement) {
-  const firstEmoji = firstVisibleEmoji(parent);
-
-  focusElement(firstEmoji);
-  firstEmoji?.click();
-}
-
 // Logical coordinates include unmounted cells. The DOM carries only the
 // filtered count, column geometry and each mounted cell's logical index.
-function categoryGeometry(category: HTMLElement) {
+export function categoryGeometry(category: HTMLElement) {
   const content = category.querySelector<HTMLElement>(
     '[data-epr-part="category-content"]',
   );
@@ -39,7 +32,7 @@ function categoryGeometry(category: HTMLElement) {
   return { content, count, columns };
 }
 
-type MoveOptions = {
+export type MoveOptions = {
   shouldFocus?: () => boolean;
   /**
    * Called when the move leaves the grid: no cell in that direction, or
@@ -47,6 +40,8 @@ type MoveOptions = {
    * false (nothing beside the grid) keeps wrapping through the rows.
    */
   exit?: () => boolean | void;
+  /** Receives the destination cell; focuses it by default. */
+  moveTo?: (emoji: HTMLElement) => void;
 };
 
 export function focusAdjacentEmoji(
@@ -143,10 +138,10 @@ function adjacentDestination(
   return { category: adjacent, count, index };
 }
 
-function focusLogicalEmoji(
+export function focusLogicalEmoji(
   category: HTMLElement,
   index: number,
-  { shouldFocus }: MoveOptions,
+  { shouldFocus, moveTo = (emoji) => emoji.focus() }: MoveOptions,
 ) {
   const { content, columns, count } = categoryGeometry(category);
   const body = closestScrollBody(category);
@@ -161,7 +156,7 @@ function focusLogicalEmoji(
       `${VisibleEmojiSelector}[data-epr-index="${index}"]`,
     );
     if (emoji) {
-      emoji.focus();
+      moveTo(emoji);
       scrollEmojiAboveLabel(emoji, valid);
       return;
     }

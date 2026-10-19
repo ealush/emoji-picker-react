@@ -5,6 +5,7 @@ import {
   formatSearchResultsLabel,
   useLabels,
   useAutoFocusSearchConfig,
+  useKeepSearchFocusConfig,
   useSearchLabelConfig,
   useSearchPlaceHolderConfig,
 } from '../config/useConfig';
@@ -36,6 +37,14 @@ const hiddenStatus: React.CSSProperties = {
   width: 1,
 };
 
+// Combobox with a grid popup (keepSearchFocus): aria-activedescendant
+// names the highlighted cell and is set when a cell is highlighted.
+const combobox = {
+  role: 'combobox',
+  'aria-haspopup': 'grid',
+  'aria-expanded': true,
+} as const;
+
 /** Native input, or a ref-forwarding design-system input. Root owns its value. */
 export const SearchInput = /* @__PURE__ */ React.forwardRef<
   HTMLInputElement,
@@ -52,7 +61,9 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
   const resultCount = useVisibleSearchResultCount();
   const { loading, error } = useEmojiDataState();
   const controller = useSearchInputController();
-  useRegisterRegion('search', inputRef);
+  const keepFocus = useKeepSearchFocusConfig();
+  // Rerun on keepFocus so the combobox links to (or unlinks from) the grid.
+  useRegisterRegion('search', inputRef, [keepFocus]);
   const {
     as: Input = 'input',
     onChange,
@@ -79,6 +90,7 @@ export const SearchInput = /* @__PURE__ */ React.forwardRef<
         placeholder={placeholder}
         aria-label={label}
         {...nativeProps}
+        {...(keepFocus && combobox)}
         type="text"
         value={controller.value}
         data-epr-part="search-input"

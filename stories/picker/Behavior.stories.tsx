@@ -40,3 +40,10 @@ export const SingleCategory = (args: Props) => (
     ]}
   />
 );
+
+// Arrow keys highlight emojis while focus stays in the search input.
+export const KeepSearchFocus = (args: Props) => (
+  <Template {...args} keepSearchFocus />
+);
+// Interaction, not appearance: covered by playwright/adoption-behavior.spec.ts.
+KeepSearchFocus.tags = ['!visual'];

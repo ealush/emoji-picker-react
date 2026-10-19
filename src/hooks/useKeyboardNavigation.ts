@@ -7,15 +7,21 @@ import {
   focusPrevElementSibling,
 } from '../DomUtils/focusElement';
 import { getActiveElement } from '../DomUtils/getActiveElement';
+import { idRef } from '../DomUtils/idRef';
 import { isRtl } from '../DomUtils/isRtl';
 import {
+  categoryGeometry,
   emojisInView,
-  focusAndClickFirstVisibleEmoji,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
+  focusLogicalEmoji,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
-import { buttonFromTarget } from '../DomUtils/selectors';
+import {
+  allUnifiedFromEmojiElement,
+  buttonFromTarget,
+  firstVisibleEmoji,
+} from '../DomUtils/selectors';
 import {
   ElementRef,
   useBodyRef,
@@ -29,18 +35,23 @@ import {
   useNavigationRegistry,
   useSearchComposingState,
   useSearchDisplayState,
+  useSearchTermState,
+  useSetActiveEmoji,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
 import {
+  useKeepSearchFocusConfig,
   useSearchDisabledConfig,
   useVariationsDisabledConfig,
 } from '../config/useConfig';
 import {
   NavigationRegionKind,
+  NavigationRegistry,
   RegisteredRegion,
 } from '../state/navigationRegistry';
 import { getRegionInDirection, nearestTo } from '../state/regionTraversal';
 
+import type { SearchHighlight } from './searchHighlight';
 import {
   useCloseAllOpenToggles,
   useHasOpenToggles,
@@ -72,6 +83,7 @@ export function useKeyboardNavigation() {
   const SearchInputRef = useSearchInputRef();
   const [isOpen, setIsOpen] = useSkinToneFanOpenState();
   const leave = useLeaveRegion();
+  const isSearchMode = useIsSearchMode();
   const SkinTonePickerRef = useSkinTonePickerRef();
   const isSkinToneInSearch = () =>
     !!SkinTonePickerRef.current?.closest('[data-epr-part="search"]');
@@ -81,6 +93,9 @@ export function useKeyboardNavigation() {
   const setVariationPicker = useSetVariationPicker();
   const variationsDisabled = useVariationsDisabledConfig();
   const registry = useNavigationRegistry();
+  const keepSearchFocus = useKeepSearchFocusConfig();
+  const highlighter = useSearchHighlight(keepSearchFocus, registry);
+  const [searchTerm] = useSearchTermState();
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
@@ -90,15 +105,23 @@ export function useKeyboardNavigation() {
   useEffect(() => {
     clearProposed.current = false;
   }, [searchValue, displayed]);
+  // A highlight follows the results: once a new result set commits, it
+  // moves to the first result (also when an arrow key landed on the old
+  // results inside the filter debounce).
+  useEffect(() => {
+    highlighter.current?.highlight();
+    // Per committed result set; the highlighter reads live refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm]);
   const main = function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
     disallowMouseMove();
     switch (key) {
       case 'Escape':
-        // Escape undoes one thing: an open menu, then the search text. With
-        // nothing to undo it stays untouched for the host (closing a
-        // popover or dialog).
+        // Escape undoes one thing: an open menu, a highlight
+        // (keepSearchFocus), then the search text. With nothing to undo it
+        // stays untouched for the host (closing a popover or dialog).
         if (hasOpenToggles()) {
           event.preventDefault();
           closeAllOpenToggles();
@@ -107,7 +130,9 @@ export function useKeyboardNavigation() {
           event.stopPropagation();
           return;
         }
-        if ((searchValue || displayed) && !clearProposed.current) {
+        if (highlighter.current?.highlight(null)) {
+          event.preventDefault();
+        } else if ((searchValue || displayed) && !clearProposed.current) {
           event.preventDefault();
           clearProposed.current = true;
           clearSearch();
@@ -121,10 +146,13 @@ export function useKeyboardNavigation() {
     if (!eventInRegion(event, SearchInputRef)) return;
     const key = logicalArrowKey(event, SearchInputRef.current);
 
+    // Modified arrows are the input's own, with or without a highlight.
+    const direction = arrowDelta(event, key);
+    if (keepSearchFocus && moveHighlight(event, key, direction)) return;
     if (key === 'Enter') {
       event.preventDefault();
-      focusAndClickFirstVisibleEmoji(BodyRef.current);
-    } else if (arrowDelta(event, key)) {
+      selectFromSearch();
+    } else if (direction) {
       leaveSearch(event, key);
     }
   };
@@ -140,6 +168,29 @@ export function useKeyboardNavigation() {
       setIsOpen(true);
       focusSkinTonePicker();
     } else if (leave('search', event.key)) event.preventDefault();
+  };
+  // keepSearchFocus: arrows move a highlight instead of focus. Until its
+  // code has loaded they stay in the input; if it failed to load (null),
+  // they navigate as without the prop. Returns whether the key was taken.
+  const moveHighlight = (
+    event: KeyboardEvent,
+    key: string,
+    direction: number,
+  ): boolean => {
+    const engine = highlighter.current;
+    if (!direction || engine === null) return false;
+    return !engine || engine.move(event, key, direction, isSearchMode);
+  };
+  // Enter in search selects the first result; with keepSearchFocus, the
+  // highlighted one, without moving focus.
+  const selectFromSearch = () => {
+    const engine = highlighter.current;
+    if (keepSearchFocus && engine?.selectFirst(isSearchMode)) return;
+    const emoji =
+      (keepSearchFocus && engine?.highlighted()) ||
+      firstVisibleEmoji(BodyRef.current);
+    if (!keepSearchFocus) focusElement(emoji);
+    emoji?.click();
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
@@ -295,12 +346,19 @@ export function useKeyboardNavigation() {
       if (event.key === 'Escape' && eventBelongsToPicker(event, current))
         handler.current(event, true);
     };
+    // Leaving the search input ends a keepSearchFocus highlight.
+    const endHighlight = (event: FocusEvent) =>
+      highlighter.current?.blur(event);
     current.addEventListener('keydown', scoped);
+    current.addEventListener('focusout', endHighlight);
     window.addEventListener('keydown', capture, true);
     return () => {
       current.removeEventListener('keydown', scoped);
+      current.removeEventListener('focusout', endHighlight);
       window.removeEventListener('keydown', capture, true);
     };
+    // The highlighter ref is stable for the Root's lifetime.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref]);
 }
 
@@ -420,6 +478,62 @@ export function useFocusRegion() {
       registry,
     ],
   );
+}
+
+// keepSearchFocus's highlight engine loads on demand, once per page, the
+// first time a picker with the prop mounts; pickers without it never load
+// it. Turning the prop off ends the highlight; the engine stays loaded.
+let engineModule: Promise<typeof import('./searchHighlight')> | undefined;
+export function loadSearchHighlight() {
+  return (engineModule ||= import('./searchHighlight').catch((error) => {
+    engineModule = undefined;
+    throw error;
+  }));
+}
+
+function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
+  const main = usePickerMainRef();
+  const body = useBodyRef();
+  const input = useSearchInputRef();
+  const setActiveEmoji = useSetActiveEmoji();
+  // undefined while loading, null once loading failed.
+  const engine = useRef<SearchHighlight | null | undefined>(undefined);
+  useEffect(() => {
+    // Turned off: end the highlight, which also cancels a pending move.
+    if (!enabled) engine.current?.highlight(null);
+    if (!enabled || engine.current) return;
+    let live = true;
+    loadSearchHighlight().then(
+      ({ createSearchHighlight }) => {
+        if (live && !engine.current)
+          engine.current = createSearchHighlight(
+            main,
+            body,
+            input,
+            registry,
+            setActiveEmoji,
+            allUnifiedFromEmojiElement,
+            caretAtEdge,
+            firstVisibleEmoji,
+            focusAdjacentEmoji,
+            getRegionInDirection,
+            idRef,
+            categoryGeometry,
+            focusLogicalEmoji,
+          );
+      },
+      // A failed load leaves the default navigation; a remount retries.
+      () => {
+        if (live) engine.current = null;
+      },
+    );
+    return () => {
+      live = false;
+    };
+    // Refs, registry and store setter are stable for the Root's lifetime.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]);
+  return engine;
 }
 
 const FACING: { [kind: string]: NavigationRegionKind } = {

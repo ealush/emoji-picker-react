@@ -38,11 +38,14 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
   useSearchComposingState: vi.fn(() => [false, vi.fn()]),
   useSearchDisplayState: vi.fn(() => ['', vi.fn()]),
+  useSetActiveEmoji: vi.fn(() => vi.fn()),
+  useSearchTermState: vi.fn(() => ['', vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
   useSearchDisabledConfig: vi.fn(() => false),
   useVariationsDisabledConfig: vi.fn(() => false),
+  useKeepSearchFocusConfig: vi.fn(() => false),
 }));
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({

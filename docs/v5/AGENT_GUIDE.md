@@ -139,7 +139,7 @@ The main entry and `/data` register the English dataset synchronously. A compose
 
 Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styled-components, MUI) for the theme, unstyled and composed paths: [STYLING_RECIPES.md](STYLING_RECIPES.md).
 
-- Target parts with `[data-epr-part]`: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State: `[data-epr-active]` (hovered or focused emoji, active tab or tone), `aria-selected`, `aria-pressed`.
+- Target parts with `[data-epr-part]`: `root`, `panel`, `search`, `search-input`, `search-clear`, `skin-tone`, `skin-tone-button`, `category-nav`, `category-tab`, `viewport`, `list`, `category`, `category-label`, `category-content`, `emoji`, `variation-picker`, `preview`, `empty`, `loading`, `load-error`, `reactions`, `reaction`, `expand-reactions`. State: `[data-epr-active]` (hovered or focused emoji, active tab or tone), `[data-epr-highlighted]` (keyboard highlight with `keepSearchFocus`), `aria-selected`, `aria-pressed`.
 - Variables yield to any consumer selector (zero specificity). For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and pass `cssLayer="epr"`.
 - Under `unstyled` or a bare Root, give `[data-epr-part='variation-picker']` and sticky `category-label`s a background; they are transparent overlays otherwise.
 - Do not override Viewport overflow, cell dimensions, category positioning or the inline cell positions. Change size variables or `columns` instead.
@@ -153,5 +153,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
 Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host, and clears a non-empty search; with nothing to undo it reaches the host untouched. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
+
+For autocomplete-style pickers where the user should keep typing while choosing, pass `keepSearchFocus`: the arrow keys move a highlight (`aria-activedescendant`, `[data-epr-highlighted]`) while focus stays in the search input, and Enter selects it. See [API.md](API.md#4a-keep-focus-in-search).
 
 An "Add emoji" or other app action is the app's own button, composed next to the grid or inside `Viewport` after `List`; never a fake custom emoji, which search, recents and screen readers would treat as an emoji. See [API.md](API.md#10-valid-composition).

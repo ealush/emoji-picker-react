@@ -118,6 +118,10 @@ export function useVariationsDisabledConfig(): boolean {
   return usePickerConfig().variationsDisabled;
 }
 
+export function useKeepSearchFocusConfig(): boolean {
+  return usePickerConfig().keepSearchFocus;
+}
+
 export function useCategoriesConfig(): CategoriesConfig {
   const { categories } = usePickerConfig();
   return categories;

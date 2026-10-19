@@ -31,6 +31,7 @@ type EmojiPickerV5Additions = {
   searchLabel?: string;
 
   suggestedEmojis?: string[];       // §7
+  keepSearchFocus?: boolean;        // §4a
   variationsDisabled?: boolean;     // §10b
 
   onReactionsModeChange?: (reactionsOpen: boolean) => void;
@@ -102,6 +103,27 @@ Type-to-search differs slightly between controlled and uncontrolled usage:
 - focus transfer is never conditional on acceptance.
 
 If Search is omitted, built-in type-to-search behaves like `searchDisabled`, while an external application input may still drive filtering through controlled `searchValue`.
+
+## 4a. Keep focus in search
+
+By default, the arrow key toward the grid moves focus from the search input into it. With `keepSearchFocus`, focus stays in the input and the arrow keys move a highlight instead, so the user can keep typing:
+
+```tsx
+<EmojiPicker keepSearchFocus />
+```
+
+- The arrow toward the grid highlights the first emoji in view (the first result while searching): ArrowDown when the grid is below the input, ArrowUp when it is above, and Left or Right when it is beside the input (with the caret at that end of the text). The arrow keys then move the highlight through the grid, including rows that are not rendered yet. Otherwise Left and Right edit the text until an emoji is highlighted; from then on they move the highlight, and Escape gives them back to the text. With Shift, Ctrl, Alt or Meta, arrows always stay with the input (selecting text, moving by word), with or without a highlight. Left and Right follow the reading direction in RTL.
+- Enter selects the highlighted emoji, or the first result when nothing is highlighted, even if the results are scrolled. Focus stays in the input.
+- Once started, the highlight follows the results: when the search changes, it moves to the first result.
+- Moving past the grid edge that faces the input (ArrowUp from the first row when the input is above, Left from the first column when it is on the left), Escape, or leaving the input removes the highlight, and cancels a move that has not landed yet. Escape ends only the highlight, even one whose emoji is scrolled out and unmounted; with nothing highlighted, it clears the search as usual.
+- Hovering an emoji previews it without taking focus from the input (true in both modes: hover never takes focus from the search input). The highlight stays where it is, and Enter still selects it; once the pointer leaves the emoji, the preview shows the highlighted one again.
+- Space types a space, so it does not open skin tone variations in this mode.
+
+The input becomes an ARIA combobox with a grid popup: `aria-controls` names the grid while both are mounted, and `aria-activedescendant` names the highlighted cell (it is empty while virtualization has the highlighted cell scrolled out). That cell carries `data-epr-highlighted` and is the active emoji for Preview, `useActiveEmoji()` and `emoji.isActive`. The default appearance styles it like keyboard focus; with `unstyled` or custom cells, style `[data-epr-highlighted]` as well.
+
+Primitive compositions pass the same prop to `Root`.
+
+The highlight code is a separate chunk that the first picker with `keepSearchFocus` loads when it mounts, so pickers without the prop never load it. Until it arrives, the arrow keys stay in the input; typing and Enter work from the start. If it fails to load (offline, a Content Security Policy, or a deploy that removed it), the arrow keys move focus into the grid as they do without the prop; the next picker mount tries again. Turning `keepSearchFocus` off ends a highlight, and Enter then selects the first result in view, as without the prop.
 
 ## 5. Search accessibility label
 
@@ -407,7 +429,7 @@ Arrows with Shift, Ctrl, Alt or Meta held never leave a part: in the search inpu
 
 "Nearest" is measured from the focused element, and focus lands next to it: from a rail tab, the row beside that tab; from a cell, the tab beside or above it. From the search input the grid starts at the first result. A tab bar above, below or beside the grid (a vertical rail, mirrored under `dir="rtl"`), a search input below the grid, or parts reordered with CSS need no configuration. While a search is active, the input and the results are each other's neighbors in whichever direction they face, skipping parts between them. Tab order is unchanged.
 
-Escape undoes one thing at a time: it closes an open variation or tone menu, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes. The same goes for an Escape right after a controlled parent rejected the clear (its `searchValue` and the input are unchanged): the next Escape reaches the host.
+Escape undoes one thing at a time: it closes an open variation or tone menu, then a `keepSearchFocus` highlight, then clears a non-empty search (and returns to its input). With nothing to undo, the picker leaves Escape alone (no `preventDefault`), so a host popover or dialog closes. The same goes for an Escape right after a controlled parent rejected the clear (its `searchValue` and the input are unchanged): the next Escape reaches the host.
 
 ## 10a. Empty state
 
@@ -584,7 +606,7 @@ Exact error text is not semver API.
 
 Panel accepts className, style, native attributes and handlers directly. Panel owns its hidden/inert presence; its children and layout come from the caller’s JSX. Apply flex/grid/gap classes on Panel itself.
 
-Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus. Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
+Custom `EmojiRenderProps.emoji.isActive` and `data-epr-active` indicate hover or keyboard focus (with `keepSearchFocus`, the keyboard highlight, which also carries `data-epr-highlighted`). Only the previous and next active cells are notified; unrelated cells do not rerender for each hover. Preserve all managed button props and position styles when replacing markup.
 
 ## Lifetimes, ownership and design-library inputs
 
