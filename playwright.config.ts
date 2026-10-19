@@ -11,6 +11,7 @@ export default defineConfig({
     'adoption-behavior.spec.ts',
     'touch-behavior.spec.ts',
     'website.spec.ts',
+    'packed-consumer.spec.ts',
   ],
   timeout: 60000,
   retries: process.env.CI ? 2 : 0,

@@ -138,6 +138,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test",
+    "test:e2e": "tsx ./scripts/e2e-consumer/prepare.ts && playwright test --config playwright.e2e.config.ts",
     "lint": "eslint src",
     "prepare": "husky && npm run build",
     "size": "size-limit",

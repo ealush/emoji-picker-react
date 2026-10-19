@@ -1,0 +1,53 @@
+body {
+  margin: 0;
+  font:
+    15px/1.45 system-ui,
+    sans-serif;
+  background: #f6f7f9;
+  color: #1d2129;
+}
+
+main {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 24px 32px;
+  padding: 24px 32px;
+}
+
+header {
+  grid-column: 1 / -1;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+header p,
+footer {
+  margin: 0;
+  color: #5b6270;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5b6270;
+}
+
+output {
+  display: block;
+  font-size: 28px;
+  min-height: 40px;
+}
+
+ol {
+  padding-left: 20px;
+}
+
+footer {
+  grid-column: 1 / -1;
+  font-size: 13px;
+}
