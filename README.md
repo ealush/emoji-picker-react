@@ -10,7 +10,7 @@ One emoji-picker engine, with two ways to build your UI: use the complete picker
 
 [![npm downloads](https://img.shields.io/npm/dm/emoji-picker-react.svg)](https://www.npmjs.com/package/emoji-picker-react)
 
-**[Live demo](https://ealush.com/emoji-picker-react)** · **[Quick start](#quick-start)** · **[Props](PROPS.md)** · **[BYOD](#byod-bring-your-own-design)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
+**[Live demo](https://ealush.com/emoji-picker-react)** · **[Quick start](#quick-start)** · **[Props](PROPS.md)** · **[Compare pickers](#compare-emoji-pickers)** · **[BYOD](#byod-bring-your-own-design)** · **[Common tasks](#common-tasks)** · **[For AI assistants](#for-ai-assistants)** · **[Report a bug](https://github.com/ealush/emoji-picker-react/issues)** · **[Sponsor](https://github.com/sponsors/ealush)**
 
 ![image](https://github.com/ealush/emoji-picker-react/assets/11255103/48901306-e7fd-49cd-8f1e-9b214083a61d)
 
@@ -70,6 +70,34 @@ See [PROPS.md](PROPS.md) for every prop.
 - **Modern React** — React 16.8 through 19, SSR, React Server Components (`"use client"` entries), TypeScript types included; ships ES2020 for every browser since 2020 and any modern bundler.
 
 > **Upgrading from v4?** Most code works unchanged; the default emoji style is now native, and markup, styling and package boundaries have changed. See [Migrating from v4](docs/v5/MIGRATION.md). The APIs on this page need `emoji-picker-react@5` or later.
+
+## Compare emoji pickers
+
+v5 supports both a complete styled picker and unstyled React composition,
+with custom image emoji, recents, category navigation and reactions built in.
+
+| Capability | emoji-picker-react v5 | Emoji Mart + React wrapper | Frimousse | emoji-picker-element |
+| --- | --- | --- | --- | --- |
+| Complete styled picker | Built in | Built in | Compose/style parts or use shadcn starter | Built in |
+| Unstyled React primitives | Built in | No React primitives API | Built in | Web component |
+| Keyboard navigation, search and skin tones | Built in | Built in | Built in | Built in |
+| Localized search and UI | Built in | Built in | Built in | Built in |
+| Native glyph support filtering | Built in | Built in | Built in for default data resolver | Built in |
+| Custom image emoji and named groups | Built in | Built in | Custom data and cell rendering | Built in |
+| Recent/frequent emoji | Built in | Built in | App-owned | Built-in favorites |
+| Category navigation controls | Built in | Built in | App-owned | Built in |
+| Compact reactions bar with expansion | Built in | App-owned | App-owned | App-owned |
+| Standalone emoji search API | Framework-free `/data` entry | `SearchIndex` | Metadata lookup only | Browser `Database` API |
+| Persistent dataset cache | Remote cache policy is app-owned | Remote cache policy is app-owned | Built-in localStorage cache | Built-in IndexedDB cache |
+
+“App-owned” means the application implements the feature. Custom renderers and
+data resolvers can extend the supplied behavior. Bundled data in
+emoji-picker-react and Emoji Mart can be used offline without a remote cache.
+
+Audited October 20, 2026 against Emoji Mart 5.6.0 / React wrapper 1.1.1,
+Frimousse 0.4.0 and emoji-picker-element 1.29.1. See the
+[full comparison and sources](docs/v5/COMPARISON.md) for API details,
+v5 capabilities, native-detection limits and data-loading APIs.
 
 ## Copyable integration prompts
 
