@@ -723,6 +723,63 @@ for (const [id, towardRail, awayFromRail] of [
   });
 }
 
+// Lets a key that should do nothing settle: grid moves land a frame or
+// more after the key.
+const settle = (page: Page) =>
+  page.evaluate(
+    () =>
+      new Promise<void>((resolve) => {
+        let frames = 4;
+        const frame = () =>
+          --frames ? requestAnimationFrame(frame) : resolve();
+        requestAnimationFrame(frame);
+      }),
+  );
+
+test('modified arrows never leave the grid or the rail', async ({ page }) => {
+  await openRegionOrder(page, 'rail-beside-grid');
+  await page.keyboard.press('ArrowDown');
+  await expect.poll(() => focusedPart(page)).toBe('emoji');
+  await pressAndMove(page, 'ArrowDown');
+  await pressAndMove(page, 'ArrowDown');
+  // A first-column cell: plain ArrowLeft would enter the rail.
+  await page.evaluate(() => {
+    (window as unknown as { cell: Element | null }).cell =
+      document.activeElement;
+  });
+  const tab = page.locator('[data-epr-part="category-tab"]').nth(2);
+  for (const modifier of ['Shift', 'Control', 'Alt', 'Meta']) {
+    await page.evaluate(() =>
+      (window as unknown as { cell: HTMLElement }).cell.focus(),
+    );
+    await page.keyboard.press(`${modifier}+ArrowLeft`);
+    await settle(page);
+    expect(await focusedPart(page), modifier).toBe('emoji');
+
+    // Plain ArrowRight would leave the vertical rail for the grid.
+    await tab.focus();
+    await page.keyboard.press(`${modifier}+ArrowRight`);
+    await settle(page);
+    expect(await focusedPart(page), modifier).toBe('category-tab');
+  }
+});
+
+test('the open preview tone fan closes when an arrow leaves along it', async ({
+  page,
+}) => {
+  await page.goto(
+    `${story('picker-overview--default')}&args=skinTonePickerLocation:PREVIEW`,
+  );
+  const fan = page.locator('[data-epr-part="skin-tone"]');
+  const shown = () => fan.locator('button[tabindex="0"]').count();
+  await page.locator('[data-epr-part="skin-tone-button"]').first().focus();
+  await page.keyboard.press('Enter');
+  await expect.poll(shown).toBe(6);
+  // Up runs through the tones, then past the last one into the grid.
+  await pressUntil(page, 'ArrowUp', 'emoji');
+  await expect.poll(shown).toBe(1);
+});
+
 test('search ArrowRight moves the caret, and opens the tones only at its end', async ({
   page,
 }) => {

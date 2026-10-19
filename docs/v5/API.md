@@ -403,7 +403,7 @@ Arrow keys follow the layout you compose. Inside a part they move as usual: betw
 - with the caret at the edge of the search text, and with Up/Down in the input;
 - from a closed skin tone control.
 
-Arrows with Shift, Ctrl, Alt or Meta held never leave a part: in the search input they extend the selection or move by word, as in any text field.
+Arrows with Shift, Ctrl, Alt or Meta held never leave a part: in the search input they extend the selection or move by word, as in any text field. In the grid and the tab bar they move as plain arrows do, but stop at the part's edge (Left and Right keep wrapping through the grid's rows).
 
 "Nearest" is measured from the focused element, and focus lands next to it: from a rail tab, the row beside that tab; from a cell, the tab beside or above it. From the search input the grid starts at the first result. A tab bar above, below or beside the grid (a vertical rail, mirrored under `dir="rtl"`), a search input below the grid, or parts reordered with CSS need no configuration. While a search is active, the input and the results are each other's neighbors in whichever direction they face, skipping parts between them. Tab order is unchanged.
 

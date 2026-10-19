@@ -163,8 +163,11 @@ export function useKeyboardNavigation() {
         setIsOpen(false);
       return;
     }
+    // Focusing search closes the fan; leaving elsewhere closes it here.
     const exit = () =>
-      inSearch ? focusSearchInput() : leave('preview-skin-tone', event.key);
+      inSearch
+        ? focusSearchInput()
+        : leave('preview-skin-tone', event.key) && setIsOpen(false);
     if (!isOpen) return exit();
     if (direction < 0) focusNextSkinTone(exit);
     else focusPrevElementSibling(getActiveElement());
@@ -193,7 +196,7 @@ export function useKeyboardNavigation() {
       tabs[tabs.indexOf(getActiveElement() as HTMLElement) + direction];
     // Past the first or last tab, or across the bar: the part that way.
     if (sibling) focusElement(sibling);
-    else leave('categories', event.key);
+    else if (!isModified(event)) leave('categories', event.key);
   };
   const reactions = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, ReactionsRef)) return;
@@ -234,8 +237,9 @@ export function useKeyboardNavigation() {
         focusAdjacentEmoji(activeElement, direction, row, {
           shouldFocus: focusGuard,
           // Past the top or bottom row, or sideways from the first or last
-          // column: the part in that direction, if any.
-          exit: () => leave('grid', event.key),
+          // column: the part in that direction, if any. Modified arrows
+          // stay in the grid.
+          exit: isModified(event) ? undefined : () => leave('grid', event.key),
         });
       return;
     }
@@ -305,10 +309,14 @@ function caretAtEdge(input: HTMLInputElement | null, end: boolean): boolean {
 const tabsOf = (bar: Element | null) =>
   Array.from(bar?.querySelectorAll<HTMLElement>('[role="tab"]') ?? []);
 
-// An arrow's step, or 0. Shift extends a selection and Ctrl/Alt move by
-// word: modified arrows are never navigation.
+// Shift extends a selection and Ctrl/Alt move by word: a modified arrow
+// never leaves a part.
+const isModified = (event: KeyboardEvent) =>
+  event.shiftKey || hasModifier(event);
+
+// An arrow's step, or 0 for a modified arrow (the text field's own).
 const arrowDelta = (event: KeyboardEvent, key: string) =>
-  event.shiftKey || hasModifier(event) ? 0 : reactionFocusDelta(key);
+  isModified(event) ? 0 : reactionFocusDelta(key);
 
 function eventInRegion(event: KeyboardEvent, ref: ElementRef): boolean {
   return !!ref.current?.contains(event.target as Node);
