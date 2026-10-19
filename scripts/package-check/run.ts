@@ -101,6 +101,7 @@ function main() {
     { cwd: scratch },
   );
 
+  checkEsmHasNoWrappers(scratch);
   const bundleDir = checkPrimitivesInitialBudget(scratch);
   const mainBundleDir = bundleDefaultConsumer(scratch);
   compileFixture(
@@ -156,6 +157,31 @@ function main() {
 // Unused part/style factories now tree-shake: keep the complete measurement
 // and enforce a 34 KiB cap against the installed tarball's public entry.
 const PRIMITIVES_INITIAL_BUDGET_BYTES = 34 * 1024;
+
+// The ESM build stays plain ESM. A module esbuild has to treat as CommonJS
+// (a side-effect file without exports) wraps itself, and the modules it
+// imports, in lazy initializers that every ESM consumer then ships.
+function checkEsmHasNoWrappers(scratch: string) {
+  const esm = join(
+    scratch,
+    'node_modules',
+    'emoji-picker-react',
+    'dist',
+    'esm',
+  );
+  const wrapped = readdirSync(esm, {
+    recursive: true,
+    encoding: 'utf8',
+  }).filter(
+    (name) =>
+      name.endsWith('.mjs') &&
+      /\b__(?:commonJS|esm)\(/.test(readFileSync(join(esm, name), 'utf8')),
+  );
+  if (wrapped.length > 0)
+    throw new Error(
+      `ESM build wraps modules in lazy initializers: ${wrapped.join(', ')}`,
+    );
+}
 
 function checkPrimitivesInitialBudget(scratch: string) {
   const out = mkdtempSync(join(scratch, 'primitives-budget-'));
