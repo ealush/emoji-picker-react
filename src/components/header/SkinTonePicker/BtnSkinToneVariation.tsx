@@ -108,23 +108,24 @@ const styles = /* @__PURE__ */ (() =>
       ':focus': {
         boxShadow: '0 0 0 3px var(--epr-focus-bg-color)',
       },
+      // Swatch colors are themeable; the fallbacks are the defaults.
       '&.epr-tone-neutral': {
-        backgroundColor: '#ffd225',
+        backgroundColor: 'var(--epr-skin-tone-neutral-color, #ffd225)',
       },
       '&.epr-tone-1f3fb': {
-        backgroundColor: '#ffdfbd',
+        backgroundColor: 'var(--epr-skin-tone-light-color, #ffdfbd)',
       },
       '&.epr-tone-1f3fc': {
-        backgroundColor: '#e9c197',
+        backgroundColor: 'var(--epr-skin-tone-medium-light-color, #e9c197)',
       },
       '&.epr-tone-1f3fd': {
-        backgroundColor: '#c88e62',
+        backgroundColor: 'var(--epr-skin-tone-medium-color, #c88e62)',
       },
       '&.epr-tone-1f3fe': {
-        backgroundColor: '#a86637',
+        backgroundColor: 'var(--epr-skin-tone-medium-dark-color, #a86637)',
       },
       '&.epr-tone-1f3ff': {
-        backgroundColor: '#60463a',
+        backgroundColor: 'var(--epr-skin-tone-dark-color, #60463a)',
       },
     },
   }))();
