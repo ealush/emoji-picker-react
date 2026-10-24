@@ -1,6 +1,6 @@
-## Unreleased
+### Details
 
-### Bug Fixes
+#### Bug fixes
 
 * Keep fast Enter selection during search debounce: select once from the matching committed results rather than selecting stale data or dropping the key. New input, another key or blur cancels a queued selection.
 * Stop propagation for Escape consumed by a menu, highlight or search clear. Consumer `onKeyDown` handlers and host dismissal listeners no longer receive those consumed keys; an unhandled Escape still reaches the host.
@@ -10,10 +10,10 @@
 * Preserve highlights for equal inline suggestion arrays during unrelated config updates; cancel queued Enter on keyless input edits, including case-only and whitespace changes.
 * Preserve rapid arrow navigation across virtualized rows and avoid per-cell preload timers.
 
-### Performance Improvements
+#### Rendering and performance
 
-* Defer grid cells until after the first layout commit, with a guaranteed post-mount update when measurement is unavailable; preload only nearby image cells and reuse unchanged filtered inventories.
-* Avoid redundant copies in cold data preparation and defer async-loader-only validation from the initial primitives bundle. Keep published ESM formatted with comments and original function/class names while retaining local compiler optimizations.
+* Grid cells render after the first layout commit, with a guaranteed post-mount update when measurement is unavailable. Mount cost is roughly unchanged: the repository mount benchmark measures one picker 2–6% and ten pickers 1–3% slower than 5.1.0. Image preloading is limited to nearby cells, without per-cell timers, and unchanged filtered inventories are reused.
+* Cold data preparation avoids redundant copies (about 19% faster in the benchmark), and async-loader-only validation is deferred out of the initial primitives bundle. Published ESM stays formatted with comments and original function/class names while retaining local compiler optimizations.
 
 ## [5.1.0](https://github.com/ealush/emoji-picker-react/compare/5.0.0...5.1.0) (2026-10-19)
 

@@ -6,6 +6,7 @@ import {
   EmojiButtonSelector,
 } from '../DomUtils/selectors';
 import {
+  useBodyRef,
   useEmojiListRef,
   usePickerMainRef,
 } from '../components/context/ElementRefContext';
@@ -69,9 +70,11 @@ export function useCategoryHeight(
       emojisPerRow: number;
       emojiSize: number;
       rowWidth: number;
+      viewportHeight?: number;
     }
   | undefined {
   const EmojiListRef = useEmojiListRef();
+  const BodyRef = useBodyRef();
   const [isReactionsMode] = useReactionsModeState();
   const PickerMainRef = usePickerMainRef();
   const emojiSizeRef = React.useRef<number | undefined>(undefined);
@@ -85,6 +88,7 @@ export function useCategoryHeight(
     emojisPerRow: number;
     emojiSize: number;
     rowWidth: number;
+    viewportHeight?: number;
   }>();
 
   // Helper to compute and store dimensions based on current DOM
@@ -116,17 +120,31 @@ export function useCategoryHeight(
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;
 
+    const next = {
+      categoryHeight,
+      emojisPerRow,
+      emojiSize,
+      rowWidth,
+      // Virtualization reads the viewport height during render, so a picker
+      // that mounts collapsed (reactions first) must re-render once it opens.
+      viewportHeight: BodyRef.current?.clientHeight,
+    };
+
     trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
+    // Returning `previous` when nothing changed is what stops the layout
+    // effect below, which depends on `dimensions`, from looping forever.
+    // Both objects come from the literal above, so their keys share an order.
     setDimensions((previous) =>
-      previous &&
-      previous.categoryHeight === categoryHeight &&
-      previous.emojisPerRow === emojisPerRow &&
-      previous.emojiSize === emojiSize &&
-      previous.rowWidth === rowWidth
-        ? previous
-        : { categoryHeight, emojisPerRow, emojiSize, rowWidth },
+      JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
     );
-  }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry, columns]);
+  }, [
+    EmojiListRef,
+    BodyRef,
+    emojiCount,
+    emojiSizeFromContext,
+    registry,
+    columns,
+  ]);
 
   // Restore measured row heights in the same commit as the filtered
   // contents. A passive effect leaves one frame of stale offsets that

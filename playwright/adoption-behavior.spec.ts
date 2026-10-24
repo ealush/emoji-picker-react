@@ -643,6 +643,54 @@ test('reduced motion: the picker drops transitions and still expands from reacti
   expect(cells).toBeGreaterThan(1);
 });
 
+// A picker that mounts as a reactions bar has a zero-height viewport on its
+// first pass; expanding must render rows down to the bottom of the body,
+// not only the overscan rows the collapsed pass computed.
+for (const id of [
+  'picker-reactions--reactions-menu',
+  'recipes-examples-imessage-tapback--css',
+]) {
+  test(`${id}: expanding from reactions fills the grid viewport`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    // At phone width the tapback recipe's reaction glyphs overlap the
+    // expand button; this test is about the grid, so skip hit-testing.
+    await page
+      .getByLabel('Show all Emojis')
+      .first()
+      .evaluate((button: HTMLElement) => button.click());
+    await expect(page.getByRole('gridcell').first()).toBeVisible();
+    // The body grows from zero height; measure only once it has settled.
+    await page.waitForFunction(
+      () =>
+        new Promise<boolean>((resolve) => {
+          const body = document.querySelector('.epr-body');
+          const before = body?.clientHeight;
+          setTimeout(
+            () => resolve(!!before && body?.clientHeight === before),
+            200,
+          );
+        }),
+    );
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const body = document.querySelector('.epr-body');
+          const cells = Array.from(
+            document.querySelectorAll('[role="gridcell"]'),
+          );
+          if (!body || cells.length === 0) return -1;
+          const lowest = Math.max(
+            ...cells.map((cell) => cell.getBoundingClientRect().bottom),
+          );
+          return Math.round(lowest - body.getBoundingClientRect().bottom);
+        }),
+      )
+      .toBeGreaterThanOrEqual(0);
+  });
+}
+
 for (const origin of ['input', 'grid'] as const) {
   for (const delay of [50, 150]) {
     test(`delayed controlled search preserves real typing from ${origin} with ${delay}ms gaps`, async ({
