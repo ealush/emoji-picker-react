@@ -55,6 +55,15 @@ export function normalizeUnified(input: string): string {
   return input.trim().toLowerCase();
 }
 
+/**
+ * Datasets disagree on where U+FE0F (emoji presentation) appears in an ID:
+ * `2764` and `2764-fe0f` are the same heart. IDs are also indexed under
+ * this form, so either spelling finds the dataset's own record.
+ */
+export function withoutFe0f(unified: string): string {
+  return unified.replace(/-fe0f/g, '');
+}
+
 export function normalizeQuery(input: string): string {
   if (!input || typeof input !== 'string') {
     return '';
@@ -102,10 +111,9 @@ function appendEntry(
   });
   records.push(info);
   byUnified.set(unified, info);
-  for (const variation of info.variations) {
-    if (!byUnified.has(variation)) {
-      byUnified.set(variation, info);
-    }
+  for (const id of [unified, ...info.variations]) {
+    if (!byUnified.has(id)) byUnified.set(id, info);
+    if (!byUnified.has(withoutFe0f(id))) byUnified.set(withoutFe0f(id), info);
   }
   indexCharBucket(byCharMutable, names, info);
 }

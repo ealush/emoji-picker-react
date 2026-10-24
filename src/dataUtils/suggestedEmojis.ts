@@ -1,3 +1,5 @@
+import { withoutFe0f } from '../data-core/prepare';
+
 import { DataEmoji, EmojiProperties } from './DataTypes';
 
 // Caller-defined Suggested contents.
@@ -47,46 +49,30 @@ export function resolveEntryId(
   if (!id) {
     return undefined;
   }
-  if (isKnownRenderId(id, lookup)) {
-    return id;
+  let unified = id;
+  let record = lookup(id);
+  // Unified IDs and custom IDs are ASCII; anything else may be the emoji
+  // character itself, read as its code points.
+  if (!record && /[^\0-\x7f]/.test(id)) {
+    unified = Array.from(id)
+      .map((char) =>
+        (char.codePointAt(0) as number).toString(16).padStart(4, '0'),
+      )
+      .join('-');
+    record = lookup(unified);
   }
-  // Unified IDs and custom IDs are ASCII; anything else may be the
-  // emoji character itself.
-  if (Array.from(id).every((char) => (char.codePointAt(0) as number) < 0x80)) {
+  if (!record) {
     return undefined;
   }
-  return nativeToUnifiedCandidates(id).find((candidate) =>
-    isKnownRenderId(candidate, lookup),
-  );
-}
-
-// Dataset IDs are zero-padded code points joined by "-", and carry U+FE0F
-// where the emoji presentation needs it; typed or stored characters often
-// omit or add it. Try the exact sequence, then without FE0F, then with
-// FE0F after the first code point (e.g. "©" -> "00a9-fe0f").
-function nativeToUnifiedCandidates(native: string): string[] {
-  const codePoints = Array.from(native).map((char) =>
-    (char.codePointAt(0) as number).toString(16).padStart(4, '0'),
-  );
-  const exact = codePoints.join('-');
-  const bare = codePoints.filter((codePoint) => codePoint !== 'fe0f');
-  const withPresentation = [bare[0], 'fe0f', ...bare.slice(1)];
-  return [exact, bare.join('-'), withPresentation.join('-')];
-}
-
-// A render identity is valid only as the base unified or a listed
-// variation. Anything else — e.g. a nonexistent variation that fell back
-// to the base record — is unknown and ignored.
-function isKnownRenderId(
-  id: string,
-  lookup: (normalizedId: string) => DataEmoji | undefined,
-): boolean {
-  const record = lookup(id);
-  if (!record) {
-    return false;
-  }
-  return (
-    record[EmojiProperties.unified] === id ||
-    (record[EmojiProperties.variations] ?? []).includes(id)
-  );
+  // A render identity is the base unified or a listed variation; a
+  // nonexistent variation that fell back to the base record is unknown.
+  // Typed, stored or other datasets' IDs often omit or add U+FE0F: resolve
+  // to the record's own spelling of that identity.
+  const known = [
+    record[EmojiProperties.unified],
+    ...(record[EmojiProperties.variations] ?? []),
+  ];
+  return known.includes(unified)
+    ? unified
+    : known.find((each) => withoutFe0f(each) === withoutFe0f(unified));
 }
