@@ -19,6 +19,11 @@ const claimsByRoot = new WeakMap<Node, Record<string, Claim[]>>();
  * allowed by one nonce must not stand in for another under CSP.
  */
 export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
+  // Chromium re-lays out every text node in the document when a sheet with
+  // cascade layers joins or leaves it, even if nothing matches. A layered
+  // sheet is added once per document or shadow root and kept; the picker's
+  // own element stays empty. Server markup keeps the CSS inline.
+  const kept = typeof document != 'undefined' && css.startsWith('@layer');
   const styleRef = React.useRef<HTMLStyleElement>(null);
   const rootRef = React.useRef<Node | undefined>(undefined);
   const [owner, setOwner] = React.useState(true);
@@ -40,6 +45,16 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
     const byKey = claimsByRoot.get(root) || {};
     claimsByRoot.set(root, byKey);
     const key = nonce + css;
+    if (kept) {
+      if (!byKey[key]) {
+        byKey[key] = [];
+        // A clone carries the element's nonce (HTML cloning steps).
+        const sheet = style!.cloneNode() as HTMLStyleElement;
+        sheet.textContent = css;
+        ((root as Document).head || root).appendChild(sheet);
+      }
+      return;
+    }
     const claims = (byKey[key] = byKey[key] || []);
     const claim: Claim = {
       update: () => setOwner(claims[0] === claim),
@@ -74,7 +89,7 @@ export function DedupedStyle({ css, nonce }: { css: string; nonce?: string }) {
       ref={styleRef}
       nonce={nonce}
       suppressHydrationWarning
-      dangerouslySetInnerHTML={{ __html: css }}
+      dangerouslySetInnerHTML={{ __html: kept ? '' : css }}
     />
   ) : null;
 }
