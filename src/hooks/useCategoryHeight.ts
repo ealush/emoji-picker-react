@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import { asSelectors, ClassNames } from '../DomUtils/classNames';
+import { ClassNames } from '../DomUtils/classNames';
 import {
   elementBorderBoxHeight,
   EmojiButtonSelector,
 } from '../DomUtils/selectors';
 import {
+  useBodyRef,
   useEmojiListRef,
   usePickerMainRef,
 } from '../components/context/ElementRefContext';
@@ -33,7 +34,7 @@ function firstVisibleContentWidth(
   fallbackWidth: number,
 ): number {
   const contentBoxes = listEl.querySelectorAll(
-    asSelectors(ClassNames.categoryContent),
+    `.${ClassNames.categoryContent}`,
   );
   for (const box of Array.from(contentBoxes)) {
     const width = (box as HTMLElement).clientWidth;
@@ -60,15 +61,20 @@ function trackColumnCount(
   previousRef.current = emojisPerRow;
 }
 
-export function useCategoryHeight(emojiCount: number):
+export function useCategoryHeight(
+  emojiCount: number,
+  ready = true,
+):
   | {
       categoryHeight: number;
       emojisPerRow: number;
       emojiSize: number;
       rowWidth: number;
+      viewportHeight?: number;
     }
   | undefined {
   const EmojiListRef = useEmojiListRef();
+  const BodyRef = useBodyRef();
   const [isReactionsMode] = useReactionsModeState();
   const PickerMainRef = usePickerMainRef();
   const emojiSizeRef = React.useRef<number | undefined>(undefined);
@@ -82,6 +88,7 @@ export function useCategoryHeight(emojiCount: number):
     emojisPerRow: number;
     emojiSize: number;
     rowWidth: number;
+    viewportHeight?: number;
   }>();
 
   // Helper to compute and store dimensions based on current DOM
@@ -99,8 +106,8 @@ export function useCategoryHeight(emojiCount: number):
       emojiSizeRef.current = measured;
     }
     const emojiSize =
-      emojiSizeFromContext ||
       measured ||
+      emojiSizeFromContext ||
       emojiSizeRef.current ||
       EMOJI_SIZE_DEFAULT;
     const pickerWidth = listEl.clientWidth;
@@ -113,13 +120,36 @@ export function useCategoryHeight(emojiCount: number):
     const rowCount = Math.ceil(emojiCount / emojisPerRow);
     const categoryHeight = rowCount * emojiSize;
 
+    const next = {
+      categoryHeight,
+      emojisPerRow,
+      emojiSize,
+      rowWidth,
+      // Virtualization reads the viewport height during render, so a picker
+      // that mounts collapsed (reactions first) must re-render once it opens.
+      viewportHeight: BodyRef.current?.clientHeight,
+    };
+
     trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
-    setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
-  }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry, columns]);
+    // Returning `previous` when nothing changed is what stops the layout
+    // effect below, which depends on `dimensions`, from looping forever.
+    // Both objects come from the literal above, so their keys share an order.
+    setDimensions((previous) =>
+      JSON.stringify(previous) === JSON.stringify(next) ? previous : next,
+    );
+  }, [
+    EmojiListRef,
+    BodyRef,
+    emojiCount,
+    emojiSizeFromContext,
+    registry,
+    columns,
+  ]);
 
   // Restore measured row heights in the same commit as the filtered
   // contents. A passive effect leaves one frame of stale offsets that
   // category navigation can observe immediately after clearing search.
+  // Recheck an estimated size when positioned/visible cells first mount.
   useIsomorphicLayoutEffect(() => {
     computeAndSetDimensions();
   }, [
@@ -127,6 +157,8 @@ export function useCategoryHeight(emojiCount: number):
     isReactionsMode,
     computeAndSetDimensions,
     visibleCategories.length,
+    dimensions,
+    ready,
   ]);
 
   // Fluid layouts (width: 100%, sheets, docks) resize without a CSS

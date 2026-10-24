@@ -44,6 +44,18 @@ function Composition(props: Partial<React.ComponentProps<typeof Picker.Root>>) {
 }
 
 describe('List components', () => {
+  it('gives a custom header the default sticky appearance when opted in', () => {
+    const { container, rerender } = render(
+      <Composition appearance="default" />,
+    );
+    expect(
+      container.querySelector('[data-brand="header"]')?.className,
+    ).toContain('epr-category-label-appearance');
+    rerender(<Composition />);
+    expect(
+      container.querySelector('[data-brand="header"]')?.className,
+    ).not.toContain('epr-category-label-appearance');
+  });
   it('renders consumer cells that keep library-owned behavior attributes', () => {
     const { container } = render(<Composition />);
     const cell = container.querySelector(

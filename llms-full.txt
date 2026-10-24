@@ -227,7 +227,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
-Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
+Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu, or clears a non-empty search, before reaching the host. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
 
 <!-- source: docs/v5/PROMPTS.md -->
 
@@ -1406,7 +1406,7 @@ The registry item depends on `emoji-picker-react@^5.0.0`. The registry component
 </Popover>
 ```
 
-The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
+The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu or clears a non-empty search, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
 
 ## Working starter sources
 
@@ -1636,7 +1636,7 @@ For standard emoji IDs:
 - a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
 - duplicates are removed by canonical normalized ID, first occurrence wins.
 
-Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
+Custom emoji IDs use the same case-insensitive rule: IDs are lowercased when indexed. Custom display names retain the supplied capitalization; search still matches them case-insensitively.
 
 Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
 
@@ -1890,6 +1890,8 @@ Styling is opt-in in both directions:
 ```
 
 `columns` sets the emojis per row on EmojiPicker and Root. The picker's width then fits those columns plus a stable scrollbar gutter, unless the consumer sets a width (`width`, `style` or any class). A container narrower than the columns renders fewer columns instead of clipping. Without `columns`, the width decides the column count, as in v4.
+
+The intrinsic grid width remains present during an empty search, data loading or a load error.
 
 ## 12. Data API
 
@@ -2362,6 +2364,7 @@ The following variables are already documented public customization surface and 
 - `--epr-preview-text-color`
 
 ### Native emoji font
+- `--epr-font-family` — font for picker text (`sans-serif` by default). Set it to `inherit` on the picker to use the surrounding application's font. Native emoji glyphs keep their separate font stack.
 - `--epr-emoji-font-family` (v5) — font stack for native emojis, e.g. a country-flag polyfill font; native support detection measures this same font.
 
 ### Skin tone

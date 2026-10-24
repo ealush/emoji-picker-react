@@ -22,6 +22,7 @@ import {
   copyFileSync,
   existsSync,
   readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -76,7 +77,16 @@ async function buildCjs(src: string, outfile: string) {
   writeFileSync(join(repoRoot, outfile), result.code + '\n');
 }
 
-function buildEsm() {
+// Explicit traversal also works before Node 18.17's recursive readdir.
+function* esmFiles(directory: string): Generator<string> {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) yield* esmFiles(path);
+    else if (entry.name.endsWith('.mjs')) yield path;
+  }
+}
+
+async function buildEsm() {
   rmSync(join(repoRoot, 'dist', 'esm'), { recursive: true, force: true });
   sh(bin('esbuild'), [
     join(repoRoot, 'src/index.tsx'),
@@ -95,6 +105,27 @@ function buildEsm() {
     '--chunk-names=chunks/[name]-[hash]',
     '--out-extension:.js=.mjs',
   ]);
+  // Preserve readable source, function/class names and comments in published
+  // ESM. Local expression optimizations still improve the consumer bundle;
+  // keep factory boundaries/annotations so unused styles remain removable.
+  for (const path of esmFiles(join(repoRoot, 'dist', 'esm'))) {
+    const result = await minify(readFileSync(path, 'utf8'), {
+      module: true,
+      ecma: 2020,
+      keep_fnames: true,
+      keep_classnames: true,
+      compress: {
+        passes: 3,
+        inline: false,
+        side_effects: false,
+        reduce_funcs: false,
+      },
+      mangle: false,
+      format: { beautify: true, comments: 'all', preserve_annotations: true },
+    });
+    if (!result.code) throw new Error(`Empty ESM output: ${path}`);
+    writeFileSync(path, result.code + '\n');
+  }
 }
 
 async function buildDeclarations() {
@@ -141,7 +172,7 @@ async function main() {
   if (!existsSync(bin('esbuild'))) {
     throw new Error('esbuild not found; run npm install first.');
   }
-  buildEsm();
+  await buildEsm();
   await buildCjs('src/index.tsx', 'dist/index.js');
   await buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
   await buildCjs('src/data.ts', 'dist/data/index.js');

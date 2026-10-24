@@ -1,4 +1,11 @@
-import { act, render, screen, within } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -61,7 +68,9 @@ function fireIntersections(ids: string[]) {
     (target) =>
       ({
         target,
-        isIntersecting: ids.includes(target.getAttribute('data-epr-category') ?? ''),
+        isIntersecting: ids.includes(
+          target.getAttribute('data-epr-category') ?? '',
+        ),
         intersectionRatio: ids.includes(
           target.getAttribute('data-epr-category') ?? '',
         )
@@ -71,7 +80,7 @@ function fireIntersections(ids: string[]) {
         intersectionRect: {},
         rootBounds: null,
         time: Date.now(),
-      } as unknown as IntersectionObserverEntry),
+      }) as unknown as IntersectionObserverEntry,
   );
   capturedCallback?.(entries, {} as IntersectionObserver);
 }
@@ -101,6 +110,21 @@ describe('first-paint render gating', () => {
 
   afterEach(() => {
     globalThis.IntersectionObserver = realIO;
+  });
+
+  it('renders and searches later categories without IntersectionObserver', async () => {
+    globalThis.IntersectionObserver =
+      undefined as unknown as typeof IntersectionObserver;
+    renderPicker();
+    fireEvent.change(screen.getByRole('textbox'), { target: { value: 'cat' } });
+    expect(
+      await screen.findByRole('gridcell', { name: 'cat' }),
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.queryByRole('gridcell', { name: 'grinning face' }),
+      ).toBeNull(),
+    );
   });
 
   it('renders the first category without waiting for the observer', () => {

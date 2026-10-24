@@ -21,7 +21,3 @@ export enum ClassNames {
   darkTheme = 'epr-dark-theme',
   autoTheme = 'epr-auto-theme',
 }
-
-export function asSelectors(...classNames: ClassNames[]): string {
-  return classNames.map((c) => `.${c}`).join('');
-}

@@ -199,10 +199,10 @@ export const Picker = props => <Root {...props}><Panel><SearchInput /><Viewport>
     (sum, name) => sum + gzipSync(files.get(name)!).length,
     0,
   );
-  const kb = (bytes / 1024).toFixed(1);
+  const kb = (bytes / 1024).toFixed(3);
   if (bytes > PRIMITIVES_INITIAL_BUDGET_BYTES) {
     throw new Error(
-      `primitives initial load ${kb} KB exceeds ${PRIMITIVES_INITIAL_BUDGET_BYTES / 1024} KB (min+gz)`,
+      `primitives initial load ${bytes} bytes (${kb} KiB) exceeds ${PRIMITIVES_INITIAL_BUDGET_BYTES / 1024} KB (min+gz)`,
     );
   }
   const eager = [...initial].some((name) =>
@@ -224,7 +224,7 @@ export const Picker = props => <Root {...props}><Panel><SearchInput /><Viewport>
       );
   }
   console.log(
-    `ok: primitives + constants initial load ${kb} KiB min+gz (ShipStyles included; dataset lazy)`,
+    `ok: primitives + constants initial load ${bytes} bytes (${kb} KiB) min+gz (ShipStyles included; dataset lazy)`,
   );
   return out;
 }

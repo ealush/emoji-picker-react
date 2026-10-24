@@ -206,7 +206,7 @@ For standard emoji IDs:
 - a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
 - duplicates are removed by canonical normalized ID, first occurrence wins.
 
-Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
+Custom emoji IDs use the same case-insensitive rule: IDs are lowercased when indexed. Custom display names retain the supplied capitalization; search still matches them case-insensitively.
 
 Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
 
@@ -460,6 +460,8 @@ Styling is opt-in in both directions:
 ```
 
 `columns` sets the emojis per row on EmojiPicker and Root. The picker's width then fits those columns plus a stable scrollbar gutter, unless the consumer sets a width (`width`, `style` or any class). A container narrower than the columns renders fewer columns instead of clipping. Without `columns`, the width decides the column count, as in v4.
+
+The intrinsic grid width remains present during an empty search, data loading or a load error.
 
 ## 12. Data API
 

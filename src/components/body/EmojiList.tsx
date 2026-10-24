@@ -15,8 +15,12 @@ import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useMergedRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
-import { useEmojiListRef } from '../context/ElementRefContext';
-import { useVisibleCategoriesState } from '../context/PickerContext';
+import { OVERSCAN_ROWS } from '../../virtualization/virtualizationHelpers';
+import { useBodyRef, useEmojiListRef } from '../context/ElementRefContext';
+import {
+  useEmojiSizeState,
+  useVisibleCategoriesState,
+} from '../context/PickerContext';
 import { useGetEmojisByCategory } from '../context/PickerDataContext';
 
 import { EmojiCategory } from './EmojiCategory';
@@ -41,6 +45,22 @@ export function EmojiList({
     [key: string]: number;
   }>({});
   const EmojiListRef = useEmojiListRef();
+  const BodyRef = useBodyRef();
+  const [emojiSize] = useEmojiSizeState();
+  const [visibleCategories] = useVisibleCategoriesState();
+  const onHeightReady = React.useCallback(
+    (categoryId: string, height: number) => {
+      setCategoryHeights((previous) =>
+        previous[categoryId] === height
+          ? previous
+          : {
+              ...previous,
+              [categoryId]: height,
+            },
+      );
+    },
+    [],
+  );
   const mergedRef = useMergedRefs(EmojiListRef, outerRef);
   const getEmojisByCategory = useGetEmojisByCategory();
   useRegisterRegion('grid', EmojiListRef);
@@ -87,17 +107,28 @@ export function EmojiList({
             categoryEmojis={getEmojisByCategory(category, group)}
             categoryConfig={categoryConfig}
             topOffset={currentOffset}
-            isFirstCategory={index === 0}
+            isCategoryVisible={
+              index === 0 || visibleCategories.includes(categoryId)
+            }
             positioned={isPositioned}
-            onHeightReady={(height) => {
-              if (categoryHeights[categoryId] !== height) {
-                setCategoryHeights((prev) => ({
-                  ...prev,
-                  [categoryId]: height,
-                }));
-              }
-            }}
-            scrollTop={scrollTop}
+            onHeightReady={onHeightReady}
+            // Outside a section's rendering/preload margin, scrolling
+            // cannot change its cells. Keep its prop stable so it can bail.
+            scrollTop={
+              categoryHeight === undefined
+                ? scrollTop
+                : Math.max(
+                    currentOffset -
+                      (BodyRef.current?.clientHeight ?? 0) -
+                      (emojiSize || 40) * (OVERSCAN_ROWS + 1),
+                    Math.min(
+                      scrollTop,
+                      currentOffset +
+                        categoryHeight +
+                        (emojiSize || 40) * (OVERSCAN_ROWS + 1),
+                    ),
+                  )
+            }
           />
         );
       })}
@@ -105,24 +136,28 @@ export function EmojiList({
   );
 }
 
-function RenderCategory({
+const RenderCategory = /* @__PURE__ */ React.memo(function RenderCategory({
   categoryEmojis,
   categoryConfig,
   topOffset,
   onHeightReady,
   scrollTop,
-  isFirstCategory,
+  isCategoryVisible,
   positioned,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
   topOffset: number;
-  onHeightReady: (height: number) => void;
+  onHeightReady: (categoryId: string, height: number) => void;
   scrollTop: number;
-  isFirstCategory: boolean;
+  isCategoryVisible: boolean;
   positioned: boolean;
 }) {
-  const [visibleCategories] = useVisibleCategoriesState();
+  const categoryId = categoryIdFromCategoryConfig(categoryConfig);
+  const reportHeight = React.useCallback(
+    (height: number) => onHeightReady(categoryId, height),
+    [categoryId, onHeightReady],
+  );
 
   // The observer is the only writer of visibleCategories. When it never
   // fires (zero-height container at mount, hidden modal), no category
@@ -130,15 +165,11 @@ function RenderCategory({
   // the deadlock; the observer takes over from there.
   // https://github.com/ealush/emoji-picker-react/issues/469
   // https://github.com/ealush/emoji-picker-react/issues/475
-  const isCategoryVisible =
-    isFirstCategory ||
-    visibleCategories.includes(categoryIdFromCategoryConfig(categoryConfig));
-
   const { virtualizedCounter, emojis, dimensions, emojiCount } =
     useEmojiVirtualization({
       categoryEmojis,
       topOffset,
-      onHeightReady,
+      onHeightReady: reportHeight,
       scrollTop,
       isCategoryVisible,
       positioned,
@@ -157,7 +188,7 @@ function RenderCategory({
       {emojis}
     </EmojiCategory>
   );
-}
+});
 
 const styles = /* @__PURE__ */ (() =>
   stylesheet.create({

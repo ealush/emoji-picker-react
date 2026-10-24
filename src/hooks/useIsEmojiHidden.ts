@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
   useActiveSkinToneState,
   useEmojisThatFailedToLoadState,
@@ -9,21 +11,23 @@ import { useIsEmojiFiltered } from './useFilter';
 
 export function useIsEmojiHidden(): (emoji: DataEmoji) => IsHiddenReturn {
   const [activeSkinTone] = useActiveSkinToneState();
-  const [emojisThatFailedToLoad] = useEmojisThatFailedToLoadState();
+  // The tuple changes when its Root-local Set is mutated by an image error.
+  const failures = useEmojisThatFailedToLoadState();
   const isEmojiFiltered = useIsEmojiFiltered();
 
-  return (emoji: DataEmoji): IsHiddenReturn => {
-    const failedToLoad = emojisThatFailedToLoad.has(
-      emojiUnified(emoji, activeSkinTone),
-    );
-    const filteredOut = isEmojiFiltered(emojiCanonicalUnified(emoji));
+  return useCallback(
+    (emoji: DataEmoji): IsHiddenReturn => {
+      const failedToLoad = failures[0].has(emojiUnified(emoji, activeSkinTone));
+      const filteredOut = isEmojiFiltered(emojiCanonicalUnified(emoji));
 
-    return {
-      failedToLoad,
-      filteredOut,
-      hidden: failedToLoad || filteredOut,
-    };
-  };
+      return {
+        failedToLoad,
+        filteredOut,
+        hidden: failedToLoad || filteredOut,
+      };
+    },
+    [activeSkinTone, failures, isEmojiFiltered],
+  );
 }
 
 type IsHiddenReturn = {
