@@ -2371,6 +2371,7 @@ The following variables are already documented public customization surface and 
 ### Skin tone
 - `--epr-skin-tone-picker-menu-color`
 - `--epr-skin-tone-size`
+- `--epr-skin-tone-neutral-color`, `--epr-skin-tone-light-color`, `--epr-skin-tone-medium-light-color`, `--epr-skin-tone-medium-color`, `--epr-skin-tone-medium-dark-color`, `--epr-skin-tone-dark-color` — the tone swatch colors (defaults `#ffd225`, `#ffdfbd`, `#e9c197`, `#c88e62`, `#a86637`, `#60463a`).
 
 ### Dark mode
 - `--epr-dark-bg-color`
