@@ -274,16 +274,20 @@ describe('useEmojiVirtualization', () => {
     ).toEqual(['1f44d-1f3fc', '1f600', '1f431', '1f436']);
   });
 
-  it('leaves the full preload to variations when they are on', () => {
+  it('preloads only the rendered image when variations are on', () => {
     vi.mocked(useEmojiStyleConfig).mockReturnValue('apple');
     vi.mocked(getEmojiPositionStyle).mockReturnValue({
       top: 360,
       insetInlineStart: 0,
     });
     (shouldVirtualize as any).mockReturnValue(true);
+    (useActiveSkinToneState as any).mockReturnValue(['1f3fc']);
     renderHook(() =>
       useEmojiVirtualization({
-        categoryEmojis: mockEmojis,
+        categoryEmojis: [
+          { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fc'] },
+          ...mockEmojis,
+        ],
         topOffset: 0,
         onHeightReady: vi.fn(),
         scrollTop: 0,
@@ -291,9 +295,10 @@ describe('useEmojiVirtualization', () => {
         positioned: true,
       }),
     );
-    expect(preloadEmoji).toHaveBeenCalled();
-    for (const call of (preloadEmoji as any).mock.calls)
-      expect(call.at(-1)).toBeUndefined();
+    // Scrolling never fetches every tone; focus fetches a cell's variations.
+    expect(
+      (preloadEmoji as any).mock.calls.map((call: unknown[]) => call.at(-1)),
+    ).toEqual(['1f44d-1f3fc', '1f600', '1f431', '1f436']);
   });
 
   it('requests native glyph checks for the rendered cells only', () => {

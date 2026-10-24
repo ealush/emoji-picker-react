@@ -114,6 +114,42 @@ for (const variant of [
   });
 }
 
+// Preloading every skin tone of every nearby cell meant hundreds of image
+// requests per scroll and 100–300 ms frames on slow devices. Scrolling
+// fetches only what cells render; focus fetches a cell's variations.
+test('scrolling an image picker never fetches unrendered skin tones', async ({
+  page,
+}) => {
+  const toned: string[] = [];
+  await page.route(/\.png(\?|$)/, (route) => {
+    if (/-1f3f[b-f]/.test(route.request().url()))
+      toned.push(route.request().url());
+    return route.fulfill({
+      contentType: 'image/png',
+      body: Buffer.from(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+        'base64',
+      ),
+    });
+  });
+  await page.addInitScript(() => window.localStorage.clear());
+  await page.goto(story('picker-emoji-styles--emoji-image-apple'));
+  await page.getByRole('gridcell').first().waitFor();
+  const body = page.locator('.epr-body');
+  for (let step = 0; step < 20; step++) {
+    await body.evaluate((element) => {
+      element.scrollTop += 300;
+    });
+    await page.waitForTimeout(50);
+  }
+  await page.waitForTimeout(300);
+  // Rows of skin-tone emoji (hands, people) were in and near view.
+  expect(await body.evaluate((element) => element.scrollTop)).toBeGreaterThan(
+    3000,
+  );
+  expect(toned).toEqual([]);
+});
+
 test('image emoji typing never schedules per-cell preload timers', async ({
   page,
 }) => {
