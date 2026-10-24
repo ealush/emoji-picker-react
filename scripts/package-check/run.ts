@@ -155,8 +155,10 @@ function main() {
 // minified and gzipped, with the dataset left in its own lazy chunk.
 // The original adoption consumer was 40.5 KiB including ShipStyles.
 // Unused part/style factories now tree-shake: keep the complete measurement
-// and enforce a 34 KiB cap against the installed tarball's public entry.
-const PRIMITIVES_INITIAL_BUDGET_BYTES = 34 * 1024;
+// and enforce a 35 KiB cap against the installed tarball's public entry.
+// 35 KiB since 5.1.3 (was 34 KiB): room for keeping layered stylesheets
+// mounted (cssLayer relayout fix); the measured load was ~34.06 KiB.
+const PRIMITIVES_INITIAL_BUDGET_BYTES = 35 * 1024;
 
 // The ESM build stays plain ESM. A module esbuild has to treat as CommonJS
 // (a side-effect file without exports) wraps itself, and the modules it
