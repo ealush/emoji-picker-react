@@ -29,9 +29,9 @@ jobs:
         working-directory: website
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "24"
           cache: "npm"
@@ -43,14 +43,14 @@ jobs:
         # The package's prepare script builds dist/.
         run: npm ci
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v6
         with:
           # NOTE: this does not inject basePath; the subpath prefix lives in
           # website/next.config.js and is verified by "Verify subpath asset
           # URLs" below.
           static_site_generator: next
       - name: Restore cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: website/.next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('website/package-lock.json') }}-${{ hashFiles('website.[jt]s', 'website.[jt]sx') }}
@@ -71,7 +71,7 @@ jobs:
             exit 1
           fi
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: website/out
 
@@ -84,4 +84,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
