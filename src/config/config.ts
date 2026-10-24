@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { DEFAULT_REACTIONS } from '../components/Reactions/DEFAULT_REACTIONS';
 import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
+import { withoutFe0f } from '../data-core/prepare';
 import { emojiUrlByUnified } from '../dataUtils/emojiUtils';
 import type { EmojiDataInput } from '../hooks/useResolvedEmojiData';
 import {
@@ -27,7 +28,8 @@ import {
 } from './categoryConfig';
 import { CustomEmoji } from './customEmojiConfig';
 
-const KNOWN_FAILING_EMOJIS = ['2640-fe0f', '2642-fe0f', '2695-fe0f'];
+// Stored without U+FE0F, like every hiddenEmojis entry.
+const KNOWN_FAILING_EMOJIS = ['2640', '2642', '2695'];
 
 export const DEFAULT_SEARCH_PLACEHOLDER = 'Search';
 export const DEFAULT_PICKER_WIDTH = 350;
@@ -171,9 +173,10 @@ export function mergeConfig(
 
   // Dataset ids are lowercase; accept the uppercase spelling consumers
   // copy from docs and tools (and stray whitespace), like `reactions` and
-  // `suggestedEmojis` already do.
+  // `suggestedEmojis` already do. Kept without U+FE0F, so either spelling
+  // of an ID hides the emoji (see useIsEmojiDisallowed).
   config.hiddenEmojis.forEach((emoji) => {
-    const id = String(emoji).trim().toLowerCase();
+    const id = withoutFe0f(String(emoji).trim().toLowerCase());
     if (id) config.unicodeToHide.add(id);
   });
 

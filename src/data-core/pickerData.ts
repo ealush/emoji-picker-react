@@ -21,7 +21,7 @@ import {
 } from '../dataUtils/DataTypes';
 import { Categories, type EmojiData } from '../types/exposedTypes';
 
-import { getPreparedCore } from './prepare';
+import { getPreparedCore, withoutFe0f } from './prepare';
 
 export interface PickerDataSnapshot {
   emojiData: EmojiData;
@@ -134,15 +134,13 @@ export function getPickerDataSnapshot(
 
   const allEmojisByUnified: Record<string, DataEmoji> = Object.create(null);
 
+  // The base unified and each variation, and either U+FE0F spelling of
+  // them; an exact ID always wins over another record's spelling.
   allEmojis.forEach((emoji) => {
-    const unified = emoji[Keys.unified];
-    allEmojisByUnified[unified] = emoji;
-
-    if (emoji[Keys.variations]) {
-      emoji[Keys.variations]?.forEach((variation) => {
-        allEmojisByUnified[variation] = emoji;
-      });
-    }
+    [emoji[Keys.unified], ...(emoji[Keys.variations] || [])].forEach((id) => {
+      allEmojisByUnified[id] = emoji;
+      allEmojisByUnified[withoutFe0f(id)] ||= emoji;
+    });
   });
 
   const snapshot: PickerDataSnapshot = {
