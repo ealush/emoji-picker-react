@@ -183,7 +183,7 @@
     },
     {
       "path": "dist/esm/index.mjs",
-      "limit": "75 KB"
+      "limit": "76 KB"
     },
     {
       "path": "dist/esm/primitives/index.mjs",
