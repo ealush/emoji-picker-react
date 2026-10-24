@@ -1,3 +1,9 @@
+## [5.0.1](https://github.com/ealush/emoji-picker-react/compare/5.0.0...5.0.1) (2026-10-24)
+
+### Bug Fixes
+
+* backport the 5.1.1 integration fixes to 5.0 ([#591](https://github.com/ealush/emoji-picker-react/issues/591)) ([3dc8981](https://github.com/ealush/emoji-picker-react/commit/3dc89817a725ee93d849a8b806b002aa46fbec35)), closes [#589](https://github.com/ealush/emoji-picker-react/issues/589)
+
 ### Details
 
 Backported from 5.1.1 for the 5.0 line (npm dist-tag `release-5.0.x`).
