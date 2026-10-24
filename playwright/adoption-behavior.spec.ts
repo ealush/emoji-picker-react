@@ -149,6 +149,54 @@ test('scrolling an image picker never fetches unrendered skin tones', async ({
   );
   expect(toned).toEqual([]);
 });
+// Chromium re-lays out every text node when a sheet with cascade layers
+// joins or leaves the document. A layered picker may pay that once, when
+// its layer first arrives; closing and reopening must stay local.
+for (const variant of ['layer-lifecycle', 'declared-layer-lifecycle']) {
+  test(`closing and reopening a layered picker stays local: ${variant}`, async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName !== 'chromium',
+      'Chromium tracing supplies layout counts',
+    );
+    await page.goto(story(`picker-columns--${variant}`));
+    const toggle = page.getByRole('button', { name: 'Toggle picker' });
+    const picker = page.locator('[data-epr-part="root"]');
+    await toggle.click();
+    await page.getByRole('gridcell').first().waitFor();
+    const cdp = await page.context().newCDPSession(page);
+    let largestLayout = 0;
+    cdp.on('Tracing.dataCollected', ({ value }) => {
+      for (const event of value) {
+        const args = event.args as unknown as
+          { beginData?: { dirtyObjects?: number } } | undefined;
+        if (event.name === 'Layout')
+          largestLayout = Math.max(
+            largestLayout,
+            Number(args?.beginData?.dirtyObjects) || 0,
+          );
+      }
+    });
+    await cdp.send('Tracing.start', { categories: 'devtools.timeline' });
+    await toggle.click();
+    await picker.waitFor({ state: 'detached' });
+    await toggle.click();
+    await page.getByRole('gridcell').first().waitFor();
+    await toggle.click();
+    await picker.waitFor({ state: 'detached' });
+    const done = new Promise((resolve) =>
+      cdp.once('Tracing.tracingComplete', resolve),
+    );
+    await cdp.send('Tracing.end');
+    await done;
+    // The fixture's 1,000 spans alone are 3,000 layout objects.
+    expect(largestLayout).toBeGreaterThan(0);
+    expect(largestLayout).toBeLessThan(1000);
+    await cdp.detach();
+  });
+}
 
 test('skin-tone swatches take their colors from the tone tokens', async ({
   page,
