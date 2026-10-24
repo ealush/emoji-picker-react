@@ -9,7 +9,7 @@ readable package stack traces. Terser applies local expression optimizations
 without mangling names or inlining annotated style factories. The primitives
 budget measures a working consumer after application-side bundling and
 minification; it is not a limit on the raw published ESM file. The package
-check logs the exact gzip bytes against the unchanged 34 KiB cap.
+check logs the exact gzip bytes against the 35 KiB cap (34 KiB before 5.1.3).
 
 `npm run check:scripts` strictly checks every script and benchmark, including
 consumer fixture sources. The library build and unit CI run this gate before
