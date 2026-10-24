@@ -1,3 +1,11 @@
+## [5.1.2](https://github.com/ealush/emoji-picker-react/compare/5.1.1...5.1.2) (2026-10-24)
+
+### Bug Fixes
+
+* let themes set the skin-tone swatch colors ([#600](https://github.com/ealush/emoji-picker-react/issues/600)) ([883e1fd](https://github.com/ealush/emoji-picker-react/commit/883e1fd742599d9d038053eb0ad7bccf7fd9e4c0))
+* match emoji IDs with or without U+FE0F ([#599](https://github.com/ealush/emoji-picker-react/issues/599)) ([2e698c5](https://github.com/ealush/emoji-picker-react/commit/2e698c5fde04868fa3f4af4cf76de179b4b877ca))
+* preload only the image a nearby cell renders while scrolling ([#598](https://github.com/ealush/emoji-picker-react/issues/598)) ([c72c260](https://github.com/ealush/emoji-picker-react/commit/c72c260a57d9acf5859186c25437c568579d648a))
+
 ## [5.1.1](https://github.com/ealush/emoji-picker-react/compare/5.1.0...5.1.1) (2026-10-24)
 
 ### Bug Fixes
