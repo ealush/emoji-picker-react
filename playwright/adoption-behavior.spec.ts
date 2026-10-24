@@ -150,6 +150,27 @@ test('scrolling an image picker never fetches unrendered skin tones', async ({
   expect(toned).toEqual([]);
 });
 
+test('skin-tone swatches take their colors from the tone tokens', async ({
+  page,
+}) => {
+  const swatch = (tone: string) =>
+    page
+      .locator(`.epr-tone-${tone}`)
+      .first()
+      .evaluate((element) => getComputedStyle(element).backgroundColor);
+  await page.goto(story('picker-columns--six-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  // Defaults are unchanged.
+  expect(await swatch('neutral')).toBe('rgb(255, 210, 37)');
+  expect(await swatch('1f3fd')).toBe('rgb(200, 142, 98)');
+  await page.goto(story('picker-columns--themed-skin-tone-swatches'));
+  await page.getByRole('gridcell').first().waitFor();
+  expect(await swatch('neutral')).toBe('rgb(1, 2, 3)');
+  expect(await swatch('1f3fd')).toBe('rgb(4, 5, 6)');
+  // An untouched tone keeps its default.
+  expect(await swatch('1f3ff')).toBe('rgb(96, 70, 58)');
+});
+
 test('image emoji typing never schedules per-cell preload timers', async ({
   page,
 }) => {

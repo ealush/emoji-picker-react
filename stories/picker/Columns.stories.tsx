@@ -163,3 +163,15 @@ export function HiddenEmptyFirstCategory() {
     </>
   );
 }
+
+// Skin-tone swatches follow the theme's tone tokens.
+export const ThemedSkinToneSwatches = () => (
+  <EmojiPicker
+    style={
+      {
+        '--epr-skin-tone-neutral-color': 'rgb(1, 2, 3)',
+        '--epr-skin-tone-medium-color': 'rgb(4, 5, 6)',
+      } as React.CSSProperties
+    }
+  />
+);
