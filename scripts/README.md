@@ -4,6 +4,13 @@ Run automation through the named `npm run` commands. Scripts use TypeScript
 and the checked-in `tsx` development dependency. Use Node 24.15+ on the 24.x
 line for the contributor toolchain; published consumers support Node 18+. `tsx` executes TypeScript; it does not check types.
 
+The ESM build keeps formatted code, comments, and function/class names for
+readable package stack traces. Terser applies local expression optimizations
+without mangling names or inlining annotated style factories. The primitives
+budget measures a working consumer after application-side bundling and
+minification; it is not a limit on the raw published ESM file. The package
+check logs the exact gzip bytes against the unchanged 34 KiB cap.
+
 `npm run check:scripts` strictly checks every script and benchmark, including
 consumer fixture sources. The library build and unit CI run this gate before
 using the scripts. Keep new automation under `scripts/` or `bench/` so the gate

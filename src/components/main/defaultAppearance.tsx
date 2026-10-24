@@ -157,10 +157,11 @@ const styles = /* @__PURE__ */ (() =>
       backgroundColor: 'var(--epr-bg-color)',
       overflow: 'hidden',
       transition: 'height 0.3s ease-in-out, background-color 0.1s ease-in-out',
+      fontFamily: 'var(--epr-font-family, inherit)',
       '*': {
         boxSizing: 'border-box',
         // Overridable without a specificity fight (v4 hard-coded sans-serif).
-        fontFamily: 'var(--epr-font-family, sans-serif)',
+        fontFamily: 'inherit',
       },
     },
     baseVariables: {

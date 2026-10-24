@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
 
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
-import { asSelectors, ClassNames } from '../DomUtils/classNames';
+import { ClassNames } from '../DomUtils/classNames';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { CategoriesConfig } from '../config/categoryConfig';
+import {
+  CategoriesConfig,
+  categoryIdFromCategoryConfig,
+} from '../config/categoryConfig';
 
 export function useActiveCategoryScrollDetection({
   setActiveCategory,
@@ -22,9 +25,11 @@ export function useActiveCategoryScrollDetection({
   const BodyRef = useBodyRef();
 
   useEffect(() => {
-    const visibleCategories = new Map<string, number>();
-    const intersectingCategories = new Map<string, boolean>();
-    const targets = new Map<string, Element>();
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisibleCategories(categories.map(categoryIdFromCategoryConfig));
+      return;
+    }
+    const observed = new Map<string, IntersectionObserverEntry>();
     const bodyRef = BodyRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,31 +44,31 @@ export function useActiveCategoryScrollDetection({
             continue;
           }
 
-          visibleCategories.set(id, entry.intersectionRatio);
-          intersectingCategories.set(id, entry.isIntersecting);
-          targets.set(id, entry.target);
+          observed.set(id, entry);
         }
 
-        const ratios = Array.from(visibleCategories);
+        const ratios = Array.from(observed);
         const visibleCats = ratios
-          .filter(([id, ratio]) => ratio > 0 || intersectingCategories.get(id))
+          .filter(
+            ([, entry]) => entry.intersectionRatio > 0 || entry.isIntersecting,
+          )
           .map(([id]) => id);
 
         setVisibleCategories(visibleCats);
         const lastCategory = ratios[ratios.length - 1];
 
-        if (lastCategory?.[1] == 1) {
+        if (lastCategory?.[1].intersectionRatio === 1) {
           return setActiveCategory(lastCategory[0]);
         }
 
         const viewportTop = bodyRef.getBoundingClientRect().top;
-        for (const [id, ratio] of ratios) {
+        for (const [id, entry] of ratios) {
           // Fractional offsets can leave less than a pixel of the preceding
           // section intersecting after a jump. It must not steal the tab
           // highlight from the section aligned with the viewport top.
           if (
-            ratio &&
-            targets.get(id)!.getBoundingClientRect().bottom > viewportTop + 1
+            entry.intersectionRatio &&
+            entry.target.getBoundingClientRect().bottom > viewportTop + 1
           ) {
             setActiveCategory(id);
             break;
@@ -75,11 +80,9 @@ export function useActiveCategoryScrollDetection({
         threshold: [0, 1],
       },
     );
-    bodyRef
-      ?.querySelectorAll(asSelectors(ClassNames.category))
-      .forEach((el) => {
-        observer.observe(el);
-      });
+    bodyRef?.querySelectorAll(`.${ClassNames.category}`).forEach((el) => {
+      observer.observe(el);
+    });
 
     return () => {
       observer.disconnect();

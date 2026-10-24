@@ -1,3 +1,5 @@
+import { useCallback } from 'react';
+
 import {
   useActiveSkinToneState,
   useNativeEmojiSupport,
@@ -20,17 +22,20 @@ export function useIsEmojiDisallowed() {
   const unicodeToHide = useUnicodeToHide();
   const [activeSkinTone] = useActiveSkinToneState();
 
-  return function isEmojiDisallowed(
-    emoji: DataEmoji,
-    renderedUnified = emojiUnified(emoji, activeSkinTone),
-  ) {
-    if (unicodeToHide.has(unifiedWithoutSkinTone(emojiUnified(emoji))))
-      return true;
-    if (isCustomEmoji(emoji)) return false;
-    const version = addedIn(emoji);
-    return (
-      version > cap ||
-      !isNativeEmojiSupported(nativeSupport, renderedUnified, version)
-    );
-  };
+  return useCallback(
+    function isEmojiDisallowed(
+      emoji: DataEmoji,
+      renderedUnified = emojiUnified(emoji, activeSkinTone),
+    ) {
+      if (unicodeToHide.has(unifiedWithoutSkinTone(emojiUnified(emoji))))
+        return true;
+      if (isCustomEmoji(emoji)) return false;
+      const version = addedIn(emoji);
+      return (
+        version > cap ||
+        !isNativeEmojiSupported(nativeSupport, renderedUnified, version)
+      );
+    },
+    [activeSkinTone, unicodeToHide, cap, nativeSupport],
+  );
 }

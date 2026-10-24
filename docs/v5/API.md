@@ -113,11 +113,13 @@ By default, the arrow key toward the grid moves focus from the search input into
 ```
 
 - The arrow toward the grid highlights the first emoji in view (the first result while searching): ArrowDown when the grid is below the input, ArrowUp when it is above, and Left or Right when it is beside the input (with the caret at that end of the text). The arrow keys then move the highlight through the grid, including rows that are not rendered yet. Otherwise Left and Right edit the text until an emoji is highlighted; from then on they move the highlight, and Escape gives them back to the text. With Shift, Ctrl, Alt or Meta, arrows always stay with the input (selecting text, moving by word), with or without a highlight. Left and Right follow the reading direction in RTL.
-- Enter selects the highlighted emoji, or the first result when nothing is highlighted, even if the results are scrolled. Focus stays in the input.
-- Once started, the highlight follows the results: when the search changes, it moves to the first result.
+- Enter selects the highlighted emoji, or the first result when nothing is highlighted, even if the results are scrolled. Focus stays in the input. While filtering is pending, Enter queues one selection for the matching results after they commit. Editing the query, pressing another key, or leaving the input cancels that queued selection.
+- Once started, the highlight follows the results: when the applied search, dataset or `suggestedEmojis` changes, it moves to the first result and updates Preview.
 - Moving past the grid edge that faces the input (ArrowUp from the first row when the input is above, Left from the first column when it is on the left), Escape, or leaving the input removes the highlight, and cancels a move that has not landed yet. Escape ends only the highlight, even one whose emoji is scrolled out and unmounted; with nothing highlighted, it clears the search as usual.
 - Hovering an emoji previews it without taking focus from the input (true in both modes: hover never takes focus from the search input). The highlight stays where it is, and Enter still selects it; once the pointer leaves the emoji, the preview shows the highlighted one again.
 - Space types a space, so it does not open skin tone variations in this mode.
+
+An Escape consumed by the picker stops propagation in window capture, before document-capture and bubbling host dismissal handlers. With nothing left to undo, Escape is left untouched for the host.
 
 The input becomes an ARIA combobox with a grid popup: `aria-controls` names the grid while both are mounted, and `aria-activedescendant` names the highlighted cell (it is empty while virtualization has the highlighted cell scrolled out). That cell carries `data-epr-highlighted` and is the active emoji for Preview, `useActiveEmoji()` and `emoji.isActive`. The default appearance styles it like keyboard focus; with `unstyled` or custom cells, style `[data-epr-highlighted]` as well.
 
@@ -229,7 +231,7 @@ For standard emoji IDs:
 - a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
 - duplicates are removed by canonical normalized ID, first occurrence wins.
 
-Custom emoji IDs use the same case-insensitive rule — `customEmojis` are already lowercased when indexed, so there is no separate exact-match pass.
+Custom emoji IDs use the same case-insensitive rule: IDs are lowercased when indexed. Custom display names retain the supplied capitalization; search still matches them case-insensitively.
 
 Entries may be unified IDs, custom emoji IDs, or the emoji characters themselves (`'🧠'`, `'❤️'`), so recents stored as inserted text can be passed through unchanged; unknown entries are ignored.
 
@@ -520,6 +522,8 @@ Styling is opt-in in both directions:
 ```
 
 `columns` sets the emojis per row on EmojiPicker and Root. The picker's width then fits those columns plus a stable scrollbar gutter, unless the consumer sets a width (`width`, `style` or any class). A container narrower than the columns renders fewer columns instead of clipping. Without `columns`, the width decides the column count, as in v4.
+
+The intrinsic grid width remains present during an empty search, data loading or a load error.
 
 ## 12. Data API
 

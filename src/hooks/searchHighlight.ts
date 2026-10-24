@@ -11,10 +11,8 @@
 // input keeps an empty active descendant so arrows stay with the highlight.
 import type { idRef } from '../DomUtils/idRef';
 import type {
-  categoryGeometry,
   focusAdjacentEmoji,
-  focusLogicalEmoji,
-  MoveOptions,
+  focusFirstEmoji,
 } from '../DomUtils/keyboardNavigation';
 import type {
   allUnifiedFromEmojiElement,
@@ -50,8 +48,7 @@ export type SearchHighlightHost = [
   focusAdjacentEmoji: typeof focusAdjacentEmoji,
   getRegionInDirection: typeof getRegionInDirection,
   idRef: typeof idRef,
-  categoryGeometry: typeof categoryGeometry,
-  focusLogicalEmoji: typeof focusLogicalEmoji,
+  focusFirstEmoji: typeof focusFirstEmoji,
 ];
 
 export type SearchHighlight = ReturnType<typeof createSearchHighlight>;
@@ -69,8 +66,7 @@ export function createSearchHighlight(
     focusAdjacentEmoji,
     getRegionInDirection,
     idRef,
-    categoryGeometry,
-    focusLogicalEmoji,
+    focusFirstEmoji,
   ]: SearchHighlightHost
 ) {
   // The input's active descendant marks a highlight as wanted, even while
@@ -78,19 +74,6 @@ export function createSearchHighlight(
   // move; new results keep it and move it to the first result.
   const wanted = () => !!input.current?.hasAttribute(ACTIVE_DESCENDANT);
   const highlighted = () => highlightedEmoji(body.current);
-
-  // The first cell of the first section with emojis (the first search
-  // result), wherever the grid is scrolled and whichever rows are
-  // rendered. Returns false when no section has emojis.
-  const moveToFirstEmoji = (options: MoveOptions): boolean => {
-    const category = Array.from(
-      body.current?.querySelectorAll<HTMLElement>(
-        '[data-epr-part="category"]',
-      ) ?? [],
-    ).find((section) => categoryGeometry(section).count > 0);
-    if (category) focusLogicalEmoji(category, 0, options);
-    return !!category;
-  };
 
   // Highlights `emoji`, clears the highlight (null), or highlights the
   // first result (no argument), and mirrors it to the active emoji so
@@ -101,7 +84,7 @@ export function createSearchHighlight(
       const generation = registry.currentGeneration();
       return (
         wanted() &&
-        (moveToFirstEmoji({
+        (focusFirstEmoji(body.current, {
           moveTo: highlight,
           shouldFocus: () => registry.isCurrent(generation) && wanted(),
         }) ||
@@ -187,19 +170,6 @@ export function createSearchHighlight(
             ? () => highlight(null)
             : undefined,
         moveTo: highlight,
-      });
-      return true;
-    },
-
-    // Enter during a search with nothing highlighted selects the first
-    // result by its place in the results, wherever the grid is scrolled.
-    // Returns false when Enter selects something else.
-    selectFirst(searching: boolean): boolean {
-      if (!searching || highlighted()) return false;
-      const generation = registry.currentGeneration();
-      moveToFirstEmoji({
-        shouldFocus: () => registry.isCurrent(generation),
-        moveTo: (emoji) => emoji.click(),
       });
       return true;
     },

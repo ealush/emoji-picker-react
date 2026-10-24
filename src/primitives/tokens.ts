@@ -140,6 +140,7 @@ export const darkPickerTokens: Record<string, string> = {
 
 /** Full light preset: geometry plus light colors (v4 defaults). */
 export const defaultPickerTokens: Record<string, string> = {
+  '--epr-font-family': 'sans-serif',
   ...lightPickerTokens,
   ...structuralPickerTokens,
 };

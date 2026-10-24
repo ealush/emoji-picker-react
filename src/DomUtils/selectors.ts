@@ -1,16 +1,12 @@
 import { unifiedWithoutSkinTone } from '../dataUtils/emojiSelectors';
 
-import { asSelectors, ClassNames } from './classNames';
+import { ClassNames } from './classNames';
 import { firstVisibleElementInContainer } from './elementPositionInRow';
 
 export type NullableElement = HTMLElement | null;
 
-export const EmojiButtonSelector = `button${asSelectors(ClassNames.emoji)}`;
-export const VisibleEmojiSelector = [
-  EmojiButtonSelector,
-  asSelectors(ClassNames.visible),
-  `:not(${asSelectors(ClassNames.hidden)})`,
-].join('');
+export const EmojiButtonSelector = `button.${ClassNames.emoji}`;
+export const VisibleEmojiSelector = `${EmojiButtonSelector}.${ClassNames.visible}:not(.${ClassNames.hidden})`;
 
 export function buttonFromTarget(
   emojiElement: NullableElement,
@@ -35,7 +31,7 @@ export function isEmojiElement(element: NullableElement): boolean {
 export function categoryLabelFromCategory(
   category: NullableElement,
 ): NullableElement {
-  return category?.querySelector(asSelectors(ClassNames.label)) ?? null;
+  return category?.querySelector(`.${ClassNames.label}`) ?? null;
 }
 
 export function closestCategoryLabel(
@@ -74,7 +70,7 @@ export function categoryLabelHeight(category: NullableElement): number {
   }
 
   const categoryWithoutLabel = category.querySelector(
-    asSelectors(ClassNames.categoryContent),
+    `.${ClassNames.categoryContent}`,
   );
 
   return (
@@ -96,9 +92,9 @@ export function isEmojiBehindLabel(emoji: NullableElement): boolean {
 export function queryScrollBody(root: NullableElement): NullableElement {
   if (!root) return null;
 
-  return root.matches(asSelectors(ClassNames.scrollBody))
+  return root.matches(`.${ClassNames.scrollBody}`)
     ? root
-    : root.querySelector(asSelectors(ClassNames.scrollBody));
+    : root.querySelector(`.${ClassNames.scrollBody}`);
 }
 
 export function emojiDistanceFromScrollTop(emoji: NullableElement): number {
@@ -114,7 +110,7 @@ export function closestScrollBody(element: NullableElement): NullableElement {
     return null;
   }
 
-  return element.closest(asSelectors(ClassNames.scrollBody)) ?? null;
+  return element.closest(`.${ClassNames.scrollBody}`) ?? null;
 }
 
 export function emojiTruOffsetLeft(element: NullableElement): number {
@@ -221,14 +217,12 @@ export function closestCategory(element: NullableElement) {
   if (!element) {
     return null;
   }
-  return element.closest(asSelectors(ClassNames.category)) as HTMLElement;
+  return element.closest(`.${ClassNames.category}`) as HTMLElement;
 }
 
 export function closestCategoryContent(element: NullableElement) {
   if (!element) {
     return null;
   }
-  return element.closest(
-    asSelectors(ClassNames.categoryContent),
-  ) as HTMLElement;
+  return element.closest(`.${ClassNames.categoryContent}`) as HTMLElement;
 }

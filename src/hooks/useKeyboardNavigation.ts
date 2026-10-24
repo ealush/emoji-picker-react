@@ -10,11 +10,10 @@ import { getActiveElement } from '../DomUtils/getActiveElement';
 import { idRef } from '../DomUtils/idRef';
 import { isRtl } from '../DomUtils/isRtl';
 import {
-  categoryGeometry,
   emojisInView,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
-  focusLogicalEmoji,
+  focusFirstEmoji,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import {
@@ -39,11 +38,14 @@ import {
   useSetActiveEmoji,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
+import { usePickerDataContext } from '../components/context/PickerDataContext';
 import {
   useKeepSearchFocusConfig,
   useSearchDisabledConfig,
   useVariationsDisabledConfig,
+  useSuggestedEmojisConfig,
 } from '../config/useConfig';
+import { normalizeQuery } from '../data-core/prepare';
 import {
   NavigationRegionKind,
   NavigationRegistry,
@@ -96,9 +98,32 @@ export function useKeyboardNavigation() {
   const keepSearchFocus = useKeepSearchFocusConfig();
   const highlighter = useSearchHighlight(keepSearchFocus, registry);
   const [searchTerm] = useSearchTermState();
+  const suggestions = JSON.stringify(useSuggestedEmojisConfig());
+  const { emojiData } = usePickerDataContext();
+  const setActiveEmoji = useSetActiveEmoji();
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
+  const pendingPick = useRef<string | null>(null);
+  const pickEmoji = (emoji: HTMLElement | null) => {
+    pendingPick.current = null;
+    if (!keepSearchFocus) focusElement(emoji);
+    emoji?.click();
+  };
+  const selectFirstResult = () => {
+    const query = pendingPick.current;
+    const generation = registry.currentGeneration();
+    if (
+      !focusFirstEmoji(BodyRef.current, {
+        shouldFocus: () =>
+          pendingPick.current === query &&
+          SearchInputRef.current?.value === query &&
+          registry.isCurrent(generation),
+        moveTo: pickEmoji,
+      })
+    )
+      pendingPick.current = null;
+  };
   // An Escape proposed clearing the search, and nothing has changed since:
   // a controlled parent rejected the clear, so the next Escape is the host's.
   const clearProposed = useRef(false);
@@ -109,10 +134,21 @@ export function useKeyboardNavigation() {
   // moves to the first result (also when an arrow key landed on the old
   // results inside the filter debounce).
   useEffect(() => {
+    const pending = pendingPick.current;
+    pendingPick.current = null;
+    setActiveEmoji(null);
     highlighter.current?.highlight();
+    if (
+      pending !== null &&
+      pending === displayed &&
+      normalizeQuery(pending) === searchTerm
+    ) {
+      pendingPick.current = pending;
+      selectFirstResult();
+    }
     // Per committed result set; the highlighter reads live refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm]);
+  }, [searchTerm, suggestions, emojiData]);
   const main = function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
@@ -132,8 +168,10 @@ export function useKeyboardNavigation() {
         }
         if (highlighter.current?.highlight(null)) {
           event.preventDefault();
+          event.stopPropagation();
         } else if ((searchValue || displayed) && !clearProposed.current) {
           event.preventDefault();
+          event.stopPropagation();
           clearProposed.current = true;
           clearSearch();
           scrollTo(0);
@@ -184,13 +222,20 @@ export function useKeyboardNavigation() {
   // Enter in search selects the first result; with keepSearchFocus, the
   // highlighted one, without moving focus.
   const selectFromSearch = () => {
-    const engine = highlighter.current;
-    if (keepSearchFocus && engine?.selectFirst(isSearchMode)) return;
-    const emoji =
-      (keepSearchFocus && engine?.highlighted()) ||
-      firstVisibleEmoji(BodyRef.current);
-    if (!keepSearchFocus) focusElement(emoji);
-    emoji?.click();
+    // Remember fast Enter while the input is ahead of the debounced grid.
+    if (
+      ![searchValue, displayed].every(
+        (value) => normalizeQuery(value) === searchTerm,
+      )
+    ) {
+      pendingPick.current = displayed;
+      return;
+    }
+    const emoji = keepSearchFocus && highlighter.current?.highlighted();
+    if (!emoji && isSearchMode) {
+      pendingPick.current = displayed;
+      selectFirstResult();
+    } else pickEmoji(emoji || firstVisibleEmoji(BodyRef.current));
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
@@ -312,20 +357,15 @@ export function useKeyboardNavigation() {
     }
   };
   const [composing] = useSearchComposingState();
-  const handler = useRef<(event: KeyboardEvent, menusOnly?: boolean) => void>(
+  const handler = useRef<(event: KeyboardEvent, escapeOnly?: boolean) => void>(
     () => {},
   );
   // One listener owns the native lifecycle; current callbacks supply state
   // and live region refs without reattaching on every picker render.
-  handler.current = (event, menusOnly) => {
-    if (
-      composing ||
-      event.isComposing ||
-      event.keyCode === 229 ||
-      (menusOnly && !hasOpenToggles())
-    )
-      return;
-    if (!menusOnly) {
+  handler.current = (event, escapeOnly) => {
+    if (composing || event.isComposing || event.keyCode === 229) return;
+    if (event.key !== 'Enter') pendingPick.current = null;
+    if (!escapeOnly) {
       search(event);
       tone(event);
       categories(event);
@@ -339,20 +379,31 @@ export function useKeyboardNavigation() {
     // Descendant parts are read through live refs by the delegated handler.
     const current = ref.current;
     if (!current) return;
+    let captured: KeyboardEvent | undefined;
     const scoped = (event: KeyboardEvent) => {
+      if (event === captured) return;
       if (eventBelongsToPicker(event, current)) handler.current(event);
     };
     const capture = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && eventBelongsToPicker(event, current))
+      if (event.key === 'Escape' && eventBelongsToPicker(event, current)) {
+        captured = event;
         handler.current(event, true);
+      }
+    };
+    const cancelPendingPick = () => {
+      pendingPick.current = null;
     };
     // Leaving the search input ends a keepSearchFocus highlight.
-    const endHighlight = (event: FocusEvent) =>
+    const endHighlight = (event: FocusEvent) => {
+      pendingPick.current = null;
       highlighter.current?.blur(event);
+    };
+    current.addEventListener('input', cancelPendingPick);
     current.addEventListener('keydown', scoped);
     current.addEventListener('focusout', endHighlight);
     window.addEventListener('keydown', capture, true);
     return () => {
+      current.removeEventListener('input', cancelPendingPick);
       current.removeEventListener('keydown', scoped);
       current.removeEventListener('focusout', endHighlight);
       window.removeEventListener('keydown', capture, true);
@@ -485,7 +536,7 @@ export function useFocusRegion() {
 // it. Turning the prop off ends the highlight; the engine stays loaded.
 let engineModule: Promise<typeof import('./searchHighlight')> | undefined;
 export function loadSearchHighlight() {
-  return (engineModule ||= import('./searchHighlight').catch((error) => {
+  return (engineModule ||= import('./deferredPicker').catch((error) => {
     engineModule = undefined;
     throw error;
   }));
@@ -518,8 +569,7 @@ function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
             focusAdjacentEmoji,
             getRegionInDirection,
             idRef,
-            categoryGeometry,
-            focusLogicalEmoji,
+            focusFirstEmoji,
           );
       },
       // A failed load leaves the default navigation; a remount retries.

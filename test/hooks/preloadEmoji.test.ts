@@ -11,7 +11,9 @@ const thumbsUp = {
 };
 
 describe('preloadEmoji', () => {
-  afterEach(() => preloadedEmojs.clear());
+  afterEach(() => {
+    preloadedEmojs.clear();
+  });
 
   it('requests the emoji and each skin-tone variation', () => {
     const getEmojiUrl = vi.fn((unified: string) => `/${unified}.png`);
