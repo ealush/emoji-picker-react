@@ -34,10 +34,13 @@ jobs:
       id-token: write
       actions: write
     steps:
-      - name: Checkout master
+      # A manual run releases the branch it was dispatched on, so the 5.0.x
+      # maintenance line ships patches under its own npm dist-tag
+      # (`release-5.0.x`, see .releaserc.json) without touching `latest`.
+      - name: Checkout the release branch
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || 'master' }}
           fetch-depth: 0
 
       # Never publish a commit the tests did not see: if master moved on,
@@ -89,6 +92,7 @@ jobs:
       # previous package version. A workflow dispatched with GITHUB_TOKEN
       # does run.
       - name: Redeploy the website with the released version
+        if: github.ref_name == 'master'
         run: gh workflow run website.yml --ref master
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,8 @@
 {
-  "branches": ["master"],
+  "branches": [
+    "master",
+    { "name": "5.0.x", "range": "5.0.x", "channel": "release-5.0.x" }
+  ],
   "tagFormat": "${version}",
   "preset": "conventionalcommits",
   "releaseRules": [
