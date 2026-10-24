@@ -1,3 +1,9 @@
+## [5.1.3](https://github.com/ealush/emoji-picker-react/compare/5.1.2...5.1.3) (2026-10-24)
+
+### Bug Fixes
+
+* keep a layered stylesheet mounted so closing the picker stays local ([#608](https://github.com/ealush/emoji-picker-react/issues/608)) ([9d31137](https://github.com/ealush/emoji-picker-react/commit/9d311379e3ddf47de44c7551313c7c511725b249))
+
 ## [5.1.2](https://github.com/ealush/emoji-picker-react/compare/5.1.1...5.1.2) (2026-10-24)
 
 ### Bug Fixes
