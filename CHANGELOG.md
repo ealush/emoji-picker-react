@@ -7,13 +7,13 @@
 * Preserve custom emoji display-name capitalization in accessible labels, previews and `onEmojiClick` payload `names`. Matching and IDs remain case-insensitive.
 * Preserve column width in empty/loading/error states, inherited text fonts, default custom-header backgrounds and externally updated highlights.
 * Render and search without IntersectionObserver, and keep primitive search focus borders visible without an explicit color preset.
-* Preserve highlights for equal inline suggestion arrays during unrelated config updates.
+* Preserve highlights for equal inline suggestion arrays during unrelated config updates; cancel queued Enter on keyless input edits, including case-only and whitespace changes.
 * Preserve rapid arrow navigation across virtualized rows and avoid per-cell preload timers.
 
 ### Performance Improvements
 
-* Defer grid cells until after the first layout commit; preload only nearby image cells and reuse unchanged filtered inventories.
-* Avoid redundant copies in cold data preparation and defer async-loader-only validation from the initial primitives bundle.
+* Defer grid cells until after the first layout commit, with a guaranteed post-mount update when measurement is unavailable; preload only nearby image cells and reuse unchanged filtered inventories.
+* Avoid redundant copies in cold data preparation and defer async-loader-only validation from the initial primitives bundle. Keep published ESM formatted with comments and original function/class names while retaining local compiler optimizations.
 
 ## [5.1.0](https://github.com/ealush/emoji-picker-react/compare/5.0.0...5.1.0) (2026-10-19)
 

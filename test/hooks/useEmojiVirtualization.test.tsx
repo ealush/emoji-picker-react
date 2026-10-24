@@ -124,6 +124,26 @@ describe('useEmojiVirtualization', () => {
     expect(result.current.emojis).toHaveLength(3);
   });
 
+  it('renders after commit without a measurement or another update', () => {
+    vi.mocked(useCategoryHeight).mockReturnValue(undefined);
+    vi.mocked(useBodyRef).mockReturnValue({ current: null });
+    const passes: number[] = [];
+    const { result } = renderHook(() => {
+      const value = useEmojiVirtualization({
+        categoryEmojis: mockEmojis,
+        topOffset: 0,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      });
+      passes.push(value.emojis.length);
+      return value;
+    });
+    expect(passes[0]).toBe(0);
+    expect(result.current.emojis).toHaveLength(3);
+  });
+
   it.each(['native', 'apple'] as const)(
     'does not queue distant preloads with %s',
     (style) => {

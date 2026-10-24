@@ -24,7 +24,6 @@ import {
 } from './support/keepSearchFocusPicker';
 
 vi.mock('../src/hooks/preloadEmoji', () => ({
-  preloadEmojiIfNeeded: () => undefined,
   preloadEmoji: () => undefined,
   preloadedEmojs: new Set(),
 }));
@@ -99,16 +98,19 @@ describe('keepSearchFocus', () => {
     });
   });
 
-  it('queues fast Enter and selects the matching result once after debounce', async () => {
-    const { input, onEmojiClick } = await renderPicker();
-    fireEvent.change(input, { target: { value: 'emoji 9' } });
-    fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onEmojiClick).not.toHaveBeenCalled();
-    await waitFor(() => expect(onEmojiClick).toHaveBeenCalledTimes(1));
-    expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
-    await act(() => new Promise((resolve) => setTimeout(resolve, 150)));
-    expect(onEmojiClick).toHaveBeenCalledTimes(1);
-  });
+  it.each(['emoji 9', 'EMOJI 9', ' emoji 9 '])(
+    'queues fast Enter for unchanged input %s and selects once',
+    async (query) => {
+      const { input, onEmojiClick } = await renderPicker();
+      fireEvent.change(input, { target: { value: query } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+      expect(onEmojiClick).not.toHaveBeenCalled();
+      await waitFor(() => expect(onEmojiClick).toHaveBeenCalledTimes(1));
+      expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
+      await act(() => new Promise((resolve) => setTimeout(resolve, 150)));
+      expect(onEmojiClick).toHaveBeenCalledTimes(1);
+    },
+  );
 
   it.each(['Escape', 'ArrowDown', 'blur', 'edit'])(
     'cancels queued Enter on %s',
@@ -120,6 +122,18 @@ describe('keepSearchFocus', () => {
       else if (action === 'edit')
         fireEvent.change(input, { target: { value: 'emoji 8' } });
       else fireEvent.keyDown(input, { key: action });
+      await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+      expect(onEmojiClick).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(['emoji 9 ', 'EMOJI 9', 'emoji 9'])(
+    'cancels queued Enter for a keyless edit to %s',
+    async (value) => {
+      const { input, onEmojiClick } = await renderPicker();
+      fireEvent.change(input, { target: { value: 'emoji 9' } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+      fireEvent.input(input, { target: { value } });
       await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
       expect(onEmojiClick).not.toHaveBeenCalled();
     },

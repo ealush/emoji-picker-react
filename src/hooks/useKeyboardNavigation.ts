@@ -10,11 +10,10 @@ import { getActiveElement } from '../DomUtils/getActiveElement';
 import { idRef } from '../DomUtils/idRef';
 import { isRtl } from '../DomUtils/isRtl';
 import {
-  categoryGeometry,
   emojisInView,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
-  focusLogicalEmoji,
+  focusFirstEmoji,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
 import {
@@ -106,6 +105,25 @@ export function useKeyboardNavigation() {
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
   const pendingPick = useRef<string | null>(null);
+  const pickEmoji = (emoji: HTMLElement | null) => {
+    pendingPick.current = null;
+    if (!keepSearchFocus) focusElement(emoji);
+    emoji?.click();
+  };
+  const selectFirstResult = () => {
+    const query = pendingPick.current;
+    const generation = registry.currentGeneration();
+    if (
+      !focusFirstEmoji(BodyRef.current, {
+        shouldFocus: () =>
+          pendingPick.current === query &&
+          SearchInputRef.current?.value === query &&
+          registry.isCurrent(generation),
+        moveTo: pickEmoji,
+      })
+    )
+      pendingPick.current = null;
+  };
   // An Escape proposed clearing the search, and nothing has changed since:
   // a controlled parent rejected the clear, so the next Escape is the host's.
   const clearProposed = useRef(false);
@@ -122,25 +140,11 @@ export function useKeyboardNavigation() {
     highlighter.current?.highlight();
     if (
       pending !== null &&
-      pending === searchTerm &&
-      normalizeQuery(displayed) === searchTerm
+      pending === displayed &&
+      normalizeQuery(pending) === searchTerm
     ) {
-      const category = BodyRef.current?.querySelector<HTMLElement>(
-        '[data-epr-part="category-content"]:not([data-epr-emoji-count="0"])',
-      )?.parentElement;
-      if (category) {
-        const generation = registry.currentGeneration();
-        pendingPick.current = pending;
-        focusLogicalEmoji(category, 0, {
-          shouldFocus: () =>
-            pendingPick.current === pending && registry.isCurrent(generation),
-          moveTo: (emoji) => {
-            pendingPick.current = null;
-            if (!keepSearchFocus) emoji.focus();
-            emoji.click();
-          },
-        });
-      }
+      pendingPick.current = pending;
+      selectFirstResult();
     }
     // Per committed result set; the highlighter reads live refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -224,17 +228,14 @@ export function useKeyboardNavigation() {
         (value) => normalizeQuery(value) === searchTerm,
       )
     ) {
-      pendingPick.current = normalizeQuery(displayed);
+      pendingPick.current = displayed;
       return;
     }
-    pendingPick.current = null;
-    const engine = highlighter.current;
-    if (keepSearchFocus && engine?.selectFirst(isSearchMode)) return;
-    const emoji =
-      (keepSearchFocus && engine?.highlighted()) ||
-      firstVisibleEmoji(BodyRef.current);
-    if (!keepSearchFocus) focusElement(emoji);
-    emoji?.click();
+    const emoji = keepSearchFocus && highlighter.current?.highlighted();
+    if (!emoji && isSearchMode) {
+      pendingPick.current = displayed;
+      selectFirstResult();
+    } else pickEmoji(emoji || firstVisibleEmoji(BodyRef.current));
   };
   const tone = function onKeyDown(event: KeyboardEvent) {
     if (!eventInRegion(event, SkinTonePickerRef)) return;
@@ -389,15 +390,20 @@ export function useKeyboardNavigation() {
         handler.current(event, true);
       }
     };
+    const cancelPendingPick = () => {
+      pendingPick.current = null;
+    };
     // Leaving the search input ends a keepSearchFocus highlight.
     const endHighlight = (event: FocusEvent) => {
       pendingPick.current = null;
       highlighter.current?.blur(event);
     };
+    current.addEventListener('input', cancelPendingPick);
     current.addEventListener('keydown', scoped);
     current.addEventListener('focusout', endHighlight);
     window.addEventListener('keydown', capture, true);
     return () => {
+      current.removeEventListener('input', cancelPendingPick);
       current.removeEventListener('keydown', scoped);
       current.removeEventListener('focusout', endHighlight);
       window.removeEventListener('keydown', capture, true);
@@ -563,8 +569,7 @@ function useSearchHighlight(enabled: boolean, registry: NavigationRegistry) {
             focusAdjacentEmoji,
             getRegionInDirection,
             idRef,
-            categoryGeometry,
-            focusLogicalEmoji,
+            focusFirstEmoji,
           );
       },
       // A failed load leaves the default navigation; a remount retries.

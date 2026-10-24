@@ -147,3 +147,19 @@ export function FirstOpenProfile() {
     </React.Profiler>
   );
 }
+
+export function HiddenEmptyFirstCategory() {
+  const [shown, setShown] = React.useState(false);
+  return (
+    <>
+      <button onClick={() => setShown(true)}>Reveal picker</button>
+      <div style={{ display: shown ? 'block' : 'none' }}>
+        <EmojiPicker
+          categories={[Categories.CUSTOM, Categories.SMILEYS_PEOPLE]}
+          customEmojis={[]}
+          autoFocusSearch={false}
+        />
+      </div>
+    </>
+  );
+}

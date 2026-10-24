@@ -1,6 +1,6 @@
 import { DEFAULT_LABEL_HEIGHT } from '../components/main/labelHeight';
 
-import { ClassNames, asSelectors } from './classNames';
+import { ClassNames } from './classNames';
 import { NullableElement } from './selectors';
 
 export function elementCountInRow(
@@ -74,7 +74,7 @@ export function getLabelHeight(parentNode: NullableElement) {
     return DEFAULT_LABEL_HEIGHT;
   }
 
-  const label = parentNode.querySelector(asSelectors(ClassNames.label));
+  const label = parentNode.querySelector(`.${ClassNames.label}`);
 
   if (label) {
     const height = label.getBoundingClientRect().height;

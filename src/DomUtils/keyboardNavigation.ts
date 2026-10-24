@@ -46,6 +46,18 @@ export type MoveOptions = {
   origin?: HTMLElement;
 };
 
+/** Move to the first filtered result, including a cell outside the viewport. */
+export function focusFirstEmoji(
+  body: NullableElement,
+  options: MoveOptions,
+): boolean {
+  const category = body?.querySelector<HTMLElement>(
+    '[data-epr-part="category-content"]:not([data-epr-emoji-count="0"])',
+  )?.parentElement;
+  if (category) focusLogicalEmoji(category, 0, options);
+  return !!category;
+}
+
 const pendingMoves = new WeakMap<
   HTMLElement,
   {

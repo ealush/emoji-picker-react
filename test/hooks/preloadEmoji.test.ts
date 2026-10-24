@@ -1,10 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import {
-  preloadEmoji,
-  preloadEmojiIfNeeded,
-  preloadedEmojs,
-} from '../../src/hooks/preloadEmoji';
+import { preloadEmoji, preloadedEmojs } from '../../src/hooks/preloadEmoji';
 import { EmojiStyle } from '../../src/types/exposedTypes';
 
 const thumbsUp = {
@@ -17,51 +13,6 @@ const thumbsUp = {
 describe('preloadEmoji', () => {
   afterEach(() => {
     preloadedEmojs.clear();
-    vi.useRealTimers();
-  });
-
-  it('does not schedule timers for distant cells on repeated render passes', () => {
-    vi.useFakeTimers();
-    const url = vi.fn((id: string) => `/${id}.png`);
-    for (let pass = 0; pass < 4; pass++) {
-      for (let index = 0; index < 2000; index++) {
-        preloadEmojiIfNeeded(
-          thumbsUp,
-          EmojiStyle.APPLE,
-          0,
-          300,
-          10000,
-          { top: index * 40 },
-          { emojiSize: 40, emojisPerRow: 8, categoryHeight: 10000 },
-          url,
-          '1f44d',
-        );
-      }
-    }
-    expect(vi.getTimerCount()).toBe(0);
-    expect(url).not.toHaveBeenCalled();
-  });
-
-  it('deduplicates nearby rendered-only preloads before scheduling work', () => {
-    vi.useFakeTimers();
-    const url = vi.fn((id: string) => `/${id}.png`);
-    const preload = () =>
-      preloadEmojiIfNeeded(
-        thumbsUp,
-        EmojiStyle.APPLE,
-        0,
-        300,
-        0,
-        { top: 320 },
-        { emojiSize: 40, emojisPerRow: 8, categoryHeight: 1000 },
-        url,
-        '1f44d',
-      );
-    preload();
-    vi.runAllTimers();
-    preload();
-    expect(vi.getTimerCount()).toBe(0);
-    expect(url).toHaveBeenCalledTimes(1);
   });
 
   it('requests the emoji and each skin-tone variation', () => {

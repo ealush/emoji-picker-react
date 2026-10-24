@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { asSelectors, ClassNames } from '../DomUtils/classNames';
+import { ClassNames } from '../DomUtils/classNames';
 import {
   elementBorderBoxHeight,
   EmojiButtonSelector,
@@ -33,7 +33,7 @@ function firstVisibleContentWidth(
   fallbackWidth: number,
 ): number {
   const contentBoxes = listEl.querySelectorAll(
-    asSelectors(ClassNames.categoryContent),
+    `.${ClassNames.categoryContent}`,
   );
   for (const box of Array.from(contentBoxes)) {
     const width = (box as HTMLElement).clientWidth;
@@ -60,7 +60,10 @@ function trackColumnCount(
   previousRef.current = emojisPerRow;
 }
 
-export function useCategoryHeight(emojiCount: number):
+export function useCategoryHeight(
+  emojiCount: number,
+  ready = true,
+):
   | {
       categoryHeight: number;
       emojisPerRow: number;
@@ -99,8 +102,8 @@ export function useCategoryHeight(emojiCount: number):
       emojiSizeRef.current = measured;
     }
     const emojiSize =
-      emojiSizeFromContext ||
       measured ||
+      emojiSizeFromContext ||
       emojiSizeRef.current ||
       EMOJI_SIZE_DEFAULT;
     const pickerWidth = listEl.clientWidth;
@@ -128,6 +131,7 @@ export function useCategoryHeight(emojiCount: number):
   // Restore measured row heights in the same commit as the filtered
   // contents. A passive effect leaves one frame of stale offsets that
   // category navigation can observe immediately after clearing search.
+  // Recheck an estimated size when positioned/visible cells first mount.
   useIsomorphicLayoutEffect(() => {
     computeAndSetDimensions();
   }, [
@@ -135,6 +139,8 @@ export function useCategoryHeight(emojiCount: number):
     isReactionsMode,
     computeAndSetDimensions,
     visibleCategories.length,
+    dimensions,
+    ready,
   ]);
 
   // Fluid layouts (width: 100%, sheets, docks) resize without a CSS

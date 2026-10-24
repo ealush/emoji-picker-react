@@ -60,7 +60,7 @@ export function useEmojiVirtualization({
   // rows plus virtualization's margin rows), nothing else.
   const probe: string[] = [];
   const preloads: DataEmoji[] = [];
-  const committed = React.useRef(false);
+  const [committed, setCommitted] = React.useState(false);
 
   // A section shows each rendered emoji once. Recents can hold the same
   // emoji under two tones (e.g. neutral and medium); the active tone
@@ -83,10 +83,18 @@ export function useEmojiVirtualization({
     });
   }, [categoryEmojis, activeSkinTone, isEmojiHidden, isEmojiDisallowed]);
 
-  const dimensions = useCategoryHeight(emojisToPush.length);
+  const dimensions = useCategoryHeight(
+    emojisToPush.length,
+    isCategoryVisible && positioned,
+  );
+
+  // Guarantee a render even when a hidden picker has no measurement cell.
+  // A passive update avoids flushing all observer effects before first paint.
+  useEffect(() => {
+    if (!dimensions) setCommitted(true);
+  }, [dimensions]);
 
   useIsomorphicLayoutEffect(() => {
-    committed.current = true;
     if (dimensions) {
       onHeightReady(dimensions.categoryHeight);
     }
@@ -114,7 +122,7 @@ export function useEmojiVirtualization({
     );
 
   const waitingForLayout =
-    (!committed.current && !dimensions) ||
+    (!committed && !dimensions) ||
     ((!dimensions || !positioned) && BodyRef.current?.clientWidth);
 
   // MeasureEmoji supplies geometry before cells are built. Layout-free

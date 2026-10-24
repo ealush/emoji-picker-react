@@ -40,6 +40,18 @@ test('primitive Search keeps a focus border without a color preset', async ({
   ).not.toBe('rgba(0, 0, 0, 0)');
 });
 
+test('revealing a picker with an empty first category renders its results', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--hidden-empty-first-category'));
+  await page.getByRole('button', { name: 'Reveal picker' }).click();
+  const grid = page.getByRole('grid');
+  await expect(grid).toBeVisible();
+  await expect
+    .poll(() => grid.getByRole('gridcell').count())
+    .toBeGreaterThan(0);
+});
+
 test('fast Enter selects the new result in one press', async ({ page }) => {
   await page.goto(story('integrations-shadcn-ui--shadcn-light'));
   const search = page.getByRole('textbox', {
@@ -50,8 +62,9 @@ test('fast Enter selects the new result in one press', async ({ page }) => {
   await expect(
     page.getByRole('dialog', { name: 'Choose an emoji' }),
   ).toHaveCount(0);
-  await expect(page.getByRole('textbox', { name: 'Message' })).not.toHaveValue(
-    'Ship it ',
+  // The English dataset's first matching result is 'heart on fire'.
+  await expect(page.getByRole('textbox', { name: 'Message' })).toHaveValue(
+    'Ship it ❤️‍🔥',
   );
 });
 

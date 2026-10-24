@@ -100,13 +100,11 @@ function useApplySearch() {
       if (!mountedRef.current) {
         return;
       }
-      setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
-        () => {
-          if (registry.isCurrent(token)) {
-            scrollTo(PickerMainRef.current, 0, () => registry.isCurrent(token));
-          }
-        },
-      );
+      setSearchTerm(searchTerm).then(() => {
+        if (registry.isCurrent(token)) {
+          scrollTo(PickerMainRef.current, 0, () => registry.isCurrent(token));
+        }
+      });
     });
   };
 }

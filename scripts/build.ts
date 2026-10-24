@@ -77,6 +77,15 @@ async function buildCjs(src: string, outfile: string) {
   writeFileSync(join(repoRoot, outfile), result.code + '\n');
 }
 
+// Explicit traversal also works before Node 18.17's recursive readdir.
+function* esmFiles(directory: string): Generator<string> {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) yield* esmFiles(path);
+    else if (entry.name.endsWith('.mjs')) yield path;
+  }
+}
+
 async function buildEsm() {
   rmSync(join(repoRoot, 'dist', 'esm'), { recursive: true, force: true });
   sh(bin('esbuild'), [
@@ -96,29 +105,25 @@ async function buildEsm() {
     '--chunk-names=chunks/[name]-[hash]',
     '--out-extension:.js=.mjs',
   ]);
-  // Compress production ESM as well as CJS, but keep annotated factory
-  // boundaries intact: downstream bundlers need them to discard unused
-  // components and their registered styles.
-  const esmRoot = join(repoRoot, 'dist', 'esm');
-  for (const file of readdirSync(esmRoot, {
-    recursive: true,
-    encoding: 'utf8',
-  })) {
-    if (!file.endsWith('.mjs')) continue;
-    const path = join(esmRoot, file);
+  // Preserve readable source, function/class names and comments in published
+  // ESM. Local expression optimizations still improve the consumer bundle;
+  // keep factory boundaries/annotations so unused styles remain removable.
+  for (const path of esmFiles(join(repoRoot, 'dist', 'esm'))) {
     const result = await minify(readFileSync(path, 'utf8'), {
       module: true,
       ecma: 2020,
+      keep_fnames: true,
+      keep_classnames: true,
       compress: {
         passes: 3,
         inline: false,
         side_effects: false,
         reduce_funcs: false,
       },
-      mangle: true,
-      format: { comments: false, preserve_annotations: true },
+      mangle: false,
+      format: { beautify: true, comments: 'all', preserve_annotations: true },
     });
-    if (!result.code) throw new Error(`Empty ESM output: ${file}`);
+    if (!result.code) throw new Error(`Empty ESM output: ${path}`);
     writeFileSync(path, result.code + '\n');
   }
 }

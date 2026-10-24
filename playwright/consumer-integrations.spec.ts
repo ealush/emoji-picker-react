@@ -246,11 +246,11 @@ test('ClassDojo: custom emoji', async ({ page }) => {
   await searchFlow(page, 'classdojo', 'Panda');
   await page
     .locator(shot('classdojo'))
-    .getByRole('gridcell', { name: 'panda' })
+    .getByRole('gridcell', { name: 'Panda', exact: true })
     .locator('visible=true')
     .first()
     .click();
-  await expect(page.getByTestId('classdojo-picked')).toHaveText('custom:panda');
+  await expect(page.getByTestId('classdojo-picked')).toHaveText('custom:Panda');
   await capture(page, 'classdojo', 'selected');
 });
 
