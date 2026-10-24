@@ -2,6 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useBodyRef } from '../../src/components/context/ElementRefContext';
+import { useActiveSkinToneState } from '../../src/components/context/PickerContext';
 import { DataEmojis } from '../../src/dataUtils/DataTypes';
 import { useEmojiStyleConfig } from '../../src/config/useConfig';
 import { preloadEmoji } from '../../src/hooks/preloadEmoji';
@@ -239,16 +240,20 @@ describe('useEmojiVirtualization', () => {
     expect(result.current.emojis.length).toBe(0);
   });
 
-  it('preloads image cells just below the viewport after commit', () => {
+  it('preloads only the rendered image of cells just below the viewport', () => {
     vi.mocked(useEmojiStyleConfig).mockReturnValue('apple');
     vi.mocked(getEmojiPositionStyle).mockReturnValue({
       top: 360,
       insetInlineStart: 0,
     });
     (shouldVirtualize as any).mockReturnValue(true);
+    (useActiveSkinToneState as any).mockReturnValue(['1f3fc']);
     renderHook(() =>
       useEmojiVirtualization({
-        categoryEmojis: mockEmojis,
+        categoryEmojis: [
+          { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fc'] },
+          ...mockEmojis,
+        ],
         topOffset: 0,
         onHeightReady: vi.fn(),
         scrollTop: 0,
@@ -256,7 +261,10 @@ describe('useEmojiVirtualization', () => {
         positioned: true,
       }),
     );
-    expect(preloadEmoji).toHaveBeenCalled();
+    // Scrolling never fetches every tone; focus fetches a cell's variations.
+    expect(
+      (preloadEmoji as any).mock.calls.map((call: unknown[]) => call.at(-1)),
+    ).toEqual(['1f44d-1f3fc', '1f600', '1f431', '1f436']);
   });
 
   it('requests native glyph checks for the rendered cells only', () => {

@@ -169,8 +169,18 @@ export function useEmojiVirtualization({
   useEffect(() => requestNativeProbe(probe));
   // Image requests belong to committed work, never an abandoned render.
   // The proximity and cache checks run synchronously, without per-cell timers.
+  // Only the image a nearby cell will render is fetched: every skin tone of
+  // every nearby cell is hundreds of requests per scroll and long frames on
+  // slow devices. Focusing a cell (useOnFocus) fetches its variations.
   useEffect(() => {
-    preloads.forEach((emoji) => preloadEmoji(getEmojiUrl, emoji, emojiStyle));
+    preloads.forEach((emoji) =>
+      preloadEmoji(
+        getEmojiUrl,
+        emoji,
+        emojiStyle,
+        emojiUnified(emoji, activeSkinTone),
+      ),
+    );
   });
 
   return {
