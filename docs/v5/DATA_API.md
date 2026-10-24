@@ -84,6 +84,7 @@ No other data helpers are part of v5.
 - trims surrounding whitespace;
 - normalizes hexadecimal unified code to lowercase;
 - accepts base or variation unified code;
+- accepts either U+FE0F spelling (`2764` or `2764-fe0f`); an exact match wins;
 - variation lookup returns the canonical/base EmojiInfo whose `variations` includes the requested variation;
 - returns `undefined` for unknown/empty input;
 - does not mutate the dataset;

@@ -1,7 +1,12 @@
 // Pure v5 data operations shared by the picker and `emoji-picker-react/data`.
 // No React / ShipStyles imports allowed in this module graph.
 
-import { getPreparedCore, normalizeQuery, normalizeUnified } from './prepare';
+import {
+  getPreparedCore,
+  normalizeQuery,
+  normalizeUnified,
+  withoutFe0f,
+} from './prepare';
 import type { EmojiDataOptions, EmojiInfo } from './types';
 
 export type { EmojiDataOptions, EmojiInfo };
@@ -74,7 +79,10 @@ export function getEmojiByUnified(
     return undefined;
   }
   const core = getPreparedCore(options?.emojiData);
-  return core.byUnified.get(normalized);
+  return (
+    core.byUnified.get(normalized) ??
+    core.byUnified.get(withoutFe0f(normalized))
+  );
 }
 
 /**
