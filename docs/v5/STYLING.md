@@ -115,6 +115,7 @@ The following variables are already documented public customization surface and 
 - `--epr-preview-text-color`
 
 ### Native emoji font
+- `--epr-font-family` — font for picker text (`sans-serif` by default). Set it to `inherit` on the picker to use the surrounding application's font. Native emoji glyphs keep their separate font stack.
 - `--epr-emoji-font-family` (v5) — font stack for native emojis, e.g. a country-flag polyfill font; native support detection measures this same font.
 
 ### Skin tone

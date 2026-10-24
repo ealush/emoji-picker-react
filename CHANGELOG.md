@@ -1,3 +1,16 @@
+### Details
+
+Backported from 5.1.1 for the 5.0 line (npm dist-tag `release-5.0.x`).
+
+#### Bug fixes
+
+* Keep fast Enter selection during search debounce: select once from the matching committed results rather than selecting stale data. Enter selects the first result even when it is scrolled out of view. New input, another key or blur cancels a queued selection.
+* Stop propagation for an Escape that clears a non-empty search, in window capture before host dismissal listeners. Consumer `onKeyDown` handlers no longer receive that consumed key; an Escape with nothing to clear still reaches the host.
+* Preserve custom emoji display-name capitalization in accessible labels, previews and `onEmojiClick` payload `names`. Matching and IDs remain case-insensitive.
+* Preserve column width in empty/loading/error states, inherited text fonts and default custom-header backgrounds.
+* Render and search without IntersectionObserver, and keep primitive search focus borders visible without an explicit color preset.
+* Render a revealed picker whose first category is empty, preserve rapid arrow navigation across virtualized rows and avoid per-cell preload timers.
+
 ## [5.0.0](https://github.com/ealush/emoji-picker-react/compare/4.22.3...5.0.0) (2026-10-10)
 
 ### ⚠ BREAKING CHANGES

@@ -46,6 +46,9 @@ const boxSizingReset =
   // vertical tab rail still adds its own width beside the grid.
   ':where([data-epr-columns] :is([data-epr-part=preview],[data-epr-part=search],[aria-orientation=horizontal])){contain:inline-size}' +
   ':where([data-epr-columns] [data-epr-part=viewport]){scrollbar-gutter:stable}' +
+  // A permanent sizing row keeps intrinsic width when all categories are
+  // hidden (no matches) or the dataset is still loading/has failed.
+  ':where([data-epr-columns] [data-epr-part=list])::before{content:"";display:block;height:0;width:calc(var(--epr-columns)*var(--epr-emoji-fullsize) + 2*var(--epr-horizontal-padding));max-width:100%}' +
   ':where([data-epr-columns] [data-epr-part=category-content]){width:calc(var(--epr-columns)*var(--epr-emoji-fullsize));min-width:calc(100% - 2*var(--epr-horizontal-padding));max-width:calc(100% - 2*var(--epr-horizontal-padding))}';
 
 export const structuralStyles = /* @__PURE__ */ (() =>

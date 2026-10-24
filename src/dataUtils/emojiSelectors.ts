@@ -82,7 +82,8 @@ export function emojiVariationUnified(
 // only if the registered dataset changes, so importing this module costs
 // nothing and does not pull the dataset into a bundle.
 let indexedSource: EmojiData | null = null;
-let allEmojisByUnified: Record<string, DataEmoji> = Object.create(null);
+let allEmojisByUnified: Record<string, DataEmoji> =
+  /* @__PURE__ */ Object.create(null);
 
 function registryIndex(): Record<string, DataEmoji> {
   const source = getRegisteredDefaultEmojiData();

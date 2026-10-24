@@ -9,12 +9,12 @@ import {
 import { getActiveElement } from '../DomUtils/getActiveElement';
 import { isRtl } from '../DomUtils/isRtl';
 import {
-  focusAndClickFirstVisibleEmoji,
+  focusFirstEmoji,
   focusFirstVisibleEmoji,
   focusAdjacentEmoji,
 } from '../DomUtils/keyboardNavigation';
 import { useScrollTo } from '../DomUtils/scrollTo';
-import { buttonFromTarget } from '../DomUtils/selectors';
+import { buttonFromTarget, firstVisibleEmoji } from '../DomUtils/selectors';
 import {
   ElementRef,
   useBodyRef,
@@ -27,9 +27,16 @@ import {
 import {
   useNavigationRegistry,
   useSearchComposingState,
+  useSearchDisplayState,
+  useSearchTermState,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
-import { useSearchDisabledConfig } from '../config/useConfig';
+import { usePickerDataContext } from '../components/context/PickerDataContext';
+import {
+  useSearchDisabledConfig,
+  useSuggestedEmojisConfig,
+} from '../config/useConfig';
+import { normalizeQuery } from '../data-core/prepare';
 import {
   NavigationRegionKind,
   RegisteredRegion,
@@ -47,7 +54,11 @@ import {
   useFocusSkinTonePicker,
 } from './useFocus';
 import useIsSearchMode from './useIsSearchMode';
-import { useClearSearchValue, useTypeToSearchKey } from './useSearchController';
+import {
+  useAcceptedSearchValue,
+  useClearSearchValue,
+  useTypeToSearchKey,
+} from './useSearchController';
 import useSetVariationPicker from './useSetVariationPicker';
 
 export function useKeyboardNavigation() {
@@ -76,6 +87,65 @@ export function useKeyboardNavigation() {
   const focusPrevRegionFromGrid = useFocusPrevRegionFrom('grid');
   const setVariationPicker = useSetVariationPicker();
   const registry = useNavigationRegistry();
+  const [searchTerm] = useSearchTermState();
+  const suggestions = JSON.stringify(useSuggestedEmojisConfig());
+  const { emojiData } = usePickerDataContext();
+  const searchValue = useAcceptedSearchValue();
+  // A controlled parent may not have accepted what the input shows yet.
+  const [displayed] = useSearchDisplayState();
+  // Enter pressed while the input is ahead of the debounced results: the
+  // query it was pressed for, selected once those results commit.
+  const pendingPick = useRef<string | null>(null);
+  const pickEmoji = (emoji: HTMLElement | null) => {
+    pendingPick.current = null;
+    focusElement(emoji);
+    emoji?.click();
+  };
+  const selectFirstResult = () => {
+    const query = pendingPick.current;
+    const generation = registry.currentGeneration();
+    if (
+      !focusFirstEmoji(BodyRef.current, {
+        shouldFocus: () =>
+          pendingPick.current === query &&
+          SearchInputRef.current?.value === query &&
+          registry.isCurrent(generation),
+        moveTo: pickEmoji,
+      })
+    )
+      pendingPick.current = null;
+  };
+  // Each committed result set settles a queued Enter for its query.
+  useEffect(() => {
+    const pending = pendingPick.current;
+    pendingPick.current = null;
+    if (
+      pending !== null &&
+      pending === displayed &&
+      normalizeQuery(pending) === searchTerm
+    ) {
+      pendingPick.current = pending;
+      selectFirstResult();
+    }
+    // Per committed result set; selection reads live refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, suggestions, emojiData]);
+  // Enter in search selects the first result, even one scrolled out of view.
+  const selectFromSearch = () => {
+    // Remember fast Enter while the input is ahead of the debounced grid.
+    if (
+      ![searchValue, displayed].every(
+        (value) => normalizeQuery(value) === searchTerm,
+      )
+    ) {
+      pendingPick.current = displayed;
+      return;
+    }
+    if (isSearchMode) {
+      pendingPick.current = displayed;
+      selectFirstResult();
+    } else pickEmoji(firstVisibleEmoji(BodyRef.current));
+  };
   const goDownFromSearchInput = () => {
     if (isSearchMode) return focusFirstVisibleEmoji(BodyRef.current);
     focusCategoryNavigation();
@@ -90,13 +160,20 @@ export function useKeyboardNavigation() {
     disallowMouseMove();
     switch (key) {
       case 'Escape':
-        event.preventDefault();
         if (hasOpenToggles()) {
+          event.preventDefault();
           closeAllOpenToggles();
           // A nested variation/tone menu consumes Escape before the
           // host popover or autocomplete dismisses the whole picker.
           event.stopPropagation();
           return;
+        }
+        // Clearing a search consumes the key. With nothing to clear, the
+        // event stays untouched (this runs in window capture, before host
+        // listeners that skip default-prevented keys, such as Radix).
+        if (searchValue || displayed) {
+          event.preventDefault();
+          event.stopPropagation();
         }
         clearSearch();
         scrollTo(0);
@@ -129,7 +206,7 @@ export function useKeyboardNavigation() {
         break;
       case 'Enter':
         event.preventDefault();
-        focusAndClickFirstVisibleEmoji(BodyRef.current);
+        selectFromSearch();
         break;
     }
   };
@@ -245,20 +322,15 @@ export function useKeyboardNavigation() {
     }
   };
   const [composing] = useSearchComposingState();
-  const handler = useRef<(event: KeyboardEvent, menusOnly?: boolean) => void>(
+  const handler = useRef<(event: KeyboardEvent, escapeOnly?: boolean) => void>(
     () => {},
   );
   // One listener owns the native lifecycle; current callbacks supply state
   // and live region refs without reattaching on every picker render.
-  handler.current = (event, menusOnly) => {
-    if (
-      composing ||
-      event.isComposing ||
-      event.keyCode === 229 ||
-      (menusOnly && !hasOpenToggles())
-    )
-      return;
-    if (!menusOnly) {
+  handler.current = (event, escapeOnly) => {
+    if (composing || event.isComposing || event.keyCode === 229) return;
+    if (event.key !== 'Enter') pendingPick.current = null;
+    if (!escapeOnly) {
       search(event);
       tone(event);
       categories(event);
@@ -272,16 +344,31 @@ export function useKeyboardNavigation() {
     // Descendant parts are read through live refs by the delegated handler.
     const current = ref.current;
     if (!current) return;
+    // Escape runs once, in the window capture phase, so a consumed key is
+    // stopped before host dismissal listeners (Radix captures on document).
+    let captured: KeyboardEvent | undefined;
     const scoped = (event: KeyboardEvent) => {
+      if (event === captured) return;
       if (eventBelongsToPicker(event, current)) handler.current(event);
     };
     const capture = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && eventBelongsToPicker(event, current))
+      if (event.key === 'Escape' && eventBelongsToPicker(event, current)) {
+        captured = event;
         handler.current(event, true);
+      }
     };
+    // Editing the query (paste, autocorrect) or leaving the picker cancels
+    // a queued Enter.
+    const cancelPendingPick = () => {
+      pendingPick.current = null;
+    };
+    current.addEventListener('input', cancelPendingPick);
+    current.addEventListener('focusout', cancelPendingPick);
     current.addEventListener('keydown', scoped);
     window.addEventListener('keydown', capture, true);
     return () => {
+      current.removeEventListener('input', cancelPendingPick);
+      current.removeEventListener('focusout', cancelPendingPick);
       current.removeEventListener('keydown', scoped);
       window.removeEventListener('keydown', capture, true);
     };

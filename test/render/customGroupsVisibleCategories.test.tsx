@@ -47,13 +47,13 @@ class ManualIntersectionObserver {
   }
 
   unobserve(target: Element) {
-    observedTargets = observedTargets.filter(t => t !== target);
+    observedTargets = observedTargets.filter((t) => t !== target);
   }
 
   disconnect() {
     // A disconnected observer forgets its targets, like the real one.
     const mine = new Set(this.observed);
-    observedTargets = observedTargets.filter(t => !mine.has(t));
+    observedTargets = observedTargets.filter((t) => !mine.has(t));
     this.observed = [];
     disconnected += 1;
   }
@@ -65,11 +65,10 @@ class ManualIntersectionObserver {
 
 function fireVisible(dataName: string) {
   const entries = observedTargets.map(
-    target =>
+    (target) =>
       ({
         target,
-        isIntersecting:
-          target.getAttribute('data-epr-category') === dataName,
+        isIntersecting: target.getAttribute('data-epr-category') === dataName,
         intersectionRatio:
           target.getAttribute('data-epr-category') === dataName ? 1 : 0,
         boundingClientRect: {},
@@ -83,7 +82,7 @@ function fireVisible(dataName: string) {
 
 function observedNames() {
   return observedTargets.map(
-    target => target.getAttribute('data-epr-category') ?? '',
+    (target) => target.getAttribute('data-epr-category') ?? '',
   );
 }
 
@@ -153,9 +152,7 @@ describe('category observation follows group updates', () => {
 
     // ...and reporting it visible renders its content + activates its tab.
     fireVisible('custom:people');
-    expect(
-      await screen.findByLabelText('ninja'),
-    ).toBeInTheDocument();
+    expect(await screen.findByLabelText('Ninja')).toBeInTheDocument();
     expect(
       screen.getByRole('tab', { name: 'People' }).getAttribute('aria-selected'),
     ).toBe('true');
@@ -193,7 +190,7 @@ describe('category observation follows group updates', () => {
 
     // Re-subscription drops the removed element (or at minimum the set
     // no longer contains it among currently rendered sections).
-    const after = observedNames().filter(name => name === 'custom:people');
+    const after = observedNames().filter((name) => name === 'custom:people');
     expect(after).toHaveLength(0);
     expect(observedTargets.length).toBeLessThanOrEqual(before);
   });

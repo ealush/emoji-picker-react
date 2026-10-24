@@ -185,7 +185,7 @@ test('reserved group names render, navigate, and select without errors', async (
   for (const [tab, emoji] of [
     ['Proto', 'emoji-__proto__'],
     ['Constructor', 'emoji-constructor'],
-    ['ToString', 'emoji-tostring'],
+    ['ToString', 'emoji-toString'],
   ] as const) {
     await expect(page.getByRole('tab', { name: tab })).toBeVisible();
     await page.getByRole('tab', { name: tab }).click();

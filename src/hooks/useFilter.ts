@@ -100,13 +100,11 @@ function useApplySearch() {
       if (!mountedRef.current) {
         return;
       }
-      setSearchTerm(searchTerm ? searchTerm?.toLowerCase() : searchTerm).then(
-        () => {
-          if (registry.isCurrent(token)) {
-            scrollTo(PickerMainRef.current, 0, () => registry.isCurrent(token));
-          }
-        },
-      );
+      setSearchTerm(searchTerm).then(() => {
+        if (registry.isCurrent(token)) {
+          scrollTo(PickerMainRef.current, 0, () => registry.isCurrent(token));
+        }
+      });
     });
   };
 }
@@ -115,7 +113,11 @@ export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return (unified) => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return React.useCallback(
+    (unified: string) =>
+      isEmojiFilteredBySearchTerm(unified, filter, searchTerm),
+    [filter, searchTerm],
+  );
 }
 
 export function isEmojiFilteredBySearchTerm(

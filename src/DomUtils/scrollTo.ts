@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useBodyRef } from '../components/context/ElementRefContext';
 
-import { asSelectors, ClassNames } from './classNames';
+import { ClassNames } from './classNames';
 import {
   categoryLabelHeight,
   closestCategory,
@@ -53,7 +53,7 @@ export function scrollEmojiAboveLabel(
     return;
   }
 
-  if (emoji.closest(asSelectors(ClassNames.variationPicker))) {
+  if (emoji.closest(`.${ClassNames.variationPicker}`)) {
     return;
   }
 

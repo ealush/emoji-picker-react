@@ -13,17 +13,20 @@ import {
   useLazyLoadEmojisConfig,
   useSkinTonesDisabledConfig,
 } from '../config/useConfig';
-import { DataEmojis } from '../dataUtils/DataTypes';
+import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiUtils';
+import { EmojiStyle } from '../types/exposedTypes';
 import {
   getEmojiPositionStyle,
   shouldVirtualize,
+  isJustBelowViewport,
 } from '../virtualization/virtualizationHelpers';
 
-import { preloadEmojiIfNeeded } from './preloadEmoji';
+import { preloadEmoji } from './preloadEmoji';
 import { useCategoryHeight } from './useCategoryHeight';
 import { useIsEmojiDisallowed } from './useDisallowedEmojis';
 import { useIsEmojiHidden } from './useIsEmojiHidden';
+import { useIsomorphicLayoutEffect } from './useIsomorphicLayoutEffect';
 
 export function useEmojiVirtualization({
   categoryEmojis,
@@ -53,31 +56,42 @@ export function useEmojiVirtualization({
   // Native glyphs checked exactly: the cells this pass renders (visible
   // rows plus virtualization's margin rows), nothing else.
   const probe: string[] = [];
-
-  let virtualizedCounter = 0;
+  const preloads: DataEmoji[] = [];
+  const [committed, setCommitted] = React.useState(false);
 
   // A section shows each rendered emoji once. Recents can hold the same
   // emoji under two tones (e.g. neutral and medium); the active tone
   // renders both as one identity, which must not be listed or keyed twice.
-  const rendered = new Set<string>();
-  const emojisToPush = categoryEmojis.filter((emoji) => {
-    const isDisallowed = isEmojiDisallowed(emoji);
-    const { hidden } = isEmojiHidden(emoji);
+  const emojisToPush = React.useMemo(() => {
+    const rendered = new Set<string>();
+    return categoryEmojis.filter((emoji) => {
+      const isDisallowed = isEmojiDisallowed(emoji);
+      const { hidden } = isEmojiHidden(emoji);
 
-    if (hidden || isDisallowed) {
-      return false;
-    }
-    const unified = emojiUnified(emoji, activeSkinTone);
-    if (rendered.has(unified)) {
-      return false;
-    }
-    rendered.add(unified);
-    return true;
-  });
+      if (hidden || isDisallowed) {
+        return false;
+      }
+      const unified = emojiUnified(emoji, activeSkinTone);
+      if (rendered.has(unified)) {
+        return false;
+      }
+      rendered.add(unified);
+      return true;
+    });
+  }, [categoryEmojis, activeSkinTone, isEmojiHidden, isEmojiDisallowed]);
 
-  const dimensions = useCategoryHeight(emojisToPush.length);
+  const dimensions = useCategoryHeight(
+    emojisToPush.length,
+    isCategoryVisible && positioned,
+  );
 
+  // Guarantee a render even when a hidden picker has no measurement cell.
+  // A passive update avoids flushing all observer effects before first paint.
   useEffect(() => {
+    if (!dimensions) setCommitted(true);
+  }, [dimensions]);
+
+  useIsomorphicLayoutEffect(() => {
     if (dimensions) {
       onHeightReady(dimensions.categoryHeight);
     }
@@ -94,61 +108,73 @@ export function useEmojiVirtualization({
       dimensions,
     });
 
-  const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
-    const unified = emojiUnified(emoji, activeSkinTone);
-    const style = getEmojiPositionStyle(dimensions, index);
-
-    if (isVirtualized(style)) {
-      virtualizedCounter++;
-      preloadEmojiIfNeeded(
-        emoji,
-        emojiStyle,
-        scrollTop,
-        BodyRef.current?.clientHeight ?? 0,
-        topOffset,
-        style,
-        dimensions,
-        getEmojiUrl,
-      );
-      return accumulator;
-    }
-
-    if (!isCategoryVisible) {
-      virtualizedCounter++;
-      return accumulator;
-    }
-
-    // Wait for layout: an unmeasured pass renders a whole category, and
-    // while sections above are unmeasured this one renders off-screen
-    // cells as if it were at the top.
-    if (dimensions && positioned) probe.push(unified);
-    accumulator.push(
-      <ClickableEmoji
-        showVariations={showVariations}
-        key={unified}
-        emoji={emoji}
-        unified={unified}
-        emojiStyle={emojiStyle}
-        lazyLoad={lazyLoadEmojis}
-        getEmojiUrl={getEmojiUrl}
-        style={{
-          ...style,
-          position: 'absolute',
-        }}
-        index={index}
-        // Grid semantics (issue #508): each emoji is a cell of its
-        // category row; native button activation is kept.
-        role="gridcell"
-      />,
+  const needsPreload = (style: { top: number } | undefined) =>
+    emojiStyle !== EmojiStyle.NATIVE &&
+    dimensions &&
+    style &&
+    isJustBelowViewport(
+      topOffset + style.top,
+      scrollTop + (BodyRef.current?.clientHeight ?? 0),
+      dimensions.emojiSize,
     );
-    return accumulator;
-  }, [] as ReactNode[]);
+
+  const waitingForLayout =
+    (!committed && !dimensions) ||
+    ((!dimensions || !positioned) && BodyRef.current?.clientWidth);
+
+  // MeasureEmoji supplies geometry before cells are built. Layout-free
+  // environments can render after the first commit without measurements.
+  const emojis = waitingForLayout
+    ? []
+    : emojisToPush.reduce((accumulator, emoji, index) => {
+        const style = getEmojiPositionStyle(dimensions, index);
+
+        if (isVirtualized(style)) {
+          if (needsPreload(style)) preloads.push(emoji);
+          return accumulator;
+        }
+
+        if (!isCategoryVisible) {
+          return accumulator;
+        }
+
+        const unified = emojiUnified(emoji, activeSkinTone);
+        // Wait for layout: an unmeasured pass renders a whole category, and
+        // while sections above are unmeasured this one renders off-screen
+        // cells as if it were at the top.
+        if (dimensions && positioned) probe.push(unified);
+        accumulator.push(
+          <ClickableEmoji
+            showVariations={showVariations}
+            key={unified}
+            emoji={emoji}
+            unified={unified}
+            emojiStyle={emojiStyle}
+            lazyLoad={lazyLoadEmojis}
+            getEmojiUrl={getEmojiUrl}
+            style={{
+              ...style,
+              position: 'absolute',
+            }}
+            index={index}
+            // Grid semantics (issue #508): each emoji is a cell of its
+            // category row; native button activation is kept.
+            role="gridcell"
+          />,
+        );
+        return accumulator;
+      }, [] as ReactNode[]);
 
   // Every commit: requests for already-checked glyphs are free.
   useEffect(() => requestNativeProbe(probe));
+  // Image requests belong to committed work, never an abandoned render.
+  // The proximity and cache checks run synchronously, without per-cell timers.
+  useEffect(() => {
+    preloads.forEach((emoji) => preloadEmoji(getEmojiUrl, emoji, emojiStyle));
+  });
 
   return {
-    virtualizedCounter,
+    virtualizedCounter: emojisToPush.length - emojis.length,
     emojis,
     dimensions,
     emojiCount: emojisToPush.length,

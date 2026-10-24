@@ -54,9 +54,8 @@ const renderPicker = (props = {}) =>
   );
 
 /**
- * Custom emoji search folds case end to end: custom names are lowercased
- * when derived into the data snapshot and the query is lowercased before
- * matching, so a capitalized declaration ('Panda') is found by a query in
+ * Custom emoji search folds case for matching while preserving the original
+ * display name, so a capitalized declaration ('Panda') is found by a query in
  * any case. Grid cells carry role="gridcell", so label queries (not button
  * role queries) locate them -- mirroring test/custom-groups.test.tsx.
  */
@@ -72,13 +71,14 @@ describe('custom emoji search case folding', () => {
         query,
       );
 
-      const customButton = await screen.findByLabelText('panda');
+      const customButton = await screen.findByLabelText('Panda');
       await userEvent.click(customButton);
 
       expect(onEmojiClick).toHaveBeenCalledTimes(1);
       expect(onEmojiClick.mock.calls[0][0]).toMatchObject({
         unified: 'panda',
         isCustom: true,
+        names: ['Panda'],
       });
     },
   );

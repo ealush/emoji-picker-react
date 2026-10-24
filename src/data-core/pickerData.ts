@@ -49,9 +49,7 @@ const NO_CUSTOM: object = {};
 
 function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
   return {
-    [EmojiProperties.name]: emoji.names.map((name: string) =>
-      name.toLowerCase(),
-    ),
+    [EmojiProperties.name]: [...emoji.names],
     [EmojiProperties.unified]: emoji.id.toLowerCase(),
     [EmojiProperties.added_in]: '0',
     [EmojiProperties.imgUrl]: emoji.imgUrl,

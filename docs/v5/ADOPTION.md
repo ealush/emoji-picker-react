@@ -105,7 +105,7 @@ The registry item depends on `emoji-picker-react@^5.0.0`. The registry component
 </Popover>
 ```
 
-The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
+The host owns insertion and dismissal. The Popover restores trigger focus. Escape first closes an open variation/tone menu or clears a non-empty search, then a subsequent Escape reaches the host. The light/dark Storybook examples import the registry component itself; browser checks exercise search, keyboard insertion, dismissal, focus restoration and WCAG-tagged axe rules.
 
 ## Working starter sources
 

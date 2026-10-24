@@ -3,6 +3,195 @@ import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
+test('first commit constructs only the measurement cell before parent refs exist', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--first-open-profile'));
+  await page.getByRole('gridcell').first().waitFor();
+  const samples = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          firstOpenProfile: {
+            phase: string;
+            created: number;
+            cells: number;
+            duration: number;
+          }[];
+        }
+      ).firstOpenProfile,
+  );
+  expect(samples[0].phase).toBe('mount');
+  expect(samples[0].created).toBeLessThanOrEqual(1);
+  expect(samples[0].cells).toBe(0);
+  expect(samples.some((sample) => sample.cells > 0)).toBe(true);
+});
+
+test('primitive Search keeps a focus border without a color preset', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--primitive-columns-with-tones'));
+  const search = page.getByRole('textbox');
+  await search.focus();
+  await expect(search).toHaveCSS('border-top-style', 'solid');
+  await expect(search).toHaveCSS('border-top-width', '1px');
+  expect(
+    await search.evaluate((input) => getComputedStyle(input).borderTopColor),
+  ).not.toBe('rgba(0, 0, 0, 0)');
+});
+
+test('revealing a picker with an empty first category renders its results', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--hidden-empty-first-category'));
+  await page.getByRole('button', { name: 'Reveal picker' }).click();
+  const grid = page.getByRole('grid');
+  await expect(grid).toBeVisible();
+  await expect
+    .poll(() => grid.getByRole('gridcell').count())
+    .toBeGreaterThan(0);
+});
+
+test('fast Enter selects the new result in one press', async ({ page }) => {
+  await page.goto(story('integrations-shadcn-ui--shadcn-light'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('fire');
+  await search.press('Enter');
+  await expect(
+    page.getByRole('dialog', { name: 'Choose an emoji' }),
+  ).toHaveCount(0);
+  // The English dataset's first matching result is 'heart on fire'.
+  await expect(page.getByRole('textbox', { name: 'Message' })).toHaveValue(
+    'Ship it ❤️‍🔥',
+  );
+});
+
+for (const variant of [
+  'layer-lifecycle',
+  'declared-layer-lifecycle',
+  'unlayered-lifecycle',
+]) {
+  test(`style lifecycle remains local: ${variant}`, async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName !== 'chromium',
+      'Chromium tracing supplies element counts',
+    );
+    await page.goto(story(`picker-columns--${variant}`));
+    const toggle = page.getByRole('button', { name: 'Toggle picker' });
+    await toggle.waitFor();
+    const cdp = await page.context().newCDPSession(page);
+    let largestStyleRecalc = 0;
+    cdp.on('Tracing.dataCollected', ({ value }) => {
+      for (const event of value) {
+        const args = event.args as unknown as
+          { elementCount?: number } | undefined;
+        if (event.name === 'UpdateLayoutTree')
+          largestStyleRecalc = Math.max(
+            largestStyleRecalc,
+            Number(args?.elementCount) || 0,
+          );
+      }
+    });
+    await cdp.send('Tracing.start', { categories: 'devtools.timeline' });
+    await toggle.click();
+    await page.getByRole('gridcell').first().waitFor();
+    await toggle.click();
+    const done = new Promise((resolve) =>
+      cdp.once('Tracing.tracingComplete', resolve),
+    );
+    await cdp.send('Tracing.end');
+    await done;
+    // The fixture has 1,000 unrelated spans. Sheet insertion/removal must
+    // not invalidate that whole host, with or without a named layer.
+    expect(largestStyleRecalc).toBeGreaterThan(0);
+    expect(largestStyleRecalc).toBeLessThan(1000);
+    await cdp.detach();
+  });
+}
+
+test('image emoji typing never schedules per-cell preload timers', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const original = window.setTimeout;
+    const counter = { count: 0 };
+    (window as unknown as { preloadTimers: typeof counter }).preloadTimers =
+      counter;
+    window.setTimeout = ((...args: Parameters<typeof window.setTimeout>) => {
+      if (new Error().stack?.includes('preloadEmojiIfNeeded')) counter.count++;
+      return original(...args);
+    }) as typeof window.setTimeout;
+  });
+  await page.goto(story('picker-columns--preload-timer-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  await page.getByRole('textbox').pressSequentially('rocket');
+  // 5.0 data names the rocket "space" first, so match its code point.
+  await page
+    .locator('[role="gridcell"][data-epr-unified="1f680"]')
+    .waitFor();
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { preloadTimers: { count: number } })
+          .preloadTimers.count,
+    ),
+  ).toBe(0);
+});
+
+test('columns keep their width through an empty query, loading and load failure', async ({
+  page,
+}) => {
+  const root = page.locator('[data-epr-part="root"]');
+  await page.goto(story('picker-columns--six-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  const width = (await root.boundingBox())!.width;
+  await page.getByRole('textbox').fill('no-match-xyz-987654321');
+  await expect(page.getByRole('gridcell')).toHaveCount(0);
+  expect(Math.abs((await root.boundingBox())!.width - width)).toBeLessThan(1);
+  for (const id of [
+    'picker-columns--loading-columns',
+    'picker-columns--error-columns',
+  ]) {
+    await page.goto(story(id));
+    await root.waitFor();
+    if (id.endsWith('error-columns')) await page.getByRole('alert').waitFor();
+    await expect
+      .poll(async () => Math.abs((await root.boundingBox())!.width - width))
+      .toBeLessThan(1);
+  }
+});
+
+test('the text font token can inherit the host font', async ({ page }) => {
+  await page.goto(story('picker-columns--six-columns'));
+  const root = page.locator('[data-epr-part="root"]');
+  await root.waitFor();
+  await root.evaluate((element: HTMLElement) => {
+    element.parentElement!.style.fontFamily = 'monospace';
+    element.style.setProperty('--epr-font-family', 'inherit');
+  });
+  await expect(page.getByRole('textbox')).toHaveCSS('font-family', 'monospace');
+  await expect(
+    page.locator('[data-epr-part="category-label"]').first(),
+  ).toHaveCSS('font-family', 'monospace');
+});
+
+test('custom headers keep the default sticky background', async ({ page }) => {
+  await page.goto(story('picker-columns--six-columns'));
+  const header = page.locator('[data-epr-part="category-label"]').first();
+  await header.waitFor({ state: 'attached' });
+  const background = await header.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+  await page.goto(story('picker-columns--custom-header-columns'));
+  await expect(header).toHaveCSS('background-color', background);
+  await expect(header).toHaveCSS('position', 'sticky');
+});
+
 for (const id of [
   'recipes-examples-geist-minimal--css',
   'recipes-examples-discord-sidebar--css',
@@ -302,6 +491,9 @@ test('nested Escape closes variations before the host palette', async ({
   ).not.toBeVisible();
   await expect(page.locator('[data-epr-part="root"]')).toBeVisible();
   await page.keyboard.press('Escape');
+  await expect(search).toHaveValue('');
+  await expect(page.locator('[data-epr-part="root"]')).toBeVisible();
+  await page.keyboard.press('Escape');
   await expect(page.locator('[data-epr-part="root"]')).toHaveCount(0);
 });
 
@@ -324,6 +516,13 @@ test('nested Escape precedes Radix document-capture dismissal', async ({
   await expect(
     page.locator('[data-epr-part="variation-picker"]'),
   ).not.toBeVisible();
+  await expect(
+    page.getByRole('dialog', { name: 'Choose an emoji' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(
+    page.getByRole('textbox', { name: 'Type to search for an emoji' }),
+  ).toHaveValue('');
   await expect(
     page.getByRole('dialog', { name: 'Choose an emoji' }),
   ).toBeVisible();
@@ -439,6 +638,54 @@ test('reduced motion: the picker drops transitions and still expands from reacti
     );
   expect(cells).toBeGreaterThan(1);
 });
+
+// A picker that mounts as a reactions bar has a zero-height viewport on its
+// first pass; expanding must render rows down to the bottom of the body,
+// not only the overscan rows the collapsed pass computed.
+for (const id of [
+  'picker-reactions--reactions-menu',
+  'recipes-examples-imessage-tapback--css',
+]) {
+  test(`${id}: expanding from reactions fills the grid viewport`, async ({
+    page,
+  }) => {
+    await page.goto(story(id));
+    // At phone width the tapback recipe's reaction glyphs overlap the
+    // expand button; this test is about the grid, so skip hit-testing.
+    await page
+      .getByLabel('Show all Emojis')
+      .first()
+      .evaluate((button: HTMLElement) => button.click());
+    await expect(page.getByRole('gridcell').first()).toBeVisible();
+    // The body grows from zero height; measure only once it has settled.
+    await page.waitForFunction(
+      () =>
+        new Promise<boolean>((resolve) => {
+          const body = document.querySelector('.epr-body');
+          const before = body?.clientHeight;
+          setTimeout(
+            () => resolve(!!before && body?.clientHeight === before),
+            200,
+          );
+        }),
+    );
+    await expect
+      .poll(() =>
+        page.evaluate(() => {
+          const body = document.querySelector('.epr-body');
+          const cells = Array.from(
+            document.querySelectorAll('[role="gridcell"]'),
+          );
+          if (!body || cells.length === 0) return -1;
+          const lowest = Math.max(
+            ...cells.map((cell) => cell.getBoundingClientRect().bottom),
+          );
+          return Math.round(lowest - body.getBoundingClientRect().bottom);
+        }),
+      )
+      .toBeGreaterThanOrEqual(0);
+  });
+}
 
 for (const origin of ['input', 'grid'] as const) {
   for (const delay of [50, 150]) {

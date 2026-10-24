@@ -218,6 +218,7 @@ check('primitives exclude default appearance', () => {
       'ErrorBoundary',
       'baseVariables',
       '--epr-dark-hover-bg-color',
+      'Emoji Picker React failed to render:',
     ]) {
       assert.ok(!content.includes(marker), `${file} contains ${marker}`);
     }
@@ -225,7 +226,8 @@ check('primitives exclude default appearance', () => {
   // Sanity: the markers exist in the main bundle, so the scan is meaningful.
   const main = staticClosure('dist/esm/index.mjs');
   assert.ok(
-    main.includes('ErrorBoundary'),
+    main.includes('Emoji Picker React failed to render:') &&
+      main.includes('--epr-dark-hover-bg-color'),
     'main bundle sanity marker missing',
   );
 });

@@ -1,3 +1,9 @@
+export const OVERSCAN_ROWS = 2;
+
+export function isJustBelowViewport(top: number, bottom: number, size: number) {
+  return top >= bottom && top < bottom + size * OVERSCAN_ROWS;
+}
+
 export function shouldVirtualize({
   scrollTop,
   clientHeight,
@@ -19,8 +25,9 @@ export function shouldVirtualize({
   const emojiBottom = emojiTop + dimensions.emojiSize;
 
   const isVisible =
-    emojiBottom + dimensions.emojiSize * 2 >= scrollTop &&
-    emojiTop <= scrollTop + clientHeight + dimensions.emojiSize;
+    emojiBottom + dimensions.emojiSize * OVERSCAN_ROWS >= scrollTop &&
+    emojiTop <=
+      scrollTop + clientHeight + dimensions.emojiSize * (OVERSCAN_ROWS - 1);
 
   return !isVisible;
 }

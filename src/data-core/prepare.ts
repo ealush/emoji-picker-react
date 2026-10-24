@@ -62,28 +62,10 @@ export function normalizeQuery(input: string): string {
   return input.trim().toLowerCase();
 }
 
-function toEmojiInfo(
-  unified: string,
-  names: readonly string[],
-  variations: readonly string[] | undefined,
-  addedIn: string,
-): EmojiInfo {
-  return Object.freeze({
-    unified,
-    emoji: parseNativeEmoji(unified),
-    name: names[names.length - 1] || '',
-    names: Object.freeze([...names]),
-    variations: Object.freeze([...(variations ?? [])]),
-    addedIn,
-  });
-}
-
 function readStringArray(raw: unknown): string[] {
-  if (!Array.isArray(raw)) {
-    return [];
-  }
-  return (raw.filter((n) => typeof n === 'string') as string[]).map((n) =>
-    n.toLowerCase(),
+  if (!Array.isArray(raw)) return [];
+  return (raw.filter((value) => typeof value === 'string') as string[]).map(
+    (value) => value.toLowerCase(),
   );
 }
 
@@ -106,11 +88,18 @@ function appendEntry(
   const names = readStringArray((entry as { n?: unknown }).n);
   const variations = readStringArray((entry as { v?: unknown }).v);
 
-  const rawAddedIn = (entry as { a?: unknown }).a;
-  const addedIn =
-    typeof rawAddedIn === 'string' ? rawAddedIn : String(rawAddedIn ?? '');
+  const addedIn = String((entry as { a?: unknown }).a ?? '');
 
-  const info = toEmojiInfo(unified, names, variations, addedIn);
+  // Freeze the arrays readStringArray owns directly, without copying them
+  // a second time. Caller arrays are never mutated or frozen.
+  const info: EmojiInfo = Object.freeze({
+    unified,
+    emoji: parseNativeEmoji(unified),
+    name: names[names.length - 1] || '',
+    names: Object.freeze(names),
+    variations: Object.freeze(variations),
+    addedIn,
+  });
   records.push(info);
   byUnified.set(unified, info);
   for (const variation of info.variations) {
@@ -121,18 +110,17 @@ function appendEntry(
   indexCharBucket(byCharMutable, names, info);
 }
 
-// One bucket entry per distinct character keeps the per-record cost
-// proportional to name length, not name length squared.
+// Records are indexed in order. A bucket already ending in this record
+// has seen the character, avoiding a temporary Set for every emoji.
 function indexCharBucket(
   byCharMutable: Map<string, EmojiInfo[]>,
   names: readonly string[],
   info: EmojiInfo,
 ): void {
-  const distinctChars = Array.from(new Set(names.join('')));
-  for (const char of distinctChars) {
+  for (const char of names.join('')) {
     const bucket = byCharMutable.get(char);
     if (bucket) {
-      bucket.push(info);
+      if (bucket[bucket.length - 1] !== info) bucket.push(info);
     } else {
       byCharMutable.set(char, [info]);
     }
@@ -161,15 +149,12 @@ export function getPreparedCore(emojiData?: EmojiData): PreparedCore {
     }
   }
 
-  const byChar = new Map<string, readonly EmojiInfo[]>();
-  byCharMutable.forEach((bucket, char) => {
-    byChar.set(char, Object.freeze(bucket));
-  });
+  byCharMutable.forEach(Object.freeze);
 
   const core: PreparedCore = {
     records,
     byUnified,
-    byChar,
+    byChar: byCharMutable,
     queryMemo: new Map<string, readonly EmojiInfo[]>(),
   };
 

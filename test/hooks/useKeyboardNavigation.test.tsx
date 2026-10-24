@@ -1,5 +1,5 @@
 import { fireEvent, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   useBodyRef,
@@ -9,7 +9,11 @@ import {
   useSearchInputRef,
   useSkinTonePickerRef,
 } from '../../src/components/context/ElementRefContext';
-import { useSkinToneFanOpenState } from '../../src/components/context/PickerContext';
+import {
+  useNavigationRegistry,
+  useSkinToneFanOpenState,
+} from '../../src/components/context/PickerContext';
+import { useDisallowMouseMove } from '../../src/hooks/useDisallowMouseMove';
 import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
 import {
   useFocusCategoryNavigation,
@@ -33,10 +37,17 @@ vi.mock('../../src/components/context/PickerContext', () => ({
   useReactionsModeState: vi.fn(() => [false, vi.fn()]),
   useNavigationRegistry: vi.fn(() => new NavigationRegistry()),
   useSearchComposingState: vi.fn(() => [false, vi.fn()]),
+  useSearchDisplayState: vi.fn(() => ['', vi.fn()]),
+  useSearchTermState: vi.fn(() => ['', vi.fn()]),
 }));
 
 vi.mock('../../src/config/useConfig', () => ({
   useSearchDisabledConfig: vi.fn(() => false),
+  useSuggestedEmojisConfig: vi.fn(() => undefined),
+}));
+
+vi.mock('../../src/components/context/PickerDataContext', () => ({
+  usePickerDataContext: () => ({ emojiData: undefined }),
 }));
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({
@@ -60,6 +71,7 @@ vi.mock('../../src/hooks/useFilter', () => ({
 vi.mock('../../src/hooks/useSearchController', () => ({
   useTypeToSearchKey: vi.fn(() => vi.fn()),
   useClearSearchValue: vi.fn(() => vi.fn()),
+  useAcceptedSearchValue: vi.fn(() => ''),
 }));
 
 vi.mock('../../src/hooks/useFocus', () => ({
@@ -105,6 +117,16 @@ describe('useKeyboardNavigation', () => {
     (useReactionsRef as any).mockReturnValue({
       current: document.createElement('div'),
     });
+  });
+
+  afterEach(() => pickerMain.remove());
+
+  it('runs an unhandled Escape once while leaving it available to the host', () => {
+    const disallow = vi.fn();
+    vi.mocked(useDisallowMouseMove).mockReturnValue(disallow);
+    renderHook(() => useKeyboardNavigation());
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(true);
+    expect(disallow).toHaveBeenCalledTimes(1);
   });
 
   it('attaches event listeners to picker main', () => {
