@@ -1,7 +1,7 @@
 import { Meta } from '@storybook/react-vite';
 import React from 'react';
 
-import EmojiPicker, { EmojiStyle } from '../../src';
+import EmojiPicker, { Categories, EmojiStyle } from '../../src';
 import {
   CategoryNav,
   List,
@@ -11,6 +11,7 @@ import {
   SkinTone,
   Viewport,
   type CategoryHeaderRenderProps,
+  type EmojiRenderProps,
 } from '../../src/primitives';
 
 // Behavior fixture for `columns` (playwright/adoption-behavior.spec.ts).
@@ -109,3 +110,40 @@ export const PrimitiveColumnsWithTones = () => (
     <Preview />
   </Root>
 );
+
+// Commit-level counters make the null-parent-ref mount pass observable.
+export function FirstOpenProfile() {
+  let created = 0;
+  const snapshots: {
+    phase: string;
+    created: number;
+    cells: number;
+    duration: number;
+  }[] = [];
+  function Cell({ emoji: _emoji, ...props }: EmojiRenderProps) {
+    created++;
+    return <button {...props} />;
+  }
+  return (
+    <React.Profiler
+      id="first-open"
+      onRender={(_id, phase, duration) => {
+        snapshots.push({
+          phase,
+          created,
+          cells: document.querySelectorAll('[role="gridcell"]').length,
+          duration,
+        });
+        (
+          window as unknown as { firstOpenProfile: typeof snapshots }
+        ).firstOpenProfile = snapshots;
+      }}
+    >
+      <EmojiPicker
+        categories={[Categories.SMILEYS_PEOPLE]}
+        components={{ Emoji: Cell }}
+        autoFocusSearch={false}
+      />
+    </React.Profiler>
+  );
+}

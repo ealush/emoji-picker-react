@@ -3,6 +3,58 @@ import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
+test('first commit constructs only the measurement cell before parent refs exist', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--first-open-profile'));
+  await page.getByRole('gridcell').first().waitFor();
+  const samples = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          firstOpenProfile: {
+            phase: string;
+            created: number;
+            cells: number;
+            duration: number;
+          }[];
+        }
+      ).firstOpenProfile,
+  );
+  expect(samples[0].phase).toBe('mount');
+  expect(samples[0].created).toBeLessThanOrEqual(1);
+  expect(samples[0].cells).toBe(0);
+  expect(samples.some((sample) => sample.cells > 0)).toBe(true);
+});
+
+test('primitive Search keeps a focus border without a color preset', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--primitive-columns-with-tones'));
+  const search = page.getByRole('textbox');
+  await search.focus();
+  await expect(search).toHaveCSS('border-top-style', 'solid');
+  await expect(search).toHaveCSS('border-top-width', '1px');
+  expect(
+    await search.evaluate((input) => getComputedStyle(input).borderTopColor),
+  ).not.toBe('rgba(0, 0, 0, 0)');
+});
+
+test('fast Enter selects the new result in one press', async ({ page }) => {
+  await page.goto(story('integrations-shadcn-ui--shadcn-light'));
+  const search = page.getByRole('textbox', {
+    name: 'Type to search for an emoji',
+  });
+  await search.fill('fire');
+  await search.press('Enter');
+  await expect(
+    page.getByRole('dialog', { name: 'Choose an emoji' }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('textbox', { name: 'Message' })).not.toHaveValue(
+    'Ship it ',
+  );
+});
+
 for (const variant of [
   'layer-lifecycle',
   'declared-layer-lifecycle',

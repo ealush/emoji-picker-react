@@ -2,7 +2,10 @@ import { GetEmojiUrl } from '../components/emoji/BaseEmojiProps';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import { emojiUnified, emojiVariations } from '../dataUtils/emojiUtils';
 import { EmojiStyle, EmojiStyleValue } from '../types/exposedTypes';
-import { Dimensions } from '../virtualization/virtualizationHelpers';
+import {
+  Dimensions,
+  isJustBelowViewport,
+} from '../virtualization/virtualizationHelpers';
 
 // eslint-disable-next-line max-params
 export function preloadEmojiIfNeeded(
@@ -39,11 +42,7 @@ export function preloadEmojiIfNeeded(
   const emojiTop = topOffset + style.top;
   const viewportBottom = scrollTop + clientHeight;
 
-  const isJustBelowViewport =
-    emojiTop >= viewportBottom &&
-    emojiTop < viewportBottom + dimensions.emojiSize * 2;
-
-  if (isJustBelowViewport) {
+  if (isJustBelowViewport(emojiTop, viewportBottom, dimensions.emojiSize)) {
     preloadEmoji(getEmojiUrl, emoji, emojiStyles, rendered);
   }
 }

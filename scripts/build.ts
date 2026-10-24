@@ -22,6 +22,7 @@ import {
   copyFileSync,
   existsSync,
   readFileSync,
+  readdirSync,
   rmSync,
   writeFileSync,
 } from 'node:fs';
@@ -76,7 +77,7 @@ async function buildCjs(src: string, outfile: string) {
   writeFileSync(join(repoRoot, outfile), result.code + '\n');
 }
 
-function buildEsm() {
+async function buildEsm() {
   rmSync(join(repoRoot, 'dist', 'esm'), { recursive: true, force: true });
   sh(bin('esbuild'), [
     join(repoRoot, 'src/index.tsx'),
@@ -95,6 +96,31 @@ function buildEsm() {
     '--chunk-names=chunks/[name]-[hash]',
     '--out-extension:.js=.mjs',
   ]);
+  // Compress production ESM as well as CJS, but keep annotated factory
+  // boundaries intact: downstream bundlers need them to discard unused
+  // components and their registered styles.
+  const esmRoot = join(repoRoot, 'dist', 'esm');
+  for (const file of readdirSync(esmRoot, {
+    recursive: true,
+    encoding: 'utf8',
+  })) {
+    if (!file.endsWith('.mjs')) continue;
+    const path = join(esmRoot, file);
+    const result = await minify(readFileSync(path, 'utf8'), {
+      module: true,
+      ecma: 2020,
+      compress: {
+        passes: 3,
+        inline: false,
+        side_effects: false,
+        reduce_funcs: false,
+      },
+      mangle: true,
+      format: { comments: false, preserve_annotations: true },
+    });
+    if (!result.code) throw new Error(`Empty ESM output: ${file}`);
+    writeFileSync(path, result.code + '\n');
+  }
 }
 
 async function buildDeclarations() {
@@ -114,6 +140,16 @@ async function buildDeclarations() {
     }
     await bundleDeclarations(path);
     copyFileSync(path, join(repoRoot, 'dist', dmts));
+  }
+  // These new private async helpers have no public declaration surface:
+  // entry declarations above are self-contained, and the highlight test
+  // loader keeps its existing searchHighlight type. Do not publish orphan
+  // declarations solely because tsc followed the dynamic runtime imports.
+  for (const helper of [
+    'hooks/deferredPicker',
+    'data-core/normalizeLoaderResult',
+  ]) {
+    rmSync(join(repoRoot, 'dist', `${helper}.d.ts`), { force: true });
   }
 }
 
@@ -141,7 +177,7 @@ async function main() {
   if (!existsSync(bin('esbuild'))) {
     throw new Error('esbuild not found; run npm install first.');
   }
-  buildEsm();
+  await buildEsm();
   await buildCjs('src/index.tsx', 'dist/index.js');
   await buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
   await buildCjs('src/data.ts', 'dist/data/index.js');

@@ -4,8 +4,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useBodyRef } from '../../src/components/context/ElementRefContext';
 import { useActiveSkinToneState } from '../../src/components/context/PickerContext';
 import { DataEmojis } from '../../src/dataUtils/DataTypes';
-import { useVariationsDisabledConfig } from '../../src/config/useConfig';
-import { preloadEmojiIfNeeded } from '../../src/hooks/preloadEmoji';
+import {
+  useVariationsDisabledConfig,
+  useEmojiStyleConfig,
+} from '../../src/config/useConfig';
+import { preloadEmoji } from '../../src/hooks/preloadEmoji';
 import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
 import { useIsEmojiDisallowed } from '../../src/hooks/useDisallowedEmojis';
@@ -54,11 +57,12 @@ vi.mock('../../src/hooks/useIsEmojiHidden', () => ({
   })),
 }));
 
-vi.mock('../../src/hooks/preloadEmoji', () => ({
-  preloadEmojiIfNeeded: vi.fn(),
-}));
+vi.mock('../../src/hooks/preloadEmoji', () => ({ preloadEmoji: vi.fn() }));
 
-vi.mock('../../src/virtualization/virtualizationHelpers', () => ({
+vi.mock('../../src/virtualization/virtualizationHelpers', async (original) => ({
+  ...(await original<
+    typeof import('../../src/virtualization/virtualizationHelpers')
+  >()),
   getEmojiPositionStyle: vi.fn(() => ({ top: 0, insetInlineStart: 0 })),
   shouldVirtualize: vi.fn(() => false),
 }));
@@ -72,6 +76,7 @@ const mockEmojis: DataEmojis = [
 describe('useEmojiVirtualization', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useEmojiStyleConfig).mockReturnValue('native');
     (useVariationsDisabledConfig as any).mockReturnValue(false);
     (useActiveSkinToneState as any).mockReturnValue(['neutral']);
 
@@ -93,6 +98,69 @@ describe('useEmojiVirtualization', () => {
       insetInlineStart: 0,
     });
     (shouldVirtualize as any).mockReturnValue(false);
+  });
+
+  it('constructs no cells in the initial pass before the parent ref exists', () => {
+    const geometry = vi.mocked(useCategoryHeight).getMockImplementation()!;
+    vi.mocked(useCategoryHeight).mockReturnValue(undefined);
+    const body = { current: null as null | HTMLElement };
+    vi.mocked(useBodyRef).mockReturnValue(body);
+    const passes: number[] = [];
+    const { result, rerender } = renderHook(() => {
+      const value = useEmojiVirtualization({
+        categoryEmojis: mockEmojis,
+        topOffset: 0,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      });
+      passes.push(value.emojis.length);
+      return value;
+    });
+    expect(passes[0]).toBe(0);
+    vi.mocked(useCategoryHeight).mockImplementation(geometry);
+    rerender();
+    expect(result.current.emojis).toHaveLength(3);
+  });
+
+  it.each(['native', 'apple'] as const)(
+    'does not queue distant preloads with %s',
+    (style) => {
+      vi.mocked(useEmojiStyleConfig).mockReturnValue(style);
+      vi.mocked(shouldVirtualize).mockReturnValue(true);
+      const { rerender } = renderHook(() =>
+        useEmojiVirtualization({
+          categoryEmojis: mockEmojis,
+          topOffset: 10000,
+          onHeightReady: vi.fn(),
+          scrollTop: 0,
+          isCategoryVisible: false,
+          positioned: true,
+        }),
+      );
+      rerender();
+      expect(preloadEmoji).not.toHaveBeenCalled();
+    },
+  );
+
+  it('does not queue nearby preloads for native glyphs', () => {
+    vi.mocked(shouldVirtualize).mockReturnValue(true);
+    vi.mocked(getEmojiPositionStyle).mockReturnValue({
+      top: 360,
+      insetInlineStart: 0,
+    });
+    renderHook(() =>
+      useEmojiVirtualization({
+        categoryEmojis: mockEmojis,
+        topOffset: 0,
+        onHeightReady: vi.fn(),
+        scrollTop: 0,
+        isCategoryVisible: true,
+        positioned: true,
+      }),
+    );
+    expect(preloadEmoji).not.toHaveBeenCalled();
   });
 
   it('does not refilter the category inventory when only scroll position changes', () => {
@@ -159,6 +227,11 @@ describe('useEmojiVirtualization', () => {
   });
 
   it('preloads only the rendered image with variationsDisabled', () => {
+    vi.mocked(useEmojiStyleConfig).mockReturnValue('apple');
+    vi.mocked(getEmojiPositionStyle).mockReturnValue({
+      top: 360,
+      insetInlineStart: 0,
+    });
     (shouldVirtualize as any).mockReturnValue(true);
     (useVariationsDisabledConfig as any).mockReturnValue(true);
     (useActiveSkinToneState as any).mockReturnValue(['1f3fc']);
@@ -168,7 +241,7 @@ describe('useEmojiVirtualization', () => {
           { n: ['thumbs up'], u: '1f44d', a: '0.6', v: ['1f44d-1f3fc'] },
           ...mockEmojis,
         ],
-        topOffset: 5000,
+        topOffset: 0,
         onHeightReady: vi.fn(),
         scrollTop: 0,
         isCategoryVisible: true,
@@ -177,26 +250,29 @@ describe('useEmojiVirtualization', () => {
     );
     // The active tone's image for emojis that have it, else the base.
     expect(
-      (preloadEmojiIfNeeded as any).mock.calls.map((call: unknown[]) =>
-        call.at(-1),
-      ),
+      (preloadEmoji as any).mock.calls.map((call: unknown[]) => call.at(-1)),
     ).toEqual(['1f44d-1f3fc', '1f600', '1f431', '1f436']);
   });
 
   it('leaves the full preload to variations when they are on', () => {
+    vi.mocked(useEmojiStyleConfig).mockReturnValue('apple');
+    vi.mocked(getEmojiPositionStyle).mockReturnValue({
+      top: 360,
+      insetInlineStart: 0,
+    });
     (shouldVirtualize as any).mockReturnValue(true);
     renderHook(() =>
       useEmojiVirtualization({
         categoryEmojis: mockEmojis,
-        topOffset: 5000,
+        topOffset: 0,
         onHeightReady: vi.fn(),
         scrollTop: 0,
         isCategoryVisible: true,
         positioned: true,
       }),
     );
-    expect(preloadEmojiIfNeeded).toHaveBeenCalled();
-    for (const call of (preloadEmojiIfNeeded as any).mock.calls)
+    expect(preloadEmoji).toHaveBeenCalled();
+    for (const call of (preloadEmoji as any).mock.calls)
       expect(call.at(-1)).toBeUndefined();
   });
 

@@ -16,12 +16,14 @@ import {
 } from '../config/useConfig';
 import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
 import { emojiUnified } from '../dataUtils/emojiUtils';
+import { EmojiStyle } from '../types/exposedTypes';
 import {
   getEmojiPositionStyle,
   shouldVirtualize,
+  isJustBelowViewport,
 } from '../virtualization/virtualizationHelpers';
 
-import { preloadEmojiIfNeeded } from './preloadEmoji';
+import { preloadEmoji } from './preloadEmoji';
 import { useCategoryHeight } from './useCategoryHeight';
 import { useIsEmojiDisallowed } from './useDisallowedEmojis';
 import { useIsEmojiHidden } from './useIsEmojiHidden';
@@ -57,13 +59,8 @@ export function useEmojiVirtualization({
   // Native glyphs checked exactly: the cells this pass renders (visible
   // rows plus virtualization's margin rows), nothing else.
   const probe: string[] = [];
-  const preloads: {
-    emoji: DataEmoji;
-    unified: string;
-    style: { top: number } | undefined;
-  }[] = [];
-
-  let virtualizedCounter = 0;
+  const preloads: DataEmoji[] = [];
+  const committed = React.useRef(false);
 
   // A section shows each rendered emoji once. Recents can hold the same
   // emoji under two tones (e.g. neutral and medium); the active tone
@@ -89,6 +86,7 @@ export function useEmojiVirtualization({
   const dimensions = useCategoryHeight(emojisToPush.length);
 
   useIsomorphicLayoutEffect(() => {
+    committed.current = true;
     if (dimensions) {
       onHeightReady(dimensions.categoryHeight);
     }
@@ -105,76 +103,80 @@ export function useEmojiVirtualization({
       dimensions,
     });
 
-  const emojis = emojisToPush.reduce((accumulator, emoji, index) => {
-    // MeasureEmoji provides the cell geometry. Until offsets are final,
-    // rendering an entire category only to discard it delays first paint.
-    // Layout-free unit tests have no measurements to wait for.
-    if ((!dimensions || !positioned) && BodyRef.current?.clientWidth) {
-      virtualizedCounter++;
-      return accumulator;
-    }
-    const unified = emojiUnified(emoji, activeSkinTone);
-    const style = getEmojiPositionStyle(dimensions, index);
-
-    if (isVirtualized(style)) {
-      virtualizedCounter++;
-      preloads.push({ emoji, unified, style });
-      return accumulator;
-    }
-
-    if (!isCategoryVisible) {
-      virtualizedCounter++;
-      return accumulator;
-    }
-
-    // Wait for layout: an unmeasured pass renders a whole category, and
-    // while sections above are unmeasured this one renders off-screen
-    // cells as if it were at the top.
-    if (dimensions && positioned) probe.push(unified);
-    accumulator.push(
-      <ClickableEmoji
-        showVariations={showVariations}
-        key={unified}
-        emoji={emoji}
-        unified={unified}
-        emojiStyle={emojiStyle}
-        lazyLoad={lazyLoadEmojis}
-        getEmojiUrl={getEmojiUrl}
-        style={{
-          ...style,
-          position: 'absolute',
-        }}
-        index={index}
-        // Grid semantics (issue #508): each emoji is a cell of its
-        // category row; native button activation is kept.
-        role="gridcell"
-      />,
+  const needsPreload = (style: { top: number } | undefined) =>
+    emojiStyle !== EmojiStyle.NATIVE &&
+    dimensions &&
+    style &&
+    isJustBelowViewport(
+      topOffset + style.top,
+      scrollTop + (BodyRef.current?.clientHeight ?? 0),
+      dimensions.emojiSize,
     );
-    return accumulator;
-  }, [] as ReactNode[]);
+
+  const waitingForLayout =
+    (!committed.current && !dimensions) ||
+    ((!dimensions || !positioned) && BodyRef.current?.clientWidth);
+
+  // MeasureEmoji supplies geometry before cells are built. Layout-free
+  // environments can render after the first commit without measurements.
+  const emojis = waitingForLayout
+    ? []
+    : emojisToPush.reduce((accumulator, emoji, index) => {
+        const style = getEmojiPositionStyle(dimensions, index);
+
+        if (isVirtualized(style)) {
+          if (needsPreload(style)) preloads.push(emoji);
+          return accumulator;
+        }
+
+        if (!isCategoryVisible) {
+          return accumulator;
+        }
+
+        const unified = emojiUnified(emoji, activeSkinTone);
+        // Wait for layout: an unmeasured pass renders a whole category, and
+        // while sections above are unmeasured this one renders off-screen
+        // cells as if it were at the top.
+        if (dimensions && positioned) probe.push(unified);
+        accumulator.push(
+          <ClickableEmoji
+            showVariations={showVariations}
+            key={unified}
+            emoji={emoji}
+            unified={unified}
+            emojiStyle={emojiStyle}
+            lazyLoad={lazyLoadEmojis}
+            getEmojiUrl={getEmojiUrl}
+            style={{
+              ...style,
+              position: 'absolute',
+            }}
+            index={index}
+            // Grid semantics (issue #508): each emoji is a cell of its
+            // category row; native button activation is kept.
+            role="gridcell"
+          />,
+        );
+        return accumulator;
+      }, [] as ReactNode[]);
 
   // Every commit: requests for already-checked glyphs are free.
   useEffect(() => requestNativeProbe(probe));
   // Image requests belong to committed work, never an abandoned render.
   // The proximity and cache checks run synchronously, without per-cell timers.
   useEffect(() => {
-    preloads.forEach(({ emoji, unified, style }) =>
-      preloadEmojiIfNeeded(
+    preloads.forEach((emoji) =>
+      preloadEmoji(
+        getEmojiUrl,
         emoji,
         emojiStyle,
-        scrollTop,
-        BodyRef.current?.clientHeight ?? 0,
-        topOffset,
-        style,
-        dimensions,
-        getEmojiUrl,
-        variationsDisabled ? unified : undefined,
+        variationsDisabled ? emojiUnified(emoji, activeSkinTone) : undefined,
       ),
     );
   });
 
   return {
-    virtualizedCounter,
+    virtualizedCounter: emojisToPush.length - emojis.length,
     emojis,
     dimensions,
     emojiCount: emojisToPush.length,

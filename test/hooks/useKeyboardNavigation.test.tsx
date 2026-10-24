@@ -13,6 +13,7 @@ import {
   useNavigationRegistry,
   useSkinToneFanOpenState,
 } from '../../src/components/context/PickerContext';
+import { useDisallowMouseMove } from '../../src/hooks/useDisallowMouseMove';
 import { useKeyboardNavigation } from '../../src/hooks/useKeyboardNavigation';
 import { useAcceptedSearchValue } from '../../src/hooks/useSearchController';
 import {
@@ -130,6 +131,14 @@ describe('useKeyboardNavigation', () => {
   });
 
   afterEach(() => pickerMain.remove());
+
+  it('runs an unhandled Escape once while leaving it available to the host', () => {
+    const disallow = vi.fn();
+    vi.mocked(useDisallowMouseMove).mockReturnValue(disallow);
+    renderHook(() => useKeyboardNavigation());
+    expect(fireEvent.keyDown(pickerMain, { key: 'Escape' })).toBe(true);
+    expect(disallow).toHaveBeenCalledTimes(1);
+  });
 
   it('attaches event listeners to picker main', () => {
     const addEventListenerSpy = vi.spyOn(pickerMain, 'addEventListener');

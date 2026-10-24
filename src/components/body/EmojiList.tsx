@@ -15,6 +15,7 @@ import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useMergedRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
+import { OVERSCAN_ROWS } from '../../virtualization/virtualizationHelpers';
 import { useBodyRef, useEmojiListRef } from '../context/ElementRefContext';
 import {
   useEmojiSizeState,
@@ -119,10 +120,12 @@ export function EmojiList({
                 : Math.max(
                     currentOffset -
                       (BodyRef.current?.clientHeight ?? 0) -
-                      (emojiSize || 40) * 3,
+                      (emojiSize || 40) * (OVERSCAN_ROWS + 1),
                     Math.min(
                       scrollTop,
-                      currentOffset + categoryHeight + (emojiSize || 40) * 3,
+                      currentOffset +
+                        categoryHeight +
+                        (emojiSize || 40) * (OVERSCAN_ROWS + 1),
                     ),
                   )
             }

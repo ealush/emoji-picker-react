@@ -3,7 +3,10 @@ import { useEffect } from 'react';
 import { categoryNameFromDom } from '../DomUtils/categoryNameFromDom';
 import { asSelectors, ClassNames } from '../DomUtils/classNames';
 import { useBodyRef } from '../components/context/ElementRefContext';
-import { CategoriesConfig } from '../config/categoryConfig';
+import {
+  CategoriesConfig,
+  categoryIdFromCategoryConfig,
+} from '../config/categoryConfig';
 
 export function useActiveCategoryScrollDetection({
   setActiveCategory,
@@ -22,6 +25,10 @@ export function useActiveCategoryScrollDetection({
   const BodyRef = useBodyRef();
 
   useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      setVisibleCategories(categories.map(categoryIdFromCategoryConfig));
+      return;
+    }
     const visibleCategories = new Map<string, number>();
     const intersectingCategories = new Map<string, boolean>();
     const targets = new Map<string, Element>();

@@ -99,18 +99,88 @@ describe('keepSearchFocus', () => {
     });
   });
 
-  it('does not pick the previous query results during the filter debounce', async () => {
+  it('queues fast Enter and selects the matching result once after debounce', async () => {
     const { input, onEmojiClick } = await renderPicker();
     fireEvent.change(input, { target: { value: 'emoji 9' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    // No stale result may be emitted, even before the new grid commits.
     expect(onEmojiClick).not.toHaveBeenCalled();
+    await waitFor(() => expect(onEmojiClick).toHaveBeenCalledTimes(1));
+    expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
+    await act(() => new Promise((resolve) => setTimeout(resolve, 150)));
+    expect(onEmojiClick).toHaveBeenCalledTimes(1);
+  });
+
+  it.each(['Escape', 'ArrowDown', 'blur', 'edit'])(
+    'cancels queued Enter on %s',
+    async (action) => {
+      const { input, onEmojiClick } = await renderPicker();
+      fireEvent.change(input, { target: { value: 'emoji 9' } });
+      fireEvent.keyDown(input, { key: 'Enter' });
+      if (action === 'blur') act(() => input.blur());
+      else if (action === 'edit')
+        fireEvent.change(input, { target: { value: 'emoji 8' } });
+      else fireEvent.keyDown(input, { key: action });
+      await act(() => new Promise((resolve) => setTimeout(resolve, 300)));
+      expect(onEmojiClick).not.toHaveBeenCalled();
+    },
+  );
+
+  it('queues fast Enter without keepSearchFocus', async () => {
+    const { onEmojiClick } = renderPickerWithoutKeepFocus();
+    const input = screen.getByRole('textbox');
+    fireEvent.change(input, { target: { value: 'emoji 9' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    await waitFor(() => expect(onEmojiClick).toHaveBeenCalledTimes(1));
+    expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
+  });
+
+  it('materializes the first matching result for queued Enter from a scrolled grid', async () => {
+    const { onEmojiClick } = renderPickerWithoutKeepFocus();
+    const input = screen.getByRole('textbox');
+    const body = document.querySelector<HTMLElement>(
+      '[data-epr-part="viewport"]',
+    )!;
+    body.scrollTop = 600;
+    fireEvent.scroll(body);
     await waitFor(() =>
       expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
     );
+    fireEvent.change(input, { target: { value: 'emoji 9' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(onEmojiClick).toHaveBeenCalledTimes(1);
+    await waitFor(() => {
+      fireEvent.scroll(body);
+      expect(onEmojiClick).toHaveBeenCalledTimes(1);
+    });
     expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
+  });
+
+  it('keeps the highlight for equal inline suggestions during unrelated config changes', async () => {
+    mockGridGeometry();
+    const view = (placeholder: string) => (
+      <Picker.Root
+        emojiData={hundred}
+        emojiStyle="native"
+        categories={[Categories.SUGGESTED]}
+        suggestedEmojis={['1f600', '1f601', '1f602']}
+        labels={{ searchPlaceholder: placeholder }}
+        keepSearchFocus
+        autoFocusSearch={false}
+      >
+        <Picker.Search />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+      </Picker.Root>
+    );
+    const { rerender } = render(view('Search'));
+    await engineLoaded();
+    const input = screen.getByRole('combobox');
+    act(() => input.focus());
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 1');
+    rerender(view('Find emoji'));
+    await expectHighlight(input, 'emoji 1');
   });
 
   it('resets the highlight and preview when caller suggestions are replaced', async () => {

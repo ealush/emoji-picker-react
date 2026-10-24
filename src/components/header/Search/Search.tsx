@@ -96,10 +96,12 @@ const styles = /* @__PURE__ */ (() =>
       border: '1px solid var(--epr-search-border-color)',
       ':focus': {
         backgroundColor: 'var(--epr-search-input-bg-color-active)',
-        border: '1px solid var(--epr-search-border-color-active)',
+        border:
+          '1px solid var(--epr-search-border-color-active, var(--epr-highlight-color, Highlight))',
       },
       '::placeholder': {
-        color: 'var(--epr-search-input-placeholder-color)',
+        color:
+          'var(--epr-search-input-placeholder-color, var(--epr-text-color, GrayText))',
       },
     },
   }))();
