@@ -114,7 +114,15 @@ export function useCategoryHeight(emojiCount: number):
     const categoryHeight = rowCount * emojiSize;
 
     trackColumnCount(emojisPerRowRef, emojisPerRow, registry);
-    setDimensions({ categoryHeight, emojisPerRow, emojiSize, rowWidth });
+    setDimensions((previous) =>
+      previous &&
+      previous.categoryHeight === categoryHeight &&
+      previous.emojisPerRow === emojisPerRow &&
+      previous.emojiSize === emojiSize &&
+      previous.rowWidth === rowWidth
+        ? previous
+        : { categoryHeight, emojisPerRow, emojiSize, rowWidth },
+    );
   }, [EmojiListRef, emojiCount, emojiSizeFromContext, registry, columns]);
 
   // Restore measured row heights in the same commit as the filtered

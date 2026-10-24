@@ -64,6 +64,7 @@ export const structuralPickerTokens: Record<string, string> = {
 
 /** Light color tokens (the v4 default palette). */
 export const lightPickerTokens: Record<string, string> = {
+  '--epr-font-family': 'sans-serif',
   '--epr-highlight-color': '#007aeb',
   '--epr-hover-bg-color': '#e5f0fa',
   '--epr-hover-bg-color-reduced-opacity': '#e5f0fa80',

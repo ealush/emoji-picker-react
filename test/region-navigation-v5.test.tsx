@@ -344,7 +344,7 @@ describe('cross-region keyboard regression', () => {
 });
 
 describe('stale grid navigation cancellation', () => {
-  it('aborts a pending arrow-key focus after the filter changes', async () => {
+  it('moves to mounted cells immediately without leaving pending focus after a filter change', async () => {
     renderPicker();
     const buttons = await screen.findAllByRole('gridcell', {
       name: /grinning face|cat face|dog face|bird/i,
@@ -360,14 +360,13 @@ describe('stale grid navigation cancellation', () => {
     });
     expect(document.activeElement).toBe(first);
 
-    // ArrowRight schedules rAF-deferred focus on the sibling…
+    // Mounted cells move immediately so rapid arrows use the new position.
     fireEvent.keyDown(first, { key: 'ArrowRight' });
-    // …but a synchronous filter change invalidates the generation first.
+    expect(document.activeElement).toBe(second);
     fireEvent.change(input, { target: { value: 'dog' } });
 
     await new Promise((resolve) => setTimeout(resolve, 60));
-    expect(document.activeElement).toBe(first);
-    expect(document.activeElement).not.toBe(second);
+    expect(document.activeElement).toBe(second);
   });
 
   it('completes the pending focus when nothing invalidates it', async () => {

@@ -115,7 +115,11 @@ export function useIsEmojiFiltered(): (unified: string) => boolean {
   const { current: filter } = useFilterRef();
   const [searchTerm] = useSearchTermState();
 
-  return (unified) => isEmojiFilteredBySearchTerm(unified, filter, searchTerm);
+  return React.useCallback(
+    (unified: string) =>
+      isEmojiFilteredBySearchTerm(unified, filter, searchTerm),
+    [filter, searchTerm],
+  );
 }
 
 export function isEmojiFilteredBySearchTerm(

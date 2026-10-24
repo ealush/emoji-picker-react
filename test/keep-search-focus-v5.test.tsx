@@ -35,6 +35,118 @@ afterEach(() => {
 });
 
 describe('keepSearchFocus', () => {
+  it('keeps a consumed Escape from reaching the host', async () => {
+    const { input } = await renderPicker();
+    const host = vi.fn();
+    document.addEventListener('keydown', host);
+    try {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      await expectHighlight(input, 'emoji 0');
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).toHaveBeenCalledTimes(1); // only ArrowDown
+      fireEvent.change(input, { target: { value: 'emoji' } });
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).toHaveBeenCalledTimes(1);
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).toHaveBeenCalledTimes(2); // nothing left to undo
+    } finally {
+      document.removeEventListener('keydown', host);
+    }
+  });
+
+  it('consumes highlight and search Escape before document capture dismissal', async () => {
+    const { input } = await renderPicker();
+    const host = vi.fn();
+    document.addEventListener('keydown', host, true);
+    try {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+      await expectHighlight(input, 'emoji 0');
+      host.mockClear();
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).not.toHaveBeenCalled();
+      fireEvent.change(input, { target: { value: 'emoji' } });
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).not.toHaveBeenCalled();
+      fireEvent.keyDown(input, { key: 'Escape' });
+      expect(host).toHaveBeenCalledTimes(1);
+    } finally {
+      document.removeEventListener('keydown', host, true);
+    }
+  });
+
+  it('moves once per rapid arrow press before the next animation frame', async () => {
+    const { input } = await renderPicker();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 2');
+  });
+
+  it('preserves rapid arrows while a destination is outside the rendered window', async () => {
+    const { input } = await renderPicker();
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    await expectHighlight(input, 'emoji 0');
+    for (let step = 0; step < 10; step++) {
+      fireEvent.keyDown(input, { key: 'ArrowDown' });
+    }
+    const body = document.querySelector<HTMLElement>(
+      '[data-epr-part="viewport"]',
+    )!;
+    await waitFor(() => {
+      fireEvent.scroll(body);
+      expect(highlighted()?.getAttribute('aria-label')).toBe('emoji 60');
+    });
+  });
+
+  it('does not pick the previous query results during the filter debounce', async () => {
+    const { input, onEmojiClick } = await renderPicker();
+    fireEvent.change(input, { target: { value: 'emoji 9' } });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    // No stale result may be emitted, even before the new grid commits.
+    expect(onEmojiClick).not.toHaveBeenCalled();
+    await waitFor(() =>
+      expect(screen.queryByRole('gridcell', { name: 'emoji 0' })).toBeNull(),
+    );
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onEmojiClick).toHaveBeenCalledTimes(1);
+    expect(onEmojiClick.mock.calls[0][0].names).toEqual(['emoji 9']);
+  });
+
+  it('resets the highlight and preview when caller suggestions are replaced', async () => {
+    mockGridGeometry();
+    let active: Picker.EmojiClickData | null = null;
+    function Active() {
+      active = Picker.useActiveEmoji();
+      return null;
+    }
+    const composition = (ids: string[]) => (
+      <Picker.Root
+        emojiData={hundred}
+        emojiStyle="native"
+        categories={[Categories.SUGGESTED]}
+        suggestedEmojis={ids}
+        keepSearchFocus
+        autoFocusSearch={false}
+      >
+        <Picker.Search />
+        <Picker.Viewport>
+          <Picker.List />
+        </Picker.Viewport>
+        <Active />
+      </Picker.Root>
+    );
+    const view = render(composition(['1f600', '1f601', '1f602']));
+    await engineLoaded();
+    const input = screen.getByRole('combobox');
+    act(() => input.focus());
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'ArrowRight' });
+    await expectHighlight(input, 'emoji 1');
+    view.rerender(composition(['1f602', '1f601', '1f600']));
+    await expectHighlight(input, 'emoji 2');
+    expect(active?.names).toEqual(['emoji 2']);
+  });
   it('makes the search input a combobox that controls the grid', async () => {
     const { input } = await renderPicker();
     expect(input.getAttribute('aria-haspopup')).toBe('grid');
@@ -275,9 +387,9 @@ describe('keepSearchFocus', () => {
     // by its position in the results, not by what is on screen.
     layout.cellsOutOfView = true;
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    // Arrows stay with the pending highlight instead of leaving search.
+    // Each arrow applies, even within the same frame.
     fireEvent.keyDown(input, { key: 'ArrowRight' });
-    await expectHighlight(input, 'emoji 5');
+    await expectHighlight(input, 'emoji 50');
   });
 
   it('keeps arrows on the highlight while its cell is replaced', async () => {

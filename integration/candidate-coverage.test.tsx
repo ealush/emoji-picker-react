@@ -211,7 +211,7 @@ async function driveClassDojo() {
   const onSelect = vi.fn();
   render(<Fixtures.ClassDojoPicker onSelect={onSelect} />);
   await userEvent.type(searchInput(), 'Panda');
-  await userEvent.click(await screen.findByLabelText('panda'));
+  await userEvent.click(await screen.findByLabelText('Panda'));
   const payload = onSelect.mock.calls[0][0] as EmojiClickData;
   expect(payload.isCustom).toBe(true);
   expectEmojiPayload(payload);

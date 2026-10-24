@@ -83,29 +83,31 @@ describe('custom emoji groups', () => {
     expect(
       screen.getByRole('rowgroup', { name: 'Animals' }),
     ).toBeInTheDocument();
-    expect(screen.getByRole('rowgroup', { name: 'People' })).toBeInTheDocument();
+    expect(
+      screen.getByRole('rowgroup', { name: 'People' }),
+    ).toBeInTheDocument();
     expect(screen.getByRole('rowgroup', { name: 'Misc' })).toBeInTheDocument();
 
     // Each emoji lives in exactly one section.
     expect(
       within(screen.getByRole('rowgroup', { name: 'Animals' })).getByLabelText(
-        'panda',
+        'Panda',
       ),
     ).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'People' })).getByLabelText(
-        'ninja',
+        'Ninja',
       ),
     ).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'Misc' })).getByLabelText(
-        'orphan',
+        'Orphan',
       ),
     ).toBeInTheDocument();
     expect(
       within(
         screen.getByRole('rowgroup', { name: 'Animals' }),
-      ).queryByLabelText('ninja'),
+      ).queryByLabelText('Ninja'),
     ).toBeNull();
   });
 
@@ -121,7 +123,7 @@ describe('custom emoji groups', () => {
     expect(screen.getByRole('tab', { name: 'animals' })).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'animals' })).getByLabelText(
-        'panda',
+        'Panda',
       ),
     ).toBeInTheDocument();
   });
@@ -157,7 +159,9 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(screen.getAllByRole('rowgroup', { name: 'Animals' })).toHaveLength(1);
+    expect(screen.getAllByRole('rowgroup', { name: 'Animals' })).toHaveLength(
+      1,
+    );
     expect(screen.queryByRole('rowgroup', { name: 'Animals 2' })).toBeNull();
   });
 
@@ -229,14 +233,14 @@ describe('custom emoji groups', () => {
     const input = screen.getByLabelText('Type to search for an emoji');
     await userEvent.type(input, 'ninja');
 
-    expect(await screen.findByLabelText('ninja')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Ninja')).toBeInTheDocument();
   });
 
   it('emits clicks for grouped customs', async () => {
     const onEmojiClick = vi.fn();
     renderPicker({ onEmojiClick });
 
-    const panda = await screen.findByLabelText('panda');
+    const panda = await screen.findByLabelText('Panda');
     await userEvent.click(panda);
 
     expect(onEmojiClick).toHaveBeenCalled();
@@ -261,7 +265,7 @@ describe('custom emoji groups', () => {
       />,
     );
 
-    expect(await screen.findAllByLabelText('panda')).not.toHaveLength(0);
+    expect(await screen.findAllByLabelText('Panda')).not.toHaveLength(0);
     expect(
       within(screen.getByRole('tablist')).getAllByRole('tab'),
     ).not.toHaveLength(0);
@@ -317,16 +321,16 @@ describe('custom emoji group updates', () => {
     expect(screen.getByRole('tab', { name: 'people' })).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'people' })).getByLabelText(
-        'ninja',
+        'Ninja',
       ),
     ).toBeInTheDocument();
 
     const input = screen.getByLabelText('Type to search for an emoji');
     await userEvent.type(input, 'ninja');
-    expect(await screen.findByLabelText('ninja')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Ninja')).toBeInTheDocument();
     await userEvent.clear(input);
     await userEvent.type(input, 'panda');
-    expect(screen.queryByLabelText('panda')).toBeNull();
+    expect(screen.queryByLabelText('Panda')).toBeNull();
   });
 
   it('B: replaces category presentation with the same emoji array', async () => {
@@ -430,7 +434,7 @@ describe('custom emoji group updates', () => {
 
     expect(
       within(screen.getByRole('rowgroup', { name: 'Animals' })).getByLabelText(
-        'panda',
+        'Panda',
       ),
     ).toBeInTheDocument();
 
@@ -448,7 +452,7 @@ describe('custom emoji group updates', () => {
 
     expect(
       within(screen.getByRole('rowgroup', { name: 'People' })).getByLabelText(
-        'panda',
+        'Panda',
       ),
     ).toBeInTheDocument();
     // The emptied Animals section hides (display: none), dropping out of
@@ -490,7 +494,7 @@ describe('custom emoji group updates', () => {
     expect(screen.getByRole('tab', { name: 'Misc' })).toBeInTheDocument();
     expect(
       within(screen.getByRole('rowgroup', { name: 'Misc' })).getByLabelText(
-        'panda',
+        'Panda',
       ),
     ).toBeInTheDocument();
   });

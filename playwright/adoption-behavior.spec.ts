@@ -3,6 +3,127 @@ import { AxeBuilder } from '@axe-core/playwright';
 
 const story = (id: string) => `/iframe.html?id=${id}&viewMode=story`;
 
+for (const variant of [
+  'layer-lifecycle',
+  'declared-layer-lifecycle',
+  'unlayered-lifecycle',
+]) {
+  test(`style lifecycle remains local: ${variant}`, async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName !== 'chromium',
+      'Chromium tracing supplies element counts',
+    );
+    await page.goto(story(`picker-columns--${variant}`));
+    const toggle = page.getByRole('button', { name: 'Toggle picker' });
+    await toggle.waitFor();
+    const cdp = await page.context().newCDPSession(page);
+    let largestStyleRecalc = 0;
+    cdp.on('Tracing.dataCollected', ({ value }) => {
+      for (const event of value) {
+        const args = event.args as unknown as
+          { elementCount?: number } | undefined;
+        if (event.name === 'UpdateLayoutTree')
+          largestStyleRecalc = Math.max(
+            largestStyleRecalc,
+            Number(args?.elementCount) || 0,
+          );
+      }
+    });
+    await cdp.send('Tracing.start', { categories: 'devtools.timeline' });
+    await toggle.click();
+    await page.getByRole('gridcell').first().waitFor();
+    await toggle.click();
+    const done = new Promise((resolve) =>
+      cdp.once('Tracing.tracingComplete', resolve),
+    );
+    await cdp.send('Tracing.end');
+    await done;
+    // The fixture has 1,000 unrelated spans. Sheet insertion/removal must
+    // not invalidate that whole host, with or without a named layer.
+    expect(largestStyleRecalc).toBeGreaterThan(0);
+    expect(largestStyleRecalc).toBeLessThan(1000);
+    await cdp.detach();
+  });
+}
+
+test('image emoji typing never schedules per-cell preload timers', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const original = window.setTimeout;
+    const counter = { count: 0 };
+    (window as unknown as { preloadTimers: typeof counter }).preloadTimers =
+      counter;
+    window.setTimeout = ((...args: Parameters<typeof window.setTimeout>) => {
+      if (new Error().stack?.includes('preloadEmojiIfNeeded')) counter.count++;
+      return original(...args);
+    }) as typeof window.setTimeout;
+  });
+  await page.goto(story('picker-columns--preload-timer-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  await page.getByRole('textbox').pressSequentially('rocket');
+  await page.getByRole('gridcell', { name: 'rocket', exact: true }).waitFor();
+  expect(
+    await page.evaluate(
+      () =>
+        (window as unknown as { preloadTimers: { count: number } })
+          .preloadTimers.count,
+    ),
+  ).toBe(0);
+});
+
+test('columns keep their width through an empty query, loading and load failure', async ({
+  page,
+}) => {
+  const root = page.locator('[data-epr-part="root"]');
+  await page.goto(story('picker-columns--six-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  const width = (await root.boundingBox())!.width;
+  await page.getByRole('textbox').fill('no-match-xyz-987654321');
+  await expect(page.getByRole('gridcell')).toHaveCount(0);
+  expect(Math.abs((await root.boundingBox())!.width - width)).toBeLessThan(1);
+  for (const id of [
+    'picker-columns--loading-columns',
+    'picker-columns--error-columns',
+  ]) {
+    await page.goto(story(id));
+    await root.waitFor();
+    if (id.endsWith('error-columns')) await page.getByRole('alert').waitFor();
+    await expect
+      .poll(async () => Math.abs((await root.boundingBox())!.width - width))
+      .toBeLessThan(1);
+  }
+});
+
+test('the text font token can inherit the host font', async ({ page }) => {
+  await page.goto(story('picker-columns--six-columns'));
+  const root = page.locator('[data-epr-part="root"]');
+  await root.waitFor();
+  await root.evaluate((element: HTMLElement) => {
+    element.parentElement!.style.fontFamily = 'monospace';
+    element.style.setProperty('--epr-font-family', 'inherit');
+  });
+  await expect(page.getByRole('textbox')).toHaveCSS('font-family', 'monospace');
+  await expect(
+    page.locator('[data-epr-part="category-label"]').first(),
+  ).toHaveCSS('font-family', 'monospace');
+});
+
+test('custom headers keep the default sticky background', async ({ page }) => {
+  await page.goto(story('picker-columns--six-columns'));
+  const header = page.locator('[data-epr-part="category-label"]').first();
+  await header.waitFor({ state: 'attached' });
+  const background = await header.evaluate(
+    (element) => getComputedStyle(element).backgroundColor,
+  );
+  await page.goto(story('picker-columns--custom-header-columns'));
+  await expect(header).toHaveCSS('background-color', background);
+  await expect(header).toHaveCSS('position', 'sticky');
+});
+
 for (const id of [
   'recipes-examples-geist-minimal--css',
   'recipes-examples-discord-sidebar--css',
@@ -309,6 +430,9 @@ test('nested Escape closes variations before the host palette', async ({
   ).not.toBeVisible();
   await expect(page.locator('[data-epr-part="root"]')).toBeVisible();
   await page.keyboard.press('Escape');
+  await expect(search).toHaveValue('');
+  await expect(page.locator('[data-epr-part="root"]')).toBeVisible();
+  await page.keyboard.press('Escape');
   await expect(page.locator('[data-epr-part="root"]')).toHaveCount(0);
 });
 
@@ -331,6 +455,13 @@ test('nested Escape precedes Radix document-capture dismissal', async ({
   await expect(
     page.locator('[data-epr-part="variation-picker"]'),
   ).not.toBeVisible();
+  await expect(
+    page.getByRole('dialog', { name: 'Choose an emoji' }),
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(
+    page.getByRole('textbox', { name: 'Type to search for an emoji' }),
+  ).toHaveValue('');
   await expect(
     page.getByRole('dialog', { name: 'Choose an emoji' }),
   ).toBeVisible();
@@ -994,8 +1125,8 @@ test('Escape reaches the host untouched when there is nothing to undo', async ({
   await expect(search).toHaveValue('');
   await page.getByRole('gridcell').first().focus();
   await page.keyboard.press('Escape');
-  // Clearing the search consumed the first; the second was the host's.
-  expect(await escapes()).toEqual([true, false]);
+  // The consumed key never reaches the host; the next one is untouched.
+  expect(await escapes()).toEqual([false]);
 });
 
 test('with variationsDisabled, Space selects an emoji like a native button', async ({

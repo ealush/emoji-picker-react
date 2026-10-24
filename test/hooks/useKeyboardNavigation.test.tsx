@@ -46,6 +46,11 @@ vi.mock('../../src/config/useConfig', () => ({
   useSearchDisabledConfig: vi.fn(() => false),
   useVariationsDisabledConfig: vi.fn(() => false),
   useKeepSearchFocusConfig: vi.fn(() => false),
+  useSuggestedEmojisConfig: vi.fn(() => undefined),
+}));
+
+vi.mock('../../src/components/context/PickerDataContext', () => ({
+  usePickerDataContext: () => ({ emojiData: undefined }),
 }));
 
 vi.mock('../../src/hooks/useCloseAllOpenToggles', () => ({

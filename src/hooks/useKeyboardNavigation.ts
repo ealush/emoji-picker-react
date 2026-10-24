@@ -39,11 +39,14 @@ import {
   useSetActiveEmoji,
   useSkinToneFanOpenState,
 } from '../components/context/PickerContext';
+import { usePickerDataContext } from '../components/context/PickerDataContext';
 import {
   useKeepSearchFocusConfig,
   useSearchDisabledConfig,
   useVariationsDisabledConfig,
+  useSuggestedEmojisConfig,
 } from '../config/useConfig';
+import { normalizeQuery } from '../data-core/prepare';
 import {
   NavigationRegionKind,
   NavigationRegistry,
@@ -96,6 +99,9 @@ export function useKeyboardNavigation() {
   const keepSearchFocus = useKeepSearchFocusConfig();
   const highlighter = useSearchHighlight(keepSearchFocus, registry);
   const [searchTerm] = useSearchTermState();
+  const suggestions = useSuggestedEmojisConfig();
+  const { emojiData } = usePickerDataContext();
+  const setActiveEmoji = useSetActiveEmoji();
   const searchValue = useAcceptedSearchValue();
   // A controlled parent may not have accepted what the input shows yet.
   const [displayed] = useSearchDisplayState();
@@ -109,10 +115,11 @@ export function useKeyboardNavigation() {
   // moves to the first result (also when an arrow key landed on the old
   // results inside the filter debounce).
   useEffect(() => {
+    setActiveEmoji(null);
     highlighter.current?.highlight();
     // Per committed result set; the highlighter reads live refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm]);
+  }, [searchTerm, suggestions, emojiData]);
   const main = function onKeyDown(event: KeyboardEvent) {
     const { key } = event;
 
@@ -132,8 +139,10 @@ export function useKeyboardNavigation() {
         }
         if (highlighter.current?.highlight(null)) {
           event.preventDefault();
+          event.stopPropagation();
         } else if ((searchValue || displayed) && !clearProposed.current) {
           event.preventDefault();
+          event.stopPropagation();
           clearProposed.current = true;
           clearSearch();
           scrollTo(0);
@@ -184,6 +193,14 @@ export function useKeyboardNavigation() {
   // Enter in search selects the first result; with keepSearchFocus, the
   // highlighted one, without moving focus.
   const selectFromSearch = () => {
+    // The input updates before the debounced grid. Enter must never pick
+    // a cell belonging to an older query (or an unaccepted controlled draft).
+    if (
+      ![searchValue, displayed].every(
+        (value) => normalizeQuery(value) === searchTerm,
+      )
+    )
+      return;
     const engine = highlighter.current;
     if (keepSearchFocus && engine?.selectFirst(isSearchMode)) return;
     const emoji =
@@ -312,20 +329,14 @@ export function useKeyboardNavigation() {
     }
   };
   const [composing] = useSearchComposingState();
-  const handler = useRef<(event: KeyboardEvent, menusOnly?: boolean) => void>(
+  const handler = useRef<(event: KeyboardEvent, escapeOnly?: boolean) => void>(
     () => {},
   );
   // One listener owns the native lifecycle; current callbacks supply state
   // and live region refs without reattaching on every picker render.
-  handler.current = (event, menusOnly) => {
-    if (
-      composing ||
-      event.isComposing ||
-      event.keyCode === 229 ||
-      (menusOnly && !hasOpenToggles())
-    )
-      return;
-    if (!menusOnly) {
+  handler.current = (event, escapeOnly) => {
+    if (composing || event.isComposing || event.keyCode === 229) return;
+    if (!escapeOnly) {
       search(event);
       tone(event);
       categories(event);

@@ -328,13 +328,13 @@ describe('ClassDojo: custom emojis in search', () => {
     const onSelect = vi.fn();
     render(<ClassDojoPicker onSelect={onSelect} />);
     await userEvent.type(screen.getByLabelText(SEARCH_LABEL), 'Panda');
-    await userEvent.click(await gridEmoji('panda'));
+    await userEvent.click(await gridEmoji('Panda'));
     expect(onSelect).toHaveBeenCalledTimes(1);
     expect(onSelect.mock.calls[0][0]).toMatchObject({
       isCustom: true,
       unified: 'panda',
     });
-    expect(screen.getByTestId('classdojo-picked')).toHaveTextContent('custom:panda');
+    expect(screen.getByTestId('classdojo-picked')).toHaveTextContent('custom:Panda');
   });
 });
 

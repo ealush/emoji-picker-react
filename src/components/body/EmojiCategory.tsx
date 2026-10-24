@@ -55,7 +55,7 @@ export function EmojiCategory({
     >
       {CategoryHeader ? (
         <CategoryHeader
-          className={cx(styles.label)}
+          className={cx(styles.label, appearance && styles.labelAppearance)}
           aria-hidden
           data-epr-part="category-label"
           category={{ id: categoryId, name: categoryName }}

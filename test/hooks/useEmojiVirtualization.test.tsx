@@ -8,6 +8,8 @@ import { useVariationsDisabledConfig } from '../../src/config/useConfig';
 import { preloadEmojiIfNeeded } from '../../src/hooks/preloadEmoji';
 import { useCategoryHeight } from '../../src/hooks/useCategoryHeight';
 import { useEmojiVirtualization } from '../../src/hooks/useEmojiVirtualization';
+import { useIsEmojiDisallowed } from '../../src/hooks/useDisallowedEmojis';
+import { useIsEmojiHidden } from '../../src/hooks/useIsEmojiHidden';
 import {
   getEmojiPositionStyle,
   shouldVirtualize,
@@ -91,6 +93,34 @@ describe('useEmojiVirtualization', () => {
       insetInlineStart: 0,
     });
     (shouldVirtualize as any).mockReturnValue(false);
+  });
+
+  it('does not refilter the category inventory when only scroll position changes', () => {
+    const disallowed = vi.fn(() => false);
+    const hidden = vi.fn(() => ({
+      failedToLoad: false,
+      filteredOut: false,
+      hidden: false,
+    }));
+    vi.mocked(useIsEmojiDisallowed).mockReturnValue(disallowed);
+    vi.mocked(useIsEmojiHidden).mockReturnValue(hidden);
+    const { rerender } = renderHook(
+      ({ scrollTop }) =>
+        useEmojiVirtualization({
+          categoryEmojis: mockEmojis,
+          topOffset: 0,
+          onHeightReady: vi.fn(),
+          scrollTop,
+          isCategoryVisible: true,
+          positioned: true,
+        }),
+      { initialProps: { scrollTop: 0 } },
+    );
+    expect(disallowed).toHaveBeenCalledTimes(mockEmojis.length);
+    rerender({ scrollTop: 40 });
+    rerender({ scrollTop: 80 });
+    expect(disallowed).toHaveBeenCalledTimes(mockEmojis.length);
+    expect(hidden).toHaveBeenCalledTimes(mockEmojis.length);
   });
 
   it('virtualizes emojis that are not in view', () => {

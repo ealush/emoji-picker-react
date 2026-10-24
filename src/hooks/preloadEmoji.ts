@@ -26,7 +26,8 @@ export function preloadEmojiIfNeeded(
 
   const unified = emojiUnified(emoji);
 
-  if (preloadedEmojs.has(unified)) {
+  const key = rendered ? rendered + '/only' : unified;
+  if (preloadedEmojs.has(unified) || preloadedEmojs.has(key)) {
     return;
   }
 
@@ -35,18 +36,16 @@ export function preloadEmojiIfNeeded(
     return;
   }
 
-  setTimeout(() => {
-    const emojiTop = topOffset + style.top;
-    const viewportBottom = scrollTop + clientHeight;
+  const emojiTop = topOffset + style.top;
+  const viewportBottom = scrollTop + clientHeight;
 
-    const isJustBelowViewport =
-      emojiTop >= viewportBottom &&
-      emojiTop < viewportBottom + dimensions.emojiSize * 2;
+  const isJustBelowViewport =
+    emojiTop >= viewportBottom &&
+    emojiTop < viewportBottom + dimensions.emojiSize * 2;
 
-    if (isJustBelowViewport) {
-      preloadEmoji(getEmojiUrl, emoji, emojiStyles, rendered);
-    }
-  });
+  if (isJustBelowViewport) {
+    preloadEmoji(getEmojiUrl, emoji, emojiStyles, rendered);
+  }
 }
 
 export function preloadEmoji(

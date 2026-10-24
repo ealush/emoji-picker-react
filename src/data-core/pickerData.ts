@@ -44,14 +44,15 @@ const EMPTY_CUSTOM_LAYER: CustomLayer = {
 
 // Outer key: dataset source object. Inner key: customEmojis array identity,
 // or NO_CUSTOM sentinel when no customs are supplied.
-const snapshotCache = new WeakMap<object, WeakMap<object, PickerDataSnapshot>>();
+const snapshotCache = new WeakMap<
+  object,
+  WeakMap<object, PickerDataSnapshot>
+>();
 const NO_CUSTOM: object = {};
 
 function customToRegularEmoji(emoji: CustomEmoji): DataEmoji {
   return {
-    [EmojiProperties.name]: emoji.names.map((name: string) =>
-      name.toLowerCase(),
-    ),
+    [EmojiProperties.name]: [...emoji.names],
     [EmojiProperties.unified]: emoji.id.toLowerCase(),
     [EmojiProperties.added_in]: '0',
     [EmojiProperties.imgUrl]: emoji.imgUrl,
@@ -87,8 +88,7 @@ export function getPickerDataSnapshot(
   genericEmojiData?: EmojiData,
   customEmojis?: CustomEmoji[],
 ): PickerDataSnapshot {
-  const source = (genericEmojiData ??
-    defaultEmojiDataOrEmpty()) as EmojiData;
+  const source = (genericEmojiData ?? defaultEmojiDataOrEmpty()) as EmojiData;
 
   // Warm the shared prepared core the picker actually searches through
   // (queryFilterDict in PickerDataContext). One construction per dataset
@@ -97,9 +97,7 @@ export function getPickerDataSnapshot(
   getPreparedCore(source);
 
   const hasCustoms = !!customEmojis && customEmojis.length > 0;
-  const customKey: object = hasCustoms
-    ? (customEmojis as object)
-    : NO_CUSTOM;
+  const customKey: object = hasCustoms ? (customEmojis as object) : NO_CUSTOM;
 
   let inner = snapshotCache.get(source);
   if (inner) {
@@ -162,8 +160,7 @@ export function __isSnapshotCached(
   genericEmojiData?: EmojiData,
   customEmojis?: CustomEmoji[],
 ): boolean {
-  const source = (genericEmojiData ??
-    defaultEmojiDataOrEmpty()) as EmojiData;
+  const source = (genericEmojiData ?? defaultEmojiDataOrEmpty()) as EmojiData;
   const inner = snapshotCache.get(source);
   if (!inner) {
     return false;

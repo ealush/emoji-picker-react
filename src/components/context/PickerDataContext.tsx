@@ -109,7 +109,11 @@ export function PickerDataProvider({
         }
       }
       for (const custom of allCustomEmojis) {
-        if (emojiNames(custom).some((name) => name.includes(normalized))) {
+        if (
+          emojiNames(custom).some((name) =>
+            name.toLowerCase().includes(normalized),
+          )
+        ) {
           dict[custom[Keys.unified]] = custom;
         }
       }
