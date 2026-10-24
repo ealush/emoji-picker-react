@@ -78,12 +78,16 @@ jobs:
           npm run size
           npm run check:package
 
+      # Provenance links the npm tarball to this workflow run and commit
+      # (signed through the job's id-token). If npm cannot generate it, the
+      # publish fails and nothing is released.
       - name: Release
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
 
       # The version commit is [skip ci], so the website would keep the
       # previous package version. A workflow dispatched with GITHUB_TOKEN
