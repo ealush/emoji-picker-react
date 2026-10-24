@@ -203,6 +203,7 @@ Existing `reactionsDefaultOpen`, `allowExpandReactions`, `reactions`, `onReactio
 
 For standard emoji IDs:
 - matching is case-insensitive;
+- matching ignores where U+FE0F appears: `'2764'` and `'2764-fe0f'` both resolve to the dataset's own spelling, the same rule `reactions` and `hiddenEmojis` use;
 - a valid variation remains that exact variation for rendering rather than collapsing to the neutral base emoji;
 - duplicates are removed by canonical normalized ID, first occurrence wins.
 

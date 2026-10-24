@@ -5,7 +5,7 @@ import {
   useSuggestedEmojisModeConfig,
 } from '../../config/useConfig';
 import { getPickerDataSnapshot } from '../../data-core/pickerData';
-import { normalizeQuery } from '../../data-core/prepare';
+import { normalizeQuery, withoutFe0f } from '../../data-core/prepare';
 import { searchEmojis } from '../../data-core/search';
 import {
   DataEmoji,
@@ -79,6 +79,7 @@ export function PickerDataProvider({
 
       const result =
         data.allEmojisByUnified[unified] ??
+        data.allEmojisByUnified[withoutFe0f(unified)] ??
         data.allEmojisByUnified[unifiedWithoutSkinTone(unified)];
       return result;
     },

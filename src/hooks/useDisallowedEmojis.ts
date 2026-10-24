@@ -5,6 +5,7 @@ import {
   useNativeEmojiSupport,
 } from '../components/context/PickerContext';
 import { useEmojiVersionConfig, useUnicodeToHide } from '../config/useConfig';
+import { withoutFe0f } from '../data-core/prepare';
 import { DataEmoji } from '../dataUtils/DataTypes';
 import {
   addedIn,
@@ -27,7 +28,11 @@ export function useIsEmojiDisallowed() {
       emoji: DataEmoji,
       renderedUnified = emojiUnified(emoji, activeSkinTone),
     ) {
-      if (unicodeToHide.has(unifiedWithoutSkinTone(emojiUnified(emoji))))
+      if (
+        unicodeToHide.has(
+          withoutFe0f(unifiedWithoutSkinTone(emojiUnified(emoji))),
+        )
+      )
         return true;
       if (isCustomEmoji(emoji)) return false;
       const version = addedIn(emoji);
