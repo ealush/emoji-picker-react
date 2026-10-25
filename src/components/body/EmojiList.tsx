@@ -12,6 +12,7 @@ import {
 import { useCategoriesConfig } from '../../config/useConfig';
 import { DataEmojis } from '../../dataUtils/DataTypes';
 import { useEmojiVirtualization } from '../../hooks/useEmojiVirtualization';
+import { useIsomorphicLayoutEffect } from '../../hooks/useIsomorphicLayoutEffect';
 import { useRegisterRegion } from '../../hooks/useRegisterRegion';
 import { useMergedRefs } from '../../primitives/nativeProps';
 import { CategoryConfig } from '../../types/exposedTypes';
@@ -61,11 +62,17 @@ export function EmojiList({
     },
     [],
   );
+  // Sections measure in layout effects that run before this list's ref is
+  // attached. One synchronous pass once it is lets the first paint show
+  // sized sections instead of an empty list.
+  const [mounted, setMounted] = React.useState(false);
+  useIsomorphicLayoutEffect(() => setMounted(true), []);
   const mergedRef = useMergedRefs(EmojiListRef, outerRef);
   const getEmojisByCategory = useGetEmojisByCategory();
   useRegisterRegion('grid', EmojiListRef);
 
   const labelHeight = getLabelHeight(EmojiListRef.current);
+  const viewportHeight = BodyRef.current?.clientHeight ?? 0;
 
   let topOffset = 0;
   // A section's offset is real once every section above it is measured.
@@ -100,6 +107,12 @@ export function EmojiList({
         if (categoryHeight) {
           topOffset += categoryHeight + labelHeight;
         }
+        // Measured offsets already place a section in view. Waiting for the
+        // observer, which reports after paint, pops sections in one by one.
+        const inView =
+          positioned &&
+          currentOffset < scrollTop + viewportHeight &&
+          topOffset > scrollTop;
 
         return (
           <RenderCategory
@@ -108,9 +121,10 @@ export function EmojiList({
             categoryConfig={categoryConfig}
             topOffset={currentOffset}
             isCategoryVisible={
-              index === 0 || visibleCategories.includes(categoryId)
+              index === 0 || inView || visibleCategories.includes(categoryId)
             }
             positioned={isPositioned}
+            mounted={mounted}
             onHeightReady={onHeightReady}
             // Outside a section's rendering/preload margin, scrolling
             // cannot change its cells. Keep its prop stable so it can bail.
@@ -119,7 +133,7 @@ export function EmojiList({
                 ? scrollTop
                 : Math.max(
                     currentOffset -
-                      (BodyRef.current?.clientHeight ?? 0) -
+                      viewportHeight -
                       (emojiSize || 40) * (OVERSCAN_ROWS + 1),
                     Math.min(
                       scrollTop,
@@ -144,6 +158,7 @@ const RenderCategory = /* @__PURE__ */ React.memo(function RenderCategory({
   scrollTop,
   isCategoryVisible,
   positioned,
+  mounted,
 }: {
   categoryEmojis: DataEmojis;
   categoryConfig: CategoryConfig;
@@ -152,6 +167,7 @@ const RenderCategory = /* @__PURE__ */ React.memo(function RenderCategory({
   scrollTop: number;
   isCategoryVisible: boolean;
   positioned: boolean;
+  mounted: boolean;
 }) {
   const categoryId = categoryIdFromCategoryConfig(categoryConfig);
   const reportHeight = React.useCallback(
@@ -173,6 +189,7 @@ const RenderCategory = /* @__PURE__ */ React.memo(function RenderCategory({
       scrollTop,
       isCategoryVisible,
       positioned,
+      mounted,
     });
 
   return (
