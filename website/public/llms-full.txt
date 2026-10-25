@@ -1708,6 +1708,8 @@ Uncontrolled:
 
 The visible value and callback use raw user text. Filtering uses a normalized derived query and is debounced; see [primitive state and actions](./PRIMITIVES.md#state-and-actions).
 
+Results stay in their sections, in section order. Within a section the best match comes first: the emoji named exactly the query, then names that start with it, then an exact keyword, then a name with a word that starts with it, then any other match. Ties keep the section's own order, which for Recents is recency. `searchEmojis` from `emoji-picker-react/data` keeps dataset order.
+
 Type-to-search differs slightly between controlled and uncontrolled usage:
 
 - both modes: focus Search immediately, then behave like ordinary input editing;

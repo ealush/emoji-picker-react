@@ -27,6 +27,7 @@ const requestNativeProbe = vi.fn();
 vi.mock('../../src/components/context/PickerContext', () => ({
   useActiveSkinToneState: vi.fn(() => ['neutral']),
   useRequestNativeProbe: () => requestNativeProbe,
+  useSearchTermState: () => [''],
 }));
 
 vi.mock('../../src/config/useConfig', () => ({

@@ -5,6 +5,7 @@ import { useBodyRef } from '../components/context/ElementRefContext';
 import {
   useActiveSkinToneState,
   useRequestNativeProbe,
+  useSearchTermState,
 } from '../components/context/PickerContext';
 import { ClickableEmoji } from '../components/emoji/Emoji';
 import {
@@ -15,6 +16,7 @@ import {
   useVariationsDisabledConfig,
 } from '../config/useConfig';
 import { DataEmoji, DataEmojis } from '../dataUtils/DataTypes';
+import { emojiNames } from '../dataUtils/emojiSelectors';
 import { emojiUnified } from '../dataUtils/emojiUtils';
 import { EmojiStyle } from '../types/exposedTypes';
 import {
@@ -68,9 +70,10 @@ export function useEmojiVirtualization({
   // A section shows each rendered emoji once. Recents can hold the same
   // emoji under two tones (e.g. neutral and medium); the active tone
   // renders both as one identity, which must not be listed or keyed twice.
+  const [searchTerm] = useSearchTermState();
   const emojisToPush = React.useMemo(() => {
     const rendered = new Set<string>();
-    return categoryEmojis.filter((emoji) => {
+    const shown = categoryEmojis.filter((emoji) => {
       const isDisallowed = isEmojiDisallowed(emoji);
       const { hidden } = isEmojiHidden(emoji);
 
@@ -84,7 +87,21 @@ export function useEmojiVirtualization({
       rendered.add(unified);
       return true;
     });
-  }, [categoryEmojis, activeSkinTone, isEmojiHidden, isEmojiDisallowed]);
+    // Within a section, the best matches come first. Sections keep their
+    // order, and ties keep the section's own order (the sort is stable).
+    return searchTerm
+      ? shown
+          .map((emoji) => [matchRank(emoji, searchTerm), emoji] as const)
+          .sort((left, right) => left[0] - right[0])
+          .map(([, emoji]) => emoji)
+      : shown;
+  }, [
+    categoryEmojis,
+    activeSkinTone,
+    isEmojiHidden,
+    isEmojiDisallowed,
+    searchTerm,
+  ]);
 
   const dimensions = useCategoryHeight(
     emojisToPush.length,
@@ -196,4 +213,16 @@ export function useEmojiVirtualization({
     dimensions,
     emojiCount: emojisToPush.length,
   };
+}
+
+// 0: the name is the query; 1: the name starts with it; 2: a keyword is
+// the query; 3: a word of the name starts with it; 4: any other match.
+function matchRank(emoji: DataEmoji, query: string): number {
+  const names = emojiNames(emoji).map((name) => name.toLowerCase());
+  const name = names[names.length - 1] || '';
+  if (name === query) return 0;
+  if (name.startsWith(query)) return 1;
+  if (names.includes(query)) return 2;
+  // Hyphens and other joiners separate words too ("t-rex").
+  return (' ' + name).replace(/[-_.:/]/g, ' ').includes(' ' + query) ? 3 : 4;
 }

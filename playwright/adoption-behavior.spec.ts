@@ -71,6 +71,29 @@ for (const recents of [false, true]) {
   });
 }
 
+// Results stay grouped by section, in section order. Within a section the
+// best match comes first: before, "cat" opened on woozy face.
+test('search puts the best match of each section first', async ({ page }) => {
+  await page.goto(story('picker-columns--six-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  const firstResult = page
+    .locator('[data-epr-part="category"]:not(.epr-hidden) [role="gridcell"]')
+    .first();
+  for (const [query, expected] of [
+    ['cat', 'cat with tears of joy'],
+    ['heart', 'heart with arrow'],
+    ['dog', 'bone'],
+  ]) {
+    await page.getByRole('textbox').fill(query);
+    await expect(firstResult).toHaveAttribute('aria-label', expected);
+  }
+  const animals = page.locator(
+    '[data-epr-category="animals_nature"] [role="gridcell"]',
+  );
+  await page.getByRole('textbox').fill('dog');
+  await expect(animals.first()).toHaveAttribute('aria-label', 'dog');
+});
+
 test('primitive Search keeps a focus border without a color preset', async ({
   page,
 }) => {
@@ -106,9 +129,9 @@ test('fast Enter selects the new result in one press', async ({ page }) => {
   await expect(
     page.getByRole('dialog', { name: 'Choose an emoji' }),
   ).toHaveCount(0);
-  // The English dataset's first matching result is 'heart on fire'.
+  // The first section's best match: 'firefighter' starts with the query.
   await expect(page.getByRole('textbox', { name: 'Message' })).toHaveValue(
-    'Ship it ❤️‍🔥',
+    'Ship it 🧑‍🚒',
   );
 });
 
