@@ -232,7 +232,17 @@ function useNativeEmojiSupportState(): [
       );
     });
     let previousFont: string | null = null;
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timer: number | undefined;
+    // Exact checks only refine the prediction already on screen. Run them
+    // in idle time, so a scroll's frames rarely wait on canvas readbacks;
+    // the timeout bounds the wait, at one small batch per callback.
+    const idle = !!view.requestIdleCallback;
+    const later = () =>
+      (timer = idle
+        ? view.requestIdleCallback(flush, { timeout: 500 })
+        : view.setTimeout(flush));
+    const cancel = () =>
+      idle ? view.cancelIdleCallback(timer!) : view.clearTimeout(timer);
     let published: NativeEmojiSupport | null = null;
     let detected: NativeEmojiProbe | undefined;
     const pending = new Set<string>();
@@ -252,7 +262,7 @@ function useNativeEmojiSupportState(): [
       published = next;
       setSnapshot([next, allEmojis]);
     };
-    // One canvas batch per task, so a fast scroll never blocks input.
+    // One small canvas batch per task, so a fast scroll never blocks input.
     const flush = () => {
       timer = undefined;
       if (!detected) return;
@@ -261,7 +271,7 @@ function useNativeEmojiSupportState(): [
       detected.prime(batch);
       // Publish once the backlog is checked, so a font refresh never
       // flashes unchecked glyphs back to their prediction.
-      if (pending.size) timer = setTimeout(flush, 0);
+      if (pending.size) later();
       else publish(nativeSupportSnapshot(detected, samples));
     };
     requestRef.current = (unifieds) => {
@@ -269,7 +279,7 @@ function useNativeEmojiSupportState(): [
         requested.add(unified);
         if (detected && !detected.has(unified)) pending.add(unified);
       });
-      if (pending.size && timer === undefined) timer = setTimeout(flush, 0);
+      if (pending.size && timer === undefined) later();
     };
     const probe = (refresh = false) => {
       const customFont = view
@@ -279,7 +289,7 @@ function useNativeEmojiSupportState(): [
       // Attribute changes often leave the computed font unchanged.
       if (!refresh && customFont === previousFont) return;
       previousFont = customFont;
-      clearTimeout(timer);
+      cancel();
       timer = undefined;
       pending.clear();
       const next = detectNativeEmojiSupport(
@@ -319,7 +329,7 @@ function useNativeEmojiSupportState(): [
     const refresh = () => probe(true);
     fonts?.addEventListener('loadingdone', refresh);
     return () => {
-      clearTimeout(timer);
+      cancel();
       detected = undefined;
       observer.disconnect();
       fonts?.removeEventListener('loadingdone', refresh);

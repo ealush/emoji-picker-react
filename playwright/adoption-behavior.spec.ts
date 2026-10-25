@@ -158,6 +158,59 @@ for (const variant of [
   });
 }
 
+// Checking each newly shown native emoji on a canvas cost most of a
+// scroll's long frames on slow devices. The checks refine a prediction
+// already on screen, so they run in idle time instead.
+test('scrolling a native picker reads the support canvas only when idle', async ({
+  page,
+  browserName,
+}) => {
+  test.skip(browserName === 'webkit', 'WebKit has no requestIdleCallback');
+  await page.addInitScript(() => {
+    const counts = { idle: 0, busy: 0 };
+    let inIdle = false;
+    const request = window.requestIdleCallback.bind(window);
+    window.requestIdleCallback = (callback, options) =>
+      request((deadline) => {
+        // A callback run because its timeout expired is not idle time.
+        inIdle = !deadline.didTimeout;
+        try {
+          callback(deadline);
+        } finally {
+          inIdle = false;
+        }
+      }, options);
+    const read = CanvasRenderingContext2D.prototype.getImageData;
+    CanvasRenderingContext2D.prototype.getImageData = function (
+      ...args: Parameters<typeof read>
+    ) {
+      counts[inIdle ? 'idle' : 'busy']++;
+      return read.apply(this, args);
+    };
+    (window as unknown as { readbacks: typeof counts }).readbacks = counts;
+  });
+  await page.goto(story('picker-columns--six-columns'));
+  await page.getByRole('gridcell').first().waitFor();
+  await page.waitForTimeout(500);
+  const readbacks = () =>
+    page.evaluate(() => ({
+      ...(window as unknown as { readbacks: { idle: number; busy: number } })
+        .readbacks,
+    }));
+  const before = await readbacks();
+  const body = page.locator('.epr-body');
+  for (let step = 0; step < 20; step++) {
+    await body.evaluate((element) => {
+      element.scrollTop += 300;
+    });
+    await page.waitForTimeout(30);
+  }
+  await page.waitForTimeout(1000);
+  const after = await readbacks();
+  expect(after.busy - before.busy).toBe(0);
+  expect(after.idle - before.idle).toBeGreaterThan(0);
+});
+
 // Preloading every skin tone of every nearby cell meant hundreds of image
 // requests per scroll and 100–300 ms frames on slow devices. Scrolling
 // fetches only what cells render; focus fetches a cell's variations.
