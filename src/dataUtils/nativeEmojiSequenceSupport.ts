@@ -1,7 +1,7 @@
 import { parseNativeEmoji } from './parseNativeEmoji';
 
 const CELL = 32;
-export const NATIVE_PROBE_BATCH = 64;
+export const NATIVE_PROBE_BATCH = 16;
 type Candidate = [unified: string, text: string, comparison: string];
 
 /** One reusable canvas and result cache per detected document/font. */
