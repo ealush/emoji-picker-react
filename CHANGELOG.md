@@ -1,3 +1,13 @@
+## [5.1.4](https://github.com/ealush/emoji-picker-react/compare/5.1.3...5.1.4) (2026-10-25)
+
+### Bug Fixes
+
+* paint the first open in one frame, with every section in view ([#613](https://github.com/ealush/emoji-picker-react/issues/613)) ([7fee990](https://github.com/ealush/emoji-picker-react/commit/7fee99005af480d8dbb4a812b57e41a31de33f7d))
+
+### Performance Improvements
+
+* check native emoji support in idle time while scrolling ([#614](https://github.com/ealush/emoji-picker-react/issues/614)) ([bce03ea](https://github.com/ealush/emoji-picker-react/commit/bce03eaf346bfd557b10770af3c1f7ff0bdd9346))
+
 ## [5.1.3](https://github.com/ealush/emoji-picker-react/compare/5.1.2...5.1.3) (2026-10-24)
 
 ### Bug Fixes
