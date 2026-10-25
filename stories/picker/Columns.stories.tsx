@@ -164,6 +164,17 @@ export function HiddenEmptyFirstCategory() {
   );
 }
 
+// Opens on click, as popover pickers do; tests read the first painted frame.
+export function OpenOnClick() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <button onClick={() => setOpen((value) => !value)}>Open picker</button>
+      {open && <EmojiPicker autoFocusSearch={false} />}
+    </>
+  );
+}
+
 // Skin-tone swatches follow the theme's tone tokens.
 export const ThemedSkinToneSwatches = () => (
   <EmojiPicker

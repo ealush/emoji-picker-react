@@ -36,6 +36,7 @@ export function useEmojiVirtualization({
   scrollTop,
   isCategoryVisible,
   positioned,
+  mounted,
 }: {
   categoryEmojis: DataEmojis;
   topOffset: number;
@@ -44,6 +45,8 @@ export function useEmojiVirtualization({
   isCategoryVisible: boolean;
   /** Whether topOffset is final; unmeasured sections above shift it. */
   positioned: boolean;
+  /** Whether the list's ref is attached, so sections can measure. */
+  mounted: boolean;
 }) {
   const isEmojiHidden = useIsEmojiHidden();
   const lazyLoadEmojis = useLazyLoadEmojisConfig();
@@ -86,6 +89,7 @@ export function useEmojiVirtualization({
   const dimensions = useCategoryHeight(
     emojisToPush.length,
     isCategoryVisible && positioned,
+    mounted,
   );
 
   // Guarantee a render even when a hidden picker has no measurement cell.

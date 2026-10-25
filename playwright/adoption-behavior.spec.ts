@@ -27,6 +27,50 @@ test('first commit constructs only the measurement cell before parent refs exist
   expect(samples.some((sample) => sample.cells > 0)).toBe(true);
 });
 
+for (const recents of [false, true]) {
+  test(`first open paints every section in view in its first frame${recents ? ' with recents' : ''}`, async ({
+    page,
+  }) => {
+    if (recents)
+      await page.addInitScript(() =>
+        localStorage.setItem(
+          'epr_suggested',
+          JSON.stringify(
+            ['1f600', '1f44d', '1f525', '1f389'].map((unified) => ({
+              unified,
+              original: unified,
+              count: 1,
+            })),
+          ),
+        ),
+      );
+    await page.goto(story('picker-columns--open-on-click'));
+    await page.getByRole('button', { name: 'Open picker' }).waitFor();
+    // The click renders synchronously; the next animation frame sees exactly
+    // what the browser is about to paint first.
+    const firstFrame = await page.evaluate(
+      () =>
+        new Promise<(string | null)[]>((resolve) => {
+          const filled = () =>
+            Array.from(document.querySelectorAll('[data-epr-part="category"]'))
+              .filter((section) => section.querySelector('[role="gridcell"]'))
+              .map((section) => section.getAttribute('data-epr-category'));
+          (window as unknown as { filled: typeof filled }).filled = filled;
+          Array.from(document.querySelectorAll('button'))
+            .find((button) => button.textContent === 'Open picker')!
+            .click();
+          requestAnimationFrame(() => resolve(filled()));
+        }),
+    );
+    await page.waitForTimeout(500);
+    const settled = await page.evaluate(() =>
+      (window as unknown as { filled(): (string | null)[] }).filled(),
+    );
+    expect(settled).toContain('smileys_people');
+    expect(firstFrame).toEqual(settled);
+  });
+}
+
 test('primitive Search keeps a focus border without a color preset', async ({
   page,
 }) => {

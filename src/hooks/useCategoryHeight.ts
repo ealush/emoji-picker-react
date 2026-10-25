@@ -64,6 +64,7 @@ function trackColumnCount(
 export function useCategoryHeight(
   emojiCount: number,
   ready = true,
+  mounted?: boolean,
 ):
   | {
       categoryHeight: number;
@@ -159,6 +160,7 @@ export function useCategoryHeight(
     visibleCategories.length,
     dimensions,
     ready,
+    mounted,
   ]);
 
   // Fluid layouts (width: 100%, sheets, docks) resize without a CSS
