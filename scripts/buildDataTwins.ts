@@ -21,6 +21,7 @@ import {
   existsSync,
   readdirSync,
   readFileSync,
+  rmSync,
   writeFileSync,
 } from 'node:fs';
 import { basename, join } from 'node:path';
@@ -37,6 +38,28 @@ function commonJsTwin(json: string): string {
     `exports.default = require("./${json}");`,
     '',
   ].join('\n');
+}
+
+// tsc also emits JavaScript for the dataset helpers it compiles alongside
+// the locales (dist/data/emojis.js, groups.js, …, dist/types/*.js). No
+// export reaches them: the entries bundle their own copies. They are ES
+// modules in .js files of a CommonJS package, so they could not load
+// anyway. Their declarations stay (the per-module declaration tree).
+function pruneUnreachableJs(dataDir: string) {
+  const typesDir = join(repoRoot, 'dist', 'types');
+  const targets = [
+    ...readdirSync(dataDir)
+      .filter((file) => /\.js$/.test(file) && !file.startsWith('emojis-'))
+      .map((file) => join(dataDir, file)),
+    ...(existsSync(typesDir) ? readdirSync(typesDir) : [])
+      .filter((file) => file.endsWith('.js'))
+      .map((file) => join(typesDir, file)),
+  ];
+  // dist/data/index.js is the CommonJS data entry, written later by
+  // build.ts; on a rebuild it is still present here and must stay.
+  for (const path of targets) {
+    if (basename(path) !== 'index.js') rmSync(path);
+  }
 }
 
 async function main() {
@@ -77,6 +100,7 @@ async function main() {
     await bundleDeclarations(dts);
     copyFileSync(dts, dmts);
   }
+  pruneUnreachableJs(dataDir);
   console.log(`locale twins complete: ${locales.length} datasets dualized`);
 }
 
