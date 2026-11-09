@@ -124,7 +124,9 @@ test('locale dataset loads on demand and searches in German', async ({
   const seen = await watch(page);
   await page.goto('/?scenario=locale');
 
-  const search = page.getByLabel('Type to search for an emoji');
+  // The dataset translates the interface too.
+  const search = page.getByLabel('Tippen, um nach einem Emoji zu suchen');
+  await expect(search).toHaveAttribute('placeholder', 'Suchen');
   await search.fill('katze');
   await pause(page);
   await cell(page, '🐱').click();
@@ -161,7 +163,8 @@ test('CommonJS require() consumer renders a required locale', async ({
   await page.goto('/cjs.html');
   await expect(page.getByTestId('artifact')).toContainText('Installed from');
 
-  const search = page.getByLabel('Type to search for an emoji');
+  const search = page.getByLabel('Saisissez du texte pour rechercher un emoji');
+  await expect(search).toHaveAttribute('placeholder', 'Rechercher');
   await search.fill('fusée');
   await pause(page);
   await cell(page, '🚀').click();

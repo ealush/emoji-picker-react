@@ -25,9 +25,46 @@ export type CategoryConfig = {
 
 export type CategoryIcons = Partial<Record<Categories, React.ReactNode>>;
 
+/**
+ * Every user-facing string the picker renders or announces. All keys are
+ * optional on the `labels` prop; anything omitted comes from the
+ * dataset's translations (`emojiData.labels`), then the English default.
+ * Category names come from `categories` / localized `emojiData`, and the
+ * preview caption from `previewConfig.defaultCaption`.
+ */
+export type PickerLabels = {
+  searchPlaceholder: string;
+  /** Accessible name of the search input. */
+  searchLabel: string;
+  searchClear: string;
+  /** Live-region announcement and visible empty state. */
+  searchResultsNone: string;
+  searchResultsOne: string;
+  /** `%n` is replaced with the result count. */
+  searchResultsMany: string;
+  categoryNavigation: string;
+  reactions: string;
+  expandReactions: string;
+  /** Shown by the Loading part while the dataset loads. */
+  loading: string;
+  loadingError: string;
+  retryLoading: string;
+  skinToneNeutral: string;
+  skinToneLight: string;
+  skinToneMediumLight: string;
+  skinToneMedium: string;
+  skinToneMediumDark: string;
+  skinToneDark: string;
+};
+
 export type EmojiData = {
   categories: Partial<Record<Categories, CategoryConfig>>;
   emojis: Record<string, DataEmoji[]>;
+  /**
+   * Translated UI strings. Every bundled locale dataset carries them;
+   * the picker applies them beneath the `labels` prop.
+   */
+  labels?: Partial<PickerLabels>;
 };
 
 export interface DataEmoji {

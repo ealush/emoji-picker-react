@@ -228,7 +228,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 ## 9. Localization and accessibility
 
-Locale datasets translate emoji names and category names. `labels` translates controls and announcements; `previewConfig.defaultCaption` sets the preview caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
+Locale datasets translate emoji names, category names, the preview caption and the interface strings. Only `loading`, `loadingError` and `retryLoading` need `labels` when the dataset comes from a loader. `labels` overrides any translated string, and `previewConfig.defaultCaption` overrides the caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
 Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host, and clears a non-empty search; with nothing to undo it reaches the host untouched. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
 
@@ -833,7 +833,7 @@ Both work without React (including in Server Components) and return immutable re
 
 ## Internationalization
 
-28 emoji datasets ship with the package. Import one and pass it as `emojiData`; translate the remaining UI strings with `labels`. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
+28 emoji datasets ship with the package. Import one and pass it as `emojiData`, and the emoji names, categories and interface strings are all translated. Use `labels` to override any string. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
 
 ## Customization
 
@@ -1054,7 +1054,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | `autoFocusSearch` | `boolean`    | `true`             | Focuses the search input automatically when the picker mounts.                               |
 | `keepSearchFocus` | `boolean`    | `false`            | Keeps focus in the search input while the arrow keys move a highlight through the emojis, so typing can continue. Enter selects the highlighted emoji. By default the arrow keys move focus into the grid. See [API.md](docs/v5/API.md#4a-keep-focus-in-search). |
 | `emojiData`       | `object \| () => Promise` | `undefined` | Locale dataset, or a loader such as `() => import('emoji-picker-react/data/emojis-fr')` to code-split it. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md). |
-| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). |
+| `labels`          | `Partial<PickerLabels>` | `undefined` | Localizes every user-facing string (search, results announcements, tabs, reactions, skin tones, loading errors and retry). Overrides the translations a locale `emojiData` carries. |
 
 ## Dimensions & Styling
 
@@ -1444,7 +1444,31 @@ export function SpanishPicker() {
 }
 ```
 
-Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones, loading, loadingError and retryLoading) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
+## What a dataset translates
+
+A locale dataset translates the whole picker by itself: emoji names (and so search), category names, the preview caption, and the interface strings in its `labels` field (search placeholder and label, clear button, results announcements, category navigation, reactions, and every skin tone). Skin-tone names come from CLDR.
+
+Three strings appear before the dataset arrives, or in place of it, so a dataset cannot provide them: `loading`, `loadingError` and `retryLoading`. When you pass a loader, translate them yourself:
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+
+const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
+const labels = {
+  loading: 'Chargement…',
+  loadingError: 'Impossible de charger les emojis.',
+  retryLoading: 'Réessayer',
+};
+
+export function FrenchPicker() {
+  return <EmojiPicker emojiData={loadFrench} labels={labels} />;
+}
+```
+
+The `labels` prop overrides any string the dataset translates. Precedence, from lowest to highest: English defaults, then the dataset's `labels`, then the legacy `searchPlaceholder` / `searchLabel` / `searchClearButtonLabel` props, then `labels`. The English datasets (`emojis-en`, `emojis-en-gb`) carry no `labels`. Datasets you build yourself may include a partial `labels` object; any key it leaves out stays English.
+
+The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
 
 ## Supported Languages
 
@@ -1756,7 +1780,7 @@ Primitive consumers may also supply a consumer `aria-label` through Search `inpu
 
 ## 5a. Localize every string
 
-`labels` covers every user-facing string the picker renders or announces. Omitted keys keep their English (v4) defaults; `labels` wins over the individual `searchPlaceholder`/`searchLabel`/`searchClearButtonLabel` props, which keep working.
+`labels` covers every user-facing string the picker renders or announces. Every bundled non-English dataset already translates these strings through its own `labels` field, except `loading`, `loadingError` and `retryLoading`, which show before the dataset exists. Omitted keys come from the dataset, then the English (v4) defaults. `labels` wins over the dataset and over the individual `searchPlaceholder`/`searchLabel`/`searchClearButtonLabel` props, which keep working.
 
 ```tsx
 <EmojiPicker

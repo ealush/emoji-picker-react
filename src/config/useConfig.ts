@@ -17,6 +17,7 @@ import {
 import { CategoriesConfig } from './categoryConfig';
 import {
   DEFAULT_LABELS,
+  DEFAULT_SEARCH_CLEAR_BUTTON_LABEL,
   DEFAULT_SEARCH_PLACEHOLDER,
   PickerDimensions,
   PickerLabels,
@@ -30,43 +31,58 @@ export enum MOUSE_EVENT_SOURCE {
   PICKER = 'picker',
 }
 
+function assignLabels(
+  target: PickerLabels,
+  source: Partial<PickerLabels> | undefined,
+) {
+  for (const key in source) {
+    const value = source[key as keyof PickerLabels];
+    if (typeof value === 'string') {
+      target[key as keyof PickerLabels] = value;
+    }
+  }
+}
+
 /**
- * Resolved user-facing strings: English defaults, then the legacy
- * individual props, then `labels` (highest precedence).
+ * Resolved user-facing strings: English defaults, then the dataset's
+ * translations (`emojiData.labels`), then the legacy individual props,
+ * then `labels` (highest precedence).
  */
 export function useLabels(): PickerLabels {
   const {
     labels,
+    emojiData,
     searchPlaceHolder,
     searchPlaceholder,
     searchLabel,
     searchClearButtonLabel,
   } = usePickerConfig();
+  const datasetLabels = emojiData?.labels;
   return React.useMemo(() => {
     const legacyPlaceholder = [searchPlaceHolder, searchPlaceholder].find(
       (p) => p !== undefined && p !== DEFAULT_SEARCH_PLACEHOLDER,
     );
     const resolved: PickerLabels = { ...DEFAULT_LABELS };
+    assignLabels(resolved, datasetLabels);
     if (legacyPlaceholder !== undefined) {
       resolved.searchPlaceholder = legacyPlaceholder;
     }
     if (searchLabel !== undefined) {
       resolved.searchLabel = searchLabel;
     }
-    if (searchClearButtonLabel !== undefined) {
+    // The base config always carries the English default; only an
+    // explicit value may override a translated dataset.
+    if (
+      searchClearButtonLabel !== undefined &&
+      searchClearButtonLabel !== DEFAULT_SEARCH_CLEAR_BUTTON_LABEL
+    ) {
       resolved.searchClear = searchClearButtonLabel;
     }
-    if (labels) {
-      for (const key of Object.keys(labels) as Array<keyof PickerLabels>) {
-        const value = labels[key];
-        if (value !== undefined) {
-          resolved[key] = value;
-        }
-      }
-    }
+    assignLabels(resolved, labels);
     return resolved;
   }, [
     labels,
+    datasetLabels,
     searchPlaceHolder,
     searchPlaceholder,
     searchLabel,

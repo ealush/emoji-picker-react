@@ -32,7 +32,10 @@ import {
 const readJsonSync = (path: string): unknown =>
   JSON.parse(readFileSync(path, 'utf8'));
 
-type Messages = { groups: { key: string; message: string }[] };
+type Messages = {
+  groups: { key: string; message: string }[];
+  skinTones?: { key: string; message: string }[];
+};
 function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === 'object';
 }
@@ -87,7 +90,15 @@ function isMessages(value: unknown): value is Messages {
         isRecord(group) &&
         typeof group.key === 'string' &&
         typeof group.message === 'string',
-    )
+    ) &&
+    (value.skinTones === undefined ||
+      (Array.isArray(value.skinTones) &&
+        value.skinTones.every(
+          (tone) =>
+            isRecord(tone) &&
+            typeof tone.key === 'string' &&
+            typeof tone.message === 'string',
+        )))
   );
 }
 // fs-extra's writeJSONSync wrote compact JSON followed by a newline.
@@ -96,6 +107,7 @@ const writeJSONSync = (path: string, data: unknown, encoding: 'utf8') =>
 
 import {
   CleanEmoji,
+  DatasetLabelMap,
   EMOJI_BASE_DATA_PATH,
   EmojiRecord,
   GroupEntry,
@@ -107,6 +119,7 @@ import {
 } from './constants';
 import { compactVariations } from './compactVariations';
 import { orderNames } from './emojiNames';
+import { uiLabels } from './uiLabels';
 
 const emojiDataSourceUnifieds = new Set<string>(
   emojiDataSource.map((emoji) => emoji.unified),
@@ -375,6 +388,40 @@ function buildLocalizedCategories(
   return categories;
 }
 
+// CLDR skin-tone names, keyed by emojibase tone key, as label keys.
+const skinToneLabelKeys: Record<string, string> = {
+  light: 'skinToneLight',
+  'medium-light': 'skinToneMediumLight',
+  medium: 'skinToneMedium',
+  'medium-dark': 'skinToneMediumDark',
+  dark: 'skinToneDark',
+};
+
+const capitalize = (value: string, lang: string): string =>
+  value.charAt(0).toLocaleUpperCase(lang) + value.slice(1);
+
+/**
+ * Translated UI strings (scripts/uiLabels.ts) plus CLDR's skin-tone
+ * names. Undefined for English, whose strings are the picker's defaults.
+ */
+function buildLocalizedLabels(
+  lang: string,
+  messages: Messages | null,
+): DatasetLabelMap | undefined {
+  const authored = uiLabels[lang.toLowerCase()];
+  if (!authored) {
+    return undefined;
+  }
+  const labels: DatasetLabelMap = { ...authored };
+  for (const tone of messages?.skinTones ?? []) {
+    const key = skinToneLabelKeys[tone.key];
+    if (key) {
+      labels[key] = capitalize(tone.message, lang);
+    }
+  }
+  return labels;
+}
+
 function writeEmojiFiles(lang: string, data: OutputData) {
   // Write localized file: src/data
   const fileContent = `
@@ -414,6 +461,7 @@ function processLanguage(lang: string) {
 
   // 4. Build Category Map
   const categories = buildLocalizedCategories(lang, messages);
+  const labels = buildLocalizedLabels(lang, messages);
 
   // Filter emojis that don't have images in emoji-datasource
   const filteredEmojis = Object.keys(groupedEmojis).reduce(
@@ -453,6 +501,7 @@ function processLanguage(lang: string) {
   const outputData: OutputData = {
     categories,
     emojis: filteredEmojis,
+    ...(labels ? { labels } : {}),
   };
 
   // 6. Write to Disk

@@ -144,7 +144,7 @@ Primitive consumers may also supply a consumer `aria-label` through Search `inpu
 
 ## 5a. Localize every string
 
-`labels` covers every user-facing string the picker renders or announces. Omitted keys keep their English (v4) defaults; `labels` wins over the individual `searchPlaceholder`/`searchLabel`/`searchClearButtonLabel` props, which keep working.
+`labels` covers every user-facing string the picker renders or announces. Every bundled non-English dataset already translates these strings through its own `labels` field, except `loading`, `loadingError` and `retryLoading`, which show before the dataset exists. Omitted keys come from the dataset, then the English (v4) defaults. `labels` wins over the dataset and over the individual `searchPlaceholder`/`searchLabel`/`searchClearButtonLabel` props, which keep working.
 
 ```tsx
 <EmojiPicker

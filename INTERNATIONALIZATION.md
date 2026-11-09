@@ -52,7 +52,31 @@ export function SpanishPicker() {
 }
 ```
 
-Category names follow the dataset; translate the remaining UI strings (search label, results announcements, tabs, reactions, skin tones, loading, loadingError and retryLoading) with the `labels` prop. The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
+## What a dataset translates
+
+A locale dataset translates the whole picker by itself: emoji names (and so search), category names, the preview caption, and the interface strings in its `labels` field (search placeholder and label, clear button, results announcements, category navigation, reactions, and every skin tone). Skin-tone names come from CLDR.
+
+Three strings appear before the dataset arrives, or in place of it, so a dataset cannot provide them: `loading`, `loadingError` and `retryLoading`. When you pass a loader, translate them yourself:
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+
+const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
+const labels = {
+  loading: 'Chargement…',
+  loadingError: 'Impossible de charger les emojis.',
+  retryLoading: 'Réessayer',
+};
+
+export function FrenchPicker() {
+  return <EmojiPicker emojiData={loadFrench} labels={labels} />;
+}
+```
+
+The `labels` prop overrides any string the dataset translates. Precedence, from lowest to highest: English defaults, then the dataset's `labels`, then the legacy `searchPlaceholder` / `searchLabel` / `searchClearButtonLabel` props, then `labels`. The English datasets (`emojis-en`, `emojis-en-gb`) carry no `labels`. Datasets you build yourself may include a partial `labels` object; any key it leaves out stays English.
+
+The legacy `emoji-picker-react/dist/data/emojis-*` paths still resolve.
 
 ## Supported Languages
 

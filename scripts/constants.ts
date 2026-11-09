@@ -72,9 +72,13 @@ export type CategoryTranslation = {
 
 export type LocalizedCategories = Record<string, CategoryTranslation>;
 
+/** Translated `PickerLabels` keys (scripts/uiLabels.ts plus CLDR tones). */
+export type DatasetLabelMap = Record<string, string>;
+
 export type OutputData = {
   categories: LocalizedCategories;
   emojis: Record<string, CleanEmoji[]>;
+  labels?: DatasetLabelMap;
 };
 
 // --- Mappings ---
@@ -284,6 +288,13 @@ export const internalCategoryNames: Record<
     recent: 'Нещодавно використані',
     custom: 'Власні емодзі',
     mood: 'Який у вас настрій?',
+  },
+  // Vietnamese
+  vi: {
+    suggested: 'Thường dùng',
+    recent: 'Dùng gần đây',
+    custom: 'Biểu tượng cảm xúc tùy chỉnh',
+    mood: 'Tâm trạng của bạn thế nào?',
   },
   // Chinese (Simplified)
   zh: {

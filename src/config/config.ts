@@ -11,6 +11,7 @@ import {
   EmojiData,
   EmojiStyle,
   EmojiStyleValue,
+  PickerLabels,
   SkinTonePickerLocation,
   SkinTones,
   SkinTonesValue,
@@ -44,36 +45,7 @@ export const SEARCH_RESULTS_ONE_RESULT_FOUND =
 export const SEARCH_RESULTS_MULTIPLE_RESULTS_FOUND =
   '%n results' + SEARCH_RESULTS_SUFFIX;
 
-/**
- * Every user-facing string the picker renders or announces. All keys are
- * optional on the `labels` prop; anything omitted keeps its English
- * default. Category names come from `categories` / localized `emojiData`,
- * and the preview caption from `previewConfig.defaultCaption`.
- */
-export type PickerLabels = {
-  searchPlaceholder: string;
-  /** Accessible name of the search input. */
-  searchLabel: string;
-  searchClear: string;
-  /** Live-region announcement and visible empty state. */
-  searchResultsNone: string;
-  searchResultsOne: string;
-  /** `%n` is replaced with the result count. */
-  searchResultsMany: string;
-  categoryNavigation: string;
-  reactions: string;
-  expandReactions: string;
-  /** Shown by the Loading part while the dataset loads. */
-  loading: string;
-  loadingError: string;
-  retryLoading: string;
-  skinToneNeutral: string;
-  skinToneLight: string;
-  skinToneMediumLight: string;
-  skinToneMedium: string;
-  skinToneMediumDark: string;
-  skinToneDark: string;
-};
+export type { PickerLabels };
 
 // English defaults, identical to the v4 strings so existing queries and
 // snapshots keep matching.
