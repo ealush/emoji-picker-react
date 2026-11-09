@@ -14,6 +14,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "moduleResolution": "node",
+    // src/locales.ts imports the datasets by their published subpath.
+    "paths": { "emoji-picker-react/data/*": ["./src/data/*"] },
     "resolveJsonModule": true,
     "jsx": "react",
     "esModuleInterop": true,

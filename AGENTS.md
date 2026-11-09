@@ -11,6 +11,7 @@ One emoji-picker engine with three public entries:
 | `emoji-picker-react` | `src/index.tsx` | Batteries-included `<EmojiPicker />`, enums, types. Registers the English dataset synchronously. |
 | `emoji-picker-react/primitives` | `src/primitives/index.ts` | Composable parts (`Root`, `Search`, `SearchInput`, `CategoryNav`, `Viewport`, `List`, `Preview`, `SkinTone`, `Empty`, `Loading`, `LoadError`, `Panel`, `Reactions`), hooks and tokens. Loads the dataset on demand. |
 | `emoji-picker-react/data` | `src/data.ts` | Framework-free `searchEmojis` / `getEmojiByUnified`. No React. |
+| `emoji-picker-react/locales` | `src/locales.ts` | `emojiDataForLocale` / `matchEmojiDataLocale`: picks a bundled dataset for a locale (default: the browser's). Imports each dataset through its own published subpath, kept external, so datasets ship once. No React. |
 
 The default picker is assembled from the primitives (`src/EmojiPickerReact.tsx`); there is one implementation of search, navigation, virtualization and selection. `test/primitives-architecture.test.ts` enforces this.
 

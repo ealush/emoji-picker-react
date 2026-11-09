@@ -22,6 +22,7 @@ Exports (generated from the entry sources):
 - `emoji-picker-react`: default `EmojiPicker`; values `Categories`, `Emoji`, `emojiByUnified`, `EmojiStyle`, `SkinTonePickerLocation`, `SkinTones`, `SuggestionMode`, `Theme`; types `CategoryButtonRenderProps`, `CategoryConfig`, `CategoryHeaderRenderProps`, `CategoryIcons`, `CustomEmoji`, `EmojiClickData`, `EmojiClickHandler`, `EmojiData`, `EmojiDataInput`, `EmojiDataLoader`, `EmojiDataLoaderOptions`, `EmojiRenderProps`, `EmojiStyleValue`, `ListComponents`, `ListEmoji`, `OnEmojiClickApi`, `PickerComponents`, `PickerLabels`, `PickerProps`, `PreviewConfig`, `Props`, `SkinToneButtonRenderProps`, `SkinToneChangeHandler`, `SkinTonesValue`, `SuggestionModeValue`, `ThemeValue`.
 - `emoji-picker-react/primitives`: values `Categories`, `CategoryNav`, `darkPickerTokens`, `defaultPickerTokens`, `EmojiStyle`, `Empty`, `lightPickerTokens`, `List`, `LoadError`, `Loading`, `Panel`, `Preview`, `Reactions`, `Root`, `Search`, `SearchInput`, `SkinTone`, `SkinTonePickerLocation`, `SkinTones`, `structuralPickerTokens`, `SuggestionMode`, `Theme`, `useActiveEmoji`, `useCategoryNavigation`, `useEmojiDataState`, `usePickerMode`, `useSearchActions`, `useSearchState`, `useSkinTone`, `Viewport`; types `CategoryButtonRenderProps`, `CategoryConfig`, `CategoryHeaderRenderProps`, `CategoryIcons`, `CategoryNavProps`, `CustomEmoji`, `EmojiClickData`, `EmojiClickHandler`, `EmojiData`, `EmojiDataInput`, `EmojiDataLoader`, `EmojiDataLoaderOptions`, `EmojiDataState`, `EmojiRenderProps`, `EmojiStyleValue`, `EmptyProps`, `ListComponents`, `ListEmoji`, `ListProps`, `LoadErrorProps`, `LoadingProps`, `OnEmojiClickApi`, `PanelProps`, `PickerAppearanceProps`, `PickerComponents`, `PickerCompositionProps`, `PickerLabels`, `PreviewConfig`, `PreviewProps`, `ReactionsProps`, `RootBehaviorProps`, `RootProps`, `SearchInputComponent`, `SearchInputElement`, `SearchInputProps`, `SearchProps`, `SearchState`, `SkinToneButtonRenderProps`, `SkinToneChangeHandler`, `SkinToneProps`, `SkinTonesValue`, `SuggestionModeValue`, `ThemeValue`, `ViewportProps`.
 - `emoji-picker-react/data`: values `getEmojiByUnified`, `searchEmojis`; types `EmojiData`, `EmojiDataOptions`, `EmojiInfo`.
+- `emoji-picker-react/locales`: values `EMOJI_DATA_LOCALES`, `emojiDataForLocale`, `matchEmojiDataLocale`; types `EmojiDataLocale`.
 - `emoji-picker-react/data/emojis-<locale>`: default export, an `EmojiData` dataset (bn, da, de, en, en-gb, es, es-mx, et, fi, fr, hi, hu, it, ja, ko, lt, ms, nb, nl, pl, pt, ru, sv, th, uk, vi, zh, zh-hant).
 
 Quick reference:
@@ -228,7 +229,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 
 ## 9. Localization and accessibility
 
-Locale datasets translate emoji names, category names, the preview caption and the interface strings. Only `loading`, `loadingError` and `retryLoading` need `labels` when the dataset comes from a loader. `labels` overrides any translated string, and `previewConfig.defaultCaption` overrides the caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
+Locale datasets translate emoji names, category names, the preview caption and the interface strings. To follow the user's language, pass `emojiData={emojiDataForLocale(locale)}` from `emoji-picker-react/locales` (no argument: the browser's languages, English fallback); it returns a stable loader, so calling it during render is fine. Only `loading`, `loadingError` and `retryLoading` need `labels` when the dataset comes from a loader. `labels` overrides any translated string, and `previewConfig.defaultCaption` overrides the caption. Complete localization covers every visible and announced string in your composition: see [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md).
 
 Keep the managed ARIA props. Test keyboard selection, search and IME input, focus restoration and nested Escape inside the real host popover or dialog: Escape closes an open variation or tone menu before reaching the host, and clears a non-empty search; with nothing to undo it reaches the host untouched. Custom emojis with duplicate names share an accessible name; scope test queries to a category.
 
@@ -833,7 +834,7 @@ Both work without React (including in Server Components) and return immutable re
 
 ## Internationalization
 
-28 emoji datasets ship with the package. Import one and pass it as `emojiData`, and the emoji names, categories and interface strings are all translated. Use `labels` to override any string. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
+28 emoji datasets ship with the package. Import one and pass it as `emojiData`, and the emoji names, categories and interface strings are all translated. Use `labels` to override any string. To follow the user's browser language, use `emojiDataForLocale()` from `emoji-picker-react/locales`: it picks the matching dataset and loads only that one. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
 
 ## Customization
 
@@ -1392,7 +1393,7 @@ If your site has a CSP that blocks inline styles, pass a `nonce` to the `EmojiPi
 
 # Internationalization (i18n)
 
-Import the dictionary you need and pass it to the `emojiData` prop:
+Import the dictionary you need and pass it to the `emojiData` prop. The dataset translates emoji names, categories and the interface strings:
 
 ```tsx check
 import * as React from 'react';
@@ -1403,6 +1404,38 @@ function App() {
   return <EmojiPicker emojiData={es} />;
 }
 ```
+
+## Follow the user's locale
+
+`emoji-picker-react/locales` picks the dataset for a locale and loads it on demand. With no argument it reads the browser's languages (`navigator.languages`), in order, and falls back to English:
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+import { emojiDataForLocale } from 'emoji-picker-react/locales';
+
+export function App() {
+  return <EmojiPicker emojiData={emojiDataForLocale()} />;
+}
+```
+
+Pass your app's locale instead when you have one (a tag, or a list in preference order):
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+import { emojiDataForLocale } from 'emoji-picker-react/locales';
+
+export function App({ locale }: { locale: string }) {
+  return <EmojiPicker emojiData={emojiDataForLocale(locale)} />;
+}
+```
+
+Matching tries the exact tag (`es-MX`), then a few aliases (`zh-TW` and `zh-Hant-*` → `zh-hant`, other `zh-*` → `zh`, `no` and `nn` → `nb`, `es-419` and `es-US` → `es-mx`), then the language alone (`fr-CA` → `fr`). `matchEmojiDataLocale(locales)` returns the chosen id without loading anything, and `EMOJI_DATA_LOCALES` lists every id.
+
+Each dataset is its own chunk: the application downloads only the one it picks. `emojiDataForLocale` returns the same loader for the same dataset, so it is safe to call during render. On the server there is no `navigator`, so the no-argument form chooses English there; the picker shows its loading state on both sides until the dataset arrives, so hydration still matches. The loading strings show before the dataset exists; translate them with `labels` (see below).
+
+## Choose a dataset yourself
 
 To defer the additional locale to a separate chunk, pass a loader instead. The default entry still eagerly registers English; the picker shows its loading state until the selected locale resolves:
 
@@ -2193,6 +2226,7 @@ const loadFrench = () => import('emoji-picker-react/data/emojis-fr');
 - The default `emoji-picker-react` entry bundles the English dataset and is always synchronous.
 - The `emoji-picker-react/primitives` entry does **not** load the dataset up front. A Root without `emojiData` loads the bundled English dataset on demand (its own chunk in ESM builds; the configured minimal consumer currently measures about 33 KiB min+gz up front including ShipStyles), rendering `<Loading>` meanwhile. Pass an object for server rendering.
 - ESM entries share their implementation chunks, so using the default picker and primitives together ships the implementation once.
+- `emoji-picker-react/locales` builds the loader for you: `emojiDataForLocale(locales?)` matches a tag or a preference list (default `navigator.languages`, English fallback) to a bundled dataset and returns that dataset's loader, always the same function for the same dataset. `matchEmojiDataLocale(locales?)` returns the matched id (`EmojiDataLocale`) without loading, and `EMOJI_DATA_LOCALES` lists them. Each dataset stays its own chunk. See [INTERNATIONALIZATION.md](../../INTERNATIONALIZATION.md#follow-the-users-locale).
 
 Hoist loaders (module scope or `useCallback`): a new function identity loads again. Loaders receive `{ signal?: AbortSignal }`; source changes, retries and unmount abort the previous attempt. Zero-argument import loaders remain valid. Rejection and synchronous throws become recoverable state, not an empty successful result. The default picker displays localized error/retry UI. Primitive consumers compose `<LoadError />` next to List/Loading or read `useEmojiDataState()` (`{ loading, error, retry }`). A custom `LoadError` child can be a function receiving `{ error, retry }`.
 

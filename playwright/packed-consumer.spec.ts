@@ -140,6 +140,36 @@ test('locale dataset loads on demand and searches in German', async ({
   await expectSelfContained(page, seen);
 });
 
+test.describe('browser locale', () => {
+  test.use({ locale: 'ja-JP' });
+
+  test('emojiDataForLocale() loads only the browser language and translates the picker', async ({
+    page,
+  }) => {
+    const seen = await watch(page);
+    await page.goto('/?scenario=browser-locale');
+
+    const search = page.getByLabel('入力して絵文字を検索');
+    await expect(search).toHaveAttribute('placeholder', '検索');
+    await expect(
+      page.getByRole('tablist', { name: 'カテゴリナビゲーション' }),
+    ).toBeVisible();
+    await search.fill('猫');
+    await pause(page);
+    await cell(page, '🐱').click();
+    await expectSelected(page, '🐱');
+    await pause(page);
+
+    // One dataset chunk, the Japanese one: the other 27 stay unloaded.
+    const datasets = seen.requests.filter((url) =>
+      /emojis-[a-z-]+[^/]*\.js$/.test(new URL(url).pathname),
+    );
+    expect(datasets).toHaveLength(1);
+    expect(datasets[0]).toMatch(/emojis-ja[^/]*\.js$/);
+    await expectSelfContained(page, seen);
+  });
+});
+
 test('primitives composition selects through the shared engine', async ({
   page,
 }) => {

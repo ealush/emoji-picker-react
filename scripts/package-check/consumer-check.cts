@@ -111,6 +111,23 @@ check('data entry resolves', () => {
   assert.deepStrictEqual(data.searchEmojis('   '), []);
 });
 
+// Locale entry: matches a tag and loads that dataset through the
+// package's own subpath (require() in CommonJS, never import()).
+check('locales entry resolves and loads', async () => {
+  const locales = requireFromScratch(
+    'emoji-picker-react/locales',
+  ) as typeof import('../../src/locales');
+  assert.strictEqual(locales.matchEmojiDataLocale('pt-BR'), 'pt');
+  assert.strictEqual(locales.EMOJI_DATA_LOCALES.length, 28);
+  const source = read('dist/locales/index.js');
+  assert.ok(!source.includes('import('), 'CommonJS locales uses import()');
+  const loaded = (await locales.emojiDataForLocale('de-AT')({})) as
+    | EmojiData
+    | { default: EmojiData };
+  const dataset = 'default' in loaded ? loaded.default : loaded;
+  assert.strictEqual(dataset.labels?.searchPlaceholder, 'Suchen');
+});
+
 // Locale subpaths: canonical and deprecated v4 deep paths.
 check('locale subpaths resolve', () => {
   const canonical = requireFromScratch(

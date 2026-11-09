@@ -26,6 +26,16 @@ export default defineConfig({
           new URL('./src/primitives/index.ts', import.meta.url),
         ),
       },
+      {
+        find: /^emoji-picker-react\/data\/(emojis-[a-z-]+)$/,
+        replacement: `${root}src/data/$1.ts`,
+      },
+      {
+        find: /^emoji-picker-react\/locales$/,
+        replacement: fileURLToPath(
+          new URL('./src/locales.ts', import.meta.url),
+        ),
+      },
       // Website components resolve their own React 18 copy by default while
       // Testing Library uses the root React; hooks break across the two.
       // Pin every React import in tests to the single root copy.

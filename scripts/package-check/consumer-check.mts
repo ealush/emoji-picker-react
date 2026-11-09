@@ -35,4 +35,12 @@ const dataset = locale.default ?? locale;
 assert.ok(dataset.categories && dataset.emojis, 'locale dataset shape');
 console.log('ok: locale ESM interop resolves');
 
+// Locale entry: dynamic import of the package's own dataset subpath.
+const locales = await import('emoji-picker-react/locales');
+assert.strictEqual(locales.matchEmojiDataLocale(['he', 'ja-JP']), 'ja');
+const loadedJa = await locales.emojiDataForLocale('ja')({});
+const ja = 'default' in loadedJa ? loadedJa.default : loadedJa;
+assert.strictEqual(ja.labels?.searchPlaceholder, '検索');
+console.log('ok: locales ESM entry loads a dataset');
+
 console.log('packed ESM consumer: all checks passed');

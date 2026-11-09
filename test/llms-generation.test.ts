@@ -26,6 +26,7 @@ it('generates stable website copies from the current sources and actual exports'
       'src/index.tsx',
       'src/primitives/index.ts',
       'src/data.ts',
+      'src/locales.ts',
     ]) {
       mkdirSync(dirname(join(root, file)), { recursive: true });
       cpSync(file, join(root, file), { recursive: true });
