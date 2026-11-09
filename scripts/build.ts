@@ -43,6 +43,10 @@ function sh(command: string, args: string[]) {
 }
 
 const EXTERNALS = [
+  // src/locales.ts loads each dataset through the package's own
+  // `data/emojis-*` subpath: kept external, it resolves to the published
+  // twin for each condition and the datasets ship once.
+  '--external:emoji-picker-react',
   '--external:react',
   '--external:react-dom',
   '--external:shipstyles',
@@ -50,10 +54,11 @@ const EXTERNALS = [
 
 const COMMON = [...EXTERNALS, '--bundle', '--log-level=warning'];
 
-async function buildCjs(src: string, outfile: string) {
+async function buildCjs(src: string, outfile: string, extra: string[] = []) {
   sh(bin('esbuild'), [
     join(repoRoot, src),
     ...COMMON,
+    ...extra,
     '--format=cjs',
     // Ship optimized production CJS without changing public property names.
     '--minify',
@@ -92,6 +97,7 @@ async function buildEsm() {
     join(repoRoot, 'src/index.tsx'),
     join(repoRoot, 'src/primitives/index.ts'),
     join(repoRoot, 'src/data.ts'),
+    join(repoRoot, 'src/locales.ts'),
     // ShipStyles 1.0's ESM .js entry lacks module metadata for Node 18.
     // Bundle it into shared .mjs chunks so native ESM consumers keep working.
     ...COMMON.filter((arg) => arg !== '--external:shipstyles'),
@@ -137,6 +143,7 @@ async function buildDeclarations() {
     ['index.d.ts', 'index.d.mts'],
     [join('primitives', 'index.d.ts'), join('primitives', 'index.d.mts')],
     ['data.d.ts', 'data.d.mts'],
+    ['locales.d.ts', 'locales.d.mts'],
   ];
   for (const [dts, dmts] of entries) {
     const path = join(repoRoot, 'dist', dts);
@@ -186,6 +193,11 @@ async function main() {
   await buildCjs('src/index.tsx', 'dist/index.js');
   await buildCjs('src/primitives/index.ts', 'dist/primitives/index.js');
   await buildCjs('src/data.ts', 'dist/data/index.js');
+  // require() instead of import(): CommonJS runners without ESM support
+  // (Jest) cannot evaluate a dynamic import.
+  await buildCjs('src/locales.ts', 'dist/locales/index.js', [
+    '--supported:dynamic-import=false',
+  ]);
   markClientEntries();
   await buildDeclarations();
   console.log(

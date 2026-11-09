@@ -13,6 +13,7 @@ import {
   Search,
   Viewport,
 } from 'emoji-picker-react/primitives';
+import { emojiDataForLocale } from 'emoji-picker-react/locales';
 
 import './app.css';
 import { nonceFromDocument, Shell, useSelectionLog } from './shell';
@@ -43,6 +44,18 @@ const scenarios: Record<string, Scenario> = {
       <EmojiPicker
         nonce={nonce}
         emojiData={() => import('emoji-picker-react/data/emojis-de')}
+        onEmojiClick={onPick}
+      />
+    ),
+  },
+  'browser-locale': {
+    title: "Follows the browser's language",
+    detail:
+      "emojiData={emojiDataForLocale()} from 'emoji-picker-react/locales' — only the matching dataset is downloaded.",
+    render: (onPick) => (
+      <EmojiPicker
+        nonce={nonce}
+        emojiData={emojiDataForLocale()}
         onEmojiClick={onPick}
       />
     ),

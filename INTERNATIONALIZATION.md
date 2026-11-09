@@ -1,6 +1,6 @@
 # Internationalization (i18n)
 
-Import the dictionary you need and pass it to the `emojiData` prop:
+Import the dictionary you need and pass it to the `emojiData` prop. The dataset translates emoji names, categories and the interface strings:
 
 ```tsx check
 import * as React from 'react';
@@ -11,6 +11,38 @@ function App() {
   return <EmojiPicker emojiData={es} />;
 }
 ```
+
+## Follow the user's locale
+
+`emoji-picker-react/locales` picks the dataset for a locale and loads it on demand. With no argument it reads the browser's languages (`navigator.languages`), in order, and falls back to English:
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+import { emojiDataForLocale } from 'emoji-picker-react/locales';
+
+export function App() {
+  return <EmojiPicker emojiData={emojiDataForLocale()} />;
+}
+```
+
+Pass your app's locale instead when you have one (a tag, or a list in preference order):
+
+```tsx check
+import * as React from 'react';
+import EmojiPicker from 'emoji-picker-react';
+import { emojiDataForLocale } from 'emoji-picker-react/locales';
+
+export function App({ locale }: { locale: string }) {
+  return <EmojiPicker emojiData={emojiDataForLocale(locale)} />;
+}
+```
+
+Matching tries the exact tag (`es-MX`), then a few aliases (`zh-TW` and `zh-Hant-*` → `zh-hant`, other `zh-*` → `zh`, `no` and `nn` → `nb`, `es-419` and `es-US` → `es-mx`), then the language alone (`fr-CA` → `fr`). `matchEmojiDataLocale(locales)` returns the chosen id without loading anything, and `EMOJI_DATA_LOCALES` lists every id.
+
+Each dataset is its own chunk: the application downloads only the one it picks. `emojiDataForLocale` returns the same loader for the same dataset, so it is safe to call during render. On the server there is no `navigator`, so the no-argument form chooses English there; the picker shows its loading state on both sides until the dataset arrives, so hydration still matches. The loading strings show before the dataset exists; translate them with `labels` (see below).
+
+## Choose a dataset yourself
 
 To defer the additional locale to a separate chunk, pass a loader instead. The default entry still eagerly registers English; the picker shows its loading state until the selected locale resolves:
 

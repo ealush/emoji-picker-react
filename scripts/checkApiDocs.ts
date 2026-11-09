@@ -55,6 +55,7 @@ try {
       'emoji-picker-react/primitives': ['src/primitives/index.ts'],
       'emoji-picker-react/data': ['src/data.ts'],
       'emoji-picker-react/data/emojis-*': ['src/data/emojis-*'],
+      'emoji-picker-react/locales': ['src/locales.ts'],
     },
   });
   const diagnostics = ts.getPreEmitDiagnostics(program);

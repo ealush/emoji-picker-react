@@ -306,7 +306,7 @@ function readAnalysis(text: string): Analysis {
     if (!isRecord(problem) || typeof problem.kind !== 'string')
       throw new Error('invalid attw problem');
   }
-  for (const name of ['.', './primitives', './data']) {
+  for (const name of ['.', './primitives', './data', './locales']) {
     const entry = entrypoints[name];
     if (!isRecord(entry) || !isRecord(entry.resolutions))
       throw new Error(`missing attw entry ${name}`);
@@ -373,7 +373,7 @@ function gateAttw(tarball: string, cwd: string) {
     return ids.map((id) => problems[String(id)]?.kind ?? `unknown:${id}`);
   };
 
-  for (const entrypoint of ['./primitives', './data']) {
+  for (const entrypoint of ['./primitives', './data', './locales']) {
     for (const resolution of ['node16-cjs', 'node16-esm', 'bundler']) {
       for (const kind of kindsOf(entrypoint, resolution)) {
         failures.push(`${entrypoint} ${resolution}: ${kind}`);

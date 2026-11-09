@@ -37,6 +37,7 @@ const ENTRIES: Array<[string, string]> = [
   ['emoji-picker-react', 'src/index.tsx'],
   ['emoji-picker-react/primitives', 'src/primitives/index.ts'],
   ['emoji-picker-react/data', 'src/data.ts'],
+  ['emoji-picker-react/locales', 'src/locales.ts'],
 ];
 
 const LOCALES =

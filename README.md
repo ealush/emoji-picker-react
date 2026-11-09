@@ -379,7 +379,7 @@ Both work without React (including in Server Components) and return immutable re
 
 ## Internationalization
 
-28 emoji datasets ship with the package. Import one and pass it as `emojiData`, and the emoji names, categories and interface strings are all translated. Use `labels` to override any string. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
+28 emoji datasets ship with the package. Import one and pass it as `emojiData`, and the emoji names, categories and interface strings are all translated. Use `labels` to override any string. To follow the user's browser language, use `emojiDataForLocale()` from `emoji-picker-react/locales`: it picks the matching dataset and loads only that one. See [INTERNATIONALIZATION.md](INTERNATIONALIZATION.md) for the list.
 
 ## Customization
 

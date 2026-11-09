@@ -37,6 +37,17 @@
       },
       "default": "./dist/data/index.js"
     },
+    "./locales": {
+      "import": {
+        "types": "./dist/locales.d.mts",
+        "default": "./dist/esm/locales.mjs"
+      },
+      "require": {
+        "types": "./dist/locales.d.ts",
+        "default": "./dist/locales/index.js"
+      },
+      "default": "./dist/locales/index.js"
+    },
     "./data/emojis-*": {
       "import": {
         "types": "./dist/data/emojis-*.d.mts",
@@ -195,6 +206,13 @@
     {
       "path": "dist/esm/data.mjs",
       "limit": "42 KB"
+    },
+    {
+      "path": "dist/esm/locales.mjs",
+      "limit": "1 KB",
+      "ignore": [
+        "emoji-picker-react"
+      ]
     }
   ],
   "devDependencies": {

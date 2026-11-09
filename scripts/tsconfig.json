@@ -17,6 +17,7 @@
       "emoji-picker-react/primitives": ["src/primitives/index.ts"],
       "emoji-picker-react/data": ["src/data.ts"],
       "emoji-picker-react/data/emojis-*": ["src/data/emojis-*"],
+      "emoji-picker-react/locales": ["src/locales.ts"],
       "@c/*": ["src/*"]
     },
     "noUnusedLocals": true,
