@@ -121,7 +121,7 @@ Adapt `Input` and `Button` props to the installed design library.
 | Drop `style` or `className` from a custom cell | Spread every managed prop onto the native button |
 | `stopPropagation` to block selection | `onEmojiClick` is the selection callback; filter there |
 | Query cells with `getByRole('button')` in tests | `getByRole('gridcell', { name: 'grinning face' })` |
-| A bare `Root` with no height | Give Root a height (`style={{ height: 400 }}` or a class); otherwise every emoji renders at once and development builds warn |
+| A bare `Root` with no height | Give Root a height (`style={{ height: 400 }}` or a class), or `height: 'auto'` with a `maxHeight` to fit short results; otherwise every emoji renders at once and development builds warn |
 | A new loader function on every render | Hoist the loader to module scope; a new identity means a new dataset |
 | Hide the default focus ring on custom controls without a replacement | Provide `:focus-visible` styles |
 
@@ -143,7 +143,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 - Variables yield to any consumer selector (zero specificity). For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and pass `cssLayer="epr"`.
 - Under `unstyled` or a bare Root, give `[data-epr-part='variation-picker']` and sticky `category-label`s a background; they are transparent overlays otherwise.
 - Do not override Viewport overflow, cell dimensions, category positioning or the inline cell positions. Change size variables or `columns` instead.
-- Root dimensions come from `style`/`className`; EmojiPicker also takes `width` and `height`. With `columns`, the width fits the columns unless set.
+- Root dimensions come from `style`/`className`; EmojiPicker also takes `width` and `height`; `height="auto"` fits the results, capped at 450px unless `style.maxHeight` is set. With `columns`, the width fits the columns unless set.
 - Use `colorScheme`, not `theme`, on components wrapped by Emotion, styled-components or MUI `styled()`.
 - `dir="rtl"` mirrors the grid, tabs and tone fan; arrow keys follow the visual direction. Custom cells receive their position as `top` and `insetInlineStart`; spread `style` rather than reading `left`.
 - `prefers-reduced-motion: reduce` turns off the library's own transitions.

@@ -526,6 +526,17 @@ Styling is opt-in in both directions:
 
 The intrinsic grid width remains present during an empty search, data loading or a load error.
 
+## 11b. Height that fits the results
+
+```tsx
+<EmojiPicker height="auto" />
+<EmojiPicker height="auto" style={{ maxHeight: '60vh' }} />
+```
+
+With `height="auto"` the picker is as tall as its content: a search with one row of results shrinks it to that row, and clearing the search grows it back. It never grows past 450px (the default height) unless `style.maxHeight` sets another limit; beyond the limit the grid scrolls as usual. When the skin tone menu opens below a single row, the picker grows just enough to show it and shrinks back when it closes.
+
+A primitives composition does the same with native styles: `<Root style={{ height: 'auto', maxHeight: 450 }}>`. Keep the max-height: without a limit the full list renders at once, and development builds warn.
+
 ## 12. Data API
 
 The data entry point is defined in [DATA_API.md](./DATA_API.md):

@@ -354,7 +354,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`. For no skin-tone variations at all (no long press), add `variationsDisabled`.
 
-**Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
+**Size** — `width` / `height` props; `height="auto"` to shrink to short search results (up to 450px or your `maxHeight`); `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 
 **Next.js App Router** — import it in any component; the entry is marked `"use client"`. To keep it out of the initial bundle: `const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })`.
 

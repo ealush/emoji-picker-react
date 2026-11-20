@@ -107,7 +107,7 @@ function useDevWarnUnboundedViewport(
       // eslint-disable-next-line no-console
       console.warn(
         '[emoji-picker-react] <Viewport> has no height limit, so every ' +
-          'emoji renders at once. Give Root a height.',
+          'emoji renders at once. Give Root a height or a max-height.',
       );
     });
     observer.observe(viewport);

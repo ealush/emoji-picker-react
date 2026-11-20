@@ -365,6 +365,50 @@ test('columns keep their width through an empty query, loading and load failure'
   }
 });
 
+test('height="auto" fits short results and keeps room for the skin tone menu', async ({
+  page,
+}) => {
+  await page.goto(story('picker-columns--fit-content-height'));
+  const root = page.locator('[data-epr-part="root"]');
+  const viewport = page.locator('[data-epr-part="viewport"]');
+  const menu = page.locator('[data-epr-part="variation-picker"]');
+  const height = async () => (await root.boundingBox())!.height;
+  await page.getByRole('gridcell').first().waitFor();
+  const full = await height();
+  expect(Math.abs(full - 452)).toBeLessThan(1);
+
+  const search = page.getByRole('textbox');
+  await search.fill('waving hand');
+  const cell = page.getByRole('gridcell', { name: 'waving hand', exact: true });
+  await expect(cell).toBeVisible();
+  await expect.poll(height).toBeLessThan(full - 100);
+  const oneRow = await height();
+  expect(
+    await viewport.evaluate((el) => el.scrollHeight - el.clientHeight),
+  ).toBeLessThanOrEqual(1);
+
+  // The menu opens below the only row; the picker grows to show all of it.
+  await search.press('ArrowDown');
+  await expect(cell).toBeFocused();
+  await page.keyboard.press('Space');
+  await expect(menu).toBeVisible();
+  await expect
+    .poll(async () =>
+      menu.evaluate((el) => {
+        const box = el.getBoundingClientRect();
+        const body = el.parentElement!.getBoundingClientRect();
+        return body.bottom - box.bottom;
+      }),
+    )
+    .toBeGreaterThanOrEqual(0);
+  await page.keyboard.press('Escape');
+  await expect(menu).not.toBeVisible();
+  await expect.poll(height).toBe(oneRow);
+
+  await search.fill('');
+  await expect.poll(height).toBe(full);
+});
+
 test('the text font token can inherit the host font', async ({ page }) => {
   await page.goto(story('picker-columns--six-columns'));
   const root = page.locator('[data-epr-part="root"]');

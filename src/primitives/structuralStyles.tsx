@@ -35,6 +35,10 @@ const boxSizingReset =
   // leaves, so colorScheme="dark" is not dark controls on a transparent
   // root. Zero specificity: any consumer background wins.
   ':where(.epr-appearance-default){background-color:var(--epr-bg-color)}' +
+  // A content-sized viewport (`height: auto`) holding one row of results
+  // is shorter than the skin tone menu that opens below that row. While
+  // the menu is open the list keeps room for it instead of clipping it.
+  ':where([data-epr-part=viewport]:has(>[data-epr-open]) [data-epr-part=list]){min-height:calc(var(--epr-category-label-height) + var(--epr-emoji-fullsize) + var(--epr-emoji-variation-picker-height) + 10px)}' +
   // `columns`: the picker hugs that many emoji columns (plus the stable
   // scrollbar gutter) unless the consumer sizes it; any width rule wins.
   // In layout the content box spans the row (columns spread evenly); a

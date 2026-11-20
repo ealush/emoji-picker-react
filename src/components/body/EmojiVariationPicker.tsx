@@ -108,6 +108,7 @@ export function EmojiVariationPicker() {
     <div
       ref={VariationPickerRef}
       data-epr-part="variation-picker"
+      data-epr-open={visible ? '' : undefined}
       className={variationClassName(appearance, visible, getMenuDirection())}
       style={{ top }}
     >

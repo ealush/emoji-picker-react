@@ -54,7 +54,7 @@ export function defaultRootStyle({
   style: React.CSSProperties | undefined;
   columns?: number;
 }): React.CSSProperties {
-  return {
+  const rootStyle: React.CSSProperties = {
     // v4-compatible default dimensions; consumer style and explicit
     // width/height props both override them. With `columns`, the width
     // fits the columns instead.
@@ -64,6 +64,12 @@ export function defaultRootStyle({
     ...(width !== undefined ? { width: getDimension(width) } : {}),
     ...(height !== undefined ? { height: getDimension(height) } : {}),
   };
+  // `height="auto"` fits the results (a short search shrinks the picker)
+  // up to the default height; a consumer max-height replaces that cap.
+  // Uncapped, the full list would render at once.
+  return rootStyle.height === 'auto'
+    ? { maxHeight: getDimension(DEFAULT_PICKER_HEIGHT), ...rootStyle }
+    : rootStyle;
 }
 
 function getDimension(dimension: string | number): string | number {

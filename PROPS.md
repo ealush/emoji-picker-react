@@ -22,7 +22,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | Prop        | Type                 | Default | Description                                           |
 | ----------- | -------------------- | ------- | ----------------------------------------------------- |
 | `width`     | `string \| number`   | `350`   | Picker width. Numbers are treated as pixels.          |
-| `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels.         |
+| `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels. `"auto"` fits the content, so a short search shrinks the picker; it grows back up to 450px, or to your `style.maxHeight`. See [API.md](docs/v5/API.md#11b-height-that-fits-the-results). |
 | `columns`   | `number`             | `undefined` | Emojis per row. The width then fits the columns unless you set `width`; a narrower container shows fewer columns. |
 | `style`     | `CSSProperties`      | `{}`    | Inline styles applied to the root element.            |
 | `className` | `string`             | `""`    | CSS class applied to the root element.                |

@@ -54,6 +54,8 @@ export const UnlayeredLifecycle = () => <StyleLifecycle layered={false} />;
 
 export const SixColumns = () => <EmojiPicker columns={6} />;
 
+export const FitContentHeight = () => <EmojiPicker height="auto" />;
+
 const fixtureImage = () =>
   'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"><circle cx="15" cy="15" r="12" fill="gold"/></svg>';
 export const PreloadTimerColumns = () => (
