@@ -199,7 +199,7 @@ Adapt `Input` and `Button` props to the installed design library.
 | Drop `style` or `className` from a custom cell | Spread every managed prop onto the native button |
 | `stopPropagation` to block selection | `onEmojiClick` is the selection callback; filter there |
 | Query cells with `getByRole('button')` in tests | `getByRole('gridcell', { name: 'grinning face' })` |
-| A bare `Root` with no height | Give Root a height (`style={{ height: 400 }}` or a class); otherwise every emoji renders at once and development builds warn |
+| A bare `Root` with no height | Give Root a height (`style={{ height: 400 }}` or a class), or `height: 'auto'` with a `maxHeight` to fit short results; otherwise every emoji renders at once and development builds warn |
 | A new loader function on every render | Hoist the loader to module scope; a new identity means a new dataset |
 | Hide the default focus ring on custom controls without a replacement | Provide `:focus-visible` styles |
 
@@ -221,7 +221,7 @@ Per-library snippets (plain CSS, CSS Modules, Tailwind, shadcn/ui, Emotion, styl
 - Variables yield to any consumer selector (zero specificity). For Tailwind v4, declare `@layer epr, theme, base, components, utilities;` and pass `cssLayer="epr"`.
 - Under `unstyled` or a bare Root, give `[data-epr-part='variation-picker']` and sticky `category-label`s a background; they are transparent overlays otherwise.
 - Do not override Viewport overflow, cell dimensions, category positioning or the inline cell positions. Change size variables or `columns` instead.
-- Root dimensions come from `style`/`className`; EmojiPicker also takes `width` and `height`. With `columns`, the width fits the columns unless set.
+- Root dimensions come from `style`/`className`; EmojiPicker also takes `width` and `height`; `height="auto"` fits the results, capped at 450px unless `style.maxHeight` is set. With `columns`, the width fits the columns unless set.
 - Use `colorScheme`, not `theme`, on components wrapped by Emotion, styled-components or MUI `styled()`.
 - `dir="rtl"` mirrors the grid, tabs and tone fan; arrow keys follow the visual direction. Custom cells receive their position as `top` and `insetInlineStart`; spread `style` rather than reading `left`.
 - `prefers-reduced-motion: reduce` turns off the library's own transitions.
@@ -808,7 +808,7 @@ import es from 'emoji-picker-react/data/emojis-es';
 
 **Hide the preview / search / skin tones** — `previewConfig={{ showPreview: false }}`, `searchDisabled`, `skinTonesDisabled`. For no skin-tone variations at all (no long press), add `variationsDisabled`.
 
-**Size** — `width` / `height` props; `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
+**Size** — `width` / `height` props; `height="auto"` to shrink to short search results (up to 450px or your `maxHeight`); `columns={8}` to fit the width to a number of emojis per row; `--epr-emoji-size` for the emojis themselves.
 
 **Next.js App Router** — import it in any component; the entry is marked `"use client"`. To keep it out of the initial bundle: `const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false })`.
 
@@ -1061,7 +1061,7 @@ Complete list of all props accepted by `EmojiPicker`. All props are optional.
 | Prop        | Type                 | Default | Description                                           |
 | ----------- | -------------------- | ------- | ----------------------------------------------------- |
 | `width`     | `string \| number`   | `350`   | Picker width. Numbers are treated as pixels.          |
-| `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels.         |
+| `height`    | `string \| number`   | `450`   | Picker height. Numbers are treated as pixels. `"auto"` fits the content, so a short search shrinks the picker; it grows back up to 450px, or to your `style.maxHeight`. See [API.md](docs/v5/API.md#11b-height-that-fits-the-results). |
 | `columns`   | `number`             | `undefined` | Emojis per row. The width then fits the columns unless you set `width`; a narrower container shows fewer columns. |
 | `style`     | `CSSProperties`      | `{}`    | Inline styles applied to the root element.            |
 | `className` | `string`             | `""`    | CSS class applied to the root element.                |
@@ -2138,6 +2138,17 @@ Styling is opt-in in both directions:
 
 The intrinsic grid width remains present during an empty search, data loading or a load error.
 
+## 11b. Height that fits the results
+
+```tsx
+<EmojiPicker height="auto" />
+<EmojiPicker height="auto" style={{ maxHeight: '60vh' }} />
+```
+
+With `height="auto"` the picker is as tall as its content: a search with one row of results shrinks it to that row, and clearing the search grows it back. It never grows past 450px (the default height) unless `style.maxHeight` sets another limit; beyond the limit the grid scrolls as usual. When the skin tone menu opens below a single row, the picker grows just enough to show it and shrinks back when it closes.
+
+A primitives composition does the same with native styles: `<Root style={{ height: 'auto', maxHeight: 450 }}>`. Keep the max-height: without a limit the full list renders at once, and development builds warn.
+
 ## 12. Data API
 
 The data entry point is defined in [DATA_API.md](./DATA_API.md):
@@ -2424,7 +2435,9 @@ they never hide a mounted part or reach the DOM.
 style/class sizing; `width`, `height`, `theme` and `unstyled` are default-picker
 appearance props. Root's `colorScheme` supplies light/dark/auto color tokens;
 `appearance="default"` opts into built-in leaf appearance. Bare compositions
-have no branded default appearance. Give Root a bounded height for scrolling.
+have no branded default appearance. Give Root a bounded height for scrolling:
+a fixed `height`, or `height: auto` with a `max-height` so short results shrink
+it.
 
 The library owns `role` and `data-epr-*` on managed elements. These consumer
 attributes are filtered. Ref forwarding points to the part's native element.

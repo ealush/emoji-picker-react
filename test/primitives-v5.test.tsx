@@ -654,6 +654,27 @@ describe('v5 default picker root ownership', () => {
     expect(aside.parentElement?.tagName).not.toBe('ASIDE');
   });
 
+  it('caps height="auto" at the default height unless the consumer sets a max-height', () => {
+    const rootStyle = (props: React.ComponentProps<typeof EmojiPicker>) => {
+      const { container } = render(
+        <EmojiPicker
+          emojiData={twoCategoryData}
+          emojiStyle={EmojiStyle.NATIVE}
+          {...props}
+        />,
+      );
+      return (container.querySelector('aside') as HTMLElement).style;
+    };
+    expect(rootStyle({ height: 'auto' })).toMatchObject({
+      height: 'auto',
+      maxHeight: '450px',
+    });
+    expect(
+      rootStyle({ style: { height: 'auto', maxHeight: '60vh' } }),
+    ).toMatchObject({ height: 'auto', maxHeight: '60vh' });
+    expect(rootStyle({ height: 300 }).maxHeight).toBe('');
+  });
+
   it('emits no DOM wrapper from the appearance layer', () => {
     const { container } = render(
       <EmojiPicker

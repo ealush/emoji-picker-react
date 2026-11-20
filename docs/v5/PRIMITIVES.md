@@ -88,7 +88,9 @@ they never hide a mounted part or reach the DOM.
 style/class sizing; `width`, `height`, `theme` and `unstyled` are default-picker
 appearance props. Root's `colorScheme` supplies light/dark/auto color tokens;
 `appearance="default"` opts into built-in leaf appearance. Bare compositions
-have no branded default appearance. Give Root a bounded height for scrolling.
+have no branded default appearance. Give Root a bounded height for scrolling:
+a fixed `height`, or `height: auto` with a `max-height` so short results shrink
+it.
 
 The library owns `role` and `data-epr-*` on managed elements. These consumer
 attributes are filtered. Ref forwarding points to the part's native element.
